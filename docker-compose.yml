@@ -1,0 +1,54 @@
+services:
+  # Backend service
+  backend:
+    build:
+      context: ./back
+      target: production
+    image: lesan-backend:latest
+    restart: unless-stopped
+    ports:
+      - "1404:1404"
+    env_file:
+      - .env.backend
+    environment:
+      - APP_PORT=1404
+      - ENV=production
+      - MONGO_URI=mongodb://mongo:27017/
+      - REDIS_URI=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./front
+      target: production
+    image: lesan-frontend:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.frontend
+    environment:
+      - APP_PORT=3000
+      - NODE_ENV=production
+      - LESAN_URL=http://backend:1404
+
+  # MongoDB service
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  # Redis service
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  redis_data:

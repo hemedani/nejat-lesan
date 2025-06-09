@@ -1,0 +1,502 @@
+[
+    {
+    "id": "mbds1ez1iy4eu82x61",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"user\",\n    \"act\": \"loginReq\",\n    \"details\": {\n      \"get\": {\n        \"mobile\": 1,\n        \"national_number\": 1\n      },\n      \"set\": {\n        \"national_number\": \"3875523474\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [
+      { "key": "nationalNumber", "value": "[body][national_number]" }
+    ]
+  },
+  {
+    "id": "mbds1mf27c23550j3lr",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"user\",\n    \"act\": \"login\",\n    \"details\": {\n      \"get\": {\n        \"token\": 1,\n        \"user\": {\n          \"_id\": 1,\n          \"first_name\": 1,\n          \"last_name\": 1,\n          \"mobile\": 1,\n          \"national_number\": 1,\n          \"level\": 1,\n          \"is_verified\": 1,\n          \"createdAt\": 1,\n          \"national_card\": {\n            \"_id\": 1,\n            \"name\": 1\n          }\n        }\n      },\n      \"set\": {\n        \"national_number\": \"3875523474\",\n        \"code\": \"11111\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "token", "value": "[body][token]" }]
+  },
+  {
+    "id": "testFilter_seri",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"seri\": 12345\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_serial",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"serial\": 841695\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_dateOfAccidentFrom",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"date_of_accident\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"dateOfAccidentFrom\": \"2024-01-01T00:00:00.000Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_dateOfAccidentTo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"date_of_accident\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"dateOfAccidentTo\": \"2024-01-31T23:59:59.999Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_deadCount",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"dead_count\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"deadCount\": 2\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_deadCountMin",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"dead_count\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"deadCountMin\": 1\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_deadCountMax",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"dead_count\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"deadCountMax\": 3\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_injuredCount",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"injured_count\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"injuredCount\": 5\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_injuredCountMin",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"injured_count\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"injuredCountMin\": 1\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_injuredCountMax",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"injured_count\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"injuredCountMax\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_hasWitness",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"has_witness\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"hasWitness\": \"true\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_newsNumber",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"news_number\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"newsNumber\": 9876\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_officer",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"officer\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"officer\": \"Officer K\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_completionDateFrom",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"completion_date\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"completionDateFrom\": \"2024-02-01T00:00:00.000Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_completionDateTo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"completion_date\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"completionDateTo\": \"2024-02-28T23:59:59.999Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_province",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"province\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"province\": \"Tehran\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_city",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"city\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"city\": \"Tehran\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_road",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"road\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"road\": \"Valiasr St\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_trafficZone",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"traffic_zone\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"trafficZone\": \"Zone A\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_cityZone",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"city_zone\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"cityZone\": \"District 1\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_accidentType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"type\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"accidentType\": \"Collision\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_position",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"position\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"position\": \"Responding Officer\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_rulingType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"ruling_type\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"rulingType\": \"Driver Fault\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_lightStatus",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"light_status\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"lightStatus\": \"Daylight\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_collisionType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"collision_type\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"collisionType\": \"Head-on\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_roadSituation",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"road_situation\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"roadSituation\": \"Clear\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_roadRepairType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"road_repair_type\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"roadRepairType\": \"None\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_shoulderStatus",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"shoulder_status\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"shoulderStatus\": \"Paved\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_areaUsages",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"area_usages\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"areaUsages\": [\"Residential\", \"Commercial\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_airStatuses",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"air_statuses\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"airStatuses\": [\"Clear\", \"Cloudy\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_roadDefects",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"road_defects\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"roadDefects\": [\"Pothole\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_humanReasons",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"human_reasons\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"humanReasons\": [\"Speeding\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleReasons",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_reasons\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleReasons\": [\"Brake Failure\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_equipmentDamages",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"equipment_damages\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"equipmentDamages\": [\"Guard Rail\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_roadSurfaceConditions",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"road_surface_conditions\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"roadSurfaceConditions\": [\"Dry\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_attachmentName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"attachments\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"attachmentName\": \"Accident Scene Photo\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_attachmentType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"attachments\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"attachmentType\": \"image/jpeg\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleColor",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleColor\": \"Red\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleSystem",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleSystem\": \"Car\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehiclePlaqueType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehiclePlaqueType\": \"Private\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleSystemType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleSystemType\": \"Sedan\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleFaultStatus",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleFaultStatus\": \"At Fault\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceCo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceCo\": \"Bimeh Iran\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceNo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceNo\": \"INS123456789\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehiclePlaqueUsage",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehiclePlaqueUsage\": \"Personal\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehiclePrintNumber",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehiclePrintNumber\": \"PRINT778899\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehiclePlaqueSerialElement",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehiclePlaqueSerialElement\": \"12A345\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceDateFrom",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceDateFrom\": \"2023-01-01T00:00:00.000Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceDateTo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceDateTo\": \"2024-01-01T00:00:00.000Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleBodyInsuranceCo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleBodyInsuranceCo\": \"Bimeh Melli\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleBodyInsuranceNo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleBodyInsuranceNo\": \"BODYINS98765\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleMotionDirection",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleMotionDirection\": \"Northbound\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleBodyInsuranceDateFrom",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleBodyInsuranceDateFrom\": \"2023-03-01T00:00:00.000Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleBodyInsuranceDateTo",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleBodyInsuranceDateTo\": \"2024-03-01T00:00:00.000Z\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleMaxDamageSections",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleMaxDamageSections\": [\"Front Bumper\", \"Left Fender\"]\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleDamageSectionOther",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleDamageSectionOther\": \"Scratched roof\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceWarrantyLimit",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceWarrantyLimit\": 50000000\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceWarrantyLimitMin",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceWarrantyLimitMin\": 10000000\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_vehicleInsuranceWarrantyLimitMax",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"vehicleInsuranceWarrantyLimitMax\": 100000000\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverSex",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverSex\": \"Male\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverFirstName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverFirstName\": \"Reza\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverLastName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverLastName\": \"Alavi\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverNationalCode",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverNationalCode\": \"0012345678\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverLicenceNumber",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverLicenceNumber\": \"L987654\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverLicenceType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverLicenceType\": \"B2\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverInjuryType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverInjuryType\": \"Minor\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_driverTotalReason",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"driverTotalReason\": \"Distraction\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerSex",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerSex\": \"Female\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerFirstName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerFirstName\": \"Sara\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerLastName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerLastName\": \"Mirzaei\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerNationalCode",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerNationalCode\": \"0098765432\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerInjuryType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerInjuryType\": \"None\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerFaultStatus",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerFaultStatus\": \"Not At Fault\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_passengerTotalReason",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"vehicle_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"passengerTotalReason\": \"N/A\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianSex",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianSex\": \"Male\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianFirstName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianFirstName\": \"Ali\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianLastName",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianLastName\": \"Hosseini\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianNationalCode",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianNationalCode\": \"1122334455\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianInjuryType",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianInjuryType\": \"Serious\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianFaultStatus",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianFaultStatus\": \"Jaywalking\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "testFilter_pedestrianTotalReason",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"pedestrian_dtos\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"pedestrianTotalReason\": \"Pedestrian Error\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  }
+]

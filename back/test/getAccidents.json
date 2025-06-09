@@ -1,0 +1,70 @@
+[
+  {
+    "id": "mbds1ez1iy4eu82x61",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"user\",\n    \"act\": \"loginReq\",\n    \"details\": {\n      \"get\": {\n        \"mobile\": 1,\n        \"national_number\": 1\n      },\n      \"set\": {\n        \"national_number\": \"3875523474\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [
+      { "key": "nationalNumber", "value": "[body][national_number]" }
+    ]
+  },
+  {
+    "id": "mbds1mf27c23550j3lr",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"user\",\n    \"act\": \"login\",\n    \"details\": {\n      \"get\": {\n        \"token\": 1,\n        \"user\": {\n          \"_id\": 1,\n          \"first_name\": 1,\n          \"last_name\": 1,\n          \"mobile\": 1,\n          \"national_number\": 1,\n          \"level\": 1,\n          \"is_verified\": 1,\n          \"createdAt\": 1,\n          \"national_card\": {\n            \"_id\": 1,\n            \"name\": 1\n          }\n        }\n      },\n      \"set\": {\n        \"national_number\": \"3875523474\",\n        \"code\": \"11111\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "token", "value": "[body][token]" }]
+  },
+  {
+    "id": "mbds64tce9dtgfz3gxj",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"accident\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"seri\": 1,\n        \"serial\": 1,\n        \"location\": 1,\n        \"vehicle_dtos\": 1,\n        \"date_of_accident\": 1,\n        \"dead_count\": 1,\n        \"has_witness\": 1,\n        \"province\": {\n          \"cities\": {\n            \"name\": 1,\n            \"english_name\": 1\n          }\n        },\n        \"position\": {\n          \"_id\": 1,\n          \"name\": 1\n        }\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"serial\": 841695\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbds75dnen8b6weocyi",
+    "bodyHeaders": "{\n    \"headers\": {\n      \"Content-Type\": \"application/json\",\n      \"token\": \"{token}\"\n    },\n    \"body\": {\n      \"service\": \"main\",\n      \"model\": \"accident\",\n      \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1, \"seri\": 1, \"serial\": 1, \"location\": 1, \"vehicle_dtos\": 1,\n          \"date_of_accident\": 1, \"dead_count\": 1, \"has_witness\": 1,\n          \"province\": { \"cities\": { \"name\": 1, \"english_name\": 1 } },\n          \"position\": { \"_id\": 1, \"name\": 1 }\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"seri\": 200 }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbds833yenbn17xsqp8",
+    "bodyHeaders": "{\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1, \"seri\": 1, \"serial\": 1, \"location\": 1, \"vehicle_dtos\": 1,\n          \"date_of_accident\": 1, \"dead_count\": 1, \"has_witness\": 1,\n          \"province\": { \"cities\": { \"name\": 1, \"english_name\": 1 } },\n          \"position\": { \"_id\": 1, \"name\": 1 }\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"dateOfAccidentFrom\": \"2024-01-01T00:00:00.000Z\" }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbds8ife354f39mqd2",
+    "bodyHeaders": "  {\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1, \"seri\": 1, \"serial\": 1, \"location\": 1, \"vehicle_dtos\": 1,\n          \"date_of_accident\": 1, \"dead_count\": 1, \"has_witness\": 1,\n          \"province\": { \"cities\": { \"name\": 1, \"english_name\": 1 } },\n          \"position\": { \"_id\": 1, \"name\": 1 }\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"dateOfAccidentTo\": \"2024-01-31T23:59:59.999Z\" }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbdsa8ulson6fyb5t0b",
+    "bodyHeaders": "  {\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1, \"seri\": 1, \"serial\": 1, \"location\": 1, \"vehicle_dtos\": 1,\n          \"date_of_accident\": 1, \"dead_count\": 1, \"has_witness\": 1,\n          \"province\": { \"cities\": { \"name\": 1, \"english_name\": 1 } },\n          \"position\": { \"_id\": 1, \"name\": 1 }\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"deadCount\": 2 }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbdsgl5dmexku9etcpl",
+    "bodyHeaders": "  {\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1,\n          \"dead_count\": 1\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"deadCountMin\": 2 }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbdshltt0h9bjqzodhbu",
+    "bodyHeaders": "  {\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1,\n          \"dead_count\": 1\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"deadCountMax\": 4 }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbdsj9ctcse227kri9j",
+    "bodyHeaders": "  {\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1,\n          \"dead_count\": 1\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"deadCountMin\": 2, \"deadCountMax\": 10 }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mbds585wzqoyg8tapy8",
+    "bodyHeaders": "  {\n    \"headers\": { \"Content-Type\": \"application/json\", \"token\": \"{token}\" },\n    \"body\": {\n      \"service\": \"main\", \"model\": \"accident\", \"act\": \"gets\",\n      \"details\": {\n        \"get\": {\n          \"_id\": 1,\n          \"injured_count\": 1\n        },\n        \"set\": { \"page\": 1, \"limit\": 10, \"injuredCount\": 1 }\n      }\n    }\n  }",
+    "repeat": 1,
+    "captures": []
+  }
+]

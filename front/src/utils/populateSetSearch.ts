@@ -1,0 +1,203 @@
+import { ReqType } from "@/types/declarations/selectInp";
+
+export type GetAccidentsSetParams =
+  ReqType["main"]["accident"]["gets"]["set"];
+
+export const populateSetSearch = (searchParams: GetAccidentsSetParams) => {
+
+  const {
+    limit = "20",
+    page = "1",
+    seri,
+    serial,
+    dateOfAccidentFrom,
+    dateOfAccidentTo,
+    deadCount,
+    deadCountMin,
+    deadCountMax,
+    injuredCount,
+    injuredCountMin,
+    injuredCountMax,
+    hasWitness,
+    newsNumber,
+    officer,
+    completionDateFrom,
+    completionDateTo,
+    province,
+    city,
+    road,
+    trafficZone,
+    cityZone,
+    accidentType,
+    position,
+    rulingType,
+    lightStatus,
+    collisionType,
+    roadSituation,
+    roadRepairType,
+    shoulderStatus,
+    areaUsages,
+    airStatuses,
+    roadDefects,
+    humanReasons,
+    vehicleReasons,
+    equipmentDamages,
+    roadSurfaceConditions,
+    attachmentName,
+    attachmentType,
+    vehicleColor,
+    vehicleSystem,
+    vehiclePlaqueType,
+    vehicleSystemType,
+    vehicleFaultStatus,
+    vehicleInsuranceCo,
+    vehicleInsuranceNo,
+    vehiclePlaqueUsage,
+    vehiclePrintNumber,
+    vehiclePlaqueSerialElement,
+    vehicleInsuranceDateFrom,
+    vehicleInsuranceDateTo,
+    vehicleBodyInsuranceCo,
+    vehicleBodyInsuranceNo,
+    vehicleMotionDirection,
+    vehicleBodyInsuranceDateFrom,
+    vehicleBodyInsuranceDateTo,
+    vehicleMaxDamageSections,
+    vehicleDamageSectionOther,
+    vehicleInsuranceWarrantyLimit,
+    vehicleInsuranceWarrantyLimitMin,
+    vehicleInsuranceWarrantyLimitMax,
+    driverSex,
+    driverFirstName,
+    driverLastName,
+    driverNationalCode,
+    driverLicenceNumber,
+    driverLicenceType,
+    driverInjuryType,
+    driverTotalReason,
+    passengerSex,
+    passengerFirstName,
+    passengerLastName,
+    passengerNationalCode,
+    passengerInjuryType,
+    passengerFaultStatus,
+    passengerTotalReason,
+    pedestrianSex,
+    pedestrianFirstName,
+    pedestrianLastName,
+    pedestrianNationalCode,
+    pedestrianInjuryType,
+    pedestrianFaultStatus,
+    pedestrianTotalReason,
+  } = searchParams;
+
+  // Helper to process potential string array inputs from searchParams
+  const parseStringArray = (input: string | string[] | undefined): string[] | undefined => {
+    if (input === undefined || input === null) return undefined;
+    let arr: string[];
+    if (typeof input === 'string') {
+      // Split comma-separated string, trim whitespace, and filter out empty strings
+      arr = input.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    } else if (Array.isArray(input)) {
+      // Ensure all elements are strings, trim, and filter out empty strings
+      arr = input.map(s => String(s).trim()).filter(s => s.length > 0);
+    } else {
+      return undefined; // Should not happen if searchParams are string | string[]
+    }
+    return arr.length > 0 ? arr : undefined;
+  };
+
+  const set: ReqType["main"]["accident"]["gets"]["set"] = {
+    limit: +limit || 20, // Convert limit string to number, default to 20
+    page: +page || 1,    // Convert page string to number, default to 1
+
+    // Conditionally add numeric fields (convert from string)
+    ...(seri && { seri: +seri }),
+    ...(serial && { serial: +serial }),
+    ...(deadCount && { deadCount: +deadCount }),
+    ...(deadCountMin && { deadCountMin: +deadCountMin }),
+    ...(deadCountMax && { deadCountMax: +deadCountMax }),
+    ...(injuredCount && { injuredCount: +injuredCount }),
+    ...(injuredCountMin && { injuredCountMin: +injuredCountMin }),
+    ...(injuredCountMax && { injuredCountMax: +injuredCountMax }),
+    ...(newsNumber && { newsNumber: +newsNumber }),
+    ...(vehicleInsuranceWarrantyLimit && { vehicleInsuranceWarrantyLimit: +vehicleInsuranceWarrantyLimit }),
+    ...(vehicleInsuranceWarrantyLimitMin && { vehicleInsuranceWarrantyLimitMin: +vehicleInsuranceWarrantyLimitMin }),
+    ...(vehicleInsuranceWarrantyLimitMax && { vehicleInsuranceWarrantyLimitMax: +vehicleInsuranceWarrantyLimitMax }),
+
+    // Conditionally add string fields (no conversion needed if already string)
+    ...(dateOfAccidentFrom && { dateOfAccidentFrom }),
+    ...(dateOfAccidentTo && { dateOfAccidentTo }),
+    ...(hasWitness && { hasWitness }),
+    ...(officer && { officer }),
+    ...(completionDateFrom && { completionDateFrom }),
+    ...(completionDateTo && { completionDateTo }),
+    ...(province && { province }),
+    ...(city && { city }),
+    ...(road && { road }),
+    ...(trafficZone && { trafficZone }),
+    ...(cityZone && { cityZone }),
+    ...(accidentType && { accidentType }),
+    ...(position && { position }),
+    ...(rulingType && { rulingType }),
+    ...(lightStatus && { lightStatus }),
+    ...(collisionType && { collisionType }),
+    ...(roadSituation && { roadSituation }),
+    ...(roadRepairType && { roadRepairType }),
+    ...(shoulderStatus && { shoulderStatus }),
+    ...(attachmentName && { attachmentName }),
+    ...(attachmentType && { attachmentType }),
+    ...(vehicleColor && { vehicleColor }),
+    ...(vehicleSystem && { vehicleSystem }),
+    ...(vehiclePlaqueType && { vehiclePlaqueType }),
+    ...(vehicleSystemType && { vehicleSystemType }),
+    ...(vehicleFaultStatus && { vehicleFaultStatus }),
+    ...(vehicleInsuranceCo && { vehicleInsuranceCo }),
+    ...(vehicleInsuranceNo && { vehicleInsuranceNo }),
+    ...(vehiclePlaqueUsage && { vehiclePlaqueUsage }),
+    ...(vehiclePrintNumber && { vehiclePrintNumber }),
+    ...(vehiclePlaqueSerialElement && { vehiclePlaqueSerialElement }),
+    ...(vehicleInsuranceDateFrom && { vehicleInsuranceDateFrom }),
+    ...(vehicleInsuranceDateTo && { vehicleInsuranceDateTo }),
+    ...(vehicleBodyInsuranceCo && { vehicleBodyInsuranceCo }),
+    ...(vehicleBodyInsuranceNo && { vehicleBodyInsuranceNo }),
+    ...(vehicleMotionDirection && { vehicleMotionDirection }),
+    ...(vehicleBodyInsuranceDateFrom && { vehicleBodyInsuranceDateFrom }),
+    ...(vehicleBodyInsuranceDateTo && { vehicleBodyInsuranceDateTo }),
+    ...(vehicleDamageSectionOther && { vehicleDamageSectionOther }),
+    ...(driverSex && { driverSex }),
+    ...(driverFirstName && { driverFirstName }),
+    ...(driverLastName && { driverLastName }),
+    ...(driverNationalCode && { driverNationalCode }),
+    ...(driverLicenceNumber && { driverLicenceNumber }),
+    ...(driverLicenceType && { driverLicenceType }),
+    ...(driverInjuryType && { driverInjuryType }),
+    ...(driverTotalReason && { driverTotalReason }),
+    ...(passengerSex && { passengerSex }),
+    ...(passengerFirstName && { passengerFirstName }),
+    ...(passengerLastName && { passengerLastName }),
+    ...(passengerNationalCode && { passengerNationalCode }),
+    ...(passengerInjuryType && { passengerInjuryType }),
+    ...(passengerFaultStatus && { passengerFaultStatus }),
+    ...(passengerTotalReason && { passengerTotalReason }),
+    ...(pedestrianSex && { pedestrianSex }),
+    ...(pedestrianFirstName && { pedestrianFirstName }),
+    ...(pedestrianLastName && { pedestrianLastName }),
+    ...(pedestrianNationalCode && { pedestrianNationalCode }),
+    ...(pedestrianInjuryType && { pedestrianInjuryType }),
+    ...(pedestrianFaultStatus && { pedestrianFaultStatus }),
+    ...(pedestrianTotalReason && { pedestrianTotalReason }),
+
+    // Conditionally add string array fields (parse if necessary)
+    ...(parseStringArray(areaUsages) && { areaUsages: parseStringArray(areaUsages) as string[] }),
+    ...(parseStringArray(airStatuses) && { airStatuses: parseStringArray(airStatuses) as string[] }),
+    ...(parseStringArray(roadDefects) && { roadDefects: parseStringArray(roadDefects) as string[] }),
+    ...(parseStringArray(humanReasons) && { humanReasons: parseStringArray(humanReasons) as string[] }),
+    ...(parseStringArray(vehicleReasons) && { vehicleReasons: parseStringArray(vehicleReasons) as string[] }),
+    ...(parseStringArray(equipmentDamages) && { equipmentDamages: parseStringArray(equipmentDamages) as string[] }),
+    ...(parseStringArray(roadSurfaceConditions) && { roadSurfaceConditions: parseStringArray(roadSurfaceConditions) as string[] }),
+    ...(parseStringArray(vehicleMaxDamageSections) && { vehicleMaxDamageSections: parseStringArray(vehicleMaxDamageSections) as string[] }),
+  };
+
+  return set;
+}

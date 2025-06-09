@@ -1,0 +1,1338 @@
+[
+  {
+    "id": "mb839i9hcbi71wds7rl",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"user\",\n    \"act\": \"loginReq\",\n    \"details\": {\n      \"get\": {\n        \"mobile\": 1,\n        \"national_number\": 1\n      },\n      \"set\": {\n        \"national_number\": \"3875523474\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb83bgqv56jqqec09ul",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"user\",\n    \"act\": \"login\",\n    \"details\": {\n      \"get\": {\n        \"user\": {\n          \"_id\": 1,\n          \"first_name\": 1,\n          \"last_name\": 1,\n          \"father_name\": 1,\n          \"mobile\": 1,\n          \"gender\": 1,\n          \"birth_date\": 1,\n          \"national_number\": 1\n        },\n        \"token\": 1\n      },\n      \"set\": {\n        \"national_number\": \"3875523474\",\n        \"code\": \"11111\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "token", "value": "[body][token]" }]
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"air_status\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "air_status", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "air_status_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{air_status}\",\n        \"name\": \"air_status_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{air_status}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"air_status\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{air_status_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"area_usage\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "area_usage", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "area_usage_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{area_usage}\",\n        \"name\": \"area_usage_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{area_usage}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"area_usage\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{area_usage_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"body_insurance_co\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "body_insurance_co", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "body_insurance_co_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{body_insurance_co}\",\n        \"name\": \"body_insurance_co_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{body_insurance_co}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"body_insurance_co\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{body_insurance_co_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"collision_type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "collision_type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "collision_type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{collision_type}\",\n        \"name\": \"collision_type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{collision_type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"collision_type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{collision_type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"color\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "color", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "color_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{color}\",\n        \"name\": \"color_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{color}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"color\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{color_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"equipment_damage\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "equipment_damage", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "equipment_damage_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{equipment_damage}\",\n        \"name\": \"equipment_damage_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{equipment_damage}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"equipment_damage\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{equipment_damage_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"fault_status\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "fault_status", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "fault_status_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{fault_status}\",\n        \"name\": \"fault_status_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{fault_status}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"fault_status\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{fault_status_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"human_reason\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "human_reason", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "human_reason_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{human_reason}\",\n        \"name\": \"human_reason_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{human_reason}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"human_reason\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{human_reason_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"insurance_co\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "insurance_co", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "insurance_co_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{insurance_co}\",\n        \"name\": \"insurance_co_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{insurance_co}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"insurance_co\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{insurance_co_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"licence_type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "licence_type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "licence_type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{licence_type}\",\n        \"name\": \"licence_type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{licence_type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"licence_type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{licence_type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"light_status\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "light_status", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "light_status_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{light_status}\",\n        \"name\": \"light_status_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{light_status}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"light_status\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{light_status_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"max_damage_section\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "max_damage_section", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "max_damage_section_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{max_damage_section}\",\n        \"name\": \"max_damage_section_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{max_damage_section}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"max_damage_section\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{max_damage_section_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"motion_direction\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "motion_direction", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "motion_direction_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{motion_direction}\",\n        \"name\": \"motion_direction_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{motion_direction}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"motion_direction\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{motion_direction_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"plaque_type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "plaque_type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "plaque_type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{plaque_type}\",\n        \"name\": \"plaque_type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{plaque_type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{plaque_type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"plaque_usage\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "plaque_usage", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "plaque_usage_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{plaque_usage}\",\n        \"name\": \"plaque_usage_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{plaque_usage}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"plaque_usage\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{plaque_usage_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"position\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "position", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "position_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{position}\",\n        \"name\": \"position_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{position}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"position\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{position_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+
+
+  
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 1,
+    "captures": [{ "key": "province", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 5,
+    "captures": [{ "key": "province_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{province}\",\n        \"name\": \"province_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{province}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"province\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{province_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+
+
+
+  
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 1,
+    "captures": [{ "key": "city", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 5,
+    "captures": [{ "key": "city_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{city}\",\n        \"name\": \"city_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{city}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{city_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+
+
+
+
+    {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 1,
+    "captures": [{ "key": "city_zone", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 5,
+    "captures": [{ "key": "city_zone_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{city_zone}\",\n        \"name\": \"city_zone_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{city_zone}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"city_zone\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{city_zone_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+
+
+
+
+
+    {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 1,
+    "captures": [{ "key": "traffic_zone", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"center_location\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"Tehran\",\n        \"english_name\": \"Tehran\",\n        \"area\": {\n          \"type\": \"MultiPolygon\",\n          \"coordinates\": [\n            [\n              [\n                [51.3, 35.6],\n                [51.6, 35.6],\n                [51.6, 35.9],\n                [51.3, 35.9],\n                [51.3, 35.6]\n              ]\n            ],\n            [\n              [\n                [51.7, 35.4],\n                [51.8, 35.4],\n                [51.8, 35.5],\n                [51.7, 35.5],\n                [51.7, 35.4]\n              ]\n            ]\n          ]\n        },\n        \"center_location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [51.42, 35.68]\n        }\n      }\n    }\n  }\n}\n",
+    "repeat": 5,
+    "captures": [{ "key": "traffic_zone_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{traffic_zone}\",\n        \"name\": \"traffic_zone_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{traffic_zone}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"traffic_zone\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{traffic_zone_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+
+  
+
+  
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"road\",\n        \"provinceId\": \"{province}\",\n        \"area\": {\n          \"type\": \"MultiLineString\",\n          \"coordinates\": [\n            [\n              [51.389, 35.689],\n              [51.390, 35.690],\n              [51.391, 35.691]\n            ],\n            [\n              [51.395, 35.695],\n              [51.396, 35.696]\n            ]\n          ]\n        }\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "road", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\",\n        \"provinceId\": \"{province}\",\n        \"area\": {\n          \"type\": \"MultiLineString\",\n          \"coordinates\": [\n            [\n              [51.389, 35.689],\n              [51.390, 35.690],\n              [51.391, 35.691]\n            ],\n            [\n              [51.395, 35.695],\n              [51.396, 35.696]\n            ]\n          ]\n        }\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "road_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road}\",\n        \"name\": \"road_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"area\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"road_defect\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "road_defect", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "road_defect_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_defect}\",\n        \"name\": \"road_defect_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_defect}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_defect\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_defect_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"road_repair_type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "road_repair_type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "road_repair_type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_repair_type}\",\n        \"name\": \"road_repair_type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_repair_type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_repair_type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_repair_type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"road_situation\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "road_situation", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "road_situation_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_situation}\",\n        \"name\": \"road_situation_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_situation}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_situation\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_situation_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"road_surface_condition\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "road_surface_condition", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [
+      { "key": "road_surface_condition_delete", "value": "[body][_id]" }
+    ]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_surface_condition}\",\n        \"name\": \"road_surface_condition_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_surface_condition}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"road_surface_condition\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{road_surface_condition_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"ruling_type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "ruling_type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "ruling_type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{ruling_type}\",\n        \"name\": \"ruling_type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{ruling_type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"ruling_type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{ruling_type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"shoulder_status\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "shoulder_status", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "shoulder_status_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{shoulder_status}\",\n        \"name\": \"shoulder_status_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{shoulder_status}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"shoulder_status\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{shoulder_status_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"system\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "system", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "system_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{system}\",\n        \"name\": \"system_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{system}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{system_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"system_type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "system_type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "system_type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{system_type}\",\n        \"name\": \"system_type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{system_type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"system_type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{system_type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"type\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "type", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "type_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{type}\",\n        \"name\": \"type_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{type}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"type\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{type_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb84ye3ybutdg9pojm",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"vehicle_reason\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": [{ "key": "vehicle_reason", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb82d1vr3sfbg6990br",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"add\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"name\": \"{faker.word.adjective()}\"\n      }\n    }\n  }\n}",
+    "repeat": 5,
+    "captures": [{ "key": "vehicle_reason_delete", "value": "[body][_id]" }]
+  },
+  {
+    "id": "mb858hejpqksaehwue",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"update\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{vehicle_reason}\",\n        \"name\": \"vehicle_reason_updated\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85anlbza1858tcyw",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"gets\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1\n      },\n      \"set\": {\n        \"page\": 1,\n        \"limit\": 10\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85bhb6e8ywrt4b01",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"get\",\n    \"details\": {\n      \"get\": {\n        \"_id\": 1,\n        \"name\": 1,\n        \"createdAt\": 1\n      },\n      \"set\": {\n        \"_id\": \"{vehicle_reason}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85q46jf53f8zm75yd",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"count\",\n    \"details\": {\n      \"get\": {\n        \"qty\": 1\n      },\n      \"set\": {}\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  },
+  {
+    "id": "mb85qwbxe7yfidrnr7",
+    "bodyHeaders": "{\n  \"headers\": {\n    \"Content-Type\": \"application/json\",\n    \"token\": \"{token}\"\n  },\n  \"body\": {\n    \"service\": \"main\",\n    \"model\": \"vehicle_reason\",\n    \"act\": \"remove\",\n    \"details\": {\n      \"get\": {\n        \"success\": 1\n      },\n      \"set\": {\n        \"_id\": \"{vehicle_reason_delete}\"\n      }\n    }\n  }\n}",
+    "repeat": 1,
+    "captures": []
+  }
+]

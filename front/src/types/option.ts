@@ -1,0 +1,1 @@
+export type ReactSelectOption = { label: string; value: string }
