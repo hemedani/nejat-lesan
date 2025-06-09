@@ -17,9 +17,11 @@ export const loginReqUserFn: ActFn = async (body) => {
 		get,
 	} = body.details;
 
-	const generatedCode = Deno.env.get("ENV") === "development"
-		? "11111"
-		: await generatingLoginRequestCode();
+	// const generatedCode = Deno.env.get("ENV") === "development"
+	// 	? "11111"
+	// 	: await generatingLoginRequestCode();
+
+	const generatedCode = "11111";
 
 	const returnUser = async (user: WithId<Document>) => {
 		await myRedis.set(user.national_number, generatedCode, { ex: 100 });
