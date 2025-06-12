@@ -105,7 +105,7 @@ POST http://localhost:1404/lesan
       }
       }
 
-HTTP/* 200
+HTTP/1.1 200
 [Captures]
 token: jsonpath "$['body']['token']"
 
