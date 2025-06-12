@@ -87,7 +87,7 @@ export default async function AccidentDashboardPage({
         </div>
         <ToggleAdvancedSearch
           defaultSearchArrayValues={defaultSearchArrayValues}
-          pageAddress="articles"
+          pageAddress="accident"
         />
       </div>
 

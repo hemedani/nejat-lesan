@@ -431,7 +431,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             <div className={`flex ${compact ? 'flex-col w-full gap-2' : 'gap-4'}`}>
               <button
                 type="button"
-                onClick={() => window.location.reload()}
+                onClick={() => router.push(pageAddress || "/")}
                 className={`text-slate-600 bg-white border border-slate-300 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 ${compact ? 'px-4 py-2 text-sm' : 'px-6 py-3'}`}
               >
                 پاک کردن فیلترها
