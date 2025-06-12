@@ -72,7 +72,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   });
 
   const createLoadOptions = (
-    action: (args: any) => Promise<any[] | null | undefined>
+    action: (args: any) => Promise<{success: boolean, body: any[]} | null | undefined>
   ) => async (inputValue?: string): Promise<SelectOption[]> => {
     const setParams: any = { limit: 20, page: 1 };
     if (inputValue) {
@@ -83,9 +83,9 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         set: setParams,
         get: { _id: 1, name: 1 },
       });
-      if (response && Array.isArray(response)) {
-        return response.map((item: { _id: string; name: string }) => ({
-          value: item._id,
+      if (response && response.success) {
+        return response.body.map((item: { _id: string; name: string }) => ({
+          value: item.name,
           label: item.name,
         }));
       }

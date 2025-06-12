@@ -17,6 +17,7 @@ const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { 
 // Import Leaflet CSS and library
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { array } from 'zod';
 
 // Define accident interface based on the schema
 interface AccidentData {
@@ -68,12 +69,13 @@ export default function HomePage() {
         setError(null);
 
         // Build search parameters from URL
-        const searchFilters: Record<string, string | number | Date> = {};
+        const searchFilters: Record<string, string | string[] | number | Date> = {};
 
         // Set required pagination fields
         const page = +(searchParams.get('page') || '1');
         const limit = +(searchParams.get('limit') || '1000');
 
+        const arrayKeys = ['areaUsages', 'airStatuses', 'roadDefects', 'humanReasons', 'vehicleReasons', 'equipmentDamages', 'roadSurfaceConditions', 'vehicleMaxDamageSections'];
         // Add other search parameters if they exist
         for (const [key, value] of searchParams.entries()) {
           if (value) {
@@ -81,6 +83,8 @@ export default function HomePage() {
               searchFilters[key] = parseInt(value) || value;
             } else if (key.includes('Date')) {
               searchFilters[key] = new Date(value);
+            } else if(arrayKeys.includes(key)) {
+              searchFilters[key] = value.split(",");
             } else {
               searchFilters[key] = value;
             }
