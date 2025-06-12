@@ -17,7 +17,6 @@ const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { 
 // Import Leaflet CSS and library
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { array } from 'zod';
 
 // Define accident interface based on the schema
 interface AccidentData {
