@@ -43,6 +43,7 @@ import {
 } from "../../../mod.ts";
 import { AccidentJson } from "../../../utils/sampleTypes.ts";
 import { accident_pure, accident_relations } from "@model";
+import { normalizePersianText } from "../../../utils/normalizePersianText.ts";
 
 export const seedFn: ActFn = async () => {
 	const { user }: MyContext = coreApp.contextFns
@@ -89,16 +90,21 @@ export const seedFn: ActFn = async () => {
 		modelName: keyof typeof modelMap,
 		userId: ObjectId,
 	): Promise<WithId<Document>> => {
+		const normalizedName = normalizePersianText(name);
 		const model = modelMap[modelName];
 		const found = await model.findOne({
-			filters: { name },
+			filters: { name: normalizedName },
 			projection: { name: 1, _id: 1 },
 		});
 		if (found) {
 			return found;
 		} else {
 			const created = await model.insertOne({
-				doc: { name, createdAt: new Date(), updatedAt: new Date() },
+				doc: {
+					name: normalizedName,
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
 				relations: { registrer: { _ids: userId } },
 				projection: { name: 1, _id: 1 },
 			});
@@ -140,7 +146,7 @@ export const seedFn: ActFn = async () => {
 		const accidentDoc: Partial<Infer<typeof pureAccident>> = {
 			seri: Number(parsedAccident.seri),
 			serial: parsedAccident.serialNO,
-			officer: parsedAccident.officer,
+			officer: normalizePersianText(parsedAccident.officer),
 			dead_count: parsedAccident.deadCount,
 			has_witness: parsedAccident.hasWitness ?? false,
 			news_number: Number(parsedAccident.newsNumber),
@@ -157,12 +163,6 @@ export const seedFn: ActFn = async () => {
 			vehicle_dtos: [],
 			pedestrian_dtos: [],
 		};
-
-		/// gemini code start
-		//
-		//
-		//
-		//
 
 		const accidentRelations: TInsertRelations<typeof accident_relations> =
 			{};
@@ -411,9 +411,6 @@ export const seedFn: ActFn = async () => {
 		//         _ids: normalizedAttachments.map(item => item!._id),
 		//     };
 		// }
-		//
-		//
-		// gemini code ends
 
 		// Optional: handle vehicleDTOS
 		if (parsedAccident.vehicleDTOS?.length) {
@@ -421,6 +418,24 @@ export const seedFn: ActFn = async () => {
 				parsedAccident.vehicleDTOS.map(async (v) => {
 					return {
 						...v,
+						plaqueNo: v.plaqueNo?.map((p) =>
+							normalizePersianText(p)
+						),
+						plaqueSerial: v.plaqueSerial?.map((p) =>
+							normalizePersianText(p)
+						),
+						printNumber: v.printNumber
+							? normalizePersianText(v.printNumber)
+							: v.printNumber,
+						insuranceNo: v.insuranceNo
+							? normalizePersianText(v.insuranceNo)
+							: v.insuranceNo,
+						bodyInsuranceNo: v.bodyInsuranceNo
+							? normalizePersianText(v.bodyInsuranceNo)
+							: v.bodyInsuranceNo,
+						damageSectionOther: v.damageSectionOther
+							? normalizePersianText(v.damageSectionOther)
+							: v.damageSectionOther,
 						color: await normalizeRelations(
 							v.color,
 							"color",
@@ -473,6 +488,14 @@ export const seedFn: ActFn = async () => {
 						),
 						driver: {
 							...v.driver,
+							firstName: normalizePersianText(v.driver.firstName),
+							lastName: normalizePersianText(v.driver.lastName),
+							nationalCode: normalizePersianText(
+								v.driver.nationalCode,
+							),
+							licenceNumber: v.driver.licenceNumber
+								? normalizePersianText(v.driver.licenceNumber)
+								: v.driver.licenceNumber,
 							licence_type: await normalizeRelations(
 								v.driver.licenceType,
 								"licence_type",
@@ -493,6 +516,13 @@ export const seedFn: ActFn = async () => {
 							? await Promise.all(
 								v.passengerDTOS.map(async (p) => ({
 									...p,
+									firstName: normalizePersianText(
+										p.firstName,
+									),
+									lastName: normalizePersianText(p.lastName),
+									nationalCode: normalizePersianText(
+										p.nationalCode,
+									),
 									sex: await normalizeRelations(
 										p.sex,
 										"type",
@@ -526,6 +556,9 @@ export const seedFn: ActFn = async () => {
 			accidentDoc.pedestrian_dtos = await Promise.all(
 				parsedAccident.pedestrianDTOS.map(async (p) => ({
 					...p,
+					firstName: normalizePersianText(p.firstName),
+					lastName: normalizePersianText(p.lastName),
+					nationalCode: normalizePersianText(p.nationalCode),
 					sex: await normalizeRelations(p.sex, "type", userId),
 					injury_type: await normalizeRelations(
 						p.injuryType,

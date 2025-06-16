@@ -93,7 +93,7 @@ export interface AccidentJson {
 	roadDefects: RelationType[];
 	vehicleDTOS?: VehicleDto[];
 	accidentDate: string;
-	base64Images?: any[];
+	base64Images?: string[];
 	humanReasons: RelationType[];
 	injuredCount: number;
 	collisionType: RelationType;
