@@ -12,7 +12,31 @@ import { gets as getVehicleReasonsAction } from "@/app/actions/vehicle_reason/ge
 import { gets as getEquipmentDamagesAction } from "@/app/actions/equipment_damage/gets";
 import { gets as getRoadSurfaceConditionsAction } from "@/app/actions/road_surface_condition/gets";
 import { gets as getMaxDamageSectionsAction } from "@/app/actions/max_damage_section/gets";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
+import { gets as getProvincesAction } from "@/app/actions/province/gets";
+import { gets as getCityZonesAction } from "@/app/actions/city_zone/gets";
+import { gets as getTrafficZonesAction } from "@/app/actions/traffic_zone/gets";
+import { gets as getRoadsAction } from "@/app/actions/road/gets";
+import { gets as getRoadRepairTypesAction } from "@/app/actions/road_repair_type/gets";
+import { gets as getRoadSituationsAction } from "@/app/actions/road_situation/gets";
+import { gets as getPositionsAction } from "@/app/actions/position/gets";
+import { gets as getColorsAction } from "@/app/actions/color/gets";
+import { gets as getPlaqueTypesAction } from "@/app/actions/plaque_type/gets";
+import { gets as getPlaqueUsagesAction } from "@/app/actions/plaque_usage/gets";
+import { gets as getLicenceTypesAction } from "@/app/actions/licence_type/gets";
+import { gets as getTypesAction } from "@/app/actions/type/gets";
+import { gets as getLightStatusesAction } from "@/app/actions/light_status/gets";
+import { gets as getShoulderStatusesAction } from "@/app/actions/shoulder_status/gets";
+import { gets as getCollisionTypesAction } from "@/app/actions/collision_type/gets";
+import { gets as getMotionDirectionsAction } from "@/app/actions/motion_direction/gets";
+import { gets as getInsuranceCosAction } from "@/app/actions/insurance_co/gets";
+import { gets as getBodyInsuranceCosAction } from "@/app/actions/body_insurance_co/gets";
+import { gets as getFaultStatusesAction } from "@/app/actions/fault_status/gets";
+import { gets as getRulingTypesAction } from "@/app/actions/ruling_type/gets";
+import { gets as getSystemsAction } from "@/app/actions/system/gets";
+import { gets as getSystemTypesAction } from "@/app/actions/system_type/gets";
 import MyInput from "../atoms/MyInput";
+import MyDateInput from "../atoms/MyDateInput";
 import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import { DeepPartial, ReqType } from "@/types/declarations/selectInp";
 import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
@@ -66,6 +90,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm<AdvencedArticleSearchParams>({
     defaultValues: initialFormValues,
@@ -103,6 +128,29 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const loadEquipmentDamagesOptions = createLoadOptions(getEquipmentDamagesAction);
   const loadRoadSurfaceConditionsOptions = createLoadOptions(getRoadSurfaceConditionsAction);
   const loadMaxDamageSectionsOptions = createLoadOptions(getMaxDamageSectionsAction);
+  const loadCitiesOptions = createLoadOptions(getCitiesAction);
+  const loadProvincesOptions = createLoadOptions(getProvincesAction);
+  const loadCityZonesOptions = createLoadOptions(getCityZonesAction);
+  const loadTrafficZonesOptions = createLoadOptions(getTrafficZonesAction);
+  const loadRoadsOptions = createLoadOptions(getRoadsAction);
+  const loadRoadRepairTypesOptions = createLoadOptions(getRoadRepairTypesAction);
+  const loadRoadSituationsOptions = createLoadOptions(getRoadSituationsAction);
+  const loadPositionsOptions = createLoadOptions(getPositionsAction);
+  const loadColorsOptions = createLoadOptions(getColorsAction);
+  const loadPlaqueTypesOptions = createLoadOptions(getPlaqueTypesAction);
+  const loadPlaqueUsagesOptions = createLoadOptions(getPlaqueUsagesAction);
+  const loadLicenceTypesOptions = createLoadOptions(getLicenceTypesAction);
+  const loadTypesOptions = createLoadOptions(getTypesAction);
+  const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
+  const loadShoulderStatusesOptions = createLoadOptions(getShoulderStatusesAction);
+  const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
+  const loadMotionDirectionsOptions = createLoadOptions(getMotionDirectionsAction);
+  const loadInsuranceCosOptions = createLoadOptions(getInsuranceCosAction);
+  const loadBodyInsuranceCosOptions = createLoadOptions(getBodyInsuranceCosAction);
+  const loadFaultStatusesOptions = createLoadOptions(getFaultStatusesAction);
+  const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
+  const loadSystemsOptions = createLoadOptions(getSystemsAction);
+  const loadSystemTypesOptions = createLoadOptions(getSystemTypesAction);
 
   const onSubmit: SubmitHandler<AdvencedArticleSearchParams> = (criteria) => {
     const queryString = Object.entries(criteria)
@@ -252,8 +300,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
               <MyInput className="!w-full !p-0" name="seri" label="سری تصادف" placeholder="شماره سری" register={register} errMsg={errors.seri?.message} type="number" />
               <MyInput className="!w-full !p-0" name="serial" label="سریال داخلی" placeholder="شماره سریال داخلی" register={register} errMsg={errors.serial?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="dateOfAccidentFrom" label="تاریخ تصادف (از)" register={register} errMsg={errors.dateOfAccidentFrom?.message} type="date" />
-              <MyInput className="!w-full !p-0" name="dateOfAccidentTo" label="تاریخ تصادف (تا)" register={register} errMsg={errors.dateOfAccidentTo?.message} type="date" />
+              <MyDateInput className="!w-full !p-0" name="dateOfAccidentFrom" label="تاریخ تصادف (از)" control={control} errMsg={errors.dateOfAccidentFrom?.message} placeholder="از تاریخ (مثال: 1403/01/01)" />
+              <MyDateInput className="!w-full !p-0" name="dateOfAccidentTo" label="تاریخ تصادف (تا)" control={control} errMsg={errors.dateOfAccidentTo?.message} placeholder="تا تاریخ (مثال: 1403/12/29)" />
               <MyInput className="!w-full !p-0" name="deadCount" label="تعداد فوتی" placeholder="تعداد دقیق" register={register} errMsg={errors.deadCount?.message} type="number" />
               <MyInput className="!w-full !p-0" name="deadCountMin" label="حداقل فوتی" placeholder="حداقل تعداد" register={register} errMsg={errors.deadCountMin?.message} type="number" />
               <MyInput className="!w-full !p-0" name="deadCountMax" label="حداکثر فوتی" placeholder="حداکثر تعداد" register={register} errMsg={errors.deadCountMax?.message} type="number" />
@@ -263,8 +311,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <MyInput className="!w-full !p-0" name="hasWitness" label="دارای شاهد" placeholder="true / false" register={register} errMsg={errors.hasWitness?.message} />
               <MyInput className="!w-full !p-0" name="newsNumber" label="شماره خبر" placeholder="شماره خبرنامه" register={register} errMsg={errors.newsNumber?.message} type="number" />
               <MyInput className="!w-full !p-0" name="officer" label="افسر رسیدگی کننده" placeholder="نام یا کد افسر" register={register} errMsg={errors.officer?.message} />
-              <MyInput className="!w-full !p-0" name="completionDateFrom" label="تاریخ تکمیل (از)" register={register} errMsg={errors.completionDateFrom?.message} type="date" />
-              <MyInput className="!w-full !p-0" name="completionDateTo" label="تاریخ تکمیل (تا)" register={register} errMsg={errors.completionDateTo?.message} type="date" />
+              <MyDateInput className="!w-full !p-0" name="completionDateFrom" label="تاریخ تکمیل (از)" control={control} errMsg={errors.completionDateFrom?.message} placeholder="از تاریخ تکمیل پرونده" />
+              <MyDateInput className="!w-full !p-0" name="completionDateTo" label="تاریخ تکمیل (تا)" control={control} errMsg={errors.completionDateTo?.message} placeholder="تا تاریخ تکمیل پرونده" />
             </div>
           </section>
 
@@ -278,19 +326,136 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             </div>
 
             <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
-              <MyInput className="!w-full !p-0" name="province" label="استان" placeholder="نام استان" register={register} errMsg={errors.province?.message} />
-              <MyInput className="!w-full !p-0" name="city" label="شهر" placeholder="نام شهر" register={register} errMsg={errors.city?.message} />
-              <MyInput className="!w-full !p-0" name="road" label="جاده/خیابان" placeholder="نام جاده یا خیابان" register={register} errMsg={errors.road?.message} />
-              <MyInput className="!w-full !p-0" name="trafficZone" label="محدوده ترافیکی" placeholder="نام محدوده" register={register} errMsg={errors.trafficZone?.message} />
-              <MyInput className="!w-full !p-0" name="cityZone" label="منطقه شهری" placeholder="نام منطقه" register={register} errMsg={errors.cityZone?.message} />
-              <MyInput className="!w-full !p-0" name="accidentType" label="نوع حادثه" placeholder="نوع حادثه" register={register} errMsg={errors.accidentType?.message} />
-              <MyInput className="!w-full !p-0" name="position" label="موقعیت ثبت کننده" placeholder="موقعیت شغلی" register={register} errMsg={errors.position?.message} />
-              <MyInput className="!w-full !p-0" name="rulingType" label="نوع رای" placeholder="نوع رای صادره" register={register} errMsg={errors.rulingType?.message} />
-              <MyInput className="!w-full !p-0" name="lightStatus" label="وضعیت روشنایی" placeholder="مثلا روز، شب" register={register} errMsg={errors.lightStatus?.message} />
-              <MyInput className="!w-full !p-0" name="collisionType" label="نوع برخورد" placeholder="مثلا شاخ به شاخ" register={register} errMsg={errors.collisionType?.message} />
-              <MyInput className="!w-full !p-0" name="roadSituation" label="وضعیت راه" placeholder="مثلا خشک، لغزنده" register={register} errMsg={errors.roadSituation?.message} />
-              <MyInput className="!w-full !p-0" name="roadRepairType" label="نوع تعمیرات راه" placeholder="نوع تعمیرات" register={register} errMsg={errors.roadRepairType?.message} />
-              <MyInput className="!w-full !p-0" name="shoulderStatus" label="وضعیت شانه راه" placeholder="وضعیت شانه" register={register} errMsg={errors.shoulderStatus?.message} />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="province"
+                label="استان"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.province}
+                loadOptions={loadProvincesOptions}
+                errMsg={errors.province?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="city"
+                label="شهر"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.city}
+                loadOptions={loadCitiesOptions}
+                errMsg={errors.city?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="road"
+                label="جاده/خیابان"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.road}
+                loadOptions={loadRoadsOptions}
+                errMsg={errors.road?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="trafficZone"
+                label="محدوده ترافیکی"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.trafficZone}
+                loadOptions={loadTrafficZonesOptions}
+                errMsg={errors.trafficZone?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="cityZone"
+                label="منطقه شهری"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.cityZone}
+                loadOptions={loadCityZonesOptions}
+                errMsg={errors.cityZone?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="accidentType"
+                label="نوع حادثه"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.accidentType}
+                loadOptions={loadTypesOptions}
+                errMsg={errors.accidentType?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="position"
+                label="موقعیت ثبت کننده"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.position}
+                loadOptions={loadPositionsOptions}
+                errMsg={errors.position?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="rulingType"
+                label="نوع رای"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.rulingType}
+                loadOptions={loadRulingTypesOptions}
+                errMsg={errors.rulingType?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="lightStatus"
+                label="وضعیت روشنایی"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.lightStatus}
+                loadOptions={loadLightStatusesOptions}
+                errMsg={errors.lightStatus?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="collisionType"
+                label="نوع برخورد"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.collisionType}
+                loadOptions={loadCollisionTypesOptions}
+                errMsg={errors.collisionType?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="roadSituation"
+                label="وضعیت راه"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.roadSituation}
+                loadOptions={loadRoadSituationsOptions}
+                errMsg={errors.roadSituation?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="roadRepairType"
+                label="نوع تعمیرات راه"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.roadRepairType}
+                loadOptions={loadRoadRepairTypesOptions}
+                errMsg={errors.roadRepairType?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="shoulderStatus"
+                label="وضعیت شانه راه"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.shoulderStatus}
+                loadOptions={loadShoulderStatusesOptions}
+                errMsg={errors.shoulderStatus?.message}
+                defaultOptions
+              />
             </div>
           </section>
 
@@ -319,23 +484,104 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             </div>
 
             <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
-              <MyInput className="!w-full !p-0" name="vehicleColor" label="رنگ خودرو" placeholder="نام رنگ" register={register} errMsg={errors.vehicleColor?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleSystem" label="سیستم خودرو" placeholder="مثلا سواری" register={register} errMsg={errors.vehicleSystem?.message} />
-              <MyInput className="!w-full !p-0" name="vehiclePlaqueType" label="نوع پلاک خودرو" placeholder="مثلا شخصی" register={register} errMsg={errors.vehiclePlaqueType?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleSystemType" label="تیپ خودرو" placeholder="مثلا سدان" register={register} errMsg={errors.vehicleSystemType?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleFaultStatus" label="وضعیت تقصیر خودرو" placeholder="مثلا مقصر" register={register} errMsg={errors.vehicleFaultStatus?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceCo" label="شرکت بیمه خودرو" placeholder="نام شرکت بیمه" register={register} errMsg={errors.vehicleInsuranceCo?.message} />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleColor"
+                label="رنگ خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleColor}
+                loadOptions={loadColorsOptions}
+                errMsg={errors.vehicleColor?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleSystem"
+                label="سیستم خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleSystem}
+                loadOptions={loadSystemsOptions}
+                errMsg={errors.vehicleSystem?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehiclePlaqueType"
+                label="نوع پلاک خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehiclePlaqueType}
+                loadOptions={loadPlaqueTypesOptions}
+                errMsg={errors.vehiclePlaqueType?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleSystemType"
+                label="تیپ خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleSystemType}
+                loadOptions={loadSystemTypesOptions}
+                errMsg={errors.vehicleSystemType?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleFaultStatus"
+                label="وضعیت تقصیر خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleFaultStatus}
+                loadOptions={loadFaultStatusesOptions}
+                errMsg={errors.vehicleFaultStatus?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleInsuranceCo"
+                label="شرکت بیمه خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleInsuranceCo}
+                loadOptions={loadInsuranceCosOptions}
+                errMsg={errors.vehicleInsuranceCo?.message}
+                defaultOptions
+              />
               <MyInput className="!w-full !p-0" name="vehicleInsuranceNo" label="شماره بیمه‌نامه خودرو" placeholder="شماره بیمه‌نامه" register={register} errMsg={errors.vehicleInsuranceNo?.message} />
-              <MyInput className="!w-full !p-0" name="vehiclePlaqueUsage" label="کاربری پلاک خودرو" placeholder="مثلا شخصی" register={register} errMsg={errors.vehiclePlaqueUsage?.message} />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehiclePlaqueUsage"
+                label="کاربری پلاک خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehiclePlaqueUsage}
+                loadOptions={loadPlaqueUsagesOptions}
+                errMsg={errors.vehiclePlaqueUsage?.message}
+                defaultOptions
+              />
               <MyInput className="!w-full !p-0" name="vehiclePrintNumber" label="شماره چاپ پلاک" placeholder="شماره چاپ" register={register} errMsg={errors.vehiclePrintNumber?.message} />
               <MyInput className="!w-full !p-0" name="vehiclePlaqueSerialElement" label="سریال پلاک (بخشی از)" placeholder="یک بخش از سریال پلاک" register={register} errMsg={errors.vehiclePlaqueSerialElement?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceDateFrom" label="تاریخ بیمه (از)" register={register} errMsg={errors.vehicleInsuranceDateFrom?.message} type="date" />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceDateTo" label="تاریخ بیمه (تا)" register={register} errMsg={errors.vehicleInsuranceDateTo?.message} type="date" />
-              <MyInput className="!w-full !p-0" name="vehicleBodyInsuranceCo" label="شرکت بیمه بدنه" placeholder="نام شرکت بیمه بدنه" register={register} errMsg={errors.vehicleBodyInsuranceCo?.message} />
+              <MyDateInput className="!w-full !p-0" name="vehicleInsuranceDateFrom" label="تاریخ بیمه (از)" control={control} errMsg={errors.vehicleInsuranceDateFrom?.message} placeholder="از تاریخ صدور بیمه" />
+              <MyDateInput className="!w-full !p-0" name="vehicleInsuranceDateTo" label="تاریخ بیمه (تا)" control={control} errMsg={errors.vehicleInsuranceDateTo?.message} placeholder="تا تاریخ انقضای بیمه" />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleBodyInsuranceCo"
+                label="شرکت بیمه بدنه"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleBodyInsuranceCo}
+                loadOptions={loadBodyInsuranceCosOptions}
+                errMsg={errors.vehicleBodyInsuranceCo?.message}
+                defaultOptions
+              />
               <MyInput className="!w-full !p-0" name="vehicleBodyInsuranceNo" label="شماره بیمه بدنه" placeholder="شماره بیمه بدنه" register={register} errMsg={errors.vehicleBodyInsuranceNo?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleMotionDirection" label="جهت حرکت خودرو" placeholder="مثلا شمال به جنوب" register={register} errMsg={errors.vehicleMotionDirection?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleBodyInsuranceDateFrom" label="تاریخ بیمه بدنه (از)" register={register} errMsg={errors.vehicleBodyInsuranceDateFrom?.message} type="date" />
-              <MyInput className="!w-full !p-0" name="vehicleBodyInsuranceDateTo" label="تاریخ بیمه بدنه (تا)" register={register} errMsg={errors.vehicleBodyInsuranceDateTo?.message} type="date" />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="vehicleMotionDirection"
+                label="جهت حرکت خودرو"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.vehicleMotionDirection}
+                loadOptions={loadMotionDirectionsOptions}
+                errMsg={errors.vehicleMotionDirection?.message}
+                defaultOptions
+              />
+              <MyDateInput className="!w-full !p-0" name="vehicleBodyInsuranceDateFrom" label="تاریخ بیمه بدنه (از)" control={control} errMsg={errors.vehicleBodyInsuranceDateFrom?.message} placeholder="از تاریخ صدور بیمه بدنه" />
+              <MyDateInput className="!w-full !p-0" name="vehicleBodyInsuranceDateTo" label="تاریخ بیمه بدنه (تا)" control={control} errMsg={errors.vehicleBodyInsuranceDateTo?.message} placeholder="تا تاریخ انقضای بیمه بدنه" />
               <MyInput className="!w-full !p-0" name="vehicleDamageSectionOther" label="سایر خسارات خودرو" placeholder="توضیح خسارت" register={register} errMsg={errors.vehicleDamageSectionOther?.message} />
               <MyInput className="!w-full !p-0" name="vehicleInsuranceWarrantyLimit" label="سقف تعهد بیمه" placeholder="مبلغ دقیق" register={register} errMsg={errors.vehicleInsuranceWarrantyLimit?.message} type="number" />
               <MyInput className="!w-full !p-0" name="vehicleInsuranceWarrantyLimitMin" label="حداقل سقف تعهد" placeholder="حداقل مبلغ" register={register} errMsg={errors.vehicleInsuranceWarrantyLimitMin?.message} type="number" />
@@ -358,7 +604,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <MyInput className="!w-full !p-0" name="driverLastName" label="نام خانوادگی راننده" placeholder="نام خانوادگی" register={register} errMsg={errors.driverLastName?.message} />
               <MyInput className="!w-full !p-0" name="driverNationalCode" label="کد ملی راننده" placeholder="کد ملی" register={register} errMsg={errors.driverNationalCode?.message} />
               <MyInput className="!w-full !p-0" name="driverLicenceNumber" label="شماره گواهینامه" placeholder="شماره گواهینامه" register={register} errMsg={errors.driverLicenceNumber?.message} />
-              <MyInput className="!w-full !p-0" name="driverLicenceType" label="نوع گواهینامه" placeholder="مثلا پایه دو" register={register} errMsg={errors.driverLicenceType?.message} />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="driverLicenceType"
+                label="نوع گواهینامه"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.driverLicenceType}
+                loadOptions={loadLicenceTypesOptions}
+                errMsg={errors.driverLicenceType?.message}
+                defaultOptions
+              />
               <MyInput className="!w-full !p-0" name="driverInjuryType" label="نوع مصدومیت راننده" placeholder="مثلا جزیی" register={register} errMsg={errors.driverInjuryType?.message} />
               <MyInput className="!w-full !p-0" name="driverTotalReason" label="علت کلی تخلف راننده" placeholder="علت تخلف" register={register} errMsg={errors.driverTotalReason?.message} />
             </div>
@@ -379,7 +634,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <MyInput className="!w-full !p-0" name="passengerLastName" label="نام خانوادگی سرنشین" placeholder="نام خانوادگی" register={register} errMsg={errors.passengerLastName?.message} />
               <MyInput className="!w-full !p-0" name="passengerNationalCode" label="کد ملی سرنشین" placeholder="کد ملی" register={register} errMsg={errors.passengerNationalCode?.message} />
               <MyInput className="!w-full !p-0" name="passengerInjuryType" label="نوع مصدومیت سرنشین" placeholder="مثلا جزیی" register={register} errMsg={errors.passengerInjuryType?.message} />
-              <MyInput className="!w-full !p-0" name="passengerFaultStatus" label="وضعیت تقصیر سرنشین" placeholder="وضعیت تقصیر" register={register} errMsg={errors.passengerFaultStatus?.message} />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="passengerFaultStatus"
+                label="وضعیت تقصیر سرنشین"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.passengerFaultStatus}
+                loadOptions={loadFaultStatusesOptions}
+                errMsg={errors.passengerFaultStatus?.message}
+                defaultOptions
+              />
               <MyInput className="!w-full !p-0" name="passengerTotalReason" label="علت کلی برای سرنشین" placeholder="علت مرتبط" register={register} errMsg={errors.passengerTotalReason?.message} />
             </div>
           </section>
@@ -399,7 +663,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <MyInput className="!w-full !p-0" name="pedestrianLastName" label="نام خانوادگی عابر" placeholder="نام خانوادگی" register={register} errMsg={errors.pedestrianLastName?.message} />
               <MyInput className="!w-full !p-0" name="pedestrianNationalCode" label="کد ملی عابر" placeholder="کد ملی" register={register} errMsg={errors.pedestrianNationalCode?.message} />
               <MyInput className="!w-full !p-0" name="pedestrianInjuryType" label="نوع مصدومیت عابر" placeholder="مثلا جزیی" register={register} errMsg={errors.pedestrianInjuryType?.message} />
-              <MyInput className="!w-full !p-0" name="pedestrianFaultStatus" label="وضعیت تقصیر عابر" placeholder="وضعیت تقصیر" register={register} errMsg={errors.pedestrianFaultStatus?.message} />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="pedestrianFaultStatus"
+                label="وضعیت تقصیر عابر"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.pedestrianFaultStatus}
+                loadOptions={loadFaultStatusesOptions}
+                errMsg={errors.pedestrianFaultStatus?.message}
+                defaultOptions
+              />
               <MyInput className="!w-full !p-0" name="pedestrianTotalReason" label="علت کلی برای عابر" placeholder="علت مرتبط" register={register} errMsg={errors.pedestrianTotalReason?.message} />
             </div>
           </section>
