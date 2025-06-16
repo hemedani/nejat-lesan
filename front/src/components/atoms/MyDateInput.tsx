@@ -48,12 +48,13 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
               }
             }}
             customShowDateFormat={customShowDateFormat}
+            className="z-999"
             inputClass={`
               w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
               placeholder:text-slate-400 text-right
               transition-all duration-200 ease-in-out
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
-              hover:border-slate-400
+              hover:border-slate-400 z-999
               ${disabled
                 ? "bg-slate-100 cursor-not-allowed opacity-60"
                 : "hover:bg-slate-50/50"
