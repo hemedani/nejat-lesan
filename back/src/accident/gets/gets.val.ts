@@ -1,6 +1,5 @@
 import { array, number, object, optional, string } from "@deps";
 import { selectStruct } from "../../../mod.ts"; // Assuming this path is correct
-import { GeoJSONGeometryStruct } from "../../../utils/geoJSONStruct.ts";
 import { geoJSONStruct } from "@model";
 
 export const getsValidator = () => {

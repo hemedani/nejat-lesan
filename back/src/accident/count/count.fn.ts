@@ -36,6 +36,8 @@ export const countFn: ActFn = async (body) => {
 			roadRepairType, // road_repair_type.name
 			shoulderStatus, // shoulder_status.name
 
+			polygon,
+
 			// Environmental & Reason-based (array of names for multi-select on embedded arrays of objects)
 			areaUsages, // area_usages[].name
 			airStatuses, // air_statuses[].name
@@ -178,6 +180,15 @@ export const countFn: ActFn = async (body) => {
 	}
 	if (shoulderStatus) {
 		filters["shoulder_status.name"] = shoulderStatus;
+	}
+
+	// --- GeoJSON Location Filter ---
+	if (polygon) {
+		filters.location = {
+			$geoIntersects: {
+				$geometry: polygon,
+			},
+		};
 	}
 
 	// --- Environmental & Reason-based (match if embedded array contains any of the provided names) ---

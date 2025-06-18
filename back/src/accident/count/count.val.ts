@@ -1,4 +1,5 @@
 import { array, enums, number, object, optional, string } from "@deps";
+import { geoJSONStruct } from "@model";
 
 export const countValidator = () => {
 	return object({
@@ -34,6 +35,9 @@ export const countValidator = () => {
 			roadSituation: optional(string()), // Was: road_situation
 			roadRepairType: optional(string()), // Was: road_repair_type
 			shoulderStatus: optional(string()), // Was: shoulder_status
+
+			// ---  GeoJSON ---
+			polygon: optional(geoJSONStruct("Polygon")), // Was: location
 
 			// --- Environmental & Reason-based (array of names for multi-select) ---
 			areaUsages: optional(array(string())), // Was: area_usages

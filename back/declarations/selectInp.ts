@@ -12892,6 +12892,10 @@ collisionType?: string;
 roadSituation?: string;
 roadRepairType?: string;
 shoulderStatus?: string;
+polygon?: {
+type: "Polygon";
+coordinates: any[];
+};
 areaUsages?: string[];
 airStatuses?: string[];
 roadDefects?: string[];
