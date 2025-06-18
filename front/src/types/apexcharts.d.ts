@@ -70,10 +70,10 @@ declare module 'apexcharts' {
   export interface ApexAxisChartSeries {
     name?: string
     type?: string
-    data: (number | null)[] | { x: any; y: any }[]
+    data: (number | null)[] | { x: string | number | Date; y: string | number | Date }[]
   }
 
-  export interface ApexNonAxisChartSeries extends Array<number> {}
+  export type ApexNonAxisChartSeries = number[]
 
   export interface ApexOptions {
     chart?: ApexChart

@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Tab } from "@headlessui/react";
+import Image from "next/image";
 import {
   ModelName,
   ToastNotify,
@@ -390,9 +391,11 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                         >
                           <div className="w-full h-24 bg-gray-100 rounded flex items-center justify-center mb-2">
                             {attachment.type.startsWith("image/") ? (
-                              <img
+                              <Image
                                 src={`/api/attachments/${attachment._id}`}
                                 alt={attachment.name}
+                                width={96}
+                                height={96}
                                 className="max-h-full max-w-full object-contain"
                               />
                             ) : (

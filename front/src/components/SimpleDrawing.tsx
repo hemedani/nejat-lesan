@@ -3,9 +3,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMap } from 'react-leaflet';
 
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+interface LeafletEvent {
+  latlng: LatLng;
+  originalEvent?: Event;
+}
+
+interface KeyboardEvent {
+  key: string;
+}
+
 interface SimpleDrawingProps {
   isActive: boolean;
-  onPolygonCreated: (polygon: any[]) => void;
+  onPolygonCreated: (polygon: LatLng[]) => void;
   onPolygonDeleted: () => void;
 }
 
@@ -16,9 +30,9 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
 }) => {
   const map = useMap();
   const [isDrawing, setIsDrawing] = useState(false);
-  const currentPolygonRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const currentPointsRef = useRef<any[]>([]);
+  const currentPolygonRef = useRef<L.Polygon | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
+  const currentPointsRef = useRef<LatLng[]>([]);
 
 
 
@@ -34,8 +48,8 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
         if (isActive) {
 
           // Add point counter
-          const pointCounter = L.control({ position: 'topleft' } as any);
-          (pointCounter as any).onAdd = function() {
+          const pointCounter = new L.Control({ position: 'topleft' });
+          (pointCounter as L.Control & { onAdd: () => HTMLElement }).onAdd = function() {
             const div = L.DomUtil.create('div', 'point-counter');
             div.style.backgroundColor = 'rgba(59, 130, 246, 0.9)';
             div.style.color = 'white';
@@ -56,7 +70,7 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
             }
           };
 
-          const handleMapClick = (e: any) => {
+          const handleMapClick = (e: LeafletEvent) => {
             if (!isDrawing) {
               setIsDrawing(true);
               currentPointsRef.current = [e.latlng];
@@ -104,8 +118,8 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
             }
           };
 
-          const handleMapRightClick = (e: any) => {
-            e.originalEvent.preventDefault();
+          const handleMapRightClick = (e: LeafletEvent) => {
+            e.originalEvent?.preventDefault();
 
             if (isDrawing && currentPointsRef.current.length >= 3) {
 
@@ -135,7 +149,7 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
             }
           };
 
-          const handleKeyPress = (e: any) => {
+          const handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Escape' && isDrawing) {
 
               // Clean up
@@ -150,6 +164,7 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
               setIsDrawing(false);
               currentPointsRef.current = [];
               updatePointCounter(0);
+              onPolygonDeleted();
             }
           };
 
@@ -172,7 +187,7 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
             }
           };
         }
-      } catch (error) {
+      } catch {
         // Handle error silently
       }
     };
@@ -181,14 +196,14 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
 
     return () => {
       if (cleanup && typeof cleanup.then === 'function') {
-        cleanup.then((cleanupFn: any) => {
+        cleanup.then((cleanupFn: unknown) => {
           if (typeof cleanupFn === 'function') {
             cleanupFn();
           }
         });
       }
     };
-  }, [map, isActive, isDrawing, onPolygonCreated]);
+  }, [map, isActive, isDrawing, onPolygonCreated, onPolygonDeleted]);
 
   return null;
 };

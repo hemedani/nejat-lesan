@@ -10,13 +10,13 @@ interface AccidentMapProps {
 
 const AccidentMap: React.FC<AccidentMapProps> = ({ accidents, onSelect }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     // This is a placeholder for map initialization
     // In a real implementation, you would initialize a map library like Leaflet or Google Maps here
     const initMap = () => {
       if (!mapRef.current) return;
-      
+
       // Display a message in the map container if no location data is available
       if (accidents.length === 0 || !accidents.some(acc => acc.location)) {
         const noDataElement = document.createElement('div');
@@ -30,17 +30,17 @@ const AccidentMap: React.FC<AccidentMapProps> = ({ accidents, onSelect }) => {
             <p class="mt-2 text-sm text-gray-500">برای نمایش نقشه، تصادفات باید دارای اطلاعات مکانی باشند.</p>
           </div>
         `;
-        
+
         mapRef.current.innerHTML = '';
         mapRef.current.appendChild(noDataElement);
         return;
       }
-      
+
       // In a real implementation, you would:
       // 1. Initialize the map
       // 2. Add markers for each accident with location data
       // 3. Set up click handlers to call onSelect
-      
+
       // For now, we'll just show a placeholder message
       const placeholderElement = document.createElement('div');
       placeholderElement.className = 'flex items-center justify-center h-full';
@@ -55,24 +55,25 @@ const AccidentMap: React.FC<AccidentMapProps> = ({ accidents, onSelect }) => {
           <p class="mt-1 text-sm text-gray-500">${accidents.length} تصادف برای نمایش روی نقشه موجود است.</p>
         </div>
       `;
-      
+
       mapRef.current.innerHTML = '';
       mapRef.current.appendChild(placeholderElement);
     };
-    
+
     initMap();
-    
+
     // Cleanup function
+    const currentMapRef = mapRef.current;
     return () => {
-      if (mapRef.current) {
-        mapRef.current.innerHTML = '';
+      if (currentMapRef) {
+        currentMapRef.innerHTML = '';
       }
     };
   }, [accidents, onSelect]);
-  
+
   return (
-    <div 
-      ref={mapRef} 
+    <div
+      ref={mapRef}
       className="w-full h-full rounded-lg border border-gray-200 bg-gray-50"
     ></div>
   );

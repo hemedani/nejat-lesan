@@ -22,7 +22,7 @@ export default async function AccidentDashboardPage({
 
   const counted = await count({
     set: {}, // Count all records for statistics
-    get: { qty: 1 },
+    get: { total: 1 },
   });
 
   // Get statistics for dashboard
@@ -32,7 +32,7 @@ export default async function AccidentDashboardPage({
 
   const recentStats = await count({
     set: statsSet,
-    get: { qty: 1 },
+    get: { total: 1 },
   });
 
   return (
