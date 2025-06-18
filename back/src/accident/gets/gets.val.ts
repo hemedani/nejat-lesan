@@ -1,5 +1,7 @@
 import { array, number, object, optional, string } from "@deps";
 import { selectStruct } from "../../../mod.ts"; // Assuming this path is correct
+import { GeoJSONGeometryStruct } from "../../../utils/geoJSONStruct.ts";
+import { geoJSONStruct } from "@model";
 
 export const getsValidator = () => {
 	return object({
@@ -39,6 +41,9 @@ export const getsValidator = () => {
 			roadSituation: optional(string()), // Was: road_situation
 			roadRepairType: optional(string()), // Was: road_repair_type
 			shoulderStatus: optional(string()), // Was: shoulder_status
+
+			// ---  GeoJSON ---
+			polygon: optional(geoJSONStruct("Polygon")), // Was: location
 
 			// --- Environmental & Reason-based (array of names for multi-select) ---
 			areaUsages: optional(array(string())), // Was: area_usages

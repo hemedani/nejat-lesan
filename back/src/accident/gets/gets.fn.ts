@@ -76,6 +76,8 @@ export const getsFn: ActFn = async (body) => {
 		roadRepairType, // road_repair_type.name
 		shoulderStatus, // shoulder_status.name
 
+		polygon,
+
 		// Environmental & Reason-based (array of names for multi-select on embedded arrays of objects)
 		areaUsages, // area_usages[].name
 		airStatuses, // air_statuses[].name
@@ -219,6 +221,15 @@ export const getsFn: ActFn = async (body) => {
 	}
 	if (shoulderStatus) {
 		matchConditions["shoulder_status.name"] = shoulderStatus;
+	}
+
+	// --- GeoJSON Location Filter ---
+	if (polygon) {
+		matchConditions.location = {
+			$geoIntersects: {
+				$geometry: polygon,
+			},
+		};
 	}
 
 	// --- Environmental & Reason-based (match if embedded array contains any of the provided names) ---
@@ -464,11 +475,26 @@ export const getsFn: ActFn = async (body) => {
 	console.groupEnd();
 	console.log(" ============= ");
 
-	// --- Execute Aggregation ---
-	return await accident
+	const foundedAccidents = await accident
 		.aggregation({
 			pipeline,
 			projection: get, // 'get' is the projection object from the request
 		})
 		.toArray();
+
+	/*
+	 * 	@LOG @DEBUG @INFO
+	 * 	This log written by ::==> {{ `` }}
+	 *
+	 * 	Please remove your log after debugging
+	 */
+	console.log(" ============= ");
+	console.group("foundedAccidents ------ ");
+	console.log();
+	console.info({ foundedAccidents }, " ------ ");
+	console.log();
+	console.groupEnd();
+	console.log(" ============= ");
+
+	return foundedAccidents;
 };
