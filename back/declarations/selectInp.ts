@@ -99,8 +99,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -125,8 +129,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -136,8 +144,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -147,6 +159,8 @@ _id?: string;
 seri: number;
 serial: number;
 location: {
+type: "Point";
+coordinates: any[];
 };
 date_of_accident: Date;
 dead_count: number;
@@ -187,6 +201,7 @@ plaque_type: {
 _id: string;
 name: string;
 };
+plaque_no: any[];
 system_type: {
 _id: string;
 name: string;
@@ -265,6 +280,8 @@ axeses: {
 _id?: string;
 name: string;
 area: {
+type: "MultiLineString";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -286,8 +303,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -312,8 +333,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -322,6 +347,8 @@ city_zones: {
 _id?: string;
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -331,6 +358,8 @@ _id?: string;
 seri: number;
 serial: number;
 location: {
+type: "Point";
+coordinates: any[];
 };
 date_of_accident: Date;
 dead_count: number;
@@ -371,6 +400,7 @@ plaque_type: {
 _id: string;
 name: string;
 };
+plaque_no: any[];
 system_type: {
 _id: string;
 name: string;
@@ -459,6 +489,8 @@ national_code: string;
 _id?: string;
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -483,6 +515,8 @@ _id?: string;
 seri: number;
 serial: number;
 location: {
+type: "Point";
+coordinates: any[];
 };
 date_of_accident: Date;
 dead_count: number;
@@ -523,6 +557,7 @@ plaque_type: {
 _id: string;
 name: string;
 };
+plaque_no: any[];
 system_type: {
 _id: string;
 name: string;
@@ -612,6 +647,8 @@ city?: number | cityInp
 _id?: string;
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -636,8 +673,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -647,6 +688,8 @@ _id?: string;
 seri: number;
 serial: number;
 location: {
+type: "Point";
+coordinates: any[];
 };
 date_of_accident: Date;
 dead_count: number;
@@ -687,6 +730,7 @@ plaque_type: {
 _id: string;
 name: string;
 };
+plaque_no: any[];
 system_type: {
 _id: string;
 name: string;
@@ -776,6 +820,8 @@ province?: number | provinceInp
 _id?: string;
 name: string;
 area: {
+type: "MultiLineString";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -800,8 +846,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -1306,6 +1356,8 @@ _id?: string;
 seri: number;
 serial: number;
 location: {
+type: "Point";
+coordinates: any[];
 };
 date_of_accident: Date;
 dead_count: number;
@@ -1346,6 +1398,7 @@ plaque_type: {
 _id: string;
 name: string;
 };
+plaque_no: any[];
 system_type: {
 _id: string;
 name: string;
@@ -1424,8 +1477,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -1435,8 +1492,12 @@ _id?: string;
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -1445,6 +1506,8 @@ road?: {
 _id?: string;
 name: string;
 area: {
+type: "MultiLineString";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -1453,6 +1516,8 @@ traffic_zone?: {
 _id?: string;
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -1461,6 +1526,8 @@ city_zone?: {
 _id?: string;
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -2512,8 +2579,12 @@ set: {
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -2585,8 +2656,12 @@ _id: string;
 name?: string;
 english_name?: string;
 area?: {
+type: "Polygon";
+coordinates: any[];
 };
 center_location?: {
+type: "Point";
+coordinates: any[];
 };
 };
 get: {
@@ -3321,6 +3396,8 @@ qty?: (0 | 1 );
 set: {
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -3381,6 +3458,8 @@ set: {
 _id: string;
 name?: string;
 area?: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 };
 get: {
@@ -6639,8 +6718,12 @@ set: {
 name: string;
 english_name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 center_location: {
+type: "Point";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -6719,8 +6802,12 @@ _id: string;
 name?: string;
 english_name?: string;
 area?: {
+type: "Polygon";
+coordinates: any[];
 };
 center_location?: {
+type: "Point";
+coordinates: any[];
 };
 };
 get: {
@@ -7528,6 +7615,8 @@ qty?: (0 | 1 );
 set: {
 name: string;
 area: {
+type: "MultiLineString";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -7573,6 +7662,8 @@ set: {
 _id: string;
 name?: string;
 area?: {
+type: "MultiLineString";
+coordinates: any[];
 };
 };
 get: {
@@ -9451,6 +9542,8 @@ qty?: (0 | 1 );
 set: {
 name: string;
 area: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 createdAt: Date;
 updatedAt: Date;
@@ -9501,6 +9594,8 @@ set: {
 _id: string;
 name?: string;
 area?: {
+type: "MultiPolygon";
+coordinates: any[];
 };
 };
 get: {
@@ -12088,6 +12183,10 @@ collisionType?: string;
 roadSituation?: string;
 roadRepairType?: string;
 shoulderStatus?: string;
+polygon?: {
+type: "Polygon";
+coordinates: any[];
+};
 areaUsages?: string[];
 airStatuses?: string[];
 roadDefects?: string[];
@@ -12765,10 +12864,91 @@ success?: (0 | 1 );
           
             count: {
 set: {
-name?: string;
+seri?: number;
+serial?: number;
+dateOfAccidentFrom?: string;
+dateOfAccidentTo?: string;
+deadCount?: number;
+deadCountMin?: number;
+deadCountMax?: number;
+injuredCount?: number;
+injuredCountMin?: number;
+injuredCountMax?: number;
+hasWitness?: string;
+newsNumber?: number;
+officer?: string;
+completionDateFrom?: string;
+completionDateTo?: string;
+province?: string;
+city?: string;
+road?: string;
+trafficZone?: string;
+cityZone?: string;
+accidentType?: string;
+position?: string;
+rulingType?: string;
+lightStatus?: string;
+collisionType?: string;
+roadSituation?: string;
+roadRepairType?: string;
+shoulderStatus?: string;
+areaUsages?: string[];
+airStatuses?: string[];
+roadDefects?: string[];
+humanReasons?: string[];
+vehicleReasons?: string[];
+equipmentDamages?: string[];
+roadSurfaceConditions?: string[];
+attachmentName?: string;
+attachmentType?: string;
+vehicleColor?: string;
+vehicleSystem?: string;
+vehiclePlaqueType?: string;
+vehicleSystemType?: string;
+vehicleFaultStatus?: string;
+vehicleInsuranceCo?: string;
+vehicleInsuranceNo?: string;
+vehiclePlaqueUsage?: string;
+vehiclePrintNumber?: string;
+vehiclePlaqueSerialElement?: string;
+vehicleInsuranceDateFrom?: string;
+vehicleInsuranceDateTo?: string;
+vehicleBodyInsuranceCo?: string;
+vehicleBodyInsuranceNo?: string;
+vehicleMotionDirection?: string;
+vehicleBodyInsuranceDateFrom?: string;
+vehicleBodyInsuranceDateTo?: string;
+vehicleMaxDamageSections?: string[];
+vehicleDamageSectionOther?: string;
+vehicleInsuranceWarrantyLimit?: number;
+vehicleInsuranceWarrantyLimitMin?: number;
+vehicleInsuranceWarrantyLimitMax?: number;
+driverSex?: string;
+driverFirstName?: string;
+driverLastName?: string;
+driverNationalCode?: string;
+driverLicenceNumber?: string;
+driverLicenceType?: string;
+driverInjuryType?: string;
+driverTotalReason?: string;
+passengerSex?: string;
+passengerFirstName?: string;
+passengerLastName?: string;
+passengerNationalCode?: string;
+passengerInjuryType?: string;
+passengerFaultStatus?: string;
+passengerTotalReason?: string;
+pedestrianSex?: string;
+pedestrianFirstName?: string;
+pedestrianLastName?: string;
+pedestrianNationalCode?: string;
+pedestrianInjuryType?: string;
+pedestrianFaultStatus?: string;
+pedestrianTotalReason?: string;
 };
 get: {
-qty?: (0 | 1 );
+total?: (0 | 1 );
+filtered?: (0 | 1 );
 };
 };
 
