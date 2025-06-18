@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { gets as getAccidents } from '@/app/actions/accident/gets';
@@ -13,32 +14,24 @@ const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.Map
 const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
+const Polygon = dynamic(() => import('react-leaflet').then((mod) => mod.Polygon), { ssr: false });
 
-// Import Leaflet CSS and library
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+// Import SimpleDrawing component
+const SimpleDrawing = dynamic(() => import('@/components/SimpleDrawing'), { ssr: false });
+
+// Leaflet will be imported dynamically to avoid SSR issues
 
 // Define accident interface based on the schema
 interface AccidentData {
   _id: string;
-  seri: number;
-  serial?: number;
-  location?: {
-    coordinates?: [number, number];
-  };
+  location: {type: string, coordinates: number[]};
   date_of_accident: string;
   dead_count: number;
   injured_count: number;
+  seri: string;
 }
 
-// Fix Leaflet default marker icons
-if (typeof window !== 'undefined') {
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-  });
-}
+// Leaflet setup will be done dynamically in useEffect
 
 export default function HomePage() {
   const [accidents, setAccidents] = useState<AccidentData[]>([]);
@@ -46,6 +39,10 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [isPolygonSearchMode, setIsPolygonSearchMode] = useState(false);
+  const [drawnPolygon, setDrawnPolygon] = useState<any[] | null>(null);
+
+
   const searchParams = useSearchParams();
 
   // Initialize empty default search values
@@ -85,71 +82,73 @@ export default function HomePage() {
     pedestrianFaultStatus: [],
   };
 
-  // Fetch accidents data
-  useEffect(() => {
-    const fetchAccidents = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // Fetch accidents data function
+  const fetchAccidents = useCallback(async (polygon?: { type: "Polygon"; coordinates: any[] }) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // Build search parameters from URL
-        const searchFilters: Record<string, string | string[] | number | Date> = {};
+      // Build search parameters from URL
+      const searchFilters: Record<string, string | string[] | number | Date> = {};
 
-        // Set required pagination fields
-        const page = +(searchParams.get('page') || '1');
-        const limit = +(searchParams.get('limit') || '1000');
+      // Set required pagination fields
+      const page = +(searchParams.get('page') || '1');
+      const limit = +(searchParams.get('limit') || '1000');
 
-        const arrayKeys = ['areaUsages', 'airStatuses', 'roadDefects', 'humanReasons', 'vehicleReasons', 'equipmentDamages', 'roadSurfaceConditions', 'vehicleMaxDamageSections'];
-        // Add other search parameters if they exist
-        for (const [key, value] of searchParams.entries()) {
-          if (value) {
-            if (key.includes('Min') || key.includes('Max') || key === 'seri' || key === 'serial') {
-              searchFilters[key] = parseInt(value) || value;
-            } else if (key.includes('Date')) {
-              searchFilters[key] = new Date(value);
-            } else if(arrayKeys.includes(key)) {
-              searchFilters[key] = value.split(",");
-            } else {
-              searchFilters[key] = value;
-            }
+      const arrayKeys = ['areaUsages', 'airStatuses', 'roadDefects', 'humanReasons', 'vehicleReasons', 'equipmentDamages', 'roadSurfaceConditions', 'vehicleMaxDamageSections'];
+      // Add other search parameters if they exist
+      for (const [key, value] of searchParams.entries()) {
+        if (value) {
+          if (key.includes('Min') || key.includes('Max') || key === 'seri' || key === 'serial') {
+            searchFilters[key] = parseInt(value) || value;
+          } else if (key.includes('Date')) {
+            searchFilters[key] = new Date(value);
+          } else if(arrayKeys.includes(key)) {
+            searchFilters[key] = value.split(",");
+          } else {
+            searchFilters[key] = value;
           }
         }
-
-        const setParams: ReqType["main"]["accident"]["gets"]["set"] = {
-          ...searchFilters,
-          page,
-          limit,
-        };
-
-        const response = await getAccidents({
-          set: setParams,
-          get: {
-            _id: 1,
-            seri: 1,
-            serial: 1,
-            location: 1,
-            date_of_accident: 1,
-            dead_count: 1,
-            injured_count: 1,
-          },
-        });
-
-        if (response.success) {
-          setAccidents(response.body);
-          setRetryCount(0);
-        } else {
-          throw new Error('پاسخ نامعتبر از سرور');
-        }
-      } catch (error) {
-        console.error('خطا در بارگذاری داده‌های تصادفات:', error);
-        setError('خطا در بارگذاری داده‌های تصادفات. لطفاً دوباره تلاش کنید.');
-      } finally {
-        setLoading(false);
       }
-    };
 
+      const setParams: ReqType["main"]["accident"]["gets"]["set"] = {
+        ...searchFilters,
+        page,
+        limit,
+        ...(polygon && { polygon }),
+      };
+
+      const response = await getAccidents({
+        set: setParams,
+        get: {
+          _id: 1,
+          seri: 1,
+          serial: 1,
+          location: 1,
+          date_of_accident: 1,
+          dead_count: 1,
+          injured_count: 1,
+        },
+      });
+
+      if (response.success) {
+        setAccidents(response.body);
+        setRetryCount(0);
+      } else {
+        throw new Error('پاسخ نامعتبر از سرور');
+      }
+    } catch (error) {
+      console.error('خطا در بارگذاری داده‌های تصادفات:', error);
+      setError('خطا در بارگذاری داده‌های تصادفات. لطفاً دوباره تلاش کنید.');
+    } finally {
+      setLoading(false);
+    }
+  }, [searchParams]);
+
+  // Fetch accidents data on mount and search params change
+  useEffect(() => {
     fetchAccidents();
-  }, [searchParams, retryCount]);
+  }, [fetchAccidents, retryCount]);
 
   // Retry function
   const handleRetry = () => {
@@ -173,6 +172,83 @@ export default function HomePage() {
   // Iran center coordinates
   const iranCenter: [number, number] = [32.4279, 53.6880];
 
+  // Function to check if a point is inside a polygon
+
+
+  // Clear polygon search
+  const clearPolygonSearch = useCallback(() => {
+    setDrawnPolygon(null);
+    setIsPolygonSearchMode(false);
+    // Fetch accidents without polygon filter
+    fetchAccidents();
+  }, [fetchAccidents]);
+
+  // Toggle polygon search mode
+  const togglePolygonSearchMode = () => {
+    if (isPolygonSearchMode) {
+      clearPolygonSearch();
+    } else {
+      setIsPolygonSearchMode(true);
+    }
+  };
+
+  const handlePolygonCreated = useCallback((polygon: any[]) => {
+    setDrawnPolygon(polygon);
+
+    // Convert polygon coordinates to GeoJSON format for backend
+    // GeoJSON polygons must be closed loops (first coordinate = last coordinate)
+    const coordinates = polygon.map(point => [point.lng, point.lat]);
+    coordinates.push(coordinates[0]); // Close the polygon loop
+
+    const geoJsonPolygon = {
+      type: "Polygon" as const,
+      coordinates: [coordinates]
+    };
+
+    // Fetch accidents with polygon filter
+    fetchAccidents(geoJsonPolygon);
+  }, [fetchAccidents]);
+
+  const handlePolygonDeleted = useCallback(() => {
+    setDrawnPolygon(null);
+    // Fetch accidents without polygon filter
+    fetchAccidents();
+  }, [fetchAccidents]);
+
+  // Dynamic Leaflet setup
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Import CSS dynamically
+    const leafletCSS = document.createElement('link');
+    leafletCSS.rel = 'stylesheet';
+    leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(leafletCSS);
+
+    const leafletDrawCSS = document.createElement('link');
+    leafletDrawCSS.rel = 'stylesheet';
+    leafletDrawCSS.href = 'https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css';
+    document.head.appendChild(leafletDrawCSS);
+
+    // Import Leaflet and fix icons
+    import('leaflet').then((L) => {
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+      });
+    });
+
+    return () => {
+      // Cleanup CSS if needed
+      document.head.removeChild(leafletCSS);
+      document.head.removeChild(leafletDrawCSS);
+    };
+  }, []);
+
+
+
   return (
     <div className="relative w-full h-screen bg-slate-100">
       {/* Map Container with Beautiful Frame */}
@@ -189,6 +265,31 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              {/* Polygon Search Toggle Button */}
+              <button
+                onClick={togglePolygonSearchMode}
+                className={`${
+                  isPolygonSearchMode
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-purple-600 hover:bg-purple-700'
+                } text-white px-6 py-2.5 rounded-xl shadow-lg transition-all duration-200 flex items-center gap-2 font-medium`}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2l6 3 5.447-2.724A1 1 0 0121 3.382v10.764a1 1 0 01-.553.894L15 18l-6-3z"
+                  />
+                </svg>
+                {isPolygonSearchMode ? 'لغو (کلیک: نقطه، راست‌کلیک: تمام)' : 'جستجوی مضلعی'}
+              </button>
+
               {/* Advanced Search Toggle Button */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -215,6 +316,19 @@ export default function HomePage() {
 
         {/* Map Area */}
         <div className="relative h-full">
+          {/* Polygon Mode Notification Banner */}
+          {isPolygonSearchMode && (
+            <div className="absolute top-4 right-4 z-30 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <span className="font-medium text-sm">حالت رسم مضلع فعال</span>
+              </div>
+              <div className="text-xs opacity-90">
+                کلیک: افزودن نقطه | راست‌کلیک: تمام | ESC: لغو
+              </div>
+            </div>
+          )}
+
           {!loading && (
             <MapContainer
               center={iranCenter}
@@ -226,6 +340,26 @@ export default function HomePage() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
+
+              <SimpleDrawing
+                isActive={isPolygonSearchMode}
+                onPolygonCreated={handlePolygonCreated}
+                onPolygonDeleted={handlePolygonDeleted}
+              />
+
+              {/* Render drawn polygon */}
+              {drawnPolygon && (
+                <Polygon
+                  positions={drawnPolygon.map((point: any) => [point.lat, point.lng])}
+                  pathOptions={{
+                    color: '#3b82f6',
+                    weight: 3,
+                    opacity: 0.8,
+                    fillOpacity: 0.1,
+                    fillColor: '#3b82f6'
+                  }}
+                />
+              )}
 
               {/* Render accident markers */}
               {accidents
@@ -330,33 +464,64 @@ export default function HomePage() {
           {!loading && !error && accidents.length > 0 && (
             <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-slate-200 p-4 min-w-[220px]">
               <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                آمار کلی
+                <div className={`w-3 h-3 ${drawnPolygon ? 'bg-purple-600' : 'bg-blue-600'} rounded-full`}></div>
+                {drawnPolygon ? 'آمار منطقه انتخابی' : 'آمار کلی'}
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600 text-sm">تعداد تصادفات:</span>
-                  <span className="font-bold text-slate-800">{accidents.length.toLocaleString('fa-IR')}</span>
+                  <span className="font-bold text-slate-800">
+                    {accidents.length.toLocaleString('fa-IR')}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600 text-sm">کل فوتی‌ها:</span>
                   <span className="font-bold text-red-600">
-                    {accidents.reduce((sum, acc) => sum + acc.dead_count, 0).toLocaleString('fa-IR')}
+                    {accidents.reduce((sum: number, acc: AccidentData) => sum + acc.dead_count, 0).toLocaleString('fa-IR')}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-600 text-sm">کل مجروحان:</span>
                   <span className="font-bold text-orange-600">
-                    {accidents.reduce((sum, acc) => sum + acc.injured_count, 0).toLocaleString('fa-IR')}
+                    {accidents.reduce((sum: number, acc: AccidentData) => sum + acc.injured_count, 0).toLocaleString('fa-IR')}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-slate-200">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-slate-500">نمایش روی نقشه:</span>
                     <span className="text-emerald-600 font-medium">
-                      {accidents.filter(acc => acc.location?.coordinates).length.toLocaleString('fa-IR')}
+                      {accidents.filter((acc: AccidentData) => acc.location?.coordinates).length.toLocaleString('fa-IR')}
                     </span>
                   </div>
+                </div>
+                {drawnPolygon && (
+                  <div className="pt-2 border-t border-slate-200">
+                    <button
+                      onClick={clearPolygonSearch}
+                      className="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      پاک کردن انتخاب
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Polygon Search Instructions */}
+          {isPolygonSearchMode && !drawnPolygon && (
+            <div className="absolute top-10 left-4 right-4 z-20 bg-purple-600/95 backdrop-blur-sm rounded-xl shadow-lg border border-purple-400 p-4">
+              <div className="flex items-center gap-3 text-white">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm mb-1">حالت جستجوی مضلعی فعال است</h4>
+                  <p className="text-xs text-purple-100">
+                    روی نقشه کلیک کنید تا شروع به رسم مضلع کنید. برای بستن مضلع، روی نقطه اول کلیک کنید.
+                  </p>
                 </div>
               </div>
             </div>
