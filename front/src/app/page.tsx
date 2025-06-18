@@ -24,7 +24,7 @@ const SimpleDrawing = dynamic(() => import('@/components/SimpleDrawing'), { ssr:
 // Define accident interface based on the schema
 interface AccidentData {
   _id: string;
-  location: {type: string, coordinates: number[]};
+  location: { type: string, coordinates: number[] };
   date_of_accident: string;
   dead_count: number;
   injured_count: number;
@@ -103,7 +103,7 @@ export default function HomePage() {
             searchFilters[key] = parseInt(value) || value;
           } else if (key.includes('Date')) {
             searchFilters[key] = new Date(value);
-          } else if(arrayKeys.includes(key)) {
+          } else if (arrayKeys.includes(key)) {
             searchFilters[key] = value.split(",");
           } else {
             searchFilters[key] = value;
@@ -250,9 +250,9 @@ export default function HomePage() {
 
 
   return (
-    <div className="relative w-full h-screen bg-slate-100">
+    <div className="relative w-full h-[calc(100vh-6rem)]">
       {/* Map Container with Beautiful Frame */}
-      <div className="absolute inset-4 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+      <div className="absolute inset-0 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
         {/* Map Header */}
         <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 border-b border-slate-300">
           <div className="flex items-center justify-between">
@@ -268,11 +268,10 @@ export default function HomePage() {
               {/* Polygon Search Toggle Button */}
               <button
                 onClick={togglePolygonSearchMode}
-                className={`${
-                  isPolygonSearchMode
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-purple-600 hover:bg-purple-700'
-                } text-white px-6 py-2.5 rounded-xl shadow-lg transition-all duration-200 flex items-center gap-2 font-medium`}
+                className={`${isPolygonSearchMode
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-purple-600 hover:bg-purple-700'
+                  } text-white px-6 py-2.5 rounded-xl shadow-lg transition-all duration-200 flex items-center gap-2 font-medium`}
               >
                 <svg
                   className="w-5 h-5"
@@ -287,7 +286,7 @@ export default function HomePage() {
                     d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 01.553-.894L9 2l6 3 5.447-2.724A1 1 0 0121 3.382v10.764a1 1 0 01-.553.894L15 18l-6-3z"
                   />
                 </svg>
-                {isPolygonSearchMode ? 'لغو (کلیک: نقطه، راست‌کلیک: تمام)' : 'جستجوی مضلعی'}
+                {isPolygonSearchMode ? 'لغو (کلیک: نقطه، راست‌کلیک: تمام)' : 'جستجوی چندضلعی'}
               </button>
 
               {/* Advanced Search Toggle Button */}
@@ -321,7 +320,7 @@ export default function HomePage() {
             <div className="absolute top-4 right-4 z-30 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="font-medium text-sm">حالت رسم مضلع فعال</span>
+                <span className="font-medium text-sm">حالت رسم چندضلعی فعال</span>
               </div>
               <div className="text-xs opacity-90">
                 کلیک: افزودن نقطه | راست‌کلیک: تمام | ESC: لغو
@@ -508,32 +507,13 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Polygon Search Instructions */}
-          {isPolygonSearchMode && !drawnPolygon && (
-            <div className="absolute top-10 left-4 right-4 z-20 bg-purple-600/95 backdrop-blur-sm rounded-xl shadow-lg border border-purple-400 p-4">
-              <div className="flex items-center gap-3 text-white">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm mb-1">حالت جستجوی مضلعی فعال است</h4>
-                  <p className="text-xs text-purple-100">
-                    روی نقشه کلیک کنید تا شروع به رسم مضلع کنید. برای بستن مضلع، روی نقطه اول کلیک کنید.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Advanced Search Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-300 z-50 border-l border-slate-200 ${
-          isSearchOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-300 z-50 border-l border-slate-200 ${isSearchOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
       >
         {/* Sidebar Header */}
         <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 border-b border-slate-300">

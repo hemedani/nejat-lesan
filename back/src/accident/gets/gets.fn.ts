@@ -461,40 +461,12 @@ export const getsFn: ActFn = async (body) => {
 	pipeline.push({ $skip: (page - 1) * limit });
 	pipeline.push({ $limit: limit });
 
-	/*
-	 * 	@LOG @DEBUG @INFO
-	 * 	This log written by ::==> {{ `` }}
-	 *
-	 * 	Please remove your log after debugging
-	 */
-	console.log(" ============= ");
-	console.group("pipeline ------ ");
-	console.log();
-	console.info({ pipeline }, " ------ ");
-	console.log();
-	console.groupEnd();
-	console.log(" ============= ");
-
 	const foundedAccidents = await accident
 		.aggregation({
 			pipeline,
 			projection: get, // 'get' is the projection object from the request
 		})
 		.toArray();
-
-	/*
-	 * 	@LOG @DEBUG @INFO
-	 * 	This log written by ::==> {{ `` }}
-	 *
-	 * 	Please remove your log after debugging
-	 */
-	console.log(" ============= ");
-	console.group("foundedAccidents ------ ");
-	console.log();
-	console.info({ foundedAccidents }, " ------ ");
-	console.log();
-	console.groupEnd();
-	console.log(" ============= ");
 
 	return foundedAccidents;
 };

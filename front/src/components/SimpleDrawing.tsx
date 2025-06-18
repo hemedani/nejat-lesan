@@ -33,25 +33,6 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
 
         if (isActive) {
 
-          // Add drawing instructions
-          const drawingInstructions = L.control({ position: 'topright' } as any);
-          (drawingInstructions as any).onAdd = function() {
-            const div = L.DomUtil.create('div', 'drawing-instructions');
-            div.style.backgroundColor = 'white';
-            div.style.padding = '10px';
-            div.style.border = '2px solid #ccc';
-            div.style.borderRadius = '5px';
-            div.style.fontSize = '12px';
-            div.innerHTML = `
-              <strong>Drawing Mode:</strong><br>
-              • Click to add points<br>
-              • Right-click to finish<br>
-              • ESC to cancel
-            `;
-            return div;
-          };
-          drawingInstructions.addTo(map);
-
           // Add point counter
           const pointCounter = L.control({ position: 'topleft' } as any);
           (pointCounter as any).onAdd = function() {
@@ -182,7 +163,6 @@ const SimpleDrawing: React.FC<SimpleDrawingProps> = ({
             map.off('click', handleMapClick);
             map.off('contextmenu', handleMapRightClick);
             document.removeEventListener('keydown', handleKeyPress);
-            drawingInstructions.remove();
             pointCounter.remove();
 
             // Clean up any remaining markers/polygons
