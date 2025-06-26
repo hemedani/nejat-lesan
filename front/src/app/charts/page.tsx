@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import EffectiveRoadDefectsDashboard from '@/components/dashboards/EffectiveRoadDefectsDashboard'
 import ChartsFilterSidebar, { RoadDefectsFilterState } from '@/components/dashboards/ChartsFilterSidebar'
-
-
+import { roadDefectsAnalytics } from '@/app/actions/accident/roadDefectsAnalytics'
 
 // Backend response interface for road defects analytics
 interface RoadDefectsAnalyticsData {
@@ -16,11 +15,6 @@ interface RoadDefectsAnalyticsData {
     name: string
     count: number
   }>
-  totalAccidents: number
-  summary: {
-    mostCommonDefect: string
-    defectPercentage: number
-  }
 }
 
 // Tab types
@@ -41,6 +35,35 @@ const ChartsPage = () => {
   const [chartData, setChartData] = useState<RoadDefectsAnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Load initial data on component mount
+  useEffect(() => {
+    const loadInitialData = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        // Load with default/empty filters for initial view
+        const response = await roadDefectsAnalytics({ set: {}, get: {defectCounts: 1, defectDistribution: 1} })
+
+        if (response.success) {
+          setChartData(response.body)
+        } else {
+          throw new Error('Failed to fetch initial data')
+        }
+      } catch (error) {
+        console.error('Error fetching initial chart data:', error)
+        setError('خطا در دریافت اطلاعات اولیه. لطفاً صفحه را مجدداً بارگذاری کنید.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    // Only load initial data for the overall tab
+    if (activeMainTab === 'charts' && activeSubTab === 'overall') {
+      loadInitialData()
+    }
+  }, [activeMainTab, activeSubTab])
 
   // Main tabs configuration
   const mainTabs: TabItem[] = [
@@ -72,50 +95,40 @@ const ChartsPage = () => {
     { id: 'trend', label: 'روند رویداد' }
   ]
 
+  // Handle manual data loading
+  const handleLoadData = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // Load with default/empty filters
+      const response = await roadDefectsAnalytics({
+        set: {},
+        get: { defectDistribution: 1, defectCounts: 1 }
+      })
+
+      if (response.success) {
+        setChartData(response.body)
+      } else {
+        throw new Error('Failed to fetch data')
+      }
+    } catch (error) {
+      console.error('Error fetching chart data:', error)
+      setError('خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   // Handle filter application with backend API call
   const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
     setIsLoading(true)
     setError(null)
 
     try {
-      // TODO: Replace with actual SDK call when available
-      // const response = await sdk.accident.roadDefectsAnalytics({ set: filters })
-
-      // Mock API call simulation for now - using filters for realistic simulation
+      // Call the server action for road defects analytics
       console.log('Applying filters:', filters)
-      const response = await new Promise<{ success: boolean; body: RoadDefectsAnalyticsData }>((resolve) => {
-        setTimeout(() => {
-          // Simulate different data based on filters
-          const hasProvinceFilter = filters.province && filters.province.length > 0
-          const totalAccidents = hasProvinceFilter ? 450 : 779
-          const withDefectCount = Math.floor(totalAccidents * 0.65)
-
-          resolve({
-            success: true,
-            body: {
-              defectDistribution: {
-                withDefect: withDefectCount,
-                withoutDefect: totalAccidents - withDefectCount
-              },
-              defectCounts: [
-                { name: 'نقص علائم عمودی', count: 42 },
-                { name: 'لغزندگی سطح راه', count: 31 },
-                { name: 'فقدان حفاظ ایمنی', count: 25 },
-                { name: 'عرض کم راه', count: 18 },
-                { name: 'عدم استاندارد بودن شانه', count: 15 },
-                { name: 'پیچ غیر استاندارد', count: 10 },
-                { name: 'وجود مانع دید', count: 9 },
-                { name: 'سایر موارد', count: 22 }
-              ],
-              totalAccidents,
-              summary: {
-                mostCommonDefect: 'نقص علائم عمودی',
-                defectPercentage: 65.0
-              }
-            }
-          })
-        }, 1000)
-      })
+      const response = await roadDefectsAnalytics({ set: filters, get: { defectCounts: 1, defectDistribution: 1} })
 
       if (response.success) {
         setChartData(response.body)
@@ -161,15 +174,36 @@ const ChartsPage = () => {
               نمایش داده‌های آماری و تحلیلی حوادث ترافیکی به صورت تعاملی
             </p>
           </div>
-          <button
-            onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
-            </svg>
-            {showFilterSidebar ? 'مخفی کردن فیلترها' : 'نمایش فیلترها'}
-          </button>
+          <div className="flex items-center gap-3">
+            {activeMainTab === 'charts' && activeSubTab === 'overall' && (
+              <button
+                onClick={handleLoadData}
+                disabled={isLoading}
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              >
+                {isLoading ? (
+                  <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                  </svg>
+                )}
+                {isLoading ? 'در حال بارگذاری...' : 'بارگذاری داده‌ها'}
+              </button>
+            )}
+            <button
+              onClick={() => setShowFilterSidebar(!showFilterSidebar)}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+              </svg>
+              {showFilterSidebar ? 'مخفی کردن فیلترها' : 'نمایش فیلترها'}
+            </button>
+          </div>
         </div>
 
         {/* Main Tabs */}
@@ -231,19 +265,25 @@ const ChartsPage = () => {
                 </div>
               )}
 
-              {chartData && (
-                <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
+              {chartData && (() => {
+                const totalAccidents = chartData.defectDistribution.withDefect + chartData.defectDistribution.withoutDefect
+                const defectPercentage = ((chartData.defectDistribution.withDefect / totalAccidents) * 100).toFixed(1)
+                const mostCommonDefect = chartData.defectCounts.length > 0 ? chartData.defectCounts[0].name : 'نامشخص'
+
+                return (
+                  <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
+                    </div>
+                    <p className="text-sm text-green-700">
+                      تحلیل {totalAccidents} تصادف با نرخ نقص راه {defectPercentage}% - شایع‌ترین نقص: {mostCommonDefect}
+                    </p>
                   </div>
-                  <p className="text-sm text-green-700">
-                    تحلیل {chartData.totalAccidents} تصادف با نرخ نقص راه {chartData.summary.defectPercentage}%
-                  </p>
-                </div>
-              )}
+                )
+              })()}
 
               <EffectiveRoadDefectsDashboard
                 data={chartData}

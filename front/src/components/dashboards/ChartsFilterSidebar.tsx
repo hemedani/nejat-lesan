@@ -40,8 +40,6 @@ export interface RoadDefectsFilterState {
   deadCountMax?: number
   injuredCountMin?: number
   injuredCountMax?: number
-  limit?: number
-  page?: number
 }
 
 interface SidebarProps {
@@ -59,10 +57,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({ config, onApplyFilters })
     reset,
     formState: { errors },
   } = useForm<RoadDefectsFilterState>({
-    defaultValues: {
-      limit: 100,
-      page: 1,
-    },
+    defaultValues: {},
   })
 
   // Helper function to create loadOptions for async multi-select
@@ -129,10 +124,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({ config, onApplyFilters })
 
   // Reset form to defaults
   const handleReset = () => {
-    const defaultValues: Partial<RoadDefectsFilterState> = {
-      limit: 100,
-      page: 1,
-    }
+    const defaultValues: Partial<RoadDefectsFilterState> = { }
 
     // Apply locked values if severity is locked
     if (config.lockToSevereAccidents) {
@@ -329,26 +321,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({ config, onApplyFilters })
                   placeholder="انتخاب وضعیت سطح راه..."
                   defaultOptions
                 />
-
-                {/* Pagination Controls */}
-                <div className="grid grid-cols-2 gap-4">
-                  <MyInput
-                    name="limit"
-                    label="تعداد رکورد"
-                    register={control.register}
-                    errMsg={errors.limit?.message}
-                    type="number"
-                    placeholder="100"
-                  />
-                  <MyInput
-                    name="page"
-                    label="شماره صفحه"
-                    register={control.register}
-                    errMsg={errors.page?.message}
-                    type="number"
-                    placeholder="1"
-                  />
-                </div>
               </div>
             )}
           </div>
