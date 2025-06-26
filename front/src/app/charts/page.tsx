@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import EffectiveRoadDefectsDashboard from '@/components/dashboards/EffectiveRoadDefectsDashboard'
+import MonthlyHolidayAnalyticsDashboard from '@/components/dashboards/MonthlyHolidayAnalyticsDashboard'
 import ChartsFilterSidebar, { RoadDefectsFilterState } from '@/components/dashboards/ChartsFilterSidebar'
 import { roadDefectsAnalytics } from '@/app/actions/accident/roadDefectsAnalytics'
+import { monthlyHolidayAnalytics } from '@/app/actions/accident/monthlyHolidayAnalytics'
 
 // Backend response interface for road defects analytics
 interface RoadDefectsAnalyticsData {
@@ -14,6 +16,15 @@ interface RoadDefectsAnalyticsData {
   defectCounts: Array<{
     name: string
     count: number
+  }>
+}
+
+// Backend response interface for monthly holiday analytics
+interface MonthlyHolidayAnalyticsData {
+  categories: string[]
+  series: Array<{
+    name: string
+    data: number[]
   }>
 }
 
@@ -33,6 +44,7 @@ const ChartsPage = () => {
   const [activeSubTab, setActiveSubTab] = useState<ChartSubTab>('overall')
   const [showFilterSidebar, setShowFilterSidebar] = useState(true)
   const [chartData, setChartData] = useState<RoadDefectsAnalyticsData | null>(null)
+  const [monthlyHolidayData, setMonthlyHolidayData] = useState<MonthlyHolidayAnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -44,11 +56,19 @@ const ChartsPage = () => {
 
       try {
         // Load with default/empty filters for initial view
-        const response = await roadDefectsAnalytics({ set: {}, get: {defectCounts: 1, defectDistribution: 1} })
+        const [roadDefectsResponse, monthlyHolidayResponse] = await Promise.all([
+          roadDefectsAnalytics({ set: {}, get: {defectCounts: 1, defectDistribution: 1} }),
+          monthlyHolidayAnalytics({ set: {}, get: {} })
+        ])
 
-        if (response.success) {
-          setChartData(response.body)
-        } else {
+        if (roadDefectsResponse.success) {
+          setChartData(roadDefectsResponse.body)
+        }
+        if (monthlyHolidayResponse.success) {
+          setMonthlyHolidayData(monthlyHolidayResponse.body)
+        }
+
+        if (!roadDefectsResponse.success && !monthlyHolidayResponse.success) {
           throw new Error('Failed to fetch initial data')
         }
       } catch (error) {
@@ -102,14 +122,22 @@ const ChartsPage = () => {
 
     try {
       // Load with default/empty filters
-      const response = await roadDefectsAnalytics({
-        set: {},
-        get: { defectDistribution: 1, defectCounts: 1 }
-      })
+      const [roadDefectsResponse, monthlyHolidayResponse] = await Promise.all([
+        roadDefectsAnalytics({
+          set: {},
+          get: { defectDistribution: 1, defectCounts: 1 }
+        }),
+        monthlyHolidayAnalytics({ set: {}, get: {} })
+      ])
 
-      if (response.success) {
-        setChartData(response.body)
-      } else {
+      if (roadDefectsResponse.success) {
+        setChartData(roadDefectsResponse.body)
+      }
+      if (monthlyHolidayResponse.success) {
+        setMonthlyHolidayData(monthlyHolidayResponse.body)
+      }
+
+      if (!roadDefectsResponse.success && !monthlyHolidayResponse.success) {
         throw new Error('Failed to fetch data')
       }
     } catch (error) {
@@ -126,13 +154,21 @@ const ChartsPage = () => {
     setError(null)
 
     try {
-      // Call the server action for road defects analytics
+      // Call the server actions for both analytics
       console.log('Applying filters:', filters)
-      const response = await roadDefectsAnalytics({ set: filters, get: { defectCounts: 1, defectDistribution: 1} })
+      const [roadDefectsResponse, monthlyHolidayResponse] = await Promise.all([
+        roadDefectsAnalytics({ set: filters, get: { defectCounts: 1, defectDistribution: 1} }),
+        monthlyHolidayAnalytics({ set: filters, get: {} })
+      ])
 
-      if (response.success) {
-        setChartData(response.body)
-      } else {
+      if (roadDefectsResponse.success) {
+        setChartData(roadDefectsResponse.body)
+      }
+      if (monthlyHolidayResponse.success) {
+        setMonthlyHolidayData(monthlyHolidayResponse.body)
+      }
+
+      if (!roadDefectsResponse.success && !monthlyHolidayResponse.success) {
         throw new Error('Failed to fetch data')
       }
     } catch (error) {
@@ -289,6 +325,13 @@ const ChartsPage = () => {
                 data={chartData}
                 isLoading={isLoading}
               />
+
+              <div className="mt-6">
+                <MonthlyHolidayAnalyticsDashboard
+                  data={monthlyHolidayData}
+                  isLoading={isLoading}
+                />
+              </div>
             </div>
           )}
 
