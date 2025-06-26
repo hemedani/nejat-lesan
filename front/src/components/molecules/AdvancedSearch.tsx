@@ -40,6 +40,7 @@ import MyDateInput from "../atoms/MyDateInput";
 import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import { DeepPartial, ReqType } from "@/types/declarations/selectInp";
 import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
+import { arrayKeys, numericKeys } from "@/utils/keys";
 
 export type AdvencedArticleSearchParams =
   ReqType["main"]["accident"]["gets"]["set"];
@@ -63,8 +64,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const initialFormValues: DeepPartial<AdvencedArticleSearchParams> = React.useMemo(() => {
     const params: DeepPartial<AdvencedArticleSearchParams> = {};
     for (const [key, value] of currentSearchParams.entries()) {
-      const arrayKeys = ['areaUsages', 'airStatuses', 'roadDefects', 'humanReasons', 'vehicleReasons', 'equipmentDamages', 'roadSurfaceConditions', 'vehicleMaxDamageSections'];
-      const numericKeys = ['page', 'limit', 'seri', 'serial', 'deadCount', 'deadCountMin', 'deadCountMax', 'injuredCount', 'injuredCountMin', 'injuredCountMax', 'newsNumber', 'vehicleInsuranceWarrantyLimit', 'vehicleInsuranceWarrantyLimitMin', 'vehicleInsuranceWarrantyLimitMax'];
 
       if (arrayKeys.includes(key)) {
         if (value) {

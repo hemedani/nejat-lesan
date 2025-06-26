@@ -8,6 +8,7 @@ import { gets as getAccidents } from '@/app/actions/accident/gets';
 import AdvancedSearch from '@/components/molecules/AdvancedSearch';
 import { DefaultSearchArrayValues } from '@/utils/prepareAccidentSearch';
 import { ReqType } from '@/types/declarations/selectInp';
+import { arrayKeys } from "@/utils/keys";
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
@@ -95,7 +96,6 @@ export default function HomePage() {
       const page = +(searchParams.get('page') || '1');
       const limit = +(searchParams.get('limit') || '1000');
 
-      const arrayKeys = ['areaUsages', 'airStatuses', 'roadDefects', 'humanReasons', 'vehicleReasons', 'equipmentDamages', 'roadSurfaceConditions', 'vehicleMaxDamageSections'];
       // Add other search parameters if they exist
       for (const [key, value] of searchParams.entries()) {
         if (value) {

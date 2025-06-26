@@ -204,23 +204,45 @@ export const getsFn: ActFn = async (body) => {
 		}
 	}
 
-	// --- Location & Context (exact match on embedded object's 'name' field) ---
-	if (province) matchConditions["province.name"] = province;
-	if (city) matchConditions["city.name"] = city;
-	if (road) matchConditions["road.name"] = road;
-	if (trafficZone) matchConditions["traffic_zone.name"] = trafficZone;
-	if (cityZone) matchConditions["city_zone.name"] = cityZone;
-	if (accidentType) matchConditions["type.name"] = accidentType; // Schema field: type.name
-	if (position) matchConditions["position.name"] = position;
-	if (rulingType) matchConditions["ruling_type.name"] = rulingType;
-	if (lightStatus) matchConditions["light_status.name"] = lightStatus;
-	if (collisionType) matchConditions["collision_type.name"] = collisionType;
-	if (roadSituation) matchConditions["road_situation.name"] = roadSituation;
-	if (roadRepairType) {
-		matchConditions["road_repair_type.name"] = roadRepairType;
+	// --- Location & Context (match if embedded object's 'name' field is in the provided array) ---
+	if (province && province.length > 0) {
+		matchConditions["province.name"] = { $in: province };
 	}
-	if (shoulderStatus) {
-		matchConditions["shoulder_status.name"] = shoulderStatus;
+	if (city && city.length > 0) {
+		matchConditions["city.name"] = { $in: city };
+	}
+	if (road && road.length > 0) {
+		matchConditions["road.name"] = { $in: road };
+	}
+	if (trafficZone && trafficZone.length > 0) {
+		matchConditions["traffic_zone.name"] = { $in: trafficZone };
+	}
+	if (cityZone && cityZone.length > 0) {
+		matchConditions["city_zone.name"] = { $in: cityZone };
+	}
+	if (accidentType && accidentType.length > 0) {
+		matchConditions["type.name"] = { $in: accidentType }; // Schema field: type.name
+	}
+	if (position && position.length > 0) {
+		matchConditions["position.name"] = { $in: position };
+	}
+	if (rulingType && rulingType.length > 0) {
+		matchConditions["ruling_type.name"] = { $in: rulingType };
+	}
+	if (lightStatus && lightStatus.length > 0) {
+		matchConditions["light_status.name"] = { $in: lightStatus };
+	}
+	if (collisionType && collisionType.length > 0) {
+		matchConditions["collision_type.name"] = { $in: collisionType };
+	}
+	if (roadSituation && roadSituation.length > 0) {
+		matchConditions["road_situation.name"] = { $in: roadSituation };
+	}
+	if (roadRepairType && roadRepairType.length > 0) {
+		matchConditions["road_repair_type.name"] = { $in: roadRepairType };
+	}
+	if (shoulderStatus && shoulderStatus.length > 0) {
+		matchConditions["shoulder_status.name"] = { $in: shoulderStatus };
 	}
 
 	// --- GeoJSON Location Filter ---
@@ -269,7 +291,9 @@ export const getsFn: ActFn = async (body) => {
 
 	// --- Pedestrian DTOs Filters (if ANY pedestrian matches criteria) ---
 	const pedestrianElemMatch: any = {};
-	if (pedestrianSex) pedestrianElemMatch.sex = pedestrianSex;
+	if (pedestrianSex && pedestrianSex.length > 0) {
+		pedestrianElemMatch.sex = { $in: pedestrianSex };
+	}
 	if (pedestrianFirstName) {
 		pedestrianElemMatch.first_name = {
 			$regex: new RegExp(pedestrianFirstName, "i"),
@@ -283,14 +307,18 @@ export const getsFn: ActFn = async (body) => {
 	if (pedestrianNationalCode) {
 		pedestrianElemMatch.national_code = pedestrianNationalCode; // Schema: national_code
 	}
-	if (pedestrianInjuryType) {
-		pedestrianElemMatch["injury_type.name"] = pedestrianInjuryType; // Schema: injury_type.name
+	if (pedestrianInjuryType && pedestrianInjuryType.length > 0) {
+		pedestrianElemMatch["injury_type.name"] = { $in: pedestrianInjuryType }; // Schema: injury_type.name
 	}
-	if (pedestrianFaultStatus) {
-		pedestrianElemMatch["fault_status.name"] = pedestrianFaultStatus; // Schema: fault_status.name
+	if (pedestrianFaultStatus && pedestrianFaultStatus.length > 0) {
+		pedestrianElemMatch["fault_status.name"] = {
+			$in: pedestrianFaultStatus,
+		}; // Schema: fault_status.name
 	}
-	if (pedestrianTotalReason) {
-		pedestrianElemMatch["total_reason.name"] = pedestrianTotalReason; // Schema: total_reason.name
+	if (pedestrianTotalReason && pedestrianTotalReason.length > 0) {
+		pedestrianElemMatch["total_reason.name"] = {
+			$in: pedestrianTotalReason,
+		}; // Schema: total_reason.name
 	}
 	if (Object.keys(pedestrianElemMatch).length > 0) {
 		matchConditions.pedestrian_dtos = { $elemMatch: pedestrianElemMatch }; // Schema field: pedestrian_dtos
@@ -300,23 +328,27 @@ export const getsFn: ActFn = async (body) => {
 	const vehicleElemMatch: any = {};
 
 	// Direct vehicle properties
-	if (vehicleColor) vehicleElemMatch["color.name"] = vehicleColor;
-	if (vehicleSystem) vehicleElemMatch["system.name"] = vehicleSystem;
-	if (vehiclePlaqueType) {
-		vehicleElemMatch["plaque_type.name"] = vehiclePlaqueType;
+	if (vehicleColor && vehicleColor.length > 0) {
+		vehicleElemMatch["color.name"] = { $in: vehicleColor };
 	}
-	if (vehicleSystemType) {
-		vehicleElemMatch["system_type.name"] = vehicleSystemType;
+	if (vehicleSystem && vehicleSystem.length > 0) {
+		vehicleElemMatch["system.name"] = { $in: vehicleSystem };
 	}
-	if (vehicleFaultStatus) {
-		vehicleElemMatch["fault_status.name"] = vehicleFaultStatus;
+	if (vehiclePlaqueType && vehiclePlaqueType.length > 0) {
+		vehicleElemMatch["plaque_type.name"] = { $in: vehiclePlaqueType };
 	}
-	if (vehicleInsuranceCo) {
-		vehicleElemMatch["insurance_co.name"] = vehicleInsuranceCo;
+	if (vehicleSystemType && vehicleSystemType.length > 0) {
+		vehicleElemMatch["system_type.name"] = { $in: vehicleSystemType };
+	}
+	if (vehicleFaultStatus && vehicleFaultStatus.length > 0) {
+		vehicleElemMatch["fault_status.name"] = { $in: vehicleFaultStatus };
+	}
+	if (vehicleInsuranceCo && vehicleInsuranceCo.length > 0) {
+		vehicleElemMatch["insurance_co.name"] = { $in: vehicleInsuranceCo };
 	}
 	if (vehicleInsuranceNo) vehicleElemMatch.insurance_no = vehicleInsuranceNo;
-	if (vehiclePlaqueUsage) {
-		vehicleElemMatch["plaque_usage.name"] = vehiclePlaqueUsage;
+	if (vehiclePlaqueUsage && vehiclePlaqueUsage.length > 0) {
+		vehicleElemMatch["plaque_usage.name"] = { $in: vehiclePlaqueUsage };
 	}
 	if (vehiclePrintNumber) vehicleElemMatch.print_number = vehiclePrintNumber;
 	if (vehiclePlaqueSerialElement) {
@@ -335,14 +367,18 @@ export const getsFn: ActFn = async (body) => {
 			);
 		}
 	}
-	if (vehicleBodyInsuranceCo) {
-		vehicleElemMatch["body_insurance_co.name"] = vehicleBodyInsuranceCo;
+	if (vehicleBodyInsuranceCo && vehicleBodyInsuranceCo.length > 0) {
+		vehicleElemMatch["body_insurance_co.name"] = {
+			$in: vehicleBodyInsuranceCo,
+		};
 	}
 	if (vehicleBodyInsuranceNo) {
 		vehicleElemMatch.body_insurance_no = vehicleBodyInsuranceNo;
 	}
-	if (vehicleMotionDirection) {
-		vehicleElemMatch["motion_direction.name"] = vehicleMotionDirection;
+	if (vehicleMotionDirection && vehicleMotionDirection.length > 0) {
+		vehicleElemMatch["motion_direction.name"] = {
+			$in: vehicleMotionDirection,
+		};
 	}
 	if (vehicleBodyInsuranceDateFrom || vehicleBodyInsuranceDateTo) {
 		vehicleElemMatch.body_insurance_date = {};
@@ -385,7 +421,9 @@ export const getsFn: ActFn = async (body) => {
 	}
 
 	// Driver properties (applied to the driver object within the vehicle)
-	if (driverSex) vehicleElemMatch["driver.sex"] = driverSex;
+	if (driverSex && driverSex.length > 0) {
+		vehicleElemMatch["driver.sex"] = { $in: driverSex };
+	}
 	if (driverFirstName) {
 		vehicleElemMatch["driver.first_name"] = {
 			$regex: new RegExp(driverFirstName, "i"),
@@ -402,19 +440,25 @@ export const getsFn: ActFn = async (body) => {
 	if (driverLicenceNumber) {
 		vehicleElemMatch["driver.licence_number"] = driverLicenceNumber;
 	}
-	if (driverLicenceType) {
-		vehicleElemMatch["driver.licence_type.name"] = driverLicenceType;
+	if (driverLicenceType && driverLicenceType.length > 0) {
+		vehicleElemMatch["driver.licence_type.name"] = {
+			$in: driverLicenceType,
+		};
 	}
-	if (driverInjuryType) {
-		vehicleElemMatch["driver.injury_type.name"] = driverInjuryType;
+	if (driverInjuryType && driverInjuryType.length > 0) {
+		vehicleElemMatch["driver.injury_type.name"] = { $in: driverInjuryType };
 	}
-	if (driverTotalReason) {
-		vehicleElemMatch["driver.total_reason.name"] = driverTotalReason;
+	if (driverTotalReason && driverTotalReason.length > 0) {
+		vehicleElemMatch["driver.total_reason.name"] = {
+			$in: driverTotalReason,
+		};
 	}
 
 	// Passenger properties (nested $elemMatch for passenger_dtos within the vehicle)
 	const passengerElemMatchForVehicle: any = {};
-	if (passengerSex) passengerElemMatchForVehicle.sex = passengerSex;
+	if (passengerSex && passengerSex.length > 0) {
+		passengerElemMatchForVehicle.sex = { $in: passengerSex };
+	}
 	if (passengerFirstName) {
 		passengerElemMatchForVehicle.first_name = {
 			$regex: new RegExp(passengerFirstName, "i"),
@@ -428,16 +472,20 @@ export const getsFn: ActFn = async (body) => {
 	if (passengerNationalCode) {
 		passengerElemMatchForVehicle.national_code = passengerNationalCode;
 	}
-	if (passengerInjuryType) {
-		passengerElemMatchForVehicle["injury_type.name"] = passengerInjuryType;
+	if (passengerInjuryType && passengerInjuryType.length > 0) {
+		passengerElemMatchForVehicle["injury_type.name"] = {
+			$in: passengerInjuryType,
+		};
 	}
-	if (passengerFaultStatus) {
-		passengerElemMatchForVehicle["fault_status.name"] =
-			passengerFaultStatus;
+	if (passengerFaultStatus && passengerFaultStatus.length > 0) {
+		passengerElemMatchForVehicle["fault_status.name"] = {
+			$in: passengerFaultStatus,
+		};
 	}
-	if (passengerTotalReason) {
-		passengerElemMatchForVehicle["total_reason.name"] =
-			passengerTotalReason;
+	if (passengerTotalReason && passengerTotalReason.length > 0) {
+		passengerElemMatchForVehicle["total_reason.name"] = {
+			$in: passengerTotalReason,
+		};
 	}
 
 	if (Object.keys(passengerElemMatchForVehicle).length > 0) {
