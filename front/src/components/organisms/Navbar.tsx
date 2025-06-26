@@ -43,7 +43,7 @@ export const Navbar = () => {
       ),
     },
     {
-      href: "/graph",
+      href: "/charts",
       label: "نمودار",
       icon: (
         <svg
@@ -95,7 +95,7 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
       ${isScrolled
           ? "bg-white bg-opacity-90 backdrop-blur-sm shadow-lg py-2"
           : "bg-gradient-to-b from-white to-transparent py-4"
