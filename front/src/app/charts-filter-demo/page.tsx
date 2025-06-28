@@ -1,31 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
-import ChartsFilterSidebar from '@/components/dashboards/ChartsFilterSidebar'
+import ChartsFilterSidebar, { RoadDefectsFilterState } from '@/components/dashboards/ChartsFilterSidebar'
 
-// FiltersState interface
-interface FiltersState {
-  timeRange: { selectedRange: string; customStartDate?: string; customEndDate?: string }
-  geographic: { province: string; city: string; station: string }
-  severity: { fatal: boolean; injury: boolean; damage: boolean }
-  daysOfWeek: { [key: string]: boolean }
-  holidays: { holiday: boolean; nonHoliday: boolean }
-  collisionType: {
-    singleVehicle: boolean
-    twoVehicle: boolean
-    vehicleMotorcycle: boolean
-    vehiclePedestrian: boolean
-    other: boolean
-    singleVehicleTypes: { [key: string]: boolean }
-    twoVehicleTypes: { [key: string]: boolean }
-  }
-  lighting: { [key: string]: boolean }
-  weather: { [key: string]: boolean }
-  accidentLocation: {
-    position: { [key: string]: boolean }
-    landUse: { [key: string]: boolean }
-  }
-}
+
 
 // Configuration presets
 const configPresets = {
@@ -59,11 +37,11 @@ type ConfigPresetKey = keyof typeof configPresets
 
 const ChartsFilterDemoPage: React.FC = () => {
   const [activePreset, setActivePreset] = useState<ConfigPresetKey>('default')
-  const [appliedFilters, setAppliedFilters] = useState<FiltersState | null>(null)
+  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState | null>(null)
   const [showSidebar, setShowSidebar] = useState(true)
 
   // Handle filter application
-  const handleApplyFilters = (filters: FiltersState) => {
+  const handleApplyFilters = (filters: RoadDefectsFilterState) => {
     setAppliedFilters(filters)
     console.log('Applied Filters:', filters)
   }
@@ -176,30 +154,42 @@ const ChartsFilterDemoPage: React.FC = () => {
               </h2>
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="font-medium text-green-800">بازه زمانی: </span>
-                    <span className="text-green-700">{appliedFilters.timeRange.selectedRange}</span>
-                  </div>
-                  {appliedFilters.geographic.province && (
+                  {appliedFilters.dateOfAccidentFrom && appliedFilters.dateOfAccidentTo && (
                     <div>
-                      <span className="font-medium text-green-800">استان: </span>
-                      <span className="text-green-700">{appliedFilters.geographic.province}</span>
+                      <span className="font-medium text-green-800">بازه زمانی: </span>
+                      <span className="text-green-700">
+                        {appliedFilters.dateOfAccidentFrom} تا {appliedFilters.dateOfAccidentTo}
+                      </span>
                     </div>
                   )}
-                  <div>
-                    <span className="font-medium text-green-800">شدت: </span>
-                    <span className="text-green-700">
-                      {Object.entries(appliedFilters.severity)
-                        .filter(([, value]) => value)
-                        .map(([key]) => {
-                          const labels: { [key: string]: string } = {
-                            fatal: 'فوتی', injury: 'جرحی', damage: 'خسارتی'
-                          }
-                          return labels[key]
-                        })
-                        .join(', ')}
-                    </span>
-                  </div>
+                  {appliedFilters.province && appliedFilters.province.length > 0 && (
+                    <div>
+                      <span className="font-medium text-green-800">استان: </span>
+                      <span className="text-green-700">{appliedFilters.province.join(', ')}</span>
+                    </div>
+                  )}
+                  {appliedFilters.city && appliedFilters.city.length > 0 && (
+                    <div>
+                      <span className="font-medium text-green-800">شهر: </span>
+                      <span className="text-green-700">{appliedFilters.city.join(', ')}</span>
+                    </div>
+                  )}
+                  {(appliedFilters.deadCountMin || appliedFilters.injuredCountMin) && (
+                    <div>
+                      <span className="font-medium text-green-800">شدت تصادف: </span>
+                      <span className="text-green-700">
+                        {appliedFilters.deadCountMin && `حداقل ${appliedFilters.deadCountMin} فوتی`}
+                        {appliedFilters.deadCountMin && appliedFilters.injuredCountMin && ' - '}
+                        {appliedFilters.injuredCountMin && `حداقل ${appliedFilters.injuredCountMin} مجروح`}
+                      </span>
+                    </div>
+                  )}
+                  {appliedFilters.roadDefects && appliedFilters.roadDefects.length > 0 && (
+                    <div>
+                      <span className="font-medium text-green-800">نقایص راه: </span>
+                      <span className="text-green-700">{appliedFilters.roadDefects.join(', ')}</span>
+                    </div>
+                  )}
                   <div className="mt-3 pt-2 border-t border-green-200">
                     <div className="text-xs text-green-600">
                       ✅ فیلترها اعمال شدند - جزئیات کامل در کنسول
