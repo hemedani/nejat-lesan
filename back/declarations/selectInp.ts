@@ -13225,6 +13225,30 @@ otherTypesChart?: (0 | 1 );
 };
 
           
+            accidentSeverityAnalytics: {
+set: {
+dateOfAccidentFrom?: string;
+dateOfAccidentTo?: string;
+officer?: string;
+province?: string[];
+city?: string[];
+road?: string[];
+lightStatus?: string[];
+collisionType?: string[];
+roadSituation?: string[];
+roadSurfaceConditions?: string[];
+humanReasons?: string[];
+roadDefects?: string[];
+vehicleSystem?: string[];
+driverSex?: string[];
+driverLicenceType?: string[];
+};
+get: {
+analytics: (1 );
+};
+};
+
+          
           }
 
         

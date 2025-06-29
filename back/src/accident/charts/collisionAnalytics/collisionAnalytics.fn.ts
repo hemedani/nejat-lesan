@@ -8,7 +8,7 @@
  * collision dashboard. It now includes comprehensive filtering logic.
  */
 import type { ActFn, Document } from "@deps";
-import { accident, Bson } from "../../../../mod.ts";
+import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
 
 export const collisionAnalyticsFn: ActFn = async (body) => {
@@ -137,7 +137,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 										singleVehicleTypes,
 									],
 								},
-								then: "One-Vehicle",
+								then: "تک وسیله‌ای",
 							},
 							{
 								case: {
@@ -146,7 +146,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 										twoVehicleType,
 									],
 								},
-								then: "Two-Vehicle",
+								then: "دو وسیله‌ای‌",
 							},
 							{
 								case: {
@@ -155,7 +155,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 										pedestrianTypes,
 									],
 								},
-								then: "Vehicle-Pedestrian",
+								then: "وسیله نقلیه با عابر",
 							},
 							{
 								case: {
@@ -164,7 +164,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 										motorcycleType,
 									],
 								},
-								then: "Vehicle-Motorcycle",
+								then: "وسیله نقلیه با موتور سیکلت",
 							},
 							{
 								case: {
@@ -173,10 +173,10 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 										multiVehicleTypes,
 									],
 								},
-								then: "Multi-Vehicle",
+								then: "چند وسیله‌ای",
 							},
 						],
-						default: "Other",
+						default: "سایر موارد",
 					},
 				},
 			},
@@ -193,7 +193,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 					{ $project: { _id: 0, name: "$_id", count: "$count" } },
 				],
 				"singleVehicleSubtypes": [
-					{ $match: { mainCollisionCategory: "One-Vehicle" } },
+					{ $match: { mainCollisionCategory: "تک وسیله‌ای" } },
 					{
 						$group: {
 							_id: "$collision_type.name",

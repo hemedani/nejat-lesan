@@ -13189,20 +13189,62 @@ export type ReqType = {
 
       collisionAnalytics: {
         set: {
+          seri?: number;
+          serial?: number;
           dateOfAccidentFrom?: string;
           dateOfAccidentTo?: string;
+          deadCountMin?: number;
+          deadCountMax?: number;
+          injuredCountMin?: number;
+          injuredCountMax?: number;
+          officer?: string;
           province?: string[];
           city?: string[];
           road?: string[];
           accidentType?: string[];
-          collisionType?: string[];
+          position?: string[];
           lightStatus?: string[];
+          collisionType?: string[];
           roadSituation?: string[];
+          roadSurfaceConditions?: string[];
+          polygon?: {
+            type: "Polygon";
+            coordinates: any[];
+          };
+          vehicleSystem?: string[];
+          vehicleFaultStatus?: string[];
+          driverSex?: string[];
+          driverLicenceType?: string[];
+          driverInjuryType?: string[];
         };
         get: {
           mainChart?: (0 | 1);
           singleVehicleChart?: (0 | 1);
           otherTypesChart?: (0 | 1);
+        };
+      };
+
+
+      accidentSeverityAnalytics: {
+        set: {
+          dateOfAccidentFrom?: string;
+          dateOfAccidentTo?: string;
+          officer?: string;
+          province?: string[];
+          city?: string[];
+          road?: string[];
+          lightStatus?: string[];
+          collisionType?: string[];
+          roadSituation?: string[];
+          roadSurfaceConditions?: string[];
+          humanReasons?: string[];
+          roadDefects?: string[];
+          vehicleSystem?: string[];
+          driverSex?: string[];
+          driverLicenceType?: string[];
+        };
+        get: {
+          analytics: (1);
         };
       };
 
