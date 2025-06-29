@@ -209,22 +209,22 @@ export const monthlyHolidayAnalyticsFn: ActFn = async (body) => {
 
 	return {
 		categories: [
-			"Farvardin",
-			"Ordibehesht",
-			"Khordad",
-			"Tir",
-			"Mordad",
-			"Shahrivar",
-			"Mehr",
-			"Aban",
-			"Azar",
-			"Dey",
-			"Bahman",
-			"Esfand",
+			"فروردین",
+			"اردیبهشت",
+			"خرداد",
+			"تیر",
+			"مرداد",
+			"شهریور",
+			"مهر",
+			"آبان",
+			"آذر",
+			"دی",
+			"بهمن",
+			"اسفند",
 		],
 		series: [
-			{ name: "Holiday", data: holidayData },
-			{ name: "Non-Holiday", data: nonHolidayData },
+			{ name: "تعطیل", data: holidayData },
+			{ name: "غیر تعطیل", data: nonHolidayData },
 		],
 	};
 };

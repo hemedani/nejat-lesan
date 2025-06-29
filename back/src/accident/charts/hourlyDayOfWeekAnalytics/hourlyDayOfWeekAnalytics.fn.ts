@@ -85,13 +85,13 @@ export const hourlyDayOfWeekAnalyticsFn: ActFn = async (body) => {
 
 	// --- 4. Format Data for ApexCharts Heatmap ---
 	const daysOfWeek = [
-		{ name: "Saturday", dbIndex: 7 },
-		{ name: "Friday", dbIndex: 6 },
-		{ name: "Thursday", dbIndex: 5 },
-		{ name: "Wednesday", dbIndex: 4 },
-		{ name: "Tuesday", dbIndex: 3 },
-		{ name: "Monday", dbIndex: 2 },
-		{ name: "Sunday", dbIndex: 1 },
+		{ name: "شنبه", dbIndex: 7 },
+		{ name: "جمعه", dbIndex: 6 },
+		{ name: "پنج شنبه", dbIndex: 5 },
+		{ name: "چهار شنبه", dbIndex: 4 },
+		{ name: "سه شنبه", dbIndex: 3 },
+		{ name: "دوشنبه", dbIndex: 2 },
+		{ name: "یکشنبه", dbIndex: 1 },
 	];
 
 	// Initialize the series structure with all zeros

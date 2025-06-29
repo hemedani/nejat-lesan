@@ -89,7 +89,7 @@ const OverallChartsPage = () => {
       } else {
         console.warn('Warning loading monthly holiday data:', monthlyHolidayResult.error)
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)
@@ -158,7 +158,7 @@ const OverallChartsPage = () => {
       if (monthlyHolidayResult.success) {
         setMonthlyHolidayData(monthlyHolidayResult.body)
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)
@@ -277,7 +277,7 @@ const OverallChartsPage = () => {
             {/* Quick Navigation to Individual Charts */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">دسترسی سریع به نمودارها</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <a
                   href="/charts/overall/road-defects"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
@@ -323,6 +323,22 @@ const OverallChartsPage = () => {
                     <div>
                       <h3 className="font-medium text-gray-900">تحلیل ساعتی روز هفته</h3>
                       <p className="text-sm text-gray-600">نمودار حرارتی توزیع تصادفات بر اساس ساعت و روز</p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="/charts/overall/collision-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">تحلیل انواع برخورد</h3>
+                      <p className="text-sm text-gray-600">تحلیل جامع انواع برخورد و تصادفات تک وسیله‌ای</p>
                     </div>
                   </div>
                 </a>

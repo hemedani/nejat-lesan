@@ -54,7 +54,7 @@ const HourlyDayOfWeekPage = () => {
       } else {
         setError(result.error || 'خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته')
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)
@@ -95,7 +95,7 @@ const HourlyDayOfWeekPage = () => {
       } else {
         setError(result.error || 'خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته')
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)

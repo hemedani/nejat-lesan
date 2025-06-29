@@ -49,7 +49,7 @@ const MonthlyHolidayPage = () => {
       } else {
         setError(result.error || 'خطا در بارگذاری داده‌های تحلیل ماهانه تعطیلات')
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)
@@ -90,7 +90,7 @@ const MonthlyHolidayPage = () => {
       } else {
         setError(result.error || 'خطا در بارگذاری داده‌های تحلیل ماهانه تعطیلات')
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)

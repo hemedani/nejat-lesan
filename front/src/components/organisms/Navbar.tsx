@@ -43,7 +43,7 @@ export const Navbar = () => {
       ),
     },
     {
-      href: "/charts",
+      href: "/charts/overall",
       label: "نمودار",
       icon: (
         <svg

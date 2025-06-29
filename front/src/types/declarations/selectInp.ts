@@ -13187,6 +13187,26 @@ export type ReqType = {
       };
 
 
+      collisionAnalytics: {
+        set: {
+          dateOfAccidentFrom?: string;
+          dateOfAccidentTo?: string;
+          province?: string[];
+          city?: string[];
+          road?: string[];
+          accidentType?: string[];
+          collisionType?: string[];
+          lightStatus?: string[];
+          roadSituation?: string[];
+        };
+        get: {
+          mainChart?: (0 | 1);
+          singleVehicleChart?: (0 | 1);
+          otherTypesChart?: (0 | 1);
+        };
+      };
+
+
     }
 
 

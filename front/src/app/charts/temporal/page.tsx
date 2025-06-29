@@ -6,9 +6,10 @@ import ChartNavigation from '@/components/navigation/ChartNavigation'
 
 const TemporalChartsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
+  const [, setIsLoading] = useState(false)
 
   // Handle filter submission (placeholder)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
     setIsLoading(true)
     // TODO: Implement temporal analytics API calls

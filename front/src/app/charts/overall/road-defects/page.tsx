@@ -57,7 +57,7 @@ const RoadDefectsPage = () => {
       } else {
         setError(result.error || 'خطا در بارگذاری داده‌های نقص راه')
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)
@@ -99,7 +99,7 @@ const RoadDefectsPage = () => {
       } else {
         setError(result.error || 'خطا در بارگذاری داده‌های نقص راه')
       }
-    } catch (err) {
+    } catch {
       setError('خطا در برقراری ارتباط با سرور')
     } finally {
       setIsLoading(false)
