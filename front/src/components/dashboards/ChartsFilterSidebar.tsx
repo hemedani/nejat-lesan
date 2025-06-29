@@ -45,9 +45,16 @@ export interface RoadDefectsFilterState {
 interface SidebarProps {
   config: ChartFilterConfig
   onApplyFilters: (filters: RoadDefectsFilterState) => void
+  title?: string
+  description?: string
 }
 
-const ChartsFilterSidebar: React.FC<SidebarProps> = ({ config, onApplyFilters }) => {
+const ChartsFilterSidebar: React.FC<SidebarProps> = ({
+  config,
+  onApplyFilters,
+  title = "فیلترهای تحلیل",
+  description = "برای مشاهده تحلیل دقیق، فیلترهای مورد نظر را اعمال کنید"
+}) => {
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false)
 
   const {
@@ -140,9 +147,9 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({ config, onApplyFilters })
       <div className="flex-1 overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">فیلترهای تحلیل نقایص راه</h2>
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
           <p className="text-sm text-gray-600 mt-1">
-            برای مشاهده تحلیل دقیق، فیلترهای مورد نظر را اعمال کنید
+            {description}
           </p>
         </div>
 

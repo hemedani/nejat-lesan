@@ -13137,6 +13137,56 @@ export type ReqType = {
       };
 
 
+      hourlyDayOfWeekAnalytics: {
+        set: {
+          seri?: number;
+          serial?: number;
+          dateOfAccidentFrom?: string;
+          dateOfAccidentTo?: string;
+          deadCount?: number;
+          deadCountMin?: number;
+          deadCountMax?: number;
+          injuredCount?: number;
+          injuredCountMin?: number;
+          injuredCountMax?: number;
+          hasWitness?: string;
+          newsNumber?: number;
+          officer?: string;
+          completionDateFrom?: string;
+          completionDateTo?: string;
+          province?: string[];
+          city?: string[];
+          road?: string[];
+          trafficZone?: string[];
+          cityZone?: string[];
+          accidentType?: string[];
+          position?: string[];
+          rulingType?: string[];
+          lightStatus?: string[];
+          collisionType?: string[];
+          roadSituation?: string[];
+          roadRepairType?: string[];
+          shoulderStatus?: string[];
+          polygon?: {
+            type: "Polygon";
+            coordinates: any[];
+          };
+          areaUsages?: string[];
+          airStatuses?: string[];
+          roadDefects?: string[];
+          humanReasons?: string[];
+          vehicleReasons?: string[];
+          equipmentDamages?: string[];
+          roadSurfaceConditions?: string[];
+          vehicleColor?: string[];
+          vehicleSystem?: string[];
+        };
+        get: {
+          series?: (0 | 1);
+        };
+      };
+
+
     }
 
 
