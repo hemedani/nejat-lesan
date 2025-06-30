@@ -7,6 +7,7 @@ import { humanReasonAnalyticsSetup } from "./humanReasonAnalytics/mod.ts";
 import { monthlyHolidayAnalyticsSetup } from "./monthlyHolidayAnalytics/mod.ts";
 import { roadDefectsAnalyticsSetup } from "./roadDefectsAnalytics/mod.ts";
 import { roadDefectsAnalyticsWithCountSetup } from "./roadDefectsAnalyticsFnWithCount/mod.ts";
+import { temporalCountAnalyticsSetup } from "./temporalCountAnalytics/mod.ts";
 import { totalReasonAnalyticsSetup } from "./totalReasonAnalytics/mod.ts";
 import { vehicleReasonAnalyticsSetup } from "./vehicleReasonAnalytics/mod.ts";
 
@@ -22,4 +23,5 @@ export const chartSetup = () => {
 	vehicleReasonAnalyticsSetup();
 	areaUsageAnalyticsSetup();
 	companyPerformanceAnalyticsSetup();
+	temporalCountAnalyticsSetup();
 };

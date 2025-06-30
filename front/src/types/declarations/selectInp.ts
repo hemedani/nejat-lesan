@@ -13361,6 +13361,30 @@ export type ReqType = {
       };
 
 
+      temporalCountAnalytics: {
+        set: {
+          dateOfAccidentFrom?: string;
+          dateOfAccidentTo?: string;
+          province?: string[];
+          city?: string[];
+          road?: string[];
+          accidentType?: string[];
+          lightStatus?: string[];
+          collisionType?: string[];
+          roadSituation?: string[];
+          roadSurfaceConditions?: string[];
+          humanReasons?: string[];
+          roadDefects?: string[];
+          vehicleSystem?: string[];
+          driverSex?: string[];
+          driverLicenceType?: string[];
+        };
+        get: {
+          analytics: (1);
+        };
+      };
+
+
     }
 
 

@@ -73,7 +73,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
       case 'temporal':
         return [
           { id: 'time-series', label: 'سری زمانی', href: '/charts/temporal/time-series' },
-          { id: 'seasonal', label: 'تحلیل فصلی', href: '/charts/temporal/seasonal' }
+          { id: 'seasonal', label: 'تحلیل فصلی', href: '/charts/temporal/seasonal' },
+          { id: 'count-analytics', label: 'شمار تصادفات', href: '/charts/temporal/count-analytics' }
         ]
       case 'spatial':
         return [
