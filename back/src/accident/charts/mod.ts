@@ -6,6 +6,7 @@ import { monthlyHolidayAnalyticsSetup } from "./monthlyHolidayAnalytics/mod.ts";
 import { roadDefectsAnalyticsSetup } from "./roadDefectsAnalytics/mod.ts";
 import { roadDefectsAnalyticsWithCountSetup } from "./roadDefectsAnalyticsFnWithCount/mod.ts";
 import { totalReasonAnalyticsSetup } from "./totalReasonAnalytics/mod.ts";
+import { vehicleReasonAnalyticsSetup } from "./vehicleReasonAnalytics/mod.ts";
 
 export const chartSetup = () => {
 	roadDefectsAnalyticsSetup();
@@ -16,4 +17,5 @@ export const chartSetup = () => {
 	accidentSeverityAnalyticsSetup();
 	totalReasonAnalyticsSetup();
 	humanReasonAnalyticsSetup();
+	vehicleReasonAnalyticsSetup();
 };

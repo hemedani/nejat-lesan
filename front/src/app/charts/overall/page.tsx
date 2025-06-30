@@ -374,6 +374,22 @@ const OverallChartsPage = () => {
                     </div>
                   </div>
                 </a>
+                <a
+                  href="/charts/overall/vehicle-reason-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12a3 3 0 000 6h6a3 3 0 000-6H9zm0 0V6a3 3 0 016 0v6m-6 0H6a3 3 0 00-3 3v3a3 3 0 003 3h12a3 3 0 003-3v-3a3 3 0 00-3-3h-3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">توزیع عامل وسیله نقلیه</h3>
+                      <p className="text-sm text-gray-600">تحلیل عوامل مؤثر وسیله نقلیه در تصادفات با نمودار دایره‌ای و میله‌ای</p>
+                    </div>
+                  </div>
+                </a>
               </div>
             </div>
 

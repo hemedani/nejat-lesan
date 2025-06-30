@@ -65,7 +65,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           { id: 'collision-analytics', label: 'تحلیل انواع برخورد', href: '/charts/overall/collision-analytics' },
           { id: 'accident-severity', label: 'سهم شدت تصادفات', href: '/charts/overall/accident-severity' },
           { id: 'total-reason-analytics', label: 'علل تامه تصادفات', href: '/charts/overall/total-reason-analytics' },
-          { id: 'human-reason-analytics', label: 'عوامل انسانی مؤثر', href: '/charts/overall/human-reason-analytics' }
+          { id: 'human-reason-analytics', label: 'عوامل انسانی مؤثر', href: '/charts/overall/human-reason-analytics' },
+          { id: 'vehicle-reason-analytics', label: 'توزیع عامل وسیله نقلیه', href: '/charts/overall/vehicle-reason-analytics' }
         ]
       case 'temporal':
         return [
