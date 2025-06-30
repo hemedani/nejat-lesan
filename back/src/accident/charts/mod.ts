@@ -1,4 +1,5 @@
 import { accidentSeverityAnalyticsSetup } from "./accidentSeverityAnalytics/mod.ts";
+import { areaUsageAnalyticsSetup } from "./areaUsageAnalytics/mod.ts";
 import { collisionAnalyticsSetup } from "./collisionAnalytics/mod.ts";
 import { hourlyDayOfWeekAnalyticsSetup } from "./hourlyDayOfWeekAnalytics/mod.ts";
 import { humanReasonAnalyticsSetup } from "./humanReasonAnalytics/mod.ts";
@@ -18,4 +19,5 @@ export const chartSetup = () => {
 	totalReasonAnalyticsSetup();
 	humanReasonAnalyticsSetup();
 	vehicleReasonAnalyticsSetup();
+	areaUsageAnalyticsSetup();
 };

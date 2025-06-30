@@ -64,6 +64,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           { id: 'hourly-day-of-week', label: 'تحلیل ساعتی روز هفته', href: '/charts/overall/hourly-day-of-week' },
           { id: 'collision-analytics', label: 'تحلیل انواع برخورد', href: '/charts/overall/collision-analytics' },
           { id: 'accident-severity', label: 'سهم شدت تصادفات', href: '/charts/overall/accident-severity' },
+          { id: 'area-usage-analytics', label: 'سهم تصادفات به تفکیک کاربری محل', href: '/charts/overall/area-usage-analytics' },
           { id: 'total-reason-analytics', label: 'علل تامه تصادفات', href: '/charts/overall/total-reason-analytics' },
           { id: 'human-reason-analytics', label: 'عوامل انسانی مؤثر', href: '/charts/overall/human-reason-analytics' },
           { id: 'vehicle-reason-analytics', label: 'توزیع عامل وسیله نقلیه', href: '/charts/overall/vehicle-reason-analytics' }

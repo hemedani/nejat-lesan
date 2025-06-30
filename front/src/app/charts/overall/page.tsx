@@ -375,6 +375,22 @@ const OverallChartsPage = () => {
                   </div>
                 </a>
                 <a
+                  href="/charts/overall/area-usage-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-pink-300 hover:bg-pink-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">سهم تصادفات به تفکیک کاربری محل</h3>
+                      <p className="text-sm text-gray-600">تحلیل توزیع تصادفات بر اساس نوع کاربری محل وقوع با نمودار دایره‌ای</p>
+                    </div>
+                  </div>
+                </a>
+                <a
                   href="/charts/overall/vehicle-reason-analytics"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-teal-300 hover:bg-teal-50 transition-colors"
                 >
