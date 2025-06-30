@@ -277,7 +277,7 @@ const OverallChartsPage = () => {
             {/* Quick Navigation to Individual Charts */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">دسترسی سریع به نمودارها</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <a
                   href="/charts/overall/road-defects"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
@@ -355,6 +355,22 @@ const OverallChartsPage = () => {
                     <div>
                       <h3 className="font-medium text-gray-900">علل تامه تصادفات</h3>
                       <p className="text-sm text-gray-600">توزیع علت تامه تصادفات شدید در قالب نمودار درختی</p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="/charts/overall/human-reason-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">عوامل انسانی مؤثر</h3>
+                      <p className="text-sm text-gray-600">توزیع عوامل انسانی مؤثر در تصادفات به صورت نمودار درختی</p>
                     </div>
                   </div>
                 </a>

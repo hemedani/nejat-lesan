@@ -1,17 +1,24 @@
 /**
  * -----------------------------------------------------------------------------
- * FILE: totalReasonAnalytics.fn.ts (Full Filters & Aggregation Version)
+ * FILE: humanReasonAnalytics.fn.ts (Full Filters & Aggregation)
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
  * This function uses a single, efficient MongoDB Aggregation Pipeline to find
- * the top 10 ultimate causes of severe accidents. It now includes a comprehensive
- * set of filters to refine the data source.
+ * the top 8 human factors contributing to accidents.
+ *
+ * It works by:
+ * 1.  Applying all user-selected filters (date, location, etc.).
+ * 2.  De-normalizing the `human_reasons` array.
+ * 3.  Excluding the "ندارد" (None) category as required.
+ * 4.  Grouping by the `human_reasons.name` field and counting occurrences.
+ * 5.  Sorting by the count to find the most frequent reasons.
+ * 6.  Limiting the result to the top 8.
  */
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
 
-export const totalReasonAnalyticsFn: ActFn = async (body) => {
+export const humanReasonAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
 
 	// --- 1. Set Default Date Range ---
@@ -31,8 +38,6 @@ export const totalReasonAnalyticsFn: ActFn = async (body) => {
 	// --- 2. Build Comprehensive Base Filter ---
 	const matchFilter: Document = {
 		date_of_accident: { $gte: startDate, $lte: endDate },
-		// IMPORTANT: Hardcoded filter for "Severe Accidents" as required by the document.
-		"type.name": { $in: ["فوتی", "جرحی"] },
 	};
 
 	// --- Add all other user-selected filters ---
@@ -40,6 +45,7 @@ export const totalReasonAnalyticsFn: ActFn = async (body) => {
 		province: "province.name",
 		city: "city.name",
 		road: "road.name",
+		accidentType: "type.name",
 		lightStatus: "light_status.name",
 		collisionType: "collision_type.name",
 		roadSituation: "road_situation.name",
@@ -77,32 +83,25 @@ export const totalReasonAnalyticsFn: ActFn = async (body) => {
 		// Stage 1: Filter documents based on all criteria.
 		{ $match: matchFilter },
 
-		// Stage 2: De-normalize the vehicle_dtos array to access each vehicle.
-		{ $unwind: "$vehicle_dtos" },
+		// Stage 2: De-normalize the human_reasons array.
+		{ $unwind: "$human_reasons" },
 
-		// Stage 3: Filter out documents where total_reason is null or not set.
-		{
-			$match: {
-				"vehicle_dtos.driver.total_reason.name": {
-					$exists: true,
-					$ne: null,
-				},
-			},
-		},
+		// Stage 3: Exclude documents where the reason is "ندارد" or null.
+		{ $match: { "human_reasons.name": { $nin: ["ندارد", null] } } },
 
-		// Stage 4: Group by the ultimate reason's name and count them.
+		// Stage 4: Group by the human reason's name and count them.
 		{
 			$group: {
-				_id: "$vehicle_dtos.driver.total_reason.name",
+				_id: "$human_reasons.name",
 				count: { $sum: 1 },
 			},
 		},
 
-		// Stage 5: Sort by count to get the most frequent reasons at the top.
+		// Stage 5: Sort by count to get the most frequent reasons.
 		{ $sort: { count: -1 } },
 
-		// Stage 6: Limit to the top 10 as required by the chart design.
-		{ $limit: 10 },
+		// Stage 6: Limit to the top 8 as required by the chart design.
+		{ $limit: 8 },
 
 		// Stage 7: Project into a clean { name, count } format for the frontend.
 		{
