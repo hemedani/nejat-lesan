@@ -63,7 +63,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           { id: 'monthly-holiday', label: 'تحلیل ماهانه تعطیلات', href: '/charts/overall/monthly-holiday' },
           { id: 'hourly-day-of-week', label: 'تحلیل ساعتی روز هفته', href: '/charts/overall/hourly-day-of-week' },
           { id: 'collision-analytics', label: 'تحلیل انواع برخورد', href: '/charts/overall/collision-analytics' },
-          { id: 'accident-severity', label: 'سهم شدت تصادفات', href: '/charts/overall/accident-severity' }
+          { id: 'accident-severity', label: 'سهم شدت تصادفات', href: '/charts/overall/accident-severity' },
+          { id: 'total-reason-analytics', label: 'علل تامه تصادفات', href: '/charts/overall/total-reason-analytics' }
         ]
       case 'temporal':
         return [
