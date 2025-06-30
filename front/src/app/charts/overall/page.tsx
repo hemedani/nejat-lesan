@@ -406,6 +406,22 @@ const OverallChartsPage = () => {
                     </div>
                   </div>
                 </a>
+                <a
+                  href="/charts/overall/company-performance-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-cyan-300 hover:bg-cyan-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 17h4a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2v6a2 2 0 002 2h4m2 0a9 9 0 11-8 0" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">مقایسه عملکرد کمپانیهای سازنده خودرو</h3>
+                      <p className="text-sm text-gray-600">نمودار حبابی مقایسه کمپانی‌ها بر اساس سهم تصادفات و شدت آسیب</p>
+                    </div>
+                  </div>
+                </a>
               </div>
             </div>
 

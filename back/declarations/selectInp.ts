@@ -13342,6 +13342,25 @@ analytics: (1 );
 };
 
           
+            companyPerformanceAnalytics: {
+set: {
+dateOfAccidentFrom?: string;
+dateOfAccidentTo?: string;
+province?: string[];
+city?: string[];
+road?: string[];
+lightStatus?: string[];
+collisionType?: string[];
+roadSituation?: string[];
+driverSex?: string[];
+driverLicenceType?: string[];
+};
+get: {
+analytics: (1 );
+};
+};
+
+          
           }
 
         
