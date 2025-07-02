@@ -8,6 +8,7 @@ import { monthlyHolidayAnalyticsSetup } from "./monthlyHolidayAnalytics/mod.ts";
 import { roadDefectsAnalyticsSetup } from "./roadDefectsAnalytics/mod.ts";
 import { roadDefectsAnalyticsWithCountSetup } from "./roadDefectsAnalyticsFnWithCount/mod.ts";
 import { temporalCountAnalyticsSetup } from "./temporalCountAnalytics/mod.ts";
+import { temporalNightAnalyticsSetup } from "./temporalNightAnalytics/mod.ts";
 import { temporalSeverityAnalyticsSetup } from "./temporalSeverityAnalytics/mod.ts";
 import { totalReasonAnalyticsSetup } from "./totalReasonAnalytics/mod.ts";
 import { vehicleReasonAnalyticsSetup } from "./vehicleReasonAnalytics/mod.ts";
@@ -26,4 +27,5 @@ export const chartSetup = () => {
 	companyPerformanceAnalyticsSetup();
 	temporalCountAnalyticsSetup();
 	temporalSeverityAnalyticsSetup();
+	temporalNightAnalyticsSetup();
 };

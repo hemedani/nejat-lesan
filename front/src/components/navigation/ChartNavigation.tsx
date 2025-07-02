@@ -136,6 +136,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "سهم تصادفات فوتی از شدید",
             href: "/charts/temporal/severity-analytics",
           },
+          {
+            id: "night-analytics",
+            label: "تصادفات در شب",
+            href: "/charts/temporal/night-analytics",
+          },
         ];
       case "spatial":
         return [

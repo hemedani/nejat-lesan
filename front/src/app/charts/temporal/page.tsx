@@ -205,6 +205,36 @@ const TemporalChartsPage = () => {
                     </div>
                   </div>
                 </a>
+                <a
+                  href="/charts/temporal/night-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-orange-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        تصادفات در شب
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        مقایسه تصادفات شبانه با/بدون روشنایی
+                      </p>
+                    </div>
+                  </div>
+                </a>
               </div>
             </div>
 
