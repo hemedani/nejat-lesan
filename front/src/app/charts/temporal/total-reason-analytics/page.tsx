@@ -22,6 +22,15 @@ interface TemporalTotalReasonData {
   series: ChartSeries[];
 }
 
+// Interface for API response structure
+interface ApiResponseData {
+  categories: string[];
+  series: {
+    name: string;
+    data: number[];
+  }[];
+}
+
 // Demo data for development and fallback
 const DEMO_DATA: TemporalTotalReasonData = {
   categories: [
@@ -173,7 +182,7 @@ const TemporalTotalReasonAnalyticsPage = () => {
 
   // Transform API response to temporal format
   const transformToTemporalFormat = (
-    analyticsData: any,
+    analyticsData: ApiResponseData,
   ): TemporalTotalReasonData => {
     try {
       // Check if the response has the expected structure
@@ -186,10 +195,12 @@ const TemporalTotalReasonAnalyticsPage = () => {
       ) {
         return {
           categories: analyticsData.categories,
-          series: analyticsData.series.map((series: any) => ({
-            name: series.name || "نامشخص",
-            data: Array.isArray(series.data) ? series.data : [],
-          })),
+          series: analyticsData.series.map(
+            (series: { name: string; data: number[] }) => ({
+              name: series.name || "نامشخص",
+              data: Array.isArray(series.data) ? series.data : [],
+            }),
+          ),
         };
       } else {
         console.warn(
