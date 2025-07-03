@@ -3,15 +3,16 @@ import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
 import { cookies } from "next/headers";
 
-export const temporalNightAnalytics = async (details: ReqType["main"]["accident"]["temporalNightAnalytics"]) => {
+export const temporalDamageAnalytics = async (details: ReqType["main"]["accident"]["temporalDamageAnalytics"]) => {
   const token = (await cookies()).get("token");
   return await AppApi().send(
     {
       service: "main",
       model: "accident",
-      act: "temporalNightAnalytics",
+      act: "temporalDamageAnalytics",
       details,
     },
     { token: token?.value }
   );
 };
+

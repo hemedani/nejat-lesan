@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalNightChart from "@/components/charts/TemporalNightChart";
 import { temporalNightAnalytics } from "@/app/actions/accident/temporalNightAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -60,6 +61,9 @@ const TemporalNightAnalyticsPage = () => {
   const [chartData, setChartData] = useState<TemporalNightData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
+    {},
+  );
 
   // Get default filters for initial load
   const getDefaultFilters = (): RoadDefectsFilterState => {
@@ -136,8 +140,9 @@ const TemporalNightAnalyticsPage = () => {
     await loadInitialData();
   };
 
-  // Handle filter submission
-  const handleApplyFilters = async (filterState: RoadDefectsFilterState) => {
+  // Handle filter application
+  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+    setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
     setChartData(null);
@@ -146,18 +151,13 @@ const TemporalNightAnalyticsPage = () => {
       // Map filter state to API parameters
       const apiParams: ReqType["main"]["accident"]["temporalNightAnalytics"]["set"] =
         {
-          dateOfAccidentFrom: filterState.dateOfAccidentFrom,
-          dateOfAccidentTo: filterState.dateOfAccidentTo,
-          province: filterState.province,
-          city: filterState.city,
-          collisionType: filterState.collisionType,
-          roadDefects: filterState.roadDefects,
-          roadSurfaceConditions: filterState.roadSurfaceConditions,
-          areaUsages: filterState.areaUsages,
-          deadCountMin: filterState.deadCountMin,
-          deadCountMax: filterState.deadCountMax,
-          injuredCountMin: filterState.injuredCountMin,
-          injuredCountMax: filterState.injuredCountMax,
+          dateOfAccidentFrom: filters.dateOfAccidentFrom,
+          dateOfAccidentTo: filters.dateOfAccidentTo,
+          province: filters.province,
+          city: filters.city,
+          collisionType: filters.collisionType,
+          roadDefects: filters.roadDefects,
+          roadSurfaceConditions: filters.roadSurfaceConditions,
         };
 
       // Remove undefined values
@@ -411,6 +411,11 @@ const TemporalNightAnalyticsPage = () => {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Applied Filters Display */}
+          <div className="mb-6">
+            <AppliedFiltersDisplay filters={appliedFilters} />
           </div>
 
           {/* Status Messages */}

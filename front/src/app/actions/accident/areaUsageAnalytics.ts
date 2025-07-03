@@ -15,6 +15,3 @@ export const areaUsageAnalytics = async (details: ReqType["main"]["accident"]["a
     { token: token?.value }
   );
 };
-
-
-

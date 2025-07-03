@@ -1,61 +1,135 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import MyAsyncMultiSelect, { SelectOption } from '../atoms/MyAsyncMultiSelect'
-import MyDateInput from '../atoms/MyDateInput'
-import MyInput from '../atoms/MyInput'
+import React, { useState, useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
+import MyDateInput from "../atoms/MyDateInput";
+import MyInput from "../atoms/MyInput";
 
 // Import action functions for loading options
-import { gets as getProvincesAction } from '@/app/actions/province/gets'
-import { gets as getCitiesAction } from '@/app/actions/city/gets'
-import { gets as getLightStatusesAction } from '@/app/actions/light_status/gets'
-import { gets as getCollisionTypesAction } from '@/app/actions/collision_type/gets'
-import { gets as getRoadDefectsAction } from '@/app/actions/road_defect/gets'
-import { gets as getAirStatusesAction } from '@/app/actions/air_status/gets'
-import { gets as getAreaUsagesAction } from '@/app/actions/area_usage/gets'
-import { gets as getRoadSurfaceConditionsAction } from '@/app/actions/road_surface_condition/gets'
+import { gets as getProvincesAction } from "@/app/actions/province/gets";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
+import { gets as getLightStatusesAction } from "@/app/actions/light_status/gets";
+import { gets as getCollisionTypesAction } from "@/app/actions/collision_type/gets";
+import { gets as getRoadDefectsAction } from "@/app/actions/road_defect/gets";
+import { gets as getAirStatusesAction } from "@/app/actions/air_status/gets";
+import { gets as getAreaUsagesAction } from "@/app/actions/area_usage/gets";
+import { gets as getRoadSurfaceConditionsAction } from "@/app/actions/road_surface_condition/gets";
+import { gets as getMaxDamageSectionsAction } from "@/app/actions/max_damage_section/gets";
 
 // Configuration interface
 interface ChartFilterConfig {
-  disableSeverityFilter?: boolean
-  disableCollisionTypeFilter?: boolean
-  disableLightingFilter?: boolean
-  lockToSevereAccidents?: boolean
+  disableSeverityFilter?: boolean;
+  disableCollisionTypeFilter?: boolean;
+  disableLightingFilter?: boolean;
+  lockToSevereAccidents?: boolean;
 }
 
-// Backend-compatible filter state interface
+// Comprehensive filter state interface for all chart pages
 export interface RoadDefectsFilterState {
-  province?: string[]
-  city?: string[]
-  dateOfAccidentFrom?: string
-  dateOfAccidentTo?: string
-  lightStatus?: string[]
-  collisionType?: string[]
-  roadDefects?: string[]
-  airStatuses?: string[]
-  areaUsages?: string[]
-  roadSurfaceConditions?: string[]
-  deadCountMin?: number
-  deadCountMax?: number
-  injuredCountMin?: number
-  injuredCountMax?: number
+  // --- Core Accident Details ---
+  seri?: number;
+  serial?: number;
+  dateOfAccidentFrom?: string;
+  dateOfAccidentTo?: string;
+  deadCountMin?: number;
+  deadCountMax?: number;
+  injuredCountMin?: number;
+  injuredCountMax?: number;
+  officer?: string;
+
+  // --- Location & Context ---
+  province?: string[];
+  city?: string[];
+  road?: string[];
+  accidentType?: string[];
+  lightStatus?: string[];
+  collisionType?: string[];
+  roadSituation?: string[];
+
+  // --- Environmental & Reason-based ---
+  areaUsages?: string[];
+  roadDefects?: string[];
+  humanReasons?: string[];
+  vehicleReasons?: string[];
+  roadSurfaceConditions?: string[];
+  airStatuses?: string[];
+
+  // --- Vehicle DTOs Filters ---
+  vehicleSystem?: string[];
+  vehicleFaultStatus?: string[];
+  maxDamageSections?: string[];
+  vehicleType?: string[];
+  vehicleColor?: string[];
+  vehicleInsuranceCo?: string[];
+  vehicleBodyInsuranceCo?: string[];
+  vehicleLicenceType?: string[];
+  vehiclePlaqueType?: string[];
+  vehiclePlaqueUsage?: string[];
+  vehicleMotionDirection?: string[];
+  vehicleEquipmentDamage?: string[];
+  vehicleRoadRepairType?: string[];
+
+  // --- Driver in Vehicle DTOs Filters ---
+  driverSex?: string[];
+  driverLicenceType?: string[];
+  driverInjuryType?: string[];
+  driverFaultStatus?: string[];
+  driverAge?: string[];
+  driverPosition?: string[];
+  driverRulingType?: string[];
+
+  // --- Road and Infrastructure ---
+  roadType?: string[];
+  roadWidth?: string[];
+  roadSlope?: string[];
+  roadCurve?: string[];
+  roadSign?: string[];
+  roadBarrier?: string[];
+  roadLighting?: string[];
+  roadShoulder?: string[];
+  shoulderStatus?: string[];
+  trafficZone?: string[];
+  cityZone?: string[];
+
+  // --- Time and Weather ---
+  timeOfAccidentFrom?: string;
+  timeOfAccidentTo?: string;
+  seasonality?: string[];
+  dayOfWeek?: string[];
+  isHoliday?: boolean;
+  weatherCondition?: string[];
+  visibility?: string[];
+  temperature?: string[];
+  precipitation?: string[];
+}
+
+// Dynamic checkbox filter interface
+export interface DynamicCheckboxFilter {
+  title: string;
+  options: string[];
+  activeOptions: string[];
+  onChange: (newActiveOptions: string[]) => void;
 }
 
 interface SidebarProps {
-  config: ChartFilterConfig
-  onApplyFilters: (filters: RoadDefectsFilterState) => void
-  title?: string
-  description?: string
+  config: ChartFilterConfig;
+  onApplyFilters: (filters: RoadDefectsFilterState) => void;
+  title?: string;
+  description?: string;
+  initialFilters?: Partial<RoadDefectsFilterState>;
+  dynamicCheckboxFilter?: DynamicCheckboxFilter;
 }
 
 const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   config,
   onApplyFilters,
   title = "فیلترهای تحلیل",
-  description = "برای مشاهده تحلیل دقیق، فیلترهای مورد نظر را اعمال کنید"
+  description = "برای مشاهده تحلیل دقیق، فیلترهای مورد نظر را اعمال کنید",
+  initialFilters,
+  dynamicCheckboxFilter,
 }) => {
-  const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false)
+  const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
 
   const {
     control,
@@ -64,45 +138,66 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     reset,
     formState: { errors },
   } = useForm<RoadDefectsFilterState>({
-    defaultValues: {},
-  })
+    defaultValues: initialFilters || {},
+  });
+
+  // Set initial values for maxDamageSections
+  useEffect(() => {
+    if (initialFilters?.maxDamageSections?.length) {
+      setValue("maxDamageSections", initialFilters.maxDamageSections);
+    }
+  }, [initialFilters?.maxDamageSections, setValue]);
+
+  // Set initial values for collisionType
+  useEffect(() => {
+    if (initialFilters?.collisionType?.length) {
+      setValue("collisionType", initialFilters.collisionType);
+    }
+  }, [initialFilters?.collisionType, setValue]);
 
   // Helper function to create loadOptions for async multi-select
-  const createLoadOptions = (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    action: (args: any) => Promise<any>
-  ) => async (inputValue?: string): Promise<SelectOption[]> => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const setParams: any = { limit: 20, page: 1 }
-    if (inputValue) {
-      setParams.name = inputValue
-    }
-    try {
-      const response = await action({
-        set: setParams,
-        get: { _id: 1, name: 1 },
-      })
-      if (response && response.success) {
-        return response.body.map((item: { _id: string; name: string }) => ({
-          value: item.name,
-          label: item.name,
-        }))
+  const createLoadOptions =
+    (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      action: (args: any) => Promise<any>,
+    ) =>
+    async (inputValue?: string): Promise<SelectOption[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const setParams: any = { limit: 20, page: 1 };
+      if (inputValue) {
+        setParams.name = inputValue;
       }
-    } catch (error) {
-      console.error('Error loading options:', error)
-    }
-    return []
-  }
+      try {
+        const response = await action({
+          set: setParams,
+          get: { _id: 1, name: 1 },
+        });
+        if (response && response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading options:", error);
+      }
+      return [];
+    };
 
   // Load options functions
-  const loadProvincesOptions = createLoadOptions(getProvincesAction)
-  const loadCitiesOptions = createLoadOptions(getCitiesAction)
-  const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction)
-  const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction)
-  const loadRoadDefectsOptions = createLoadOptions(getRoadDefectsAction)
-  const loadAirStatusesOptions = createLoadOptions(getAirStatusesAction)
-  const loadAreaUsagesOptions = createLoadOptions(getAreaUsagesAction)
-  const loadRoadSurfaceConditionsOptions = createLoadOptions(getRoadSurfaceConditionsAction)
+  const loadProvincesOptions = createLoadOptions(getProvincesAction);
+  const loadCitiesOptions = createLoadOptions(getCitiesAction);
+  const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
+  const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
+  const loadRoadDefectsOptions = createLoadOptions(getRoadDefectsAction);
+  const loadAirStatusesOptions = createLoadOptions(getAirStatusesAction);
+  const loadAreaUsagesOptions = createLoadOptions(getAreaUsagesAction);
+  const loadRoadSurfaceConditionsOptions = createLoadOptions(
+    getRoadSurfaceConditionsAction,
+  );
+  const loadMaxDamageSectionsOptions = createLoadOptions(
+    getMaxDamageSectionsAction,
+  );
 
   // Handle form submission
   const onSubmit: SubmitHandler<RoadDefectsFilterState> = (data) => {
@@ -111,46 +206,54 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
       if (Array.isArray(value)) {
         if (value.length > 0) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          acc[key as keyof RoadDefectsFilterState] = value as any
+          acc[key as keyof RoadDefectsFilterState] = value as any;
         }
-      } else if (value !== undefined && value !== null && value.toString().trim() !== '') {
+      } else if (
+        value !== undefined &&
+        value !== null &&
+        value.toString().trim() !== ""
+      ) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        acc[key as keyof RoadDefectsFilterState] = value as any
+        acc[key as keyof RoadDefectsFilterState] = value as any;
       }
-      return acc
-    }, {} as RoadDefectsFilterState)
+      return acc;
+    }, {} as RoadDefectsFilterState);
 
     // Apply severity filter logic based on config
     if (config.lockToSevereAccidents) {
-      cleanedData.deadCountMin = Math.max(cleanedData.deadCountMin || 0, 1)
-      cleanedData.injuredCountMin = Math.max(cleanedData.injuredCountMin || 0, 1)
+      cleanedData.deadCountMin = Math.max(cleanedData.deadCountMin || 0, 1);
+      cleanedData.injuredCountMin = Math.max(
+        cleanedData.injuredCountMin || 0,
+        1,
+      );
     }
 
-    onApplyFilters(cleanedData)
-  }
+    onApplyFilters(cleanedData);
+  };
 
   // Reset form to defaults
   const handleReset = () => {
-    const defaultValues: Partial<RoadDefectsFilterState> = { }
+    const defaultValues: Partial<RoadDefectsFilterState> = {};
 
     // Apply locked values if severity is locked
     if (config.lockToSevereAccidents) {
-      defaultValues.deadCountMin = 1
-      defaultValues.injuredCountMin = 1
+      defaultValues.deadCountMin = 1;
+      defaultValues.injuredCountMin = 1;
     }
 
-    reset(defaultValues)
-  }
+    reset(defaultValues);
+  };
 
   return (
-    <div className="w-80 bg-gray-50 border-l border-gray-200 h-full flex flex-col" dir="rtl">
+    <div
+      className="w-80 bg-gray-50 border-l border-gray-200 h-full flex flex-col"
+      dir="rtl"
+    >
       <div className="flex-1 overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            {description}
-          </p>
+          <p className="text-sm text-gray-600 mt-1">{description}</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
@@ -206,8 +309,16 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                 {config.lockToSevereAccidents && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4 text-blue-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       <span className="text-sm text-blue-800 font-medium">
                         فیلتر تصادفات شدید فعال است
@@ -236,9 +347,65 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     placeholder={config.lockToSevereAccidents ? "1" : "0"}
                   />
                 </div>
+
+                {/* Max Damage Sections */}
+                <MyAsyncMultiSelect
+                  name="maxDamageSections"
+                  label="بخش‌های آسیب‌دیده"
+                  setValue={setValue}
+                  loadOptions={loadMaxDamageSectionsOptions}
+                  errMsg={errors.maxDamageSections?.message}
+                  placeholder="انتخاب بخش‌های آسیب‌دیده..."
+                  defaultOptions
+                  defaultValue={
+                    initialFilters?.maxDamageSections?.map((section) => ({
+                      value: section,
+                      label: section,
+                    })) || []
+                  }
+                />
               </div>
             )}
           </div>
+
+          {/* Dynamic Checkbox Filter Section */}
+          {dynamicCheckboxFilter && (
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <h3 className="text-sm font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
+                {dynamicCheckboxFilter.title}
+              </h3>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {dynamicCheckboxFilter.options.map((option, index) => (
+                  <label
+                    key={index}
+                    className="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={dynamicCheckboxFilter.activeOptions.includes(
+                        option,
+                      )}
+                      onChange={(e) => {
+                        const newActiveOptions = e.target.checked
+                          ? [...dynamicCheckboxFilter.activeOptions, option]
+                          : dynamicCheckboxFilter.activeOptions.filter(
+                              (o) => o !== option,
+                            );
+                        dynamicCheckboxFilter.onChange(newActiveOptions);
+                      }}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                    />
+                    <span className="text-sm text-gray-700">{option}</span>
+                  </label>
+                ))}
+              </div>
+              {dynamicCheckboxFilter.options.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">
+                  هیچ گزینه‌ای در دسترس نیست
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Advanced Filters Section */}
           <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -249,11 +416,15 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
             >
               <span>فیلترهای پیشرفته</span>
               <svg
-                className={`w-5 h-5 transform transition-transform ${advancedFiltersOpen ? 'rotate-180' : ''}`}
+                className={`w-5 h-5 transform transition-transform ${advancedFiltersOpen ? "rotate-180" : ""}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
               </svg>
             </button>
 
@@ -293,6 +464,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     errMsg={errors.collisionType?.message}
                     placeholder="انتخاب نوع برخورد..."
                     defaultOptions
+                    defaultValue={
+                      initialFilters?.collisionType?.map((type) => ({
+                        value: type,
+                        label: type,
+                      })) || []
+                    }
                   />
                 )}
 
@@ -351,7 +528,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChartsFilterSidebar
+export default ChartsFilterSidebar;

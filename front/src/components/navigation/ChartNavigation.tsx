@@ -117,16 +117,6 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
       case "temporal":
         return [
           {
-            id: "time-series",
-            label: "سری زمانی",
-            href: "/charts/temporal/time-series",
-          },
-          {
-            id: "seasonal",
-            label: "تحلیل فصلی",
-            href: "/charts/temporal/seasonal",
-          },
-          {
             id: "count-analytics",
             label: "شمار تصادفات",
             href: "/charts/temporal/count-analytics",
@@ -140,6 +130,26 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             id: "night-analytics",
             label: "تصادفات در شب",
             href: "/charts/temporal/night-analytics",
+          },
+          {
+            id: "damage-analytics",
+            label: "مقایسه زمانی صدمات",
+            href: "/charts/temporal/damage-analytics",
+          },
+          {
+            id: "collision-analytics",
+            label: "نحوه و نوع برخورد",
+            href: "/charts/temporal/collision-analytics",
+          },
+          {
+            id: "total-reason-analytics",
+            label: "علت تامه",
+            href: "/charts/temporal/total-reason-analytics",
+          },
+          {
+            id: "unlicensed-drivers-analytics",
+            label: "کاربران فاقد گواهینامه",
+            href: "/charts/temporal/unlicensed-drivers-analytics",
           },
         ];
       case "spatial":

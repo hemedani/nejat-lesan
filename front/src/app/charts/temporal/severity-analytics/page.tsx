@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalSeverityChart from "@/components/charts/TemporalSeverityChart";
 import { temporalSeverityAnalytics } from "@/app/actions/accident/temporalSeverityAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -58,6 +59,9 @@ const TemporalSeverityAnalyticsPage = () => {
   const [chartData, setChartData] = useState<TemporalSeverityData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
+    {},
+  );
 
   // Get default filters for initial load
   const getDefaultFilters = (): RoadDefectsFilterState => {
@@ -136,7 +140,9 @@ const TemporalSeverityAnalyticsPage = () => {
   };
 
   // Handle filter submission
-  const handleApplyFilters = async (filterState: RoadDefectsFilterState) => {
+  // Handle filter application
+  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+    setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
     setChartData(null);
@@ -145,14 +151,14 @@ const TemporalSeverityAnalyticsPage = () => {
       // Map filter state to API parameters
       const apiParams: ReqType["main"]["accident"]["temporalSeverityAnalytics"]["set"] =
         {
-          dateOfAccidentFrom: filterState.dateOfAccidentFrom,
-          dateOfAccidentTo: filterState.dateOfAccidentTo,
-          province: filterState.province,
-          city: filterState.city,
-          lightStatus: filterState.lightStatus,
-          collisionType: filterState.collisionType,
-          roadDefects: filterState.roadDefects,
-          roadSurfaceConditions: filterState.roadSurfaceConditions,
+          dateOfAccidentFrom: filters.dateOfAccidentFrom,
+          dateOfAccidentTo: filters.dateOfAccidentTo,
+          province: filters.province,
+          city: filters.city,
+          lightStatus: filters.lightStatus,
+          collisionType: filters.collisionType,
+          roadDefects: filters.roadDefects,
+          roadSurfaceConditions: filters.roadSurfaceConditions,
         };
 
       // Remove undefined values
@@ -353,8 +359,13 @@ const TemporalSeverityAnalyticsPage = () => {
             </div>
           </div>
 
-          {/* Status Messages */}
-          <div className="space-y-4">
+          {/* Applied Filters Display */}
+          <div className="mb-6">
+            <AppliedFiltersDisplay filters={appliedFilters} />
+          </div>
+
+          {/* Chart */}
+          <div className="space-y-6">
             {/* Error Message */}
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">

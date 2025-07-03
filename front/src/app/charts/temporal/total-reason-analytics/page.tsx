@@ -1,67 +1,128 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
-import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
-import { areaUsageAnalytics } from "@/app/actions/accident/areaUsageAnalytics";
-import AreaUsageChart from "@/components/charts/AreaUsageChart";
+import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
+import TemporalTotalReasonChart from "@/components/charts/TemporalTotalReasonChart";
+import { temporalTotalReasonAnalytics } from "@/app/actions/accident/temporalTotalReasonAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
 
-// Backend response interface for area usage analytics
-interface AreaUsageAnalyticsResponse {
-  analytics: Array<{
-    name: string;
-    count: number;
-  }>;
+// Interface for chart series
+interface ChartSeries {
+  name: string;
+  data: number[];
+}
+
+// Interface for temporal total reason data
+interface TemporalTotalReasonData {
+  categories: string[];
+  series: ChartSeries[];
 }
 
 // Demo data for development and fallback
-const DEMO_DATA: AreaUsageAnalyticsResponse["analytics"] = [
-  { name: "مسکونی", count: 1456 },
-  { name: "تجاری", count: 970 },
-  { name: "صنعتی", count: 634 },
-  { name: "آموزشی", count: 423 },
-  { name: "بهداشتی درمانی", count: 312 },
-  { name: "مذهبی", count: 267 },
-  { name: "ورزشی", count: 198 },
-  { name: "کشاورزی", count: 156 },
-  { name: "نظامی", count: 89 },
-  { name: "سایر", count: 245 },
-];
+const DEMO_DATA: TemporalTotalReasonData = {
+  categories: [
+    "1401-01",
+    "1401-02",
+    "1401-03",
+    "1401-04",
+    "1401-05",
+    "1401-06",
+    "1401-07",
+    "1401-08",
+    "1401-09",
+    "1401-10",
+    "1401-11",
+    "1401-12",
+  ],
+  series: [
+    {
+      name: "عدم رعایت حق تقدم",
+      data: [42, 38, 45, 41, 39, 44, 46, 43, 40, 47, 45, 42],
+    },
+    {
+      name: "سرعت غیرمجاز",
+      data: [35, 32, 38, 36, 34, 39, 41, 37, 33, 40, 38, 35],
+    },
+    {
+      name: "عدم حفظ فاصله",
+      data: [28, 25, 31, 29, 27, 32, 34, 30, 26, 33, 31, 28],
+    },
+    {
+      name: "تغییر مسیر ناگهانی",
+      data: [22, 19, 25, 23, 21, 26, 28, 24, 20, 27, 25, 22],
+    },
+    {
+      name: "رانندگی در حالت خواب‌آلودگی",
+      data: [18, 15, 21, 19, 17, 22, 24, 20, 16, 23, 21, 18],
+    },
+    {
+      name: "عدم توجه به علائم راهنمایی",
+      data: [15, 12, 18, 16, 14, 19, 21, 17, 13, 20, 18, 15],
+    },
+    {
+      name: "رانندگی در مسیر مخالف",
+      data: [12, 9, 15, 13, 11, 16, 18, 14, 10, 17, 15, 12],
+    },
+    {
+      name: "نقص فنی وسیله نقلیه",
+      data: [8, 5, 11, 9, 7, 12, 14, 10, 6, 13, 11, 8],
+    },
+    {
+      name: "شرایط جوی نامساعد",
+      data: [6, 3, 9, 7, 5, 10, 12, 8, 4, 11, 9, 6],
+    },
+    {
+      name: "نقص در روشنایی جاده",
+      data: [4, 1, 7, 5, 3, 8, 10, 6, 2, 9, 7, 4],
+    },
+  ],
+};
 
-const AreaUsageAnalyticsPage = () => {
+const DEFAULT_FILTER_STATE: RoadDefectsFilterState = {
+  province: [],
+  city: [],
+  dateOfAccidentFrom: undefined,
+  dateOfAccidentTo: undefined,
+  lightStatus: [],
+  collisionType: [],
+  roadDefects: [],
+  roadSurfaceConditions: [],
+  humanReasons: [],
+  vehicleSystem: [],
+  driverSex: [],
+  driverLicenceType: [],
+};
+
+const TemporalTotalReasonAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [chartData, setChartData] = useState<
-    AreaUsageAnalyticsResponse["analytics"] | null
-  >(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [chartData, setChartData] = useState<TemporalTotalReasonData | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] =
+    useState<RoadDefectsFilterState>(DEFAULT_FILTER_STATE);
+  const [activeReasons, setActiveReasons] = useState<string[]>([]);
 
   // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const loadInitialData = async () => {
+  const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+    setChartData(null);
 
     try {
-      const result = await areaUsageAnalytics({
-        set: {
+      const apiParams: ReqType["main"]["accident"]["temporalTotalReasonAnalytics"]["set"] =
+        {
           dateOfAccidentFrom: "",
           dateOfAccidentTo: "",
           province: [],
           city: [],
           road: [],
-          accidentType: [],
           lightStatus: [],
           collisionType: [],
           roadSituation: [],
@@ -71,79 +132,144 @@ const AreaUsageAnalyticsPage = () => {
           vehicleSystem: [],
           driverSex: [],
           driverLicenceType: [],
-        },
-        get: {
-          analytics: 1,
-        },
+        };
+
+      const response = await temporalTotalReasonAnalytics({
+        set: apiParams,
+        get: { analytics: 1 },
       });
 
-      if (result.success && result.body) {
-        setChartData(result.body.analytics);
+      if (response.success && response.body?.analytics) {
+        // Transform the response to temporal format
+        const temporalData = transformToTemporalFormat(response.body.analytics);
+        setChartData(temporalData);
+        setActiveReasons(
+          temporalData.series.length > 0 ? [temporalData.series[0].name] : [],
+        );
         setIsDemoMode(false);
       } else {
-        console.warn("API failed, using demo data:", result.error);
+        console.warn(
+          "[TemporalTotalReasonAnalytics] API failed, using demo data:",
+          response,
+        );
         setChartData(DEMO_DATA);
+        setActiveReasons([DEMO_DATA.series[0].name]);
         setIsDemoMode(true);
-        setError(null); // Clear error when using demo data
+        setError(null);
       }
     } catch (err) {
-      console.warn("Network error, using demo data:", err);
+      console.error(
+        "[TemporalTotalReasonAnalytics] Network error, using demo data:",
+        err,
+      );
       setChartData(DEMO_DATA);
+      setActiveReasons([DEMO_DATA.series[0].name]);
       setIsDemoMode(true);
-      setError(null); // Clear error when using demo data
+      setError(null);
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  // Transform API response to temporal format
+  const transformToTemporalFormat = (
+    analyticsData: any,
+  ): TemporalTotalReasonData => {
+    try {
+      // Check if the response has the expected structure
+      if (
+        analyticsData &&
+        analyticsData.categories &&
+        analyticsData.series &&
+        Array.isArray(analyticsData.categories) &&
+        Array.isArray(analyticsData.series)
+      ) {
+        return {
+          categories: analyticsData.categories,
+          series: analyticsData.series.map((series: any) => ({
+            name: series.name || "نامشخص",
+            data: Array.isArray(series.data) ? series.data : [],
+          })),
+        };
+      } else {
+        console.warn(
+          "[TemporalTotalReasonAnalytics] Invalid API response structure, using demo data",
+        );
+        return DEMO_DATA;
+      }
+    } catch (error) {
+      console.error(
+        "[TemporalTotalReasonAnalytics] Error transforming API data:",
+        error,
+      );
+      return DEMO_DATA;
+    }
   };
+
+  // Load initial data on mount
+  useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
-    setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
     setChartData(null);
 
     try {
-      const filterPayload: ReqType["main"]["accident"]["areaUsageAnalytics"]["set"] =
+      const filterPayload: ReqType["main"]["accident"]["temporalTotalReasonAnalytics"]["set"] =
         {
           dateOfAccidentFrom: filters.dateOfAccidentFrom || "",
           dateOfAccidentTo: filters.dateOfAccidentTo || "",
           province: filters.province || [],
           city: filters.city || [],
           road: [],
-          accidentType: [],
           lightStatus: filters.lightStatus || [],
           collisionType: filters.collisionType || [],
           roadSituation: [],
           roadSurfaceConditions: filters.roadSurfaceConditions || [],
-          humanReasons: [],
+          humanReasons: filters.humanReasons || [],
           roadDefects: filters.roadDefects || [],
-          vehicleSystem: [],
-          driverSex: [],
-          driverLicenceType: [],
+          vehicleSystem: filters.vehicleSystem || [],
+          driverSex: filters.driverSex || [],
+          driverLicenceType: filters.driverLicenceType || [],
         };
 
-      const result = await areaUsageAnalytics({
+      const response = await temporalTotalReasonAnalytics({
         set: filterPayload,
-        get: {
-          analytics: 1,
-        },
+        get: { analytics: 1 },
       });
 
-      if (result.success && result.body) {
-        setChartData(result.body.analytics);
+      if (response.success && response.body?.analytics) {
+        const temporalData = transformToTemporalFormat(response.body.analytics);
+        setChartData(temporalData);
+        setActiveReasons(
+          temporalData.series.length > 0 ? [temporalData.series[0].name] : [],
+        );
+        setAppliedFilters(filters);
         setIsDemoMode(false);
       } else {
-        console.warn("Filter API failed, using demo data:", result.error);
+        console.warn(
+          "[TemporalTotalReasonAnalytics] Filter API failed, using demo data:",
+          response,
+        );
         setChartData(DEMO_DATA);
+        setActiveReasons([DEMO_DATA.series[0].name]);
+        setAppliedFilters(filters);
         setIsDemoMode(true);
-        setError(null); // Clear error when using demo data
+        setError(null);
       }
     } catch (err) {
-      console.warn("Filter network error, using demo data:", err);
+      console.warn(
+        "[TemporalTotalReasonAnalytics] Filter network error, using demo data:",
+        err,
+      );
       setChartData(DEMO_DATA);
+      setActiveReasons([DEMO_DATA.series[0].name]);
+      setAppliedFilters(filters);
       setIsDemoMode(true);
-      setError(null); // Clear error when using demo data
+      setError(null);
     } finally {
       setIsLoading(false);
     }
@@ -152,6 +278,23 @@ const AreaUsageAnalyticsPage = () => {
   // Handle manual data loading
   const handleLoadData = async () => {
     await loadInitialData();
+  };
+
+  // Handle active reasons change
+  const handleActiveReasonsChange = (newActiveReasons: string[]) => {
+    setActiveReasons(newActiveReasons);
+  };
+
+  // Get dynamic checkbox filter configuration
+  const getDynamicCheckboxFilter = () => {
+    if (!chartData || !chartData.series) return undefined;
+
+    return {
+      title: "انتخاب علل برای نمایش",
+      options: chartData.series.map((series) => series.name),
+      activeOptions: activeReasons,
+      onChange: handleActiveReasonsChange,
+    };
   };
 
   // Filter configuration
@@ -167,7 +310,10 @@ const AreaUsageAnalyticsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation currentSection="overall" />
+      <ChartNavigation
+        currentSection="temporal"
+        currentChart="total-reason-analytics"
+      />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -176,8 +322,9 @@ const AreaUsageAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
-              title="فیلترهای تحلیل کاربری محل"
-              description="برای مشاهده سهم تصادفات به تفکیک کاربری محل، فیلترهای مورد نظر را اعمال کنید"
+              title="فیلترهای تحلیل زمانی علت تامه"
+              description="برای مشاهده روند زمانی علت تامه تصادفات، فیلترهای مورد نظر را اعمال کنید"
+              dynamicCheckboxFilter={getDynamicCheckboxFilter()}
             />
           </div>
         )}
@@ -189,11 +336,11 @@ const AreaUsageAnalyticsPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  سهم تصادفات به تفکیک کاربری محل
+                  مقایسه زمانی علت تامه تصادفات
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  نمایش توزیع تصادفات بر اساس نوع کاربری محل وقوع به صورت نمودار
-                  دایره‌ای (Doughnut)
+                  تحلیل روند زمانی ۱۰ علت برتر تصادفات و مقایسه آن‌ها در طول
+                  زمان
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -288,9 +435,7 @@ const AreaUsageAnalyticsPage = () => {
           </div>
 
           {/* Applied Filters Display */}
-          <div className="mb-6">
-            <AppliedFiltersDisplay filters={appliedFilters} />
-          </div>
+          <AppliedFiltersDisplay filters={appliedFilters} />
 
           {/* Charts Content */}
           <div className="space-y-6">
@@ -360,98 +505,57 @@ const AreaUsageAnalyticsPage = () => {
                   </h3>
                 </div>
                 <p className="text-sm text-green-700">
-                  تحلیل کاربری محل با {chartData.length} نوع کاربری شناسایی شده
-                  - مجموع:{" "}
-                  {chartData
-                    .reduce((sum, item) => sum + item.count, 0)
-                    .toLocaleString("fa-IR")}{" "}
-                  تصادف
+                  تحلیل زمانی علت تامه تصادفات با {chartData.series.length} علت
+                  برتر شناسایی شده - دوره زمانی: {chartData.categories.length}{" "}
+                  دوره
                 </p>
               </div>
             )}
 
-            {/* Doughnut Chart */}
-            <AreaUsageChart data={chartData} isLoading={isLoading} />
+            {/* Temporal Chart */}
+            <TemporalTotalReasonChart
+              data={chartData}
+              isLoading={isLoading}
+              activeReasons={activeReasons}
+            />
 
             {/* Statistical Summary */}
-            {chartData && chartData.length > 0 && !isLoading && (
+            {chartData && chartData.series.length > 0 && !isLoading && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   خلاصه آماری
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
-                      {chartData.length}
+                      {chartData.series.length}
                     </div>
                     <div className="text-sm text-blue-800">
-                      تعداد انواع کاربری شناسایی شده
+                      تعداد علل شناسایی شده
                     </div>
                   </div>
                   <div className="bg-green-50 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
-                      {chartData
-                        .reduce((sum, item) => sum + item.count, 0)
-                        .toLocaleString("fa-IR")}
+                      {activeReasons.length}
                     </div>
-                    <div className="text-sm text-green-800">مجموع تصادفات</div>
+                    <div className="text-sm text-green-800">علل انتخاب شده</div>
+                  </div>
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {chartData.categories.length}
+                    </div>
+                    <div className="text-sm text-purple-800">دوره زمانی</div>
                   </div>
                   <div className="bg-amber-50 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-amber-600">
-                      {chartData[0]?.name || "نامشخص"}
-                    </div>
-                    <div className="text-sm text-amber-800">
-                      کاربری غالب ({chartData[0]?.count.toLocaleString("fa-IR")}{" "}
-                      تصادف)
-                    </div>
-                  </div>
-                </div>
-
-                {/* Top 3 Land Uses */}
-                <div className="mt-6 border-t border-gray-200 pt-6">
-                  <h4 className="text-md font-semibold text-gray-900 mb-3">
-                    سه کاربری برتر
-                  </h4>
-                  <div className="space-y-3">
-                    {chartData.slice(0, 3).map((item, index) => {
-                      const totalCount = chartData.reduce(
-                        (sum, dataItem) => sum + dataItem.count,
+                      {chartData.series.reduce(
+                        (total, series) =>
+                          total +
+                          series.data.reduce((sum, value) => sum + value, 0),
                         0,
-                      );
-                      const percentage = (
-                        (item.count / totalCount) *
-                        100
-                      ).toFixed(1);
-                      const colors = [
-                        "bg-blue-500",
-                        "bg-green-500",
-                        "bg-amber-500",
-                      ];
-
-                      return (
-                        <div
-                          key={item.name}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-3 h-3 rounded-full ${colors[index]}`}
-                            ></div>
-                            <span className="font-medium text-gray-900">
-                              {item.name}
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-semibold text-gray-900">
-                              {item.count.toLocaleString("fa-IR")} تصادف
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              {percentage}% از کل
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                      )}
+                    </div>
+                    <div className="text-sm text-amber-800">مجموع تصادفات</div>
                   </div>
                 </div>
               </div>
@@ -463,4 +567,4 @@ const AreaUsageAnalyticsPage = () => {
   );
 };
 
-export default AreaUsageAnalyticsPage;
+export default TemporalTotalReasonAnalyticsPage;
