@@ -1,13 +1,14 @@
-import ClientCommonModelDashboard from "@/components/template/clientCommonModelDashboard";
+import CityZoneDashboard from "@/components/template/CityZoneDashboard";
 import SearchBox from "@/components/molecules/SearchBox";
 import Pagination from "@/components/molecules/Pagination";
 import { ReqType } from "@/types/declarations/selectInp";
 import { gets } from "@/app/actions/city_zone/gets";
 import { count } from "@/app/actions/city_zone/count";
 import { remove } from "@/app/actions/city_zone/remove";
-import { add } from "@/app/actions/city_zone/add";
+
 import { update } from "@/app/actions/city_zone/update";
 import { translateModelNameToPersian } from "@/utils/helper";
+import Link from "next/link";
 
 export default async function AirStatusDashboard({
   searchParams,
@@ -45,8 +46,37 @@ export default async function AirStatusDashboard({
           </p>
         </div>
       </div>
+
+      {/* Custom Add Button */}
+      <div className="absolute top-1 left-5 mt-4">
+        <Link
+          href="/admin/city-zone/create"
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          ایجاد منطقه شهری جدید
+        </Link>
+      </div>
+
       <SearchBox title="name" defaultValue={name} />
-      <ClientCommonModelDashboard data={data.success ? data.body : []} model="city_zone" remove={remove} add={add} update={update} />
+      <CityZoneDashboard
+        data={data.success ? data.body : []}
+        model="city_zone"
+        remove={remove}
+        update={update}
+      />
       <Pagination countPage={counted?.body.qty} initialPage={+page} />
     </div>
   );
