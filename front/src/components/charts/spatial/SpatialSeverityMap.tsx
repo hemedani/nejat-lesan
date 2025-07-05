@@ -1,0 +1,247 @@
+"use client";
+
+import React from "react";
+import dynamic from "next/dynamic";
+
+// Dynamically import react-leaflet components to avoid SSR issues
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false },
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false },
+);
+const GeoJSON = dynamic(
+  () => import("react-leaflet").then((mod) => mod.GeoJSON),
+  { ssr: false },
+);
+
+interface MapData {
+  zoneId: string;
+  zoneName: string;
+  ratio: number;
+}
+
+interface SpatialSeverityMapProps {
+  mapData: MapData[];
+  geoJsonData: Record<string, unknown> | null;
+  isLoading: boolean;
+}
+
+const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
+  mapData,
+  geoJsonData,
+  isLoading,
+}) => {
+  // Color scale function: green (low) to yellow to red (high)
+  const getColor = (ratio: number): string => {
+    if (ratio === 0) return "#E5E7EB"; // Gray for no data
+    if (ratio <= 0.2) return "#10B981"; // Green
+    if (ratio <= 0.4) return "#84CC16"; // Light green
+    if (ratio <= 0.6) return "#F59E0B"; // Yellow
+    if (ratio <= 0.8) return "#F97316"; // Orange
+    return "#EF4444"; // Red
+  };
+
+  // Style function for GeoJSON features
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const style = (feature?: any) => {
+    if (!feature || !feature.properties) return {};
+    const zoneId = feature.properties.id;
+    const zoneData = mapData.find((item) => item.zoneId === zoneId);
+    const ratio = zoneData?.ratio || 0;
+
+    return {
+      fillColor: getColor(ratio),
+      weight: 2,
+      opacity: 1,
+      color: "#6B7280",
+      dashArray: "",
+      fillOpacity: 0.7,
+    };
+  };
+
+  // Event handlers for interactive features
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onEachFeature = (feature: any, layer: any) => {
+    const zoneId = feature.properties.id;
+    const zoneName = feature.properties.name;
+    const zoneData = mapData.find((item) => item.zoneId === zoneId);
+    const ratio = zoneData?.ratio || 0;
+
+    // Popup content
+    const popupContent = `
+      <div class="p-3 min-w-48">
+        <h4 class="font-semibold text-gray-900 mb-2">${zoneName}</h4>
+        <div class="space-y-1 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-600">نسبت شدت:</span>
+            <span class="font-medium">${(ratio * 100).toFixed(1)}%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">سطح خطر:</span>
+            <span class="font-medium" style="color: ${getColor(ratio)}">
+              ${getRiskLevel(ratio)}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    layer.bindPopup(popupContent);
+
+    // Hover effects
+    layer.on({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mouseover: (e: any) => {
+        const eventLayer = e.target;
+        eventLayer.setStyle({
+          weight: 3,
+          color: "#374151",
+          dashArray: "",
+          fillOpacity: 0.9,
+        });
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mouseout: (e: any) => {
+        const eventLayer = e.target;
+        eventLayer.setStyle(style(feature));
+      },
+    });
+  };
+
+  // Get risk level text based on ratio
+  const getRiskLevel = (ratio: number): string => {
+    if (ratio === 0) return "داده ناموجود";
+    if (ratio <= 0.2) return "کم";
+    if (ratio <= 0.4) return "متوسط";
+    if (ratio <= 0.6) return "بالا";
+    if (ratio <= 0.8) return "بسیار بالا";
+    return "بحرانی";
+  };
+
+  // Default center (Tehran coordinates)
+  const defaultCenter: [number, number] = [35.6892, 51.389];
+  const defaultZoom = 11;
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-96 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (
+    !geoJsonData ||
+    !geoJsonData.features ||
+    !Array.isArray(geoJsonData.features) ||
+    geoJsonData.features.length === 0
+  ) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          نقشه سهم شدت تصادفات
+        </h3>
+        <div className="text-center py-8">
+          <p className="text-gray-500">داده‌های نقشه موجود نیست</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">
+          نقشه سهم شدت تصادفات
+        </h3>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fillRule="evenodd"
+              d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z"
+              clipRule="evenodd"
+            />
+          </svg>
+          نقشه کوروپلث
+        </div>
+      </div>
+
+      <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
+        <MapContainer
+          center={defaultCenter}
+          zoom={defaultZoom}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <GeoJSON
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            data={geoJsonData as any}
+            style={style}
+            onEachFeature={onEachFeature}
+            key={JSON.stringify(geoJsonData)}
+          />
+        </MapContainer>
+      </div>
+
+      {/* Color Legend */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-sm font-medium text-gray-900">راهنمای رنگ‌ها</h4>
+          <span className="text-xs text-gray-500">نسبت شدت تصادفات</span>
+        </div>
+        <div className="flex items-center gap-1 text-xs">
+          <div className="flex items-center gap-1">
+            <div className="w-4 h-4 bg-green-500 rounded"></div>
+            <span>کم</span>
+          </div>
+          <div className="flex-1 h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded mx-2"></div>
+          <div className="flex items-center gap-1">
+            <div className="w-4 h-4 bg-red-500 rounded"></div>
+            <span>بالا</span>
+          </div>
+        </div>
+        <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <span>0%</span>
+          <span>100%</span>
+        </div>
+      </div>
+
+      {/* Map Controls Info */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>کلیک روی مناطق برای جزئیات</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L10 9.586V6z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>نگه داشتن ماوس برای نمایش اطلاعات</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SpatialSeverityMap;
