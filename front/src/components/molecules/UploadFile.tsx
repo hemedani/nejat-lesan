@@ -1,6 +1,7 @@
 import {
   isValidImageExtension,
   isValidPdfExtension,
+  isValidGeoJsonExtension,
 } from "@/utils/checkFileExtension";
 import React, { useState } from "react";
 import Image from "next/image";
@@ -12,7 +13,7 @@ interface IUploadImage {
   token?: string;
   lesanUrl?: string;
   inputName: string;
-  type?: "video" | "image" | "doc";
+  type?: "video" | "image" | "doc" | "geo";
   filePath?: string;
 }
 
@@ -81,7 +82,23 @@ export const UploadImage = ({
         htmlFor={inputName}
         className="w-full py-3 bg-gray-200 flex items-center justify-center rounded-lg cursor-pointer hover:bg-gray-300"
       >
-        <input type="file" id={inputName} hidden onChange={handleFileChange} />
+        <input
+          type="file"
+          id={inputName}
+          hidden
+          onChange={handleFileChange}
+          accept={
+            type === "image"
+              ? "image/jpeg,image/png,image/webp,image/jpg"
+              : type === "doc"
+                ? "application/pdf"
+                : type === "geo"
+                  ? ".geojson,.json,.geo,application/json,application/geo+json"
+                  : type === "video"
+                    ? "video/*"
+                    : "*"
+          }
+        />
         انتخاب فایل
       </label>
 
@@ -102,6 +119,29 @@ export const UploadImage = ({
             src={URL.createObjectURL(file)}
           />
         </div>
+      ) : file &&
+        (file.type === "application/json" ||
+          file.type === "application/geo+json" ||
+          file.name.toLowerCase().endsWith(".geojson")) ? (
+        <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <svg
+              className="w-16 h-16 mx-auto mb-2 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p className="text-sm text-gray-600">فایل GeoJSON</p>
+            <p className="text-xs text-gray-500">{file.name}</p>
+          </div>
+        </div>
       ) : filePath && isValidImageExtension(filePath) ? (
         <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border">
           <Image
@@ -119,6 +159,26 @@ export const UploadImage = ({
             src={`${lesanUrl}/uploads/docs/${filePath}`}
           />
         </div>
+      ) : filePath && isValidGeoJsonExtension(filePath) ? (
+        <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <svg
+              className="w-16 h-16 mx-auto mb-2 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p className="text-sm text-gray-600">فایل GeoJSON</p>
+            <p className="text-xs text-gray-500">{filePath}</p>
+          </div>
+        </div>
       ) : (
         ""
       )}
@@ -132,8 +192,8 @@ export const UploadImage = ({
           {isUploaded === "uploading"
             ? "در حال بارگذاری..."
             : isUploaded
-            ? "بارگذاری موفق"
-            : "بارگذاری"}
+              ? "بارگذاری موفق"
+              : "بارگذاری"}
         </button>
       )}
     </div>

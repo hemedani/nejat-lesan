@@ -4,12 +4,14 @@ import { getsSetup } from "./gets/mod.ts";
 import { updateSetup } from "./update/mod.ts";
 import { removeSetup } from "./remove/mod.ts";
 import { countSetup } from "./count/mod.ts";
+import { seedCityZonesSetup } from "./seedCityZones/mod.ts";
 
 export const cityZoneSetup = () => {
-  addSetup();
-  updateSetup();
-  getSetup();
-  getsSetup();
-  removeSetup();
-  countSetup();
+	addSetup();
+	updateSetup();
+	getSetup();
+	getsSetup();
+	removeSetup();
+	countSetup();
+	seedCityZonesSetup();
 };
