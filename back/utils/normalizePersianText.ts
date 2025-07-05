@@ -3,17 +3,40 @@ export function normalizePersianText(text: string): string {
 	if (!text) return "";
 
 	return text
+		// Remove zero-width characters and invisible characters
+		.replace(/[\u200B-\u200D\u2060\uFEFF]/g, "") // Zero-width space, joiner, non-joiner, etc.
+		.replace(/\u200F/g, "") // Right-to-Left mark
+		.replace(/\u200E/g, "") // Left-to-Right mark
+		.replace(/\u202A-\u202E/g, "") // Embedding and override characters
+
+		// Normalize Arabic/Persian characters
 		.replace(/ي/g, "ی") // ی عربی → ی فارسی
 		.replace(/ك/g, "ک") // ک عربی → ک فارسی
 		.replace(/ۀ/g, "ه") // ه‌ی عربی خاص → ه
-		.replace(/ؤ/g, "و") // واو با همزه → و (در صورت نیاز)
+		.replace(/ؤ/g, "و") // واو با همزه → و
+		.replace(/ء/g, "") // Remove standalone hamza
 		.replace(/إ|أ|آ/g, "ا") // انواع الف همزه‌دار → ا
-		// .replace(/‌/g, "") // حذف نیم‌فاصله (U+200C) اگر نیاز نباشه
-		// .replace(/\u200C/g, "") // اطمینان از حذف نیم‌فاصله به صورت یونیکدی
-		.replace(/\u200F/g, "") // حذف Right-to-Left mark
-		.replace(/\u200E/g, "") // حذف Left-to-Right mark
+		.replace(/ة/g, "ه") // تا مربوطه → ه
+		.replace(/ئ/g, "ی") // ی همزه‌دار → ی
+
+		// Normalize digits to English
+		.replace(/[۰-۹]/g, (match) => String.fromCharCode(match.charCodeAt(0) - '۰'.charCodeAt(0) + '0'.charCodeAt(0)))
+		.replace(/[٠-٩]/g, (match) => String.fromCharCode(match.charCodeAt(0) - '٠'.charCodeAt(0) + '0'.charCodeAt(0)))
+
+		// Normalize punctuation and symbols
+		.replace(/[‌]/g, " ") // نیم‌فاصله → space
+		.replace(/[−–—]/g, "-") // Different dashes → hyphen
+		.replace(/['']/g, "'") // Different apostrophes → standard apostrophe
+		.replace(/[""]/g, '"') // Different quotes → standard quote
+		.replace(/[«»]/g, '"') // Persian quotes → standard quote
+		.replace(/[،]/g, ",") // Persian comma → standard comma
+		.replace(/[؛]/g, ";") // Persian semicolon → standard semicolon
+		.replace(/[؟]/g, "?") // Persian question mark → standard question mark
+
+		// Remove extra spaces and normalize whitespace
 		.replace(/\s+/g, " ") // حذف فاصله‌های اضافی
-		.trim(); // حذف فاصله ابتدا و انتها
+		.trim() // حذف فاصله ابتدا و انتها
+		.toLowerCase(); // Convert to lowercase for consistent comparison
 }
 
 // const raw1 = "شخصي كاربردي ي";

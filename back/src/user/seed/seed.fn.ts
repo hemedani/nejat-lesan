@@ -98,7 +98,7 @@ export const seedFn: ActFn = async () => {
 			throw new Error(`Invalid name provided for ${modelName}: ${name}`);
 		}
 
-		const normalizedName = normalizePersianText(name);
+		const normalizedName = normalizePersianText(name).toLowerCase();
 		const cacheKey = `${modelName}:${normalizedName}`;
 
 		// Check cache first
@@ -108,9 +108,11 @@ export const seedFn: ActFn = async () => {
 
 		const model = modelMap[modelName];
 
-		// Use a more specific query to avoid race conditions
+		// Use case-insensitive search to avoid duplicates
 		const found = await model.findOne({
-			filters: { name: normalizedName },
+			filters: {
+				name: { $regex: new RegExp(`^${normalizedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+			},
 			projection: { name: 1, _id: 1 },
 		});
 
@@ -142,15 +144,18 @@ export const seedFn: ActFn = async () => {
 					);
 				}
 			} catch (error) {
-				// If creation fails due to duplicate, try to find it again
+				// If creation fails due to duplicate, try to find it again with case-insensitive search
 				const foundAfterError = await model.findOne({
-					filters: { name: normalizedName },
+					filters: {
+						name: { $regex: new RegExp(`^${normalizedName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+					},
 					projection: { name: 1, _id: 1 },
 				});
 				if (foundAfterError) {
 					relationCache.set(cacheKey, foundAfterError);
 					return foundAfterError;
 				}
+				console.error(`Error creating ${modelName} with name "${normalizedName}":`, error);
 				throw error;
 			}
 		}
@@ -214,7 +219,7 @@ export const seedFn: ActFn = async () => {
 
 
 	// Process records in batches for better performance
-	const BATCH_SIZE = 5; // Reduced batch size to prevent overwhelming the database
+	const BATCH_SIZE = 1; // Reduced to 1 to prevent race conditions and duplicate records
 	const userId = user._id;
 	const startTime = Date.now();
 
@@ -700,40 +705,36 @@ export const seedFn: ActFn = async () => {
 		}
 	};
 
-	// Process records in batches
+	// Process records sequentially to prevent race conditions and duplicates
 	let processedCount = 0;
 	let skippedCount = 0;
 	let totalRecords = readJSON.length;
 
-	console.log(`Starting to process ${totalRecords} accident records in batches of ${BATCH_SIZE}...`);
+	console.log(`Starting to process ${totalRecords} accident records sequentially...`);
 
-	for (let i = 0; i < readJSON.length; i += BATCH_SIZE) {
-		const batchStartTime = Date.now();
-		const batch = readJSON.slice(i, i + BATCH_SIZE);
-		const results = await Promise.allSettled(batch.map(processAccidentRecord));
+	for (let i = 0; i < readJSON.length; i++) {
+		const recordStartTime = Date.now();
 
-		// Count results
-		results.forEach((result, index) => {
-			if (result.status === 'fulfilled') {
-				processedCount++;
-			} else {
-				skippedCount++;
-				console.error(`Failed to process record ${i + index + 1}: ${result.reason}`);
-			}
-		});
+		try {
+			await processAccidentRecord(readJSON[i]);
+			processedCount++;
+		} catch (error) {
+			skippedCount++;
+			console.error(`Failed to process record ${i + 1}: ${error}`);
+		}
 
-		const batchEndTime = Date.now();
-		const batchTime = batchEndTime - batchStartTime;
-		const currentBatch = Math.floor(i / BATCH_SIZE) + 1;
-		const totalBatches = Math.ceil(readJSON.length / BATCH_SIZE);
+		const recordEndTime = Date.now();
+		const recordTime = recordEndTime - recordStartTime;
 		const progress = ((processedCount + skippedCount) / totalRecords * 100).toFixed(1);
 
-		// Log detailed progress
-		console.log(`Batch ${currentBatch}/${totalBatches} completed in ${batchTime}ms - Progress: ${progress}% - Processed: ${processedCount}, Skipped: ${skippedCount}, Invalid coords: ${invalidCoordinatesCount}`);
+		// Log progress every 100 records
+		if ((i + 1) % 100 === 0 || i === readJSON.length - 1) {
+			console.log(`Progress: ${progress}% - Record ${i + 1}/${totalRecords} completed in ${recordTime}ms - Processed: ${processedCount}, Skipped: ${skippedCount}, Invalid coords: ${invalidCoordinatesCount}`);
+		}
 
-		// Optional: Add small delay between batches to prevent overwhelming the database
-		if (i + BATCH_SIZE < readJSON.length) {
-			await new Promise(resolve => setTimeout(resolve, 100));
+		// Add small delay to prevent overwhelming the database
+		if (i < readJSON.length - 1) {
+			await new Promise(resolve => setTimeout(resolve, 10));
 		}
 	}
 
