@@ -2,8 +2,20 @@
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
 
-export const add = async (name: string) => {
+export const add = async (data: {
+  name: string;
+  english_name: string;
+  area: {
+    type: "MultiPolygon";
+    coordinates: number[][][][];
+  };
+  center_location: {
+    type: "Point";
+    coordinates: number[];
+  };
+}) => {
   const token = (await cookies()).get("token");
+
   return await AppApi().send(
     {
       service: "main",
@@ -11,13 +23,22 @@ export const add = async (name: string) => {
       act: "add",
       details: {
         set: {
-          name,
+          name: data.name,
+          english_name: data.english_name,
+          area: data.area,
+          center_location: data.center_location,
         },
         get: {
+          _id: 1,
           name: 1,
+          english_name: 1,
+          area: 1,
+          center_location: 1,
+          createdAt: 1,
+          updatedAt: 1,
         },
       },
     },
-    { token: token?.value }
+    { token: token?.value },
   );
 };
