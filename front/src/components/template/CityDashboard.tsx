@@ -11,6 +11,7 @@ import {
   translateModelNameToPersian,
 } from "@/utils/helper";
 import CreateUpdateModal from "./CreateUpdateModal";
+import SeedCityZonesModal from "./SeedCityZonesModal";
 
 interface TData {
   _id: string;
@@ -22,6 +23,8 @@ interface CityDashboardProps {
   model: ModelName;
   remove: (_id: string, hardCascade: boolean) => Promise<any>;
   update: (_id: string, name: string) => Promise<any>;
+  token?: string;
+  lesanUrl: string;
 }
 
 const CityDashboard: React.FC<CityDashboardProps> = ({
@@ -29,17 +32,22 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
   model,
   remove,
   update,
+  token,
+  lesanUrl,
 }) => {
   const router = useRouter();
 
-  const [activeModal, setActiveModal] = useState<"edit" | "delete" | null>(
-    null,
-  );
+  const [activeModal, setActiveModal] = useState<
+    "edit" | "delete" | "seedZones" | null
+  >(null);
   const [selectedItem, setSelectedItem] = useState<TData | null>(null);
 
   const [hardCascade, setHardCascade] = useState<boolean>(false);
 
-  const openModal = (type: "edit" | "delete", item: TData | null = null) => {
+  const openModal = (
+    type: "edit" | "delete" | "seedZones",
+    item: TData | null = null,
+  ) => {
     setSelectedItem(item);
     setActiveModal(type);
   };
@@ -86,6 +94,7 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
             title={item.name}
             onDelete={() => openModal("delete", item)}
             onEdit={() => openModal("edit", item)}
+            onSeedZones={() => openModal("seedZones", item)}
           />
         ))}
       </div>
@@ -109,6 +118,17 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
           message={`آیا مطمئن هستید که می‌خواهید این ${translateModelNameToPersian(model)} را حذف کنید؟ این عمل قابل بازگشت نیست.`}
           isHardCascade={hardCascade}
           onHardCascadeChange={setHardCascade}
+        />
+      )}
+
+      {activeModal === "seedZones" && selectedItem && (
+        <SeedCityZonesModal
+          isOpen
+          onClose={closeModal}
+          cityId={selectedItem._id}
+          cityName={selectedItem.name}
+          token={token}
+          lesanUrl={lesanUrl}
         />
       )}
     </div>

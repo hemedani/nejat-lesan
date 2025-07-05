@@ -164,6 +164,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "نقاط داغ",
             href: "/charts/spatial/hotspots",
           },
+          {
+            id: "severity-analytics",
+            label: "سهم شدت تصادفات",
+            href: "/charts/spatial/severity-analytics",
+          },
         ];
       case "trend":
         return [
