@@ -4059,6 +4059,17 @@ qty?: (0 | 1 );
 };
 
           
+            seedCityZones: {
+set: {
+cityId: string;
+geoId: string;
+};
+get: {
+summary: (1 );
+};
+};
+
+          
           }
 
         
@@ -4910,7 +4921,7 @@ updatedAt?: (0 | 1 );
           
             uploadFile: {
 set: {
-type: ("video" | "image" | "doc" );
+type: ("video" | "image" | "doc" | "geo" );
 createdAt: Date;
 updatedAt: Date;
 };
@@ -13582,6 +13593,48 @@ roadSurfaceConditions?: string[];
 vehicleSystem?: string[];
 vehicleFaultStatus?: string[];
 driverSex?: string[];
+driverInjuryType?: string[];
+};
+get: {
+analytics: (1 );
+};
+};
+
+          
+            spatialSeverityAnalytics: {
+set: {
+seri?: number;
+serial?: number;
+dateOfAccidentFrom?: string;
+dateOfAccidentTo?: string;
+deadCountMin?: number;
+deadCountMax?: number;
+injuredCountMin?: number;
+injuredCountMax?: number;
+officer?: string;
+province?: string[];
+city?: string[];
+road?: string[];
+trafficZone?: string[];
+cityZone?: string[];
+accidentType?: string[];
+position?: string[];
+rulingType?: string[];
+lightStatus?: string[];
+collisionType?: string[];
+roadSituation?: string[];
+roadRepairType?: string[];
+shoulderStatus?: string[];
+areaUsages?: string[];
+airStatuses?: string[];
+roadDefects?: string[];
+humanReasons?: string[];
+vehicleReasons?: string[];
+roadSurfaceConditions?: string[];
+vehicleSystem?: string[];
+vehicleFaultStatus?: string[];
+driverSex?: string[];
+driverLicenceType?: string[];
 driverInjuryType?: string[];
 };
 get: {
