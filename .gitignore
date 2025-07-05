@@ -3,3 +3,4 @@ node_modules
 back/dump.rdb
 front/dump.rdb
 back/dump.rdb
+back/uploads
