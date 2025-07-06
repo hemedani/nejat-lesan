@@ -17,6 +17,8 @@ export const uploadFileFn: ActFn = async (body) => {
 		? "./uploads/videos"
 		: type === "geo"
 		? "./uploads/geo"
+		: type === "json"
+		? "./uploads/json"
 		: "./uploads/docs";
 	await ensureDir(uploadDir);
 

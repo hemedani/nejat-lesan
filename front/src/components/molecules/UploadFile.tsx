@@ -13,7 +13,7 @@ interface IUploadImage {
   token?: string;
   lesanUrl?: string;
   inputName: string;
-  type?: "video" | "image" | "doc" | "geo";
+  type?: "video" | "image" | "doc" | "geo" | "json";
   filePath?: string;
 }
 

@@ -88,7 +88,7 @@ const SpatialChartsPage = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 تحلیل‌های مکانی
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <a
                   href="/charts/spatial/regional"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
@@ -179,6 +179,36 @@ const SpatialChartsPage = () => {
                       </h3>
                       <p className="text-sm text-gray-600">
                         مقایسه مکانی سهم شدت تصادفات
+                      </p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="/charts/spatial/light-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        وضعیت روشنایی
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        مقایسه مکانی وضعیت روشنایی
                       </p>
                     </div>
                   </div>
