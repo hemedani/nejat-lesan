@@ -10,6 +10,7 @@ import { roadDefectsAnalyticsWithCountSetup } from "./roadDefectsAnalyticsFnWith
 import { spatialCollisionAnalyticsSetup } from "./spatialCollisionAnalytics/mod.ts";
 import { spatialLightAnalyticsSetup } from "./spatialLightAnalytics/mod.ts";
 import { spatialSeverityAnalyticsSetup } from "./spatialSeverityAnalytics/mod.ts";
+import { spatialSingleVehicleAnalyticsSetup } from "./spatialSingleVehicleAnalytics/mod.ts";
 import { temporalCollisionAnalyticsSetup } from "./temporalCollisionAnalytics/mod.ts";
 import { temporalCountAnalyticsSetup } from "./temporalCountAnalytics/mod.ts";
 import { temporalDamageAnalyticsSetup } from "./temporalDamageAnalytics/mod.ts";
@@ -42,4 +43,5 @@ export const chartSetup = () => {
 	spatialSeverityAnalyticsSetup();
 	spatialLightAnalyticsSetup();
 	spatialCollisionAnalyticsSetup();
+	spatialSingleVehicleAnalyticsSetup();
 };

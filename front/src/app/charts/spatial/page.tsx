@@ -88,7 +88,7 @@ const SpatialChartsPage = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 تحلیل‌های مکانی
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <a
                   href="/charts/spatial/regional"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
@@ -239,6 +239,36 @@ const SpatialChartsPage = () => {
                       </h3>
                       <p className="text-sm text-gray-600">
                         مقایسه مکانی نحوه و نوع برخورد
+                      </p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="/charts/spatial/single-vehicle-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-indigo-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        تصادفات تک وسیله ای
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        مقایسه مکانی تصادفات تک وسیله ای
                       </p>
                     </div>
                   </div>

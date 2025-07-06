@@ -179,6 +179,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "نحوه و نوع برخورد",
             href: "/charts/spatial/collision-analytics",
           },
+          {
+            id: "single-vehicle-analytics",
+            label: "تصادفات تک وسیله ای",
+            href: "/charts/spatial/single-vehicle-analytics",
+          },
         ];
       case "trend":
         return [
