@@ -35,7 +35,7 @@ const SpatialLightAnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState<
     SpatialLightAnalyticsResponse["analytics"] | null
   >(null);
-  const [geoJsonData, setGeoJsonData] = useState<any>(null);
+  const [geoJsonData, setGeoJsonData] = useState<object | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
