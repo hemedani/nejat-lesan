@@ -88,7 +88,7 @@ const SpatialChartsPage = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 تحلیل‌های مکانی
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 <a
                   href="/charts/spatial/regional"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
@@ -209,6 +209,36 @@ const SpatialChartsPage = () => {
                       </h3>
                       <p className="text-sm text-gray-600">
                         مقایسه مکانی وضعیت روشنایی
+                      </p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="/charts/spatial/collision-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-green-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 10V3L4 14h7v7l9-11h-7z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        نحوه و نوع برخورد
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        مقایسه مکانی نحوه و نوع برخورد
                       </p>
                     </div>
                   </div>

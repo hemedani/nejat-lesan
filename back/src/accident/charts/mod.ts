@@ -7,6 +7,7 @@ import { humanReasonAnalyticsSetup } from "./humanReasonAnalytics/mod.ts";
 import { monthlyHolidayAnalyticsSetup } from "./monthlyHolidayAnalytics/mod.ts";
 import { roadDefectsAnalyticsSetup } from "./roadDefectsAnalytics/mod.ts";
 import { roadDefectsAnalyticsWithCountSetup } from "./roadDefectsAnalyticsFnWithCount/mod.ts";
+import { spatialCollisionAnalyticsSetup } from "./spatialCollisionAnalytics/mod.ts";
 import { spatialLightAnalyticsSetup } from "./spatialLightAnalytics/mod.ts";
 import { spatialSeverityAnalyticsSetup } from "./spatialSeverityAnalytics/mod.ts";
 import { temporalCollisionAnalyticsSetup } from "./temporalCollisionAnalytics/mod.ts";
@@ -40,4 +41,5 @@ export const chartSetup = () => {
 	temporalUnlicensedDriversAnalyticsSetup();
 	spatialSeverityAnalyticsSetup();
 	spatialLightAnalyticsSetup();
+	spatialCollisionAnalyticsSetup();
 };
