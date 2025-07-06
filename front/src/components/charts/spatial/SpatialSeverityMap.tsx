@@ -25,7 +25,8 @@ interface MapData {
 
 interface SpatialSeverityMapProps {
   mapData: MapData[];
-  geoJsonData: Record<string, unknown> | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  geoJsonData: any;
   isLoading: boolean;
 }
 
@@ -44,12 +45,48 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     return "#EF4444"; // Red
   };
 
+  // Helper function to match zone names flexibly
+  const findZoneData = (zoneName: string) => {
+    if (!zoneName) return null;
+
+    // Try exact match first
+    let zoneData = mapData.find((item) => item.zoneName === zoneName);
+    if (zoneData) return zoneData;
+
+    // Try to extract number from zone name and match
+    const zoneNumber = zoneName.match(/\d+/)?.[0];
+    if (zoneNumber) {
+      zoneData = mapData.find((item) => item.zoneName === zoneNumber);
+      if (zoneData) return zoneData;
+    }
+
+    // Try fuzzy matching - remove common prefixes/suffixes
+    const cleanZoneName = zoneName
+      .replace(/^(منطقه|zone|district)\s*/i, "")
+      .trim();
+    zoneData = mapData.find((item) => {
+      const cleanItemName = item.zoneName
+        .replace(/^(منطقه|zone|district)\s*/i, "")
+        .trim();
+      return cleanItemName === cleanZoneName;
+    });
+    if (zoneData) return zoneData;
+
+    // Try partial matching
+    zoneData = mapData.find(
+      (item) =>
+        zoneName.includes(item.zoneName) || item.zoneName.includes(zoneName),
+    );
+
+    return zoneData;
+  };
+
   // Style function for GeoJSON features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const style = (feature?: any) => {
     if (!feature || !feature.properties) return {};
-    const zoneId = feature.properties.id;
-    const zoneData = mapData.find((item) => item.zoneId === zoneId);
+    const zoneName = feature.properties.name;
+    const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;
 
     return {
@@ -65,9 +102,8 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   // Event handlers for interactive features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onEachFeature = (feature: any, layer: any) => {
-    const zoneId = feature.properties.id;
-    const zoneName = feature.properties.name;
-    const zoneData = mapData.find((item) => item.zoneId === zoneId);
+    const zoneName = feature.properties?.name || "Unknown";
+    const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;
 
     // Popup content
@@ -85,6 +121,14 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
               ${getRiskLevel(ratio)}
             </span>
           </div>
+          ${
+            zoneData
+              ? `<div class="flex justify-between">
+            <span class="text-gray-600">شناسه منطقه:</span>
+            <span class="font-medium">${zoneData.zoneId}</span>
+          </div>`
+              : ""
+          }
         </div>
       </div>
     `;
@@ -154,6 +198,69 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     );
   }
 
+  // Calculate bounds for the map if GeoJSON data is available
+  const getBounds = (): [[number, number], [number, number]] | null => {
+    if (!geoJsonData || !geoJsonData.features) return null;
+
+    try {
+      const features = geoJsonData.features;
+      let minLat = Infinity,
+        maxLat = -Infinity;
+      let minLng = Infinity,
+        maxLng = -Infinity;
+
+      features.forEach((feature: Record<string, unknown>) => {
+        if (
+          feature.geometry &&
+          typeof feature.geometry === "object" &&
+          feature.geometry !== null
+        ) {
+          const geometry = feature.geometry as { coordinates: unknown };
+          if (geometry.coordinates) {
+            const coords = geometry.coordinates;
+            const flatCoords = Array.isArray(coords) ? coords.flat(3) : [];
+
+            for (let i = 0; i < flatCoords.length; i += 2) {
+              const lng = flatCoords[i];
+              const lat = flatCoords[i + 1];
+
+              if (typeof lng === "number" && typeof lat === "number") {
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+              }
+            }
+          }
+        }
+      });
+
+      if (
+        minLat !== Infinity &&
+        maxLat !== -Infinity &&
+        minLng !== Infinity &&
+        maxLng !== -Infinity
+      ) {
+        return [
+          [minLat, minLng],
+          [maxLat, maxLng],
+        ];
+      }
+    } catch (error) {
+      console.warn("Error calculating bounds:", error);
+    }
+
+    return null;
+  };
+
+  const bounds = getBounds();
+  const mapCenter = bounds
+    ? ([
+        (bounds[0][0] + bounds[1][0]) / 2,
+        (bounds[0][1] + bounds[1][1]) / 2,
+      ] as [number, number])
+    : defaultCenter;
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
@@ -174,17 +281,21 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 
       <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
         <MapContainer
-          center={defaultCenter}
+          center={mapCenter}
           zoom={defaultZoom}
           style={{ height: "100%", width: "100%" }}
+          bounds={
+            bounds
+              ? (bounds as [[number, number], [number, number]])
+              : undefined
+          }
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <GeoJSON
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            data={geoJsonData as any}
+            data={geoJsonData}
             style={style}
             onEachFeature={onEachFeature}
             key={JSON.stringify(geoJsonData)}

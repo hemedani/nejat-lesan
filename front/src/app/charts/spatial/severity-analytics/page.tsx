@@ -35,21 +35,7 @@ const SpatialSeverityAnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState<
     SpatialSeverityAnalyticsResponse["analytics"] | null
   >(null);
-  const [geoJsonData, setGeoJsonData] = useState<{
-    type: string;
-    features: Array<{
-      type: string;
-      properties: {
-        id: string;
-        name: string;
-        cityId: string;
-      };
-      geometry: {
-        type: string;
-        coordinates: number[][][] | number[][][][];
-      };
-    }>;
-  } | null>(null);
+  const [geoJsonData, setGeoJsonData] = useState<object | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -302,11 +288,36 @@ const SpatialSeverityAnalyticsPage = () => {
                     </svg>
                   </div>
                   <h4 className="font-medium text-gray-900 mb-1">
-                    مناطق پرخطر
+                    مناطق با تصادفات شدید بالا
                   </h4>
                   <p className="text-2xl font-bold text-red-600">
                     {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.6)
                       .length || 0}
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-orange-50 rounded-lg">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg
+                      className="w-6 h-6 text-orange-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">
+                    مناطق با شدت متوسط
+                  </h4>
+                  <p className="text-2xl font-bold text-orange-600">
+                    {analyticsData.mapChart?.filter(
+                      (zone) => zone.ratio > 0.3 && zone.ratio <= 0.6,
+                    ).length || 0}
                   </p>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
@@ -326,11 +337,25 @@ const SpatialSeverityAnalyticsPage = () => {
                     </svg>
                   </div>
                   <h4 className="font-medium text-gray-900 mb-1">
-                    مناطق کم خطر
+                    مناطق با تصادفات خفیف بالا
                   </h4>
                   <p className="text-2xl font-bold text-green-600">
                     {analyticsData.mapChart?.filter((zone) => zone.ratio <= 0.3)
                       .length || 0}
+                  </p>
+                </div>
+              </div>
+
+              {/* Additional insights */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="bg-red-50 rounded-lg p-4">
+                  <h4 className="font-medium text-red-900 mb-2">
+                    📊 تحلیل شدت تصادفات
+                  </h4>
+                  <p className="text-sm text-red-800">
+                    این نمودار نسبت شدت تصادفات را در مناطق مختلف شهر نشان
+                    می‌دهد. مناطق با نسبت بالا تصادفات شدید، نیاز فوری به
+                    اقدامات ایمنی و بهبود زیرساخت‌های جاده‌ای دارند.
                   </p>
                 </div>
               </div>
