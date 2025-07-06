@@ -4921,7 +4921,7 @@ updatedAt?: (0 | 1 );
           
             uploadFile: {
 set: {
-type: ("video" | "image" | "doc" | "geo" );
+type: ("video" | "image" | "doc" | "geo" | "json" );
 createdAt: Date;
 updatedAt: Date;
 };
@@ -11017,6 +11017,7 @@ vehicleReasons?: (0 | 1 );
           
             seed: {
 set: {
+fileID: string;
 };
 get: {
 ok?: (0 | 1 );
@@ -13602,6 +13603,48 @@ analytics: (1 );
 
           
             spatialSeverityAnalytics: {
+set: {
+seri?: number;
+serial?: number;
+dateOfAccidentFrom?: string;
+dateOfAccidentTo?: string;
+deadCountMin?: number;
+deadCountMax?: number;
+injuredCountMin?: number;
+injuredCountMax?: number;
+officer?: string;
+province?: string[];
+city?: string[];
+road?: string[];
+trafficZone?: string[];
+cityZone?: string[];
+accidentType?: string[];
+position?: string[];
+rulingType?: string[];
+lightStatus?: string[];
+collisionType?: string[];
+roadSituation?: string[];
+roadRepairType?: string[];
+shoulderStatus?: string[];
+areaUsages?: string[];
+airStatuses?: string[];
+roadDefects?: string[];
+humanReasons?: string[];
+vehicleReasons?: string[];
+roadSurfaceConditions?: string[];
+vehicleSystem?: string[];
+vehicleFaultStatus?: string[];
+driverSex?: string[];
+driverLicenceType?: string[];
+driverInjuryType?: string[];
+};
+get: {
+analytics: (1 );
+};
+};
+
+          
+            spatialLightAnalytics: {
 set: {
 seri?: number;
 serial?: number;
