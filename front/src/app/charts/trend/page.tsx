@@ -88,7 +88,7 @@ const TrendChartsPage = () => {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 تحلیل‌های روند
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <a
                   href="/charts/trend/monthly-trend"
                   className="block p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors"
@@ -171,6 +171,36 @@ const TrendChartsPage = () => {
                       </h3>
                       <p className="text-sm text-gray-600">
                         مقایسه سهم شدت تصادفات در رویداد با سایر ایام
+                      </p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="/charts/trend/collision-analytics"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-6 h-6 text-purple-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        نحوه و نوع برخورد
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        مقایسه سهم نحوه و نوع برخورد در رویداد با سایر ایام
                       </p>
                     </div>
                   </div>

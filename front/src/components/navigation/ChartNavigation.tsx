@@ -202,6 +202,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "سهم شدت تصادفات",
             href: "/charts/trend/severity-analytics",
           },
+          {
+            id: "collision-analytics",
+            label: "نحوه و نوع برخورد",
+            href: "/charts/trend/collision-analytics",
+          },
         ];
       default:
         return [];
