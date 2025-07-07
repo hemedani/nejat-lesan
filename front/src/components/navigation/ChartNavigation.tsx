@@ -197,6 +197,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "روند سالانه",
             href: "/charts/trend/yearly-trend",
           },
+          {
+            id: "severity-analytics",
+            label: "سهم شدت تصادفات",
+            href: "/charts/trend/severity-analytics",
+          },
         ];
       default:
         return [];

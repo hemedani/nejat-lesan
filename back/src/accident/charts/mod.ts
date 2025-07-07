@@ -2,6 +2,7 @@ import { accidentSeverityAnalyticsSetup } from "./accidentSeverityAnalytics/mod.
 import { areaUsageAnalyticsSetup } from "./areaUsageAnalytics/mod.ts";
 import { collisionAnalyticsSetup } from "./collisionAnalytics/mod.ts";
 import { companyPerformanceAnalyticsSetup } from "./companyPerformanceAnalytics/mod.ts";
+import { eventSeverityAnalyticsSetup } from "./eventSeverityAnalytics/mod.ts";
 import { hourlyDayOfWeekAnalyticsSetup } from "./hourlyDayOfWeekAnalytics/mod.ts";
 import { humanReasonAnalyticsSetup } from "./humanReasonAnalytics/mod.ts";
 import { monthlyHolidayAnalyticsSetup } from "./monthlyHolidayAnalytics/mod.ts";
@@ -44,4 +45,5 @@ export const chartSetup = () => {
 	spatialLightAnalyticsSetup();
 	spatialCollisionAnalyticsSetup();
 	spatialSingleVehicleAnalyticsSetup();
+	eventSeverityAnalyticsSetup();
 };
