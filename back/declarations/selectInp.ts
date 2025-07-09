@@ -13841,6 +13841,10 @@ analytics: (1 );
           
             mapAccidents: {
 set: {
+polygon?: {
+type: "Polygon";
+coordinates: any[];
+};
 limit?: number;
 skip?: number;
 seri?: number;

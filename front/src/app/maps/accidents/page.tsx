@@ -9,6 +9,10 @@ import ChartsFilterSidebar, {
 } from "@/components/dashboards/ChartsFilterSidebar";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+import AccidentDetailsModal from "@/components/modals/AccidentDetailsModal";
+
+// Hooks
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 // Actions
 import { mapAccidents } from "@/app/actions/accident/mapAccidents";
@@ -38,6 +42,11 @@ const AccidentsMapPage: React.FC = () => {
   const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
     {},
   );
+
+  // Modal state for polygon search results
+  const [modalData, setModalData] = useState<accidentSchema[] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isPolygonLoading, setIsPolygonLoading] = useState<boolean>(false);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
@@ -79,6 +88,94 @@ const AccidentsMapPage: React.FC = () => {
   useEffect(() => {
     handleApplyFilters({});
   }, []);
+
+  // Prevent background scrolling when polygon loading overlay is open
+  useScrollLock(isPolygonLoading);
+
+  // Handle shape drawing
+  const handleShapeDrawn = async (
+    geoJSON: GeoJSON.Feature,
+    layer?: { getRadius?(): number },
+  ) => {
+    setIsPolygonLoading(true);
+    try {
+      // Extract coordinates from the GeoJSON based on geometry type
+      let coordinates: number[][][];
+
+      if (geoJSON.geometry.type === "Polygon") {
+        const polygonGeometry = geoJSON.geometry as GeoJSON.Polygon;
+        coordinates = polygonGeometry.coordinates;
+      } else if (geoJSON.geometry.type === "Point") {
+        // Handle circle - get radius from the layer
+        const pointGeometry = geoJSON.geometry as GeoJSON.Point;
+        const [lng, lat] = pointGeometry.coordinates;
+        // Get radius from the layer (in meters) and convert to degrees
+        const radiusInMeters = layer?.getRadius ? layer.getRadius() : 1000;
+        const radiusInDegrees = radiusInMeters / 111320; // Approximate meters to degrees conversion
+
+        // Development debugging
+        if (process.env.NODE_ENV !== "production") {
+          console.log("Circle center coordinates:", lng, lat);
+          console.log("Circle radius in meters:", radiusInMeters);
+          console.log("Layer has getRadius method:", !!layer?.getRadius);
+          console.log("Circle radius in degrees:", radiusInDegrees);
+        }
+
+        // Create a more accurate polygon approximation of the circle
+        const segments = 32; // Number of segments for circle approximation
+        const circleCoordinates: number[][] = [];
+
+        for (let i = 0; i <= segments; i++) {
+          const angle = (i / segments) * 2 * Math.PI;
+          const x = lng + radiusInDegrees * Math.cos(angle);
+          const y = lat + radiusInDegrees * Math.sin(angle);
+          circleCoordinates.push([x, y]);
+        }
+
+        coordinates = [circleCoordinates];
+
+        // Development debugging
+        if (process.env.NODE_ENV !== "production") {
+          console.log("Generated circle polygon coordinates:", coordinates);
+        }
+      } else {
+        // Default fallback for other geometry types - convert to polygon format
+        const geom = geoJSON.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon;
+        coordinates = geom.coordinates as number[][][];
+      }
+
+      // Create polygon filter with current applied filters
+      const requestPayload = {
+        ...appliedFilters,
+        polygon: {
+          type: "Polygon" as const,
+          coordinates: coordinates,
+        },
+        limit: 5000, // Higher limit for polygon searches
+        skip: 0,
+      };
+
+      const response = await mapAccidents({
+        set: requestPayload,
+        get: { accidents: 1 as const, total: 1 as const },
+      });
+
+      if (response.success && response.body) {
+        setModalData(response.body.accidents || []);
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error fetching polygon accidents:", error);
+    } finally {
+      setIsPolygonLoading(false);
+    }
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalData(null);
+  };
 
   // Filter configuration
   const getFilterConfig = () => {
@@ -151,9 +248,34 @@ const AccidentsMapPage: React.FC = () => {
           {/* Map Container */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
             <div className="h-[700px]">
-              <AccidentMap accidents={accidents} isLoading={isLoading} />
+              <AccidentMap
+                accidents={accidents}
+                isLoading={isLoading}
+                onShapeDrawn={handleShapeDrawn}
+              />
             </div>
           </div>
+
+          {/* Loading overlay for polygon search */}
+          {isPolygonLoading && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1500]">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                  <span className="text-gray-700">
+                    در حال جستجو در منطقه انتخاب شده...
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Accident Details Modal */}
+          <AccidentDetailsModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            data={modalData || []}
+          />
 
           {/* Summary Stats */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">

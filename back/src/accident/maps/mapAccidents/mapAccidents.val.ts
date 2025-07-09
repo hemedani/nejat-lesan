@@ -4,7 +4,7 @@
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
  * The most comprehensive validator for finding accidents, including all possible
- * filters from the master list and pagination controls.
+ * filters from the master list, pagination controls, and a GeoJSON polygon filter.
  */
 import { array, enums, number, object, optional, string } from "@deps";
 import { geoJSONStruct } from "@model";
@@ -12,6 +12,9 @@ import { geoJSONStruct } from "@model";
 export const mapAccidentsValidator = () => {
 	return object({
 		set: object({
+			// --- GeoJSON ---
+			polygon: optional(geoJSONStruct("Polygon")),
+
 			// --- Pagination ---
 			limit: optional(number()),
 			skip: optional(number()),

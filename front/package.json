@@ -24,6 +24,7 @@
     "react-hook-form": "^7.56.4",
     "react-hot-toast": "^2.5.2",
     "react-leaflet": "^5.0.0",
+    "react-leaflet-draw": "^0.20.6",
     "react-leaflet-heatmap-layer-v3": "^3.0.3-beta-1",
     "react-select": "^5.10.1",
     "zaman": "^2.1.1",

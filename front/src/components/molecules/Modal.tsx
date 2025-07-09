@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 export interface ModalProps {
   isOpen: boolean;
@@ -50,10 +51,13 @@ const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen, onClose]);
 
+  // Prevent background scrolling when modal is open
+  useScrollLock(isOpen);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
         ref={modalRef}
         className="bg-white rounded-lg p-6 shadow-xl max-w-md w-full mx-4 transform transition-all"

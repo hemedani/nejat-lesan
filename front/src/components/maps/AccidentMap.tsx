@@ -7,13 +7,20 @@ import {
   useMapEvents,
   Marker,
   Popup,
+  FeatureGroup,
 } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
+import { EditControl } from "react-leaflet-draw";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw/dist/leaflet.draw.css";
+
+// Import leaflet-draw types
+import "leaflet-draw";
 
 // Types
 import { accidentSchema } from "@/types/declarations/selectInp";
+import { DrawCreatedEvent } from "@/types/leaflet-draw";
 
 // Custom marker icons
 const createCustomIcon = (color: string) => {
@@ -56,9 +63,21 @@ const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({
 const AccidentMap: React.FC<{
   accidents: accidentSchema[];
   isLoading: boolean;
-}> = ({ accidents, isLoading }) => {
+  onShapeDrawn?: (
+    geoJSON: GeoJSON.Feature,
+    layer?: { getRadius?(): number },
+  ) => void;
+}> = ({ accidents, isLoading, onShapeDrawn }) => {
   const [currentZoom, setCurrentZoom] = useState(6);
   const showHeatmap = currentZoom < 10;
+
+  // Handle drawing events
+  const handleShapeCreated = (e: DrawCreatedEvent) => {
+    const shapeGeoJSON = e.layer.toGeoJSON();
+    if (onShapeDrawn) {
+      onShapeDrawn(shapeGeoJSON, e.layer);
+    }
+  };
 
   // Prepare heatmap data
   const heatmapPoints = accidents
@@ -111,6 +130,13 @@ const AccidentMap: React.FC<{
         zoom={6}
         className="w-full h-full"
         style={{ minHeight: "600px" }}
+        zoomControl={true}
+        scrollWheelZoom={true}
+        doubleClickZoom={true}
+        zoomSnap={1}
+        zoomDelta={1}
+        wheelDebounceTime={40}
+        wheelPxPerZoomLevel={60}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -118,6 +144,43 @@ const AccidentMap: React.FC<{
         />
 
         <MapEventHandler onZoomChange={setCurrentZoom} />
+
+        {/* Drawing Controls */}
+        <FeatureGroup>
+          <EditControl
+            position="topright"
+            onCreated={handleShapeCreated}
+            draw={{
+              rectangle: {
+                shapeOptions: {
+                  color: "#3b82f6",
+                  weight: 2,
+                  fillOpacity: 0.1,
+                },
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#3b82f6",
+                  weight: 2,
+                  fillOpacity: 0.1,
+                },
+              },
+              circle: {
+                shapeOptions: {
+                  color: "#3b82f6",
+                  weight: 2,
+                  fillOpacity: 0.1,
+                },
+              },
+              polyline: false,
+              marker: false,
+              circlemarker: false,
+            }}
+            edit={{
+              remove: true,
+            }}
+          />
+        </FeatureGroup>
 
         {/* Conditional rendering based on zoom level */}
         {showHeatmap && heatmapPoints.length > 0 && (
@@ -279,10 +342,20 @@ const AccidentMap: React.FC<{
         <div className="mt-2 pt-2 border-t text-xs text-gray-600">
           {showHeatmap ? "نمایش حرارتی" : "نمایش نقاط"}
         </div>
+        <div className="mt-2 pt-2 border-t text-xs">
+          <div className="font-medium text-gray-700 mb-1">ابزار ترسیم:</div>
+          <div className="text-gray-600 space-y-1">
+            <div>• چندضلعی: کلیک برای نقاط</div>
+            <div>• مستطیل: کشیدن از گوشه</div>
+            <div>• دایره: کلیک و کشیدن</div>
+            <div>• جدول جزئیات پس از ترسیم</div>
+            <div>• حذف: انتخاب و Delete</div>
+          </div>
+        </div>
       </div>
 
       {/* Stats overlay */}
-      <div className="absolute top-4 right-4 bg-white p-3 rounded-lg shadow-lg z-[1000]">
+      <div className="absolute bottom-4 right-4 bg-white p-3 rounded-lg shadow-lg z-[1000]">
         <div className="text-sm">
           <div className="font-semibold">
             تعداد تصادفات: {accidents.length.toLocaleString("fa-IR")}

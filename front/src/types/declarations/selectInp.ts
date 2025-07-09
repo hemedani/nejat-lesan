@@ -13841,6 +13841,10 @@ export type ReqType = {
 
       mapAccidents: {
         set: {
+          polygon?: {
+            type: "Polygon";
+            coordinates: any[];
+          };
           limit?: number;
           skip?: number;
           seri?: number;

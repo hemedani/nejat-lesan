@@ -50,7 +50,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
   const openModal = (
     type: "edit" | "delete" | "view",
-    item: accidentSchema | null = null
+    item: accidentSchema | null = null,
   ) => {
     setSelectedItem(item);
     setActiveModal(type);
@@ -69,13 +69,14 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
       if (removedItem.success) {
         ToastNotify(
           "success",
-          `${translateModelNameToPersian(model)} با موفقیت حذف شد`
+          `${translateModelNameToPersian(model)} با موفقیت حذف شد`,
         );
       } else {
         ToastNotify(
           "error",
-          `مشکلی در حذف ${translateModelNameToPersian(model)} وجود دارد - ${removedItem.body.message
-          }}`
+          `مشکلی در حذف ${translateModelNameToPersian(model)} وجود دارد - ${
+            removedItem.body.message
+          }}`,
         );
       }
 
@@ -121,34 +122,37 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
           <Tab.List className="flex space-x-4 space-x-reverse mt-6 border-b">
             <Tab
               className={({ selected }) =>
-                `px-4 py-2 text-sm font-medium border-b-2 ${selected
-                  ? "border-red-500 text-red-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                `px-4 py-2 text-sm font-medium border-b-2 ${
+                  selected
+                    ? "border-red-500 text-red-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`
               }
-            // onClick={() => setViewMode("card")}
+              // onClick={() => setViewMode("card")}
             >
               نمایش کارتی
             </Tab>
             <Tab
               className={({ selected }) =>
-                `px-4 py-2 text-sm font-medium border-b-2 ${selected
-                  ? "border-red-500 text-red-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                `px-4 py-2 text-sm font-medium border-b-2 ${
+                  selected
+                    ? "border-red-500 text-red-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`
               }
-            // onClick={() => setViewMode("table")}
+              // onClick={() => setViewMode("table")}
             >
               نمایش جدولی
             </Tab>
             <Tab
               className={({ selected }) =>
-                `px-4 py-2 text-sm font-medium border-b-2 ${selected
-                  ? "border-red-500 text-red-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                `px-4 py-2 text-sm font-medium border-b-2 ${
+                  selected
+                    ? "border-red-500 text-red-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`
               }
-            // onClick={() => setViewMode("map")}
+              // onClick={() => setViewMode("map")}
             >
               نمایش نقشه
             </Tab>
@@ -214,7 +218,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
           onConfirm={confirmDelete}
           onCancel={closeModal}
           message={`آیا مطمئن هستید که می‌خواهید این ${translateModelNameToPersian(
-            model
+            model,
           )} را حذف کنید؟ این عمل قابل بازگشت نیست.`}
           isHardCascade={hardCascade}
           onHardCascadeChange={setHardCascade}
@@ -223,7 +227,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
       {activeModal === "view" && selectedItem && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
           onClick={closeModal}
         >
           <div
@@ -336,7 +340,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
                   <div className="space-y-4">
                     {selectedItem.vehicle_dtos &&
-                      selectedItem.vehicle_dtos.length > 0 ? (
+                    selectedItem.vehicle_dtos.length > 0 ? (
                       selectedItem.vehicle_dtos.map((vehicle, index) => (
                         <div
                           key={index}

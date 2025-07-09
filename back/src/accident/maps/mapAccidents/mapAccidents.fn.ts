@@ -32,6 +32,15 @@ export const mapAccidentsFn: ActFn = async (body) => {
 		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 
+	// --- Add GeoJSON Polygon Filter ---
+	if (filters.polygon) {
+		matchFilter.location = {
+			$geoWithin: {
+				$geometry: filters.polygon,
+			},
+		};
+	}
+
 	// --- Add all other user-selected filters ---
 	if (filters.officer) {
 		matchFilter.officer = { $regex: new RegExp(filters.officer, "i") };
