@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 # Copy application code
 COPY . .
@@ -57,7 +57,7 @@ RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 RUN chown -R nextjs:nextjs /app
 
 # Set environment variables
