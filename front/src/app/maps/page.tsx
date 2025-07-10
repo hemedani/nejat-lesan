@@ -6,10 +6,12 @@ import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+import { useMapComparison } from "@/context/MapComparisonContext";
 
 const MapsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [, setIsLoading] = useState(false);
+  const { getComparisonCount } = useMapComparison();
 
   // Handle filter submission (placeholder)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -188,29 +190,44 @@ const MapsPage = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-dashed border-gray-200">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <svg
-                      className="w-6 h-6 text-indigo-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
-                      />
-                    </svg>
+              <Link href="/maps/comparison" className="block">
+                <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-indigo-200 hover:border-indigo-300 transition-colors cursor-pointer hover:shadow-md">
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <svg
+                        className="w-6 h-6 text-indigo-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      مقایسه نقشه‌ها
+                      {getComparisonCount() > 0 && (
+                        <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-indigo-500 rounded-full mr-2">
+                          {getComparisonCount()}
+                        </span>
+                      )}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      مقایسه تصاویر ذخیره شده
+                      {getComparisonCount() > 0 && (
+                        <span className="text-indigo-600 font-medium">
+                          {" "}
+                          ({getComparisonCount()} ذخیره شده)
+                        </span>
+                      )}
+                    </p>
                   </div>
-                  <h3 className="font-medium text-gray-900 mb-2">
-                    نقشه تطبیقی
-                  </h3>
-                  <p className="text-sm text-gray-600">مقایسه دوره‌ای</p>
                 </div>
-              </div>
+              </Link>
             </div>
 
             {/* Main Map Placeholder */}

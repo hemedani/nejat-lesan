@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import html2canvas from "html2canvas";
+import toast from "react-hot-toast";
 
 // Components
 import ChartsFilterSidebar, {
@@ -13,6 +15,10 @@ import AccidentDetailsModal from "@/components/modals/AccidentDetailsModal";
 
 // Hooks
 import { useScrollLock } from "@/hooks/useScrollLock";
+import {
+  useMapComparison,
+  generateComparisonTitle,
+} from "@/context/MapComparisonContext";
 
 // Actions
 import { mapAccidents } from "@/app/actions/accident/mapAccidents";
@@ -47,6 +53,11 @@ const AccidentsMapPage: React.FC = () => {
   const [modalData, setModalData] = useState<accidentSchema[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isPolygonLoading, setIsPolygonLoading] = useState<boolean>(false);
+
+  // Map comparison context
+  const { addComparison } = useMapComparison();
+  const [isCapturingSnapshot, setIsCapturingSnapshot] =
+    useState<boolean>(false);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
@@ -89,8 +100,8 @@ const AccidentsMapPage: React.FC = () => {
     handleApplyFilters({});
   }, []);
 
-  // Prevent background scrolling when polygon loading overlay is open
-  useScrollLock(isPolygonLoading);
+  // Prevent background scrolling when polygon loading overlay is open or when capturing snapshot
+  useScrollLock(isPolygonLoading || isCapturingSnapshot);
 
   // Handle shape drawing
   const handleShapeDrawn = async (
@@ -177,6 +188,79 @@ const AccidentsMapPage: React.FC = () => {
     setModalData(null);
   };
 
+  // Handle snapshot capture for comparison
+  const handleCaptureSnapshot = async () => {
+    setIsCapturingSnapshot(true);
+    try {
+      // Find the map container element
+      const mapContainer = document.querySelector(".leaflet-container");
+      if (!mapContainer) {
+        toast.error("خطا در پیدا کردن نقشه");
+        return;
+      }
+
+      // Wait for map to be fully loaded
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Configure html2canvas options
+      const options = {
+        backgroundColor: "#ffffff",
+        scale: 1,
+        useCORS: true,
+        allowTaint: true,
+        ignoreElements: (element: HTMLElement) => {
+          // Exclude drawing controls and other UI elements from the snapshot
+          return (
+            element.classList?.contains("leaflet-draw-toolbar") ||
+            element.classList?.contains("leaflet-control-zoom") ||
+            element.classList?.contains("leaflet-control-attribution")
+          );
+        },
+      };
+
+      // Capture the map as image using html2canvas (better font handling)
+      let dataUrl: string;
+      try {
+        const canvas = await html2canvas(mapContainer as HTMLElement, options);
+        dataUrl = canvas.toDataURL("image/png", 0.9);
+      } catch (error) {
+        console.warn(
+          "html2canvas capture failed, trying with basic options:",
+          error,
+        );
+        // Fallback with minimal options
+        const fallbackOptions = {
+          backgroundColor: "#ffffff",
+          scale: 0.8,
+          useCORS: true,
+          allowTaint: true,
+        };
+        const fallbackCanvas = await html2canvas(
+          mapContainer as HTMLElement,
+          fallbackOptions,
+        );
+        dataUrl = fallbackCanvas.toDataURL("image/png", 0.8);
+      }
+
+      // Generate a descriptive title
+      const title = generateComparisonTitle(appliedFilters);
+
+      // Add to comparison context
+      addComparison({
+        imageDataUrl: dataUrl,
+        filters: appliedFilters,
+        title,
+      });
+
+      toast.success("نقشه با موفقیت برای مقایسه ذخیره شد");
+    } catch (error) {
+      console.error("Error capturing snapshot:", error);
+      toast.error("خطا در ذخیره نقشه");
+    } finally {
+      setIsCapturingSnapshot(false);
+    }
+  };
+
   // Filter configuration
   const getFilterConfig = () => {
     return {
@@ -217,6 +301,35 @@ const AccidentsMapPage: React.FC = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={handleCaptureSnapshot}
+                  disabled={isCapturingSnapshot || isLoading}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isCapturingSnapshot ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>در حال ذخیره...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                        />
+                      </svg>
+                      <span>ارسال برای مقایسه</span>
+                    </>
+                  )}
+                </button>
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
@@ -264,6 +377,20 @@ const AccidentsMapPage: React.FC = () => {
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                   <span className="text-gray-700">
                     در حال جستجو در منطقه انتخاب شده...
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Loading overlay for snapshot capture */}
+          {isCapturingSnapshot && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1500]">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                  <span className="text-gray-700">
+                    در حال ذخیره نقشه برای مقایسه...
                   </span>
                 </div>
               </div>

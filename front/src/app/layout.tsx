@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { MapComparisonProvider } from "@/context/MapComparisonContext";
 import { AuthInitializer } from "@/components/AuthInitializer";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/organisms/Navbar";
@@ -25,18 +26,20 @@ export default async function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body>
-        <AuthProvider>
-          <AuthInitializer
-            isAuthenticated={isAuthenticated}
-            userLevel={userLevel}
-          />
-          <div className="h-screen">
-            <Navbar />
-            <div className="flex-1 p-6 bg-gray-300 mt-16">{children}</div>
-            <Footer />
-          </div>
-          <Toaster position="top-center" reverseOrder={false} />
-        </AuthProvider>
+        <MapComparisonProvider>
+          <AuthProvider>
+            <AuthInitializer
+              isAuthenticated={isAuthenticated}
+              userLevel={userLevel}
+            />
+            <div className="h-screen">
+              <Navbar />
+              <div className="flex-1 p-6 bg-gray-300 mt-16">{children}</div>
+              <Footer />
+            </div>
+            <Toaster position="top-center" reverseOrder={false} />
+          </AuthProvider>
+        </MapComparisonProvider>
       </body>
     </html>
   );

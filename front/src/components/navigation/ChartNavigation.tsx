@@ -64,6 +64,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
     { id: "heatmap", label: "نقشه حرارتی", href: "/maps/heatmap" },
     { id: "clusters", label: "تحلیل خوشه‌ای", href: "/maps/clusters" },
     { id: "regional", label: "تحلیل منطقه‌ای", href: "/maps/regional" },
+    { id: "comparison", label: "مقایسه نقشه‌ها", href: "/maps/comparison" },
   ];
 
   // Chart-specific navigation for each section
