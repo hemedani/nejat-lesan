@@ -193,6 +193,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "تصادفات تک وسیله ای",
             href: "/charts/spatial/single-vehicle-analytics",
           },
+          {
+            id: "safety-index",
+            label: "شاخص ناحیه‌ای ایمنی",
+            href: "/charts/spatial/safety-index",
+          },
         ];
       case "trend":
         return [

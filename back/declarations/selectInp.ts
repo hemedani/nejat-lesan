@@ -13984,6 +13984,33 @@ analytics: (1 );
 };
 
           
+            spatialSafetyIndexAnalytics: {
+set: {
+groupBy: ("province" | "city" | "city_zone" );
+dateOfAccidentFrom?: string;
+dateOfAccidentTo?: string;
+deadCountMin?: number;
+deadCountMax?: number;
+injuredCountMin?: number;
+injuredCountMax?: number;
+officer?: string;
+province?: string[];
+city?: string[];
+cityZone?: string[];
+accidentType?: string[];
+position?: string[];
+lightStatus?: string[];
+collisionType?: string[];
+roadSituation?: string[];
+vehicleSystem?: string[];
+driverSex?: string[];
+};
+get: {
+analytics: (1 );
+};
+};
+
+          
             mapAccidents: {
 set: {
 polygon?: {
