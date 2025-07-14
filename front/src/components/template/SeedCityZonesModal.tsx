@@ -12,7 +12,6 @@ interface SeedCityZonesModalProps {
   cityId: string;
   cityName: string;
   token?: string;
-  lesanUrl?: string;
 }
 
 const SeedCityZonesModal: React.FC<SeedCityZonesModalProps> = ({
@@ -21,7 +20,6 @@ const SeedCityZonesModal: React.FC<SeedCityZonesModalProps> = ({
   cityId,
   cityName,
   token,
-  lesanUrl,
 }) => {
   const [uploadedFileId, setUploadedFileId] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -108,7 +106,6 @@ const SeedCityZonesModal: React.FC<SeedCityZonesModalProps> = ({
             <UploadImage
               setUploadedImage={setUploadedFileId}
               token={token}
-              lesanUrl={lesanUrl}
               inputName="geoJsonFile"
               type="geo"
             />
