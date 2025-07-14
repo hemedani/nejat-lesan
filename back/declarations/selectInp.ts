@@ -98,6 +98,7 @@ axeses?: number | roadInp
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -128,6 +129,7 @@ cities: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -143,6 +145,7 @@ center: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -302,6 +305,7 @@ accidents?: number | accidentInp
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -332,6 +336,7 @@ province?: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -350,6 +355,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -492,6 +498,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -650,6 +657,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -672,6 +680,7 @@ city?: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -845,6 +854,7 @@ province?: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -1476,6 +1486,7 @@ province?: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -1491,6 +1502,7 @@ city?: {
 _id?: string;
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -1519,6 +1531,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 };
@@ -1529,6 +1542,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 };
@@ -2578,6 +2592,7 @@ qty?: (0 | 1 );
 set: {
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -2595,6 +2610,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2619,6 +2635,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2628,6 +2645,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -2668,6 +2686,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2692,6 +2711,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2701,6 +2721,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -2731,6 +2752,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2779,6 +2801,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2803,6 +2826,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2812,6 +2836,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2844,6 +2869,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -2866,6 +2892,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2905,6 +2932,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2914,6 +2942,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -2930,6 +2959,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -2937,6 +2967,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3053,6 +3084,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3101,6 +3133,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3125,6 +3158,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3134,6 +3168,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3166,6 +3201,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -3188,6 +3224,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3227,6 +3264,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3236,6 +3274,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3252,6 +3291,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3259,6 +3299,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3399,6 +3440,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 cityId: string;
@@ -3407,6 +3449,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -3429,6 +3472,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3466,6 +3510,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -3488,6 +3533,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3520,6 +3566,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -3566,6 +3613,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3590,6 +3638,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3599,6 +3648,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3636,6 +3686,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3645,6 +3696,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3661,6 +3713,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3668,6 +3721,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3784,6 +3838,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -3830,6 +3885,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3854,6 +3910,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3863,6 +3920,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3900,6 +3958,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3909,6 +3968,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -3925,6 +3985,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -3932,6 +3993,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -6728,6 +6790,7 @@ qty?: (0 | 1 );
 set: {
 name: string;
 english_name: string;
+population: number;
 area: {
 type: "MultiPolygon";
 coordinates: any[];
@@ -6743,6 +6806,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6767,6 +6831,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6776,6 +6841,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6825,6 +6891,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6849,6 +6916,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6858,6 +6926,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6897,6 +6966,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6945,6 +7015,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6969,6 +7040,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -6978,6 +7050,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7001,6 +7074,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7025,6 +7099,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7034,6 +7109,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7071,6 +7147,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7080,6 +7157,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7096,6 +7174,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7103,6 +7182,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7231,6 +7311,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7251,6 +7332,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7299,6 +7381,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7323,6 +7406,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7332,6 +7416,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7355,6 +7440,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7379,6 +7465,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7388,6 +7475,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7425,6 +7513,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7434,6 +7523,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7450,6 +7540,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7457,6 +7548,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -7585,6 +7677,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7659,6 +7752,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7703,6 +7797,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7766,6 +7861,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7790,6 +7886,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7799,6 +7896,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7887,6 +7985,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7911,6 +8010,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -7920,6 +8020,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -9556,6 +9657,7 @@ area: {
 type: "MultiPolygon";
 coordinates: any[];
 };
+population: number;
 createdAt: Date;
 updatedAt: Date;
 };
@@ -9563,6 +9665,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -9613,6 +9716,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -9658,6 +9762,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -9718,6 +9823,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -9727,6 +9833,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -9743,6 +9850,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -9750,6 +9858,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -9866,6 +9975,7 @@ get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -9926,6 +10036,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -9935,6 +10046,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -9951,6 +10063,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -9958,6 +10071,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -11252,6 +11366,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11261,6 +11376,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11277,6 +11393,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -11284,6 +11401,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -11412,6 +11530,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11421,6 +11540,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11437,6 +11557,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -11444,6 +11565,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -11571,6 +11693,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11595,6 +11718,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11604,6 +11728,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11636,6 +11761,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11660,6 +11786,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11669,6 +11796,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -11714,6 +11842,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -11724,6 +11853,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -11762,6 +11892,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -11784,6 +11915,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12271,6 +12403,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12295,6 +12428,7 @@ cities?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12304,6 +12438,7 @@ center?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12336,6 +12471,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12360,6 +12496,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12369,6 +12506,7 @@ city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -12414,6 +12552,7 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
@@ -12424,6 +12563,7 @@ traffic_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -12462,6 +12602,7 @@ city_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 area?: (0 | 1 );
+population?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -12484,6 +12625,7 @@ city?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
 area?: (0 | 1 );
 center_location?: (0 | 1 );
 createdAt?: (0 | 1 );
