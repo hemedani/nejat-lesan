@@ -2,7 +2,5 @@ node_modules
 .DS_Store
 back/dump.rdb
 front/dump.rdb
-back/dump.rdb
 back/uploads
-back/dump.rdb
 dump.rdb
