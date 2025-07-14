@@ -3502,6 +3502,7 @@ export type ReqType = {
         set: {
           _id: string;
           name?: string;
+          population?: number;
           area?: {
             type: "MultiPolygon";
             coordinates: any[];

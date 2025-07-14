@@ -3502,6 +3502,7 @@ pedestrian_dtos?: (0 | 1 );
 set: {
 _id: string;
 name?: string;
+population?: number;
 area?: {
 type: "MultiPolygon";
 coordinates: any[];

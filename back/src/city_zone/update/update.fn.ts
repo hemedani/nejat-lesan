@@ -4,7 +4,7 @@ import { city_zone_pure } from "@model";
 
 export const updateFn: ActFn = async (body) => {
 	const {
-		set: { _id, name, area },
+		set: { _id, name, area, population },
 		get,
 	} = body.details;
 
@@ -15,6 +15,7 @@ export const updateFn: ActFn = async (body) => {
 
 	name && (updateObj.name = name);
 	area && (updateObj.area = area);
+	population && (updateObj.population = population);
 
 	return await city_zone.findOneAndUpdate({
 		filter: { _id: new ObjectId(_id as string) },

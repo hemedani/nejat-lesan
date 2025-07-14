@@ -6,7 +6,7 @@ import { gets } from "@/app/actions/city_zone/gets";
 import { count } from "@/app/actions/city_zone/count";
 import { remove } from "@/app/actions/city_zone/remove";
 
-import { update } from "@/app/actions/city_zone/update";
+import { cookies } from "next/headers";
 import { translateModelNameToPersian } from "@/utils/helper";
 import Link from "next/link";
 
@@ -32,6 +32,11 @@ export default async function AirStatusDashboard({
     set: set.name ? { name: set.name } : {},
     get: { qty: 1 },
   });
+
+  const token = (await cookies()).get("token");
+  const lesanUrl = process.env.LESAN_URL
+    ? process.env.LESAN_URL
+    : "http://localhost:1382";
 
   return (
     <div className="relative min-h-full">
@@ -75,7 +80,8 @@ export default async function AirStatusDashboard({
         data={data.success ? data.body : []}
         model="city_zone"
         remove={remove}
-        update={update}
+        token={token?.value}
+        lesanUrl={lesanUrl}
       />
       <Pagination countPage={counted?.body.qty} initialPage={+page} />
     </div>
