@@ -1,0 +1,43 @@
+# Uploads directory - will be created at runtime and mounted as volume
+uploads/
+
+# Deno cache
+.deno/
+
+# Development files
+.env
+.env.*
+*.log
+
+# Git
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (prevents copying host npm dependencies that could cause permission issues)
+node_modules/
+
+# Temporary files
+tmp/
+temp/
+
+# Documentation
+README.md
+docs/
+
+# Docker files (no need to copy these into the image)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Declaration files (auto-generated)
+declarations/

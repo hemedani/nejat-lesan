@@ -21,22 +21,18 @@ export const UserCreateSchema = z.object({
   summary: z.string().optional(),
   national_number: z.string().regex(/^\d{10}$/, "کد ملی باید 10 رقم باشد"),
   address: z.string(),
-  level: z.enum(["Ordinary", "Manager", "Editor", "Ghost"], { message: "سطح الزامی است" }),
+  level: z.enum(["Ordinary", "Manager", "Editor", "Ghost"], {
+    message: "سطح الزامی است",
+  }),
   is_verified: z.boolean(),
   nationalCard: z.string().optional(), // برای کارت ملی
   avatar: z.string().optional(), // برای عکس پروفایل
 });
 
 export type UserFormCreateSchemaType = z.infer<typeof UserCreateSchema>;
-export type UserSetObj = ReqType["main"]["user"]["addUser"]["set"]
+export type UserSetObj = ReqType["main"]["user"]["addUser"]["set"];
 
-export const FormCreateUser = ({
-  token,
-  lesanUrl
-}: {
-  token?: string;
-  lesanUrl: string;
-}) => {
+export const FormCreateUser = ({ token }: { token?: string }) => {
   const router = useRouter();
 
   const {
@@ -61,50 +57,100 @@ export const FormCreateUser = ({
 
   return (
     <div className="p-8">
-      <form onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6 bg-gray-100 p-6 border rounded-lg">
-
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6 bg-gray-100 p-6 border rounded-lg"
+      >
         <div className="w-full flex flex-wrap">
-
           <div className="w-1/2 p-4">
             <span className="text-sm font-medium text-gray-700">
               عکس پروفایل
             </span>
             <UploadImage
               inputName="avatar"
-              setUploadedImage={(uploaded: string) => setValue("avatar", uploaded)}
+              setUploadedImage={(uploaded: string) =>
+                setValue("avatar", uploaded)
+              }
               type="image"
               token={token}
-              lesanUrl={lesanUrl}
             />
           </div>
           <div className="w-1/2 p-4">
-            <span className="text-sm font-medium text-gray-700">عکس کارت ملی</span>
+            <span className="text-sm font-medium text-gray-700">
+              عکس کارت ملی
+            </span>
             <UploadImage
               inputName="nationalCard"
-              setUploadedImage={(uploaded: string) => setValue("nationalCard", uploaded)}
-              lesanUrl={lesanUrl}
+              setUploadedImage={(uploaded: string) =>
+                setValue("nationalCard", uploaded)
+              }
               type="image"
               token={token}
             />
           </div>
 
-          <MyInput label="نام" register={register} name="first_name" errMsg={errors.father_name?.message} />
-          <MyInput label="نام خانوادگی" register={register} name="last_name" errMsg={errors.last_name?.message} />
-          <MyInput label="نام پدر" register={register} name="father_name" errMsg={errors.father_name?.message} />
-          <MyInput label="شماره موبایل" register={register} name="mobile" type="number" errMsg={errors.mobile?.message} />
-          <MyInput label="شماره شماسنامه" register={register} name="national_number" type="number" errMsg={errors.national_number?.message} />
-          <MyInput label="شماره ملی" register={register} name="national_number" errMsg={errors.national_number?.message} />
-          <MyInput label="آدرس" register={register} name="address" errMsg={errors.address?.message} />
-          <MyInput label="توضیحات" register={register} name="summary" errMsg={errors.summary?.message} />
+          <MyInput
+            label="نام"
+            register={register}
+            name="first_name"
+            errMsg={errors.father_name?.message}
+          />
+          <MyInput
+            label="نام خانوادگی"
+            register={register}
+            name="last_name"
+            errMsg={errors.last_name?.message}
+          />
+          <MyInput
+            label="نام پدر"
+            register={register}
+            name="father_name"
+            errMsg={errors.father_name?.message}
+          />
+          <MyInput
+            label="شماره موبایل"
+            register={register}
+            name="mobile"
+            type="number"
+            errMsg={errors.mobile?.message}
+          />
+          <MyInput
+            label="شماره شماسنامه"
+            register={register}
+            name="national_number"
+            type="number"
+            errMsg={errors.national_number?.message}
+          />
+          <MyInput
+            label="شماره ملی"
+            register={register}
+            name="national_number"
+            errMsg={errors.national_number?.message}
+          />
+          <MyInput
+            label="آدرس"
+            register={register}
+            name="address"
+            errMsg={errors.address?.message}
+          />
+          <MyInput
+            label="توضیحات"
+            register={register}
+            name="summary"
+            errMsg={errors.summary?.message}
+          />
 
           <div className={`w-1/2 p-4 flex flex-col gap-1`}>
             <label htmlFor="birth_date">تاریخ تولد</label>
             <DatePicker
-              className={`text-gray-600 border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700 bg-gray-100 ${errors.birth_date?.message ? "border-red-500" : "border-gray-300"}`
-              }
-              onChange={(e) => setValue("birth_date", e.value)} />
-            {errors.birth_date?.message && (<span className="text-red-500 text-xs">{errors.birth_date?.message}</span>)}
+              className={`text-gray-600 border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700 bg-gray-100 ${errors.birth_date?.message ? "border-red-500" : "border-gray-300"}`}
+              onChange={(e) => setValue("birth_date", e.value)}
+            />
+            {errors.birth_date?.message && (
+              <span className="text-red-500 text-xs">
+                {errors.birth_date?.message}
+              </span>
+            )}
           </div>
 
           <SelectBox

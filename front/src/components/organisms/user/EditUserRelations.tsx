@@ -15,10 +15,18 @@ export const UpdateUserRelationSchema = z.object({
   nationalCard: z.any().optional(), // برای کارت ملی
 });
 
-export type UpdateUserRelationSchemaType = z.infer<typeof UpdateUserRelationSchema>;
-export type UpdateUserRelationSet = ReqType["main"]["user"]["updateUserRelations"]["set"]
+export type UpdateUserRelationSchemaType = z.infer<
+  typeof UpdateUserRelationSchema
+>;
+export type UpdateUserRelationSet =
+  ReqType["main"]["user"]["updateUserRelations"]["set"];
 
-export const EditUserRelations = ({ _id, lesanUrl, avatar, national_card, isOwn }: userSchema & { lesanUrl: string, isOwn?: boolean }) => {
+export const EditUserRelations = ({
+  _id,
+  avatar,
+  national_card,
+  isOwn,
+}: userSchema & { isOwn?: boolean }) => {
   const { handleSubmit, setValue } = useForm<UpdateUserRelationSet>({
     resolver: zodResolver(UpdateUserRelationSchema),
   });
@@ -45,10 +53,11 @@ export const EditUserRelations = ({ _id, lesanUrl, avatar, national_card, isOwn 
           <span>عکس پروفایل کاربری</span>
           <UploadImage
             inputName="avatar"
-            setUploadedImage={(uploaded: string) => setValue("avatar", uploaded)}
+            setUploadedImage={(uploaded: string) =>
+              setValue("avatar", uploaded)
+            }
             type="image"
             token={token}
-            lesanUrl={lesanUrl}
             filePath={avatar ? avatar.name : undefined}
           />
         </div>
@@ -56,10 +65,11 @@ export const EditUserRelations = ({ _id, lesanUrl, avatar, national_card, isOwn 
           <span>عکس کارت ملی</span>
           <UploadImage
             inputName="nationalCard"
-            setUploadedImage={(uploaded: string) => setValue("nationalCard", uploaded)}
+            setUploadedImage={(uploaded: string) =>
+              setValue("nationalCard", uploaded)
+            }
             type="image"
             token={token}
-            lesanUrl={lesanUrl}
             filePath={national_card ? national_card.name : undefined}
           />
         </div>
@@ -72,7 +82,6 @@ export const EditUserRelations = ({ _id, lesanUrl, avatar, national_card, isOwn 
           ارسال
         </button>
       </div>
-
     </form>
   );
 };

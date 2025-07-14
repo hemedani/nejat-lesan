@@ -24,7 +24,6 @@ interface CityDashboardProps {
   remove: (_id: string, hardCascade: boolean) => Promise<any>;
   update: (_id: string, name: string) => Promise<any>;
   token?: string;
-  lesanUrl: string;
 }
 
 const CityDashboard: React.FC<CityDashboardProps> = ({
@@ -33,7 +32,6 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
   remove,
   update,
   token,
-  lesanUrl,
 }) => {
   const router = useRouter();
 
@@ -128,7 +126,6 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
           cityId={selectedItem._id}
           cityName={selectedItem.name}
           token={token}
-          lesanUrl={lesanUrl}
         />
       )}
     </div>

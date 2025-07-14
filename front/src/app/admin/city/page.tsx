@@ -35,9 +35,6 @@ export default async function AirStatusDashboard({
   });
 
   const token = (await cookies()).get("token");
-  const lesanUrl = process.env.LESAN_URL
-    ? process.env.LESAN_URL
-    : "http://localhost:1404";
 
   return (
     <div className="relative min-h-full">
@@ -83,7 +80,6 @@ export default async function AirStatusDashboard({
         remove={remove}
         update={update}
         token={token?.value}
-        lesanUrl={lesanUrl}
       />
       <Pagination countPage={counted?.body.qty} initialPage={+page} />
     </div>

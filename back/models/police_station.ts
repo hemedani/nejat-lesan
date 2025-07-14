@@ -1,7 +1,7 @@
 import { coreApp } from "../mod.ts";
 import { boolean, number, type RelationDataType, string } from "@deps";
-import { geoJSONStruct } from "./province.ts";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
+import { geoJSONStruct } from "@model";
 
 export const police_station_pure = {
 	name: string(),

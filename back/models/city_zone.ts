@@ -1,11 +1,17 @@
 import { coreApp } from "../mod.ts";
-import { type RelationDataType, RelationSortOrderType, string } from "@deps";
+import {
+	number,
+	type RelationDataType,
+	RelationSortOrderType,
+	string,
+} from "@deps";
 import { geoJSONStruct } from "@model";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const city_zone_pure = {
 	name: string(),
 	area: geoJSONStruct("MultiPolygon"),
+	population: number(),
 
 	...createUpdateAt,
 };

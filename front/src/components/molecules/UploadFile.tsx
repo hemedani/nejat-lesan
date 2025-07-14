@@ -3,6 +3,7 @@ import {
   isValidPdfExtension,
   isValidGeoJsonExtension,
 } from "@/utils/checkFileExtension";
+import { getLesanBaseUrl } from "@/services/api";
 import React, { useState } from "react";
 import Image from "next/image";
 
@@ -11,7 +12,6 @@ export const dynamic = "force-dynamic";
 interface IUploadImage {
   setUploadedImage: (pic: string) => void;
   token?: string;
-  lesanUrl?: string;
   inputName: string;
   type?: "video" | "image" | "doc" | "geo" | "json";
   filePath?: string;
@@ -19,7 +19,6 @@ interface IUploadImage {
 
 export const UploadImage = ({
   token,
-  lesanUrl,
   inputName,
   setUploadedImage,
   type,
@@ -54,7 +53,7 @@ export const UploadImage = ({
     formData.append("lesan-body", JSON.stringify(lesanBody));
 
     try {
-      const response = await fetch(`${lesanUrl}/lesan`, {
+      const response = await fetch(`${getLesanBaseUrl()}/lesan`, {
         method: "POST",
         body: formData,
         headers: {
@@ -146,7 +145,7 @@ export const UploadImage = ({
         <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border">
           <Image
             className="w-full h-full object-cover"
-            src={`${lesanUrl}/uploads/images/${filePath}`}
+            src={`${getLesanBaseUrl()}/uploads/images/${filePath}`}
             alt="Uploaded image preview"
             width={400}
             height={160}
@@ -156,7 +155,7 @@ export const UploadImage = ({
         <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border">
           <embed
             className="w-full h-full object-cover"
-            src={`${lesanUrl}/uploads/docs/${filePath}`}
+            src={`${getLesanBaseUrl()}/uploads/docs/${filePath}`}
           />
         </div>
       ) : filePath && isValidGeoJsonExtension(filePath) ? (

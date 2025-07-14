@@ -1,4 +1,5 @@
 import { lesan, MongoClient, redis } from "@deps";
+import { ensureDir } from "https://deno.land/std@0.208.0/fs/mod.ts";
 import {
 	accidents,
 	air_statuses,
@@ -91,6 +92,14 @@ export const { selectStruct, getSchemas } = coreApp.schemas;
 
 functionsSetup();
 
+// Ensure uploads directory exists
+try {
+	await ensureDir("./uploads");
+	console.log("Uploads directory ready");
+} catch (error) {
+	console.error("Failed to create uploads directory:", error);
+}
+
 coreApp.runServer({
 	port: 1404,
 	typeGeneration: true,
@@ -99,5 +108,9 @@ coreApp.runServer({
 	cors: [
 		"http://localhost:3000",
 		"http://localhost:4000",
+		"http://frontend:3000",
+		"http://lesan-frontend-1:3000",
+		"http://127.0.0.1:3000",
+		"http://127.0.0.1:4000",
 	],
 });

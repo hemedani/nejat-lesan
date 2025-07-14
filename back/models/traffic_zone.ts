@@ -1,11 +1,12 @@
 import { coreApp } from "../mod.ts";
-import { type RelationDataType, string } from "@deps";
+import { number, type RelationDataType, string } from "@deps";
 import { geoJSONStruct } from "@model";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const traffic_zone_pure = {
 	name: string(),
 	area: geoJSONStruct("MultiPolygon"), // -- محدوده بومی (اگر متفاوت است)
+	population: number(),
 
 	...createUpdateAt,
 };

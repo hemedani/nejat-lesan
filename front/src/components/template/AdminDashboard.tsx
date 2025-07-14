@@ -41,14 +41,9 @@ interface AdminDashboardData {
 interface AdminDashboardProps {
   data: AdminDashboardData;
   token?: string;
-  lesanUrl: string;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({
-  data,
-  token,
-  lesanUrl,
-}) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ data, token }) => {
   const [isSeedModalOpen, setIsSeedModalOpen] = useState(false);
 
   return (
@@ -278,7 +273,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         isOpen={isSeedModalOpen}
         onClose={() => setIsSeedModalOpen(false)}
         token={token}
-        lesanUrl={lesanUrl}
       />
     </>
   );

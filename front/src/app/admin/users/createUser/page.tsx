@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Page = async () => {
   const token = (await cookies()).get("token");
-  const lesanUrl = process.env.LESAN_URL ? process.env.LESAN_URL : "http://localhost:1382"
+
   return (
     <div className="p-6 min-h-full">
       <div className="flex items-center justify-between mb-6">
@@ -16,7 +16,7 @@ const Page = async () => {
           بازگشت به لیست
         </Link>
       </div>
-      <FormCreateUser token={token?.value} lesanUrl={lesanUrl} />
+      <FormCreateUser token={token?.value} />
     </div>
   );
 };

@@ -10,14 +10,12 @@ interface SeedDatabaseModalProps {
   isOpen: boolean;
   onClose: () => void;
   token?: string;
-  lesanUrl?: string;
 }
 
 const SeedDatabaseModal: React.FC<SeedDatabaseModalProps> = ({
   isOpen,
   onClose,
   token,
-  lesanUrl,
 }) => {
   const [uploadedFileId, setUploadedFileId] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -104,7 +102,6 @@ const SeedDatabaseModal: React.FC<SeedDatabaseModalProps> = ({
             <UploadImage
               setUploadedImage={setUploadedFileId}
               token={token}
-              lesanUrl={lesanUrl}
               inputName="seedDataFile"
               type="json"
             />
