@@ -42,6 +42,7 @@ const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 export const CityCreateSchema = z.object({
   name: z.string().min(1, "نام شهر الزامی است"),
   english_name: z.string().min(1, "نام انگلیسی شهر الزامی است"),
+  population: z.coerce.number().min(0, "جمعیت نمی‌تواند منفی باشد"),
   provinceId: z.string().min(1, "انتخاب استان الزامی است"),
   isCenter: z.boolean(),
   area: z.object(
@@ -289,6 +290,7 @@ export const FormCreateCity = ({
     const createdCity = await add({
       name: data.name,
       english_name: data.english_name,
+      population: data.population,
       area: data.area as {
         type: "MultiPolygon";
         coordinates: number[][][][];
@@ -346,7 +348,7 @@ export const FormCreateCity = ({
             اطلاعات شهر
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Name Input */}
             <MyInput
               label="نام شهر"
@@ -361,6 +363,15 @@ export const FormCreateCity = ({
               register={register}
               name="english_name"
               errMsg={errors.english_name?.message}
+            />
+
+            {/* Population Input */}
+            <MyInput
+              label="جمعیت"
+              register={register}
+              name="population"
+              type="number"
+              errMsg={errors.population?.message}
             />
           </div>
 

@@ -37,6 +37,7 @@ const SimpleDrawing = dynamic(() => import("@/components/SimpleDrawing"), {
 export const ProvinceCreateSchema = z.object({
   name: z.string().min(1, "نام استان الزامی است"),
   english_name: z.string().min(1, "نام انگلیسی استان الزامی است"),
+  population: z.coerce.number().min(0, "جمعیت نمی‌تواند منفی باشد"),
   area: z.object(
     {
       type: z.literal("MultiPolygon"),
@@ -202,10 +203,13 @@ export const FormCreateProvince = ({
   };
 
   // Form submission
-  const onSubmit: SubmitHandler<ProvinceFormCreateSchemaType> = async (data) => {
+  const onSubmit: SubmitHandler<ProvinceFormCreateSchemaType> = async (
+    data,
+  ) => {
     const createdProvince = await add({
       name: data.name,
       english_name: data.english_name,
+      population: data.population,
       area: data.area as {
         type: "MultiPolygon";
         coordinates: number[][][][];
@@ -220,7 +224,10 @@ export const FormCreateProvince = ({
       ToastNotify("success", "استان با موفقیت ایجاد شد");
       router.replace("/admin/province");
     } else {
-      ToastNotify("error", createdProvince.body.message || "خطا در ایجاد استان");
+      ToastNotify(
+        "error",
+        createdProvince.body.message || "خطا در ایجاد استان",
+      );
     }
   };
 
@@ -261,7 +268,7 @@ export const FormCreateProvince = ({
             اطلاعات استان
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Name Input */}
             <MyInput
               label="نام استان"
@@ -276,6 +283,15 @@ export const FormCreateProvince = ({
               register={register}
               name="english_name"
               errMsg={errors.english_name?.message}
+            />
+
+            {/* Population Input */}
+            <MyInput
+              label="جمعیت"
+              register={register}
+              name="population"
+              type="number"
+              errMsg={errors.population?.message}
             />
           </div>
         </div>
