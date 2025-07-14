@@ -2673,8 +2673,9 @@ set: {
 _id: string;
 name?: string;
 english_name?: string;
+population?: number;
 area?: {
-type: "Polygon";
+type: "MultiPolygon";
 coordinates: any[];
 };
 center_location?: {

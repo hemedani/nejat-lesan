@@ -7,9 +7,10 @@ export const updateFn: ActFn = async (body) => {
 		set: {
 			_id,
 			name,
-			area,
-
 			english_name,
+			population,
+
+			area,
 			center_location,
 		},
 		get,
@@ -22,6 +23,7 @@ export const updateFn: ActFn = async (body) => {
 
 	name && (updateObj.name = name);
 	english_name && (updateObj.english_name = english_name);
+	population && (updateObj.population = population);
 	area && (updateObj.area = area);
 	center_location && (updateObj.center_location = center_location);
 	// native_area && (updateObj.native_area = native_area);

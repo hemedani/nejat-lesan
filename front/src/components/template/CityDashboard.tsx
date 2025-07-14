@@ -10,7 +10,7 @@ import {
   ToastNotify,
   translateModelNameToPersian,
 } from "@/utils/helper";
-import CreateUpdateModal from "./CreateUpdateModal";
+import CityUpdateModal from "./CityUpdateModal";
 import SeedCityZonesModal from "./SeedCityZonesModal";
 
 interface TData {
@@ -22,16 +22,16 @@ interface CityDashboardProps {
   data: TData[];
   model: ModelName;
   remove: (_id: string, hardCascade: boolean) => Promise<any>;
-  update: (_id: string, name: string) => Promise<any>;
   token?: string;
+  lesanUrl: string;
 }
 
 const CityDashboard: React.FC<CityDashboardProps> = ({
   data,
   model,
   remove,
-  update,
   token,
+  lesanUrl,
 }) => {
   const router = useRouter();
 
@@ -77,11 +77,10 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
     closeModal();
   };
 
-  // Dummy add function for the modal (not used but required by CreateUpdateModal)
-  const dummyAdd = async () => ({
-    success: false,
-    body: { message: "Add not supported in this dashboard" },
-  });
+  const handleUpdateSuccess = () => {
+    router.refresh();
+    closeModal();
+  };
 
   return (
     <div>
@@ -97,14 +96,14 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
         ))}
       </div>
 
-      {activeModal === "edit" && (
-        <CreateUpdateModal
+      {activeModal === "edit" && selectedItem && (
+        <CityUpdateModal
           isOpen
           onClose={closeModal}
-          itemToEdit={selectedItem}
-          model={model}
-          add={dummyAdd}
-          update={update}
+          cityId={selectedItem._id}
+          token={token}
+          lesanUrl={lesanUrl}
+          onSuccessAction={handleUpdateSuccess}
         />
       )}
 
