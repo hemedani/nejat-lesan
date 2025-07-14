@@ -6,7 +6,7 @@ import { gets } from "@/app/actions/province/gets";
 import { count } from "@/app/actions/province/count";
 import { remove } from "@/app/actions/province/remove";
 
-import { update } from "@/app/actions/province/update";
+import { cookies } from "next/headers";
 import { translateModelNameToPersian } from "@/utils/helper";
 import Link from "next/link";
 
@@ -16,6 +16,10 @@ export default async function AirStatusDashboard({
   searchParams: Promise<ReqType["main"]["province"]["gets"]["set"]>;
 }) {
   const { limit = "20", page = "1", name } = await searchParams;
+  const token = (await cookies()).get("token");
+  const lesanUrl = process.env.LESAN_URL
+    ? process.env.LESAN_URL
+    : "http://localhost:1382";
 
   const set: ReqType["main"]["province"]["gets"]["set"] = {
     limit: +limit || 20,
@@ -75,7 +79,8 @@ export default async function AirStatusDashboard({
         data={data.success ? data.body : []}
         model="province"
         remove={remove}
-        update={update}
+        token={token?.value}
+        lesanUrl={lesanUrl}
       />
       <Pagination countPage={counted?.body.qty} initialPage={+page} />
     </div>

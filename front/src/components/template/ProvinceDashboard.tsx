@@ -10,7 +10,7 @@ import {
   ToastNotify,
   translateModelNameToPersian,
 } from "@/utils/helper";
-import CreateUpdateModal from "./CreateUpdateModal";
+import ProvinceUpdateModal from "./ProvinceUpdateModal";
 
 interface TData {
   _id: string;
@@ -21,14 +21,16 @@ interface ProvinceDashboardProps {
   data: TData[];
   model: ModelName;
   remove: (_id: string, hardCascade: boolean) => Promise<any>;
-  update: (_id: string, name: string) => Promise<any>;
+  token?: string;
+  lesanUrl: string;
 }
 
 const ProvinceDashboard: React.FC<ProvinceDashboardProps> = ({
   data,
   model,
   remove,
-  update,
+  token,
+  lesanUrl,
 }) => {
   const router = useRouter();
 
@@ -71,11 +73,10 @@ const ProvinceDashboard: React.FC<ProvinceDashboardProps> = ({
     closeModal();
   };
 
-  // Dummy add function for the modal (not used but required by CreateUpdateModal)
-  const dummyAdd = async () => ({
-    success: false,
-    body: { message: "Add not supported in this dashboard" },
-  });
+  const handleUpdateSuccess = () => {
+    router.refresh();
+    closeModal();
+  };
 
   return (
     <div>
@@ -90,14 +91,14 @@ const ProvinceDashboard: React.FC<ProvinceDashboardProps> = ({
         ))}
       </div>
 
-      {activeModal === "edit" && (
-        <CreateUpdateModal
+      {activeModal === "edit" && selectedItem && (
+        <ProvinceUpdateModal
           isOpen
           onClose={closeModal}
-          itemToEdit={selectedItem}
-          model={model}
-          add={dummyAdd}
-          update={update}
+          provinceId={selectedItem._id}
+          token={token}
+          lesanUrl={lesanUrl}
+          onSuccessAction={handleUpdateSuccess}
         />
       )}
 
