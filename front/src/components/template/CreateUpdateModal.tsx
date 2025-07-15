@@ -4,17 +4,22 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { ModelName, ToastNotify, translateModelNameToPersian } from "@/utils/helper";
+import {
+  ModelName,
+  ToastNotify,
+  translateModelNameToPersian,
+} from "@/utils/helper";
 import MyInput from "@/components/atoms/MyInput";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface CreateUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
   itemToEdit?: { _id: string; name: string } | null;
   model: ModelName;
-  add: (name: string) => Promise<any>
-  update: (_id: string, name: string) => Promise<any>
+  add: (name: string) => Promise<any>;
+  update: (_id: string, name: string) => Promise<any>;
 }
 
 const itemSchema = z.object({
@@ -32,9 +37,12 @@ const CreateUpdateModal = ({
   itemToEdit,
   model,
   update,
-  add
+  add,
 }: CreateUpdateModalProps): React.ReactElement => {
   const router = useRouter();
+
+  // Prevent background scrolling when modal is open
+  useScrollLock(isOpen);
 
   const {
     register,
@@ -58,10 +66,16 @@ const CreateUpdateModal = ({
     try {
       if (itemToEdit) {
         await update(itemToEdit._id, data.name);
-        ToastNotify("success", `${translateModelNameToPersian(model)} با موفقیت ویرایش شد`);
+        ToastNotify(
+          "success",
+          `${translateModelNameToPersian(model)} با موفقیت ویرایش شد`,
+        );
       } else {
         await add(data.name);
-        ToastNotify("success", `${translateModelNameToPersian(model)} با موفقیت ایجاد شد`);
+        ToastNotify(
+          "success",
+          `${translateModelNameToPersian(model)} با موفقیت ایجاد شد`,
+        );
       }
       router.refresh();
       reset();
@@ -74,17 +88,21 @@ const CreateUpdateModal = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-500 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-500 z-[2000] ${
+        isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+      }`}
     >
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg w-1/3 transform transition-all duration-500 ${isOpen
-          ? "scale-100 opacity-100 translate-y-0"
-          : "scale-90 opacity-0 translate-y-10"
-          }`}
+        className={`bg-white p-6 rounded-lg shadow-lg w-1/3 transform transition-all duration-500 ${
+          isOpen
+            ? "scale-100 opacity-100 translate-y-0"
+            : "scale-90 opacity-0 translate-y-10"
+        }`}
       >
         <h2 className="text-lg font-bold mb-4">
-          {itemToEdit ? `ویرایش ${translateModelNameToPersian(model)}` : `ایجاد ${translateModelNameToPersian(model)} جدید`}
+          {itemToEdit
+            ? `ویرایش ${translateModelNameToPersian(model)}`
+            : `ایجاد ${translateModelNameToPersian(model)} جدید`}
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <MyInput

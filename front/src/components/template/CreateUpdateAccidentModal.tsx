@@ -12,6 +12,7 @@ import {
   translateModelNameToPersian,
 } from "@/utils/helper";
 import { accidentSchema } from "@/types/declarations/selectInp";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface CreateUpdateAccidentModalProps {
   isOpen: boolean;
@@ -50,6 +51,9 @@ const CreateUpdateAccidentModal: React.FC<CreateUpdateAccidentModalProps> = ({
 }) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Prevent background scrolling when modal is open
+  useScrollLock(isOpen);
 
   const {
     register,
@@ -131,7 +135,7 @@ const CreateUpdateAccidentModal: React.FC<CreateUpdateAccidentModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000]">
       <div className="bg-white rounded-lg shadow-xl w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center border-b pb-4 mb-6">

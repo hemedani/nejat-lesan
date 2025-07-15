@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface IProps {
   onConfirm: () => void;
@@ -17,9 +18,12 @@ export const DeleteModal: FC<IProps> = ({
   isHardCascade,
   onHardCascadeChange,
 }) => {
+  // Prevent background scrolling when modal is open
+  useScrollLock(isVisible);
+
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${
+      className={`fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 z-[2000] ${
         isVisible
           ? "opacity-100 pointer-events-auto"
           : "opacity-0 pointer-events-none"

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FormUpdateCity } from "./FormUpdateCity";
 import { AppApi } from "@/services/api";
 import { ToastNotify } from "@/utils/helper";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface CityData {
   _id: string;
@@ -36,11 +37,12 @@ const CityUpdateModal: React.FC<CityUpdateModalProps> = ({
   lesanUrl,
   onSuccessAction,
 }) => {
-  const [cityData, setCityData] = useState<CityData | undefined>(
-    undefined,
-  );
+  const [cityData, setCityData] = useState<CityData | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Prevent background scrolling when modal is open
+  useScrollLock(isOpen);
 
   const fetchCityData = useCallback(async () => {
     setIsLoading(true);
@@ -110,7 +112,7 @@ const CityUpdateModal: React.FC<CityUpdateModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000] overflow-y-auto">
       <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto m-4">
         {/* Modal Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg">
@@ -141,9 +143,7 @@ const CityUpdateModal: React.FC<CityUpdateModalProps> = ({
             <div className="flex items-center justify-center p-12">
               <div className="flex flex-col items-center gap-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-gray-600">
-                  در حال بارگذاری اطلاعات شهر...
-                </p>
+                <p className="text-gray-600">در حال بارگذاری اطلاعات شهر...</p>
               </div>
             </div>
           )}

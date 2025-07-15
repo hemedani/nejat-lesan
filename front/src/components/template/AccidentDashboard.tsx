@@ -18,6 +18,7 @@ import AccidentTable from "../organisms/AccidentTable";
 import AccidentMap from "../organisms/AccidentMap";
 import CreateUpdateAccidentModal from "./CreateUpdateAccidentModal";
 import { accidentSchema } from "@/types/declarations/selectInp";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface AccidentDashboardProps {
   data: accidentSchema[];
@@ -47,6 +48,9 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
   const [selectedItem, setSelectedItem] = useState<accidentSchema | null>(null);
   const [hardCascade, setHardCascade] = useState<boolean>(false);
   // const [_viewMode, setViewMode] = useState<"card" | "table" | "map">("card");
+
+  // Prevent background scrolling when view modal is open
+  useScrollLock(activeModal === "view");
 
   const openModal = (
     type: "edit" | "delete" | "view",
@@ -227,7 +231,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
       {activeModal === "view" && selectedItem && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000]"
           onClick={closeModal}
         >
           <div
