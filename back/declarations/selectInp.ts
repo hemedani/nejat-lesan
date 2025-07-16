@@ -278,6 +278,8 @@ name: string;
 };
 national_code: string;
 }[];
+createdAt: Date;
+updatedAt: Date;
 }[];
 axeses: {
 _id?: string;
@@ -480,6 +482,8 @@ name: string;
 };
 national_code: string;
 }[];
+createdAt: Date;
+updatedAt: Date;
 }[];
 };
 ;
@@ -638,6 +642,8 @@ name: string;
 };
 national_code: string;
 }[];
+createdAt: Date;
+updatedAt: Date;
 }[];
 };
 ;
@@ -813,6 +819,8 @@ name: string;
 };
 national_code: string;
 }[];
+createdAt: Date;
+updatedAt: Date;
 }[];
 };
 ;
@@ -1482,6 +1490,8 @@ name: string;
 };
 national_code: string;
 }[];
+createdAt: Date;
+updatedAt: Date;
 province?: {
 _id?: string;
 name: string;
@@ -2663,6 +2673,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 };
@@ -2740,6 +2752,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 };
@@ -2857,6 +2871,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -2913,6 +2929,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 accidents?: {
@@ -2929,6 +2947,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -3189,6 +3209,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -3245,6 +3267,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 accidents?: {
@@ -3261,6 +3285,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -3493,6 +3519,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 };
@@ -3555,6 +3583,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 };
@@ -3668,6 +3698,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 accidents?: {
@@ -3684,6 +3716,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -3940,6 +3974,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 accidents?: {
@@ -3956,6 +3992,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -6863,6 +6901,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -6949,6 +6989,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -7071,6 +7113,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 center?: {
@@ -7130,6 +7174,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 accidents?: {
@@ -7146,6 +7192,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -7437,6 +7485,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 center?: {
@@ -7496,6 +7546,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 accidents?: {
@@ -7512,6 +7564,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -7919,6 +7973,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -8043,6 +8099,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -9701,6 +9759,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 };
@@ -9752,6 +9812,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 };
@@ -9822,6 +9884,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -10035,6 +10099,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -11347,9 +11413,146 @@ qty?: (0 | 1 );
       
             add: {
 set: {
+seri?: number;
+serial?: number;
+location: {
+type: "Point";
+coordinates: any[];
+};
+date_of_accident: Date;
+dead_count?: number;
+has_witness?: boolean;
+news_number?: number;
+officer?: string;
+injured_count?: number;
+completion_date?: Date;
+vehicle_dtos?: {
+color?: {
+_id: string;
 name: string;
-createdAt: Date;
-updatedAt: Date;
+};
+driver?: {
+sex?: ("Male" | "Female" | "Other" );
+last_name?: string;
+first_name?: string;
+injury_type?: {
+_id: string;
+name: string;
+};
+licence_type?: {
+_id: string;
+name: string;
+};
+national_code?: string;
+licence_number?: string;
+total_reason?: {
+_id: string;
+name: string;
+};
+};
+system?: {
+_id: string;
+name: string;
+};
+plaque_type?: {
+_id: string;
+name: string;
+};
+plaque_no?: any[];
+system_type?: {
+_id: string;
+name: string;
+};
+fault_status?: {
+_id: string;
+name: string;
+};
+insurance_co?: {
+_id: string;
+name: string;
+};
+insurance_no?: string;
+plaque_usage?: {
+_id: string;
+name: string;
+};
+print_number?: string;
+plaque_serial?: string[];
+insurance_date?: Date;
+body_insurance_co?: {
+_id: string;
+name: string;
+};
+body_insurance_no?: string;
+motion_direction?: {
+_id: string;
+name: string;
+};
+body_insurance_date?: Date;
+max_damage_sections?: {
+_id: string;
+name: string;
+}[];
+damage_section_other?: string;
+insurance_warranty_limit?: number;
+passenger_dtos?: {
+sex?: ("Male" | "Female" | "Other" );
+last_name?: string;
+first_name?: string;
+injury_type?: {
+_id: string;
+name: string;
+};
+fault_status?: {
+_id: string;
+name: string;
+};
+total_reason?: {
+_id: string;
+name: string;
+};
+national_code?: string;
+}[];
+}[];
+pedestrian_dtos?: {
+sex?: ("Male" | "Female" | "Other" );
+last_name?: string;
+first_name?: string;
+injury_type?: {
+_id: string;
+name: string;
+};
+fault_status?: {
+_id: string;
+name: string;
+};
+total_reason?: {
+_id: string;
+name: string;
+};
+national_code?: string;
+}[];
+provinceId?: string;
+cityId?: string;
+roadId?: string;
+trafficZoneId?: string;
+cityZoneId?: string;
+typeId?: string;
+positionId?: string;
+rulingTypeId?: string;
+lightStatusId?: string;
+collisionTypeId?: string;
+roadSituationId?: string;
+roadRepairTypeId?: string;
+shoulderStatusId?: string;
+areaUsagesIds?: string[];
+airStatusesIds?: string[];
+roadDefectsIds?: string[];
+humanReasonsIds?: string[];
+vehicleReasonsIds?: string[];
+equipmentDamagesIds?: string[];
+roadSurfaceConditionsIds?: string[];
+attachmentsIds?: string[];
 };
 get: {
 _id?: (0 | 1 );
@@ -11365,6 +11568,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -11529,6 +11734,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -11692,6 +11899,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -11751,6 +11960,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -11817,6 +12028,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 road?: {
@@ -11889,6 +12102,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 city_zone?: {
@@ -11938,6 +12153,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 type?: {
@@ -12402,6 +12619,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -12461,6 +12680,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 axeses?: {
 _id?: (0 | 1 );
@@ -12527,6 +12748,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 road?: {
@@ -12599,6 +12822,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 city_zone?: {
@@ -12648,6 +12873,8 @@ injured_count?: (0 | 1 );
 completion_date?: (0 | 1 );
 vehicle_dtos?: (0 | 1 );
 pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
 };
 };
 type?: {
