@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { ReqType } from "@/types/declarations/selectInp";
 import { count } from "@/app/actions/accident/count";
 import { remove } from "@/app/actions/accident/remove";
@@ -39,16 +40,36 @@ export default async function AccidentDashboardPage({
     <div className="relative min-h-full bg-gray-50 p-6">
       {/* Dashboard Header */}
       <div className="mb-8">
-        <div className="flex items-center mb-2">
-          <div className="bg-red-500 w-2 h-12 mr-4 rounded-full"></div>
-          <div>
-            <h1 className="text-3xl md:text-4xl text-gray-800 font-bold">
-              {translateModelNameToPersian("accident")}
-            </h1>
-            <p className="text-gray-500 mt-1">
-              سیستم مدیریت و تحلیل {translateModelNameToPersian("accident")}
-            </p>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
+            <div className="bg-red-500 w-2 h-12 mr-4 rounded-full"></div>
+            <div>
+              <h1 className="text-3xl md:text-4xl text-gray-800 font-bold">
+                {translateModelNameToPersian("accident")}
+              </h1>
+              <p className="text-gray-500 mt-1">
+                سیستم مدیریت و تحلیل {translateModelNameToPersian("accident")}
+              </p>
+            </div>
           </div>
+          <Link
+            href="/admin/accident/create"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+            افزودن حادثه جدید
+          </Link>
         </div>
       </div>
 

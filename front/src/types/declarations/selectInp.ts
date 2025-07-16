@@ -11347,9 +11347,146 @@ export type ReqType = {
 
       add: {
         set: {
-          name: string;
-          createdAt: Date;
-          updatedAt: Date;
+          seri?: number;
+          serial?: number;
+          location: {
+            type: "Point";
+            coordinates: any[];
+          };
+          date_of_accident: Date;
+          dead_count?: number;
+          has_witness?: boolean;
+          news_number?: number;
+          officer?: string;
+          injured_count?: number;
+          completion_date?: Date;
+          vehicle_dtos?: {
+            color?: {
+              _id: string;
+              name: string;
+            };
+            driver?: {
+              sex?: ("Male" | "Female" | "Other");
+              last_name?: string;
+              first_name?: string;
+              injury_type?: {
+                _id: string;
+                name: string;
+              };
+              licence_type?: {
+                _id: string;
+                name: string;
+              };
+              national_code?: string;
+              licence_number?: string;
+              total_reason?: {
+                _id: string;
+                name: string;
+              };
+            };
+            system?: {
+              _id: string;
+              name: string;
+            };
+            plaque_type?: {
+              _id: string;
+              name: string;
+            };
+            plaque_no?: any[];
+            system_type?: {
+              _id: string;
+              name: string;
+            };
+            fault_status?: {
+              _id: string;
+              name: string;
+            };
+            insurance_co?: {
+              _id: string;
+              name: string;
+            };
+            insurance_no?: string;
+            plaque_usage?: {
+              _id: string;
+              name: string;
+            };
+            print_number?: string;
+            plaque_serial?: string[];
+            insurance_date?: Date;
+            body_insurance_co?: {
+              _id: string;
+              name: string;
+            };
+            body_insurance_no?: string;
+            motion_direction?: {
+              _id: string;
+              name: string;
+            };
+            body_insurance_date?: Date;
+            max_damage_sections?: {
+              _id: string;
+              name: string;
+            }[];
+            damage_section_other?: string;
+            insurance_warranty_limit?: number;
+            passenger_dtos?: {
+              sex?: ("Male" | "Female" | "Other");
+              last_name?: string;
+              first_name?: string;
+              injury_type?: {
+                _id: string;
+                name: string;
+              };
+              fault_status?: {
+                _id: string;
+                name: string;
+              };
+              total_reason?: {
+                _id: string;
+                name: string;
+              };
+              national_code?: string;
+            }[];
+          }[];
+          pedestrian_dtos?: {
+            sex?: ("Male" | "Female" | "Other");
+            last_name?: string;
+            first_name?: string;
+            injury_type?: {
+              _id: string;
+              name: string;
+            };
+            fault_status?: {
+              _id: string;
+              name: string;
+            };
+            total_reason?: {
+              _id: string;
+              name: string;
+            };
+            national_code?: string;
+          }[];
+          provinceId?: string;
+          cityId?: string;
+          roadId?: string;
+          trafficZoneId?: string;
+          cityZoneId?: string;
+          typeId?: string;
+          positionId?: string;
+          rulingTypeId?: string;
+          lightStatusId?: string;
+          collisionTypeId?: string;
+          roadSituationId?: string;
+          roadRepairTypeId?: string;
+          shoulderStatusId?: string;
+          areaUsagesIds?: string[];
+          airStatusesIds?: string[];
+          roadDefectsIds?: string[];
+          humanReasonsIds?: string[];
+          vehicleReasonsIds?: string[];
+          equipmentDamagesIds?: string[];
+          roadSurfaceConditionsIds?: string[];
+          attachmentsIds?: string[];
         };
         get: {
           _id?: (0 | 1);

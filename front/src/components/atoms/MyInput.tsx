@@ -10,6 +10,7 @@ interface InputProps<T extends FieldValues = FieldValues> {
   errMsg?: string;
   type?: string;
   placeholder?: string;
+  step?: string;
 }
 
 const MyInput = <T extends FieldValues = FieldValues>({
@@ -19,7 +20,8 @@ const MyInput = <T extends FieldValues = FieldValues>({
   type,
   label,
   placeholder,
-  register
+  register,
+  step,
 }: InputProps<T>) => {
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
@@ -41,9 +43,10 @@ const MyInput = <T extends FieldValues = FieldValues>({
             transition-all duration-200 ease-in-out
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
             hover:border-slate-400
-            ${errMsg
-              ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
-              : "border-slate-300 hover:bg-slate-50/50"
+            ${
+              errMsg
+                ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
+                : "border-slate-300 hover:bg-slate-50/50"
             }
           `}
           rows={4}
@@ -54,15 +57,17 @@ const MyInput = <T extends FieldValues = FieldValues>({
           {...register(name)}
           type={type || "text"}
           placeholder={placeholder || label}
+          step={step}
           className={`
             w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
             placeholder:text-slate-400 text-right
             transition-all duration-200 ease-in-out
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
             hover:border-slate-400
-            ${errMsg
-              ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
-              : "border-slate-300 hover:bg-slate-50/50"
+            ${
+              errMsg
+                ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
+                : "border-slate-300 hover:bg-slate-50/50"
             }
             ${type === "date" ? "text-left" : ""}
           `}
