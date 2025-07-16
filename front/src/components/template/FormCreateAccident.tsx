@@ -3,7 +3,12 @@
 import "leaflet/dist/leaflet.css";
 import React from "react";
 import type { Marker as LeafletMarker } from "leaflet";
-import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
+import {
+  useForm,
+  SubmitHandler,
+  useFieldArray,
+  Resolver,
+} from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +16,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { LatLngExpression } from "leaflet";
 import { ToastNotify } from "@/utils/helper";
+import type { CSSObjectWithLabel } from "react-select";
 import MyInput from "../atoms/MyInput";
 import MyDateInput from "../atoms/MyDateInput";
 import MyAsyncMultiSelect from "../atoms/MyAsyncMultiSelect";
@@ -140,19 +146,19 @@ const MySingleSelect = dynamic(
               isClearable
               isRtl
               styles={{
-                control: (provided: Record<string, any>) => ({
+                control: (provided: CSSObjectWithLabel) => ({
                   ...provided,
                   minHeight: "48px",
                   borderRadius: "12px",
                   borderColor: errMsg ? "#ef4444" : "#cbd5e1",
                   direction: "rtl",
                 }),
-                option: (provided: Record<string, any>) => ({
+                option: (provided: CSSObjectWithLabel) => ({
                   ...provided,
                   direction: "rtl",
                   textAlign: "right",
                 }),
-                singleValue: (provided: Record<string, any>) => ({
+                singleValue: (provided: CSSObjectWithLabel) => ({
                   ...provided,
                   direction: "rtl",
                 }),
@@ -442,7 +448,13 @@ const AccidentCreateSchema = z.object({
     .optional(),
 });
 
-type AccidentFormCreateSchemaType = z.infer<typeof AccidentCreateSchema>;
+type AccidentFormCreateSchemaType = Omit<
+  z.infer<typeof AccidentCreateSchema>,
+  "latitude" | "longitude"
+> & {
+  latitude: number;
+  longitude: number;
+};
 
 const FormCreateAccident = () => {
   const router = useRouter();
@@ -461,7 +473,9 @@ const FormCreateAccident = () => {
     watch,
     formState: { errors },
   } = useForm<AccidentFormCreateSchemaType>({
-    resolver: zodResolver(AccidentCreateSchema),
+    resolver: zodResolver(
+      AccidentCreateSchema,
+    ) as Resolver<AccidentFormCreateSchemaType>,
     defaultValues: {
       dead_count: 0,
       injured_count: 0,
@@ -1038,7 +1052,18 @@ const FormCreateAccident = () => {
     name: string,
     value: { _id: string; name: string } | null,
   ) => {
-    setValue(name as keyof AccidentFormCreateSchemaType, value as any);
+    setValue(
+      name as keyof AccidentFormCreateSchemaType,
+      value as unknown as AccidentFormCreateSchemaType[keyof AccidentFormCreateSchemaType],
+    );
+  };
+
+  // Wrapper function to match MySingleSelect signature
+  const setValueWrapper = (name: string, value: string) => {
+    setValue(
+      name as keyof AccidentFormCreateSchemaType,
+      value as AccidentFormCreateSchemaType[keyof AccidentFormCreateSchemaType],
+    );
   };
 
   const onSubmit: SubmitHandler<AccidentFormCreateSchemaType> = async (
@@ -1102,7 +1127,7 @@ const FormCreateAccident = () => {
             (id: string) => ({ _id: id }),
           ),
           passenger_dtos: vehicle.passenger_dtos?.map(
-            (passenger: Record<string, any>) => ({
+            (passenger: Record<string, unknown>) => ({
               ...passenger,
             }),
           ),
@@ -1114,7 +1139,7 @@ const FormCreateAccident = () => {
       };
 
       // Remove the original form fields that are now mapped to Id fields
-      const processedData = accidentData as Record<string, any>;
+      const processedData = accidentData as Record<string, unknown>;
       delete processedData.province;
       delete processedData.city;
       delete processedData.road;
@@ -1136,7 +1161,7 @@ const FormCreateAccident = () => {
       delete processedData.equipment_damages;
       delete processedData.road_surface_conditions;
 
-      const result = await add(processedData);
+      const result = await add(processedData as Parameters<typeof add>[0]);
 
       if (result.success) {
         ToastNotify("success", "حادثه با موفقیت اضافه شد");
@@ -1290,7 +1315,7 @@ const FormCreateAccident = () => {
                 name="province"
                 label="استان"
                 loadOptions={loadProvinces}
-                setValue={setValue}
+                setValue={setValueWrapper}
                 defaultOptions={true}
                 errMsg={errors.province?.message}
               />
@@ -1298,7 +1323,7 @@ const FormCreateAccident = () => {
                 name="city"
                 label="شهر"
                 loadOptions={loadCities}
-                setValue={setValue}
+                setValue={setValueWrapper}
                 defaultOptions={true}
                 errMsg={errors.city?.message}
               />
@@ -1306,7 +1331,7 @@ const FormCreateAccident = () => {
                 name="road"
                 label="جاده"
                 loadOptions={loadRoads}
-                setValue={setValue}
+                setValue={setValueWrapper}
                 defaultOptions={true}
                 errMsg={errors.road?.message}
               />
@@ -1314,7 +1339,7 @@ const FormCreateAccident = () => {
                 name="traffic_zone"
                 label="منطقه ترافیک"
                 loadOptions={loadTrafficZones}
-                setValue={setValue}
+                setValue={setValueWrapper}
                 defaultOptions={true}
                 errMsg={errors.traffic_zone?.message}
               />
@@ -1322,7 +1347,7 @@ const FormCreateAccident = () => {
                 name="city_zone"
                 label="منطقه شهری"
                 loadOptions={loadCityZones}
-                setValue={setValue}
+                setValue={setValueWrapper}
                 defaultOptions={true}
                 errMsg={errors.city_zone?.message}
               />
@@ -1395,7 +1420,7 @@ const FormCreateAccident = () => {
               name="road_defects"
               label="نقص جاده"
               loadOptions={loadRoadDefects}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.road_defects?.message}
             />
@@ -1403,7 +1428,7 @@ const FormCreateAccident = () => {
               name="road_repair_type"
               label="نوع تعمیر جاده"
               loadOptions={loadRoadRepairTypes}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.road_repair_type?.message}
             />
@@ -1411,7 +1436,7 @@ const FormCreateAccident = () => {
               name="road_situation"
               label="وضعیت جاده"
               loadOptions={loadRoadSituations}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.road_situation?.message}
             />
@@ -1419,7 +1444,7 @@ const FormCreateAccident = () => {
               name="road_surface_conditions"
               label="شرایط سطح جاده"
               loadOptions={loadRoadSurfaceConditions}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.road_surface_conditions?.message}
             />
@@ -1427,7 +1452,7 @@ const FormCreateAccident = () => {
               name="air_statuses"
               label="وضعیت هوا"
               loadOptions={loadAirStatuses}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.air_statuses?.message}
             />
@@ -1435,7 +1460,7 @@ const FormCreateAccident = () => {
               name="light_status"
               label="وضعیت نور"
               loadOptions={loadLightStatuses}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.light_status?.message}
             />
@@ -1443,7 +1468,7 @@ const FormCreateAccident = () => {
               name="shoulder_status"
               label="وضعیت شانه جاده"
               loadOptions={loadShoulderStatuses}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.shoulder_status?.message}
             />
@@ -1451,7 +1476,7 @@ const FormCreateAccident = () => {
               name="position"
               label="موقعیت"
               loadOptions={loadPositions}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.position?.message}
             />
@@ -1468,7 +1493,7 @@ const FormCreateAccident = () => {
               name="type"
               label="نوع حادثه"
               loadOptions={loadTypes}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.type?.message}
             />
@@ -1476,7 +1501,7 @@ const FormCreateAccident = () => {
               name="collision_type"
               label="نوع تصادف"
               loadOptions={loadCollisionTypes}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.collision_type?.message}
             />
@@ -1484,7 +1509,7 @@ const FormCreateAccident = () => {
               name="area_usages"
               label="کاربری منطقه"
               loadOptions={loadAreaUsages}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.area_usages?.message}
             />
@@ -1492,7 +1517,7 @@ const FormCreateAccident = () => {
               name="ruling_type"
               label="نوع حکم"
               loadOptions={loadRulingTypes}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.ruling_type?.message}
             />
@@ -1500,7 +1525,7 @@ const FormCreateAccident = () => {
               name="human_reasons"
               label="دلایل انسانی"
               loadOptions={loadHumanReasons}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.human_reasons?.message}
             />
@@ -1508,7 +1533,7 @@ const FormCreateAccident = () => {
               name="vehicle_reasons"
               label="دلایل وسیله نقلیه"
               loadOptions={loadVehicleReasons}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.vehicle_reasons?.message}
             />
@@ -1516,7 +1541,7 @@ const FormCreateAccident = () => {
               name="equipment_damages"
               label="آسیب تجهیزات"
               loadOptions={loadEquipmentDamages}
-              setValue={setValue}
+              setValue={setValueWrapper}
               defaultOptions={true}
               errMsg={errors.equipment_damages?.message}
             />
