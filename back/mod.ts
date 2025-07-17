@@ -112,5 +112,6 @@ coreApp.runServer({
 		"http://lesan-frontend-1:3000",
 		"http://127.0.0.1:3000",
 		"http://127.0.0.1:4000",
+		"http://46.245.98.10:3795",
 	],
 });
