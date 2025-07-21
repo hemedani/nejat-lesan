@@ -35,7 +35,8 @@ services:
     environment:
       - APP_PORT=3000
       - NODE_ENV=production
-      - LESAN_URL=http://backend:1404
+      - LESAN_URL=http://46.245.98.10:1404
+      - NEXT_PUBLIC_LESAN_URL=http://46.245.98.10:1404
 
   # MongoDB service
   mongo:

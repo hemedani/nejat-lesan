@@ -11,7 +11,25 @@ const getLesanUrl = (): string => {
     // Server-side: use internal Docker network or env variable
     return envLesanUrl ? `${envLesanUrl}/lesan` : "http://localhost:1404/lesan";
   } else {
-    // Client-side: always use localhost for browser requests
+    // Client-side: check for public env var first, then detect production
+    const publicLesanUrl = process.env.NEXT_PUBLIC_LESAN_URL;
+    if (publicLesanUrl) {
+      return `${publicLesanUrl}/lesan`;
+    }
+
+    // If no public env var, check if we're in production by looking at the current hostname
+    if (
+      typeof window !== "undefined" &&
+      window.location.hostname !== "localhost" &&
+      window.location.hostname !== "127.0.0.1"
+    ) {
+      // In production, construct the backend URL based on current hostname
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      return `${protocol}//${hostname}:1404/lesan`;
+    }
+
+    // Default to localhost for development
     return "http://localhost:1404/lesan";
   }
 };
@@ -25,7 +43,25 @@ export const getLesanBaseUrl = (): string => {
     // Server-side: use internal Docker network or env variable
     return envLesanUrl || "http://localhost:1404";
   } else {
-    // Client-side: always use localhost for browser requests
+    // Client-side: check for public env var first, then detect production
+    const publicLesanUrl = process.env.NEXT_PUBLIC_LESAN_URL;
+    if (publicLesanUrl) {
+      return publicLesanUrl;
+    }
+
+    // If no public env var, check if we're in production by looking at the current hostname
+    if (
+      typeof window !== "undefined" &&
+      window.location.hostname !== "localhost" &&
+      window.location.hostname !== "127.0.0.1"
+    ) {
+      // In production, construct the backend URL based on current hostname
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      return `${protocol}//${hostname}:1404`;
+    }
+
+    // Default to localhost for development
     return "http://localhost:1404";
   }
 };
