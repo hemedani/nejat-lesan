@@ -435,7 +435,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {renderFilterSection(
           "🛠️ نوع تعمیر جاده",
           <RoadIcon className="w-4 h-4 text-amber-600" />,
-          filters.vehicleRoadRepairType,
+          filters.roadRepairType,
           "bg-amber-50 text-amber-700",
         )}
 

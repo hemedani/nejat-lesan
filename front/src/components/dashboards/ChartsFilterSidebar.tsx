@@ -9,12 +9,26 @@ import MyInput from "../atoms/MyInput";
 // Import action functions for loading options
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
+import { gets as getRoadsAction } from "@/app/actions/road/gets";
+import { gets as getTrafficZonesAction } from "@/app/actions/traffic_zone/gets";
+import { gets as getCityZonesAction } from "@/app/actions/city_zone/gets";
+import { gets as getAccidentTypesAction } from "@/app/actions/type/gets";
+import { gets as getPositionsAction } from "@/app/actions/position/gets";
+import { gets as getRulingTypesAction } from "@/app/actions/ruling_type/gets";
 import { gets as getLightStatusesAction } from "@/app/actions/light_status/gets";
 import { gets as getCollisionTypesAction } from "@/app/actions/collision_type/gets";
-import { gets as getRoadDefectsAction } from "@/app/actions/road_defect/gets";
-import { gets as getAirStatusesAction } from "@/app/actions/air_status/gets";
+import { gets as getRoadSituationsAction } from "@/app/actions/road_situation/gets";
+import { gets as getRoadRepairTypesAction } from "@/app/actions/road_repair_type/gets";
+import { gets as getShoulderStatusesAction } from "@/app/actions/shoulder_status/gets";
 import { gets as getAreaUsagesAction } from "@/app/actions/area_usage/gets";
+import { gets as getAirStatusesAction } from "@/app/actions/air_status/gets";
+import { gets as getRoadDefectsAction } from "@/app/actions/road_defect/gets";
+import { gets as getHumanReasonsAction } from "@/app/actions/human_reason/gets";
+import { gets as getVehicleReasonsAction } from "@/app/actions/vehicle_reason/gets";
 import { gets as getRoadSurfaceConditionsAction } from "@/app/actions/road_surface_condition/gets";
+import { gets as getVehicleSystemsAction } from "@/app/actions/system/gets";
+import { gets as getFaultStatusesAction } from "@/app/actions/fault_status/gets";
+import { gets as getLicenceTypesAction } from "@/app/actions/licence_type/gets";
 import { gets as getMaxDamageSectionsAction } from "@/app/actions/max_damage_section/gets";
 
 // Configuration interface
@@ -38,26 +52,45 @@ export interface RoadDefectsFilterState {
   injuredCountMax?: number;
   officer?: string;
 
-  // --- Location & Context ---
+  // --- Location & Context (supported by mapAccidents) ---
   province?: string[];
   city?: string[];
   road?: string[];
+  trafficZone?: string[];
+  cityZone?: string[];
   accidentType?: string[];
+  position?: string[];
+  rulingType?: string[];
+
+  // --- Accident Characteristics (supported by mapAccidents) ---
   lightStatus?: string[];
   collisionType?: string[];
   roadSituation?: string[];
+  roadRepairType?: string[];
+  shoulderStatus?: string[];
 
-  // --- Environmental & Reason-based ---
+  // --- Environmental & Reason-based (supported by mapAccidents) ---
   areaUsages?: string[];
+  airStatuses?: string[];
   roadDefects?: string[];
   humanReasons?: string[];
   vehicleReasons?: string[];
   roadSurfaceConditions?: string[];
-  airStatuses?: string[];
 
-  // --- Vehicle DTOs Filters ---
+  // --- Vehicle & Driver (supported by mapAccidents) ---
   vehicleSystem?: string[];
   vehicleFaultStatus?: string[];
+  driverSex?: string[];
+  driverLicenceType?: string[];
+  driverInjuryType?: string[];
+
+  // --- Additional driver fields for compatibility ---
+  driverFaultStatus?: string[];
+  driverAge?: string[];
+  driverPosition?: string[];
+  driverRulingType?: string[];
+
+  // --- Additional filters for compatibility ---
   maxDamageSections?: string[];
   vehicleType?: string[];
   vehicleColor?: string[];
@@ -68,16 +101,6 @@ export interface RoadDefectsFilterState {
   vehiclePlaqueUsage?: string[];
   vehicleMotionDirection?: string[];
   vehicleEquipmentDamage?: string[];
-  vehicleRoadRepairType?: string[];
-
-  // --- Driver in Vehicle DTOs Filters ---
-  driverSex?: string[];
-  driverLicenceType?: string[];
-  driverInjuryType?: string[];
-  driverFaultStatus?: string[];
-  driverAge?: string[];
-  driverPosition?: string[];
-  driverRulingType?: string[];
 
   // --- Road and Infrastructure ---
   roadType?: string[];
@@ -88,9 +111,6 @@ export interface RoadDefectsFilterState {
   roadBarrier?: string[];
   roadLighting?: string[];
   roadShoulder?: string[];
-  shoulderStatus?: string[];
-  trafficZone?: string[];
-  cityZone?: string[];
 
   // --- Time and Weather ---
   timeOfAccidentFrom?: string;
@@ -187,14 +207,32 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   // Load options functions
   const loadProvincesOptions = createLoadOptions(getProvincesAction);
   const loadCitiesOptions = createLoadOptions(getCitiesAction);
+  const loadRoadsOptions = createLoadOptions(getRoadsAction);
+  const loadTrafficZonesOptions = createLoadOptions(getTrafficZonesAction);
+  const loadCityZonesOptions = createLoadOptions(getCityZonesAction);
+  const loadAccidentTypesOptions = createLoadOptions(getAccidentTypesAction);
+  const loadPositionsOptions = createLoadOptions(getPositionsAction);
+  const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
   const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
   const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
-  const loadRoadDefectsOptions = createLoadOptions(getRoadDefectsAction);
-  const loadAirStatusesOptions = createLoadOptions(getAirStatusesAction);
+  const loadRoadSituationsOptions = createLoadOptions(getRoadSituationsAction);
+  const loadRoadRepairTypesOptions = createLoadOptions(
+    getRoadRepairTypesAction,
+  );
+  const loadShoulderStatusesOptions = createLoadOptions(
+    getShoulderStatusesAction,
+  );
   const loadAreaUsagesOptions = createLoadOptions(getAreaUsagesAction);
+  const loadAirStatusesOptions = createLoadOptions(getAirStatusesAction);
+  const loadRoadDefectsOptions = createLoadOptions(getRoadDefectsAction);
+  const loadHumanReasonsOptions = createLoadOptions(getHumanReasonsAction);
+  const loadVehicleReasonsOptions = createLoadOptions(getVehicleReasonsAction);
   const loadRoadSurfaceConditionsOptions = createLoadOptions(
     getRoadSurfaceConditionsAction,
   );
+  const loadVehicleSystemsOptions = createLoadOptions(getVehicleSystemsAction);
+  const loadFaultStatusesOptions = createLoadOptions(getFaultStatusesAction);
+  const loadLicenceTypesOptions = createLoadOptions(getLicenceTypesAction);
   const loadMaxDamageSectionsOptions = createLoadOptions(
     getMaxDamageSectionsAction,
   );
@@ -301,6 +339,76 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                 placeholder="انتخاب شهر..."
                 defaultOptions
               />
+              <MyAsyncMultiSelect
+                name="road"
+                label="راه"
+                setValue={setValue}
+                loadOptions={loadRoadsOptions}
+                errMsg={errors.road?.message}
+                placeholder="انتخاب راه..."
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                name="trafficZone"
+                label="منطقه ترافیکی"
+                setValue={setValue}
+                loadOptions={loadTrafficZonesOptions}
+                errMsg={errors.trafficZone?.message}
+                placeholder="انتخاب منطقه ترافیکی..."
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                name="cityZone"
+                label="منطقه شهری"
+                setValue={setValue}
+                loadOptions={loadCityZonesOptions}
+                errMsg={errors.cityZone?.message}
+                placeholder="انتخاب منطقه شهری..."
+                defaultOptions
+              />
+            </div>
+
+            {/* Accident Type and Position */}
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <MyAsyncMultiSelect
+                name="accidentType"
+                label="نوع تصادف"
+                setValue={setValue}
+                loadOptions={loadAccidentTypesOptions}
+                errMsg={errors.accidentType?.message}
+                placeholder="انتخاب نوع تصادف..."
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                name="position"
+                label="موقعیت"
+                setValue={setValue}
+                loadOptions={loadPositionsOptions}
+                errMsg={errors.position?.message}
+                placeholder="انتخاب موقعیت..."
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                name="rulingType"
+                label="نوع حکم"
+                setValue={setValue}
+                loadOptions={loadRulingTypesOptions}
+                errMsg={errors.rulingType?.message}
+                placeholder="انتخاب نوع حکم..."
+                defaultOptions
+              />
+            </div>
+
+            {/* Officer Field */}
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <MyInput
+                name="officer"
+                label="افسر مسئول"
+                register={control.register}
+                errMsg={errors.officer?.message}
+                type="text"
+                placeholder="نام افسر مسئول..."
+              />
             </div>
 
             {/* Severity Filters */}
@@ -339,12 +447,51 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     placeholder={config.lockToSevereAccidents ? "1" : "0"}
                   />
                   <MyInput
+                    name="deadCountMax"
+                    label="حداکثر تعداد فوتی"
+                    register={control.register}
+                    errMsg={errors.deadCountMax?.message}
+                    type="number"
+                    placeholder="حداکثر..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <MyInput
                     name="injuredCountMin"
                     label="حداقل تعداد مجروح"
                     register={control.register}
                     errMsg={errors.injuredCountMin?.message}
                     type="number"
                     placeholder={config.lockToSevereAccidents ? "1" : "0"}
+                  />
+                  <MyInput
+                    name="injuredCountMax"
+                    label="حداکثر تعداد مجروح"
+                    register={control.register}
+                    errMsg={errors.injuredCountMax?.message}
+                    type="number"
+                    placeholder="حداکثر..."
+                  />
+                </div>
+
+                {/* Serial Number Fields */}
+                <div className="grid grid-cols-2 gap-4">
+                  <MyInput
+                    name="seri"
+                    label="شماره سری"
+                    register={control.register}
+                    errMsg={errors.seri?.message}
+                    type="number"
+                    placeholder="شماره سری..."
+                  />
+                  <MyInput
+                    name="serial"
+                    label="شماره سریال"
+                    register={control.register}
+                    errMsg={errors.serial?.message}
+                    type="number"
+                    placeholder="شماره سریال..."
                   />
                 </div>
 
@@ -430,6 +577,37 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
 
             {advancedFiltersOpen && (
               <div className="space-y-4">
+                {/* Road and Infrastructure */}
+                <MyAsyncMultiSelect
+                  name="roadSituation"
+                  label="وضعیت راه"
+                  setValue={setValue}
+                  loadOptions={loadRoadSituationsOptions}
+                  errMsg={errors.roadSituation?.message}
+                  placeholder="انتخاب وضعیت راه..."
+                  defaultOptions
+                />
+
+                <MyAsyncMultiSelect
+                  name="roadRepairType"
+                  label="نوع تعمیر راه"
+                  setValue={setValue}
+                  loadOptions={loadRoadRepairTypesOptions}
+                  errMsg={errors.roadRepairType?.message}
+                  placeholder="انتخاب نوع تعمیر راه..."
+                  defaultOptions
+                />
+
+                <MyAsyncMultiSelect
+                  name="shoulderStatus"
+                  label="وضعیت شانه راه"
+                  setValue={setValue}
+                  loadOptions={loadShoulderStatusesOptions}
+                  errMsg={errors.shoulderStatus?.message}
+                  placeholder="انتخاب وضعیت شانه راه..."
+                  defaultOptions
+                />
+
                 {/* Road Defects */}
                 <MyAsyncMultiSelect
                   name="roadDefects"
@@ -505,6 +683,128 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   placeholder="انتخاب وضعیت سطح راه..."
                   defaultOptions
                 />
+
+                {/* Human and Vehicle Reasons */}
+                <MyAsyncMultiSelect
+                  name="humanReasons"
+                  label="علل انسانی"
+                  setValue={setValue}
+                  loadOptions={loadHumanReasonsOptions}
+                  errMsg={errors.humanReasons?.message}
+                  placeholder="انتخاب علل انسانی..."
+                  defaultOptions
+                />
+
+                <MyAsyncMultiSelect
+                  name="vehicleReasons"
+                  label="علل وسیله نقلیه"
+                  setValue={setValue}
+                  loadOptions={loadVehicleReasonsOptions}
+                  errMsg={errors.vehicleReasons?.message}
+                  placeholder="انتخاب علل وسیله نقلیه..."
+                  defaultOptions
+                />
+
+                {/* Vehicle System and Fault Status */}
+                <MyAsyncMultiSelect
+                  name="vehicleSystem"
+                  label="سیستم وسیله نقلیه"
+                  setValue={setValue}
+                  loadOptions={loadVehicleSystemsOptions}
+                  errMsg={errors.vehicleSystem?.message}
+                  placeholder="انتخاب سیستم وسیله نقلیه..."
+                  defaultOptions
+                />
+
+                <MyAsyncMultiSelect
+                  name="vehicleFaultStatus"
+                  label="وضعیت خطای وسیله نقلیه"
+                  setValue={setValue}
+                  loadOptions={loadFaultStatusesOptions}
+                  errMsg={errors.vehicleFaultStatus?.message}
+                  placeholder="انتخاب وضعیت خطای وسیله نقلیه..."
+                  defaultOptions
+                />
+
+                {/* Driver Information */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                    اطلاعات راننده
+                  </h4>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      جنسیت راننده
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="مرد"
+                          {...control.register("driverSex")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">مرد</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="زن"
+                          {...control.register("driverSex")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">زن</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <MyAsyncMultiSelect
+                    name="driverLicenceType"
+                    label="نوع گواهینامه راننده"
+                    setValue={setValue}
+                    loadOptions={loadLicenceTypesOptions}
+                    errMsg={errors.driverLicenceType?.message}
+                    placeholder="انتخاب نوع گواهینامه راننده..."
+                    defaultOptions
+                  />
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      نوع آسیب راننده
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="فوتی"
+                          {...control.register("driverInjuryType")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">فوتی</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="مجروح"
+                          {...control.register("driverInjuryType")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">
+                          مجروح
+                        </span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="سالم"
+                          {...control.register("driverInjuryType")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">سالم</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
