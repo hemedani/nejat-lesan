@@ -114,7 +114,7 @@ const SpatialSeverityAnalyticsPage = () => {
         const validatedAnalytics = {
           ...analyticsResponse.body.analytics,
           mapChart: analyticsResponse.body.analytics.mapChart.filter(
-            (item) =>
+            (item: { zoneId: string; zoneName: string; ratio: number }) =>
               item && item.zoneName && typeof item.zoneName === "string",
           ),
         };
