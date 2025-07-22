@@ -227,71 +227,6 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
     }
   };
 
-  // Map-specific navigation for each section
-  const getMapNavigation = (section: string): NavigationItem[] => {
-    switch (section) {
-      case "accidents":
-        return [
-          {
-            id: "interactive",
-            label: "نقشه تعاملی",
-            href: "/maps/accidents",
-          },
-          {
-            id: "heatmap",
-            label: "نمایش حرارتی",
-            href: "/maps/accidents/heatmap",
-          },
-          {
-            id: "clusters",
-            label: "نمایش خوشه‌ای",
-            href: "/maps/accidents/clusters",
-          },
-        ];
-      case "heatmap":
-        return [
-          {
-            id: "density",
-            label: "تراکم تصادفات",
-            href: "/maps/heatmap/density",
-          },
-          {
-            id: "severity",
-            label: "شدت تصادفات",
-            href: "/maps/heatmap/severity",
-          },
-        ];
-      case "clusters":
-        return [
-          {
-            id: "analysis",
-            label: "تحلیل خوشه",
-            href: "/maps/clusters/analysis",
-          },
-          {
-            id: "hotspots",
-            label: "نقاط داغ",
-            href: "/maps/clusters/hotspots",
-          },
-        ];
-      case "regional":
-        return [
-          {
-            id: "provinces",
-            label: "تحلیل استانی",
-            href: "/maps/regional/provinces",
-          },
-          {
-            id: "cities",
-            label: "تحلیل شهری",
-            href: "/maps/regional/cities",
-          },
-        ];
-      default:
-        return [];
-    }
-  };
-
   // Generate breadcrumbs
   const generateBreadcrumbs = () => {
     const breadcrumbs = [{ label: "داشبورد", href: "/" }];
@@ -340,14 +275,6 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
   const breadcrumbs = generateBreadcrumbs();
   const chartNavigation = currentSection
     ? getChartNavigation(currentSection)
-    : [];
-
-  // Extract current map section from pathname for map navigation
-  const currentMapSection = pathname.includes("/maps")
-    ? pathname.split("/maps/")[1]?.split("/")[0]
-    : null;
-  const mapNavigation = currentMapSection
-    ? getMapNavigation(currentMapSection)
     : [];
 
   return (
@@ -482,35 +409,6 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
                     }`}
                   >
                     {chart.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
-
-      {/* Map-specific Navigation */}
-      {pathname.includes("/maps") &&
-        currentMapSection &&
-        mapNavigation.length > 0 && (
-          <div className="px-6 py-3 bg-gray-25 border-t border-gray-100">
-            <nav className="flex space-x-4 space-x-reverse">
-              <span className="text-sm font-medium text-gray-700 py-2">
-                نقشه‌ها:
-              </span>
-              {mapNavigation.map((map) => {
-                const isActive = pathname === map.href;
-                return (
-                  <Link
-                    key={map.id}
-                    href={map.href}
-                    className={`py-2 px-3 rounded-md text-sm transition-colors ${
-                      isActive
-                        ? "bg-blue-50 text-blue-700 font-medium"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    {map.label}
                   </Link>
                 );
               })}
