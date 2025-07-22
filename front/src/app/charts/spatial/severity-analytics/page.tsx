@@ -110,7 +110,15 @@ const SpatialSeverityAnalyticsPage = () => {
 
       // Handle analytics response
       if (analyticsResponse.success && analyticsResponse.body) {
-        setAnalyticsData(analyticsResponse.body.analytics);
+        // Filter out any map data items with invalid zoneName values
+        const validatedAnalytics = {
+          ...analyticsResponse.body.analytics,
+          mapChart: analyticsResponse.body.analytics.mapChart.filter(
+            (item) =>
+              item && item.zoneName && typeof item.zoneName === "string",
+          ),
+        };
+        setAnalyticsData(validatedAnalytics);
       } else {
         throw new Error("Failed to fetch analytics data");
       }

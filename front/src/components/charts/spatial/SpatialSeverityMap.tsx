@@ -35,6 +35,29 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   geoJsonData,
   isLoading,
 }) => {
+  const [mapError, setMapError] = React.useState<string | null>(null);
+
+  // Effect to catch any rendering errors with the map data
+  React.useEffect(() => {
+    setMapError(null);
+    try {
+      // Validate mapData structure
+      if (mapData && Array.isArray(mapData)) {
+        const invalidItems = mapData.filter(
+          (item) =>
+            !item ||
+            typeof item.zoneName !== "string" ||
+            item.zoneName.trim() === "",
+        );
+        if (invalidItems.length > 0) {
+          console.warn("Found invalid map data items:", invalidItems);
+        }
+      }
+    } catch (error) {
+      console.error("Map data validation error:", error);
+      setMapError("خطا در اعتبارسنجی داده‌های نقشه");
+    }
+  }, [mapData, geoJsonData]);
   // Color scale function: green (low) to yellow to red (high)
   const getColor = (ratio: number): string => {
     if (ratio === 0) return "#E5E7EB"; // Gray for no data
@@ -47,16 +70,20 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 
   // Helper function to match zone names flexibly
   const findZoneData = (zoneName: string) => {
-    if (!zoneName) return null;
+    if (!zoneName || !mapData || mapData.length === 0) return null;
 
     // Try exact match first
-    let zoneData = mapData.find((item) => item.zoneName === zoneName);
+    let zoneData = mapData.find(
+      (item) => item.zoneName && item.zoneName === zoneName,
+    );
     if (zoneData) return zoneData;
 
     // Try to extract number from zone name and match
     const zoneNumber = zoneName.match(/\d+/)?.[0];
     if (zoneNumber) {
-      zoneData = mapData.find((item) => item.zoneName === zoneNumber);
+      zoneData = mapData.find(
+        (item) => item.zoneName && item.zoneName === zoneNumber,
+      );
       if (zoneData) return zoneData;
     }
 
@@ -65,6 +92,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       .replace(/^(منطقه|zone|district)\s*/i, "")
       .trim();
     zoneData = mapData.find((item) => {
+      if (!item.zoneName) return false;
       const cleanItemName = item.zoneName
         .replace(/^(منطقه|zone|district)\s*/i, "")
         .trim();
@@ -75,7 +103,8 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     // Try partial matching
     zoneData = mapData.find(
       (item) =>
-        zoneName.includes(item.zoneName) || item.zoneName.includes(zoneName),
+        item.zoneName &&
+        (zoneName.includes(item.zoneName) || item.zoneName.includes(zoneName)),
     );
 
     return zoneData;
@@ -84,8 +113,27 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   // Style function for GeoJSON features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const style = (feature?: any) => {
-    if (!feature || !feature.properties) return {};
+    if (!feature || !feature.properties)
+      return {
+        fillColor: "#E5E7EB",
+        weight: 2,
+        opacity: 1,
+        color: "#6B7280",
+        dashArray: "",
+        fillOpacity: 0.7,
+      };
+
     const zoneName = feature.properties.name;
+    if (!zoneName || typeof zoneName !== "string")
+      return {
+        fillColor: "#E5E7EB",
+        weight: 2,
+        opacity: 1,
+        color: "#6B7280",
+        dashArray: "",
+        fillOpacity: 0.7,
+      };
+
     const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;
 
@@ -102,7 +150,11 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   // Event handlers for interactive features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onEachFeature = (feature: any, layer: any) => {
+    if (!feature || !feature.properties || !layer) return;
+
     const zoneName = feature.properties?.name || "Unknown";
+    if (typeof zoneName !== "string") return;
+
     const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;
 
@@ -294,12 +346,21 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <GeoJSON
-            data={geoJsonData}
-            style={style}
-            onEachFeature={onEachFeature}
-            key={JSON.stringify(geoJsonData)}
-          />
+          {mapError ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+              <div className="text-center p-4">
+                <p className="text-red-600 font-medium">خطا در بارگذاری نقشه</p>
+                <p className="text-sm text-gray-500 mt-1">{mapError}</p>
+              </div>
+            </div>
+          ) : (
+            <GeoJSON
+              data={geoJsonData}
+              style={style}
+              onEachFeature={onEachFeature}
+              key={JSON.stringify(geoJsonData)}
+            />
+          )}
         </MapContainer>
       </div>
 
