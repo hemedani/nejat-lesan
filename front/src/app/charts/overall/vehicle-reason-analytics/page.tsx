@@ -4,11 +4,15 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { vehicleReasonAnalytics } from "@/app/actions/accident/vehicleReasonAnalytics";
 import VehicleReasonDashboard from "@/components/dashboards/VehicleReasonDashboard";
 import { ReqType } from "@/types/declarations/selectInp";
+
+// Get enabled filters for vehicle reason analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("VEHICLE_REASON_ANALYTICS");
 
 // Backend response interface for vehicle reason analytics
 interface VehicleReasonAnalyticsResponse {
@@ -195,6 +199,7 @@ const VehicleReasonAnalyticsPage = () => {
               config={getFilterConfig()}
               title="فیلترهای تحلیل عامل وسیله نقلیه"
               description="برای مشاهده توزیع عامل وسیله نقلیه مؤثر در تصادفات، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}
