@@ -4,11 +4,15 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { eventCollisionAnalytics } from "@/app/actions/accident/eventCollisionAnalytics";
 import EventCollisionComparisonChart from "../../../../components/dashboards/charts/EventCollisionComparisonChart";
 import { DatePicker } from "zaman";
+
+// Get enabled filters for trend collision analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("TREND_COLLISION_ANALYTICS");
 
 // Backend response interface for event collision analytics
 interface EventCollisionResponse {
@@ -372,6 +376,9 @@ const EventCollisionAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل روند برخورد"
+              description="فیلترهای مربوط به تحلیل روند نوع برخورد در رویدادها"
             />
           </div>
         )}

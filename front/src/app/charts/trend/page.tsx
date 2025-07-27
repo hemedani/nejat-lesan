@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for trend charts (use basic trend filters)
+const ENABLED_FILTERS = getEnabledFiltersForChart("TREND_COLLISION_ANALYTICS");
 
 const TrendChartsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -40,6 +44,9 @@ const TrendChartsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل روند"
+              description="فیلترهای عمومی برای تحلیل‌های روند تصادفات"
             />
           </div>
         )}

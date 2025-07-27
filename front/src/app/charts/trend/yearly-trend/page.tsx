@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for yearly trend analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("YEARLY_TREND_ANALYTICS");
 
 const YearlyTrendPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -27,10 +31,7 @@ const YearlyTrendPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="trend"
-        currentChart="yearly-trend"
-      />
+      <ChartNavigation currentSection="trend" currentChart="yearly-trend" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -39,8 +40,9 @@ const YearlyTrendPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای روند سالانه"
-              description="فیلترهای مربوط به تحلیل روند چندساله تصادفات"
+              description="فیلترهای مربوط به تحلیل روند سالانه تصادفات"
             />
           </div>
         )}
@@ -104,7 +106,9 @@ const YearlyTrendPage = () => {
                 این بخش در حال توسعه می‌باشد
               </h2>
               <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                سیستم تحلیل روند سالانه تصادفات به زودی در دسترس خواهد بود. این ابزار شامل تحلیل‌های عمیق بلندمدت، مقایسه عملکرد سال‌ها و پیش‌بینی روندهای آتی خواهد بود.
+                سیستم تحلیل روند سالانه تصادفات به زودی در دسترس خواهد بود. این
+                ابزار شامل تحلیل‌های عمیق بلندمدت، مقایسه عملکرد سال‌ها و
+                پیش‌بینی روندهای آتی خواهد بود.
               </p>
               <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full">
                 <svg
@@ -120,7 +124,9 @@ const YearlyTrendPage = () => {
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="font-medium">در مرحله طراحی نمودارهای بلندمدت</span>
+                <span className="font-medium">
+                  در مرحله طراحی نمودارهای بلندمدت
+                </span>
               </div>
             </div>
           </div>
@@ -134,11 +140,26 @@ const YearlyTrendPage = () => {
               </h3>
               <div className="bg-gray-50 rounded-lg h-64 flex items-center justify-center mb-4 relative overflow-hidden">
                 {/* Simulated multi-year chart */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 200">
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 300 200"
+                >
                   <defs>
-                    <linearGradient id="yearlyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" style={{stopColor: '#6366F1', stopOpacity: 0.3}} />
-                      <stop offset="100%" style={{stopColor: '#6366F1', stopOpacity: 0}} />
+                    <linearGradient
+                      id="yearlyGradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="0%"
+                      y2="100%"
+                    >
+                      <stop
+                        offset="0%"
+                        style={{ stopColor: "#6366F1", stopOpacity: 0.3 }}
+                      />
+                      <stop
+                        offset="100%"
+                        style={{ stopColor: "#6366F1", stopOpacity: 0 }}
+                      />
                     </linearGradient>
                   </defs>
                   {/* Main trend line */}
@@ -169,7 +190,9 @@ const YearlyTrendPage = () => {
                   <circle cx="260" cy="85" r="4" fill="#6366F1" />
                 </svg>
                 <div className="relative z-10 text-center bg-white bg-opacity-80 rounded-lg p-2">
-                  <p className="text-gray-600 text-sm font-medium">روند ۱۰ ساله پیش‌نمایش</p>
+                  <p className="text-gray-600 text-sm font-medium">
+                    روند ۱۰ ساله پیش‌نمایش
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
@@ -185,35 +208,48 @@ const YearlyTrendPage = () => {
               <div className="bg-gray-50 rounded-lg h-64 flex flex-col justify-center p-4 mb-4">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">نرخ رشد سالانه</span>
+                    <span className="text-sm text-gray-600">
+                      نرخ رشد سالانه
+                    </span>
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-2 bg-gray-200 rounded-full">
                         <div className="w-10 h-2 bg-red-500 rounded-full"></div>
                       </div>
-                      <span className="text-sm font-bold text-red-600">-2.3%</span>
+                      <span className="text-sm font-bold text-red-600">
+                        -2.3%
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">نرخ رشد ۵ ساله</span>
+                    <span className="text-sm text-gray-600">
+                      نرخ رشد ۵ ساله
+                    </span>
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-2 bg-gray-200 rounded-full">
                         <div className="w-6 h-2 bg-yellow-500 rounded-full"></div>
                       </div>
-                      <span className="text-sm font-bold text-yellow-600">-1.1%</span>
+                      <span className="text-sm font-bold text-yellow-600">
+                        -1.1%
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">نرخ رشد ۱۰ ساله</span>
+                    <span className="text-sm text-gray-600">
+                      نرخ رشد ۱۰ ساله
+                    </span>
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-2 bg-gray-200 rounded-full">
                         <div className="w-12 h-2 bg-green-500 rounded-full"></div>
                       </div>
-                      <span className="text-sm font-bold text-green-600">-3.7%</span>
+                      <span className="text-sm font-bold text-green-600">
+                        -3.7%
+                      </span>
                     </div>
                   </div>
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-xs text-blue-800">
-                      📉 روند کلی کاهشی است که نشان‌دهنده بهبود ایمنی جاده‌ای می‌باشد
+                      📉 روند کلی کاهشی است که نشان‌دهنده بهبود ایمنی جاده‌ای
+                      می‌باشد
                     </p>
                   </div>
                 </div>
@@ -315,7 +351,9 @@ const YearlyTrendPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center p-6 bg-blue-50 rounded-lg">
                 <div className="text-3xl mb-2">📉</div>
-                <h4 className="font-bold text-lg text-blue-900 mb-2">دهه ۱۳۹۰</h4>
+                <h4 className="font-bold text-lg text-blue-900 mb-2">
+                  دهه ۱۳۹۰
+                </h4>
                 <p className="text-3xl font-bold text-blue-600 mb-2">--</p>
                 <p className="text-sm text-blue-700">میانگین سالانه</p>
                 <div className="mt-3 text-xs text-blue-600">
@@ -325,7 +363,9 @@ const YearlyTrendPage = () => {
 
               <div className="text-center p-6 bg-purple-50 rounded-lg">
                 <div className="text-3xl mb-2">📊</div>
-                <h4 className="font-bold text-lg text-purple-900 mb-2">دهه ۱۴۰۰</h4>
+                <h4 className="font-bold text-lg text-purple-900 mb-2">
+                  دهه ۱۴۰۰
+                </h4>
                 <p className="text-3xl font-bold text-purple-600 mb-2">--</p>
                 <p className="text-sm text-purple-700">میانگین سالانه</p>
                 <div className="mt-3 text-xs text-purple-600">
@@ -335,7 +375,9 @@ const YearlyTrendPage = () => {
 
               <div className="text-center p-6 bg-green-50 rounded-lg">
                 <div className="text-3xl mb-2">🎯</div>
-                <h4 className="font-bold text-lg text-green-900 mb-2">پیش‌بینی</h4>
+                <h4 className="font-bold text-lg text-green-900 mb-2">
+                  پیش‌بینی
+                </h4>
                 <p className="text-3xl font-bold text-green-600 mb-2">--</p>
                 <p className="text-sm text-green-700">هدف ۱۴۰۵</p>
                 <div className="mt-3 text-xs text-green-600">
@@ -352,78 +394,130 @@ const YearlyTrendPage = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">🔬 تحلیل‌های آماری</h4>
+                <h4 className="font-medium text-gray-900 mb-3">
+                  🔬 تحلیل‌های آماری
+                </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3"/>
+                      <svg
+                        className="w-3 h-3 text-blue-600"
+                        fill="currentColor"
+                        viewBox="0 0 8 8"
+                      >
+                        <circle cx="4" cy="4" r="3" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">تحلیل رگرسیون</p>
-                      <p className="text-xs text-gray-600">بررسی عوامل مؤثر بر روند سالانه</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        تحلیل رگرسیون
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        بررسی عوامل مؤثر بر روند سالانه
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3"/>
+                      <svg
+                        className="w-3 h-3 text-green-600"
+                        fill="currentColor"
+                        viewBox="0 0 8 8"
+                      >
+                        <circle cx="4" cy="4" r="3" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">آزمون معنی‌داری</p>
-                      <p className="text-xs text-gray-600">بررسی آماری معناداری تغییرات</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        آزمون معنی‌داری
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        بررسی آماری معناداری تغییرات
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3"/>
+                      <svg
+                        className="w-3 h-3 text-purple-600"
+                        fill="currentColor"
+                        viewBox="0 0 8 8"
+                      >
+                        <circle cx="4" cy="4" r="3" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">تحلیل چرخه‌ای</p>
-                      <p className="text-xs text-gray-600">شناسایی چرخه‌های بلندمدت</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        تحلیل چرخه‌ای
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        شناسایی چرخه‌های بلندمدت
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">🎯 پیش‌بینی و برنامه‌ریزی</h4>
+                <h4 className="font-medium text-gray-900 mb-3">
+                  🎯 پیش‌بینی و برنامه‌ریزی
+                </h4>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-orange-600" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3"/>
+                      <svg
+                        className="w-3 h-3 text-orange-600"
+                        fill="currentColor"
+                        viewBox="0 0 8 8"
+                      >
+                        <circle cx="4" cy="4" r="3" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">پیش‌بینی ۵ ساله</p>
-                      <p className="text-xs text-gray-600">مدل‌سازی روندهای آتی</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        پیش‌بینی ۵ ساله
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        مدل‌سازی روندهای آتی
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-red-600" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3"/>
+                      <svg
+                        className="w-3 h-3 text-red-600"
+                        fill="currentColor"
+                        viewBox="0 0 8 8"
+                      >
+                        <circle cx="4" cy="4" r="3" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">تعیین اهداف</p>
-                      <p className="text-xs text-gray-600">تنظیم اهداف کاهش تصادفات</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        تعیین اهداف
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        تنظیم اهداف کاهش تصادفات
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-teal-600" fill="currentColor" viewBox="0 0 8 8">
-                        <circle cx="4" cy="4" r="3"/>
+                      <svg
+                        className="w-3 h-3 text-teal-600"
+                        fill="currentColor"
+                        viewBox="0 0 8 8"
+                      >
+                        <circle cx="4" cy="4" r="3" />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">سناریوسازی</p>
-                      <p className="text-xs text-gray-600">بررسی اثر مداخلات مختلف</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        سناریوسازی
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        بررسی اثر مداخلات مختلف
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -454,7 +548,9 @@ const YearlyTrendPage = () => {
                   🔍 مبانی علمی تحلیل روند سالانه
                 </h4>
                 <p className="text-sm text-gray-600 mb-3">
-                  این سیستم بر اساس مدل‌های آماری پیشرفته شامل ARIMA، رگرسیون چندمتغیره و تحلیل سری زمانی برای ارائه تحلیل‌های دقیق روندهای بلندمدت طراحی شده است.
+                  این سیستم بر اساس مدل‌های آماری پیشرفته شامل ARIMA، رگرسیون
+                  چندمتغیره و تحلیل سری زمانی برای ارائه تحلیل‌های دقیق روندهای
+                  بلندمدت طراحی شده است.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">

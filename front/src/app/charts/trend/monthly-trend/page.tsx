@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for monthly trend analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("MONTHLY_TREND_ANALYTICS");
 
 const MonthlyTrendPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -27,10 +31,7 @@ const MonthlyTrendPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="trend"
-        currentChart="monthly-trend"
-      />
+      <ChartNavigation currentSection="trend" currentChart="monthly-trend" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -39,6 +40,7 @@ const MonthlyTrendPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای روند ماهانه"
               description="فیلترهای مربوط به تحلیل روند ماهانه تصادفات"
             />
@@ -104,7 +106,9 @@ const MonthlyTrendPage = () => {
                 این بخش در حال توسعه می‌باشد
               </h2>
               <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                سیستم تحلیل روند ماهانه تصادفات به زودی در دسترس خواهد بود. این ابزار شامل نمودارهای تعاملی، تحلیل الگوهای فصلی و پیش‌بینی آماری روندهای آتی خواهد بود.
+                سیستم تحلیل روند ماهانه تصادفات به زودی در دسترس خواهد بود. این
+                ابزار شامل نمودارهای تعاملی، تحلیل الگوهای فصلی و پیش‌بینی آماری
+                روندهای آتی خواهد بود.
               </p>
               <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-800 px-4 py-2 rounded-full">
                 <svg
@@ -120,7 +124,9 @@ const MonthlyTrendPage = () => {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <span className="font-medium">در حال توسعه نمودارهای ماهانه</span>
+                <span className="font-medium">
+                  در حال توسعه نمودارهای ماهانه
+                </span>
               </div>
             </div>
           </div>
@@ -134,11 +140,26 @@ const MonthlyTrendPage = () => {
               </h3>
               <div className="bg-gray-50 rounded-lg h-64 flex items-center justify-center mb-4 relative overflow-hidden">
                 {/* Simulated line chart */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 200">
+                <svg
+                  className="absolute inset-0 w-full h-full"
+                  viewBox="0 0 300 200"
+                >
                   <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" style={{stopColor: '#3B82F6', stopOpacity: 0.3}} />
-                      <stop offset="100%" style={{stopColor: '#3B82F6', stopOpacity: 0}} />
+                    <linearGradient
+                      id="gradient"
+                      x1="0%"
+                      y1="0%"
+                      x2="0%"
+                      y2="100%"
+                    >
+                      <stop
+                        offset="0%"
+                        style={{ stopColor: "#3B82F6", stopOpacity: 0.3 }}
+                      />
+                      <stop
+                        offset="100%"
+                        style={{ stopColor: "#3B82F6", stopOpacity: 0 }}
+                      />
                     </linearGradient>
                   </defs>
                   <polyline
@@ -158,11 +179,14 @@ const MonthlyTrendPage = () => {
                   <circle cx="230" cy="70" r="4" fill="#3B82F6" />
                 </svg>
                 <div className="relative z-10 text-center">
-                  <p className="text-gray-500 text-sm font-medium">نمودار روند پیش‌نمایش</p>
+                  <p className="text-gray-500 text-sm font-medium">
+                    نمودار روند پیش‌نمایش
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                نمایش تغییرات ماهانه تعداد تصادفات با قابلیت مقایسه سال‌های مختلف
+                نمایش تغییرات ماهانه تعداد تصادفات با قابلیت مقایسه سال‌های
+                مختلف
               </p>
             </div>
 
@@ -185,7 +209,9 @@ const MonthlyTrendPage = () => {
                   </div>
                   <div className="text-center p-3 bg-orange-100 rounded-lg">
                     <div className="text-2xl mb-1">☀️</div>
-                    <p className="text-sm font-medium text-orange-800">تابستان</p>
+                    <p className="text-sm font-medium text-orange-800">
+                      تابستان
+                    </p>
                     <p className="text-xs text-orange-600">اوج +25%</p>
                   </div>
                   <div className="text-center p-3 bg-amber-100 rounded-lg">
@@ -329,9 +355,7 @@ const MonthlyTrendPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    تحلیل فصلی
-                  </h4>
+                  <h4 className="font-medium text-gray-900 mb-1">تحلیل فصلی</h4>
                   <p className="text-sm text-gray-600">
                     شناسایی الگوهای فصلی و تأثیر آب و هوا بر تصادفات
                   </p>
@@ -445,28 +469,36 @@ const MonthlyTrendPage = () => {
               <div className="flex items-center gap-4">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">مرحله ۱: طراحی رابط کاربری</p>
+                  <p className="font-medium text-gray-900">
+                    مرحله ۱: طراحی رابط کاربری
+                  </p>
                   <p className="text-sm text-gray-600">✅ تکمیل شده</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">مرحله ۲: پیاده‌سازی API</p>
+                  <p className="font-medium text-gray-900">
+                    مرحله ۲: پیاده‌سازی API
+                  </p>
                   <p className="text-sm text-gray-600">🔄 در حال انجام</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">مرحله ۳: نمودارهای تعاملی</p>
+                  <p className="font-medium text-gray-900">
+                    مرحله ۳: نمودارهای تعاملی
+                  </p>
                   <p className="text-sm text-gray-600">⏳ در انتظار</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">مرحله ۴: تست و بهینه‌سازی</p>
+                  <p className="font-medium text-gray-900">
+                    مرحله ۴: تست و بهینه‌سازی
+                  </p>
                   <p className="text-sm text-gray-600">⏳ در انتظار</p>
                 </div>
               </div>

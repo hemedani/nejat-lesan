@@ -4,11 +4,15 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { eventSeverityAnalytics } from "@/app/actions/accident/eventSeverityAnalytics";
 import EventSeverityComparisonChart from "@/components/dashboards/charts/EventSeverityComparisonChart";
 import { DatePicker } from "zaman";
+
+// Get enabled filters for trend severity analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("TREND_SEVERITY_ANALYTICS");
 
 // Backend response interface for event severity analytics
 interface EventSeverityResponse {
@@ -372,6 +376,9 @@ const EventSeverityAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل روند شدت"
+              description="فیلترهای مربوط به تحلیل روند شدت تصادفات در رویدادها"
             />
           </div>
         )}
