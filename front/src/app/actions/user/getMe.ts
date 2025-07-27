@@ -15,13 +15,16 @@ export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
     level: 1,
   };
 
-  return await AppApi().send({
-    service: "main",
-    model: "user",
-    act: "addUser",
-    details: {
-      set: { national_number },
-      get,
+  return await AppApi().send(
+    {
+      service: "main",
+      model: "user",
+      act: "getMe",
+      details: {
+        set: {},
+        get,
+      },
     },
-  }, { token: token?.value });
+    { token: token?.value },
+  );
 };
