@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import AccidentDetailsModal from "@/components/modals/AccidentDetailsModal";
@@ -27,6 +28,9 @@ import { mapAccidents } from "@/app/actions/accident/mapAccidents";
 import { accidentSchema } from "@/types/declarations/selectInp";
 
 // Dynamic import for map components (disable SSR)
+// Get enabled filters for accidents map (use comprehensive filters)
+const ENABLED_FILTERS = getEnabledFiltersForChart("HOTSPOTS_ANALYTICS");
+
 const AccidentMap = dynamic(() => import("@/components/maps/AccidentMap"), {
   ssr: false,
   loading: () => (
@@ -283,6 +287,9 @@ const AccidentsMapPage: React.FC = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای نقشه تصادفات"
+              description="فیلترهای مربوط به نمایش تصادفات روی نقشه"
             />
           </div>
         )}

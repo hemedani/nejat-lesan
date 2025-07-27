@@ -1,7 +1,13 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import ChartsFilterSidebar, { RoadDefectsFilterState } from './ChartsFilterSidebar'
+import React, { useState } from "react";
+import ChartsFilterSidebar, {
+  RoadDefectsFilterState,
+} from "./ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+
+// Get enabled filters for the example (use comprehensive filters)
+const ENABLED_FILTERS = getEnabledFiltersForChart("COLLISION_ANALYTICS");
 
 // Define different configuration presets for demonstration
 const configPresets = {
@@ -9,48 +15,49 @@ const configPresets = {
     disableSeverityFilter: false,
     disableCollisionTypeFilter: false,
     disableLightingFilter: false,
-    lockToSevereAccidents: false
+    lockToSevereAccidents: false,
   },
   roadDefects: {
     disableSeverityFilter: false,
     disableCollisionTypeFilter: false,
     disableLightingFilter: false,
-    lockToSevereAccidents: true // Lock to severe accidents only
+    lockToSevereAccidents: true, // Lock to severe accidents only
   },
   lightingAnalysis: {
     disableSeverityFilter: false,
     disableCollisionTypeFilter: true, // Disable collision type for lighting analysis
     disableLightingFilter: false,
-    lockToSevereAccidents: false
+    lockToSevereAccidents: false,
   },
   severityFocus: {
     disableSeverityFilter: true, // Disable severity filter completely
     disableCollisionTypeFilter: false,
     disableLightingFilter: false,
-    lockToSevereAccidents: false
-  }
-}
+    lockToSevereAccidents: false,
+  },
+};
 
-type ConfigPresetKey = keyof typeof configPresets
+type ConfigPresetKey = keyof typeof configPresets;
 
 const ChartsFilterExample: React.FC = () => {
-  const [activePreset, setActivePreset] = useState<ConfigPresetKey>('default')
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState | null>(null)
-  const [showSidebar, setShowSidebar] = useState(true)
+  const [activePreset, setActivePreset] = useState<ConfigPresetKey>("default");
+  const [appliedFilters, setAppliedFilters] =
+    useState<RoadDefectsFilterState | null>(null);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   // Handle filter application
   const handleApplyFilters = (filters: RoadDefectsFilterState) => {
-    setAppliedFilters(filters)
-    console.log('Applied Filters:', filters)
-  }
+    setAppliedFilters(filters);
+    console.log("Applied Filters:", filters);
+  };
 
   // Preset descriptions in Persian
   const presetDescriptions = {
-    default: 'پیکربندی پیش‌فرض - همه فیلترها فعال',
-    roadDefects: 'تحلیل نقایص راه - فقط تصادفات شدید قابل انتخاب',
-    lightingAnalysis: 'تحلیل روشنایی - نوع برخورد غیرفعال',
-    severityFocus: 'تمرکز بر شدت - فیلتر شدت غیرفعال'
-  }
+    default: "پیکربندی پیش‌فرض - همه فیلترها فعال",
+    roadDefects: "تحلیل نقایص راه - فقط تصادفات شدید قابل انتخاب",
+    lightingAnalysis: "تحلیل روشنایی - نوع برخورد غیرفعال",
+    severityFocus: "تمرکز بر شدت - فیلتر شدت غیرفعال",
+  };
 
   return (
     <div className="flex h-screen bg-gray-100" dir="rtl">
@@ -72,14 +79,12 @@ const ChartsFilterExample: React.FC = () => {
                 onClick={() => setActivePreset(key as ConfigPresetKey)}
                 className={`w-full text-right p-3 rounded-lg border-2 transition-all ${
                   activePreset === key
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                 }`}
               >
                 <div className="font-medium">{description}</div>
-                <div className="text-sm text-gray-500 mt-1">
-                  {key}
-                </div>
+                <div className="text-sm text-gray-500 mt-1">{key}</div>
               </button>
             ))}
           </div>
@@ -103,7 +108,7 @@ const ChartsFilterExample: React.FC = () => {
             onClick={() => setShowSidebar(!showSidebar)}
             className="w-full bg-gray-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-700 transition-colors"
           >
-            {showSidebar ? 'مخفی کردن ساید بار' : 'نمایش ساید بار'}
+            {showSidebar ? "مخفی کردن ساید بار" : "نمایش ساید بار"}
           </button>
         </div>
 
@@ -119,9 +124,10 @@ const ChartsFilterExample: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-green-800">بازه زمانی:</h3>
                   <p className="text-sm text-green-700">
-                    {appliedFilters.dateOfAccidentFrom && appliedFilters.dateOfAccidentTo
+                    {appliedFilters.dateOfAccidentFrom &&
+                    appliedFilters.dateOfAccidentTo
                       ? `از ${appliedFilters.dateOfAccidentFrom} تا ${appliedFilters.dateOfAccidentTo}`
-                      : 'تعیین نشده'}
+                      : "تعیین نشده"}
                   </p>
                 </div>
 
@@ -129,8 +135,9 @@ const ChartsFilterExample: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-green-800">محدوده مکانی:</h3>
                   <p className="text-sm text-green-700">
-                    استان: {appliedFilters.province?.join(', ') || 'انتخاب نشده'} |
-                    شهر: {appliedFilters.city?.join(', ') || 'انتخاب نشده'}
+                    استان:{" "}
+                    {appliedFilters.province?.join(", ") || "انتخاب نشده"} |
+                    شهر: {appliedFilters.city?.join(", ") || "انتخاب نشده"}
                   </p>
                 </div>
 
@@ -138,20 +145,30 @@ const ChartsFilterExample: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-green-800">شدت تصادف:</h3>
                   <p className="text-sm text-green-700">
-                    حداقل فوتی: {appliedFilters.deadCountMin || 0} |
-                    حداقل مجروح: {appliedFilters.injuredCountMin || 0}
+                    حداقل فوتی: {appliedFilters.deadCountMin || 0} | حداقل
+                    مجروح: {appliedFilters.injuredCountMin || 0}
                   </p>
                 </div>
 
                 {/* Filters Applied */}
                 <div>
-                  <h3 className="font-medium text-green-800">فیلترهای اعمال شده:</h3>
+                  <h3 className="font-medium text-green-800">
+                    فیلترهای اعمال شده:
+                  </h3>
                   <p className="text-sm text-green-700">
                     {[
-                      appliedFilters.lightStatus?.length ? `روشنایی: ${appliedFilters.lightStatus.join(', ')}` : null,
-                      appliedFilters.collisionType?.length ? `نوع برخورد: ${appliedFilters.collisionType.join(', ')}` : null,
-                      appliedFilters.roadDefects?.length ? `نقایص راه: ${appliedFilters.roadDefects.join(', ')}` : null
-                    ].filter(Boolean).join(' | ') || 'هیچ فیلتر خاصی اعمال نشده'}
+                      appliedFilters.lightStatus?.length
+                        ? `روشنایی: ${appliedFilters.lightStatus.join(", ")}`
+                        : null,
+                      appliedFilters.collisionType?.length
+                        ? `نوع برخورد: ${appliedFilters.collisionType.join(", ")}`
+                        : null,
+                      appliedFilters.roadDefects?.length
+                        ? `نقایص راه: ${appliedFilters.roadDefects.join(", ")}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" | ") || "هیچ فیلتر خاصی اعمال نشده"}
                   </p>
                 </div>
 
@@ -159,7 +176,8 @@ const ChartsFilterExample: React.FC = () => {
                 <div className="border-t border-green-200 pt-3">
                   <h3 className="font-medium text-green-800">خلاصه:</h3>
                   <p className="text-xs text-green-600">
-                    فیلترها با موفقیت اعمال شدند. تعداد کل معیارهای انتخاب شده در کنسول مرورگر قابل مشاهده است.
+                    فیلترها با موفقیت اعمال شدند. تعداد کل معیارهای انتخاب شده
+                    در کنسول مرورگر قابل مشاهده است.
                   </p>
                 </div>
               </div>
@@ -175,7 +193,11 @@ const ChartsFilterExample: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm p-8 h-full">
             <div className="text-center">
               <div className="text-gray-400 mb-4">
-                <svg className="w-24 h-24 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  className="w-24 h-24 mx-auto"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                 </svg>
               </div>
@@ -183,22 +205,39 @@ const ChartsFilterExample: React.FC = () => {
                 منطقه نمایش نمودار
               </h2>
               <p className="text-gray-600 mb-4">
-                پیکربندی فعلی: <span className="font-semibold">{presetDescriptions[activePreset]}</span>
+                پیکربندی فعلی:{" "}
+                <span className="font-semibold">
+                  {presetDescriptions[activePreset]}
+                </span>
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 inline-block">
-                <h3 className="font-medium text-blue-800 mb-2">وضعیت فیلترها:</h3>
+                <h3 className="font-medium text-blue-800 mb-2">
+                  وضعیت فیلترها:
+                </h3>
                 <div className="text-sm text-blue-700 space-y-1">
                   <div>
-                    فیلتر شدت: {configPresets[activePreset].disableSeverityFilter ? '❌ غیرفعال' : '✅ فعال'}
+                    فیلتر شدت:{" "}
+                    {configPresets[activePreset].disableSeverityFilter
+                      ? "❌ غیرفعال"
+                      : "✅ فعال"}
                   </div>
                   <div>
-                    فیلتر نوع برخورد: {configPresets[activePreset].disableCollisionTypeFilter ? '❌ غیرفعال' : '✅ فعال'}
+                    فیلتر نوع برخورد:{" "}
+                    {configPresets[activePreset].disableCollisionTypeFilter
+                      ? "❌ غیرفعال"
+                      : "✅ فعال"}
                   </div>
                   <div>
-                    فیلتر روشنایی: {configPresets[activePreset].disableLightingFilter ? '❌ غیرفعال' : '✅ فعال'}
+                    فیلتر روشنایی:{" "}
+                    {configPresets[activePreset].disableLightingFilter
+                      ? "❌ غیرفعال"
+                      : "✅ فعال"}
                   </div>
                   <div>
-                    قفل تصادفات شدید: {configPresets[activePreset].lockToSevereAccidents ? '🔒 فعال' : '🔓 غیرفعال'}
+                    قفل تصادفات شدید:{" "}
+                    {configPresets[activePreset].lockToSevereAccidents
+                      ? "🔒 فعال"
+                      : "🔓 غیرفعال"}
                   </div>
                 </div>
               </div>
@@ -211,11 +250,14 @@ const ChartsFilterExample: React.FC = () => {
           <ChartsFilterSidebar
             config={configPresets[activePreset]}
             onApplyFilters={handleApplyFilters}
+            enabledFilters={ENABLED_FILTERS}
+            title="مثال فیلترهای نمودار"
+            description="نمایش نحوه کارکرد فیلترهای مختلف"
           />
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChartsFilterExample
+export default ChartsFilterExample;

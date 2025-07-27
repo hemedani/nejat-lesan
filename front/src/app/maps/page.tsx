@@ -5,7 +5,11 @@ import Link from "next/link";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for maps (use comprehensive filters)
+const ENABLED_FILTERS = getEnabledFiltersForChart("HOTSPOTS_ANALYTICS");
 import { useMapComparison } from "@/context/MapComparisonContext";
 
 const MapsPage = () => {
@@ -43,6 +47,9 @@ const MapsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای نقشه"
+              description="فیلترهای عمومی برای نمایش داده‌ها روی نقشه"
             />
           </div>
         )}
