@@ -18,9 +18,9 @@ export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
   return await AppApi().send({
     service: "main",
     model: "user",
-    act: "getMe",
+    act: "addUser",
     details: {
-      set: {},
+      set: { national_number },
       get,
     },
   }, { token: token?.value });

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { areaUsageAnalytics } from "@/app/actions/accident/areaUsageAnalytics";
@@ -17,6 +18,9 @@ interface AreaUsageAnalyticsResponse {
     count: number;
   }>;
 }
+
+// Get enabled filters for area usage analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("AREA_USAGE_ANALYTICS");
 
 // Demo data for development and fallback
 const DEMO_DATA: AreaUsageAnalyticsResponse["analytics"] = [
@@ -178,6 +182,7 @@ const AreaUsageAnalyticsPage = () => {
               config={getFilterConfig()}
               title="فیلترهای تحلیل کاربری محل"
               description="برای مشاهده سهم تصادفات به تفکیک کاربری محل، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}

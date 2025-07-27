@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { companyPerformanceAnalytics } from "@/app/actions/accident/companyPerformanceAnalytics";
@@ -12,6 +13,11 @@ import dynamic from "next/dynamic";
 
 // Dynamic import for ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+
+// Get enabled filters for company performance analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "COMPANY_PERFORMANCE_ANALYTICS",
+);
 
 // Backend response interface for company performance analytics
 interface CompanyPerformanceAnalyticsResponse {
@@ -482,6 +488,7 @@ const CompanyPerformanceAnalyticsPage = () => {
               config={getFilterConfig()}
               title="فیلترهای مقایسه عملکرد کمپانی‌ها"
               description="برای مقایسه عملکرد کمپانی‌های مختلف خودروسازی، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}

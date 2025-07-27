@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { collisionAnalytics } from "@/app/actions/accident/collisionAnalytics";
@@ -24,6 +25,9 @@ interface CollisionAnalyticsResponse {
     count: number;
   }>;
 }
+
+// Get enabled filters for collision analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("COLLISION_ANALYTICS");
 
 const CollisionAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -144,6 +148,7 @@ const CollisionAnalyticsPage = () => {
               config={getFilterConfig()}
               title="فیلترهای تحلیل برخورد"
               description="برای مشاهده تحلیل دقیق انواع برخورد، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}

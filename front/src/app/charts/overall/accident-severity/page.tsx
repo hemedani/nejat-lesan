@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { accidentSeverityAnalytics } from "@/app/actions/accident/accidentSeverityAnalytics";
@@ -16,6 +17,11 @@ interface AccidentSeverityResponse {
     count: number;
   }>;
 }
+
+// Get enabled filters for accident severity analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "ACCIDENT_SEVERITY_ANALYTICS",
+);
 
 const AccidentSeverityPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -160,6 +166,7 @@ const AccidentSeverityPage = () => {
               config={getFilterConfig()}
               title="فیلترهای شدت تصادفات"
               description="برای مشاهده تحلیل دقیق سهم شدت تصادفات، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}
