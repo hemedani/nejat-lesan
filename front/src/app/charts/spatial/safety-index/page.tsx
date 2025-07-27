@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSafetyIndexAnalytics } from "@/app/actions/accident/spatialSafetyIndexAnalytics";
@@ -12,6 +13,9 @@ import { getGeoJSON } from "@/app/actions/getGeoJSON";
 import dynamic from "next/dynamic";
 import SpatialSafetyBarChart from "@/components/charts/spatial/SpatialSafetyBarChart";
 import { ReqType } from "@/types/declarations/selectInp";
+
+// Get enabled filters for spatial safety index analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("SAFETY_INDEX_ANALYTICS");
 
 // Dynamic import for map component to avoid SSR issues with Leaflet
 const SpatialSafetyMap = dynamic(
@@ -222,6 +226,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به شاخص ناحیه‌ای ایمنی"

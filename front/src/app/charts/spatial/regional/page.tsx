@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for regional analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("REGIONAL_ANALYTICS");
 
 const RegionalAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -27,10 +31,7 @@ const RegionalAnalyticsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="spatial"
-        currentChart="regional"
-      />
+      <ChartNavigation currentSection="spatial" currentChart="regional" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -39,6 +40,7 @@ const RegionalAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل منطقه‌ای"
               description="فیلترهای مربوط به مقایسه مناطق مختلف"
             />
@@ -104,7 +106,9 @@ const RegionalAnalyticsPage = () => {
                 این بخش در حال توسعه می‌باشد
               </h2>
               <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                تحلیل منطقه‌ای تصادفات به زودی در دسترس خواهد بود. این بخش شامل مقایسه آماری تصادفات در مناطق مختلف شهر، شناسایی الگوهای منطقه‌ای و ارائه گزارش‌های تخصصی خواهد بود.
+                تحلیل منطقه‌ای تصادفات به زودی در دسترس خواهد بود. این بخش شامل
+                مقایسه آماری تصادفات در مناطق مختلف شهر، شناسایی الگوهای
+                منطقه‌ای و ارائه گزارش‌های تخصصی خواهد بود.
               </p>
               <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full">
                 <svg
@@ -153,7 +157,8 @@ const RegionalAnalyticsPage = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-600">
-                مقایسه میزان تصادفات، شدت آسیب‌دیدگی و انواع برخورد در مناطق مختلف شهر
+                مقایسه میزان تصادفات، شدت آسیب‌دیدگی و انواع برخورد در مناطق
+                مختلف شهر
               </p>
             </div>
 
@@ -363,7 +368,8 @@ const RegionalAnalyticsPage = () => {
                   آیا نیاز به اطلاعات بیشتری دارید؟
                 </h4>
                 <p className="text-sm text-gray-600">
-                  برای دریافت اطلاعات بیشتر در مورد زمان‌بندی توسعه این بخش یا درخواست ویژگی‌های خاص، با تیم توسعه تماس بگیرید.
+                  برای دریافت اطلاعات بیشتر در مورد زمان‌بندی توسعه این بخش یا
+                  درخواست ویژگی‌های خاص، با تیم توسعه تماس بگیرید.
                 </p>
               </div>
             </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSeverityAnalytics } from "@/app/actions/accident/spatialSeverityAnalytics";
@@ -11,6 +12,9 @@ import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 import SpatialSeverityBarChart from "@/components/charts/spatial/SpatialSeverityBarChart";
 import SpatialSeverityMap from "@/components/charts/spatial/SpatialSeverityMap";
 import { ReqType } from "@/types/declarations/selectInp";
+
+// Get enabled filters for spatial severity analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("SPATIAL_SEVERITY_ANALYTICS");
 
 // Response interface for spatial severity analytics
 interface SpatialSeverityAnalyticsResponse {
@@ -163,9 +167,10 @@ const SpatialSeverityAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
-              description="فیلترهای مربوط به تحلیل سهم شدت تصادفات"
+              description="فیلترهای مربوط به تحلیل شدت تصادفات"
             />
           </div>
         )}

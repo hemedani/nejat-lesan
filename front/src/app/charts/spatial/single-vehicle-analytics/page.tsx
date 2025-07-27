@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSingleVehicleAnalytics } from "@/app/actions/accident/spatialSingleVehicleAnalytics";
@@ -13,7 +14,12 @@ import SpatialSingleVehicleBarChart from "@/components/charts/spatial/SpatialSin
 import SpatialSingleVehicleMap from "@/components/charts/spatial/SpatialSingleVehicleMap";
 import { ReqType } from "@/types/declarations/selectInp";
 
-// Response interface for spatial single-vehicle analytics
+// Get enabled filters for spatial single vehicle analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "SPATIAL_SINGLE_VEHICLE_ANALYTICS",
+);
+
+// Response interface for spatial single vehicle analytics
 interface SpatialSingleVehicleAnalyticsResponse {
   analytics: {
     barChart: {
@@ -155,9 +161,10 @@ const SpatialSingleVehicleAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
-              description="فیلترهای مربوط به تحلیل تصادفات تک وسیله ای"
+              description="فیلترهای مربوط به تحلیل تصادفات تک وسیله نقلیه"
             />
           </div>
         )}
