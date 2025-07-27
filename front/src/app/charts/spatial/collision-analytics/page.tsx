@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialCollisionAnalytics } from "@/app/actions/accident/spatialCollisionAnalytics";
@@ -12,6 +13,11 @@ import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 import SpatialCollisionBarChart from "@/components/charts/spatial/SpatialCollisionBarChart";
 import SpatialCollisionMap from "@/components/charts/spatial/SpatialCollisionMap";
 import { ReqType } from "@/types/declarations/selectInp";
+
+// Get enabled filters for spatial collision analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "SPATIAL_COLLISION_ANALYTICS",
+);
 
 // Response interface for spatial collision analytics
 interface SpatialCollisionAnalyticsResponse {
@@ -158,6 +164,7 @@ const SpatialCollisionAnalyticsPage = () => {
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به تحلیل نحوه و نوع برخورد"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}
@@ -329,31 +336,42 @@ const SpatialCollisionAnalyticsPage = () => {
                   </h4>
                   <p className="text-sm text-green-800">
                     این تحلیل توزیع انواع برخورد را در مناطق مختلف نشان می‌دهد.
-                    مناطق با نسبت بالای برخورد خاص، نیاز به بررسی بیشتر
-                    علل و عوامل مؤثر دارند.
+                    مناطق با نسبت بالای برخورد خاص، نیاز به بررسی بیشتر علل و
+                    عوامل مؤثر دارند.
                   </p>
                 </div>
               </div>
 
               {/* Collision Type Breakdown */}
-              {analyticsData.barChart?.series && analyticsData.barChart.series.length > 0 && (
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-medium text-gray-900 mb-3">
-                    انواع برخورد بررسی شده
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {analyticsData.barChart.series.map((series, index) => {
-                      const totalForThisType = series.data.reduce((sum, val) => sum + val, 0);
-                      return (
-                        <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
-                          <span className="text-sm text-gray-700">{series.name}</span>
-                          <span className="text-sm font-medium text-gray-900">{totalForThisType} تصادف</span>
-                        </div>
-                      );
-                    })}
+              {analyticsData.barChart?.series &&
+                analyticsData.barChart.series.length > 0 && (
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      انواع برخورد بررسی شده
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {analyticsData.barChart.series.map((series, index) => {
+                        const totalForThisType = series.data.reduce(
+                          (sum, val) => sum + val,
+                          0,
+                        );
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-2 bg-white rounded border"
+                          >
+                            <span className="text-sm text-gray-700">
+                              {series.name}
+                            </span>
+                            <span className="text-sm font-medium text-gray-900">
+                              {totalForThisType} تصادف
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           )}
         </div>

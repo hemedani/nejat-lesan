@@ -12,6 +12,10 @@ import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 import SpatialLightBarChart from "@/components/charts/spatial/SpatialLightBarChart";
 import SpatialLightMap from "@/components/charts/spatial/SpatialLightMap";
 import { ReqType } from "@/types/declarations/selectInp";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+
+// Get enabled filters for spatial light analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("SPATIAL_LIGHT_ANALYTICS");
 
 // Response interface for spatial light analytics
 interface SpatialLightAnalyticsResponse {
@@ -158,6 +162,7 @@ const SpatialLightAnalyticsPage = () => {
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به تحلیل وضعیت روشنایی"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}
