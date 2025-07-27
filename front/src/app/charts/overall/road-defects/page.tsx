@@ -5,9 +5,13 @@ import EffectiveRoadDefectsDashboard from "@/components/dashboards/EffectiveRoad
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { roadDefectsAnalytics } from "@/app/actions/accident/roadDefectsAnalytics";
+
+// Get enabled filters for road defects analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("ROAD_DEFECTS_ANALYTICS");
 
 // Backend response interface for road defects analytics
 interface RoadDefectsAnalyticsData {
@@ -142,6 +146,7 @@ const RoadDefectsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}

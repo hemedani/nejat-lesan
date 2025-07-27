@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { humanReasonAnalytics } from "@/app/actions/accident/humanReasonAnalytics";
@@ -17,6 +18,9 @@ interface HumanReasonAnalyticsResponse {
     count: number;
   }>;
 }
+
+// Get enabled filters for human reason analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("HUMAN_REASON_ANALYTICS");
 
 // Demo data for development and fallback
 const DEMO_DATA: HumanReasonAnalyticsResponse["analytics"] = [
@@ -174,6 +178,7 @@ const HumanReasonAnalyticsPage = () => {
               config={getFilterConfig()}
               title="فیلترهای تحلیل عامل انسانی"
               description="برای مشاهده توزیع عامل انسانی مؤثر در تصادفات، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}

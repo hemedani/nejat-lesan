@@ -5,8 +5,12 @@ import HourlyDayOfWeekHeatmap from "@/components/charts/HourlyDayOfWeekHeatmap";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { hourlyDayOfWeekAnalytics } from "@/app/actions/accident/hourlyDayOfWeekAnalytics";
+
+// Get enabled filters for hourly day of week analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("HOURLY_DAY_ANALYTICS");
 
 // Backend response interface for hourly day of week analytics
 interface HourlyDayOfWeekAnalyticsRawData {
@@ -200,6 +204,7 @@ const HourlyDayOfWeekPage = () => {
               config={getFilterConfig()}
               title="فیلترهای تحلیل ساعتی روز هفته"
               description="برای مشاهده توزیع تصادفات بر اساس ساعت و روز هفته، فیلترهای مورد نظر را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
             />
           </div>
         )}
