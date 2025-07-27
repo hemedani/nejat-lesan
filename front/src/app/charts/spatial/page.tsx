@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for spatial charts (use geographic filters)
+const ENABLED_FILTERS = getEnabledFiltersForChart("SPATIAL_LIGHT_ANALYTICS");
 
 const SpatialChartsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -40,6 +44,9 @@ const SpatialChartsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل مکانی"
+              description="فیلترهای عمومی برای تحلیل‌های مکانی تصادفات"
             />
           </div>
         )}
