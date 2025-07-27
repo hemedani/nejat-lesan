@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import TemporalCollisionChart from "@/components/charts/TemporalCollisionChart";
 import { temporalCollisionAnalytics } from "@/app/actions/accident/temporalCollisionAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -13,6 +14,11 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 // Type alias for temporal collision analytics API parameters
 type TemporalCollisionApiParams =
   ReqType["main"]["accident"]["temporalCollisionAnalytics"]["set"];
+
+// Get enabled filters for temporal collision analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "TEMPORAL_COLLISION_ANALYTICS",
+);
 
 interface ChartSeries {
   name: string;
@@ -255,6 +261,7 @@ const TemporalCollisionAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل برخورد"
               description="برای مشاهده تحلیل زمانی نحوه و نوع برخورد، فیلترهای مورد نظر را اعمال کنید"
               initialFilters={{

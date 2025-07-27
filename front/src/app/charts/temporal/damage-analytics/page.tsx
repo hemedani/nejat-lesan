@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import TemporalDamageChart from "@/components/charts/TemporalDamageChart";
 import { temporalDamageAnalytics } from "@/app/actions/accident/temporalDamageAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -26,6 +27,9 @@ interface TemporalDamageResponse {
   };
   success: boolean;
 }
+
+// Get enabled filters for temporal damage analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_DAMAGE_ANALYTICS");
 
 // Demo data for fallback
 const DEMO_DATA: TemporalDamageData = {
@@ -272,6 +276,7 @@ const TemporalDamageAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل صدمات"
               description="برای مشاهده تحلیل دقیق صدمات، فیلترهای مورد نظر را اعمال کنید"
               initialFilters={{

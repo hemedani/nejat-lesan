@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalSeverityChart from "@/components/charts/TemporalSeverityChart";
 import { temporalSeverityAnalytics } from "@/app/actions/accident/temporalSeverityAnalytics";
@@ -26,6 +27,11 @@ interface TemporalSeverityResponse {
   };
   success: boolean;
 }
+
+// Get enabled filters for temporal severity analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "TEMPORAL_SEVERITY_ANALYTICS",
+);
 
 // Demo data for fallback
 const DEMO_DATA: TemporalSeverityData = {
@@ -248,6 +254,7 @@ const TemporalSeverityAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل سهم تصادفات فوتی"
               description="برای تحلیل سهم تصادفات فوتی از تصادفات شدید، فیلترهای مورد نظر خود را اعمال کنید"
             />

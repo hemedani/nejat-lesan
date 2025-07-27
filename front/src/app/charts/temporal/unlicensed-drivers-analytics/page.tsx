@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { temporalUnlicensedDriversAnalytics } from "@/app/actions/accident/temporalUnlicensedDriversAnalytics";
@@ -30,6 +31,11 @@ interface TemporalUnlicensedDriversResponse {
   };
   success: boolean;
 }
+
+// Get enabled filters for temporal unlicensed drivers analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS",
+);
 
 // Chart component
 interface TemporalUnlicensedDriversChartProps {
@@ -359,6 +365,9 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل رانندگان بدون گواهینامه"
+              description="برای تحلیل تصادفات رانندگان بدون گواهینامه، فیلترهای مورد نظر را اعمال کنید"
             />
           </div>
         )}

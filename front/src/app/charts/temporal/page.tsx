@@ -4,7 +4,11 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+
+// Get enabled filters for temporal charts (use comprehensive temporal filters)
+const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_COUNT_ANALYTICS");
 
 const TemporalChartsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -40,6 +44,9 @@ const TemporalChartsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل زمانی"
+              description="فیلترهای عمومی برای تحلیل‌های زمانی تصادفات"
             />
           </div>
         )}

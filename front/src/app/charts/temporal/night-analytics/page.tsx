@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalNightChart from "@/components/charts/TemporalNightChart";
 import { temporalNightAnalytics } from "@/app/actions/accident/temporalNightAnalytics";
@@ -26,6 +27,9 @@ interface TemporalNightResponse {
   };
   success: boolean;
 }
+
+// Get enabled filters for temporal night analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_NIGHT_ANALYTICS");
 
 // Demo data for fallback
 const DEMO_DATA: TemporalNightData = {
@@ -303,8 +307,9 @@ const TemporalNightAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
-              title="فیلترهای تحلیل تصادفات شبانه"
-              description="برای تحلیل تصادفات در شب، فیلترهای مورد نظر خود را اعمال کنید"
+              enabledFilters={ENABLED_FILTERS}
+              title="فیلترهای تحلیل شبانه"
+              description="برای تحلیل دقیق تصادفات شبانه، فیلترهای مورد نظر را اعمال کنید"
             />
           </div>
         )}

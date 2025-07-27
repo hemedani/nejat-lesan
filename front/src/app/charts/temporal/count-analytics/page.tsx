@@ -5,6 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalCountChart from "@/components/charts/TemporalCountChart";
 import { temporalCountAnalytics } from "@/app/actions/accident/temporalCountAnalytics";
@@ -26,6 +27,9 @@ interface TemporalCountResponse {
   };
   success: boolean;
 }
+
+// Get enabled filters for temporal count analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_COUNT_ANALYTICS");
 
 // Demo data for fallback
 const DEMO_DATA: TemporalCountData = {
@@ -246,6 +250,7 @@ const TemporalCountAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل زمانی تصادفات"
               description="برای تحلیل روند زمانی تصادفات، فیلترهای مورد نظر خود را اعمال کنید"
             />

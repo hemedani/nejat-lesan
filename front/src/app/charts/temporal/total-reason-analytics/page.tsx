@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import ChartsFilterSidebar, {
   RoadDefectsFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalTotalReasonChart from "@/components/charts/TemporalTotalReasonChart";
@@ -21,6 +22,11 @@ interface TemporalTotalReasonData {
   categories: string[];
   series: ChartSeries[];
 }
+
+// Get enabled filters for temporal total reason analytics
+const ENABLED_FILTERS = getEnabledFiltersForChart(
+  "TEMPORAL_TOTAL_REASON_ANALYTICS",
+);
 
 // Interface for API response structure
 interface ApiResponseData {
@@ -333,6 +339,7 @@ const TemporalTotalReasonAnalyticsPage = () => {
             <ChartsFilterSidebar
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
+              enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل زمانی علت تامه"
               description="برای مشاهده روند زمانی علت تامه تصادفات، فیلترهای مورد نظر را اعمال کنید"
               dynamicCheckboxFilter={getDynamicCheckboxFilter()}
