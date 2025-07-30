@@ -47,7 +47,8 @@ export const seedCityZonesFn: ActFn = async (body) => {
 
 	// --- 3. Iterate Over Each Zone in the GeoJSON ---
 	for (const feature of featureCollection.features) {
-		const zoneName = feature.properties.name.toString();
+		// Handle both "name" and "NAME" properties, and both string and number types
+		const zoneName = (feature.properties.name ?? feature.properties.NAME ?? "Unknown").toString();
 		const zoneGeometry = feature.geometry;
 
 		console.log(`Processing Zone: ${zoneName}`);
