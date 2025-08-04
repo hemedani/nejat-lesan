@@ -75,11 +75,11 @@ const AccidentsMapPage: React.FC = () => {
         finalFilters.dateOfAccidentTo = `${lastYear}-12-31`;
       }
 
-      // Set reasonable limit for initial load
+      // Use pagination values from filters or set reasonable defaults
       const requestPayload = {
         ...finalFilters,
-        limit: 1000,
-        skip: 0,
+        limit: finalFilters.limit || 1000,
+        skip: finalFilters.skip || 0,
       };
 
       const response = await mapAccidents({
@@ -166,8 +166,8 @@ const AccidentsMapPage: React.FC = () => {
           type: "Polygon" as const,
           coordinates: coordinates,
         },
-        limit: 5000, // Higher limit for polygon searches
-        skip: 0,
+        limit: appliedFilters.limit || 5000, // Use filter value or higher limit for polygon searches
+        skip: appliedFilters.skip || 0,
       };
 
       const response = await mapAccidents({

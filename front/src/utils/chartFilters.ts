@@ -401,6 +401,8 @@ export const CHART_SPECIFIC_FILTERS = {
     "injuredCountMin",
     "injuredCountMax",
     "officer",
+    "limit",
+    "skip",
   ] as EnabledFilters,
 
   // Regional Analytics

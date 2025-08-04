@@ -41,6 +41,10 @@ interface ChartFilterConfig {
 
 // Comprehensive filter state interface for all chart pages
 export interface RoadDefectsFilterState {
+  // --- Pagination Controls ---
+  limit?: number;
+  skip?: number;
+
   // --- Core Accident Details ---
   seri?: number;
   serial?: number;
@@ -521,6 +525,33 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                         errMsg={errors.injuredCountMax?.message}
                         type="number"
                         placeholder="حداکثر..."
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* Pagination Controls */}
+                {(enabledFilters.includes("limit") ||
+                  enabledFilters.includes("skip")) && (
+                  <div className="grid grid-cols-2 gap-4">
+                    {enabledFilters.includes("limit") && (
+                      <MyInput
+                        name="limit"
+                        label="تعداد نتایج"
+                        register={control.register}
+                        errMsg={errors.limit?.message}
+                        type="number"
+                        placeholder="1000"
+                      />
+                    )}
+                    {enabledFilters.includes("skip") && (
+                      <MyInput
+                        name="skip"
+                        label="رد کردن نتایج"
+                        register={control.register}
+                        errMsg={errors.skip?.message}
+                        type="number"
+                        placeholder="0"
                       />
                     )}
                   </div>
