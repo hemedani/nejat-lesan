@@ -32,9 +32,9 @@ export default async function RootLayout({
               isAuthenticated={isAuthenticated}
               userLevel={userLevel}
             />
-            <div className="h-screen">
+            <div className="h-screen flex flex-col">
               <Navbar />
-              <div className="flex-1 p-6 bg-gray-300 mt-16">{children}</div>
+              <div className="flex-1 bg-gray-200 mt-16">{children}</div>
               <Footer />
             </div>
             <Toaster position="top-center" reverseOrder={false} />

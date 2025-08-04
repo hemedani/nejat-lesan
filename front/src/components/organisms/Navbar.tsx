@@ -1,24 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { IconLogo, } from "../atoms/Icons";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const { isAuthenticated, userLevel, logout } = useAuth();
-
-  // Add scroll detection for navbar styling
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Custom navigation links with icons
   const navLinks = [
@@ -95,18 +84,19 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
-      ${isScrolled
-          ? "bg-white bg-opacity-90 backdrop-blur-sm shadow-lg py-2"
-          : "bg-gradient-to-b from-white to-transparent py-4"
-        }
-      border-b border-gray-100`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gray-600 py-3 shadow-lg border-b border-gray-500`}
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 relative">
         {/* Logo with subtle animation */}
         <div className="text-xl font-bold transform transition-all duration-500 hover:scale-105">
           <Link href="/" className="flex items-center gap-2">
-            <IconLogo />
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
           </Link>
         </div>
 
@@ -119,22 +109,22 @@ export const Navbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="group flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-all duration-300"
+              className="group flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300"
             >
-              <span className="transform transition-all duration-300 group-hover:scale-110 text-indigo-500">
+              <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
                 {link.icon}
               </span>
               <span className="relative py-2">
                 {link.label}
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-600 to-indigo-400 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-300 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </span>
             </Link>
           ))}
 
           {/* Elegant dropdown for additional links */}
           <div className="relative group">
-            <button className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-all duration-300">
-              <span className="transform transition-all duration-300 group-hover:scale-110 text-indigo-500">
+            <button className="flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300">
+              <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
                 <svg
                   className="w-4 h-4"
                   viewBox="0 0 24 24"
@@ -152,15 +142,15 @@ export const Navbar = () => {
               </span>
               <span className="relative py-2">
                 بیشتر
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-600 to-indigo-400 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-300 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </span>
             </button>
-            <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl overflow-hidden shadow-xl opacity-0 invisible group-hover:visible group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-10 border border-gray-100">
+            <div className="absolute right-0 mt-2 w-52 bg-gray-500 rounded-xl overflow-hidden shadow-xl opacity-0 invisible group-hover:visible group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-10 border border-gray-400">
               {dropdownLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block px-5 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+                  className="block px-5 py-3 text-white hover:bg-gray-400 hover:text-yellow-400 transition-colors duration-200"
                 >
                   {link.label}
                 </Link>
@@ -178,7 +168,7 @@ export const Navbar = () => {
                 userLevel === "Editor") && (
                 <Link
                   href="/admin"
-                  className="flex items-center gap-1.5 px-4 py-2 text-gray-700 hover:text-indigo-600 rounded-lg transition-all duration-300 hover:bg-indigo-50"
+                  className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
                 >
                   <svg
                     className="w-4 h-4"
@@ -201,7 +191,7 @@ export const Navbar = () => {
             {isAuthenticated && userLevel === "Normal" && (
               <Link
                 href="/user"
-                className="flex items-center gap-1.5 px-4 py-2 text-gray-700 hover:text-indigo-600 rounded-lg transition-all duration-300 hover:bg-indigo-50"
+                className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
               >
                 <svg
                   className="w-4 h-4"
@@ -224,7 +214,7 @@ export const Navbar = () => {
             {isAuthenticated ? (
               <button
                 onClick={logout}
-                className="flex items-center gap-1.5 px-4 py-2 text-gray-700 hover:text-rose-600 rounded-lg transition-all duration-300 hover:bg-rose-50"
+                className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-red-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
               >
                 <svg
                   className="w-4 h-4"
@@ -245,7 +235,7 @@ export const Navbar = () => {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 px-4 py-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-all duration-300"
+                className="flex items-center gap-1.5 px-4 py-2 text-gray-800 bg-yellow-400 hover:bg-yellow-300 rounded-lg transition-all duration-300"
               >
                 <svg
                   className="w-4 h-4"
@@ -268,22 +258,25 @@ export const Navbar = () => {
 
           {/* Mobile menu button with animation */}
           <button
-            className="md:hidden text-gray-800 hover:text-indigo-600 focus:outline-none transition-transform duration-300 hover:scale-110"
+            className="md:hidden text-white hover:text-yellow-400 focus:outline-none transition-transform duration-300 hover:scale-110"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "بستن منو" : "باز کردن منو"}
           >
             <div className="relative w-6 h-6">
               <span
-                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
-                  }`}
+                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                }`}
               ></span>
               <span
-                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : "opacity-100"
-                  }`}
+                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${
+                  isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                }`}
               ></span>
               <span
-                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                  }`}
+                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                }`}
               ></span>
             </div>
           </button>
@@ -292,17 +285,18 @@ export const Navbar = () => {
 
       {/* Mobile Menu with smooth animation */}
       <div
-        className={`md:hidden absolute left-0 w-full bg-white shadow-xl transition-all duration-500 ease-in-out transform ${isMobileMenuOpen
-          ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
-          : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
-          }`}
+        className={`md:hidden absolute left-0 w-full bg-gray-600 shadow-xl transition-all duration-500 ease-in-out transform ${
+          isMobileMenuOpen
+            ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
+            : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
+        }`}
       >
         <nav className="flex flex-col items-center py-6 space-y-1" dir="rtl">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-2 w-full py-3 px-6 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+              className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4 flex items-center justify-center gap-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <span className="text-indigo-500">{link.icon}</span>
@@ -318,7 +312,7 @@ export const Navbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-2 w-full py-3 px-6 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+              className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <span>{link.label}</span>
@@ -332,7 +326,7 @@ export const Navbar = () => {
               userLevel === "Editor") && (
               <Link
                 href="/admin"
-                className="flex items-center gap-2 w-full py-3 px-6 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+                className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <svg
@@ -356,7 +350,7 @@ export const Navbar = () => {
           {isAuthenticated && userLevel === "Normal" && (
             <Link
               href="/user"
-              className="flex items-center gap-2 w-full py-3 px-6 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+              className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <svg
@@ -405,7 +399,7 @@ export const Navbar = () => {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-2 w-full py-3 px-6 text-indigo-600 hover:bg-indigo-50 transition-colors duration-200"
+              className="w-full px-6 py-3 text-gray-800 bg-yellow-400 hover:bg-yellow-300 transition-all duration-300 text-center rounded-lg mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <svg
