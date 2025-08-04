@@ -87,22 +87,33 @@ export const seedCityZonesFn: ActFn = async (body) => {
 				`Found ${accidentsInZone.length} accidents in Zone ${zoneName}. Linking...`,
 			);
 
-			// --- 6. Create an array of promises to update each accident ---
-			const updatePromises = accidentsInZone.map((accId) =>
-				accident.addRelation({
-					filters: { _id: accId._id },
-					relations: {
-						city_zone: {
-							_ids: newZone!._id,
-							relatedRelations: { accidents: true },
-						},
-					},
-					replace: true, // Necessary for single-type relations
-				})
-			);
+			// --- 6. Process accidents in batches to avoid memory overflow ---
+			const batchSize = 100; // Process 100 accidents at a time
+			let processedCount = 0;
 
-			// --- 7. Execute all update promises in parallel ---
-			await Promise.all(updatePromises);
+			for (let i = 0; i < accidentsInZone.length; i += batchSize) {
+				const batch = accidentsInZone.slice(i, i + batchSize);
+
+				// Create promises for this batch only
+				const batchPromises = batch.map((accId) =>
+					accident.addRelation({
+						filters: { _id: accId._id },
+						relations: {
+							city_zone: {
+								_ids: newZone!._id,
+								relatedRelations: { accidents: true },
+							},
+						},
+						replace: true, // Necessary for single-type relations
+					})
+				);
+
+				// --- 7. Execute batch promises in parallel ---
+				await Promise.all(batchPromises);
+
+				processedCount += batch.length;
+				console.log(`Processed ${processedCount}/${accidentsInZone.length} accidents in Zone ${zoneName}`);
+			}
 
 			summary.accidentsUpdated += accidentsInZone.length;
 		}
