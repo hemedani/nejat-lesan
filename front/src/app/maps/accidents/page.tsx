@@ -90,7 +90,14 @@ const AccidentsMapPage: React.FC = () => {
       if (response.success && response.body) {
         setAccidents(response.body.accidents || []);
         setTotal(response.body.total || 0);
-        setAppliedFilters(finalFilters);
+        // Show original user filters plus any date defaults that were applied
+        const filtersToDisplay = { ...filters };
+        if (!filters.dateOfAccidentFrom && !filters.dateOfAccidentTo) {
+          // If user didn't set dates, show the defaults we applied
+          filtersToDisplay.dateOfAccidentFrom = finalFilters.dateOfAccidentFrom;
+          filtersToDisplay.dateOfAccidentTo = finalFilters.dateOfAccidentTo;
+        }
+        setAppliedFilters(filtersToDisplay);
       }
     } catch (error) {
       console.error("Error fetching accidents:", error);

@@ -22,6 +22,7 @@ import {
 
 // Import the filter state type
 import { RoadDefectsFilterState } from "./ChartsFilterSidebar";
+import { formatDate } from "@/utils/formatters";
 
 /**
  * Props interface for the AppliedFiltersDisplay component
@@ -135,8 +136,13 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         </h4>
         <div className="flex flex-wrap gap-1">
           <span className="inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default">
-            {filters.dateOfAccidentFrom || "ابتدا"} -{" "}
-            {filters.dateOfAccidentTo || "انتها"}
+            {filters.dateOfAccidentFrom
+              ? formatDate(filters.dateOfAccidentFrom)
+              : "ابتدا"}{" "}
+            -{" "}
+            {filters.dateOfAccidentTo
+              ? formatDate(filters.dateOfAccidentTo)
+              : "انتها"}
           </span>
         </div>
       </div>
@@ -639,6 +645,35 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
           filters.injuredCountMin,
           filters.injuredCountMax,
           "bg-rose-100 text-rose-800",
+        )}
+
+        {/* Pagination Controls */}
+        {filters.limit !== undefined && (
+          <div className="space-y-2">
+            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <FilterIcon className="w-4 h-4 text-indigo-500" />
+              <span>📊 تعداد نتایج</span>
+            </h4>
+            <div className="flex flex-wrap gap-1">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-indigo-100 text-indigo-800">
+                {filters.limit}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {filters.skip !== undefined && (
+          <div className="space-y-2">
+            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+              <FilterIcon className="w-4 h-4 text-cyan-500" />
+              <span>⏭️ رد کردن نتایج</span>
+            </h4>
+            <div className="flex flex-wrap gap-1">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-cyan-100 text-cyan-800">
+                {filters.skip}
+              </span>
+            </div>
+          </div>
         )}
       </div>
 

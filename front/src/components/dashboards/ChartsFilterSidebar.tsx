@@ -252,13 +252,28 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           acc[key as keyof RoadDefectsFilterState] = value as any;
         }
-      } else if (
-        value !== undefined &&
-        value !== null &&
-        value.toString().trim() !== ""
-      ) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        acc[key as keyof RoadDefectsFilterState] = value as any;
+      } else if (value !== undefined && value !== null && value !== "") {
+        // For numeric fields, convert to number; for others, keep as string
+        const numericFields = [
+          "limit",
+          "skip",
+          "deadCountMin",
+          "deadCountMax",
+          "injuredCountMin",
+          "injuredCountMax",
+          "seri",
+          "serial",
+        ];
+        if (numericFields.includes(key)) {
+          const numValue = Number(value);
+          if (!isNaN(numValue)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            acc[key as keyof RoadDefectsFilterState] = numValue as any;
+          }
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          acc[key as keyof RoadDefectsFilterState] = value as any;
+        }
       }
       return acc;
     }, {} as RoadDefectsFilterState);
