@@ -58,18 +58,20 @@ const ArrayToSelectOptions = <T>(
   data: T[],
   valueKey: keyof T,
   labelKey: keyof T,
-  secondaryLabelKey?: keyof T
+  secondaryLabelKey?: keyof T,
 ) => {
   return data.map((item) => ({
     value: String(item[valueKey]),
-    label: `${item[labelKey]} ${secondaryLabelKey ? item[secondaryLabelKey] : ""
-      }`,
+    label: `${item[labelKey]} ${
+      secondaryLabelKey ? item[secondaryLabelKey] : ""
+    }`,
   }));
 };
 
 export type ModelName =
   | "user"
   | "city"
+  | "township"
   | "province"
   | "road"
   | "traffic_zone"
@@ -108,6 +110,8 @@ function translateModelNameToPersian(modelName: ModelName): string {
       return "کاربر";
     case "city":
       return "شهر";
+    case "township":
+      return "شهرستان";
     case "province":
       return "استان";
     case "road":
@@ -175,7 +179,6 @@ function translateModelNameToPersian(modelName: ModelName): string {
   }
 }
 
-
 function snakeToKebabCase(input: string): string {
   return input.replace(/_/g, "-");
 }
@@ -189,5 +192,5 @@ export {
   translateGender,
   translateLevel,
   translateModelNameToPersian,
-  snakeToKebabCase
+  snakeToKebabCase,
 };
