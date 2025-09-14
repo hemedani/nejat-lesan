@@ -14401,6 +14401,7 @@ completionDateFrom?: string;
 completionDateTo?: string;
 province?: string[];
 city?: string[];
+township?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];

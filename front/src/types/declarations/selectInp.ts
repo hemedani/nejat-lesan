@@ -1,13 +1,10 @@
-
 /* eslint-disable */
 
-
 export type userInp = {
-  avatar?: number | fileInp
-  national_card?: number | fileInp
-  uploadedAssets?: number | fileInp
-}
-
+  avatar?: number | fileInp;
+  national_card?: number | fileInp;
+  uploadedAssets?: number | fileInp;
+};
 
 export type userSchema = {
   _id?: string;
@@ -15,12 +12,12 @@ export type userSchema = {
   last_name: string;
   father_name: string;
   mobile: string;
-  gender: ("Male" | "Female");
+  gender: "Male" | "Female";
   birth_date?: Date;
   summary?: string;
   national_number: string;
   address: string;
-  level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+  level: "Ghost" | "Manager" | "Editor" | "Ordinary";
   is_verified: boolean;
   settings: {
     city: {
@@ -66,14 +63,9 @@ export type userSchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type fileInp = {
-  uploader?: number | userInp
-
-}
-
+  uploader?: number | userInp;
+};
 
 export type fileSchema = {
   _id?: string;
@@ -88,12 +80,12 @@ export type fileSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -116,17 +108,13 @@ export type fileSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type provinceInp = {
-  registrer?: number | userInp
-  cities?: number | townshipInp
-  center?: number | cityInp
-  accidents?: number | accidentInp
-  axeses?: number | roadInp
-}
-
+  registrer?: number | userInp;
+  cities?: number | townshipInp;
+  center?: number | cityInp;
+  accidents?: number | accidentInp;
+  axeses?: number | roadInp;
+};
 
 export type provinceSchema = {
   _id?: string;
@@ -149,12 +137,12 @@ export type provinceSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -229,7 +217,7 @@ export type provinceSchema = {
         name: string;
       };
       driver: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -293,7 +281,7 @@ export type provinceSchema = {
       damage_section_other: string;
       insurance_warranty_limit: number;
       passenger_dtos?: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -312,7 +300,7 @@ export type provinceSchema = {
       }[];
     }[];
     pedestrian_dtos?: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -343,16 +331,12 @@ export type provinceSchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type cityInp = {
-  registrer?: number | userInp
-  province?: number | provinceInp
-  city_zones?: number | city_zoneInp
-  accidents?: number | accidentInp
-}
-
+  registrer?: number | userInp;
+  province?: number | provinceInp;
+  city_zones?: number | city_zoneInp;
+  accidents?: number | accidentInp;
+};
 
 export type citySchema = {
   _id?: string;
@@ -375,12 +359,12 @@ export type citySchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -450,7 +434,7 @@ export type citySchema = {
         name: string;
       };
       driver: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -514,7 +498,7 @@ export type citySchema = {
       damage_section_other: string;
       insurance_warranty_limit: number;
       passenger_dtos?: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -533,7 +517,7 @@ export type citySchema = {
       }[];
     }[];
     pedestrian_dtos?: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -554,16 +538,11 @@ export type citySchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type townshipInp = {
-  registrer?: number | userInp
-  province?: number | provinceInp
-  accidents?: number | accidentInp
-  accidents?: number | accidentInp
-}
-
+  registrer?: number | userInp;
+  province?: number | provinceInp;
+  accidents?: number | accidentInp;
+};
 
 export type townshipSchema = {
   _id?: string;
@@ -586,12 +565,12 @@ export type townshipSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -650,7 +629,7 @@ export type townshipSchema = {
         name: string;
       };
       driver: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -714,7 +693,7 @@ export type townshipSchema = {
       damage_section_other: string;
       insurance_warranty_limit: number;
       passenger_dtos?: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -733,7 +712,7 @@ export type townshipSchema = {
       }[];
     }[];
     pedestrian_dtos?: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -754,14 +733,10 @@ export type townshipSchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type traffic_zoneInp = {
-  registrer?: number | userInp
-  accidents?: number | accidentInp
-}
-
+  registrer?: number | userInp;
+  accidents?: number | accidentInp;
+};
 
 export type traffic_zoneSchema = {
   _id?: string;
@@ -779,12 +754,12 @@ export type traffic_zoneSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -827,7 +802,7 @@ export type traffic_zoneSchema = {
         name: string;
       };
       driver: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -891,7 +866,7 @@ export type traffic_zoneSchema = {
       damage_section_other: string;
       insurance_warranty_limit: number;
       passenger_dtos?: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -910,7 +885,7 @@ export type traffic_zoneSchema = {
       }[];
     }[];
     pedestrian_dtos?: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -931,15 +906,11 @@ export type traffic_zoneSchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type city_zoneInp = {
-  registrer?: number | userInp
-  city?: number | cityInp
-  accidents?: number | accidentInp
-}
-
+  registrer?: number | userInp;
+  city?: number | cityInp;
+  accidents?: number | accidentInp;
+};
 
 export type city_zoneSchema = {
   _id?: string;
@@ -957,12 +928,12 @@ export type city_zoneSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1021,7 +992,7 @@ export type city_zoneSchema = {
         name: string;
       };
       driver: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -1085,7 +1056,7 @@ export type city_zoneSchema = {
       damage_section_other: string;
       insurance_warranty_limit: number;
       passenger_dtos?: {
-        sex: ("Male" | "Female" | "Other");
+        sex: "Male" | "Female" | "Other";
         last_name: string;
         first_name: string;
         injury_type: {
@@ -1104,7 +1075,7 @@ export type city_zoneSchema = {
       }[];
     }[];
     pedestrian_dtos?: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -1125,15 +1096,10 @@ export type city_zoneSchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type roadInp = {
-  registrer?: number | userInp
-  province?: number | provinceInp
-
-}
-
+  registrer?: number | userInp;
+  province?: number | provinceInp;
+};
 
 export type roadSchema = {
   _id?: string;
@@ -1150,12 +1116,12 @@ export type roadSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1194,14 +1160,9 @@ export type roadSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type typeSchema = {
   _id?: string;
@@ -1214,12 +1175,12 @@ export type typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1242,14 +1203,9 @@ export type typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type area_usageInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type area_usageSchema = {
   _id?: string;
@@ -1262,12 +1218,12 @@ export type area_usageSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1290,14 +1246,9 @@ export type area_usageSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type positionInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type positionSchema = {
   _id?: string;
@@ -1310,12 +1261,12 @@ export type positionSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1338,14 +1289,9 @@ export type positionSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type ruling_typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type ruling_typeSchema = {
   _id?: string;
@@ -1358,12 +1304,12 @@ export type ruling_typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1386,14 +1332,9 @@ export type ruling_typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type air_statusInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type air_statusSchema = {
   _id?: string;
@@ -1406,12 +1347,12 @@ export type air_statusSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1434,14 +1375,9 @@ export type air_statusSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type light_statusInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type light_statusSchema = {
   _id?: string;
@@ -1454,12 +1390,12 @@ export type light_statusSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1482,14 +1418,9 @@ export type light_statusSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type road_defectInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type road_defectSchema = {
   _id?: string;
@@ -1502,12 +1433,12 @@ export type road_defectSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1530,14 +1461,9 @@ export type road_defectSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type human_reasonInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type human_reasonSchema = {
   _id?: string;
@@ -1550,12 +1476,12 @@ export type human_reasonSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1578,14 +1504,9 @@ export type human_reasonSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type collision_typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type collision_typeSchema = {
   _id?: string;
@@ -1598,12 +1519,12 @@ export type collision_typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1626,14 +1547,9 @@ export type collision_typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type road_situationInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type road_situationSchema = {
   _id?: string;
@@ -1646,12 +1562,12 @@ export type road_situationSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1674,14 +1590,9 @@ export type road_situationSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type road_repair_typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type road_repair_typeSchema = {
   _id?: string;
@@ -1694,12 +1605,12 @@ export type road_repair_typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1722,14 +1633,9 @@ export type road_repair_typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type shoulder_statusInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type shoulder_statusSchema = {
   _id?: string;
@@ -1742,12 +1648,12 @@ export type shoulder_statusSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1770,14 +1676,9 @@ export type shoulder_statusSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type vehicle_reasonInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type vehicle_reasonSchema = {
   _id?: string;
@@ -1790,12 +1691,12 @@ export type vehicle_reasonSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1818,14 +1719,9 @@ export type vehicle_reasonSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type equipment_damageInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type equipment_damageSchema = {
   _id?: string;
@@ -1838,12 +1734,12 @@ export type equipment_damageSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1866,14 +1762,9 @@ export type equipment_damageSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type road_surface_conditionInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type road_surface_conditionSchema = {
   _id?: string;
@@ -1886,12 +1777,12 @@ export type road_surface_conditionSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -1914,35 +1805,30 @@ export type road_surface_conditionSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type accidentInp = {
-  province?: number | provinceInp
-  city?: number | cityInp
-  township?: number | townshipInp
-  road?: number | roadInp
-  traffic_zone?: number | traffic_zoneInp
-  city_zone?: number | city_zoneInp
-  type?: number | typeInp
-  area_usages?: number | area_usageInp
-  position?: number | positionInp
-  ruling_type?: number | ruling_typeInp
-  air_statuses?: number | air_statusInp
-  light_status?: number | light_statusInp
-  road_defects?: number | road_defectInp
-  human_reasons?: number | human_reasonInp
-  collision_type?: number | collision_typeInp
-  road_situation?: number | road_situationInp
-  road_repair_type?: number | road_repair_typeInp
-  shoulder_status?: number | shoulder_statusInp
-  vehicle_reasons?: number | vehicle_reasonInp
-  equipment_damages?: number | equipment_damageInp
-  road_surface_conditions?: number | road_surface_conditionInp
-  attachments?: number | fileInp
-
-}
-
+  province?: number | provinceInp;
+  city?: number | cityInp;
+  township?: number | townshipInp;
+  road?: number | roadInp;
+  traffic_zone?: number | traffic_zoneInp;
+  city_zone?: number | city_zoneInp;
+  type?: number | typeInp;
+  area_usages?: number | area_usageInp;
+  position?: number | positionInp;
+  ruling_type?: number | ruling_typeInp;
+  air_statuses?: number | air_statusInp;
+  light_status?: number | light_statusInp;
+  road_defects?: number | road_defectInp;
+  human_reasons?: number | human_reasonInp;
+  collision_type?: number | collision_typeInp;
+  road_situation?: number | road_situationInp;
+  road_repair_type?: number | road_repair_typeInp;
+  shoulder_status?: number | shoulder_statusInp;
+  vehicle_reasons?: number | vehicle_reasonInp;
+  equipment_damages?: number | equipment_damageInp;
+  road_surface_conditions?: number | road_surface_conditionInp;
+  attachments?: number | fileInp;
+};
 
 export type accidentSchema = {
   _id?: string;
@@ -1965,7 +1851,7 @@ export type accidentSchema = {
       name: string;
     };
     driver: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -2029,7 +1915,7 @@ export type accidentSchema = {
     damage_section_other: string;
     insurance_warranty_limit: number;
     passenger_dtos?: {
-      sex: ("Male" | "Female" | "Other");
+      sex: "Male" | "Female" | "Other";
       last_name: string;
       first_name: string;
       injury_type: {
@@ -2048,7 +1934,7 @@ export type accidentSchema = {
     }[];
   }[];
   pedestrian_dtos?: {
-    sex: ("Male" | "Female" | "Other");
+    sex: "Male" | "Female" | "Other";
     last_name: string;
     first_name: string;
     injury_type: {
@@ -2246,14 +2132,9 @@ export type accidentSchema = {
     updatedAt: Date;
   }[];
 };
-;
-
-
 export type body_insurance_coInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type body_insurance_coSchema = {
   _id?: string;
@@ -2266,12 +2147,12 @@ export type body_insurance_coSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2294,14 +2175,9 @@ export type body_insurance_coSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type colorInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type colorSchema = {
   _id?: string;
@@ -2314,12 +2190,12 @@ export type colorSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2342,14 +2218,9 @@ export type colorSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type fault_statusInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type fault_statusSchema = {
   _id?: string;
@@ -2362,12 +2233,12 @@ export type fault_statusSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2390,14 +2261,9 @@ export type fault_statusSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type insurance_coInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type insurance_coSchema = {
   _id?: string;
@@ -2410,12 +2276,12 @@ export type insurance_coSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2438,14 +2304,9 @@ export type insurance_coSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type licence_typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type licence_typeSchema = {
   _id?: string;
@@ -2458,12 +2319,12 @@ export type licence_typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2486,14 +2347,9 @@ export type licence_typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type max_damage_sectionInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type max_damage_sectionSchema = {
   _id?: string;
@@ -2506,12 +2362,12 @@ export type max_damage_sectionSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2534,14 +2390,9 @@ export type max_damage_sectionSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type motion_directionInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type motion_directionSchema = {
   _id?: string;
@@ -2554,12 +2405,12 @@ export type motion_directionSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2582,14 +2433,9 @@ export type motion_directionSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type plaque_typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type plaque_typeSchema = {
   _id?: string;
@@ -2602,12 +2448,12 @@ export type plaque_typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2630,14 +2476,9 @@ export type plaque_typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type plaque_usageInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type plaque_usageSchema = {
   _id?: string;
@@ -2650,12 +2491,12 @@ export type plaque_usageSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2678,14 +2519,9 @@ export type plaque_usageSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type systemInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type systemSchema = {
   _id?: string;
@@ -2698,12 +2534,12 @@ export type systemSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2726,14 +2562,9 @@ export type systemSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type system_typeInp = {
-  registrer?: number | userInp
-
-}
-
+  registrer?: number | userInp;
+};
 
 export type system_typeSchema = {
   _id?: string;
@@ -2746,12 +2577,12 @@ export type system_typeSchema = {
     last_name: string;
     father_name: string;
     mobile: string;
-    gender: ("Male" | "Female");
+    gender: "Male" | "Female";
     birth_date?: Date;
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+    level: "Ghost" | "Manager" | "Editor" | "Ordinary";
     is_verified: boolean;
     settings: {
       city: {
@@ -2774,18 +2605,9 @@ export type system_typeSchema = {
     updatedAt: Date;
   };
 };
-;
-
-
 export type ReqType = {
-
-
   main: {
-
-
     air_status: {
-
-
       add: {
         set: {
           name: string;
@@ -2793,30 +2615,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -2824,84 +2645,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -2911,54 +2730,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -2966,27 +2784,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     area_usage: {
-
-
       add: {
         set: {
           name: string;
@@ -2994,30 +2806,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -3025,84 +2836,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -3112,54 +2921,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -3167,27 +2975,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     body_insurance_co: {
-
-
       add: {
         set: {
           name: string;
@@ -3195,30 +2997,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -3226,84 +3027,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -3312,54 +3111,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -3367,27 +3165,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     city: {
-
-
       add: {
         set: {
           name: string;
@@ -3407,69 +3199,68 @@ export type ReqType = {
           isCenter: boolean;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city_zones?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -3487,418 +3278,416 @@ export type ReqType = {
           };
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city_zones?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city_zones?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -3907,349 +3696,348 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city_zones?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -4257,27 +4045,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     township: {
-
-
       add: {
         set: {
           name: string;
@@ -4296,61 +4078,60 @@ export type ReqType = {
           provinceId: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -4368,358 +4149,356 @@ export type ReqType = {
           };
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -4728,297 +4507,296 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -5026,27 +4804,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     city_zone: {
-
-
       add: {
         set: {
           name: string;
@@ -5060,59 +4832,58 @@ export type ReqType = {
           cityId: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -5125,345 +4896,343 @@ export type ReqType = {
           };
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zones?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -5472,286 +5241,285 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zones?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -5759,20 +5527,18 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
 
       seedCityZones: {
         set: {
@@ -5780,17 +5546,12 @@ export type ReqType = {
           geoId: string;
         };
         get: {
-          summary: (1);
+          summary: 1;
         };
       };
-
-
-    }
-
+    };
 
     collision_type: {
-
-
       add: {
         set: {
           name: string;
@@ -5798,30 +5559,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -5829,84 +5589,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -5915,54 +5673,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -5970,27 +5727,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     color: {
-
-
       add: {
         set: {
           name: string;
@@ -5998,30 +5749,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -6029,84 +5779,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -6115,54 +5863,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -6170,27 +5917,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     equipment_damage: {
-
-
       add: {
         set: {
           name: string;
@@ -6198,30 +5939,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -6229,84 +5969,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -6316,54 +6054,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -6371,27 +6108,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     fault_status: {
-
-
       add: {
         set: {
           name: string;
@@ -6399,30 +6130,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -6430,84 +6160,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -6516,54 +6244,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -6571,126 +6298,114 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     file: {
-
-
       getFiles: {
         set: {
           page: number;
           limit: number;
           name?: string;
-          type?: ("image" | "video" | "doc");
+          type?: "image" | "video" | "doc";
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          type?: (0 | 1);
-          size?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          type?: 0 | 1;
+          size?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           uploader?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       uploadFile: {
         set: {
-          type: ("video" | "image" | "doc" | "geo" | "json");
+          type: "video" | "image" | "doc" | "geo" | "json";
           createdAt: Date;
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          type?: (0 | 1);
-          size?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          type?: 0 | 1;
+          size?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           uploader?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
-
-    }
-
+    };
 
     human_reason: {
-
-
       add: {
         set: {
           name: string;
@@ -6698,30 +6413,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -6729,84 +6443,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -6816,54 +6528,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -6871,27 +6582,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     insurance_co: {
-
-
       add: {
         set: {
           name: string;
@@ -6899,30 +6604,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -6930,84 +6634,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -7016,54 +6718,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -7071,27 +6772,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     licence_type: {
-
-
       add: {
         set: {
           name: string;
@@ -7099,30 +6794,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -7130,84 +6824,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -7216,54 +6908,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -7271,27 +6962,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     light_status: {
-
-
       add: {
         set: {
           name: string;
@@ -7299,30 +6984,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -7330,84 +7014,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -7416,54 +7098,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -7471,27 +7152,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     max_damage_section: {
-
-
       add: {
         set: {
           name: string;
@@ -7499,30 +7174,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -7530,84 +7204,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -7617,54 +7289,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -7672,27 +7343,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     motion_direction: {
-
-
       add: {
         set: {
           name: string;
@@ -7700,30 +7365,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -7731,84 +7395,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -7817,54 +7479,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -7872,27 +7533,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     plaque_type: {
-
-
       add: {
         set: {
           name: string;
@@ -7900,30 +7555,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -7931,84 +7585,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -8017,54 +7669,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -8072,27 +7723,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     plaque_usage: {
-
-
       add: {
         set: {
           name: string;
@@ -8100,30 +7745,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -8131,84 +7775,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -8217,54 +7859,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -8272,27 +7913,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     position: {
-
-
       add: {
         set: {
           name: string;
@@ -8300,30 +7935,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -8331,84 +7965,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -8417,54 +8049,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -8472,27 +8103,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     province: {
-
-
       add: {
         set: {
           name: string;
@@ -8510,78 +8135,77 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           cities?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           center?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           axeses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -8599,454 +8223,452 @@ export type ReqType = {
           };
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           cities?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           center?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           axeses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           cities?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           center?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zones?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           axeses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -9055,376 +8677,375 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          english_name?: (0 | 1);
-          population?: (0 | 1);
-          area?: (0 | 1);
-          center_location?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          english_name?: 0 | 1;
+          population?: 0 | 1;
+          area?: 0 | 1;
+          center_location?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           cities?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           center?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zones?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           axeses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -9432,27 +9053,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     road: {
-
-
       add: {
         set: {
           name: string;
@@ -9465,41 +9080,40 @@ export type ReqType = {
           provinceId: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -9511,167 +9125,165 @@ export type ReqType = {
           };
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -9680,126 +9292,125 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -9807,27 +9418,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     road_defect: {
-
-
       add: {
         set: {
           name: string;
@@ -9835,30 +9440,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -9866,84 +9470,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -9953,54 +9555,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -10008,27 +9609,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     road_repair_type: {
-
-
       add: {
         set: {
           name: string;
@@ -10036,30 +9631,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -10067,84 +9661,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -10153,54 +9745,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -10208,27 +9799,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     road_situation: {
-
-
       add: {
         set: {
           name: string;
@@ -10236,30 +9821,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -10267,84 +9851,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -10353,54 +9935,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -10408,27 +9989,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     road_surface_condition: {
-
-
       add: {
         set: {
           name: string;
@@ -10436,30 +10011,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -10467,84 +10041,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -10554,54 +10126,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -10609,27 +10180,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     ruling_type: {
-
-
       add: {
         set: {
           name: string;
@@ -10637,30 +10202,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -10668,84 +10232,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -10754,54 +10316,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -10809,27 +10370,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     shoulder_status: {
-
-
       add: {
         set: {
           name: string;
@@ -10837,30 +10392,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -10868,84 +10422,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -10954,54 +10506,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -11009,27 +10560,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     system: {
-
-
       add: {
         set: {
           name: string;
@@ -11037,30 +10582,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -11068,84 +10612,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -11154,54 +10696,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -11209,27 +10750,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     system_type: {
-
-
       add: {
         set: {
           name: string;
@@ -11237,30 +10772,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -11268,84 +10802,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -11354,54 +10886,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -11409,27 +10940,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     traffic_zone: {
-
-
       add: {
         set: {
           name: string;
@@ -11442,49 +10967,48 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -11496,273 +11020,271 @@ export type ReqType = {
           };
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -11771,224 +11293,223 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          area?: (0 | 1);
-          population?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          area?: 0 | 1;
+          population?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           accidents?: {
-            _id?: (0 | 1);
-            seri?: (0 | 1);
-            serial?: (0 | 1);
-            location?: (0 | 1);
-            date_of_accident?: (0 | 1);
-            dead_count?: (0 | 1);
-            has_witness?: (0 | 1);
-            news_number?: (0 | 1);
-            officer?: (0 | 1);
-            injured_count?: (0 | 1);
-            completion_date?: (0 | 1);
-            vehicle_dtos?: (0 | 1);
-            pedestrian_dtos?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            seri?: 0 | 1;
+            serial?: 0 | 1;
+            location?: 0 | 1;
+            date_of_accident?: 0 | 1;
+            dead_count?: 0 | 1;
+            has_witness?: 0 | 1;
+            news_number?: 0 | 1;
+            officer?: 0 | 1;
+            injured_count?: 0 | 1;
+            completion_date?: 0 | 1;
+            vehicle_dtos?: 0 | 1;
+            pedestrian_dtos?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             township?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             traffic_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zone?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             area_usages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             position?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             ruling_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             air_statuses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             light_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_defects?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             human_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             collision_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_situation?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_repair_type?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             shoulder_status?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             vehicle_reasons?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             equipment_damages?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             road_surface_conditions?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             attachments?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -11996,27 +11517,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     type: {
-
-
       add: {
         set: {
           name: string;
@@ -12024,30 +11539,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -12055,84 +11569,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -12141,54 +11653,53 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -12196,283 +11707,273 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     user: {
-
-
       addUser: {
         set: {
           first_name: string;
           last_name: string;
           father_name: string;
           mobile: string;
-          gender: ("Male" | "Female");
+          gender: "Male" | "Female";
           birth_date?: Date;
           summary?: string;
           national_number: string;
           address: string;
-          level: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+          level: "Ghost" | "Manager" | "Editor" | "Ordinary";
           is_verified: boolean;
           nationalCard?: string;
           avatar?: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       getMe: {
-        set: {
-        };
+        set: {};
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       getUser: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       login: {
         set: {
@@ -12480,62 +11981,60 @@ export type ReqType = {
           code: string;
         };
         get?: {
-          token?: (0 | 1);
+          token?: 0 | 1;
           user: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       loginReq: {
         set: {
           national_number: string;
         };
         get: {
-          mobile: (1);
-          national_number: (1);
+          mobile: 1;
+          national_number: 1;
         };
       };
-
 
       tempUser: {
         set: {
@@ -12546,48 +12045,47 @@ export type ReqType = {
           national_number: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       updateUser: {
         set: {
@@ -12595,54 +12093,53 @@ export type ReqType = {
           first_name?: string;
           last_name?: string;
           father_name?: string;
-          gender?: ("Male" | "Female");
+          gender?: "Male" | "Female";
           birth_date?: Date;
           summary?: string;
           address?: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       registerUser: {
         set: {
@@ -12650,48 +12147,47 @@ export type ReqType = {
           national_number: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       changeMobile: {
         set: {
@@ -12699,112 +12195,110 @@ export type ReqType = {
           mobile: string;
         };
         get: {
-          mobile: (1);
-          national_number: (1);
+          mobile: 1;
+          national_number: 1;
         };
       };
 
-
       getUsers: {
         set: {
-          levels?: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+          levels?: "Ghost" | "Manager" | "Editor" | "Ordinary";
           page: number;
           limit: number;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       removeUser: {
         set: {
@@ -12812,68 +12306,65 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       countUsers: {
         set: {
-          levels?: ("Ghost" | "Manager" | "Editor" | "Ordinary");
+          levels?: "Ghost" | "Manager" | "Editor" | "Ordinary";
         };
         get: {
-          qty: (0 | 1);
+          qty: 0 | 1;
         };
       };
-
 
       toggleFavArticle: {
         set: {
           articleId: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       updateUserRelations: {
         set: {
@@ -12882,104 +12373,96 @@ export type ReqType = {
           nationalCard?: string;
         };
         get: {
-          _id?: (0 | 1);
-          first_name?: (0 | 1);
-          last_name?: (0 | 1);
-          father_name?: (0 | 1);
-          mobile?: (0 | 1);
-          gender?: (0 | 1);
-          birth_date?: (0 | 1);
-          summary?: (0 | 1);
-          national_number?: (0 | 1);
-          address?: (0 | 1);
-          level?: (0 | 1);
-          is_verified?: (0 | 1);
-          settings?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          first_name?: 0 | 1;
+          last_name?: 0 | 1;
+          father_name?: 0 | 1;
+          mobile?: 0 | 1;
+          gender?: 0 | 1;
+          birth_date?: 0 | 1;
+          summary?: 0 | 1;
+          national_number?: 0 | 1;
+          address?: 0 | 1;
+          level?: 0 | 1;
+          is_verified?: 0 | 1;
+          settings?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           avatar?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           national_card?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           uploadedAssets?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
 
-
       dashboardStatistic: {
-        set: {
-        };
+        set: {};
         get: {
-          users?: (0 | 1);
-          provinces?: (0 | 1);
-          cities?: (0 | 1);
-          accidents?: (0 | 1);
-          airStatuses?: (0 | 1);
-          areaUsages?: (0 | 1);
-          bodyInsuranceCos?: (0 | 1);
-          collisionTypes?: (0 | 1);
-          colors?: (0 | 1);
-          equipmentDamages?: (0 | 1);
-          faultStatuses?: (0 | 1);
-          humanReasons?: (0 | 1);
-          insuranceCos?: (0 | 1);
-          licenceTypes?: (0 | 1);
-          lightStatuses?: (0 | 1);
-          maxDamageSections?: (0 | 1);
-          motionDirections?: (0 | 1);
-          plaqueTypes?: (0 | 1);
-          plaqueUsages?: (0 | 1);
-          positions?: (0 | 1);
-          roads?: (0 | 1);
-          roadDefects?: (0 | 1);
-          roadRepairTypes?: (0 | 1);
-          roadSituations?: (0 | 1);
-          roadSurfaceConditions?: (0 | 1);
-          rulingTypes?: (0 | 1);
-          shoulderStatuses?: (0 | 1);
-          systems?: (0 | 1);
-          systemTypes?: (0 | 1);
-          types?: (0 | 1);
-          vehicleReasons?: (0 | 1);
+          users?: 0 | 1;
+          provinces?: 0 | 1;
+          cities?: 0 | 1;
+          accidents?: 0 | 1;
+          airStatuses?: 0 | 1;
+          areaUsages?: 0 | 1;
+          bodyInsuranceCos?: 0 | 1;
+          collisionTypes?: 0 | 1;
+          colors?: 0 | 1;
+          equipmentDamages?: 0 | 1;
+          faultStatuses?: 0 | 1;
+          humanReasons?: 0 | 1;
+          insuranceCos?: 0 | 1;
+          licenceTypes?: 0 | 1;
+          lightStatuses?: 0 | 1;
+          maxDamageSections?: 0 | 1;
+          motionDirections?: 0 | 1;
+          plaqueTypes?: 0 | 1;
+          plaqueUsages?: 0 | 1;
+          positions?: 0 | 1;
+          roads?: 0 | 1;
+          roadDefects?: 0 | 1;
+          roadRepairTypes?: 0 | 1;
+          roadSituations?: 0 | 1;
+          roadSurfaceConditions?: 0 | 1;
+          rulingTypes?: 0 | 1;
+          shoulderStatuses?: 0 | 1;
+          systems?: 0 | 1;
+          systemTypes?: 0 | 1;
+          types?: 0 | 1;
+          vehicleReasons?: 0 | 1;
         };
       };
-
 
       seed: {
         set: {
           fileID: string;
         };
         get: {
-          ok?: (0 | 1);
+          ok?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     vehicle_reason: {
-
-
       add: {
         set: {
           name: string;
@@ -12987,30 +12470,29 @@ export type ReqType = {
           updatedAt: Date;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -13018,84 +12500,82 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -13105,54 +12585,53 @@ export type ReqType = {
           names?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          name?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          name?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           registrer?: {
-            _id?: (0 | 1);
-            first_name?: (0 | 1);
-            last_name?: (0 | 1);
-            father_name?: (0 | 1);
-            mobile?: (0 | 1);
-            gender?: (0 | 1);
-            birth_date?: (0 | 1);
-            summary?: (0 | 1);
-            national_number?: (0 | 1);
-            address?: (0 | 1);
-            level?: (0 | 1);
-            is_verified?: (0 | 1);
-            settings?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            first_name?: 0 | 1;
+            last_name?: 0 | 1;
+            father_name?: 0 | 1;
+            mobile?: 0 | 1;
+            gender?: 0 | 1;
+            birth_date?: 0 | 1;
+            summary?: 0 | 1;
+            national_number?: 0 | 1;
+            address?: 0 | 1;
+            level?: 0 | 1;
+            is_verified?: 0 | 1;
+            settings?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             avatar?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             national_card?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             uploadedAssets?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              type?: (0 | 1);
-              size?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              type?: 0 | 1;
+              size?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -13160,27 +12639,21 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
           name?: string;
         };
         get: {
-          qty?: (0 | 1);
+          qty?: 0 | 1;
         };
       };
-
-
-    }
-
+    };
 
     accident: {
-
-
       add: {
         set: {
           seri?: number;
@@ -13202,7 +12675,7 @@ export type ReqType = {
               name: string;
             };
             driver?: {
-              sex?: ("Male" | "Female" | "Other");
+              sex?: "Male" | "Female" | "Other";
               last_name?: string;
               first_name?: string;
               injury_type?: {
@@ -13266,7 +12739,7 @@ export type ReqType = {
             damage_section_other?: string;
             insurance_warranty_limit?: number;
             passenger_dtos?: {
-              sex?: ("Male" | "Female" | "Other");
+              sex?: "Male" | "Female" | "Other";
               last_name?: string;
               first_name?: string;
               injury_type?: {
@@ -13285,7 +12758,7 @@ export type ReqType = {
             }[];
           }[];
           pedestrian_dtos?: {
-            sex?: ("Male" | "Female" | "Other");
+            sex?: "Male" | "Female" | "Other";
             last_name?: string;
             first_name?: string;
             injury_type?: {
@@ -13325,175 +12798,174 @@ export type ReqType = {
           attachmentsIds?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          seri?: (0 | 1);
-          serial?: (0 | 1);
-          location?: (0 | 1);
-          date_of_accident?: (0 | 1);
-          dead_count?: (0 | 1);
-          has_witness?: (0 | 1);
-          news_number?: (0 | 1);
-          officer?: (0 | 1);
-          injured_count?: (0 | 1);
-          completion_date?: (0 | 1);
-          vehicle_dtos?: (0 | 1);
-          pedestrian_dtos?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          seri?: 0 | 1;
+          serial?: 0 | 1;
+          location?: 0 | 1;
+          date_of_accident?: 0 | 1;
+          dead_count?: 0 | 1;
+          has_witness?: 0 | 1;
+          news_number?: 0 | 1;
+          officer?: 0 | 1;
+          injured_count?: 0 | 1;
+          completion_date?: 0 | 1;
+          vehicle_dtos?: 0 | 1;
+          pedestrian_dtos?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           township?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           traffic_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           area_usages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           position?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           ruling_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           air_statuses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           light_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_defects?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           human_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           collision_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_situation?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_repair_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           shoulder_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           vehicle_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           equipment_damages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_surface_conditions?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           attachments?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       update: {
         set: {
@@ -13501,884 +12973,882 @@ export type ReqType = {
           name?: string;
         };
         get: {
-          _id?: (0 | 1);
-          seri?: (0 | 1);
-          serial?: (0 | 1);
-          location?: (0 | 1);
-          date_of_accident?: (0 | 1);
-          dead_count?: (0 | 1);
-          has_witness?: (0 | 1);
-          news_number?: (0 | 1);
-          officer?: (0 | 1);
-          injured_count?: (0 | 1);
-          completion_date?: (0 | 1);
-          vehicle_dtos?: (0 | 1);
-          pedestrian_dtos?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          seri?: 0 | 1;
+          serial?: 0 | 1;
+          location?: 0 | 1;
+          date_of_accident?: 0 | 1;
+          dead_count?: 0 | 1;
+          has_witness?: 0 | 1;
+          news_number?: 0 | 1;
+          officer?: 0 | 1;
+          injured_count?: 0 | 1;
+          completion_date?: 0 | 1;
+          vehicle_dtos?: 0 | 1;
+          pedestrian_dtos?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           township?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           traffic_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           city_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           area_usages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           position?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           ruling_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           air_statuses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           light_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_defects?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           human_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           collision_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_situation?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_repair_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           shoulder_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           vehicle_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           equipment_damages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           road_surface_conditions?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
           attachments?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
           };
         };
       };
-
 
       get: {
         set: {
           _id: string;
         };
         get: {
-          _id?: (0 | 1);
-          seri?: (0 | 1);
-          serial?: (0 | 1);
-          location?: (0 | 1);
-          date_of_accident?: (0 | 1);
-          dead_count?: (0 | 1);
-          has_witness?: (0 | 1);
-          news_number?: (0 | 1);
-          officer?: (0 | 1);
-          injured_count?: (0 | 1);
-          completion_date?: (0 | 1);
-          vehicle_dtos?: (0 | 1);
-          pedestrian_dtos?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          seri?: 0 | 1;
+          serial?: 0 | 1;
+          location?: 0 | 1;
+          date_of_accident?: 0 | 1;
+          dead_count?: 0 | 1;
+          has_witness?: 0 | 1;
+          news_number?: 0 | 1;
+          officer?: 0 | 1;
+          injured_count?: 0 | 1;
+          completion_date?: 0 | 1;
+          vehicle_dtos?: 0 | 1;
+          pedestrian_dtos?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zones?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           township?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           traffic_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           area_usages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           position?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           ruling_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           air_statuses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           light_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_defects?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           human_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           collision_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_situation?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_repair_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           shoulder_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           vehicle_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           equipment_damages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_surface_conditions?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           attachments?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       gets: {
         set: {
@@ -14401,6 +13871,7 @@ export type ReqType = {
           completionDateTo?: string;
           province?: string[];
           city?: string[];
+          township?: string[];
           road?: string[];
           trafficZone?: string[];
           cityZone?: string[];
@@ -14471,709 +13942,708 @@ export type ReqType = {
           pedestrianTotalReason?: string[];
         };
         get: {
-          _id?: (0 | 1);
-          seri?: (0 | 1);
-          serial?: (0 | 1);
-          location?: (0 | 1);
-          date_of_accident?: (0 | 1);
-          dead_count?: (0 | 1);
-          has_witness?: (0 | 1);
-          news_number?: (0 | 1);
-          officer?: (0 | 1);
-          injured_count?: (0 | 1);
-          completion_date?: (0 | 1);
-          vehicle_dtos?: (0 | 1);
-          pedestrian_dtos?: (0 | 1);
-          createdAt?: (0 | 1);
-          updatedAt?: (0 | 1);
+          _id?: 0 | 1;
+          seri?: 0 | 1;
+          serial?: 0 | 1;
+          location?: 0 | 1;
+          date_of_accident?: 0 | 1;
+          dead_count?: 0 | 1;
+          has_witness?: 0 | 1;
+          news_number?: 0 | 1;
+          officer?: 0 | 1;
+          injured_count?: 0 | 1;
+          completion_date?: 0 | 1;
+          vehicle_dtos?: 0 | 1;
+          pedestrian_dtos?: 0 | 1;
+          createdAt?: 0 | 1;
+          updatedAt?: 0 | 1;
           province?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             cities?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             center?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             axeses?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city_zones?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              area?: (0 | 1);
-              population?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              area?: 0 | 1;
+              population?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           township?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            english_name?: (0 | 1);
-            population?: (0 | 1);
-            area?: (0 | 1);
-            center_location?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            english_name?: 0 | 1;
+            population?: 0 | 1;
+            area?: 0 | 1;
+            center_location?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             province?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           traffic_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           city_zone?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            area?: (0 | 1);
-            population?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            area?: 0 | 1;
+            population?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             city?: {
-              _id?: (0 | 1);
-              name?: (0 | 1);
-              english_name?: (0 | 1);
-              population?: (0 | 1);
-              area?: (0 | 1);
-              center_location?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              name?: 0 | 1;
+              english_name?: 0 | 1;
+              population?: 0 | 1;
+              area?: 0 | 1;
+              center_location?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
             accidents?: {
-              _id?: (0 | 1);
-              seri?: (0 | 1);
-              serial?: (0 | 1);
-              location?: (0 | 1);
-              date_of_accident?: (0 | 1);
-              dead_count?: (0 | 1);
-              has_witness?: (0 | 1);
-              news_number?: (0 | 1);
-              officer?: (0 | 1);
-              injured_count?: (0 | 1);
-              completion_date?: (0 | 1);
-              vehicle_dtos?: (0 | 1);
-              pedestrian_dtos?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              seri?: 0 | 1;
+              serial?: 0 | 1;
+              location?: 0 | 1;
+              date_of_accident?: 0 | 1;
+              dead_count?: 0 | 1;
+              has_witness?: 0 | 1;
+              news_number?: 0 | 1;
+              officer?: 0 | 1;
+              injured_count?: 0 | 1;
+              completion_date?: 0 | 1;
+              vehicle_dtos?: 0 | 1;
+              pedestrian_dtos?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           area_usages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           position?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           ruling_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           air_statuses?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           light_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_defects?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           human_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           collision_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_situation?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_repair_type?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           shoulder_status?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           vehicle_reasons?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           equipment_damages?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           road_surface_conditions?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             registrer?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
           attachments?: {
-            _id?: (0 | 1);
-            name?: (0 | 1);
-            type?: (0 | 1);
-            size?: (0 | 1);
-            createdAt?: (0 | 1);
-            updatedAt?: (0 | 1);
+            _id?: 0 | 1;
+            name?: 0 | 1;
+            type?: 0 | 1;
+            size?: 0 | 1;
+            createdAt?: 0 | 1;
+            updatedAt?: 0 | 1;
             uploader?: {
-              _id?: (0 | 1);
-              first_name?: (0 | 1);
-              last_name?: (0 | 1);
-              father_name?: (0 | 1);
-              mobile?: (0 | 1);
-              gender?: (0 | 1);
-              birth_date?: (0 | 1);
-              summary?: (0 | 1);
-              national_number?: (0 | 1);
-              address?: (0 | 1);
-              level?: (0 | 1);
-              is_verified?: (0 | 1);
-              settings?: (0 | 1);
-              createdAt?: (0 | 1);
-              updatedAt?: (0 | 1);
+              _id?: 0 | 1;
+              first_name?: 0 | 1;
+              last_name?: 0 | 1;
+              father_name?: 0 | 1;
+              mobile?: 0 | 1;
+              gender?: 0 | 1;
+              birth_date?: 0 | 1;
+              summary?: 0 | 1;
+              national_number?: 0 | 1;
+              address?: 0 | 1;
+              level?: 0 | 1;
+              is_verified?: 0 | 1;
+              settings?: 0 | 1;
+              createdAt?: 0 | 1;
+              updatedAt?: 0 | 1;
             };
           };
         };
       };
-
 
       remove: {
         set: {
@@ -15181,10 +14651,9 @@ export type ReqType = {
           hardCascade?: boolean;
         };
         get: {
-          success?: (0 | 1);
+          success?: 0 | 1;
         };
       };
-
 
       count: {
         set: {
@@ -15275,11 +14744,10 @@ export type ReqType = {
           pedestrianTotalReason?: string[];
         };
         get: {
-          total?: (0 | 1);
-          filtered?: (0 | 1);
+          total?: 0 | 1;
+          filtered?: 0 | 1;
         };
       };
-
 
       roadDefectsAnalytics: {
         set: {
@@ -15370,11 +14838,10 @@ export type ReqType = {
           pedestrianTotalReason?: string[];
         };
         get: {
-          defectDistribution?: (0 | 1);
-          defectCounts?: (0 | 1);
+          defectDistribution?: 0 | 1;
+          defectCounts?: 0 | 1;
         };
       };
-
 
       roadDefectsAnalyticsWithCount: {
         set: {
@@ -15388,11 +14855,10 @@ export type ReqType = {
           };
         };
         get: {
-          defectDistribution?: (0 | 1);
-          defectCounts?: (0 | 1);
+          defectDistribution?: 0 | 1;
+          defectCounts?: 0 | 1;
         };
       };
-
 
       monthlyHolidayAnalytics: {
         set: {
@@ -15455,11 +14921,10 @@ export type ReqType = {
           driverLicenceNumber?: string;
         };
         get: {
-          categories?: (0 | 1);
-          series?: (0 | 1);
+          categories?: 0 | 1;
+          series?: 0 | 1;
         };
       };
-
 
       hourlyDayOfWeekAnalytics: {
         set: {
@@ -15506,10 +14971,9 @@ export type ReqType = {
           vehicleSystem?: string[];
         };
         get: {
-          series?: (0 | 1);
+          series?: 0 | 1;
         };
       };
-
 
       collisionAnalytics: {
         set: {
@@ -15542,12 +15006,11 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          mainChart?: (0 | 1);
-          singleVehicleChart?: (0 | 1);
-          otherTypesChart?: (0 | 1);
+          mainChart?: 0 | 1;
+          singleVehicleChart?: 0 | 1;
+          otherTypesChart?: 0 | 1;
         };
       };
-
 
       accidentSeverityAnalytics: {
         set: {
@@ -15568,10 +15031,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       totalReasonAnalytics: {
         set: {
@@ -15591,10 +15053,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       humanReasonAnalytics: {
         set: {
@@ -15614,10 +15075,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       vehicleReasonAnalytics: {
         set: {
@@ -15637,10 +15097,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       areaUsageAnalytics: {
         set: {
@@ -15661,10 +15120,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       companyPerformanceAnalytics: {
         set: {
@@ -15680,10 +15138,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalCountAnalytics: {
         set: {
@@ -15704,10 +15161,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalSeverityAnalytics: {
         set: {
@@ -15727,10 +15183,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalNightAnalytics: {
         set: {
@@ -15762,10 +15217,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalCollisionAnalytics: {
         set: {
@@ -15804,10 +15258,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalDamageAnalytics: {
         set: {
@@ -15834,10 +15287,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalTotalReasonAnalytics: {
         set: {
@@ -15868,10 +15320,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       temporalUnlicensedDriversAnalytics: {
         set: {
@@ -15909,10 +15360,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       spatialSeverityAnalytics: {
         set: {
@@ -15951,10 +15401,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       spatialLightAnalytics: {
         set: {
@@ -15993,10 +15442,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       spatialCollisionAnalytics: {
         set: {
@@ -16035,10 +15483,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       spatialSingleVehicleAnalytics: {
         set: {
@@ -16077,10 +15524,9 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       eventSeverityAnalytics: {
         set: {
@@ -16119,10 +15565,9 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       eventCollisionAnalytics: {
         set: {
@@ -16146,14 +15591,13 @@ export type ReqType = {
           driverLicenceType?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
 
-
       spatialSafetyIndexAnalytics: {
         set: {
-          groupBy: ("province" | "city" | "city_zone");
+          groupBy: "province" | "city" | "city_zone";
           dateOfAccidentFrom?: string;
           dateOfAccidentTo?: string;
           deadCountMin?: number;
@@ -16173,10 +15617,9 @@ export type ReqType = {
           driverSex?: string[];
         };
         get: {
-          analytics: (1);
+          analytics: 1;
         };
       };
-
 
       mapAccidents: {
         set: {
@@ -16221,32 +15664,27 @@ export type ReqType = {
           driverInjuryType?: string[];
         };
         get: {
-          accidents: (1);
-          total: (1);
+          accidents: 1;
+          total: 1;
         };
       };
-
-
-    }
-
-
-  }
-
-
+    };
+  };
 };
-
 
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 
-export const lesanApi = (
-  { URL, settings, baseHeaders }: {
-    URL: string;
-    settings?: Record<string, any>;
-    baseHeaders?: Record<string, any>;
-  },
-) => {
+export const lesanApi = ({
+  URL,
+  settings,
+  baseHeaders,
+}: {
+  URL: string;
+  settings?: Record<string, any>;
+  baseHeaders?: Record<string, any>;
+}) => {
   const setting = {
     method: "POST",
     headers: {
@@ -16273,15 +15711,18 @@ export const lesanApi = (
     TSet extends DeepPartial<ReqType[TService][TModel][TAct]["set"]>,
     // @ts-ignore: Unreachable code error
     TGet extends DeepPartial<ReqType[TService][TModel][TAct]["get"]>,
-  >(body: {
-    service?: TService;
-    model: TModel;
-    act: TAct;
-    details: {
-      set: TSet;
-      get: TGet;
-    };
-  }, additionalHeaders?: Record<string, any>) => {
+  >(
+    body: {
+      service?: TService;
+      model: TModel;
+      act: TAct;
+      details: {
+        set: TSet;
+        get: TGet;
+      };
+    },
+    additionalHeaders?: Record<string, any>,
+  ) => {
     const req = await fetch(URL, {
       ...getSetting(),
       headers: {
@@ -16297,5 +15738,3 @@ export const lesanApi = (
 
   return { send, setHeaders };
 };
-
-
