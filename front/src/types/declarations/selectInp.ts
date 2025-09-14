@@ -561,6 +561,7 @@ export type townshipInp = {
   registrer?: number | userInp
   province?: number | provinceInp
   accidents?: number | accidentInp
+  accidents?: number | accidentInp
 }
 
 

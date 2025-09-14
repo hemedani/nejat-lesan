@@ -34,6 +34,17 @@ export const township_relations = {
 			},
 		},
 	},
+	accidents: {
+		schemaName: "accident",
+		type: "multiple" as RelationDataType,
+		optional: true,
+		limit: 20,
+		sort: {
+			field: "_id",
+			order: "desc" as RelationSortOrderType,
+		},
+		relatedRelations: {},
+	},
 };
 
 export const townships = () =>
