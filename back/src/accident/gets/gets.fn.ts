@@ -64,6 +64,7 @@ export const getsFn: ActFn = async (body) => {
 		// Location & Context (filtering by name of embedded object)
 		province,
 		city,
+		township,
 		road,
 		trafficZone,
 		cityZone,
@@ -210,6 +211,9 @@ export const getsFn: ActFn = async (body) => {
 	}
 	if (city && city.length > 0) {
 		matchConditions["city.name"] = { $in: city };
+	}
+	if (township && township.length > 0) {
+		matchConditions["township.name"] = { $in: township };
 	}
 	if (road && road.length > 0) {
 		matchConditions["road.name"] = { $in: road };

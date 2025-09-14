@@ -29,6 +29,7 @@ export const getsValidator = () => {
 			// --- Location & Context (filtering by name) ---
 			province: optional(array(string())),
 			city: optional(array(string())),
+			township: optional(array(string())),
 			road: optional(array(string())),
 			trafficZone: optional(array(string())), // Was: traffic_zone
 			cityZone: optional(array(string())), // Was: city_zone

@@ -73,6 +73,7 @@ export default function HomePage() {
     vehicleMaxDamageSections: [],
     province: [],
     city: [],
+    township: [],
     road: [],
     trafficZone: [],
     cityZone: [],

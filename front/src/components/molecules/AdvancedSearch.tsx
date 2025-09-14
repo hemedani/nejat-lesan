@@ -13,6 +13,7 @@ import { gets as getEquipmentDamagesAction } from "@/app/actions/equipment_damag
 import { gets as getRoadSurfaceConditionsAction } from "@/app/actions/road_surface_condition/gets";
 import { gets as getMaxDamageSectionsAction } from "@/app/actions/max_damage_section/gets";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
+import { gets as getTownshipsAction } from "@/app/actions/township/gets";
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
 import { gets as getCityZonesAction } from "@/app/actions/city_zone/gets";
 import { gets as getTrafficZonesAction } from "@/app/actions/traffic_zone/gets";
@@ -61,29 +62,35 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const router = useRouter();
   const currentSearchParams = useSearchParams();
 
-  const initialFormValues: DeepPartial<AdvencedArticleSearchParams> = React.useMemo(() => {
-    const params: DeepPartial<AdvencedArticleSearchParams> = {};
-    for (const [key, value] of currentSearchParams.entries()) {
-
-      if (arrayKeys.includes(key)) {
-        if (value) {
-          const formValue = defaultSearchArrayValues[key as keyof DefaultSearchArrayValues]?.filter(opt => value.split(',').includes(opt.value));
-          if (formValue) {
-            params[key as keyof AdvencedArticleSearchParams] = formValue.map(fv => fv.value) as any;
-          } else {
-            params[key as keyof AdvencedArticleSearchParams] = value.split(',') as any;
+  const initialFormValues: DeepPartial<AdvencedArticleSearchParams> =
+    React.useMemo(() => {
+      const params: DeepPartial<AdvencedArticleSearchParams> = {};
+      for (const [key, value] of currentSearchParams.entries()) {
+        if (arrayKeys.includes(key)) {
+          if (value) {
+            const formValue = defaultSearchArrayValues[
+              key as keyof DefaultSearchArrayValues
+            ]?.filter((opt) => value.split(",").includes(opt.value));
+            if (formValue) {
+              params[key as keyof AdvencedArticleSearchParams] = formValue.map(
+                (fv) => fv.value,
+              ) as any;
+            } else {
+              params[key as keyof AdvencedArticleSearchParams] = value.split(
+                ",",
+              ) as any;
+            }
           }
+        } else if (numericKeys.includes(key)) {
+          if (value) {
+            params[key as keyof AdvencedArticleSearchParams] = +value as any;
+          }
+        } else if (value) {
+          params[key as keyof AdvencedArticleSearchParams] = value as any;
         }
-      } else if (numericKeys.includes(key)) {
-        if (value) {
-          params[key as keyof AdvencedArticleSearchParams] = +value as any;
-        }
-      } else if (value) {
-        params[key as keyof AdvencedArticleSearchParams] = value as any;
       }
-    }
-    return params;
-  }, [currentSearchParams, defaultSearchArrayValues]);
+      return params;
+    }, [currentSearchParams, defaultSearchArrayValues]);
 
   const {
     register,
@@ -95,44 +102,57 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     defaultValues: initialFormValues,
   });
 
-  const createLoadOptions = (
-    action: (args: any) => Promise<{success: boolean, body: any[]} | null | undefined>
-  ) => async (inputValue?: string): Promise<SelectOption[]> => {
-    const setParams: any = { limit: 20, page: 1 };
-    if (inputValue) {
-      setParams.name = inputValue;
-    }
-    try {
-      const response = await action({
-        set: setParams,
-        get: { _id: 1, name: 1 },
-      });
-      if (response && response.success) {
-        return response.body.map((item: { _id: string; name: string }) => ({
-          value: item.name,
-          label: item.name,
-        }));
+  const createLoadOptions =
+    (
+      action: (
+        args: any,
+      ) => Promise<{ success: boolean; body: any[] } | null | undefined>,
+    ) =>
+    async (inputValue?: string): Promise<SelectOption[]> => {
+      const setParams: any = { limit: 20, page: 1 };
+      if (inputValue) {
+        setParams.name = inputValue;
       }
-    } catch (error) {
-      console.error("Error loading options:", error);
-    }
-    return [];
-  };
+      try {
+        const response = await action({
+          set: setParams,
+          get: { _id: 1, name: 1 },
+        });
+        if (response && response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading options:", error);
+      }
+      return [];
+    };
 
   const loadAreaUsagesOptions = createLoadOptions(getAreaUsagesAction);
   const loadAirStatusesOptions = createLoadOptions(getAirStatusesAction);
   const loadRoadDefectsOptions = createLoadOptions(getRoadDefectsAction);
   const loadHumanReasonsOptions = createLoadOptions(getHumanReasonsAction);
   const loadVehicleReasonsOptions = createLoadOptions(getVehicleReasonsAction);
-  const loadEquipmentDamagesOptions = createLoadOptions(getEquipmentDamagesAction);
-  const loadRoadSurfaceConditionsOptions = createLoadOptions(getRoadSurfaceConditionsAction);
-  const loadMaxDamageSectionsOptions = createLoadOptions(getMaxDamageSectionsAction);
+  const loadEquipmentDamagesOptions = createLoadOptions(
+    getEquipmentDamagesAction,
+  );
+  const loadRoadSurfaceConditionsOptions = createLoadOptions(
+    getRoadSurfaceConditionsAction,
+  );
+  const loadMaxDamageSectionsOptions = createLoadOptions(
+    getMaxDamageSectionsAction,
+  );
   const loadCitiesOptions = createLoadOptions(getCitiesAction);
+  const loadTownshipsOptions = createLoadOptions(getTownshipsAction);
   const loadProvincesOptions = createLoadOptions(getProvincesAction);
   const loadCityZonesOptions = createLoadOptions(getCityZonesAction);
   const loadTrafficZonesOptions = createLoadOptions(getTrafficZonesAction);
   const loadRoadsOptions = createLoadOptions(getRoadsAction);
-  const loadRoadRepairTypesOptions = createLoadOptions(getRoadRepairTypesAction);
+  const loadRoadRepairTypesOptions = createLoadOptions(
+    getRoadRepairTypesAction,
+  );
   const loadRoadSituationsOptions = createLoadOptions(getRoadSituationsAction);
   const loadPositionsOptions = createLoadOptions(getPositionsAction);
   const loadColorsOptions = createLoadOptions(getColorsAction);
@@ -141,11 +161,17 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const loadLicenceTypesOptions = createLoadOptions(getLicenceTypesAction);
   const loadTypesOptions = createLoadOptions(getTypesAction);
   const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
-  const loadShoulderStatusesOptions = createLoadOptions(getShoulderStatusesAction);
+  const loadShoulderStatusesOptions = createLoadOptions(
+    getShoulderStatusesAction,
+  );
   const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
-  const loadMotionDirectionsOptions = createLoadOptions(getMotionDirectionsAction);
+  const loadMotionDirectionsOptions = createLoadOptions(
+    getMotionDirectionsAction,
+  );
   const loadInsuranceCosOptions = createLoadOptions(getInsuranceCosAction);
-  const loadBodyInsuranceCosOptions = createLoadOptions(getBodyInsuranceCosAction);
+  const loadBodyInsuranceCosOptions = createLoadOptions(
+    getBodyInsuranceCosAction,
+  );
   const loadFaultStatusesOptions = createLoadOptions(getFaultStatusesAction);
   const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
   const loadSystemsOptions = createLoadOptions(getSystemsAction);
@@ -156,12 +182,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       .filter((filterArr) => {
         const value = filterArr[1];
         if (Array.isArray(value)) return value.length > 0;
-        return value !== undefined && value !== null && value.toString().trim() !== "";
+        return (
+          value !== undefined &&
+          value !== null &&
+          value.toString().trim() !== ""
+        );
       })
       .map(([key, value]) =>
         Array.isArray(value)
           ? `${encodeURIComponent(key)}=${encodeURIComponent(value.join(","))}`
-          : `${encodeURIComponent(key)}=${encodeURIComponent(value as string | number | boolean)}`
+          : `${encodeURIComponent(key)}=${encodeURIComponent(value as string | number | boolean)}`,
       )
       .join("&");
 
@@ -182,7 +212,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       <div className="bg-white border border-slate-200 rounded-xl shadow-lg mt-6">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className={`${compact ? 'p-4 space-y-6' : 'p-8 space-y-10'}`}
+          className={`${compact ? "p-4 space-y-6" : "p-8 space-y-10"}`}
         >
           {/* Header */}
           <header className="border-b border-slate-200 pb-6">
@@ -195,15 +225,21 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </header>
 
           {/* Multi-Select Filters Section */}
-          <section className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 فیلترهای دسته‌بندی (چند انتخابی)
               </h3>
             </div>
 
-            <div className={`grid ${compact ? 'gap-4 grid-cols-1' : 'gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'}`}>
+            <div
+              className={`grid ${compact ? "gap-4 grid-cols-1" : "gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"}`}
+            >
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="areaUsages"
@@ -288,43 +324,169 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </section>
 
           {/* Core Accident Details Section */}
-          <section className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 جزئیات اصلی تصادف
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
-              <MyInput className="!w-full !p-0" name="seri" label="سری تصادف" placeholder="شماره سری" register={register} errMsg={errors.seri?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="serial" label="سریال داخلی" placeholder="شماره سریال داخلی" register={register} errMsg={errors.serial?.message} type="number" />
-              <MyDateInput className="!w-full !p-0" name="dateOfAccidentFrom" label="تاریخ تصادف (از)" control={control} errMsg={errors.dateOfAccidentFrom?.message} placeholder="از تاریخ (مثال: 1403/01/01)" />
-              <MyDateInput className="!w-full !p-0" name="dateOfAccidentTo" label="تاریخ تصادف (تا)" control={control} errMsg={errors.dateOfAccidentTo?.message} placeholder="تا تاریخ (مثال: 1403/12/29)" />
-              <MyInput className="!w-full !p-0" name="deadCount" label="تعداد فوتی" placeholder="تعداد دقیق" register={register} errMsg={errors.deadCount?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="deadCountMin" label="حداقل فوتی" placeholder="حداقل تعداد" register={register} errMsg={errors.deadCountMin?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="deadCountMax" label="حداکثر فوتی" placeholder="حداکثر تعداد" register={register} errMsg={errors.deadCountMax?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="injuredCount" label="تعداد مجروح" placeholder="تعداد دقیق" register={register} errMsg={errors.injuredCount?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="injuredCountMin" label="حداقل مجروح" placeholder="حداقل تعداد" register={register} errMsg={errors.injuredCountMin?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="injuredCountMax" label="حداکثر مجروح" placeholder="حداکثر تعداد" register={register} errMsg={errors.injuredCountMax?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="hasWitness" label="دارای شاهد" placeholder="true / false" register={register} errMsg={errors.hasWitness?.message} />
-              <MyInput className="!w-full !p-0" name="newsNumber" label="شماره خبر" placeholder="شماره خبرنامه" register={register} errMsg={errors.newsNumber?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="officer" label="افسر رسیدگی کننده" placeholder="نام یا کد افسر" register={register} errMsg={errors.officer?.message} />
-              <MyDateInput className="!w-full !p-0" name="completionDateFrom" label="تاریخ تکمیل (از)" control={control} errMsg={errors.completionDateFrom?.message} placeholder="از تاریخ تکمیل پرونده" />
-              <MyDateInput className="!w-full !p-0" name="completionDateTo" label="تاریخ تکمیل (تا)" control={control} errMsg={errors.completionDateTo?.message} placeholder="تا تاریخ تکمیل پرونده" />
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}
+            >
+              <MyInput
+                className="!w-full !p-0"
+                name="seri"
+                label="سری تصادف"
+                placeholder="شماره سری"
+                register={register}
+                errMsg={errors.seri?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="serial"
+                label="سریال داخلی"
+                placeholder="شماره سریال داخلی"
+                register={register}
+                errMsg={errors.serial?.message}
+                type="number"
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="dateOfAccidentFrom"
+                label="تاریخ تصادف (از)"
+                control={control}
+                errMsg={errors.dateOfAccidentFrom?.message}
+                placeholder="از تاریخ (مثال: 1403/01/01)"
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="dateOfAccidentTo"
+                label="تاریخ تصادف (تا)"
+                control={control}
+                errMsg={errors.dateOfAccidentTo?.message}
+                placeholder="تا تاریخ (مثال: 1403/12/29)"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="deadCount"
+                label="تعداد فوتی"
+                placeholder="تعداد دقیق"
+                register={register}
+                errMsg={errors.deadCount?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="deadCountMin"
+                label="حداقل فوتی"
+                placeholder="حداقل تعداد"
+                register={register}
+                errMsg={errors.deadCountMin?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="deadCountMax"
+                label="حداکثر فوتی"
+                placeholder="حداکثر تعداد"
+                register={register}
+                errMsg={errors.deadCountMax?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="injuredCount"
+                label="تعداد مجروح"
+                placeholder="تعداد دقیق"
+                register={register}
+                errMsg={errors.injuredCount?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="injuredCountMin"
+                label="حداقل مجروح"
+                placeholder="حداقل تعداد"
+                register={register}
+                errMsg={errors.injuredCountMin?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="injuredCountMax"
+                label="حداکثر مجروح"
+                placeholder="حداکثر تعداد"
+                register={register}
+                errMsg={errors.injuredCountMax?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="hasWitness"
+                label="دارای شاهد"
+                placeholder="true / false"
+                register={register}
+                errMsg={errors.hasWitness?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="newsNumber"
+                label="شماره خبر"
+                placeholder="شماره خبرنامه"
+                register={register}
+                errMsg={errors.newsNumber?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="officer"
+                label="افسر رسیدگی کننده"
+                placeholder="نام یا کد افسر"
+                register={register}
+                errMsg={errors.officer?.message}
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="completionDateFrom"
+                label="تاریخ تکمیل (از)"
+                control={control}
+                errMsg={errors.completionDateFrom?.message}
+                placeholder="از تاریخ تکمیل پرونده"
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="completionDateTo"
+                label="تاریخ تکمیل (تا)"
+                control={control}
+                errMsg={errors.completionDateTo?.message}
+                placeholder="تا تاریخ تکمیل پرونده"
+              />
             </div>
           </section>
 
           {/* Location & Context Section */}
-          <section className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-amber-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 موقعیت و شرایط مکانی/زمانی
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}
+            >
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="province"
@@ -343,6 +505,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 defaultValue={defaultSearchArrayValues.city}
                 loadOptions={loadCitiesOptions}
                 errMsg={errors.city?.message}
+                defaultOptions
+              />
+              <MyAsyncMultiSelect
+                className="!w-full !p-0"
+                name="township"
+                label="شهرستان"
+                setValue={setValue}
+                defaultValue={defaultSearchArrayValues.township}
+                loadOptions={loadTownshipsOptions}
+                errMsg={errors.township?.message}
                 defaultOptions
               />
               <MyAsyncMultiSelect
@@ -459,30 +631,56 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </section>
 
           {/* Attachments Section */}
-          <section className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-purple-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 فایل‌های ضمیمه
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
-              <MyInput className="!w-full !p-0" name="attachmentName" label="نام فایل ضمیمه" placeholder="بخشی از نام فایل" register={register} errMsg={errors.attachmentName?.message} />
-              <MyInput className="!w-full !p-0" name="attachmentType" label="نوع فایل ضمیمه" placeholder="مثلا image/jpeg" register={register} errMsg={errors.attachmentType?.message} />
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}
+            >
+              <MyInput
+                className="!w-full !p-0"
+                name="attachmentName"
+                label="نام فایل ضمیمه"
+                placeholder="بخشی از نام فایل"
+                register={register}
+                errMsg={errors.attachmentName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="attachmentType"
+                label="نوع فایل ضمیمه"
+                placeholder="مثلا image/jpeg"
+                register={register}
+                errMsg={errors.attachmentType?.message}
+              />
             </div>
           </section>
 
           {/* Vehicle Details Section */}
-          <section className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-indigo-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 جزئیات وسیله نقلیه
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}
+            >
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="vehicleColor"
@@ -543,7 +741,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.vehicleInsuranceCo?.message}
                 defaultOptions
               />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceNo" label="شماره بیمه‌نامه خودرو" placeholder="شماره بیمه‌نامه" register={register} errMsg={errors.vehicleInsuranceNo?.message} />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehicleInsuranceNo"
+                label="شماره بیمه‌نامه خودرو"
+                placeholder="شماره بیمه‌نامه"
+                register={register}
+                errMsg={errors.vehicleInsuranceNo?.message}
+              />
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="vehiclePlaqueUsage"
@@ -554,10 +759,38 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.vehiclePlaqueUsage?.message}
                 defaultOptions
               />
-              <MyInput className="!w-full !p-0" name="vehiclePrintNumber" label="شماره چاپ پلاک" placeholder="شماره چاپ" register={register} errMsg={errors.vehiclePrintNumber?.message} />
-              <MyInput className="!w-full !p-0" name="vehiclePlaqueSerialElement" label="سریال پلاک (بخشی از)" placeholder="یک بخش از سریال پلاک" register={register} errMsg={errors.vehiclePlaqueSerialElement?.message} />
-              <MyDateInput className="!w-full !p-0" name="vehicleInsuranceDateFrom" label="تاریخ بیمه (از)" control={control} errMsg={errors.vehicleInsuranceDateFrom?.message} placeholder="از تاریخ صدور بیمه" />
-              <MyDateInput className="!w-full !p-0" name="vehicleInsuranceDateTo" label="تاریخ بیمه (تا)" control={control} errMsg={errors.vehicleInsuranceDateTo?.message} placeholder="تا تاریخ انقضای بیمه" />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehiclePrintNumber"
+                label="شماره چاپ پلاک"
+                placeholder="شماره چاپ"
+                register={register}
+                errMsg={errors.vehiclePrintNumber?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehiclePlaqueSerialElement"
+                label="سریال پلاک (بخشی از)"
+                placeholder="یک بخش از سریال پلاک"
+                register={register}
+                errMsg={errors.vehiclePlaqueSerialElement?.message}
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="vehicleInsuranceDateFrom"
+                label="تاریخ بیمه (از)"
+                control={control}
+                errMsg={errors.vehicleInsuranceDateFrom?.message}
+                placeholder="از تاریخ صدور بیمه"
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="vehicleInsuranceDateTo"
+                label="تاریخ بیمه (تا)"
+                control={control}
+                errMsg={errors.vehicleInsuranceDateTo?.message}
+                placeholder="تا تاریخ انقضای بیمه"
+              />
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="vehicleBodyInsuranceCo"
@@ -568,7 +801,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.vehicleBodyInsuranceCo?.message}
                 defaultOptions
               />
-              <MyInput className="!w-full !p-0" name="vehicleBodyInsuranceNo" label="شماره بیمه بدنه" placeholder="شماره بیمه بدنه" register={register} errMsg={errors.vehicleBodyInsuranceNo?.message} />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehicleBodyInsuranceNo"
+                label="شماره بیمه بدنه"
+                placeholder="شماره بیمه بدنه"
+                register={register}
+                errMsg={errors.vehicleBodyInsuranceNo?.message}
+              />
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="vehicleMotionDirection"
@@ -579,30 +819,116 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.vehicleMotionDirection?.message}
                 defaultOptions
               />
-              <MyDateInput className="!w-full !p-0" name="vehicleBodyInsuranceDateFrom" label="تاریخ بیمه بدنه (از)" control={control} errMsg={errors.vehicleBodyInsuranceDateFrom?.message} placeholder="از تاریخ صدور بیمه بدنه" />
-              <MyDateInput className="!w-full !p-0" name="vehicleBodyInsuranceDateTo" label="تاریخ بیمه بدنه (تا)" control={control} errMsg={errors.vehicleBodyInsuranceDateTo?.message} placeholder="تا تاریخ انقضای بیمه بدنه" />
-              <MyInput className="!w-full !p-0" name="vehicleDamageSectionOther" label="سایر خسارات خودرو" placeholder="توضیح خسارت" register={register} errMsg={errors.vehicleDamageSectionOther?.message} />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceWarrantyLimit" label="سقف تعهد بیمه" placeholder="مبلغ دقیق" register={register} errMsg={errors.vehicleInsuranceWarrantyLimit?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceWarrantyLimitMin" label="حداقل سقف تعهد" placeholder="حداقل مبلغ" register={register} errMsg={errors.vehicleInsuranceWarrantyLimitMin?.message} type="number" />
-              <MyInput className="!w-full !p-0" name="vehicleInsuranceWarrantyLimitMax" label="حداکثر سقف تعهد" placeholder="حداکثر مبلغ" register={register} errMsg={errors.vehicleInsuranceWarrantyLimitMax?.message} type="number" />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="vehicleBodyInsuranceDateFrom"
+                label="تاریخ بیمه بدنه (از)"
+                control={control}
+                errMsg={errors.vehicleBodyInsuranceDateFrom?.message}
+                placeholder="از تاریخ صدور بیمه بدنه"
+              />
+              <MyDateInput
+                className="!w-full !p-0"
+                name="vehicleBodyInsuranceDateTo"
+                label="تاریخ بیمه بدنه (تا)"
+                control={control}
+                errMsg={errors.vehicleBodyInsuranceDateTo?.message}
+                placeholder="تا تاریخ انقضای بیمه بدنه"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehicleDamageSectionOther"
+                label="سایر خسارات خودرو"
+                placeholder="توضیح خسارت"
+                register={register}
+                errMsg={errors.vehicleDamageSectionOther?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehicleInsuranceWarrantyLimit"
+                label="سقف تعهد بیمه"
+                placeholder="مبلغ دقیق"
+                register={register}
+                errMsg={errors.vehicleInsuranceWarrantyLimit?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehicleInsuranceWarrantyLimitMin"
+                label="حداقل سقف تعهد"
+                placeholder="حداقل مبلغ"
+                register={register}
+                errMsg={errors.vehicleInsuranceWarrantyLimitMin?.message}
+                type="number"
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="vehicleInsuranceWarrantyLimitMax"
+                label="حداکثر سقف تعهد"
+                placeholder="حداکثر مبلغ"
+                register={register}
+                errMsg={errors.vehicleInsuranceWarrantyLimitMax?.message}
+                type="number"
+              />
             </div>
           </section>
 
           {/* Driver Details Section */}
-          <section className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-rose-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 جزئیات راننده
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
-              <MyInput className="!w-full !p-0" name="driverSex" label="جنسیت راننده" placeholder="Male / Female" register={register} errMsg={errors.driverSex?.message} />
-              <MyInput className="!w-full !p-0" name="driverFirstName" label="نام راننده" placeholder="نام" register={register} errMsg={errors.driverFirstName?.message} />
-              <MyInput className="!w-full !p-0" name="driverLastName" label="نام خانوادگی راننده" placeholder="نام خانوادگی" register={register} errMsg={errors.driverLastName?.message} />
-              <MyInput className="!w-full !p-0" name="driverNationalCode" label="کد ملی راننده" placeholder="کد ملی" register={register} errMsg={errors.driverNationalCode?.message} />
-              <MyInput className="!w-full !p-0" name="driverLicenceNumber" label="شماره گواهینامه" placeholder="شماره گواهینامه" register={register} errMsg={errors.driverLicenceNumber?.message} />
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}
+            >
+              <MyInput
+                className="!w-full !p-0"
+                name="driverSex"
+                label="جنسیت راننده"
+                placeholder="Male / Female"
+                register={register}
+                errMsg={errors.driverSex?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="driverFirstName"
+                label="نام راننده"
+                placeholder="نام"
+                register={register}
+                errMsg={errors.driverFirstName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="driverLastName"
+                label="نام خانوادگی راننده"
+                placeholder="نام خانوادگی"
+                register={register}
+                errMsg={errors.driverLastName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="driverNationalCode"
+                label="کد ملی راننده"
+                placeholder="کد ملی"
+                register={register}
+                errMsg={errors.driverNationalCode?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="driverLicenceNumber"
+                label="شماره گواهینامه"
+                placeholder="شماره گواهینامه"
+                register={register}
+                errMsg={errors.driverLicenceNumber?.message}
+              />
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="driverLicenceType"
@@ -613,26 +939,81 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.driverLicenceType?.message}
                 defaultOptions
               />
-              <MyInput className="!w-full !p-0" name="driverInjuryType" label="نوع مصدومیت راننده" placeholder="مثلا جزیی" register={register} errMsg={errors.driverInjuryType?.message} />
-              <MyInput className="!w-full !p-0" name="driverTotalReason" label="علت کلی تخلف راننده" placeholder="علت تخلف" register={register} errMsg={errors.driverTotalReason?.message} />
+              <MyInput
+                className="!w-full !p-0"
+                name="driverInjuryType"
+                label="نوع مصدومیت راننده"
+                placeholder="مثلا جزیی"
+                register={register}
+                errMsg={errors.driverInjuryType?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="driverTotalReason"
+                label="علت کلی تخلف راننده"
+                placeholder="علت تخلف"
+                register={register}
+                errMsg={errors.driverTotalReason?.message}
+              />
             </div>
           </section>
 
           {/* Passenger Details Section */}
-          <section className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-teal-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 جزئیات سرنشین
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
-              <MyInput className="!w-full !p-0" name="passengerSex" label="جنسیت سرنشین" placeholder="Male / Female" register={register} errMsg={errors.passengerSex?.message} />
-              <MyInput className="!w-full !p-0" name="passengerFirstName" label="نام سرنشین" placeholder="نام" register={register} errMsg={errors.passengerFirstName?.message} />
-              <MyInput className="!w-full !p-0" name="passengerLastName" label="نام خانوادگی سرنشین" placeholder="نام خانوادگی" register={register} errMsg={errors.passengerLastName?.message} />
-              <MyInput className="!w-full !p-0" name="passengerNationalCode" label="کد ملی سرنشین" placeholder="کد ملی" register={register} errMsg={errors.passengerNationalCode?.message} />
-              <MyInput className="!w-full !p-0" name="passengerInjuryType" label="نوع مصدومیت سرنشین" placeholder="مثلا جزیی" register={register} errMsg={errors.passengerInjuryType?.message} />
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}
+            >
+              <MyInput
+                className="!w-full !p-0"
+                name="passengerSex"
+                label="جنسیت سرنشین"
+                placeholder="Male / Female"
+                register={register}
+                errMsg={errors.passengerSex?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="passengerFirstName"
+                label="نام سرنشین"
+                placeholder="نام"
+                register={register}
+                errMsg={errors.passengerFirstName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="passengerLastName"
+                label="نام خانوادگی سرنشین"
+                placeholder="نام خانوادگی"
+                register={register}
+                errMsg={errors.passengerLastName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="passengerNationalCode"
+                label="کد ملی سرنشین"
+                placeholder="کد ملی"
+                register={register}
+                errMsg={errors.passengerNationalCode?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="passengerInjuryType"
+                label="نوع مصدومیت سرنشین"
+                placeholder="مثلا جزیی"
+                register={register}
+                errMsg={errors.passengerInjuryType?.message}
+              />
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="passengerFaultStatus"
@@ -643,25 +1024,73 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.passengerFaultStatus?.message}
                 defaultOptions
               />
-              <MyInput className="!w-full !p-0" name="passengerTotalReason" label="علت کلی برای سرنشین" placeholder="علت مرتبط" register={register} errMsg={errors.passengerTotalReason?.message} />
+              <MyInput
+                className="!w-full !p-0"
+                name="passengerTotalReason"
+                label="علت کلی برای سرنشین"
+                placeholder="علت مرتبط"
+                register={register}
+                errMsg={errors.passengerTotalReason?.message}
+              />
             </div>
           </section>
 
           {/* Pedestrian Details Section */}
-          <section className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-orange-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 جزئیات عابر پیاده
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
-              <MyInput className="!w-full !p-0" name="pedestrianSex" label="جنسیت عابر" placeholder="Male / Female" register={register} errMsg={errors.pedestrianSex?.message} />
-              <MyInput className="!w-full !p-0" name="pedestrianFirstName" label="نام عابر" placeholder="نام" register={register} errMsg={errors.pedestrianFirstName?.message} />
-              <MyInput className="!w-full !p-0" name="pedestrianLastName" label="نام خانوادگی عابر" placeholder="نام خانوادگی" register={register} errMsg={errors.pedestrianLastName?.message} />
-              <MyInput className="!w-full !p-0" name="pedestrianNationalCode" label="کد ملی عابر" placeholder="کد ملی" register={register} errMsg={errors.pedestrianNationalCode?.message} />
-              <MyInput className="!w-full !p-0" name="pedestrianInjuryType" label="نوع مصدومیت عابر" placeholder="مثلا جزیی" register={register} errMsg={errors.pedestrianInjuryType?.message} />
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}`}
+            >
+              <MyInput
+                className="!w-full !p-0"
+                name="pedestrianSex"
+                label="جنسیت عابر"
+                placeholder="Male / Female"
+                register={register}
+                errMsg={errors.pedestrianSex?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="pedestrianFirstName"
+                label="نام عابر"
+                placeholder="نام"
+                register={register}
+                errMsg={errors.pedestrianFirstName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="pedestrianLastName"
+                label="نام خانوادگی عابر"
+                placeholder="نام خانوادگی"
+                register={register}
+                errMsg={errors.pedestrianLastName?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="pedestrianNationalCode"
+                label="کد ملی عابر"
+                placeholder="کد ملی"
+                register={register}
+                errMsg={errors.pedestrianNationalCode?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="pedestrianInjuryType"
+                label="نوع مصدومیت عابر"
+                placeholder="مثلا جزیی"
+                register={register}
+                errMsg={errors.pedestrianInjuryType?.message}
+              />
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="pedestrianFaultStatus"
@@ -672,27 +1101,58 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 errMsg={errors.pedestrianFaultStatus?.message}
                 defaultOptions
               />
-              <MyInput className="!w-full !p-0" name="pedestrianTotalReason" label="علت کلی برای عابر" placeholder="علت مرتبط" register={register} errMsg={errors.pedestrianTotalReason?.message} />
+              <MyInput
+                className="!w-full !p-0"
+                name="pedestrianTotalReason"
+                label="علت کلی برای عابر"
+                placeholder="علت مرتبط"
+                register={register}
+                errMsg={errors.pedestrianTotalReason?.message}
+              />
             </div>
           </section>
 
           {/* Pagination Controls Section */}
-          <section className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? 'p-4' : 'p-8'}`}>
-            <div className={`flex items-center gap-3 ${compact ? 'mb-4' : 'mb-8'}`}>
+          <section
+            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
+            >
               <div className="w-1 h-6 bg-slate-600 rounded-full"></div>
               <h3 className="text-xl font-semibold text-slate-800">
                 تنظیمات صفحه‌بندی
               </h3>
             </div>
 
-            <div className={`grid gap-6 ${compact ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
-              <MyInput className="!w-full !p-0" name="page" type="number" label="شماره صفحه" placeholder="شماره صفحه" register={register} errMsg={errors.page?.message} />
-              <MyInput className="!w-full !p-0" name="limit" type="number" label="تعداد در صفحه" placeholder="تعداد در هر صفحه" register={register} errMsg={errors.limit?.message} />
+            <div
+              className={`grid gap-6 ${compact ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}
+            >
+              <MyInput
+                className="!w-full !p-0"
+                name="page"
+                type="number"
+                label="شماره صفحه"
+                placeholder="شماره صفحه"
+                register={register}
+                errMsg={errors.page?.message}
+              />
+              <MyInput
+                className="!w-full !p-0"
+                name="limit"
+                type="number"
+                label="تعداد در صفحه"
+                placeholder="تعداد در هر صفحه"
+                register={register}
+                errMsg={errors.limit?.message}
+              />
             </div>
           </section>
 
           {/* Submit Button */}
-          <footer className={`flex flex-col justify-between items-center gap-4 border-t border-slate-200 ${compact ? 'pt-4 sm:flex-col' : 'pt-8 sm:flex-row gap-6'}`}>
+          <footer
+            className={`flex flex-col justify-between items-center gap-4 border-t border-slate-200 ${compact ? "pt-4 sm:flex-col" : "pt-8 sm:flex-row gap-6"}`}
+          >
             {!compact && (
               <div className="flex-1 text-right">
                 <p className="text-sm text-slate-600">
@@ -700,17 +1160,19 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 </p>
               </div>
             )}
-            <div className={`flex ${compact ? 'flex-col w-full gap-2' : 'gap-4'}`}>
+            <div
+              className={`flex ${compact ? "flex-col w-full gap-2" : "gap-4"}`}
+            >
               <button
                 type="button"
                 onClick={() => router.push(pageAddress || "/")}
-                className={`text-slate-600 bg-white border border-slate-300 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 ${compact ? 'px-4 py-2 text-sm' : 'px-6 py-3'}`}
+                className={`text-slate-600 bg-white border border-slate-300 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 ${compact ? "px-4 py-2 text-sm" : "px-6 py-3"}`}
               >
                 پاک کردن فیلترها
               </button>
               <button
                 type="submit"
-                className={`bg-gradient-to-l from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${compact ? 'px-4 py-2 text-sm' : 'px-8 py-3'}`}
+                className={`bg-gradient-to-l from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${compact ? "px-4 py-2 text-sm" : "px-8 py-3"}`}
               >
                 اعمال فیلترها و جستجو
               </button>
