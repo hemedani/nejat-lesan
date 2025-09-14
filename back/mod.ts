@@ -31,6 +31,7 @@ import {
 	shoulder_statuses,
 	system_types,
 	systems,
+	townships,
 	traffic_zones,
 	types,
 	users,
@@ -55,6 +56,7 @@ export const user = users();
 export const file = files();
 export const province = provinces();
 export const city = cities();
+export const township = townships();
 export const traffic_zone = traffic_zones();
 export const city_zone = city_zones();
 export const accident = accidents();

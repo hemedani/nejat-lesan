@@ -1,6 +1,7 @@
 import { fileSetup } from "./file/mod.ts";
 import { userSetup } from "./user/mod.ts";
 import { citySetup } from "./city/mod.ts";
+import { townshipSetup } from "./township/mod.ts";
 import { provinceSetup } from "./province/mod.ts";
 import { roadSetup } from "./road/mod.ts";
 import { colorSetup } from "./color/mod.ts";
@@ -38,6 +39,7 @@ export const functionsSetup = () => {
 	areaUsageSetup();
 	bodyInsuranceCoSetup();
 	citySetup();
+	townshipSetup();
 	cityZoneSetup();
 	collisionTypeSetup();
 	colorSetup();

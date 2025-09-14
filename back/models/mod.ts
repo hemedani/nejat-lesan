@@ -4,6 +4,7 @@ export * from "./utils/pureLocation.ts";
 export * from "./file.ts";
 export * from "./user.ts";
 export * from "./city.ts";
+export * from "./township.ts";
 export * from "./province.ts";
 export * from "./road.ts";
 export * from "./traffic_zone.ts";

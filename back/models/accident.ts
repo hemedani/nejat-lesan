@@ -110,7 +110,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -125,7 +125,22 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
+				sort: {
+					field: "_id",
+					order: "desc" as RelationSortOrderType,
+				},
+			},
+		},
+	},
+	township: {
+		schemaName: "township",
+		type: "single" as RelationDataType,
+		optional: true,
+		relatedRelations: {
+			accidents: {
+				type: "multiple" as RelationDataType,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -140,7 +155,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -155,7 +170,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -170,7 +185,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -185,7 +200,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -200,7 +215,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -215,7 +230,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -230,7 +245,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -245,7 +260,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -260,7 +275,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -275,7 +290,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -290,7 +305,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -305,7 +320,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -320,7 +335,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -335,7 +350,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -350,7 +365,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -365,7 +380,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -380,7 +395,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
@@ -395,7 +410,7 @@ export const accident_relations = {
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
-				limit: 50,
+				limit: 20,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,
