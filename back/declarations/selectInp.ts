@@ -5041,6 +5041,17 @@ qty?: (0 | 1 );
 };
 
           
+            seedTownships: {
+set: {
+provinceId: string;
+geoId: string;
+};
+get: {
+summary: (1 );
+};
+};
+
+          
           }
 
         

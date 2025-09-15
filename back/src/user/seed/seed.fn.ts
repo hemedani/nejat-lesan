@@ -8,6 +8,7 @@ import {
 	type WithId,
 } from "@deps";
 import { MyContext } from "../../../utils/context.ts";
+import { myRedis } from "../../../mod.ts";
 import {
 	accident,
 	air_status,
@@ -102,6 +103,79 @@ export const seedFn: ActFn = async (body) => {
 	// Cache for findOrCreate results to avoid duplicate database queries
 	const relationCache = new Map<string, WithId<Document>>();
 
+	// Global cache for most frequently used entities to reduce Redis pressure
+	const globalEntityCache = new Map<string, WithId<Document>>();
+	const frequentlyUsedEntities = new Set<string>();
+
+	// Performance monitoring for cache operations
+	let redisHits = 0;
+	let redisMisses = 0;
+	let dbQueries = 0;
+	let recordsCreated = 0;
+	let globalCacheHits = 0;
+
+	// Relation statistics
+	let relationSuccesses = 0;
+	let relationFailures = 0;
+
+	// Helper function to handle Redis errors gracefully
+	const safeRedisOperation = async <T>(operation: () => Promise<T>, fallback: T, operationName: string): Promise<T> => {
+		try {
+			return await operation();
+		} catch (error) {
+			console.warn(`Redis ${operationName} failed, using fallback:`, error);
+			return fallback;
+		}
+	};
+
+	// Check Redis connection health
+	const checkRedisConnection = async (): Promise<boolean> => {
+		try {
+			await myRedis.ping();
+			return true;
+		} catch (error) {
+			console.warn("Redis connection issue detected:", error);
+			return false;
+		}
+	};
+
+	// Retry mechanism with exponential backoff and timeout
+	const retryWithBackoff = async <T>(
+		operation: () => Promise<T>,
+		maxRetries: number = 5,
+		baseDelay: number = 100,
+		timeoutMs: number = 15000
+	): Promise<T> => {
+		const startTime = Date.now();
+
+		for (let attempt = 0; attempt < maxRetries; attempt++) {
+			// Check if we've exceeded the total timeout
+			if (Date.now() - startTime > timeoutMs) {
+				throw new Error(`Operation timeout after ${timeoutMs}ms`);
+			}
+
+			try {
+				return await operation();
+			} catch (error) {
+				if (attempt === maxRetries - 1) {
+					// Only log final failures occasionally to reduce noise
+					if (Math.random() < 0.2) {
+						console.warn(`Failed after ${maxRetries} attempts: ${error.message}`);
+					}
+					throw error;
+				}
+
+				const delay = Math.min(baseDelay * Math.pow(2, attempt) + Math.random() * 100, 2000);
+				// Only log every 10th retry to reduce noise
+				if (Math.random() < 0.1) {
+					console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms for: ${error.message}`);
+				}
+				await new Promise(resolve => setTimeout(resolve, delay));
+			}
+		}
+		throw new Error('Max retries exceeded');
+	};
+
 	const findOrCreate = async (
 		name: string,
 		modelName: keyof typeof modelMap,
@@ -114,15 +188,48 @@ export const seedFn: ActFn = async (body) => {
 
 		const normalizedName = normalizePersianText(name).toLowerCase();
 		const cacheKey = `${modelName}:${normalizedName}`;
+		const redisCacheKey = `seed_cache:${cacheKey}`;
+		const redisLockKey = `seed_lock:${cacheKey}`;
 
-		// Check cache first
+		// Check in-memory cache first (fastest)
 		if (relationCache.has(cacheKey)) {
 			return relationCache.get(cacheKey)!;
+		}
+
+		// Check global entity cache for frequently used items
+		if (globalEntityCache.has(cacheKey)) {
+			const cachedItem = globalEntityCache.get(cacheKey)!;
+			relationCache.set(cacheKey, cachedItem);
+			globalCacheHits++;
+			return cachedItem;
+		}
+
+		// Check Redis cache
+		const redisResult = await safeRedisOperation(
+			async () => await myRedis.get(redisCacheKey),
+			null,
+			`cache read for ${cacheKey}`
+		);
+
+		if (redisResult) {
+			try {
+				const cachedItem = JSON.parse(redisResult);
+				// Convert back to ObjectId
+				cachedItem._id = new ObjectId(cachedItem._id);
+				relationCache.set(cacheKey, cachedItem);
+				redisHits++;
+				return cachedItem;
+			} catch (parseError) {
+				console.warn(`Failed to parse cached item for ${cacheKey}:`, parseError);
+			}
+		} else {
+			redisMisses++;
 		}
 
 		const model = modelMap[modelName];
 
 		// Use case-insensitive search to avoid duplicates
+		dbQueries++;
 		const found = await model.findOne({
 			filters: {
 				name: {
@@ -141,60 +248,114 @@ export const seedFn: ActFn = async (body) => {
 		});
 
 		if (found) {
+			// Cache in memory and global cache
 			relationCache.set(cacheKey, found);
-			return found;
-		} else {
-			// Double-check cache again before creating (race condition protection)
-			if (relationCache.has(cacheKey)) {
-				return relationCache.get(cacheKey)!;
+
+			// Track frequently used entities and cache them globally
+			if (frequentlyUsedEntities.has(cacheKey) || Math.random() < 0.1) {
+				globalEntityCache.set(cacheKey, found);
+				frequentlyUsedEntities.add(cacheKey);
 			}
 
-			try {
-				const created = await model.insertOne({
-					doc: {
-						name: normalizedName,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-					},
-					relations: { registrer: { _ids: userId } },
-					projection: { name: 1, _id: 1 },
-				});
-				if (created) {
-					relationCache.set(cacheKey, created);
-					return created;
-				} else {
-					throw new Error(
-						`can not create or find this model ${modelName}`,
-					);
-				}
-			} catch (error) {
-				// If creation fails due to duplicate, try to find it again with case-insensitive search
-				const foundAfterError = await model.findOne({
-					filters: {
-						name: {
-							$regex: new RegExp(
-								`^${
-									normalizedName.replace(
-										/[.*+?^${}()|[\]\\]/g,
-										"\\$&",
-									)
-								}$`,
-								"i",
-							),
-						},
-					},
-					projection: { name: 1, _id: 1 },
-				});
-				if (foundAfterError) {
-					relationCache.set(cacheKey, foundAfterError);
-					return foundAfterError;
-				}
-				console.error(
-					`Error creating ${modelName} with name "${normalizedName}":`,
-					error,
+			await safeRedisOperation(
+				async () => await myRedis.set(redisCacheKey, JSON.stringify({
+					_id: found._id.toString(),
+					name: found.name
+				}), { ex: 3600 }),
+				null,
+				`cache write for ${cacheKey}`
+			);
+			return found;
+		} else {
+			// Use Redis-based locking with retry mechanism to prevent duplicates during parallel processing
+			return await retryWithBackoff(async () => {
+				// Try to acquire lock with 5 second expiration (reduced for faster recovery)
+				const lockAcquired = await safeRedisOperation(
+					async () => await myRedis.set(redisLockKey, "1", { nx: true, ex: 5 }),
+					null,
+					"lock acquisition"
 				);
-				throw error;
-			}
+
+				if (lockAcquired === "OK") {
+					try {
+						// Double-check if someone else created it while we were waiting
+						const doubleCheckFound = await model.findOne({
+							filters: {
+								name: {
+									$regex: new RegExp(
+										`^${
+											normalizedName.replace(
+												/[.*+?^${}()|[\]\\]/g,
+												"\\$&",
+											)
+										}$`,
+										"i",
+									),
+								},
+							},
+							projection: { name: 1, _id: 1 },
+						});
+
+						if (doubleCheckFound) {
+							// Someone else created it, use their result
+							relationCache.set(cacheKey, doubleCheckFound);
+							try {
+								await myRedis.set(redisCacheKey, JSON.stringify({
+									_id: doubleCheckFound._id.toString(),
+									name: doubleCheckFound.name
+								}), { ex: 3600 });
+							} catch (redisError) {
+								console.warn(`Redis cache write error for ${cacheKey}:`, redisError);
+							}
+							return doubleCheckFound;
+						}
+
+						// Create the new record
+						recordsCreated++;
+						const created = await model.insertOne({
+							doc: {
+								name: normalizedName,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+							relations: { registrer: { _ids: userId } },
+							projection: { name: 1, _id: 1 },
+						});
+
+						if (created) {
+							relationCache.set(cacheKey, created);
+
+							// Cache newly created entities globally if they might be frequently used
+							if (Math.random() < 0.2) {
+								globalEntityCache.set(cacheKey, created);
+								frequentlyUsedEntities.add(cacheKey);
+							}
+
+							await safeRedisOperation(
+								async () => await myRedis.set(redisCacheKey, JSON.stringify({
+									_id: created._id.toString(),
+									name: created.name
+								}), { ex: 3600 }),
+								null,
+								`cache write for new record ${cacheKey}`
+							);
+							return created;
+						} else {
+							throw new Error(`can not create or find this model ${modelName}`);
+						}
+					} finally {
+						// Always release the lock
+						await safeRedisOperation(
+							async () => await myRedis.del(redisLockKey),
+							null,
+							"lock release"
+						);
+					}
+				} else {
+					// Lock acquisition failed, throw error to trigger retry mechanism
+					throw new Error(`Lock acquisition failed for ${modelName} with name "${normalizedName}"`);
+				}
+			}, 6, 100, 10000); // 6 retries with 100ms base delay, 10 second timeout
 		}
 	};
 
@@ -208,12 +369,18 @@ export const seedFn: ActFn = async (body) => {
 			item.name.trim().length === 0
 		) return null;
 		try {
-			return await findOrCreate(item.name, modelName, userId);
+			const result = await findOrCreate(item.name, modelName, userId);
+			relationSuccesses++;
+			return result;
 		} catch (error) {
-			console.error(
-				`Failed to normalize relation ${modelName} with name ${item.name}:`,
-				error,
-			);
+			relationFailures++;
+			// Only log every 20th failure to reduce noise
+			if (Math.random() < 0.05) {
+				console.warn(
+					`Failed to normalize relation ${modelName} with name "${item.name}":`,
+					error.message
+				);
+			}
 			return null;
 		}
 	};
@@ -261,8 +428,66 @@ export const seedFn: ActFn = async (body) => {
 		};
 	};
 
+
+	// Pre-populate Redis cache with existing entities to avoid database lookups
+	const warmUpCache = async () => {
+		const redisConnected = await checkRedisConnection();
+		if (!redisConnected) {
+			console.warn("Redis not available, skipping cache warmup");
+			return;
+		}
+
+		console.log("Warming up Redis cache with existing entities...");
+		const warmupStartTime = Date.now();
+		let totalCachedItems = 0;
+
+		for (const [modelName, model] of Object.entries(modelMap)) {
+			try {
+				// Get all existing records for this model
+				const existingRecords = await model.findMany({
+					filters: {},
+					projection: { name: 1, _id: 1 },
+					limit: 10000 // Reasonable limit to avoid memory issues
+				});
+
+				// Cache each record in Redis
+				for (const record of existingRecords) {
+					const normalizedName = normalizePersianText(record.name).toLowerCase();
+					const redisCacheKey = `seed_cache:${modelName}:${normalizedName}`;
+
+					const success = await safeRedisOperation(
+						async () => {
+							await myRedis.set(redisCacheKey, JSON.stringify({
+								_id: record._id.toString(),
+								name: record.name
+							}), { ex: 3600 });
+							return true;
+						},
+						false,
+						`cache warmup for ${modelName} record`
+					);
+
+					if (success) {
+						totalCachedItems++;
+					}
+				}
+
+				console.log(`Cached ${existingRecords.length} existing ${modelName} records`);
+			} catch (error) {
+				console.warn(`Failed to warm up cache for ${modelName}:`, error);
+			}
+		}
+
+		const warmupEndTime = Date.now();
+		console.log(`Cache warmup completed in ${warmupEndTime - warmupStartTime}ms. Cached ${totalCachedItems} total items.`);
+	};
+
+	// Initialize Redis cache cleanup and warmup
+	console.log("Initializing seed process with Redis cache...");
+	await warmUpCache();
+
 	// Process records in batches for better performance
-	const BATCH_SIZE = 1; // Reduced to 1 to prevent race conditions and duplicate records
+	const BATCH_SIZE = 50; // Reduced further for easier debugging
 	const userId = user._id;
 	const startTime = Date.now();
 
@@ -333,7 +558,7 @@ export const seedFn: ActFn = async (body) => {
 						"province",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.province = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -347,7 +572,7 @@ export const seedFn: ActFn = async (body) => {
 				relationPromises.push(
 					normalizeRelations(parsedAccident.township, "city", userId)
 						.then((normalized) => {
-							if (normalized) {
+							if (normalized && normalized._id) {
 								accidentRelations.city = {
 									_ids: normalized._id,
 									relatedRelations: { accidents: true },
@@ -361,7 +586,7 @@ export const seedFn: ActFn = async (body) => {
 				relationPromises.push(
 					normalizeRelations(parsedAccident.road, "road", userId)
 						.then((normalized) => {
-							if (normalized) {
+							if (normalized && normalized._id) {
 								accidentRelations.road = {
 									_ids: normalized._id,
 									relatedRelations: { accidents: true },
@@ -375,7 +600,7 @@ export const seedFn: ActFn = async (body) => {
 				relationPromises.push(
 					normalizeRelations(parsedAccident.type, "type", userId)
 						.then((normalized) => {
-							if (normalized) {
+							if (normalized && normalized._id) {
 								accidentRelations.type = {
 									_ids: normalized._id,
 									relatedRelations: { accidents: true },
@@ -392,7 +617,7 @@ export const seedFn: ActFn = async (body) => {
 						"position",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.position = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -409,7 +634,7 @@ export const seedFn: ActFn = async (body) => {
 						"ruling_type",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.ruling_type = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -426,7 +651,7 @@ export const seedFn: ActFn = async (body) => {
 						"light_status",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.light_status = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -443,7 +668,7 @@ export const seedFn: ActFn = async (body) => {
 						"collision_type",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.collision_type = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -460,7 +685,7 @@ export const seedFn: ActFn = async (body) => {
 						"road_situation",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.road_situation = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -477,7 +702,7 @@ export const seedFn: ActFn = async (body) => {
 						"road_repair_type",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.road_repair_type = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -494,7 +719,7 @@ export const seedFn: ActFn = async (body) => {
 						"shoulder_status",
 						userId,
 					).then((normalized) => {
-						if (normalized) {
+						if (normalized && normalized._id) {
 							accidentRelations.shoulder_status = {
 								_ids: normalized._id,
 								relatedRelations: { accidents: true },
@@ -512,10 +737,13 @@ export const seedFn: ActFn = async (body) => {
 						"area_usage",
 						userId,
 					).then((normalized) => {
-						accidentRelations.area_usages = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.area_usages = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -527,10 +755,13 @@ export const seedFn: ActFn = async (body) => {
 						"air_status",
 						userId,
 					).then((normalized) => {
-						accidentRelations.air_statuses = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.air_statuses = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -542,10 +773,13 @@ export const seedFn: ActFn = async (body) => {
 						"road_defect",
 						userId,
 					).then((normalized) => {
-						accidentRelations.road_defects = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.road_defects = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -557,10 +791,13 @@ export const seedFn: ActFn = async (body) => {
 						"human_reason",
 						userId,
 					).then((normalized) => {
-						accidentRelations.human_reasons = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.human_reasons = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -572,10 +809,13 @@ export const seedFn: ActFn = async (body) => {
 						"vehicle_reason",
 						userId,
 					).then((normalized) => {
-						accidentRelations.vehicle_reasons = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.vehicle_reasons = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -587,10 +827,13 @@ export const seedFn: ActFn = async (body) => {
 						"equipment_damage",
 						userId,
 					).then((normalized) => {
-						accidentRelations.equipment_damages = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.equipment_damages = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -602,10 +845,13 @@ export const seedFn: ActFn = async (body) => {
 						"road_surface_condition",
 						userId,
 					).then((normalized) => {
-						accidentRelations.road_surface_conditions = {
-							_ids: normalized.map((item) => item!._id),
-							relatedRelations: { accidents: true },
-						};
+						const validIds = normalized.filter(item => item && item._id).map(item => item!._id);
+						if (validIds.length > 0) {
+							accidentRelations.road_surface_conditions = {
+								_ids: validIds,
+								relatedRelations: { accidents: true },
+							};
+						}
 					}),
 				);
 			}
@@ -666,57 +912,57 @@ export const seedFn: ActFn = async (body) => {
 									),
 									insurance_warranty_limit:
 										v.insuranceWarrantyLimit || 0,
-									color: await normalizeRelations(
+									color: v.color ? await normalizeRelations(
 										v.color,
 										"color",
 										userId,
-									),
-									system: await normalizeRelations(
+									) : null,
+									system: v.system ? await normalizeRelations(
 										v.system,
 										"system",
 										userId,
-									),
-									plaque_type: await normalizeRelations(
+									) : null,
+									plaque_type: v.plaqueType ? await normalizeRelations(
 										v.plaqueType,
 										"plaque_type",
 										userId,
-									),
-									system_type: await normalizeRelations(
+									) : null,
+									system_type: v.systemType ? await normalizeRelations(
 										v.systemType,
 										"system_type",
 										userId,
-									),
-									fault_status: await normalizeRelations(
+									) : null,
+									fault_status: v.faultStatus ? await normalizeRelations(
 										v.faultStatus,
 										"fault_status",
 										userId,
-									),
-									insurance_co: await normalizeRelations(
+									) : null,
+									insurance_co: v.insuranceCo ? await normalizeRelations(
 										v.insuranceCo,
 										"insurance_co",
 										userId,
-									),
-									plaque_usage: await normalizeRelations(
+									) : null,
+									plaque_usage: v.plaqueUsage ? await normalizeRelations(
 										v.plaqueUsage,
 										"plaque_usage",
 										userId,
-									),
-									body_insurance_co: await normalizeRelations(
+									) : null,
+									body_insurance_co: v.bodyInsuranceCo ? await normalizeRelations(
 										v.bodyInsuranceCo,
 										"body_insurance_co",
 										userId,
-									),
-									motion_direction: await normalizeRelations(
+									) : null,
+									motion_direction: v.motionDirection ? await normalizeRelations(
 										v.motionDirection,
 										"motion_direction",
 										userId,
-									),
-									max_damage_sections:
-										await normalizeArrayRelations(
+									) : null,
+									max_damage_sections: v.maxDamageSections ?
+										(await normalizeArrayRelations(
 											v.maxDamageSections,
 											"max_damage_section",
 											userId,
-										),
+										)).filter(item => item && item._id) : [],
 									driver: {
 										first_name: v.driver.firstName
 											? normalizePersianText(
@@ -747,21 +993,21 @@ export const seedFn: ActFn = async (body) => {
 													: "Other"
 											)
 											: "Other",
-										licence_type: await normalizeRelations(
+										licence_type: v.driver.licenceType ? await normalizeRelations(
 											v.driver.licenceType,
 											"licence_type",
 											userId,
-										),
-										injury_type: await normalizeRelations(
+										) : null,
+										injury_type: v.driver.injuryType ? await normalizeRelations(
 											v.driver.injuryType,
 											"max_damage_section",
 											userId,
-										),
-										total_reason: await normalizeRelations(
+										) : null,
+										total_reason: v.driver.totalReason ? await normalizeRelations(
 											v.driver.totalReason,
 											"human_reason",
 											userId,
-										),
+										) : null,
 									},
 									passenger_dtos: v.passengerDTOS?.length
 										? await Promise.all(
@@ -787,24 +1033,24 @@ export const seedFn: ActFn = async (body) => {
 															: "Other"
 													)
 													: "Other",
-												injury_type:
+												injury_type: p.injuryType ?
 													await normalizeRelations(
 														p.injuryType,
 														"max_damage_section",
 														userId,
-													),
-												fault_status:
+													) : null,
+												fault_status: p.faultStatus ?
 													await normalizeRelations(
 														p.faultStatus,
 														"fault_status",
 														userId,
-													),
-												total_reason:
+													) : null,
+												total_reason: p.totalReason ?
 													await normalizeRelations(
 														p.totalReason,
 														"human_reason",
 														userId,
-													),
+													) : null,
 											})),
 										)
 										: [],
@@ -844,39 +1090,103 @@ export const seedFn: ActFn = async (body) => {
 									: "Other"
 							)
 							: "Other",
-						injury_type: await normalizeRelations(
+						injury_type: p.injuryType ? await normalizeRelations(
 							p.injuryType,
 							"max_damage_section",
 							userId,
-						),
-						fault_status: await normalizeRelations(
+						) : null,
+						fault_status: p.faultStatus ? await normalizeRelations(
 							p.faultStatus,
 							"fault_status",
 							userId,
-						),
-						total_reason: await normalizeRelations(
+						) : null,
+						total_reason: p.totalReason ? await normalizeRelations(
 							p.totalReason,
 							"human_reason",
 							userId,
-						),
+						) : null,
 					})),
 				);
 				accidentDoc.pedestrian_dtos = pedestrianResults as any;
 			}
 
 			try {
+				// Basic validation for critical relations like province
+				if (accidentRelations.province && typeof accidentRelations.province._ids === 'string') {
+					try {
+						const provinceId = new ObjectId(accidentRelations.province._ids);
+						const provinceExists = await province.findOne({
+							filters: { _id: provinceId },
+							projection: { _id: 1 }
+						});
+
+						if (!provinceExists) {
+							console.warn(`Province with ID ${accidentRelations.province._ids} not found in database for accident ${parsedAccident.serialNO}`);
+							delete accidentRelations.province;
+						}
+					} catch (e) {
+						console.warn(`Invalid province ObjectId ${accidentRelations.province._ids} for accident ${parsedAccident.serialNO}`);
+						delete accidentRelations.province;
+					}
+				}
+
+				// Validate ObjectId format for other relations
+				const invalidRelations = [];
+
+				for (const [key, relation] of Object.entries(accidentRelations)) {
+					if (!relation || !relation._ids) {
+						invalidRelations.push(key);
+						continue;
+					}
+
+					// Check ObjectId format for single relations
+					if (typeof relation._ids === 'string') {
+						try {
+							new ObjectId(relation._ids);
+						} catch (e) {
+							invalidRelations.push(key);
+						}
+					}
+					// Check ObjectId format for array relations
+					else if (Array.isArray(relation._ids)) {
+						try {
+							const validIds = relation._ids.filter(id => {
+								try {
+									new ObjectId(id);
+									return true;
+								} catch {
+									return false;
+								}
+							});
+							if (validIds.length === 0) {
+								invalidRelations.push(key);
+							} else if (validIds.length !== relation._ids.length) {
+								relation._ids = validIds;
+							}
+						} catch (e) {
+							invalidRelations.push(key);
+						}
+					}
+				}
+
+				// Remove invalid relations
+				invalidRelations.forEach(key => delete accidentRelations[key]);
+
 				await accident.insertOne({
 					doc: accidentDoc,
 					relations: accidentRelations,
 					projection: { _id: 1 },
 				});
 			} catch (error) {
-				console.error(
-					`Failed to insert accident with serial ${
-						parsedAccident.serialNO || "unknown"
-					}:`,
-					error,
-				);
+				// Only log every 10th error to reduce noise
+				if (Math.random() < 0.1) {
+					console.error(
+						`Failed to insert accident with serial ${
+							parsedAccident.serialNO || "unknown"
+						}:`,
+						error.message
+					);
+				}
 				// Don't throw error, just log it to continue processing other records
 				return;
 			}
@@ -886,43 +1196,63 @@ export const seedFn: ActFn = async (body) => {
 		}
 	};
 
-	// Process records sequentially to prevent race conditions and duplicates
+	// Process records in batches for better performance
 	let processedCount = 0;
 	let skippedCount = 0;
 	let totalRecords = readJSON.length;
 
 	console.log(
-		`Starting to process ${totalRecords} accident records sequentially...`,
+		`Starting to process ${totalRecords} accident records in batches of ${BATCH_SIZE}...`,
 	);
+	console.log(`Redis-based entity caching enabled with lock timeout and retry mechanism.`);
 
-	for (let i = 0; i < readJSON.length; i++) {
-		const recordStartTime = Date.now();
+	for (let i = 0; i < readJSON.length; i += BATCH_SIZE) {
+		const batchStartTime = Date.now();
+		const batch = readJSON.slice(i, i + BATCH_SIZE);
 
-		try {
-			await processAccidentRecord(readJSON[i]);
-			processedCount++;
-		} catch (error) {
-			skippedCount++;
-			console.error(`Failed to process record ${i + 1}: ${error}`);
-		}
+		const batchPromises = batch.map(async (record, index) => {
+			try {
+				await processAccidentRecord(record);
+				return { success: true, index: i + index };
+			} catch (error) {
+				console.error(`Failed to process record ${i + index + 1}: ${error}`);
+				return { success: false, index: i + index, error };
+			}
+		});
 
-		const recordEndTime = Date.now();
-		const recordTime = recordEndTime - recordStartTime;
+		const batchResults = await Promise.all(batchPromises);
+
+		const batchProcessed = batchResults.filter(r => r.success).length;
+		const batchSkipped = batchResults.filter(r => !r.success).length;
+
+		processedCount += batchProcessed;
+		skippedCount += batchSkipped;
+
+		const batchEndTime = Date.now();
+		const batchTime = batchEndTime - batchStartTime;
 		const progress = ((processedCount + skippedCount) / totalRecords * 100)
 			.toFixed(1);
 
-		// Log progress every 100 records
-		if ((i + 1) % 100 === 0 || i === readJSON.length - 1) {
+		// Log progress after each batch
+		// Only log progress every 5th batch to reduce noise
+		if ((Math.floor(i / BATCH_SIZE) + 1) % 5 === 0 || i + BATCH_SIZE >= totalRecords) {
 			console.log(
-				`Progress: ${progress}% - Record ${
-					i + 1
-				}/${totalRecords} completed in ${recordTime}ms - Processed: ${processedCount}, Skipped: ${skippedCount}, Invalid coords: ${invalidCoordinatesCount}`,
+				`Progress: ${progress}% - Batch ${Math.floor(i / BATCH_SIZE) + 1} (records ${i + 1}-${Math.min(i + BATCH_SIZE, totalRecords)}) completed in ${batchTime}ms - Processed: ${batchProcessed}, Skipped: ${batchSkipped}, Total processed: ${processedCount}, Total skipped: ${skippedCount}, Invalid coords: ${invalidCoordinatesCount}`,
 			);
+			console.log(`Cache stats: Global cache hits: ${globalCacheHits}, Redis hits: ${redisHits}, misses: ${redisMisses}, DB queries: ${dbQueries}, records created: ${recordsCreated}`);
+			console.log(`Relation stats: Successes: ${relationSuccesses}, Failures: ${relationFailures}, Success rate: ${((relationSuccesses / (relationSuccesses + relationFailures)) * 100).toFixed(1)}%`);
 		}
 
-		// Add small delay to prevent overwhelming the database
-		if (i < readJSON.length - 1) {
-			await new Promise((resolve) => setTimeout(resolve, 10));
+		// Add small delay between batches to prevent overwhelming the database
+		if (i + BATCH_SIZE < readJSON.length) {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
+
+		// Clear in-memory cache periodically to prevent memory leaks (keep global cache)
+		if ((Math.floor(i / BATCH_SIZE) + 1) % 20 === 0) {
+			console.log("Clearing in-memory cache to prevent memory leaks...");
+			relationCache.clear();
+			console.log(`Global entity cache size: ${globalEntityCache.size}, Frequently used entities: ${frequentlyUsedEntities.size}`);
 		}
 	}
 
@@ -947,6 +1277,63 @@ export const seedFn: ActFn = async (body) => {
 			(processedCount / (totalTime / 1000)).toFixed(2)
 		}`,
 	);
+
+	// Performance statistics
+	const cacheHitRate = ((redisHits / (redisHits + redisMisses)) * 100).toFixed(1);
+	console.log(`\n=== CACHE PERFORMANCE ===`);
+	console.log(`Global cache hits: ${globalCacheHits}`);
+	console.log(`Redis cache hits: ${redisHits}`);
+	console.log(`Redis cache misses: ${redisMisses}`);
+	console.log(`Cache hit rate: ${cacheHitRate}%`);
+	console.log(`Database queries: ${dbQueries}`);
+	console.log(`New records created: ${recordsCreated}`);
+	console.log(`In-memory cache size: ${relationCache.size} items`);
+	console.log(`Global entity cache size: ${globalEntityCache.size} items`);
+	console.log(`Frequently used entities: ${frequentlyUsedEntities.size} types`);
+	console.log(`\n=== RELATION PERFORMANCE ===`);
+	console.log(`Relation successes: ${relationSuccesses}`);
+	console.log(`Relation failures: ${relationFailures}`);
+	console.log(`Relation success rate: ${((relationSuccesses / (relationSuccesses + relationFailures)) * 100).toFixed(1)}%`);
+
+	// Cleanup function to clear Redis cache entries after seeding
+	const cleanupCache = async () => {
+		console.log("Cleaning up Redis cache entries...");
+		const keys = await safeRedisOperation(
+			async () => await myRedis.keys("seed_cache:*"),
+			[],
+			"cache cleanup key lookup"
+		);
+
+		if (keys.length > 0) {
+			await safeRedisOperation(
+				async () => await myRedis.del(...keys),
+				null,
+				"cache cleanup deletion"
+			);
+			console.log(`Cleaned up ${keys.length} Redis cache entries`);
+		}
+
+		// Also cleanup any remaining lock keys
+		const lockKeys = await safeRedisOperation(
+			async () => await myRedis.keys("seed_lock:*"),
+			[],
+			"lock cleanup key lookup"
+		);
+
+		if (lockKeys.length > 0) {
+			await safeRedisOperation(
+				async () => await myRedis.del(...lockKeys),
+				null,
+				"lock cleanup deletion"
+			);
+			console.log(`Cleaned up ${lockKeys.length} Redis lock entries`);
+		}
+	};
+
+	// Cleanup cache entries at the end
+	await cleanupCache();
+
+	console.log(`Redis cache cleaned up after seeding process`);
 	console.log(`=========================\n`);
 
 	return { ok: true };
