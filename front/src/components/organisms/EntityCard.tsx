@@ -5,6 +5,7 @@ interface SimpleCardProps {
   onEdit?: () => void; // تابع برای ویرایش (اختیاری)
   onDelete?: () => void; // تابع برای حذف (اختیاری)
   onSeedZones?: () => void; // تابع برای اضافه کردن مناطق شهر (اختیاری)
+  onSeedTownships?: () => void; // تابع برای اضافه کردن شهرستان‌های استان (اختیاری)
 }
 
 const EntityCard: React.FC<SimpleCardProps> = ({
@@ -12,6 +13,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
   onEdit,
   onDelete,
   onSeedZones,
+  onSeedTownships,
 }) => {
   return (
     <div className="border w-full max-w-sm bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
@@ -22,6 +24,15 @@ const EntityCard: React.FC<SimpleCardProps> = ({
             onClick={onSeedZones}
             className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200 shadow"
             title="اضافه کردن مناطق شهر"
+          >
+            <MapIcon />
+          </button>
+        )}
+        {onSeedTownships && (
+          <button
+            onClick={onSeedTownships}
+            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow"
+            title="اضافه کردن شهرستان‌های استان"
           >
             <MapIcon />
           </button>

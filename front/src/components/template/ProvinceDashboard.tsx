@@ -11,6 +11,7 @@ import {
   translateModelNameToPersian,
 } from "@/utils/helper";
 import ProvinceUpdateModal from "./ProvinceUpdateModal";
+import SeedTownshipsModal from "./SeedTownshipsModal";
 
 interface TData {
   _id: string;
@@ -34,14 +35,17 @@ const ProvinceDashboard: React.FC<ProvinceDashboardProps> = ({
 }) => {
   const router = useRouter();
 
-  const [activeModal, setActiveModal] = useState<"edit" | "delete" | null>(
-    null,
-  );
+  const [activeModal, setActiveModal] = useState<
+    "edit" | "delete" | "seedTownships" | null
+  >(null);
   const [selectedItem, setSelectedItem] = useState<TData | null>(null);
 
   const [hardCascade, setHardCascade] = useState<boolean>(false);
 
-  const openModal = (type: "edit" | "delete", item: TData | null = null) => {
+  const openModal = (
+    type: "edit" | "delete" | "seedTownships",
+    item: TData | null = null,
+  ) => {
     setSelectedItem(item);
     setActiveModal(type);
   };
@@ -87,6 +91,7 @@ const ProvinceDashboard: React.FC<ProvinceDashboardProps> = ({
             title={item.name}
             onDelete={() => openModal("delete", item)}
             onEdit={() => openModal("edit", item)}
+            onSeedTownships={() => openModal("seedTownships", item)}
           />
         ))}
       </div>
@@ -110,6 +115,16 @@ const ProvinceDashboard: React.FC<ProvinceDashboardProps> = ({
           message={`آیا مطمئن هستید که می‌خواهید این ${translateModelNameToPersian(model)} را حذف کنید؟ این عمل قابل بازگشت نیست.`}
           isHardCascade={hardCascade}
           onHardCascadeChange={setHardCascade}
+        />
+      )}
+
+      {activeModal === "seedTownships" && selectedItem && (
+        <SeedTownshipsModal
+          isOpen
+          onClose={closeModal}
+          provinceId={selectedItem._id}
+          provinceName={selectedItem.name}
+          token={token}
         />
       )}
     </div>
