@@ -7,7 +7,7 @@ import {
 	string,
 } from "@deps";
 import { selectStruct } from "../../../mod.ts";
-import { user_genders } from "@model";
+import { geoJSONStruct, user_genders } from "@model";
 
 export const updateUserValidator = () => {
 	return object({
@@ -23,6 +23,7 @@ export const updateUserValidator = () => {
 			summary: optional(string()),
 
 			address: optional(string()),
+			citySettingId: optional(objectIdValidation),
 		}),
 		get: selectStruct("user", 1),
 	});

@@ -8,10 +8,14 @@
  * of accident severity, now focused on comparing zones within a specific city.
  */
 import type { ActFn, Document } from "@deps";
-import { accident } from "../../../../mod.ts";
+import { accident, coreApp } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { MyContext } from "@lib";
 
 export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
+	const { user }: MyContext = coreApp.contextFns
+		.getContextModel() as MyContext;
+
 	const { set: filters } = body.details;
 
 	// --- 1. Set Default Date Range ---
@@ -92,7 +96,7 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 	// NEW LOGIC: Prioritize city filter, with a default for this specific chart.
 	if (!matchFilter["city.name"]) {
 		// Default to the largest city in Khuzestan province as requested.
-		matchFilter["city.name"] = "اهواز";
+		matchFilter["city.name"] = user.settings?.city.name || "اهواز";
 	}
 
 	const vehicleElemMatch: Document = {};

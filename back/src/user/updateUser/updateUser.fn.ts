@@ -1,5 +1,5 @@
 import { type ActFn, Infer, object, ObjectId } from "@deps";
-import { user } from "../../../mod.ts";
+import { city, coreApp, user } from "../../../mod.ts";
 import { user_pure } from "../../../models/user.ts";
 
 export const updateUserFn: ActFn = async (body) => {
@@ -18,6 +18,7 @@ export const updateUserFn: ActFn = async (body) => {
 			summary,
 
 			address,
+			citySettingId,
 		},
 		get,
 	} = body.details;
@@ -33,6 +34,28 @@ export const updateUserFn: ActFn = async (body) => {
 		...(summary && { summary }),
 		...(address && { address }),
 	};
+
+	if (citySettingId) {
+		const cityPureProjection = coreApp.schemas.createProjection(
+			"city",
+			"Pure",
+		);
+
+		const foundedCity = await city.findOne({
+			filters: { _id: new ObjectId(citySettingId as string) },
+			projection: cityPureProjection,
+		});
+
+		if (foundedCity) {
+			updateObj.settings = {
+				city: {
+					_id: foundedCity._id,
+					name: foundedCity.name,
+					center_location: foundedCity.center_location,
+				},
+			};
+		}
+	}
 
 	return await user.findOneAndUpdate({
 		filter: { _id: new ObjectId(_id as string) },

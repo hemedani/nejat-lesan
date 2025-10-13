@@ -8,10 +8,14 @@
  * conditional counting logic to calculate the map ratio accurately.
  */
 import type { ActFn, Document } from "@deps";
-import { accident } from "../../../../mod.ts";
+import { accident, coreApp } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { MyContext } from "@lib";
 
 export const spatialLightAnalyticsFn: ActFn = async (body) => {
+	const { user }: MyContext = coreApp.contextFns
+		.getContextModel() as MyContext;
+
 	const { set: filters } = body.details;
 
 	// --- 1. Set Default Date Range ---
@@ -95,7 +99,7 @@ export const spatialLightAnalyticsFn: ActFn = async (body) => {
 
 	// Default city for this chart is "اهواز"
 	if (!matchFilter["city.name"]) {
-		matchFilter["city.name"] = "اهواز";
+		matchFilter["city.name"] = user.settings?.city.name || "اهواز";
 	}
 
 	// --- 3. Define and Execute the Aggregation Pipeline ---

@@ -1,6 +1,6 @@
 "use client";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ToastNotify, translateGender, } from "@/utils/helper";
+import { ToastNotify, translateGender } from "@/utils/helper";
 import { useRouter } from "next/navigation";
 import { ReqType, userSchema } from "@/types/declarations/selectInp";
 import { z } from "zod";
@@ -9,6 +9,12 @@ import MyInput from "@/components/atoms/MyInput";
 import { DatePicker } from "zaman";
 import SelectBox from "@/components/atoms/Select";
 import { updateUserPure } from "@/app/actions/user/updateUser";
+import dynamic from "next/dynamic";
+import { SelectOption } from "../atoms/MyAsyncMultiSelect";
+import { useCallback, useState } from "react";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
+
+const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
 export const UpdateUserPureSchema = z.object({
   _id: z.string(),
@@ -19,6 +25,7 @@ export const UpdateUserPureSchema = z.object({
   birth_date: z.coerce.date().optional(),
   summary: z.string().optional(),
   address: z.optional(z.string()),
+  citySettingId: z.string().optional(),
 });
 
 export type UpdateUserPureSchemaType = z.infer<typeof UpdateUserPureSchema>;
@@ -39,6 +46,48 @@ export const EditUserPures = ({
   });
 
   const router = useRouter();
+  const [selectedCity, setSelectedCity] = useState<SelectOption | null>(null);
+
+  // Load cities options
+  const loadCitiesOptions = async (
+    inputValue?: string,
+  ): Promise<SelectOption[]> => {
+    const setParams: { limit: number; page: number; name?: string } = {
+      limit: 20,
+      page: 1,
+    };
+    if (inputValue) {
+      setParams.name = inputValue;
+    }
+    try {
+      const response = await getCitiesAction({
+        set: setParams,
+        get: { _id: 1, name: 1 },
+      });
+      if (response && response.success) {
+        return response.body.map((item: { _id: string; name: string }) => ({
+          value: item._id,
+          label: item.name,
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading cities:", error);
+    }
+    return [];
+  };
+
+  // Handle city selection
+  const handleCitySelect = useCallback(
+    async (selectedOption: SelectOption | null) => {
+      setSelectedCity(selectedOption);
+      if (selectedOption) {
+        setValue("citySettingId", selectedOption.value, {
+          shouldValidate: true,
+        });
+      }
+    },
+    [setValue],
+  );
 
   const onSubmit: SubmitHandler<UpdateUserPureSet> = async (formData) => {
     const updatedUserPures = await updateUserPure(formData);
@@ -95,8 +144,9 @@ export const EditUserPures = ({
         <div className={`w-1/2 p-4 flex flex-col gap-1`}>
           <label htmlFor="birth_date">تاریخ تولد</label>
           <DatePicker
-            className={`text-gray-600 border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700 bg-gray-100 ${errors.birth_date?.message ? "border-red-500" : "border-gray-300"
-              }`}
+            className={`text-gray-600 border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700 bg-gray-100 ${
+              errors.birth_date?.message ? "border-red-500" : "border-gray-300"
+            }`}
             defaultValue={rest.birth_date}
             onChange={(e) => setValue("birth_date", e.value)}
           />
@@ -121,6 +171,80 @@ export const EditUserPures = ({
             label: translateGender(rest.gender),
           }}
         />
+      </div>
+
+      <hr className="my-4" />
+      {/* City Selection */}
+      <div className="flex flex-col gap-2">
+        <h4 className="text-lg font-semibold text-gray-700 mb-2">
+          تنظیمات کاربری
+        </h4>
+        <label className="text-sm font-medium text-slate-700 text-right">
+          انتخاب شهر تحت مدیریت کاربر
+        </label>
+        <AsyncSelect
+          cacheOptions
+          defaultOptions
+          value={selectedCity}
+          loadOptions={loadCitiesOptions}
+          onChange={(newValue) =>
+            handleCitySelect(newValue as SelectOption | null)
+          }
+          placeholder="شهر را انتخاب کنید"
+          noOptionsMessage={() => "شهری یافت نشد"}
+          loadingMessage={() => "در حال بارگذاری..."}
+          isRtl={true}
+          isClearable
+          styles={{
+            control: (provided: any, state: any) => ({
+              ...provided,
+              minHeight: "48px",
+              backgroundColor: errors.citySettingId ? "#fef2f2" : "white",
+              borderColor: errors.citySettingId
+                ? state.isFocused
+                  ? "#ef4444"
+                  : "#fca5a5"
+                : state.isFocused
+                  ? "#3b82f6"
+                  : "#cbd5e1",
+              borderRadius: "12px",
+              direction: "rtl",
+            }),
+            valueContainer: (provided: any) => ({
+              ...provided,
+              padding: "2px 16px",
+              direction: "rtl",
+            }),
+            placeholder: (provided: any) => ({
+              ...provided,
+              color: "#94a3b8",
+              direction: "rtl",
+              textAlign: "right",
+            }),
+            singleValue: (provided: any) => ({
+              ...provided,
+              color: "#1e293b",
+              direction: "rtl",
+              textAlign: "right",
+            }),
+            option: (provided: any, state: any) => ({
+              ...provided,
+              backgroundColor: state.isSelected
+                ? "#3b82f6"
+                : state.isFocused
+                  ? "#f1f5f9"
+                  : "transparent",
+              color: state.isSelected ? "white" : "#1e293b",
+              direction: "rtl",
+              textAlign: "right",
+            }),
+          }}
+        />
+        {errors.citySettingId && (
+          <span className="text-red-500 text-xs font-medium text-right mt-1">
+            {errors.citySettingId.message}
+          </span>
+        )}
       </div>
 
       <div className="w-full flex gap-4 justify-end">

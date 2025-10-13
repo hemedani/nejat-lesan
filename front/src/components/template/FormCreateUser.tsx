@@ -10,6 +10,12 @@ import MyInput from "../atoms/MyInput";
 import { createUser } from "@/app/actions/user/createUser";
 import MyDateInput from "../atoms/MyDateInput";
 import { ReqType } from "@/types/declarations/selectInp";
+import dynamic from "next/dynamic";
+import { SelectOption } from "../atoms/MyAsyncMultiSelect";
+import { useCallback, useState } from "react";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
+
+const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
 export const UserCreateSchema = z.object({
   first_name: z.string().min(1, "نام الزامی است"),
@@ -27,6 +33,7 @@ export const UserCreateSchema = z.object({
   is_verified: z.boolean(),
   nationalCard: z.string().optional(),
   avatar: z.string().optional(),
+  citySettingId: z.string().optional(),
 });
 
 export type UserFormData = z.infer<typeof UserCreateSchema>;
@@ -34,6 +41,7 @@ export type UserSetObj = ReqType["main"]["user"]["addUser"]["set"];
 
 export const FormCreateUser = ({ token }: { token?: string }) => {
   const router = useRouter();
+  const [selectedCity, setSelectedCity] = useState<SelectOption | null>(null);
 
   const {
     register,
@@ -52,6 +60,47 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     },
     mode: "onChange",
   });
+
+  // Load cities options
+  const loadCitiesOptions = async (
+    inputValue?: string,
+  ): Promise<SelectOption[]> => {
+    const setParams: { limit: number; page: number; name?: string } = {
+      limit: 20,
+      page: 1,
+    };
+    if (inputValue) {
+      setParams.name = inputValue;
+    }
+    try {
+      const response = await getCitiesAction({
+        set: setParams,
+        get: { _id: 1, name: 1 },
+      });
+      if (response && response.success) {
+        return response.body.map((item: { _id: string; name: string }) => ({
+          value: item._id,
+          label: item.name,
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading cities:", error);
+    }
+    return [];
+  };
+
+  // Handle city selection
+  const handleCitySelect = useCallback(
+    async (selectedOption: SelectOption | null) => {
+      setSelectedCity(selectedOption);
+      if (selectedOption) {
+        setValue("citySettingId", selectedOption.value, {
+          shouldValidate: true,
+        });
+      }
+    },
+    [setValue],
+  );
 
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
     try {
@@ -75,7 +124,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 mb-42">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 bg-gray-100 p-6 border rounded-lg"
@@ -207,6 +256,80 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             ]}
             defaultValue={{ value: "false", label: "تایید نشده" }}
           />
+        </div>
+
+        <hr className="my-4" />
+        {/* City Selection */}
+        <div className="flex flex-col gap-2">
+          <h4 className="text-lg font-semibold text-gray-700 mb-2">
+            تنظیمات کاربری
+          </h4>
+          <label className="text-sm font-medium text-slate-700 text-right">
+            انتخاب شهر تحت مدیریت کاربر
+          </label>
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            value={selectedCity}
+            loadOptions={loadCitiesOptions}
+            onChange={(newValue) =>
+              handleCitySelect(newValue as SelectOption | null)
+            }
+            placeholder="شهر را انتخاب کنید"
+            noOptionsMessage={() => "شهری یافت نشد"}
+            loadingMessage={() => "در حال بارگذاری..."}
+            isRtl={true}
+            isClearable
+            styles={{
+              control: (provided: any, state: any) => ({
+                ...provided,
+                minHeight: "48px",
+                backgroundColor: errors.citySettingId ? "#fef2f2" : "white",
+                borderColor: errors.citySettingId
+                  ? state.isFocused
+                    ? "#ef4444"
+                    : "#fca5a5"
+                  : state.isFocused
+                    ? "#3b82f6"
+                    : "#cbd5e1",
+                borderRadius: "12px",
+                direction: "rtl",
+              }),
+              valueContainer: (provided: any) => ({
+                ...provided,
+                padding: "2px 16px",
+                direction: "rtl",
+              }),
+              placeholder: (provided: any) => ({
+                ...provided,
+                color: "#94a3b8",
+                direction: "rtl",
+                textAlign: "right",
+              }),
+              singleValue: (provided: any) => ({
+                ...provided,
+                color: "#1e293b",
+                direction: "rtl",
+                textAlign: "right",
+              }),
+              option: (provided: any, state: any) => ({
+                ...provided,
+                backgroundColor: state.isSelected
+                  ? "#3b82f6"
+                  : state.isFocused
+                    ? "#f1f5f9"
+                    : "transparent",
+                color: state.isSelected ? "white" : "#1e293b",
+                direction: "rtl",
+                textAlign: "right",
+              }),
+            }}
+          />
+          {errors.citySettingId && (
+            <span className="text-red-500 text-xs font-medium text-right mt-1">
+              {errors.citySettingId.message}
+            </span>
+          )}
         </div>
 
         <div className="w-full flex gap-4 justify-end">

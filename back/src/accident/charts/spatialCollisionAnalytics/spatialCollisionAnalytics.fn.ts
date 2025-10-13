@@ -8,10 +8,14 @@
  * of collision types, focused on comparing zones within a specific city.
  */
 import type { ActFn, Document } from "@deps";
-import { accident, collision_type } from "../../../../mod.ts";
+import { accident, collision_type, coreApp } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { MyContext } from "@lib";
 
 export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
+	const { user }: MyContext = coreApp.contextFns
+		.getContextModel() as MyContext;
+
 	const { set: filters } = body.details;
 
 	// --- 1. Set Default Date Range ---
@@ -91,7 +95,7 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 
 	// Default city for this chart is "اهواز"
 	if (!matchFilter["city.name"]) {
-		matchFilter["city.name"] = "اهواز";
+		matchFilter["city.name"] = user.settings?.city.name || "اهواز";
 	}
 
 	// --- 3. Define and Execute the Aggregation Pipeline ---

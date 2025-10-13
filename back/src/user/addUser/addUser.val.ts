@@ -37,6 +37,7 @@ export const addUserValidator = () => {
 			is_verified: defaulted(boolean(), false),
 			nationalCard: optional(objectIdValidation),
 			avatar: optional(objectIdValidation),
+			citySettingId: optional(objectIdValidation),
 		}),
 		get: selectStruct("user", 1),
 	});
