@@ -6,6 +6,8 @@ import {
 	defaulted,
 	enums,
 	number,
+	object,
+	objectIdValidation,
 	optional,
 	pattern,
 	refine,
@@ -14,6 +16,7 @@ import {
 	union,
 } from "@deps";
 import { createUpdateAt, isValidNationalNumber } from "@lib";
+import { geoJSONStruct, pure_location } from "@model";
 
 export const user_level_array = ["Ghost", "Manager", "Editor", "Ordinary"];
 export const user_level_emums = enums(user_level_array);
@@ -60,6 +63,13 @@ export const user_pure = {
 
 	level: user_level_emums,
 	is_verified: defaulted(boolean(), false),
+	settings: object({
+		city: object({
+			_id: objectIdValidation,
+			name: string(),
+			center_location: geoJSONStruct("Point"),
+		}),
+	}),
 	...createUpdateAt,
 };
 
