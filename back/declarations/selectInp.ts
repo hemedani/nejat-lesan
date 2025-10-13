@@ -24,19 +24,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -97,19 +90,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -158,19 +144,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -384,19 +363,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -560,7 +532,6 @@ updatedAt: Date;
     export type townshipInp = {
       registrer?: number | userInp
 province?: number | provinceInp
-accidents?: number | accidentInp
       accidents?: number | accidentInp
     }
 
@@ -595,19 +566,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -788,19 +752,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -966,19 +923,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1159,19 +1109,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1223,19 +1166,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1271,19 +1207,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1319,19 +1248,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1367,19 +1289,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1415,19 +1330,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1463,19 +1371,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1511,19 +1412,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1559,19 +1453,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1607,19 +1494,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1655,19 +1535,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1703,19 +1576,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1751,19 +1617,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1799,19 +1658,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1847,19 +1699,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -1895,19 +1740,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2275,19 +2113,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2323,19 +2154,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2371,19 +2195,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2419,19 +2236,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2467,19 +2277,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2515,19 +2318,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2563,19 +2359,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2611,19 +2400,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2659,19 +2441,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2707,19 +2482,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -2755,19 +2523,12 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 settings: {
 city: {
+_id: string;
 name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
 center_location: {
 type: "Point";
 coordinates: any[];
 };
-createdAt: Date;
-updatedAt: Date;
 };
 };
 createdAt: Date;
@@ -12243,6 +12004,7 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
 is_verified: boolean;
 nationalCard?: string;
 avatar?: string;
+citySettingId?: string;
 };
 get: {
 _id?: (0 | 1 );
@@ -12610,6 +12372,7 @@ gender?: ("Male" | "Female" );
 birth_date?: Date;
 summary?: string;
 address?: string;
+citySettingId?: string;
 };
 get: {
 _id?: (0 | 1 );
