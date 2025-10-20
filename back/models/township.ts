@@ -1,6 +1,6 @@
 import { coreApp } from "../mod.ts";
 import { type RelationDataType, type RelationSortOrderType } from "@deps";
-import { pure_location } from "@model";
+import { area_excludes, pure_location } from "@model";
 
 export const township_pure = {
 	...pure_location,
@@ -23,10 +23,12 @@ export const township_relations = {
 		schemaName: "province",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: area_excludes,
 		relatedRelations: {
 			cities: {
 				type: "multiple" as RelationDataType,
 				limit: 50,
+				excludes: area_excludes,
 				sort: {
 					field: "_id",
 					order: "desc" as RelationSortOrderType,

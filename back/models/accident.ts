@@ -13,7 +13,15 @@ import {
 	string,
 	tuple,
 } from "@deps";
-import { geoJSONStruct } from "@model";
+import {
+	area_excludes,
+	city_zone_excludes,
+	file_excludes,
+	geoJSONStruct,
+	road_excludes,
+	share_relation_excludes,
+	traffic_zone_excludes,
+} from "@model";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const day_of_week = enums([
@@ -107,6 +115,7 @@ export const accident_relations = {
 		schemaName: "province",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: area_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -122,6 +131,7 @@ export const accident_relations = {
 		schemaName: "city",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: area_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -137,6 +147,7 @@ export const accident_relations = {
 		schemaName: "township",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: area_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -152,6 +163,7 @@ export const accident_relations = {
 		schemaName: "road",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: road_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -167,6 +179,7 @@ export const accident_relations = {
 		schemaName: "traffic_zone",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: traffic_zone_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -182,6 +195,7 @@ export const accident_relations = {
 		schemaName: "city_zone",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: city_zone_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -197,6 +211,7 @@ export const accident_relations = {
 		schemaName: "type",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -212,6 +227,7 @@ export const accident_relations = {
 		schemaName: "area_usage",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -227,6 +243,7 @@ export const accident_relations = {
 		schemaName: "position",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -242,6 +259,7 @@ export const accident_relations = {
 		schemaName: "ruling_type",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -257,6 +275,7 @@ export const accident_relations = {
 		schemaName: "air_status",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -272,6 +291,7 @@ export const accident_relations = {
 		schemaName: "light_status",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -287,6 +307,7 @@ export const accident_relations = {
 		schemaName: "road_defect",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -302,6 +323,7 @@ export const accident_relations = {
 		schemaName: "human_reason",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -317,6 +339,7 @@ export const accident_relations = {
 		schemaName: "collision_type",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -332,6 +355,7 @@ export const accident_relations = {
 		schemaName: "road_situation",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -347,6 +371,7 @@ export const accident_relations = {
 		schemaName: "road_repair_type",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -362,6 +387,7 @@ export const accident_relations = {
 		schemaName: "shoulder_status",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -377,6 +403,7 @@ export const accident_relations = {
 		schemaName: "vehicle_reason",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -392,6 +419,7 @@ export const accident_relations = {
 		schemaName: "equipment_damage",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -407,6 +435,7 @@ export const accident_relations = {
 		schemaName: "road_surface_condition",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: share_relation_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,
@@ -422,6 +451,7 @@ export const accident_relations = {
 		schemaName: "file",
 		type: "multiple" as RelationDataType,
 		optional: true,
+		excludes: ["createdAt", "updatedAt"],
 		relatedRelations: {},
 	},
 };

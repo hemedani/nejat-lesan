@@ -12,3 +12,10 @@ export const pure_location = {
 
 	...createUpdateAt,
 };
+
+export const area_excludes = [
+	"area",
+	"center_location",
+	"createdAt",
+	"updatedAt",
+];

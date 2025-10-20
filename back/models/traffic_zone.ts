@@ -1,6 +1,6 @@
 import { coreApp } from "../mod.ts";
 import { number, type RelationDataType, string } from "@deps";
-import { geoJSONStruct } from "@model";
+import { geoJSONStruct, user_excludes } from "@model";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const traffic_zone_pure = {
@@ -11,11 +11,14 @@ export const traffic_zone_pure = {
 	...createUpdateAt,
 };
 
+export const traffic_zone_excludes = ["area", "updatedAt", "createdAt"];
+
 export const traffic_zone_relations = {
 	registrer: {
 		schemaName: "user",
 		type: "single" as RelationDataType,
 		optional: true,
+		excludes: user_excludes,
 		relatedRelations: {},
 	},
 };

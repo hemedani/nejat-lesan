@@ -73,6 +73,14 @@ export const user_pure = {
 	...createUpdateAt,
 };
 
+export const user_excludes = [
+	"summary",
+	"createdAt",
+	"updatedAt",
+	"settings",
+	"birth_date",
+];
+
 export const user_relations = {
 	avatar: {
 		schemaName: "file",
