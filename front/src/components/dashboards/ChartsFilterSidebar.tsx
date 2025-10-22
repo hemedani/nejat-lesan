@@ -30,6 +30,14 @@ import { gets as getVehicleSystemsAction } from "@/app/actions/system/gets";
 import { gets as getFaultStatusesAction } from "@/app/actions/fault_status/gets";
 import { gets as getLicenceTypesAction } from "@/app/actions/licence_type/gets";
 import { gets as getMaxDamageSectionsAction } from "@/app/actions/max_damage_section/gets";
+import { gets as getEquipmentDamagesAction } from "@/app/actions/equipment_damage/gets";
+import { gets as getSystemTypesAction } from "@/app/actions/system_type/gets";
+import { gets as getBodyInsuranceCosAction } from "@/app/actions/body_insurance_co/gets";
+import { gets as getInsuranceCosAction } from "@/app/actions/insurance_co/gets";
+import { gets as getPlaqueTypesAction } from "@/app/actions/plaque_type/gets";
+import { gets as getPlaqueUsagesAction } from "@/app/actions/plaque_usage/gets";
+import { gets as getMotionDirectionsAction } from "@/app/actions/motion_direction/gets";
+import { gets as getColorsAction } from "@/app/actions/color/gets";
 
 // Configuration interface
 interface ChartFilterConfig {
@@ -80,52 +88,37 @@ export interface RoadDefectsFilterState {
   humanReasons?: string[];
   vehicleReasons?: string[];
   roadSurfaceConditions?: string[];
+  equipmentDamages?: string[];
 
-  // --- Vehicle & Driver (supported by mapAccidents) ---
+  // --- Vehicle DTOs Filters ---
+  vehicleColor?: string[];
   vehicleSystem?: string[];
+  vehiclePlaqueType?: string[];
+  vehicleSystemType?: string[];
   vehicleFaultStatus?: string[];
+  vehicleInsuranceCo?: string[];
+  vehiclePlaqueUsage?: string[];
+  vehicleBodyInsuranceCo?: string[];
+  vehicleMotionDirection?: string[];
+  vehicleMaxDamageSections?: string[];
+
+  // --- Driver in Vehicle DTOs Filters ---
   driverSex?: string[];
   driverLicenceType?: string[];
   driverInjuryType?: string[];
+  driverTotalReason?: string[];
 
-  // --- Additional driver fields for compatibility ---
-  driverFaultStatus?: string[];
-  driverAge?: string[];
-  driverPosition?: string[];
-  driverRulingType?: string[];
+  // --- Passenger in Vehicle DTOs Filters ---
+  passengerSex?: string[];
+  passengerInjuryType?: string[];
+  passengerFaultStatus?: string[];
+  passengerTotalReason?: string[];
 
-  // --- Additional filters for compatibility ---
-  maxDamageSections?: string[];
-  vehicleType?: string[];
-  vehicleColor?: string[];
-  vehicleInsuranceCo?: string[];
-  vehicleBodyInsuranceCo?: string[];
-  vehicleLicenceType?: string[];
-  vehiclePlaqueType?: string[];
-  vehiclePlaqueUsage?: string[];
-  vehicleMotionDirection?: string[];
-  vehicleEquipmentDamage?: string[];
-
-  // --- Road and Infrastructure ---
-  roadType?: string[];
-  roadWidth?: string[];
-  roadSlope?: string[];
-  roadCurve?: string[];
-  roadSign?: string[];
-  roadBarrier?: string[];
-  roadLighting?: string[];
-  roadShoulder?: string[];
-
-  // --- Time and Weather ---
-  timeOfAccidentFrom?: string;
-  timeOfAccidentTo?: string;
-  seasonality?: string[];
-  dayOfWeek?: string[];
-  isHoliday?: boolean;
-  weatherCondition?: string[];
-  visibility?: string[];
-  temperature?: string[];
-  precipitation?: string[];
+  // --- Pedestrian DTOs Filters ---
+  pedestrianSex?: string[];
+  pedestrianInjuryType?: string[];
+  pedestrianFaultStatus?: string[];
+  pedestrianTotalReason?: string[];
 }
 
 // Dynamic checkbox filter interface
@@ -167,19 +160,14 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     defaultValues: initialFilters || {},
   });
 
-  // Set initial values for maxDamageSections
+  // Set initial values
   useEffect(() => {
-    if (initialFilters?.maxDamageSections?.length) {
-      setValue("maxDamageSections", initialFilters.maxDamageSections);
+    if (initialFilters) {
+      Object.entries(initialFilters).forEach(([key, value]) => {
+        setValue(key as keyof RoadDefectsFilterState, value);
+      });
     }
-  }, [initialFilters?.maxDamageSections, setValue]);
-
-  // Set initial values for collisionType
-  useEffect(() => {
-    if (initialFilters?.collisionType?.length) {
-      setValue("collisionType", initialFilters.collisionType);
-    }
-  }, [initialFilters?.collisionType, setValue]);
+  }, [initialFilters, setValue]);
 
   // Helper function to create loadOptions for async multi-select
   const createLoadOptions =
@@ -242,6 +230,20 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   const loadMaxDamageSectionsOptions = createLoadOptions(
     getMaxDamageSectionsAction,
   );
+  const loadEquipmentDamagesOptions = createLoadOptions(
+    getEquipmentDamagesAction,
+  );
+  const loadSystemTypesOptions = createLoadOptions(getSystemTypesAction);
+  const loadBodyInsuranceCosOptions = createLoadOptions(
+    getBodyInsuranceCosAction,
+  );
+  const loadInsuranceCosOptions = createLoadOptions(getInsuranceCosAction);
+  const loadPlaqueTypesOptions = createLoadOptions(getPlaqueTypesAction);
+  const loadPlaqueUsagesOptions = createLoadOptions(getPlaqueUsagesAction);
+  const loadMotionDirectionsOptions = createLoadOptions(
+    getMotionDirectionsAction,
+  );
+  const loadColorsOptions = createLoadOptions(getColorsAction);
 
   // Handle form submission
   const onSubmit: SubmitHandler<RoadDefectsFilterState> = (data) => {
@@ -598,25 +600,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     )}
                   </div>
                 )}
-
-                {/* Max Damage Sections */}
-                {enabledFilters.includes("maxDamageSections") && (
-                  <MyAsyncMultiSelect
-                    name="maxDamageSections"
-                    label="بخش‌های آسیب‌دیده"
-                    setValue={setValue}
-                    loadOptions={loadMaxDamageSectionsOptions}
-                    errMsg={errors.maxDamageSections?.message}
-                    placeholder="انتخاب بخش‌های آسیب‌دیده..."
-                    defaultOptions
-                    defaultValue={
-                      initialFilters?.maxDamageSections?.map((section) => ({
-                        value: section,
-                        label: section,
-                      })) || []
-                    }
-                  />
-                )}
               </div>
             )}
           </div>
@@ -684,6 +667,9 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
             {advancedFiltersOpen && (
               <div className="space-y-4">
                 {/* Road and Infrastructure */}
+                <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                  شرایط راه و محیط
+                </h4>
                 {enabledFilters.includes("roadSituation") && (
                   <MyAsyncMultiSelect
                     name="roadSituation"
@@ -720,7 +706,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   />
                 )}
 
-                {/* Road Defects */}
                 {enabledFilters.includes("roadDefects") && (
                   <MyAsyncMultiSelect
                     name="roadDefects"
@@ -733,7 +718,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   />
                 )}
 
-                {/* Lighting Conditions */}
                 {!config.disableLightingFilter &&
                   enabledFilters.includes("lightStatus") && (
                     <MyAsyncMultiSelect
@@ -747,7 +731,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     />
                   )}
 
-                {/* Collision Types */}
                 {!config.disableCollisionTypeFilter &&
                   enabledFilters.includes("collisionType") && (
                     <MyAsyncMultiSelect
@@ -758,16 +741,9 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.collisionType?.message}
                       placeholder="انتخاب نوع برخورد..."
                       defaultOptions
-                      defaultValue={
-                        initialFilters?.collisionType?.map((type) => ({
-                          value: type,
-                          label: type,
-                        })) || []
-                      }
                     />
                   )}
 
-                {/* Weather Conditions */}
                 {enabledFilters.includes("airStatuses") && (
                   <MyAsyncMultiSelect
                     name="airStatuses"
@@ -780,7 +756,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   />
                 )}
 
-                {/* Area Usage */}
                 {enabledFilters.includes("areaUsages") && (
                   <MyAsyncMultiSelect
                     name="areaUsages"
@@ -793,7 +768,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   />
                 )}
 
-                {/* Road Surface Conditions */}
                 {enabledFilters.includes("roadSurfaceConditions") && (
                   <MyAsyncMultiSelect
                     name="roadSurfaceConditions"
@@ -806,7 +780,10 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   />
                 )}
 
-                {/* Human and Vehicle Reasons */}
+                {/* Reasons */}
+                <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                  علل تصادف
+                </h4>
                 {enabledFilters.includes("humanReasons") && (
                   <MyAsyncMultiSelect
                     name="humanReasons"
@@ -831,7 +808,10 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   />
                 )}
 
-                {/* Vehicle System and Fault Status */}
+                {/* Vehicle Details */}
+                <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                  جزئیات وسیله نقلیه
+                </h4>
                 {enabledFilters.includes("vehicleSystem") && (
                   <MyAsyncMultiSelect
                     name="vehicleSystem"
@@ -839,11 +819,65 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     setValue={setValue}
                     loadOptions={loadVehicleSystemsOptions}
                     errMsg={errors.vehicleSystem?.message}
-                    placeholder="انتخاب سیستم وسیله نقلیه..."
+                    placeholder="انتخاب سیستم..."
                     defaultOptions
                   />
                 )}
-
+                {enabledFilters.includes("vehicleSystemType") && (
+                  <MyAsyncMultiSelect
+                    name="vehicleSystemType"
+                    label="نوع سیستم وسیله نقلیه"
+                    setValue={setValue}
+                    loadOptions={loadSystemTypesOptions}
+                    errMsg={errors.vehicleSystemType?.message}
+                    placeholder="انتخاب نوع سیستم..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehicleColor") && (
+                  <MyAsyncMultiSelect
+                    name="vehicleColor"
+                    label="رنگ وسیله نقلیه"
+                    setValue={setValue}
+                    loadOptions={loadColorsOptions}
+                    errMsg={errors.vehicleColor?.message}
+                    placeholder="انتخاب رنگ..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehiclePlaqueType") && (
+                  <MyAsyncMultiSelect
+                    name="vehiclePlaqueType"
+                    label="نوع پلاک"
+                    setValue={setValue}
+                    loadOptions={loadPlaqueTypesOptions}
+                    errMsg={errors.vehiclePlaqueType?.message}
+                    placeholder="انتخاب نوع پلاک..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehiclePlaqueUsage") && (
+                  <MyAsyncMultiSelect
+                    name="vehiclePlaqueUsage"
+                    label="کاربری پلاک"
+                    setValue={setValue}
+                    loadOptions={loadPlaqueUsagesOptions}
+                    errMsg={errors.vehiclePlaqueUsage?.message}
+                    placeholder="انتخاب کاربری پلاک..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehicleMotionDirection") && (
+                  <MyAsyncMultiSelect
+                    name="vehicleMotionDirection"
+                    label="جهت حرکت وسیله نقلیه"
+                    setValue={setValue}
+                    loadOptions={loadMotionDirectionsOptions}
+                    errMsg={errors.vehicleMotionDirection?.message}
+                    placeholder="انتخاب جهت حرکت..."
+                    defaultOptions
+                  />
+                )}
                 {enabledFilters.includes("vehicleFaultStatus") && (
                   <MyAsyncMultiSelect
                     name="vehicleFaultStatus"
@@ -851,107 +885,144 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     setValue={setValue}
                     loadOptions={loadFaultStatusesOptions}
                     errMsg={errors.vehicleFaultStatus?.message}
-                    placeholder="انتخاب وضعیت خطای وسیله نقلیه..."
+                    placeholder="انتخاب وضعیت خطا..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehicleInsuranceCo") && (
+                  <MyAsyncMultiSelect
+                    name="vehicleInsuranceCo"
+                    label="شرکت بیمه شخص ثالث"
+                    setValue={setValue}
+                    loadOptions={loadInsuranceCosOptions}
+                    errMsg={errors.vehicleInsuranceCo?.message}
+                    placeholder="انتخاب شرکت بیمه..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehicleBodyInsuranceCo") && (
+                  <MyAsyncMultiSelect
+                    name="vehicleBodyInsuranceCo"
+                    label="شرکت بیمه بدنه"
+                    setValue={setValue}
+                    loadOptions={loadBodyInsuranceCosOptions}
+                    errMsg={errors.vehicleBodyInsuranceCo?.message}
+                    placeholder="انتخاب شرکت بیمه..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("vehicleMaxDamageSections") && (
+                  <MyAsyncMultiSelect
+                    name="vehicleMaxDamageSections"
+                    label="بخش‌های آسیب‌دیده"
+                    setValue={setValue}
+                    loadOptions={loadMaxDamageSectionsOptions}
+                    errMsg={errors.vehicleMaxDamageSections?.message}
+                    placeholder="انتخاب بخش‌های آسیب‌دیده..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("equipmentDamages") && (
+                  <MyAsyncMultiSelect
+                    name="equipmentDamages"
+                    label="خسارت تجهیزات"
+                    setValue={setValue}
+                    loadOptions={loadEquipmentDamagesOptions}
+                    errMsg={errors.equipmentDamages?.message}
+                    placeholder="انتخاب خسارت تجهیزات..."
                     defaultOptions
                   />
                 )}
 
-                {/* Driver Information */}
-                {(enabledFilters.includes("driverSex") ||
-                  enabledFilters.includes("driverLicenceType") ||
-                  enabledFilters.includes("driverInjuryType")) && (
-                  <div className="space-y-4">
-                    <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
-                      اطلاعات راننده
-                    </h4>
-
-                    {enabledFilters.includes("driverSex") && (
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          جنسیت راننده
-                        </label>
-                        <div className="flex gap-4">
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              value="مرد"
-                              {...control.register("driverSex")}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-                            <span className="mr-2 text-sm text-gray-700">
-                              مرد
-                            </span>
-                          </label>
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              value="زن"
-                              {...control.register("driverSex")}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-                            <span className="mr-2 text-sm text-gray-700">
-                              زن
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    )}
-
-                    {enabledFilters.includes("driverLicenceType") && (
-                      <MyAsyncMultiSelect
-                        name="driverLicenceType"
-                        label="نوع گواهینامه راننده"
-                        setValue={setValue}
-                        loadOptions={loadLicenceTypesOptions}
-                        errMsg={errors.driverLicenceType?.message}
-                        placeholder="انتخاب نوع گواهینامه راننده..."
-                        defaultOptions
-                      />
-                    )}
-
-                    {enabledFilters.includes("driverInjuryType") && (
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          نوع آسیب راننده
-                        </label>
-                        <div className="flex gap-4">
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              value="فوتی"
-                              {...control.register("driverInjuryType")}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-                            <span className="mr-2 text-sm text-gray-700">
-                              فوتی
-                            </span>
-                          </label>
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              value="مجروح"
-                              {...control.register("driverInjuryType")}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-                            <span className="mr-2 text-sm text-gray-700">
-                              مجروح
-                            </span>
-                          </label>
-                          <label className="flex items-center">
-                            <input
-                              type="checkbox"
-                              value="سالم"
-                              {...control.register("driverInjuryType")}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-                            <span className="mr-2 text-sm text-gray-700">
-                              سالم
-                            </span>
-                          </label>
-                        </div>
-                      </div>
-                    )}
+                {/* Person Details */}
+                <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                  جزئیات اشخاص
+                </h4>
+                {/* Driver */}
+                {enabledFilters.includes("driverSex") && (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      جنسیت راننده
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="مرد"
+                          {...control.register("driverSex")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">مرد</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="زن"
+                          {...control.register("driverSex")}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="mr-2 text-sm text-gray-700">زن</span>
+                      </label>
+                    </div>
                   </div>
+                )}
+                {enabledFilters.includes("driverLicenceType") && (
+                  <MyAsyncMultiSelect
+                    name="driverLicenceType"
+                    label="نوع گواهینامه راننده"
+                    setValue={setValue}
+                    loadOptions={loadLicenceTypesOptions}
+                    errMsg={errors.driverLicenceType?.message}
+                    placeholder="انتخاب نوع گواهینامه..."
+                    defaultOptions
+                  />
+                )}
+                {enabledFilters.includes("driverInjuryType") && (
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      نوع آسیب راننده
+                    </label>
+                    <div className="flex gap-4 flex-wrap">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="فوتی"
+                          {...control.register("driverInjuryType")}
+                          className="w-4 h-4"
+                        />
+                        <span className="mr-2 text-sm">فوتی</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="مجروح"
+                          {...control.register("driverInjuryType")}
+                          className="w-4 h-4"
+                        />
+                        <span className="mr-2 text-sm">مجروح</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          value="سالم"
+                          {...control.register("driverInjuryType")}
+                          className="w-4 h-4"
+                        />
+                        <span className="mr-2 text-sm">سالم</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+                {enabledFilters.includes("driverTotalReason") && (
+                  <MyAsyncMultiSelect
+                    name="driverTotalReason"
+                    label="علت اصلی راننده"
+                    setValue={setValue}
+                    loadOptions={loadHumanReasonsOptions}
+                    errMsg={errors.driverTotalReason?.message}
+                    placeholder="انتخاب علت اصلی..."
+                    defaultOptions
+                  />
                 )}
               </div>
             )}
