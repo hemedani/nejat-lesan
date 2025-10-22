@@ -3,8 +3,21 @@
  * FILE: hourlyDayOfWeekAnalytics.val.ts
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
- * The complete validator for the heatmap analytics endpoint. It accepts the
- * full range of filters for consistency with other dashboard components.
+ * Validator for the "hourlyDayOfWeekAnalytics" act.
+ *
+ * This validator includes the **complete set of filters** used across all
+ * analytics endpoints (mirroring `roadDefectsAnalytics.val.ts`) to ensure:
+ * - UI consistency (reuse of filter components)
+ * - Flexible, deep data exploration
+ *
+ * 🔹 All categorical filters are `array(string())` → support **multi-select**.
+ * 🔹 Numeric range filters use `Min`/`Max` suffixes (e.g., deadCountMin).
+ * 🔹 Text fields (e.g., officer, names) support **partial matching**.
+ * 🔹 Boolean-like fields (e.g., hasWitness) use string "true"/"false".
+ * 🔹 Date fields accept ISO strings or Jalali-compatible formats.
+ *
+ * The `get` section is minimal (only `series`) since the heatmap always
+ * returns the full grid of 7 days × 24 hours.
  */
 import { array, enums, number, object, optional, string } from "@deps";
 import { geoJSONStruct } from "@model";
@@ -23,19 +36,19 @@ export const hourlyDayOfWeekAnalyticsValidator = () => {
 			injuredCount: optional(number()),
 			injuredCountMin: optional(number()),
 			injuredCountMax: optional(number()),
-			hasWitness: optional(string()),
+			hasWitness: optional(string()), // "true" or "false"
 			newsNumber: optional(number()),
-			officer: optional(string()),
+			officer: optional(string()), // Partial text match
 			completionDateFrom: optional(string()),
 			completionDateTo: optional(string()),
 
-			// --- Location & Context (using arrays for multi-select) ---
+			// --- Location & Context (multi-select → array) ---
 			province: optional(array(string())),
 			city: optional(array(string())),
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())),
-			accidentType: optional(array(string())),
+			accidentType: optional(array(string())), // Linked to 'Type' model
 			position: optional(array(string())),
 			rulingType: optional(array(string())),
 			lightStatus: optional(array(string())),
@@ -44,10 +57,10 @@ export const hourlyDayOfWeekAnalyticsValidator = () => {
 			roadRepairType: optional(array(string())),
 			shoulderStatus: optional(array(string())),
 
-			// --- GeoJSON ---
+			// --- GeoJSON Spatial Filter (reserved for future use) ---
 			polygon: optional(geoJSONStruct("Polygon")),
 
-			// --- Environmental & Reason-based ---
+			// --- Environmental & Reason-based (multi-select) ---
 			areaUsages: optional(array(string())),
 			airStatuses: optional(array(string())),
 			roadDefects: optional(array(string())),
@@ -56,13 +69,64 @@ export const hourlyDayOfWeekAnalyticsValidator = () => {
 			equipmentDamages: optional(array(string())),
 			roadSurfaceConditions: optional(array(string())),
 
+			// --- Attachments ---
+			attachmentName: optional(string()),
+			attachmentType: optional(string()),
+
 			// --- Vehicle DTOs Filters ---
 			vehicleColor: optional(array(string())),
 			vehicleSystem: optional(array(string())),
-			// ... and so on for all other filters ...
+			vehiclePlaqueType: optional(array(string())),
+			vehicleSystemType: optional(array(string())),
+			vehicleFaultStatus: optional(array(string())),
+			vehicleInsuranceCo: optional(array(string())),
+			vehicleInsuranceNo: optional(string()),
+			vehiclePlaqueUsage: optional(array(string())),
+			vehiclePrintNumber: optional(string()),
+			vehiclePlaqueSerialElement: optional(string()),
+			vehicleInsuranceDateFrom: optional(string()),
+			vehicleInsuranceDateTo: optional(string()),
+			vehicleBodyInsuranceCo: optional(array(string())),
+			vehicleBodyInsuranceNo: optional(string()),
+			vehicleMotionDirection: optional(array(string())),
+			vehicleBodyInsuranceDateFrom: optional(string()),
+			vehicleBodyInsuranceDateTo: optional(string()),
+			vehicleMaxDamageSections: optional(array(string())),
+			vehicleDamageSectionOther: optional(string()),
+			vehicleInsuranceWarrantyLimit: optional(number()),
+			vehicleInsuranceWarrantyLimitMin: optional(number()),
+			vehicleInsuranceWarrantyLimitMax: optional(number()),
+
+			// --- Driver in Vehicle DTOs Filters ---
+			driverSex: optional(array(string())),
+			driverFirstName: optional(string()),
+			driverLastName: optional(string()),
+			driverNationalCode: optional(string()),
+			driverLicenceNumber: optional(string()),
+			driverLicenceType: optional(array(string())),
+			driverInjuryType: optional(array(string())),
+			driverTotalReason: optional(array(string())),
+
+			// --- Passenger in Vehicle DTOs Filters ---
+			passengerSex: optional(array(string())),
+			passengerFirstName: optional(string()),
+			passengerLastName: optional(string()),
+			passengerNationalCode: optional(string()),
+			passengerInjuryType: optional(array(string())),
+			passengerFaultStatus: optional(array(string())),
+			passengerTotalReason: optional(array(string())),
+
+			// --- Pedestrian DTOs Filters ---
+			pedestrianSex: optional(array(string())),
+			pedestrianFirstName: optional(string()),
+			pedestrianLastName: optional(string()),
+			pedestrianNationalCode: optional(string()),
+			pedestrianInjuryType: optional(array(string())),
+			pedestrianFaultStatus: optional(array(string())),
+			pedestrianTotalReason: optional(array(string())),
 		}),
 		get: object({
-			series: optional(enums([0, 1])),
+			series: optional(enums([0, 1])), // Reserved for future response control
 		}),
 	});
 };
