@@ -164,23 +164,18 @@ const MonthlyHolidayPage = () => {
   const getStatistics = () => {
     if (!chartData || !chartData.series || !chartData.categories) return null;
 
-    const holidaySeries = chartData.series.find((s) =>
-      s.name.includes("تعطیل"),
-    );
-    const nonHolidaySeries = chartData.series.find((s) =>
-      s.name.includes("غیرتعطیل"),
+    const holidaySeries = chartData.series.find((s) => s.name === "تعطیل");
+    const nonHolidaySeries = chartData.series.find(
+      (s) => s.name === "غیر تعطیل",
     );
 
-    if (!holidaySeries || !nonHolidaySeries) return null;
+    if (!holidaySeries && !nonHolidaySeries) return null;
 
-    const totalHolidayAccidents = holidaySeries.data.reduce(
-      (sum, val) => sum + val,
-      0,
-    );
-    const totalNonHolidayAccidents = nonHolidaySeries.data.reduce(
-      (sum, val) => sum + val,
-      0,
-    );
+    const totalHolidayAccidents =
+      holidaySeries?.data.reduce((sum, val) => sum + val, 0) || 0;
+    const totalNonHolidayAccidents =
+      nonHolidaySeries?.data.reduce((sum, val) => sum + val, 0) || 0;
+
     const totalAccidents = totalHolidayAccidents + totalNonHolidayAccidents;
     const holidayPercentage =
       totalAccidents > 0
@@ -188,10 +183,11 @@ const MonthlyHolidayPage = () => {
         : "0";
 
     // Find month with highest holiday accidents
-    const maxIndex = holidaySeries.data.indexOf(
-      Math.max(...holidaySeries.data),
-    );
-    const peakMonth = chartData.categories[maxIndex] || "نامشخص";
+    const maxIndex = holidaySeries
+      ? holidaySeries.data.indexOf(Math.max(...holidaySeries.data))
+      : -1;
+    const peakMonth =
+      maxIndex !== -1 ? chartData.categories[maxIndex] : "نامشخص";
 
     return {
       totalHolidayAccidents,
