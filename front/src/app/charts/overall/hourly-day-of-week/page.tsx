@@ -136,20 +136,57 @@ const HourlyDayOfWeekPage = () => {
     try {
       const result = await hourlyDayOfWeekAnalytics({
         set: {
-          province: filters.province || [],
-          city: filters.city || [],
+          // Core Accident Details
           dateOfAccidentFrom: filters.dateOfAccidentFrom || "",
           dateOfAccidentTo: filters.dateOfAccidentTo || "",
-          lightStatus: filters.lightStatus || [],
-          collisionType: filters.collisionType || [],
-          roadDefects: filters.roadDefects || [],
-          airStatuses: filters.airStatuses || [],
-          areaUsages: filters.areaUsages || [],
-          roadSurfaceConditions: filters.roadSurfaceConditions || [],
           deadCountMin: filters.deadCountMin,
           deadCountMax: filters.deadCountMax,
           injuredCountMin: filters.injuredCountMin,
           injuredCountMax: filters.injuredCountMax,
+
+          // Location & Context
+          province: filters.province || [],
+          city: filters.city || [],
+          road: filters.road || [],
+          trafficZone: filters.trafficZone || [],
+          cityZone: filters.cityZone || [],
+          accidentType: filters.accidentType || [],
+          position: filters.position || [],
+          rulingType: filters.rulingType || [],
+
+          // Accident Characteristics
+          lightStatus: filters.lightStatus || [],
+          collisionType: filters.collisionType || [],
+          roadSituation: filters.roadSituation || [],
+          roadRepairType: filters.roadRepairType || [],
+          shoulderStatus: filters.shoulderStatus || [],
+
+          // Environmental & Reason-based
+          areaUsages: filters.areaUsages || [],
+          airStatuses: filters.airStatuses || [],
+          roadDefects: filters.roadDefects || [],
+          humanReasons: filters.humanReasons || [],
+          vehicleReasons: filters.vehicleReasons || [],
+          roadSurfaceConditions: filters.roadSurfaceConditions || [],
+          equipmentDamages: filters.equipmentDamages || [],
+
+          // Vehicle DTOs Filters
+          vehicleColor: filters.vehicleColor || [],
+          vehicleSystem: filters.vehicleSystem || [],
+          vehiclePlaqueType: filters.vehiclePlaqueType || [],
+          vehicleSystemType: filters.vehicleSystemType || [],
+          vehicleFaultStatus: filters.vehicleFaultStatus || [],
+          vehicleInsuranceCo: filters.vehicleInsuranceCo || [],
+          vehiclePlaqueUsage: filters.vehiclePlaqueUsage || [],
+          vehicleBodyInsuranceCo: filters.vehicleBodyInsuranceCo || [],
+          vehicleMotionDirection: filters.vehicleMotionDirection || [],
+          vehicleMaxDamageSections: filters.vehicleMaxDamageSections || [],
+
+          // Driver in Vehicle DTOs Filters
+          driverSex: filters.driverSex || [],
+          driverLicenceType: filters.driverLicenceType || [],
+          driverInjuryType: filters.driverInjuryType || [],
+          driverTotalReason: filters.driverTotalReason || [],
         },
         get: {
           series: 1,
