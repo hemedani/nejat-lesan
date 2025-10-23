@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -32,9 +32,7 @@ const AccidentSeverityPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDamageFilterActive, setIsDamageFilterActive] =
     useState<boolean>(false);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
   useEffect(() => {
@@ -48,24 +46,9 @@ const AccidentSeverityPage = () => {
     setIsDamageFilterActive(true);
 
     try {
+      // Initial load with empty filters
       const result = await accidentSeverityAnalytics({
-        set: {
-          dateOfAccidentFrom: "",
-          dateOfAccidentTo: "",
-          officer: "",
-          province: [],
-          city: [],
-          road: [],
-          lightStatus: [],
-          collisionType: [],
-          roadSituation: [],
-          roadSurfaceConditions: [],
-          humanReasons: [],
-          roadDefects: [],
-          vehicleSystem: [],
-          driverSex: [],
-          driverLicenceType: [],
-        },
+        set: {}, // Pass empty set for initial load
         get: {
           analytics: 1,
         },
@@ -84,7 +67,7 @@ const AccidentSeverityPage = () => {
   };
 
   // Handle filter submission
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
@@ -103,23 +86,7 @@ const AccidentSeverityPage = () => {
 
     try {
       const result = await accidentSeverityAnalytics({
-        set: {
-          dateOfAccidentFrom: filters.dateOfAccidentFrom || "",
-          dateOfAccidentTo: filters.dateOfAccidentTo || "",
-          officer: "",
-          province: filters.province || [],
-          city: filters.city || [],
-          road: [],
-          lightStatus: filters.lightStatus || [],
-          collisionType: filters.collisionType || [],
-          roadSituation: [],
-          roadSurfaceConditions: filters.roadSurfaceConditions || [],
-          humanReasons: [],
-          roadDefects: filters.roadDefects || [],
-          vehicleSystem: [],
-          driverSex: [],
-          driverLicenceType: [],
-        },
+        set: filters, // Pass all filters directly
         get: {
           analytics: 1,
         },
