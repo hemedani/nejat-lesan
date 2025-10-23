@@ -1,10 +1,10 @@
 // Utility file for defining enabled filters for different chart types
 // This provides a centralized way to manage which filters are available for each chart type
 
-import { RoadDefectsFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 
 // Type for enabled filters
-export type EnabledFilters = Array<keyof RoadDefectsFilterState>;
+export type EnabledFilters = Array<keyof ChartFilterState>;
 
 // Common filter sets that can be reused across multiple charts
 export const COMMON_FILTER_SETS = {
@@ -81,7 +81,6 @@ export const COMMON_FILTER_SETS = {
     "driverSex",
     "driverLicenceType",
     "driverInjuryType",
-    "maxDamageSections",
   ] as EnabledFilters,
 };
 
@@ -144,7 +143,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "position",
     "rulingType",
     "lightStatus",
-    "collisionType", // Key filter for collision analytics
+    "collisionType",
     "roadSituation",
     "roadRepairType",
     "shoulderStatus",
@@ -154,7 +153,29 @@ export const CHART_SPECIFIC_FILTERS = {
     "humanReasons",
     "vehicleReasons",
     "roadSurfaceConditions",
+    "equipmentDamages",
+    "vehicleColor",
     "vehicleSystem",
+    "vehiclePlaqueType",
+    "vehicleSystemType",
+    "vehicleFaultStatus",
+    "vehicleInsuranceCo",
+    "vehiclePlaqueUsage",
+    "vehicleBodyInsuranceCo",
+    "vehicleMotionDirection",
+    "vehicleMaxDamageSections",
+    "driverSex",
+    "driverLicenceType",
+    "driverInjuryType",
+    "driverTotalReason",
+    "passengerSex",
+    "passengerInjuryType",
+    "passengerFaultStatus",
+    "passengerTotalReason",
+    "pedestrianSex",
+    "pedestrianInjuryType",
+    "pedestrianFaultStatus",
+    "pedestrianTotalReason",
   ] as EnabledFilters,
 
   // Road Defects Analytics
@@ -252,24 +273,104 @@ export const CHART_SPECIFIC_FILTERS = {
     "officer",
   ] as EnabledFilters,
 
-  // Accident Severity Analytics
+  // Accident Severity Analytics - Now includes all available filters
   ACCIDENT_SEVERITY_ANALYTICS: [
+    // Core Accident Details
     "seri",
     "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
+    "deadCount",
     "deadCountMin",
     "deadCountMax",
+    "injuredCount",
     "injuredCountMin",
-    "injuredCountMax", // Key filters for severity
+    "injuredCountMax",
+    "hasWitness",
+    "newsNumber",
+    "officer",
+    "completionDateFrom",
+    "completionDateTo",
+
+    // Location & Context
     "province",
     "city",
     "road",
+    "trafficZone",
+    "cityZone",
     "accidentType",
+    "position",
+    "rulingType",
+
+    // Environmental & Reason-based
+    "lightStatus",
     "collisionType",
+    "roadSituation",
+    "roadRepairType",
+    "shoulderStatus",
+    "areaUsages",
+    "airStatuses",
+    "roadDefects",
     "humanReasons",
     "vehicleReasons",
-    "officer",
+    "equipmentDamages",
+    "roadSurfaceConditions",
+
+    // Attachments
+    "attachmentName",
+    "attachmentType",
+
+    // Vehicle DTOs Filters
+    "vehicleColor",
+    "vehicleSystem",
+    "vehiclePlaqueType",
+    "vehicleSystemType",
+    "vehicleFaultStatus",
+    "vehicleInsuranceCo",
+    "vehicleInsuranceNo",
+    "vehiclePlaqueUsage",
+    "vehiclePrintNumber",
+    "vehiclePlaqueSerialElement",
+    "vehicleInsuranceDateFrom",
+    "vehicleInsuranceDateTo",
+    "vehicleBodyInsuranceCo",
+    "vehicleBodyInsuranceNo",
+    "vehicleMotionDirection",
+    "vehicleBodyInsuranceDateFrom",
+    "vehicleBodyInsuranceDateTo",
+    "vehicleMaxDamageSections",
+    "vehicleDamageSectionOther",
+    "vehicleInsuranceWarrantyLimit",
+    "vehicleInsuranceWarrantyLimitMin",
+    "vehicleInsuranceWarrantyLimitMax",
+
+    // Driver in Vehicle DTOs Filters
+    "driverSex",
+    "driverFirstName",
+    "driverLastName",
+    "driverNationalCode",
+    "driverLicenceNumber",
+    "driverLicenceType",
+    "driverInjuryType",
+    "driverTotalReason",
+
+    // Passenger in Vehicle DTOs Filters
+    "passengerSex",
+    "passengerFirstName",
+    "passengerLastName",
+    "passengerNationalCode",
+    "passengerInjuryType",
+    "passengerFaultStatus",
+    "passengerTotalReason",
+
+    // Pedestrian DTOs Filters
+    "pedestrianSex",
+    "pedestrianFirstName",
+    "pedestrianLastName",
+    "pedestrianNationalCode",
+    "pedestrianInjuryType",
+    "pedestrianFaultStatus",
+    "pedestrianTotalReason",
   ] as EnabledFilters,
 
   // Monthly/Holiday Analytics - Based on monthlyHolidayAnalytics API
@@ -819,7 +920,7 @@ export const getEnabledFiltersForChart = (
 export const combineFilterSets = (
   ...filterSets: EnabledFilters[]
 ): EnabledFilters => {
-  const combined = new Set<keyof RoadDefectsFilterState>();
+  const combined = new Set<keyof ChartFilterState>();
   filterSets.forEach((set) => {
     set.forEach((filter) => combined.add(filter));
   });
