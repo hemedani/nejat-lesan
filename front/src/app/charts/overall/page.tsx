@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import EffectiveRoadDefectsDashboard from "@/components/dashboards/EffectiveRoadDefectsDashboard";
 import MonthlyHolidayAnalyticsDashboard from "@/components/dashboards/MonthlyHolidayAnalyticsDashboard";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { COMMON_FILTER_SETS } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -109,7 +109,7 @@ const OverallChartsPage = () => {
   };
 
   // Handle filter submission
-  const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
+  const handleFilterSubmit = async (filters: ChartFilterState) => {
     setIsLoading(true);
     setError(null);
 

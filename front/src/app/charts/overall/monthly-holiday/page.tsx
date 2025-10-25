@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import MonthlyHolidayAnalyticsDashboard from "@/components/dashboards/MonthlyHolidayAnalyticsDashboard";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -66,7 +66,7 @@ const MonthlyHolidayPage = () => {
   };
 
   // Handle filter submission
-  const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
+  const handleFilterSubmit = async (filters: ChartFilterState) => {
     setIsLoading(true);
     setError(null);
 

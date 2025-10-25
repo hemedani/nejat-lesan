@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -44,7 +44,7 @@ const SpatialLightAnalyticsPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Default filters with "اهواز" pre-selected for city and "روز" for light status
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>({
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
     city: ["اهواز"],
     lightStatus: ["روز"],
   });
@@ -56,7 +56,7 @@ const SpatialLightAnalyticsPage = () => {
   }, []);
 
   // Handle filter submission
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);

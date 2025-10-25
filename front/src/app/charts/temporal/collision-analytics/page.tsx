@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import TemporalCollisionChart from "@/components/charts/TemporalCollisionChart";
@@ -79,14 +79,14 @@ const TemporalCollisionAnalyticsPage = () => {
   );
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>({
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
     collisionType: DEFAULT_COLLISION_TYPES,
   });
 
   // Load initial data on component mount
   const loadInitialData = useCallback(async () => {
     // Get default filters for initial load
-    const getDefaultFilters = (): RoadDefectsFilterState => {
+    const getDefaultFilters = (): ChartFilterState => {
       return {
         province: [],
         city: [],
@@ -173,7 +173,7 @@ const TemporalCollisionAnalyticsPage = () => {
   }, [loadInitialData]);
 
   // Handle filter application
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setIsLoading(true);
     setError(null);
     setChartData(null);

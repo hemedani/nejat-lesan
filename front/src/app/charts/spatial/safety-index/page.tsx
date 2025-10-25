@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -70,9 +70,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   // Default filters - empty for initial load to use backend defaults
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Ensure client-side rendering for map component
   useEffect(() => {
@@ -94,7 +92,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
   }, [groupBy]);
 
   // Handle filter submission
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);

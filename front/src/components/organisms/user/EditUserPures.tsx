@@ -10,9 +10,10 @@ import { DatePicker } from "zaman";
 import SelectBox from "@/components/atoms/Select";
 import { updateUserPure } from "@/app/actions/user/updateUser";
 import dynamic from "next/dynamic";
-import { SelectOption } from "../atoms/MyAsyncMultiSelect";
+import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useCallback, useState } from "react";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
+import type { StylesConfig } from "react-select";
 
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
@@ -84,6 +85,11 @@ export const EditUserPures = ({
         setValue("citySettingId", selectedOption.value, {
           shouldValidate: true,
         });
+      } else {
+        // clear value when selection cleared
+        setValue("citySettingId", undefined as unknown as string, {
+          shouldValidate: true,
+        });
       }
     },
     [setValue],
@@ -98,6 +104,53 @@ export const EditUserPures = ({
       ToastNotify("error", updatedUserPures.body.message);
     }
   };
+
+  // StylesConfig typed for react-select with our SelectOption type (single-select)
+  const selectStyles: StylesConfig<unknown, false> = {
+    control: (provided, state) => ({
+      ...provided,
+      minHeight: "48px",
+      backgroundColor: errors.citySettingId ? "#fef2f2" : "white",
+      borderColor: errors.citySettingId
+        ? state.isFocused
+          ? "#ef4444"
+          : "#fca5a5"
+        : state.isFocused
+          ? "#3b82f6"
+          : "#cbd5e1",
+      borderRadius: "12px",
+      direction: "rtl",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      padding: "2px 16px",
+      direction: "rtl",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#94a3b8",
+      direction: "rtl",
+      textAlign: "right",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#1e293b",
+      direction: "rtl",
+      textAlign: "right",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#3b82f6"
+        : state.isFocused
+          ? "#f1f5f9"
+          : "transparent",
+      color: state.isSelected ? "white" : "#1e293b",
+      direction: "rtl",
+      textAlign: "right",
+    }),
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="flex flex-wrap w-full">
@@ -195,50 +248,7 @@ export const EditUserPures = ({
           loadingMessage={() => "در حال بارگذاری..."}
           isRtl={true}
           isClearable
-          styles={{
-            control: (provided: any, state: any) => ({
-              ...provided,
-              minHeight: "48px",
-              backgroundColor: errors.citySettingId ? "#fef2f2" : "white",
-              borderColor: errors.citySettingId
-                ? state.isFocused
-                  ? "#ef4444"
-                  : "#fca5a5"
-                : state.isFocused
-                  ? "#3b82f6"
-                  : "#cbd5e1",
-              borderRadius: "12px",
-              direction: "rtl",
-            }),
-            valueContainer: (provided: any) => ({
-              ...provided,
-              padding: "2px 16px",
-              direction: "rtl",
-            }),
-            placeholder: (provided: any) => ({
-              ...provided,
-              color: "#94a3b8",
-              direction: "rtl",
-              textAlign: "right",
-            }),
-            singleValue: (provided: any) => ({
-              ...provided,
-              color: "#1e293b",
-              direction: "rtl",
-              textAlign: "right",
-            }),
-            option: (provided: any, state: any) => ({
-              ...provided,
-              backgroundColor: state.isSelected
-                ? "#3b82f6"
-                : state.isFocused
-                  ? "#f1f5f9"
-                  : "transparent",
-              color: state.isSelected ? "white" : "#1e293b",
-              direction: "rtl",
-              textAlign: "right",
-            }),
-          }}
+          styles={selectStyles}
         />
         {errors.citySettingId && (
           <span className="text-red-500 text-xs font-medium text-right mt-1">

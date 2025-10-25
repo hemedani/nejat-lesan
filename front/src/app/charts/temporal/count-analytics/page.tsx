@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -61,12 +61,10 @@ const TemporalCountAnalyticsPage = () => {
   const [chartData, setChartData] = useState<TemporalCountData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Get default filters for initial load
-  const getDefaultFilters = (): RoadDefectsFilterState => {
+  const getDefaultFilters = (): ChartFilterState => {
     return {
       province: [],
       city: [],
@@ -143,7 +141,7 @@ const TemporalCountAnalyticsPage = () => {
 
   // Handle filter submission
   // Handle filter application
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import HourlyDayOfWeekHeatmap from "@/components/charts/HourlyDayOfWeekHeatmap";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -129,7 +129,7 @@ const HourlyDayOfWeekPage = () => {
   }, [loadInitialData]);
 
   // Handle filter submission
-  const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
+  const handleFilterSubmit = async (filters: ChartFilterState) => {
     setIsLoading(true);
     setError(null);
 

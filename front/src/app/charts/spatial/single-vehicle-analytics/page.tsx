@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -46,7 +46,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Default filters with "اهواز" pre-selected for city and "خروج از جاده" for collision type
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>({
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
     city: ["اهواز"],
     collisionType: ["خروج از جاده"],
   });
@@ -58,7 +58,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
   }, []);
 
   // Handle filter submission
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import EffectiveRoadDefectsDashboard from "@/components/dashboards/EffectiveRoadDefectsDashboard";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -37,9 +37,7 @@ const RoadDefectsPage = () => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
   useEffect(() => {
@@ -72,7 +70,7 @@ const RoadDefectsPage = () => {
   };
 
   // Handle filter submission
-  const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
+  const handleFilterSubmit = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
