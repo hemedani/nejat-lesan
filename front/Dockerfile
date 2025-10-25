@@ -5,16 +5,16 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package*.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN npm ci --legacy-peer-deps
+# Install pnpm and dependencies
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Copy application code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN pnpm build
 
 # Stage 2: Production
 FROM node:20-alpine AS production
@@ -25,8 +25,12 @@ WORKDIR /app
 # Create a non-root user
 RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 # Copy built application from builder stage
 COPY --from=builder --chown=nextjs:nextjs /app/package*.json ./
+COPY --from=builder --chown=nextjs:nextjs /app/pnpm-lock.yaml ./
 COPY --from=builder --chown=nextjs:nextjs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nextjs /app/public ./public
 COPY --from=builder --chown=nextjs:nextjs /app/node_modules ./node_modules
@@ -42,7 +46,7 @@ EXPOSE ${APP_PORT}
 USER nextjs
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
 
 # Stage 3: Development
 FROM node:20-alpine AS development
@@ -54,10 +58,10 @@ WORKDIR /app
 RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
 
 # Copy package files
-COPY package*.json ./
+COPY package*.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN npm ci --legacy-peer-deps
+# Install pnpm and dependencies
+RUN npm install -g pnpm && pnpm install
 RUN chown -R nextjs:nextjs /app
 
 # Set environment variables
@@ -71,4 +75,4 @@ EXPOSE ${APP_PORT}
 USER nextjs
 
 # Start the application in development mode
-CMD ["npm", "run", "dev", "--", "--turbopack"]
+CMD ["pnpm", "dev", "--", "--turbopack"]
