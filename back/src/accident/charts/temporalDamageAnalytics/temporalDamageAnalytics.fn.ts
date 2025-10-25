@@ -12,7 +12,7 @@
  * Key features:
  * - Default date range = last 3 Jalali years
  * - Default damage sections if none selected
- * - Flattens `vehicle_dtos[].max_damage_sections.name` into a single array per accident
+ * - Flattens `vehicle_dtos[].vehicleMaxDamageSections.name` into a single array per accident
  * - Uses `$setIntersection` to detect if any selected damage type is present
  * - Returns continuous monthly series (0% if no data)
  * - Applies **all filters** before aggregation for maximum performance
@@ -153,7 +153,7 @@ export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 		vehiclePlaqueUsage: "plaque_usage.name",
 		vehicleBodyInsuranceCo: "body_insurance_co.name",
 		vehicleMotionDirection: "motion_direction.name",
-		maxDamageSections: "max_damage_sections.name", // ← critical for this chart
+		vehicleMaxDamageSections: "max_damage_sections.name", // ← critical for this chart
 		driverSex: "driver.sex",
 		driverLicenceType: "driver.licence_type.name",
 		driverInjuryType: "driver.injury_type.name",
@@ -331,8 +331,9 @@ export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 	];
 
 	const damageSectionsToAnalyze =
-		(filters.maxDamageSections && filters.maxDamageSections.length > 0)
-			? filters.maxDamageSections
+		(filters.vehicleMaxDamageSections &&
+				filters.vehicleMaxDamageSections.length > 0)
+			? filters.vehicleMaxDamageSections
 			: defaultDamageSections;
 
 	// =========================================================================

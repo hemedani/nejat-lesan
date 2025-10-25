@@ -223,7 +223,7 @@ const TemporalDamageAnalyticsPage = () => {
           vehicleBodyInsuranceCo: defaultFilters.vehicleBodyInsuranceCo,
           vehicleBodyInsuranceNo: defaultFilters.vehicleBodyInsuranceNo,
           vehicleMotionDirection: defaultFilters.vehicleMotionDirection,
-          maxDamageSections: defaultFilters.maxDamageSections,
+          vehicleMaxDamageSections: defaultFilters.vehicleMaxDamageSections,
           vehicleDamageSectionOther: defaultFilters.vehicleDamageSectionOther,
           vehicleInsuranceWarrantyLimit:
             defaultFilters.vehicleInsuranceWarrantyLimit,
@@ -364,7 +364,7 @@ const TemporalDamageAnalyticsPage = () => {
           vehicleBodyInsuranceCo: filterState.vehicleBodyInsuranceCo,
           vehicleBodyInsuranceNo: filterState.vehicleBodyInsuranceNo,
           vehicleMotionDirection: filterState.vehicleMotionDirection,
-          maxDamageSections: filterState.maxDamageSections,
+          vehicleMaxDamageSections: filterState.vehicleMaxDamageSections,
           vehicleDamageSectionOther: filterState.vehicleDamageSectionOther,
           vehicleInsuranceWarrantyLimit:
             filterState.vehicleInsuranceWarrantyLimit,

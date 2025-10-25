@@ -92,7 +92,7 @@ export const temporalDamageAnalyticsValidator = () => {
 			vehicleBodyInsuranceNo: optional(string()),
 			vehicleMotionDirection: optional(array(string())),
 			// 🔑 Critical filter for this chart:
-			maxDamageSections: optional(array(string())),
+			vehicleMaxDamageSections: optional(array(string())),
 			vehicleDamageSectionOther: optional(string()),
 			vehicleInsuranceWarrantyLimit: optional(number()),
 			vehicleInsuranceWarrantyLimitMin: optional(number()),
