@@ -1,13 +1,13 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { RoadDefectsFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 
 // Interface for a single comparison snapshot
 export interface ComparisonItem {
   id: string; // Unique identifier (timestamp)
   imageDataUrl: string; // Base64 image string from html-to-image
-  filters: RoadDefectsFilterState; // The applied filter state
+  filters: ChartFilterState; // The applied filter state
   createdAt: Date; // When the snapshot was taken
   title?: string; // Optional custom title for the snapshot
 }
@@ -22,9 +22,9 @@ interface MapComparisonContextType {
 }
 
 // Create the context
-const MapComparisonContext = createContext<MapComparisonContextType | undefined>(
-  undefined
-);
+const MapComparisonContext = createContext<
+  MapComparisonContextType | undefined
+>(undefined);
 
 // Provider component
 export const MapComparisonProvider: React.FC<{ children: ReactNode }> = ({
@@ -78,14 +78,14 @@ export const useMapComparison = (): MapComparisonContextType => {
   const context = useContext(MapComparisonContext);
   if (context === undefined) {
     throw new Error(
-      "useMapComparison must be used within a MapComparisonProvider"
+      "useMapComparison must be used within a MapComparisonProvider",
     );
   }
   return context;
 };
 
 // Helper function to generate a descriptive title for a comparison
-export const generateComparisonTitle = (filters: RoadDefectsFilterState): string => {
+export const generateComparisonTitle = (filters: ChartFilterState): string => {
   const parts: string[] = [];
 
   // Add date range if available

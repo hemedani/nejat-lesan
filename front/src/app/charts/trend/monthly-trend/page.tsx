@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -14,7 +14,7 @@ const MonthlyTrendPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 
   // Handle filter submission (placeholder)
-  const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
+  const handleFilterSubmit = async (filters: ChartFilterState) => {
     console.log("Filters applied:", filters);
   };
 

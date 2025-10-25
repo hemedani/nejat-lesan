@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -217,13 +217,11 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
   const [chartData, setChartData] =
     useState<TemporalUnlicensedDriversData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
   const loadInitialData = useCallback(async () => {
-    const getDefaultFilters = (): RoadDefectsFilterState => {
+    const getDefaultFilters = (): ChartFilterState => {
       return {
         province: [],
         city: [],
@@ -235,7 +233,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         airStatuses: [],
         areaUsages: [],
         roadSurfaceConditions: [],
-        maxDamageSections: [],
+        vehicleMaxDamageSections: [],
         deadCountMin: undefined,
         deadCountMax: undefined,
         injuredCountMin: undefined,
@@ -294,7 +292,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
   }, [loadInitialData]);
 
   // Handle filter application
-  const handleApplyFilters = async (filterState: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filterState: ChartFilterState) => {
     setIsLoading(true);
     setError(null);
     setChartData(null);

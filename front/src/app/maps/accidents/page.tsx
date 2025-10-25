@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 // Components
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -49,9 +49,7 @@ const AccidentsMapPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [accidents, setAccidents] = useState<accidentSchema[]>([]);
   const [total, setTotal] = useState(0);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Modal state for polygon search results
   const [modalData, setModalData] = useState<accidentSchema[] | null>(null);
@@ -64,7 +62,7 @@ const AccidentsMapPage: React.FC = () => {
     useState<boolean>(false);
 
   // Handle filter submission
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setIsLoading(true);
     try {
       // If no date filter provided, default to last year

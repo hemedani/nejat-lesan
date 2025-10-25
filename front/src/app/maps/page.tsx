@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -19,7 +19,7 @@ const MapsPage = () => {
 
   // Handle filter submission (placeholder)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleFilterSubmit = async (filters: RoadDefectsFilterState) => {
+  const handleFilterSubmit = async (filters: ChartFilterState) => {
     setIsLoading(true);
     // TODO: Implement maps analytics API calls
     setTimeout(() => setIsLoading(false), 1000);

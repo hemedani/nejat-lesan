@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
-} from "./ChartsFilterSidebar";
+import ChartsFilterSidebar, { ChartFilterState } from "./ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 
 // Get enabled filters for the example (use comprehensive filters)
@@ -41,12 +39,13 @@ type ConfigPresetKey = keyof typeof configPresets;
 
 const ChartsFilterExample: React.FC = () => {
   const [activePreset, setActivePreset] = useState<ConfigPresetKey>("default");
-  const [appliedFilters, setAppliedFilters] =
-    useState<RoadDefectsFilterState | null>(null);
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState | null>(
+    null,
+  );
   const [showSidebar, setShowSidebar] = useState(true);
 
   // Handle filter application
-  const handleApplyFilters = (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     console.log("Applied Filters:", filters);
   };

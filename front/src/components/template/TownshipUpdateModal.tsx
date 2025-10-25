@@ -70,7 +70,6 @@ const TownshipUpdateModal: React.FC<TownshipUpdateModalProps> = ({
                 _id: 1,
                 name: 1,
                 english_name: 1,
-                center_location: 1,
               },
             },
           },

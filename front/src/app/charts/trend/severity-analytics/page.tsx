@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
-  RoadDefectsFilterState,
+  ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -236,9 +236,7 @@ const EventSeverityAnalyticsPage = () => {
   >(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [appliedFilters, setAppliedFilters] = useState<RoadDefectsFilterState>(
-    {},
-  );
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
   useEffect(() => {
@@ -289,7 +287,7 @@ const EventSeverityAnalyticsPage = () => {
   };
 
   // Handle filter submission
-  const handleApplyFilters = async (filters: RoadDefectsFilterState) => {
+  const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     await fetchData(filters, eventRange);
   };
@@ -303,10 +301,7 @@ const EventSeverityAnalyticsPage = () => {
   };
 
   // Fetch data with current filters and event range
-  const fetchData = async (
-    filters: RoadDefectsFilterState,
-    range: EventRange,
-  ) => {
+  const fetchData = async (filters: ChartFilterState, range: EventRange) => {
     if (!range.from || !range.to) return;
 
     setIsLoading(true);

@@ -14,14 +14,10 @@ import {
   SkullIcon,
   ShieldIcon,
   RoadIcon,
-  SunIcon,
-  CloudIcon,
-  ThermometerIcon,
-  EyeIcon,
 } from "@/components/atoms/Icons";
 
 // Import the filter state type
-import { RoadDefectsFilterState } from "./ChartsFilterSidebar";
+import { ChartFilterState } from "./ChartsFilterSidebar";
 import { formatDate } from "@/utils/formatters";
 
 /**
@@ -31,9 +27,9 @@ import { formatDate } from "@/utils/formatters";
 interface AppliedFiltersDisplayProps {
   /**
    * Filter state object containing all applied filters
-   * Uses the comprehensive RoadDefectsFilterState interface
+   * Uses the comprehensive ChartFilterState interface
    */
-  filters: RoadDefectsFilterState;
+  filters: ChartFilterState;
 }
 
 /**
@@ -52,7 +48,7 @@ interface AppliedFiltersDisplayProps {
  *
  * @component
  * @param {AppliedFiltersDisplayProps} props - The component props
- * @param {RoadDefectsFilterState & {maxDamageSections?: string[]}} props.filters - Filter state object
+ * @param {ChartFilterState} props.filters - Filter state object
  * @returns {React.ReactElement | null} The rendered component or null if no filters are applied
  *
  * @example
@@ -77,6 +73,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
   const hasFilters = Object.entries(filters).some(([, value]) => {
     if (value === undefined || value === null) return false;
     if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "string") return value.trim() !== "";
     return true;
   });
 
@@ -264,22 +261,6 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {/* Date Range */}
         {renderDateRange()}
 
-        {/* Time Range */}
-        {(filters.timeOfAccidentFrom || filters.timeOfAccidentTo) && (
-          <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <CalendarIcon className="w-4 h-4 text-gray-500" />
-              <span>⏰ بازه زمانی</span>
-            </h4>
-            <div className="flex flex-wrap gap-1">
-              <span className="inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default">
-                {filters.timeOfAccidentFrom || "ابتدا"} -{" "}
-                {filters.timeOfAccidentTo || "انتها"}
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Collision and Damage Filters */}
         {renderFilterSection(
           "🚗 نوع برخورد",
@@ -291,7 +272,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {renderFilterSection(
           "🔧 بخش‌های آسیب‌دیده",
           <CogIcon className="w-4 h-4 text-yellow-500" />,
-          filters.maxDamageSections,
+          filters.vehicleMaxDamageSections,
           "bg-yellow-100 text-yellow-800",
         )}
 
@@ -376,13 +357,6 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         )}
 
         {renderFilterSection(
-          "🚙 نوع وسیله نقلیه",
-          <CarIcon className="w-4 h-4 text-blue-500" />,
-          filters.vehicleType,
-          "bg-blue-100 text-blue-800",
-        )}
-
-        {renderFilterSection(
           "🎨 رنگ وسیله نقلیه",
           <CarIcon className="w-4 h-4 text-violet-500" />,
           filters.vehicleColor,
@@ -401,13 +375,6 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
           <ShieldIcon className="w-4 h-4 text-cyan-600" />,
           filters.vehicleBodyInsuranceCo,
           "bg-cyan-50 text-cyan-700",
-        )}
-
-        {renderFilterSection(
-          "📄 نوع گواهینامه",
-          <FilterIcon className="w-4 h-4 text-indigo-500" />,
-          filters.vehicleLicenceType,
-          "bg-indigo-100 text-indigo-800",
         )}
 
         {renderFilterSection(
@@ -434,7 +401,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {renderFilterSection(
           "🔧 آسیب تجهیزات",
           <CarIcon className="w-4 h-4 text-yellow-600" />,
-          filters.vehicleEquipmentDamage,
+          filters.equipmentDamages,
           "bg-yellow-50 text-yellow-700",
         )}
 
@@ -467,91 +434,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
           "bg-rose-100 text-rose-800",
         )}
 
-        {renderFilterSection(
-          "⚠️ وضعیت تقصیر راننده",
-          <UserIcon className="w-4 h-4 text-red-500" />,
-          filters.driverFaultStatus,
-          "bg-red-100 text-red-800",
-        )}
-
-        {renderFilterSection(
-          "🎂 سن راننده",
-          <UserIcon className="w-4 h-4 text-blue-500" />,
-          filters.driverAge,
-          "bg-blue-100 text-blue-800",
-        )}
-
-        {renderFilterSection(
-          "🪑 موقعیت راننده",
-          <UserIcon className="w-4 h-4 text-green-500" />,
-          filters.driverPosition,
-          "bg-green-100 text-green-800",
-        )}
-
-        {renderFilterSection(
-          "⚖️ نوع حکم راننده",
-          <FilterIcon className="w-4 h-4 text-gray-500" />,
-          filters.driverRulingType,
-          "bg-gray-100 text-gray-800",
-        )}
-
         {/* Road Infrastructure */}
-        {renderFilterSection(
-          "🛣️ نوع جاده",
-          <RoadIcon className="w-4 h-4 text-stone-500" />,
-          filters.roadType,
-          "bg-stone-100 text-stone-800",
-        )}
-
-        {renderFilterSection(
-          "📏 عرض جاده",
-          <RoadIcon className="w-4 h-4 text-stone-600" />,
-          filters.roadWidth,
-          "bg-stone-50 text-stone-700",
-        )}
-
-        {renderFilterSection(
-          "⛰️ شیب جاده",
-          <RoadIcon className="w-4 h-4 text-gray-500" />,
-          filters.roadSlope,
-          "bg-gray-100 text-gray-800",
-        )}
-
-        {renderFilterSection(
-          "🌀 پیچ جاده",
-          <RoadIcon className="w-4 h-4 text-gray-600" />,
-          filters.roadCurve,
-          "bg-gray-50 text-gray-700",
-        )}
-
-        {renderFilterSection(
-          "🚥 تابلوی جاده",
-          <FilterIcon className="w-4 h-4 text-yellow-500" />,
-          filters.roadSign,
-          "bg-yellow-100 text-yellow-800",
-        )}
-
-        {renderFilterSection(
-          "🚧 نرده جاده",
-          <RoadIcon className="w-4 h-4 text-orange-500" />,
-          filters.roadBarrier,
-          "bg-orange-100 text-orange-800",
-        )}
-
-        {renderFilterSection(
-          "💡 روشنایی جاده",
-          <SunIcon className="w-4 h-4 text-amber-500" />,
-          filters.roadLighting,
-          "bg-amber-100 text-amber-800",
-        )}
-
-        {renderFilterSection(
-          "🛤️ شانه جاده",
-          <RoadIcon className="w-4 h-4 text-slate-500" />,
-          filters.roadShoulder,
-          "bg-slate-100 text-slate-800",
-        )}
-
         {renderFilterSection(
           "🛤️ وضعیت شانه",
           <RoadIcon className="w-4 h-4 text-slate-600" />,
@@ -571,63 +454,6 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
           <HomeIcon className="w-4 h-4 text-indigo-500" />,
           filters.cityZone,
           "bg-indigo-100 text-indigo-800",
-        )}
-
-        {/* Time and Weather */}
-        {renderFilterSection(
-          "🗓️ فصل",
-          <CalendarIcon className="w-4 h-4 text-green-500" />,
-          filters.seasonality,
-          "bg-green-100 text-green-800",
-        )}
-
-        {renderFilterSection(
-          "📅 روز هفته",
-          <CalendarIcon className="w-4 h-4 text-blue-500" />,
-          filters.dayOfWeek,
-          "bg-blue-100 text-blue-800",
-        )}
-
-        {filters.isHoliday !== undefined && (
-          <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <CalendarIcon className="w-4 h-4 text-purple-500" />
-              <span>🎉 تعطیلی</span>
-            </h4>
-            <div className="flex flex-wrap gap-1">
-              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-purple-100 text-purple-800">
-                {filters.isHoliday ? "تعطیل" : "غیر تعطیل"}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {renderFilterSection(
-          "🌤️ وضعیت آب و هوا",
-          <CloudIcon className="w-4 h-4 text-sky-500" />,
-          filters.weatherCondition,
-          "bg-sky-100 text-sky-800",
-        )}
-
-        {renderFilterSection(
-          "👁️ میزان دید",
-          <EyeIcon className="w-4 h-4 text-gray-500" />,
-          filters.visibility,
-          "bg-gray-100 text-gray-800",
-        )}
-
-        {renderFilterSection(
-          "🌡️ دما",
-          <ThermometerIcon className="w-4 h-4 text-red-500" />,
-          filters.temperature,
-          "bg-red-100 text-red-800",
-        )}
-
-        {renderFilterSection(
-          "🌧️ بارندگی",
-          <CloudIcon className="w-4 h-4 text-blue-500" />,
-          filters.precipitation,
-          "bg-blue-100 text-blue-800",
         )}
 
         {/* Casualty Count Ranges */}
@@ -686,6 +512,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
               Object.entries(filters).filter(([, value]) => {
                 if (value === undefined || value === null) return false;
                 if (Array.isArray(value)) return value.length > 0;
+                if (typeof value === "string") return value.trim() !== "";
                 return true;
               }).length
             }
