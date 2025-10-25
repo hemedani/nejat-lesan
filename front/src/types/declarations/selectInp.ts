@@ -13153,7 +13153,7 @@ export type ReqType = {
           vehicleBodyInsuranceCo?: string[];
           vehicleBodyInsuranceNo?: string;
           vehicleMotionDirection?: string[];
-          maxDamageSections?: string[];
+          vehicleMaxDamageSections?: string[];
           vehicleDamageSectionOther?: string;
           vehicleInsuranceWarrantyLimit?: number;
           vehicleInsuranceWarrantyLimitMin?: number;
