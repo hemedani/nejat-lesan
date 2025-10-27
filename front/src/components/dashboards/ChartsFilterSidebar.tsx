@@ -747,14 +747,45 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                 </div>
                 <div className="grid grid-cols-1 gap-4">
                   {enabledFilters.includes("hasWitness") && (
-                    <MyInput
-                      name="hasWitness"
-                      label="وجود شاهد"
-                      register={control.register}
-                      errMsg={errors.hasWitness?.message}
-                      type="text"
-                      placeholder="true یا false"
-                    />
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        وجود شاهد
+                      </label>
+                      <div className="flex flex-wrap gap-4">
+                        <label className="inline-flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            value="true"
+                            {...control.register("hasWitness")}
+                            className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="mr-2 text-gray-700">بله</span>
+                        </label>
+                        <label className="inline-flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            value="false"
+                            {...control.register("hasWitness")}
+                            className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="mr-2 text-gray-700">خیر</span>
+                        </label>
+                        <label className="inline-flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            value=""
+                            {...control.register("hasWitness")}
+                            className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="mr-2 text-gray-700">هرکدام</span>
+                        </label>
+                      </div>
+                      {errors.hasWitness && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.hasWitness.message}
+                        </p>
+                      )}
+                    </div>
                   )}
                   {enabledFilters.includes("newsNumber") && (
                     <MyInput
