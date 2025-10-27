@@ -1,3 +1,7 @@
+// =========================================================================
+// src/utils/chartFilters.ts
+// =========================================================================
+
 // Utility file for defining enabled filters for different chart types
 // This provides a centralized way to manage which filters are available for each chart type
 
@@ -260,17 +264,100 @@ export const CHART_SPECIFIC_FILTERS = {
 
   // Area Usage Analytics
   AREA_USAGE_ANALYTICS: [
+    // --- Core Accident Details ---
+    "seri",
+    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
+    "deadCount",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCount",
+    "injuredCountMin",
+    "injuredCountMax",
+    "hasWitness",
+    "newsNumber",
+    "officer",
+    "completionDateFrom",
+    "completionDateTo",
+
+    // --- Location & Context (multi-select) ---
     "province",
     "city",
     "road",
-    "areaUsages", // Key filter for area usage
+    "trafficZone",
+    "cityZone",
     "accidentType",
-    "collisionType",
+    "position",
+    "rulingType",
+
+    // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
+    "collisionType",
     "roadSituation",
-    "officer",
+    "roadRepairType",
+    "shoulderStatus",
+    "areaUsages", // ← main focus of this chart
+    "airStatuses",
+    "roadDefects",
+    "humanReasons",
+    "vehicleReasons",
+    "equipmentDamages",
+    "roadSurfaceConditions",
+
+    // --- Attachments ---
+    "attachmentName",
+    "attachmentType",
+
+    // --- Vehicle DTOs Filters ---
+    "vehicleColor",
+    "vehicleSystem",
+    "vehiclePlaqueType",
+    "vehicleSystemType",
+    "vehicleFaultStatus",
+    "vehicleInsuranceCo",
+    "vehicleInsuranceNo",
+    "vehiclePlaqueUsage",
+    "vehiclePrintNumber",
+    "vehiclePlaqueSerialElement",
+    "vehicleInsuranceDateFrom",
+    "vehicleInsuranceDateTo",
+    "vehicleBodyInsuranceCo",
+    "vehicleBodyInsuranceNo",
+    "vehicleMotionDirection",
+    "vehicleMaxDamageSections",
+    "vehicleDamageSectionOther",
+    "vehicleInsuranceWarrantyLimit",
+    "vehicleInsuranceWarrantyLimitMin",
+    "vehicleInsuranceWarrantyLimitMax",
+
+    // --- Driver in Vehicle DTOs Filters ---
+    "driverSex",
+    "driverFirstName",
+    "driverLastName",
+    "driverNationalCode",
+    "driverLicenceNumber",
+    "driverLicenceType",
+    "driverInjuryType",
+    "driverTotalReason",
+
+    // --- Passenger in Vehicle DTOs Filters ---
+    "passengerSex",
+    "passengerFirstName",
+    "passengerLastName",
+    "passengerNationalCode",
+    "passengerInjuryType",
+    "passengerFaultStatus",
+    "passengerTotalReason",
+
+    // --- Pedestrian DTOs Filters ---
+    "pedestrianSex",
+    "pedestrianFirstName",
+    "pedestrianLastName",
+    "pedestrianNationalCode",
+    "pedestrianInjuryType",
+    "pedestrianFaultStatus",
+    "pedestrianTotalReason",
   ] as EnabledFilters,
 
   // Accident Severity Analytics - Now includes all available filters

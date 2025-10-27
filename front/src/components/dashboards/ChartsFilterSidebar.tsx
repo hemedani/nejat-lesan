@@ -1,3 +1,7 @@
+// =========================================================================
+// src/components/dashboards/ChartsFilterSidebar.tsx
+// =========================================================================
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -277,6 +281,27 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
 
   // Handle form submission
   const onSubmit: SubmitHandler<ChartFilterState> = (data) => {
+    // Normalize checkbox group fields to always be arrays
+    const checkboxFields: (keyof ChartFilterState)[] = [
+      "driverSex",
+      "driverInjuryType",
+      "passengerSex",
+      "passengerInjuryType",
+      "pedestrianSex",
+      "pedestrianInjuryType",
+    ];
+
+    checkboxFields.forEach((fieldName) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const value = (data as any)[fieldName];
+      if (value === false || value === undefined || value === null) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data as any)[fieldName] = []; // Convert false/undefined/null to empty array
+      } else if (!Array.isArray(value)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data as any)[fieldName] = [value]; // Convert single value to array
+      }
+    });
     // Filter out empty arrays and undefined values
     const cleanedData = Object.entries(data).reduce((acc, [key, value]) => {
       if (Array.isArray(value)) {
@@ -1216,7 +1241,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       <label className="flex items-center">
                         <input
                           type="checkbox"
-                          value="مرد"
+                          value="Male"
                           {...control.register("driverSex")}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                         />
@@ -1225,7 +1250,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       <label className="flex items-center">
                         <input
                           type="checkbox"
-                          value="زن"
+                          value="Female"
                           {...control.register("driverSex")}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                         />
