@@ -717,16 +717,100 @@ export const CHART_SPECIFIC_FILTERS = {
 
   // Company Performance Analytics
   COMPANY_PERFORMANCE_ANALYTICS: [
+    // --- Core Accident Details ---
+    "seri",
+    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
+    "deadCount",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCount",
+    "injuredCountMin",
+    "injuredCountMax",
+    "hasWitness",
+    "newsNumber",
+    "officer",
+    "completionDateFrom",
+    "completionDateTo",
+
+    // --- Location & Context (multi-select) ---
     "province",
     "city",
-    "vehicleReasons",
-    "vehicleSystem",
-    "vehicleFaultStatus", // Key filters for vehicle/company analysis
+    "road",
+    "trafficZone",
+    "cityZone",
+    "accidentType",
+    "position",
+    "rulingType",
+
+    // --- Environmental & Reason-based (multi-select) ---
+    "lightStatus",
     "collisionType",
     "roadSituation",
-    "officer",
+    "roadRepairType",
+    "shoulderStatus",
+    "areaUsages",
+    "airStatuses",
+    "roadDefects",
+    "humanReasons",
+    "vehicleReasons",
+    "equipmentDamages",
+    "roadSurfaceConditions",
+
+    // --- Attachments ---
+    "attachmentName",
+    "attachmentType",
+
+    // --- Vehicle DTOs Filters ---
+    "vehicleColor",
+    "vehicleSystem", // ← main grouping field (manufacturer)
+    "vehiclePlaqueType",
+    "vehicleSystemType",
+    "vehicleFaultStatus",
+    "vehicleInsuranceCo",
+    "vehicleInsuranceNo",
+    "vehiclePlaqueUsage",
+    "vehiclePrintNumber",
+    "vehiclePlaqueSerialElement",
+    "vehicleInsuranceDateFrom",
+    "vehicleInsuranceDateTo",
+    "vehicleBodyInsuranceCo",
+    "vehicleBodyInsuranceNo",
+    "vehicleMotionDirection",
+    "vehicleMaxDamageSections",
+    "vehicleDamageSectionOther",
+    "vehicleInsuranceWarrantyLimit",
+    "vehicleInsuranceWarrantyLimitMin",
+    "vehicleInsuranceWarrantyLimitMax",
+
+    // --- Driver in Vehicle DTOs Filters ---
+    "driverSex",
+    "driverFirstName",
+    "driverLastName",
+    "driverNationalCode",
+    "driverLicenceNumber",
+    "driverLicenceType",
+    "driverInjuryType",
+    "driverTotalReason",
+
+    // --- Passenger in Vehicle DTOs Filters ---
+    "passengerSex",
+    "passengerFirstName",
+    "passengerLastName",
+    "passengerNationalCode",
+    "passengerInjuryType",
+    "passengerFaultStatus",
+    "passengerTotalReason",
+
+    // --- Pedestrian DTOs Filters ---
+    "pedestrianSex",
+    "pedestrianFirstName",
+    "pedestrianLastName",
+    "pedestrianNationalCode",
+    "pedestrianInjuryType",
+    "pedestrianFaultStatus",
+    "pedestrianTotalReason",
   ] as EnabledFilters,
 
   // Total Reason Analytics - Based on totalReasonAnalytics API
