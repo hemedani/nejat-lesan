@@ -1,17 +1,19 @@
 /**
  * -----------------------------------------------------------------------------
- * FILE: temporalCountAnalytics.fn.ts (Full Filters & Aggregation)
+ * FILE: temporalCountAnalytics.fn.ts
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
- * This function uses a single, efficient MongoDB Aggregation Pipeline to count
- * accidents for each month within a specified time range.
+ * Returns a **monthly time-series** of accident counts over a specified period.
  *
- * It works by:
- * 1.  Setting a default time range to the last 3 years if none is provided.
- * 2.  Applying all user-selected filters.
- * 3.  Grouping documents by year and month.
- * 4.  Post-processing the results to create a continuous time-series, filling
- * any months with zero accidents to ensure a clean chart on the frontend.
+ * This function fully respects Lesan’s principle: **the client defines all filters,
+ * and the server executes them efficiently using MongoDB’s native operators**.
+ *
+ * Key features:
+ * - Default date range = last 3 Jalali years up to today
+ * - Applies **all filters** before aggregation
+ * - Groups by Gregorian year/month (for consistent sorting)
+ * - Fills missing months with 0 for continuous charting
+ * - Handles embedded `vehicle_dtos`, `pedestrian_dtos` via `$elemMatch`
  */
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
@@ -20,66 +22,306 @@ import moment from "npm:jalali-moment";
 export const temporalCountAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
 
-	// --- 1. Set Default Date Range ---
-	let startDate, endDate;
+	// =========================================================================
+	// 1. DATE RANGE SETUP
+	// =========================================================================
+	let startDate: moment.Moment, endDate: moment.Moment;
 	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
-		// Default to the last 3 full years for a meaningful temporal comparison
 		const now = moment();
-		const startYear = now.jYear() - 3;
-		startDate = moment(`${startYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+		const startJalaliYear = now.jYear() - 3;
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
 			"day",
 		);
-		endDate = moment().endOf("day"); // End today
+		endDate = moment().endOf("day");
 	} else {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day");
 		endDate = moment(filters.dateOfAccidentTo).endOf("day");
 	}
 
-	// --- 2. Build Comprehensive Base Filter ---
-	const matchFilter: Document = {
+	const baseFilter: Document = {
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 	};
 
-	// --- Add all other user-selected filters ---
-	const arrayFilters: { [key: string]: string } = {
-		province: "province.name",
-		city: "city.name",
-		road: "road.name",
-		accidentType: "type.name",
-		lightStatus: "light_status.name",
-		collisionType: "collision_type.name",
-		roadSituation: "road_situation.name",
-		roadSurfaceConditions: "road_surface_conditions.name",
-		humanReasons: "human_reasons.name",
-		roadDefects: "road_defects.name",
-	};
+	// =========================================================================
+	// 2. APPLY CORE ACCIDENT FILTERS
+	// =========================================================================
+	if (filters.seri !== undefined) baseFilter.seri = filters.seri;
+	if (filters.serial !== undefined) baseFilter.serial = filters.serial;
+	if (filters.newsNumber !== undefined) {
+		baseFilter.news_number = filters.newsNumber;
+	}
 
-	for (const key in arrayFilters) {
-		if (filters[key] && filters[key].length > 0) {
-			matchFilter[arrayFilters[key]] = { $in: filters[key] };
+	if (filters.deadCount !== undefined) {
+		baseFilter.dead_count = filters.deadCount;
+	} else if (
+		filters.deadCountMin !== undefined || filters.deadCountMax !== undefined
+	) {
+		baseFilter.dead_count = {};
+		if (filters.deadCountMin !== undefined) {
+			baseFilter.dead_count.$gte = filters.deadCountMin;
+		}
+		if (filters.deadCountMax !== undefined) {
+			baseFilter.dead_count.$lte = filters.deadCountMax;
 		}
 	}
 
+	if (filters.injuredCount !== undefined) {
+		baseFilter.injured_count = filters.injuredCount;
+	} else if (
+		filters.injuredCountMin !== undefined ||
+		filters.injuredCountMax !== undefined
+	) {
+		baseFilter.injured_count = {};
+		if (filters.injuredCountMin !== undefined) {
+			baseFilter.injured_count.$gte = filters.injuredCountMin;
+		}
+		if (filters.injuredCountMax !== undefined) {
+			baseFilter.injured_count.$lte = filters.injuredCountMax;
+		}
+	}
+
+	if (filters.hasWitness !== undefined) {
+		baseFilter.has_witness = filters.hasWitness === "true";
+	}
+
+	if (filters.officer) {
+		baseFilter.officer = { $regex: new RegExp(filters.officer, "i") };
+	}
+
+	if (filters.completionDateFrom || filters.completionDateTo) {
+		baseFilter.completion_date = {};
+		if (filters.completionDateFrom) {
+			baseFilter.completion_date.$gte = new Date(
+				filters.completionDateFrom,
+			);
+		}
+		if (filters.completionDateTo) {
+			baseFilter.completion_date.$lte = new Date(
+				filters.completionDateTo,
+			);
+		}
+	}
+
+	// =========================================================================
+	// 3. APPLY ARRAY-BASED CONTEXT & ENVIRONMENTAL FILTERS ($in)
+	// =========================================================================
+	const contextFields: Record<string, string> = {
+		province: "province.name",
+		city: "city.name",
+		road: "road.name",
+		trafficZone: "traffic_zone.name",
+		cityZone: "city_zone.name",
+		accidentType: "type.name",
+		position: "position.name",
+		rulingType: "ruling_type.name",
+		lightStatus: "light_status.name",
+		collisionType: "collision_type.name",
+		roadSituation: "road_situation.name",
+		roadRepairType: "road_repair_type.name",
+		shoulderStatus: "shoulder_status.name",
+		areaUsages: "area_usages.name",
+		airStatuses: "air_statuses.name",
+		roadDefects: "road_defects.name",
+		humanReasons: "human_reasons.name",
+		vehicleReasons: "vehicle_reasons.name",
+		equipmentDamages: "equipment_damages.name",
+		roadSurfaceConditions: "road_surface_conditions.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(contextFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			baseFilter[dbPath] = { $in: value };
+		}
+	}
+
+	// =========================================================================
+	// 4. APPLY VEHICLE_DTOs FILTERS ($elemMatch)
+	// =========================================================================
 	const vehicleElemMatch: Document = {};
-	if (filters.vehicleSystem && filters.vehicleSystem.length > 0) {
-		vehicleElemMatch["system.name"] = { $in: filters.vehicleSystem };
+
+	const vehicleArrayFields: Record<string, string> = {
+		vehicleColor: "color.name",
+		vehicleSystem: "system.name",
+		vehiclePlaqueType: "plaque_type.name",
+		vehicleSystemType: "system_type.name",
+		vehicleFaultStatus: "fault_status.name",
+		vehicleInsuranceCo: "insurance_co.name",
+		vehiclePlaqueUsage: "plaque_usage.name",
+		vehicleBodyInsuranceCo: "body_insurance_co.name",
+		vehicleMotionDirection: "motion_direction.name",
+		vehicleMaxDamageSections: "max_damage_sections.name",
+		driverSex: "driver.sex",
+		driverLicenceType: "driver.licence_type.name",
+		driverInjuryType: "driver.injury_type.name",
+		driverTotalReason: "driver.total_reason.name",
+		passengerSex: "passenger.sex",
+		passengerInjuryType: "passenger.injury_type.name",
+		passengerFaultStatus: "passenger.fault_status.name",
+		passengerTotalReason: "passenger.total_reason.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(vehicleArrayFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			vehicleElemMatch[dbPath] = { $in: value };
+		}
 	}
-	if (filters.driverSex && filters.driverSex.length > 0) {
-		vehicleElemMatch["driver.sex.name"] = { $in: filters.driverSex };
+
+	// Exact & text fields
+	const vehicleExactFields = [
+		"vehicleInsuranceNo",
+		"vehiclePrintNumber",
+		"vehiclePlaqueSerialElement",
+		"vehicleBodyInsuranceNo",
+		"driverNationalCode",
+		"driverLicenceNumber",
+		"passengerNationalCode",
+		"vehicleDamageSectionOther",
+	] as const;
+
+	for (const field of vehicleExactFields) {
+		if (filters[field]) {
+			const dbField = field
+				.replace(/([A-Z])/g, "_$1")
+				.toLowerCase()
+				.replace("vehicle_", "")
+				.replace("driver_", "driver.")
+				.replace("passenger_", "passenger.");
+			vehicleElemMatch[dbField] = filters[field];
+		}
 	}
-	if (filters.driverLicenceType && filters.driverLicenceType.length > 0) {
-		vehicleElemMatch["driver.licence_type.name"] = {
-			$in: filters.driverLicenceType,
+
+	if (filters.driverFirstName) {
+		vehicleElemMatch["driver.first_name"] = {
+			$regex: new RegExp(filters.driverFirstName, "i"),
+		};
+	}
+	if (filters.driverLastName) {
+		vehicleElemMatch["driver.last_name"] = {
+			$regex: new RegExp(filters.driverLastName, "i"),
+		};
+	}
+	if (filters.passengerFirstName) {
+		vehicleElemMatch["passenger.first_name"] = {
+			$regex: new RegExp(filters.passengerFirstName, "i"),
+		};
+	}
+	if (filters.passengerLastName) {
+		vehicleElemMatch["passenger.last_name"] = {
+			$regex: new RegExp(filters.passengerLastName, "i"),
 		};
 	}
 
-	if (Object.keys(vehicleElemMatch).length > 0) {
-		matchFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
+	// Insurance date ranges
+	if (filters.vehicleInsuranceDateFrom || filters.vehicleInsuranceDateTo) {
+		vehicleElemMatch.insurance_date = {};
+		if (filters.vehicleInsuranceDateFrom) {
+			vehicleElemMatch.insurance_date.$gte = new Date(
+				filters.vehicleInsuranceDateFrom,
+			);
+		}
+		if (filters.vehicleInsuranceDateTo) {
+			vehicleElemMatch.insurance_date.$lte = new Date(
+				filters.vehicleInsuranceDateTo,
+			);
+		}
+	}
+	if (
+		filters.vehicleBodyInsuranceDateFrom ||
+		filters.vehicleBodyInsuranceDateTo
+	) {
+		vehicleElemMatch.body_insurance_date = {};
+		if (filters.vehicleBodyInsuranceDateFrom) {
+			vehicleElemMatch.body_insurance_date.$gte = new Date(
+				filters.vehicleBodyInsuranceDateFrom,
+			);
+		}
+		if (filters.vehicleBodyInsuranceDateTo) {
+			vehicleElemMatch.body_insurance_date.$lte = new Date(
+				filters.vehicleBodyInsuranceDateTo,
+			);
+		}
 	}
 
-	// --- 3. Define and Execute the Aggregation Pipeline ---
+	// Numeric range
+	if (filters.vehicleInsuranceWarrantyLimit !== undefined) {
+		vehicleElemMatch.insurance_warranty_limit =
+			filters.vehicleInsuranceWarrantyLimit;
+	} else if (
+		filters.vehicleInsuranceWarrantyLimitMin !== undefined ||
+		filters.vehicleInsuranceWarrantyLimitMax !== undefined
+	) {
+		vehicleElemMatch.insurance_warranty_limit = {};
+		if (filters.vehicleInsuranceWarrantyLimitMin !== undefined) {
+			vehicleElemMatch.insurance_warranty_limit.$gte =
+				filters.vehicleInsuranceWarrantyLimitMin;
+		}
+		if (filters.vehicleInsuranceWarrantyLimitMax !== undefined) {
+			vehicleElemMatch.insurance_warranty_limit.$lte =
+				filters.vehicleInsuranceWarrantyLimitMax;
+		}
+	}
+
+	if (Object.keys(vehicleElemMatch).length > 0) {
+		baseFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
+	}
+
+	// =========================================================================
+	// 5. APPLY PEDESTRIAN_DTOs FILTERS ($elemMatch)
+	// =========================================================================
+	const pedestrianElemMatch: Document = {};
+
+	const pedestrianArrayFields: Record<string, string> = {
+		pedestrianSex: "sex",
+		pedestrianInjuryType: "injury_type.name",
+		pedestrianFaultStatus: "fault_status.name",
+		pedestrianTotalReason: "total_reason.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(pedestrianArrayFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			pedestrianElemMatch[dbPath] = { $in: value };
+		}
+	}
+
+	if (filters.pedestrianNationalCode) {
+		pedestrianElemMatch.national_code = filters.pedestrianNationalCode;
+	}
+	if (filters.pedestrianFirstName) {
+		pedestrianElemMatch.first_name = {
+			$regex: new RegExp(filters.pedestrianFirstName, "i"),
+		};
+	}
+	if (filters.pedestrianLastName) {
+		pedestrianElemMatch.last_name = {
+			$regex: new RegExp(filters.pedestrianLastName, "i"),
+		};
+	}
+
+	if (Object.keys(pedestrianElemMatch).length > 0) {
+		baseFilter.pedestrian_dtos = { $elemMatch: pedestrianElemMatch };
+	}
+
+	// =========================================================================
+	// 6. ATTACHMENTS FILTERS
+	// =========================================================================
+	if (filters.attachmentName) {
+		baseFilter["attachments.name"] = {
+			$regex: new RegExp(filters.attachmentName, "i"),
+		};
+	}
+	if (filters.attachmentType) {
+		baseFilter["attachments.type"] = filters.attachmentType;
+	}
+
+	// =========================================================================
+	// 7. EXECUTE AGGREGATION PIPELINE
+	//    - Group by Gregorian year/month (for correct chronological order)
+	// =========================================================================
 	const pipeline: Document[] = [
-		{ $match: matchFilter },
+		{ $match: baseFilter },
 		{
 			$group: {
 				_id: {
@@ -104,44 +346,43 @@ export const temporalCountAnalyticsFn: ActFn = async (body) => {
 
 	const dbResults = await accident.aggregation({ pipeline }).toArray();
 
-	// --- 4. Post-process to create a continuous time series ---
+	// =========================================================================
+	// 8. BUILD CONTINUOUS MONTHLY SERIES (Gregorian months for sorting)
+	//    - But display as Jalali in categories (e.g., "1400-04")
+	// =========================================================================
 	const resultsMap = new Map<string, number>();
-	dbResults.forEach((result) => {
-		const key = `${result._id.year}-${
-			String(result._id.month).padStart(2, "0")
-		}`;
-		resultsMap.set(key, result.count);
-	});
+	for (const r of dbResults) {
+		const key = `${r._id.year}-${String(r._id.month).padStart(2, "0")}`;
+		resultsMap.set(key, r.count);
+	}
 
 	const categories: string[] = [];
 	const seriesData: number[] = [];
 	const current = startDate.clone();
 
-	while (current.isBefore(endDate) || current.isSame(endDate, "month")) {
-		// Convert to Jalali for the key format expected by the frontend
-		const jalaliDate = moment(current.toDate()).locale("fa");
-		const year = jalaliDate.jYear();
-		const month = jalaliDate.jMonth() + 1;
-		const key = `${current.year()}-${
+	while (current.isSameOrBefore(endDate, "month")) {
+		// Gregorian key for lookup
+		const gregKey = `${current.year()}-${
 			String(current.month() + 1).padStart(2, "0")
 		}`;
+		// Jalali label for display
+		const jalali = moment(current.toDate()).locale("fa");
+		const jalaliLabel = `${jalali.jYear()}-${
+			String(jalali.jMonth() + 1).padStart(2, "0")
+		}`;
 
-		categories.push(`${year}-${String(month).padStart(2, "0")}`);
-		seriesData.push(resultsMap.get(key) || 0);
-
+		categories.push(jalaliLabel);
+		seriesData.push(resultsMap.get(gregKey) || 0);
 		current.add(1, "month");
 	}
 
-	// --- 5. Format and Return the Final Payload ---
+	// =========================================================================
+	// 9. RETURN IN STANDARD FORMAT
+	// =========================================================================
 	return {
 		analytics: {
-			categories: categories,
-			series: [
-				{
-					name: "تعداد تصادفات",
-					data: seriesData,
-				},
-			],
+			categories,
+			series: [{ name: "تعداد تصادفات", data: seriesData }],
 		},
 	};
 };
