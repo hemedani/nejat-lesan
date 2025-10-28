@@ -1,11 +1,22 @@
 /**
  * -----------------------------------------------------------------------------
- * FILE: temporalNightAnalytics.fn.ts (Full Filters & Aggregation)
+ * FILE: temporalNightAnalytics.fn.ts
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
- * This function uses a single, efficient MongoDB Aggregation Pipeline to count
- * accidents for each month, categorized by nighttime lighting conditions.
- * It includes a comprehensive filter-building stage for maximum data slicing.
+ * Returns a **monthly time-series** of nighttime accidents, split by:
+ * - "شب با روشنایی کافی"
+ * - "شب با نور ناکافی"
+ *
+ * This function fully respects Lesan’s principle: **the client defines all filters,
+ * and the server executes them efficiently using MongoDB’s native operators**.
+ *
+ * Key features:
+ * - Default date range = last 3 Jalali years up to today
+ * - Hardcoded filter for **only two nighttime lighting conditions**
+ * - Applies **all filters** before aggregation
+ * - Groups by Gregorian year/month + lighting condition
+ * - Fills missing months with 0 for continuous charting
+ * - Handles embedded `vehicle_dtos`, `pedestrian_dtos` via `$elemMatch`
  */
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
@@ -14,12 +25,14 @@ import moment from "npm:jalali-moment";
 export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
 
-	// --- 1. Set Default Date Range ---
-	let startDate, endDate;
+	// =========================================================================
+	// 1. DATE RANGE SETUP
+	// =========================================================================
+	let startDate: moment.Moment, endDate: moment.Moment;
 	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
 		const now = moment();
-		const startYear = now.jYear() - 3;
-		startDate = moment(`${startYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+		const startJalaliYear = now.jYear() - 3;
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
 			"day",
 		);
 		endDate = moment().endOf("day");
@@ -28,96 +41,295 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 		endDate = moment(filters.dateOfAccidentTo).endOf("day");
 	}
 
-	// --- 2. Build Comprehensive Base Filter ---
-	const matchFilter: Document = {
+	// =========================================================================
+	// 2. BUILD BASE FILTER WITH NIGHTTIME LIGHTING CONSTRAINT
+	// =========================================================================
+	const baseFilter: Document = {
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
-		// IMPORTANT: Hardcoded filter for "Nighttime" accidents as required by the chart.
-		// FIX: Corrected "شب بدون روشنایی کافی" to "شب با نور ناکافی" to match the database schema.
 		"light_status.name": {
 			$in: ["شب با روشنایی کافی", "شب با نور ناکافی"],
 		},
 	};
 
-	// --- Add all other user-selected filters ---
-	if (filters.officer) {
-		matchFilter.officer = { $regex: new RegExp(filters.officer, "i") };
-	}
-	if (filters.deadCountMin !== undefined) {
-		matchFilter.dead_count = {
-			...matchFilter.dead_count,
-			$gte: filters.deadCountMin,
-		};
-	}
-	if (filters.deadCountMax !== undefined) {
-		matchFilter.dead_count = {
-			...matchFilter.dead_count,
-			$lte: filters.deadCountMax,
-		};
-	}
-	if (filters.injuredCountMin !== undefined) {
-		matchFilter.injured_count = {
-			...matchFilter.injured_count,
-			$gte: filters.injuredCountMin,
-		};
-	}
-	if (filters.injuredCountMax !== undefined) {
-		matchFilter.injured_count = {
-			...matchFilter.injured_count,
-			$lte: filters.injuredCountMax,
-		};
+	// =========================================================================
+	// 3. APPLY CORE ACCIDENT FILTERS
+	// =========================================================================
+	if (filters.seri !== undefined) baseFilter.seri = filters.seri;
+	if (filters.serial !== undefined) baseFilter.serial = filters.serial;
+	if (filters.newsNumber !== undefined) {
+		baseFilter.news_number = filters.newsNumber;
 	}
 
-	const arrayFilters: { [key: string]: string } = {
-		province: "province.name",
-		city: "city.name",
-		road: "road.name",
-		accidentType: "type.name",
-		position: "position.name",
-		collisionType: "collision_type.name",
-		roadSituation: "road_situation.name",
-		roadSurfaceConditions: "road_surface_conditions.name",
-		areaUsages: "area_usages.name",
-		roadDefects: "road_defects.name",
-		humanReasons: "human_reasons.name",
-		vehicleReasons: "vehicle_reasons.name",
-	};
-
-	for (const key in arrayFilters) {
-		if (filters[key] && filters[key].length > 0) {
-			matchFilter[arrayFilters[key]] = { $in: filters[key] };
+	if (filters.deadCount !== undefined) {
+		baseFilter.dead_count = filters.deadCount;
+	} else if (
+		filters.deadCountMin !== undefined || filters.deadCountMax !== undefined
+	) {
+		baseFilter.dead_count = {};
+		if (filters.deadCountMin !== undefined) {
+			baseFilter.dead_count.$gte = filters.deadCountMin;
+		}
+		if (filters.deadCountMax !== undefined) {
+			baseFilter.dead_count.$lte = filters.deadCountMax;
 		}
 	}
 
+	if (filters.injuredCount !== undefined) {
+		baseFilter.injured_count = filters.injuredCount;
+	} else if (
+		filters.injuredCountMin !== undefined ||
+		filters.injuredCountMax !== undefined
+	) {
+		baseFilter.injured_count = {};
+		if (filters.injuredCountMin !== undefined) {
+			baseFilter.injured_count.$gte = filters.injuredCountMin;
+		}
+		if (filters.injuredCountMax !== undefined) {
+			baseFilter.injured_count.$lte = filters.injuredCountMax;
+		}
+	}
+
+	if (filters.hasWitness !== undefined) {
+		baseFilter.has_witness = filters.hasWitness === "true";
+	}
+
+	if (filters.officer) {
+		baseFilter.officer = { $regex: new RegExp(filters.officer, "i") };
+	}
+
+	if (filters.completionDateFrom || filters.completionDateTo) {
+		baseFilter.completion_date = {};
+		if (filters.completionDateFrom) {
+			baseFilter.completion_date.$gte = new Date(
+				filters.completionDateFrom,
+			);
+		}
+		if (filters.completionDateTo) {
+			baseFilter.completion_date.$lte = new Date(
+				filters.completionDateTo,
+			);
+		}
+	}
+
+	// =========================================================================
+	// 4. APPLY ARRAY-BASED CONTEXT & ENVIRONMENTAL FILTERS ($in)
+	// =========================================================================
+	const contextFields: Record<string, string> = {
+		province: "province.name",
+		city: "city.name",
+		road: "road.name",
+		trafficZone: "traffic_zone.name",
+		cityZone: "city_zone.name",
+		accidentType: "type.name",
+		position: "position.name",
+		rulingType: "ruling_type.name",
+		collisionType: "collision_type.name",
+		roadSituation: "road_situation.name",
+		roadRepairType: "road_repair_type.name",
+		shoulderStatus: "shoulder_status.name",
+		areaUsages: "area_usages.name",
+		airStatuses: "air_statuses.name",
+		roadDefects: "road_defects.name",
+		humanReasons: "human_reasons.name",
+		vehicleReasons: "vehicle_reasons.name",
+		equipmentDamages: "equipment_damages.name",
+		roadSurfaceConditions: "road_surface_conditions.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(contextFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			baseFilter[dbPath] = { $in: value };
+		}
+	}
+
+	// =========================================================================
+	// 5. APPLY VEHICLE_DTOs FILTERS ($elemMatch)
+	// =========================================================================
 	const vehicleElemMatch: Document = {};
-	if (filters.vehicleSystem && filters.vehicleSystem.length > 0) {
-		vehicleElemMatch["system.name"] = { $in: filters.vehicleSystem };
+
+	const vehicleArrayFields: Record<string, string> = {
+		vehicleColor: "color.name",
+		vehicleSystem: "system.name",
+		vehiclePlaqueType: "plaque_type.name",
+		vehicleSystemType: "system_type.name",
+		vehicleFaultStatus: "fault_status.name",
+		vehicleInsuranceCo: "insurance_co.name",
+		vehiclePlaqueUsage: "plaque_usage.name",
+		vehicleBodyInsuranceCo: "body_insurance_co.name",
+		vehicleMotionDirection: "motion_direction.name",
+		vehicleMaxDamageSections: "max_damage_sections.name",
+		driverSex: "driver.sex",
+		driverLicenceType: "driver.licence_type.name",
+		driverInjuryType: "driver.injury_type.name",
+		driverTotalReason: "driver.total_reason.name",
+		passengerSex: "passenger.sex",
+		passengerInjuryType: "passenger.injury_type.name",
+		passengerFaultStatus: "passenger.fault_status.name",
+		passengerTotalReason: "passenger.total_reason.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(vehicleArrayFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			vehicleElemMatch[dbPath] = { $in: value };
+		}
 	}
-	if (filters.vehicleFaultStatus && filters.vehicleFaultStatus.length > 0) {
-		vehicleElemMatch["fault_status.name"] = {
-			$in: filters.vehicleFaultStatus,
+
+	// Exact & text fields
+	const vehicleExactFields = [
+		"vehicleInsuranceNo",
+		"vehiclePrintNumber",
+		"vehiclePlaqueSerialElement",
+		"vehicleBodyInsuranceNo",
+		"driverNationalCode",
+		"driverLicenceNumber",
+		"passengerNationalCode",
+		"vehicleDamageSectionOther",
+	] as const;
+
+	for (const field of vehicleExactFields) {
+		if (filters[field]) {
+			const dbField = field
+				.replace(/([A-Z])/g, "_$1")
+				.toLowerCase()
+				.replace("vehicle_", "")
+				.replace("driver_", "driver.")
+				.replace("passenger_", "passenger.");
+			vehicleElemMatch[dbField] = filters[field];
+		}
+	}
+
+	if (filters.driverFirstName) {
+		vehicleElemMatch["driver.first_name"] = {
+			$regex: new RegExp(filters.driverFirstName, "i"),
 		};
 	}
-	if (filters.driverSex && filters.driverSex.length > 0) {
-		vehicleElemMatch["driver.sex.name"] = { $in: filters.driverSex };
-	}
-	if (filters.driverLicenceType && filters.driverLicenceType.length > 0) {
-		vehicleElemMatch["driver.licence_type.name"] = {
-			$in: filters.driverLicenceType,
+	if (filters.driverLastName) {
+		vehicleElemMatch["driver.last_name"] = {
+			$regex: new RegExp(filters.driverLastName, "i"),
 		};
 	}
-	if (filters.driverInjuryType && filters.driverInjuryType.length > 0) {
-		vehicleElemMatch["driver.injury_type.name"] = {
-			$in: filters.driverInjuryType,
+	if (filters.passengerFirstName) {
+		vehicleElemMatch["passenger.first_name"] = {
+			$regex: new RegExp(filters.passengerFirstName, "i"),
 		};
+	}
+	if (filters.passengerLastName) {
+		vehicleElemMatch["passenger.last_name"] = {
+			$regex: new RegExp(filters.passengerLastName, "i"),
+		};
+	}
+
+	// Insurance date ranges
+	if (filters.vehicleInsuranceDateFrom || filters.vehicleInsuranceDateTo) {
+		vehicleElemMatch.insurance_date = {};
+		if (filters.vehicleInsuranceDateFrom) {
+			vehicleElemMatch.insurance_date.$gte = new Date(
+				filters.vehicleInsuranceDateFrom,
+			);
+		}
+		if (filters.vehicleInsuranceDateTo) {
+			vehicleElemMatch.insurance_date.$lte = new Date(
+				filters.vehicleInsuranceDateTo,
+			);
+		}
+	}
+	if (
+		filters.vehicleBodyInsuranceDateFrom ||
+		filters.vehicleBodyInsuranceDateTo
+	) {
+		vehicleElemMatch.body_insurance_date = {};
+		if (filters.vehicleBodyInsuranceDateFrom) {
+			vehicleElemMatch.body_insurance_date.$gte = new Date(
+				filters.vehicleBodyInsuranceDateFrom,
+			);
+		}
+		if (filters.vehicleBodyInsuranceDateTo) {
+			vehicleElemMatch.body_insurance_date.$lte = new Date(
+				filters.vehicleBodyInsuranceDateTo,
+			);
+		}
+	}
+
+	// Numeric range
+	if (filters.vehicleInsuranceWarrantyLimit !== undefined) {
+		vehicleElemMatch.insurance_warranty_limit =
+			filters.vehicleInsuranceWarrantyLimit;
+	} else if (
+		filters.vehicleInsuranceWarrantyLimitMin !== undefined ||
+		filters.vehicleInsuranceWarrantyLimitMax !== undefined
+	) {
+		vehicleElemMatch.insurance_warranty_limit = {};
+		if (filters.vehicleInsuranceWarrantyLimitMin !== undefined) {
+			vehicleElemMatch.insurance_warranty_limit.$gte =
+				filters.vehicleInsuranceWarrantyLimitMin;
+		}
+		if (filters.vehicleInsuranceWarrantyLimitMax !== undefined) {
+			vehicleElemMatch.insurance_warranty_limit.$lte =
+				filters.vehicleInsuranceWarrantyLimitMax;
+		}
 	}
 
 	if (Object.keys(vehicleElemMatch).length > 0) {
-		matchFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
+		baseFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
 	}
 
-	// --- 3. Define and Execute the Aggregation Pipeline ---
+	// =========================================================================
+	// 6. APPLY PEDESTRIAN_DTOs FILTERS ($elemMatch)
+	// =========================================================================
+	const pedestrianElemMatch: Document = {};
+
+	const pedestrianArrayFields: Record<string, string> = {
+		pedestrianSex: "sex",
+		pedestrianInjuryType: "injury_type.name",
+		pedestrianFaultStatus: "fault_status.name",
+		pedestrianTotalReason: "total_reason.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(pedestrianArrayFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			pedestrianElemMatch[dbPath] = { $in: value };
+		}
+	}
+
+	if (filters.pedestrianNationalCode) {
+		pedestrianElemMatch.national_code = filters.pedestrianNationalCode;
+	}
+	if (filters.pedestrianFirstName) {
+		pedestrianElemMatch.first_name = {
+			$regex: new RegExp(filters.pedestrianFirstName, "i"),
+		};
+	}
+	if (filters.pedestrianLastName) {
+		pedestrianElemMatch.last_name = {
+			$regex: new RegExp(filters.pedestrianLastName, "i"),
+		};
+	}
+
+	if (Object.keys(pedestrianElemMatch).length > 0) {
+		baseFilter.pedestrian_dtos = { $elemMatch: pedestrianElemMatch };
+	}
+
+	// =========================================================================
+	// 7. ATTACHMENTS FILTERS
+	// =========================================================================
+	if (filters.attachmentName) {
+		baseFilter["attachments.name"] = {
+			$regex: new RegExp(filters.attachmentName, "i"),
+		};
+	}
+	if (filters.attachmentType) {
+		baseFilter["attachments.type"] = filters.attachmentType;
+	}
+
+	// =========================================================================
+	// 8. EXECUTE AGGREGATION PIPELINE
+	//    - Group by month + lighting condition
+	// =========================================================================
 	const pipeline: Document[] = [
-		{ $match: matchFilter },
+		{ $match: baseFilter },
 		{
 			$group: {
 				_id: {
@@ -143,48 +355,50 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 
 	const dbResults = await accident.aggregation({ pipeline }).toArray();
 
-	// --- 4. Post-process to create a continuous time series ---
-	const litNightMap = new Map<string, number>();
-	const unlitNightMap = new Map<string, number>();
+	// =========================================================================
+	// 9. BUILD DUAL SERIES FOR LIGHTING CONDITIONS
+	// =========================================================================
+	const litMap = new Map<string, number>();
+	const unlitMap = new Map<string, number>();
 
-	dbResults.forEach((result) => {
-		const key = `${result._id.year}-${
-			String(result._id.month).padStart(2, "0")
-		}`;
-		if (result._id.lightStatus === "شب با روشنایی کافی") {
-			litNightMap.set(key, result.count);
-		} else if (result._id.lightStatus === "شب با نور ناکافی") { // FIX: Corrected string here as well.
-			unlitNightMap.set(key, result.count);
+	for (const r of dbResults) {
+		const key = `${r._id.year}-${String(r._id.month).padStart(2, "0")}`;
+		if (r._id.lightStatus === "شب با روشنایی کافی") {
+			litMap.set(key, r.count);
+		} else if (r._id.lightStatus === "شب با نور ناکافی") {
+			unlitMap.set(key, r.count);
 		}
-	});
+	}
 
 	const categories: string[] = [];
-	const litNightData: number[] = [];
-	const unlitNightData: number[] = [];
+	const litData: number[] = [];
+	const unlitData: number[] = [];
 	const current = startDate.clone();
 
-	while (current.isBefore(endDate) || current.isSame(endDate, "month")) {
-		const jalaliDate = moment(current.toDate()).locale("fa");
-		const year = jalaliDate.jYear();
-		const month = jalaliDate.jMonth() + 1;
-		const key = `${current.year()}-${
+	while (current.isSameOrBefore(endDate, "month")) {
+		const gregKey = `${current.year()}-${
 			String(current.month() + 1).padStart(2, "0")
 		}`;
+		const jalali = moment(current.toDate()).locale("fa");
+		const jalaliLabel = `${jalali.jYear()}-${
+			String(jalali.jMonth() + 1).padStart(2, "0")
+		}`;
 
-		categories.push(`${year}-${String(month).padStart(2, "0")}`);
-		litNightData.push(litNightMap.get(key) || 0);
-		unlitNightData.push(unlitNightMap.get(key) || 0);
-
+		categories.push(jalaliLabel);
+		litData.push(litMap.get(gregKey) || 0);
+		unlitData.push(unlitMap.get(gregKey) || 0);
 		current.add(1, "month");
 	}
 
-	// --- 5. Format and Return the Final Payload ---
+	// =========================================================================
+	// 10. RETURN IN STANDARD FORMAT
+	// =========================================================================
 	return {
 		analytics: {
-			categories: categories,
+			categories,
 			series: [
-				{ name: "شب با روشنایی کافی", data: litNightData },
-				{ name: "شب بدون روشنایی کافی", data: unlitNightData },
+				{ name: "شب با روشنایی کافی", data: litData },
+				{ name: "شب با نور ناکافی", data: unlitData },
 			],
 		},
 	};
