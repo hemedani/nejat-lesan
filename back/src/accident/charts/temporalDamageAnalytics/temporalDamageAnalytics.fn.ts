@@ -330,11 +330,10 @@ export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 		"چراغ جلو چپ",
 	];
 
-	const damageSectionsToAnalyze =
-		(filters.vehicleMaxDamageSections &&
-				filters.vehicleMaxDamageSections.length > 0)
-			? filters.vehicleMaxDamageSections
-			: defaultDamageSections;
+	const damageSectionsToAnalyze = (filters.vehicleMaxDamageSections &&
+			filters.vehicleMaxDamageSections.length > 0)
+		? filters.vehicleMaxDamageSections
+		: defaultDamageSections;
 
 	// =========================================================================
 	// 8. EXECUTE AGGREGATION PIPELINE
@@ -434,7 +433,7 @@ export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 
 	const categories: string[] = [];
 	const seriesData: number[] = [];
-	let current = startDate.clone();
+	const current = startDate.clone();
 
 	while (current.isSameOrBefore(endDate, "month")) {
 		const key = `${current.year()}-${
