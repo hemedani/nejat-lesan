@@ -1,11 +1,21 @@
 /**
  * -----------------------------------------------------------------------------
- * FILE: spatialCollisionAnalytics.fn.ts (Full Filters & Advanced Aggregation)
+ * FILE: spatialCollisionAnalytics.fn.ts
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
- * This function uses a single, efficient MongoDB Aggregation Pipeline with the
- * `$facet` operator to generate all data required for the spatial comparison
- * of collision types, focused on comparing zones within a specific city.
+ * Returns **dual analytics** for spatial collision analysis **by city zone**:
+ * 1. **Stacked bar chart**: Counts of each collision type per zone
+ * 2. **Zonal map**: % of user-selected (or default) collision types among severe accidents per zone
+ *
+ * This function fully respects Lesan’s principle: **the client defines all filters,
+ * and the server executes them efficiently using MongoDB’s native operators**.
+ *
+ * Key features:
+ * - Default date range = last Jalali year up to today
+ * - Applies **all filters** before aggregation
+ * - Defaults to user’s city or "اهواز" if no city selected
+ * - Uses `$facet` to run both aggregations in one roundtrip
+ * - Handles embedded `vehicle_dtos`, `pedestrian_dtos` via `$elemMatch`
  */
 import type { ActFn, Document } from "@deps";
 import { accident, collision_type, coreApp } from "../../../../mod.ts";
@@ -15,57 +25,92 @@ import { MyContext } from "@lib";
 export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 	const { user }: MyContext = coreApp.contextFns
 		.getContextModel() as MyContext;
-
 	const { set: filters } = body.details;
 
-	// --- 1. Set Default Date Range ---
-	let startDate, endDate;
+	// =========================================================================
+	// 1. DATE RANGE SETUP
+	// =========================================================================
+	let startDate: Date, endDate: Date;
 	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
 		const now = moment();
-		const lastYear = now.jYear() - 1;
-		startDate = moment(`${lastYear}/01/01`, "jYYYY/jMM/jDD").startOf("day")
-			.toDate();
+		const lastJalaliYear = now.jYear() - 1;
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
 		endDate = moment().endOf("day").toDate();
 	} else {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
 	}
 
-	// --- 2. Build Comprehensive Base Filter ---
-	const matchFilter: Document = {
+	const baseFilter: Document = {
 		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 
-	// --- Add all other user-selected filters ---
-	if (filters.officer) {
-		matchFilter.officer = { $regex: new RegExp(filters.officer, "i") };
-	}
-	if (filters.deadCountMin !== undefined) {
-		matchFilter.dead_count = {
-			...matchFilter.dead_count,
-			$gte: filters.deadCountMin,
-		};
-	}
-	if (filters.deadCountMax !== undefined) {
-		matchFilter.dead_count = {
-			...matchFilter.dead_count,
-			$lte: filters.deadCountMax,
-		};
-	}
-	if (filters.injuredCountMin !== undefined) {
-		matchFilter.injured_count = {
-			...matchFilter.injured_count,
-			$gte: filters.injuredCountMin,
-		};
-	}
-	if (filters.injuredCountMax !== undefined) {
-		matchFilter.injured_count = {
-			...matchFilter.injured_count,
-			$lte: filters.injuredCountMax,
-		};
+	// =========================================================================
+	// 2. APPLY CORE ACCIDENT FILTERS
+	// =========================================================================
+	if (filters.seri !== undefined) baseFilter.seri = filters.seri;
+	if (filters.serial !== undefined) baseFilter.serial = filters.serial;
+	if (filters.newsNumber !== undefined) {
+		baseFilter.news_number = filters.newsNumber;
 	}
 
-	const arrayFilters: { [key: string]: string } = {
+	if (filters.deadCount !== undefined) {
+		baseFilter.dead_count = filters.deadCount;
+	} else if (
+		filters.deadCountMin !== undefined || filters.deadCountMax !== undefined
+	) {
+		baseFilter.dead_count = {};
+		if (filters.deadCountMin !== undefined) {
+			baseFilter.dead_count.$gte = filters.deadCountMin;
+		}
+		if (filters.deadCountMax !== undefined) {
+			baseFilter.dead_count.$lte = filters.deadCountMax;
+		}
+	}
+
+	if (filters.injuredCount !== undefined) {
+		baseFilter.injured_count = filters.injuredCount;
+	} else if (
+		filters.injuredCountMin !== undefined ||
+		filters.injuredCountMax !== undefined
+	) {
+		baseFilter.injured_count = {};
+		if (filters.injuredCountMin !== undefined) {
+			baseFilter.injured_count.$gte = filters.injuredCountMin;
+		}
+		if (filters.injuredCountMax !== undefined) {
+			baseFilter.injured_count.$lte = filters.injuredCountMax;
+		}
+	}
+
+	if (filters.hasWitness !== undefined) {
+		baseFilter.has_witness = filters.hasWitness === "true";
+	}
+
+	if (filters.officer) {
+		baseFilter.officer = { $regex: new RegExp(filters.officer, "i") };
+	}
+
+	if (filters.completionDateFrom || filters.completionDateTo) {
+		baseFilter.completion_date = {};
+		if (filters.completionDateFrom) {
+			baseFilter.completion_date.$gte = new Date(
+				filters.completionDateFrom,
+			);
+		}
+		if (filters.completionDateTo) {
+			baseFilter.completion_date.$lte = new Date(
+				filters.completionDateTo,
+			);
+		}
+	}
+
+	// =========================================================================
+	// 3. APPLY ARRAY-BASED CONTEXT & ENVIRONMENTAL FILTERS ($in)
+	// =========================================================================
+	const contextFields: Record<string, string> = {
 		province: "province.name",
 		city: "city.name",
 		road: "road.name",
@@ -84,33 +129,238 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 		roadDefects: "road_defects.name",
 		humanReasons: "human_reasons.name",
 		vehicleReasons: "vehicle_reasons.name",
+		equipmentDamages: "equipment_damages.name",
 		roadSurfaceConditions: "road_surface_conditions.name",
 	};
 
-	for (const key in arrayFilters) {
-		if (filters[key] && filters[key]?.length > 0) {
-			matchFilter[arrayFilters[key]] = { $in: filters[key] };
+	for (const [filterKey, dbPath] of Object.entries(contextFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			baseFilter[dbPath] = { $in: value };
 		}
 	}
 
-	// Default city for this chart is "اهواز"
-	if (!matchFilter["city.name"]) {
-		matchFilter["city.name"] = user.settings?.city.name || "اهواز";
+	// =========================================================================
+	// 4. DEFAULT TO USER'S CITY OR "اهواز" IF NO CITY SELECTED
+	// =========================================================================
+	if (!baseFilter["city.name"]) {
+		baseFilter["city.name"] = user.settings?.city?.name || "اهواز";
 	}
 
-	// --- 3. Define and Execute the Aggregation Pipeline ---
+	// =========================================================================
+	// 5. APPLY VEHICLE_DTOs FILTERS ($elemMatch)
+	// =========================================================================
+	const vehicleElemMatch: Document = {};
+
+	const vehicleArrayFields: Record<string, string> = {
+		vehicleColor: "color.name",
+		vehicleSystem: "system.name",
+		vehiclePlaqueType: "plaque_type.name",
+		vehicleSystemType: "system_type.name",
+		vehicleFaultStatus: "fault_status.name",
+		vehicleInsuranceCo: "insurance_co.name",
+		vehiclePlaqueUsage: "plaque_usage.name",
+		vehicleBodyInsuranceCo: "body_insurance_co.name",
+		vehicleMotionDirection: "motion_direction.name",
+		vehicleMaxDamageSections: "max_damage_sections.name",
+		driverSex: "driver.sex",
+		driverLicenceType: "driver.licence_type.name",
+		driverInjuryType: "driver.injury_type.name",
+		driverTotalReason: "driver.total_reason.name",
+		passengerSex: "passenger.sex",
+		passengerInjuryType: "passenger.injury_type.name",
+		passengerFaultStatus: "passenger.fault_status.name",
+		passengerTotalReason: "passenger.total_reason.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(vehicleArrayFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			vehicleElemMatch[dbPath] = { $in: value };
+		}
+	}
+
+	// Exact & text fields
+	const vehicleExactFields = [
+		"vehicleInsuranceNo",
+		"vehiclePrintNumber",
+		"vehiclePlaqueSerialElement",
+		"vehicleBodyInsuranceNo",
+		"driverNationalCode",
+		"driverLicenceNumber",
+		"passengerNationalCode",
+		"vehicleDamageSectionOther",
+	] as const;
+
+	for (const field of vehicleExactFields) {
+		if (filters[field]) {
+			const dbField = field
+				.replace(/([A-Z])/g, "_$1")
+				.toLowerCase()
+				.replace("vehicle_", "")
+				.replace("driver_", "driver.")
+				.replace("passenger_", "passenger.");
+			vehicleElemMatch[dbField] = filters[field];
+		}
+	}
+
+	if (filters.driverFirstName) {
+		vehicleElemMatch["driver.first_name"] = {
+			$regex: new RegExp(filters.driverFirstName, "i"),
+		};
+	}
+	if (filters.driverLastName) {
+		vehicleElemMatch["driver.last_name"] = {
+			$regex: new RegExp(filters.driverLastName, "i"),
+		};
+	}
+	if (filters.passengerFirstName) {
+		vehicleElemMatch["passenger.first_name"] = {
+			$regex: new RegExp(filters.passengerFirstName, "i"),
+		};
+	}
+	if (filters.passengerLastName) {
+		vehicleElemMatch["passenger.last_name"] = {
+			$regex: new RegExp(filters.passengerLastName, "i"),
+		};
+	}
+
+	// Insurance date ranges
+	if (filters.vehicleInsuranceDateFrom || filters.vehicleInsuranceDateTo) {
+		vehicleElemMatch.insurance_date = {};
+		if (filters.vehicleInsuranceDateFrom) {
+			vehicleElemMatch.insurance_date.$gte = new Date(
+				filters.vehicleInsuranceDateFrom,
+			);
+		}
+		if (filters.vehicleInsuranceDateTo) {
+			vehicleElemMatch.insurance_date.$lte = new Date(
+				filters.vehicleInsuranceDateTo,
+			);
+		}
+	}
+	if (
+		filters.vehicleBodyInsuranceDateFrom ||
+		filters.vehicleBodyInsuranceDateTo
+	) {
+		vehicleElemMatch.body_insurance_date = {};
+		if (filters.vehicleBodyInsuranceDateFrom) {
+			vehicleElemMatch.body_insurance_date.$gte = new Date(
+				filters.vehicleBodyInsuranceDateFrom,
+			);
+		}
+		if (filters.vehicleBodyInsuranceDateTo) {
+			vehicleElemMatch.body_insurance_date.$lte = new Date(
+				filters.vehicleBodyInsuranceDateTo,
+			);
+		}
+	}
+
+	// Numeric range
+	if (filters.vehicleInsuranceWarrantyLimit !== undefined) {
+		vehicleElemMatch.insurance_warranty_limit =
+			filters.vehicleInsuranceWarrantyLimit;
+	} else if (
+		filters.vehicleInsuranceWarrantyLimitMin !== undefined ||
+		filters.vehicleInsuranceWarrantyLimitMax !== undefined
+	) {
+		vehicleElemMatch.insurance_warranty_limit = {};
+		if (filters.vehicleInsuranceWarrantyLimitMin !== undefined) {
+			vehicleElemMatch.insurance_warranty_limit.$gte =
+				filters.vehicleInsuranceWarrantyLimitMin;
+		}
+		if (filters.vehicleInsuranceWarrantyLimitMax !== undefined) {
+			vehicleElemMatch.insurance_warranty_limit.$lte =
+				filters.vehicleInsuranceWarrantyLimitMax;
+		}
+	}
+
+	if (Object.keys(vehicleElemMatch).length > 0) {
+		baseFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
+	}
+
+	// =========================================================================
+	// 6. APPLY PEDESTRIAN_DTOs FILTERS ($elemMatch)
+	// =========================================================================
+	const pedestrianElemMatch: Document = {};
+
+	const pedestrianArrayFields: Record<string, string> = {
+		pedestrianSex: "sex",
+		pedestrianInjuryType: "injury_type.name",
+		pedestrianFaultStatus: "fault_status.name",
+		pedestrianTotalReason: "total_reason.name",
+	};
+
+	for (const [filterKey, dbPath] of Object.entries(pedestrianArrayFields)) {
+		const value = filters[filterKey as keyof typeof filters];
+		if (Array.isArray(value) && value.length > 0) {
+			pedestrianElemMatch[dbPath] = { $in: value };
+		}
+	}
+
+	if (filters.pedestrianNationalCode) {
+		pedestrianElemMatch.national_code = filters.pedestrianNationalCode;
+	}
+	if (filters.pedestrianFirstName) {
+		pedestrianElemMatch.first_name = {
+			$regex: new RegExp(filters.pedestrianFirstName, "i"),
+		};
+	}
+	if (filters.pedestrianLastName) {
+		pedestrianElemMatch.last_name = {
+			$regex: new RegExp(filters.pedestrianLastName, "i"),
+		};
+	}
+
+	if (Object.keys(pedestrianElemMatch).length > 0) {
+		baseFilter.$and = baseFilter.$and || [];
+		baseFilter.$and.push({
+			pedestrian_dtos: { $elemMatch: pedestrianElemMatch },
+		});
+	}
+
+	// =========================================================================
+	// 7. ATTACHMENTS FILTERS
+	// =========================================================================
+	if (filters.attachmentName) {
+		baseFilter["attachments.name"] = {
+			$regex: new RegExp(filters.attachmentName, "i"),
+		};
+	}
+	if (filters.attachmentType) {
+		baseFilter["attachments.type"] = filters.attachmentType;
+	}
+
+	// =========================================================================
+	// 8. DEFINE COLLISION TYPES TO ANALYZE
+	// =========================================================================
+	const defaultCollisionTypes = ["برخورد وسیله نقلیه با یک وسیله نقلیه"];
 	const collisionTypesToAnalyze =
 		(filters.collisionType && filters.collisionType.length > 0)
 			? filters.collisionType
-			: ["برخورد وسیله نقلیه با یک وسیله نقلیه"]; // Default from documentation
+			: defaultCollisionTypes;
 
+	// =========================================================================
+	// 9. EXECUTE $FACET AGGREGATION
+	//    - Only zones with city_zone.name
+	//    - Bar chart: all collision types
+	//    - Map chart: % of selected types among severe accidents
+	// =========================================================================
 	const pipeline: Document[] = [
-		{ $match: matchFilter },
-		{ $match: { "city_zone.name": { $exists: true, $ne: null } } },
+		{ $match: baseFilter },
+		{ $match: { "city_zone.name": { $exists: true, $nin: [null, ""] } } },
 		{
 			$facet: {
-				// --- Part 1: Data for the Stacked Bar Chart ---
 				barChartData: [
+					// ✅ Ensure collision_type.name exists and is valid
+					{
+						$match: {
+							"collision_type.name": {
+								$exists: true,
+								$nin: [null, ""],
+							},
+						},
+					},
 					{
 						$group: {
 							_id: {
@@ -124,7 +374,10 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 						$group: {
 							_id: "$_id.location",
 							counts: {
-								$push: { k: "$_id.collisionType", v: "$count" },
+								$push: {
+									k: "$_id.collisionType", // Now guaranteed to be valid
+									v: "$count",
+								},
 							},
 							total: { $sum: "$count" },
 						},
@@ -138,13 +391,11 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 						},
 					},
 				],
-				// --- Part 2: Data for the Zonal Map ---
 				mapData: [
-					{ $match: { "type.name": { $in: ["فوتی", "جرحی"] } } },
 					{
 						$group: {
 							_id: "$city_zone.name",
-							severeCount: { $sum: 1 },
+							totalCount: { $sum: 1 },
 							selectedCollisionTypeCount: {
 								$sum: {
 									$cond: [
@@ -167,12 +418,12 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 							name: "$_id",
 							ratio: {
 								$cond: {
-									if: { $gt: ["$severeCount", 0] },
+									if: { $gt: ["$totalCount", 0] },
 									then: {
 										$multiply: [{
 											$divide: [
 												"$selectedCollisionTypeCount",
-												"$severeCount",
+												"$totalCount",
 											],
 										}, 100],
 									},
@@ -187,29 +438,35 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 	];
 
 	const results = await accident.aggregation({ pipeline }).toArray();
-	const analyticsData = results[0] || { barChartData: [], mapData: [] };
+	const data = results[0] || { barChartData: [], mapData: [] };
 
-	// --- 4. Format Bar Chart Data for Frontend ---
-	const allCollisionTypes =
-		(await collision_type.find({ filters: {}, projection: { name: 1 } })
-			.toArray()).map((ct) => ct.name);
-	const categories = analyticsData.barChartData.map((item: any) => item.name);
-	const series = allCollisionTypes.map((status) => ({
-		name: status,
-		data: categories.map((cat: string) =>
-			analyticsData.barChartData.find((d: any) => d.name === cat)
-				?.counts[status] || 0
+	// =========================================================================
+	// 10. GET ALL COLLISION TYPES FOR COMPLETE SERIES
+	// =========================================================================
+	const allCollisionTypes = (
+		await collision_type.find({ filters: {}, projection: { name: 1 } })
+			.toArray()
+	).map((ct) => ct.name);
+
+	const categories = data.barChartData.map((item: any) => item.name);
+	const series = allCollisionTypes.map((type) => ({
+		name: type,
+		data: categories.map((cat) =>
+			data.barChartData.find((d: any) => d.name === cat)?.counts[type] ||
+			0
 		),
-	})).filter((s) => s.data.some((d) => d > 0)); // Only include series with data
+	})).filter((s) => s.data.some((count) => count > 0)); // Only non-zero series
 
-	// --- 5. Format and Return the Final Payload ---
+	// =========================================================================
+	// 11. RETURN IN STANDARD FORMAT
+	// =========================================================================
 	return {
 		analytics: {
 			barChart: {
-				categories: categories,
-				series: series,
+				categories,
+				series,
 			},
-			mapChart: analyticsData.mapData,
+			mapChart: data.mapData,
 		},
 	};
 };
