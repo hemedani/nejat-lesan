@@ -33,10 +33,11 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 	let startDate: Date, endDate: Date;
 	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
 		const now = moment();
-		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
-			"day",
-		).toDate();
+		const lastJalaliThreeYears = now.jYear() - 3;
+		startDate = moment(`${lastJalaliThreeYears}/01/01`, "jYYYY/jMM/jDD")
+			.startOf(
+				"day",
+			).toDate();
 		endDate = moment().endOf("day").toDate();
 	} else {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
@@ -382,8 +383,46 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 						},
 					},
 				],
+				// mapData: [
+				// 	{ $match: { "type.name": { $in: ["فوتی", "جرحی"] } } },
+				// 	{
+				// 		$group: {
+				// 			_id: "$city_zone.name",
+				// 			fatalCount: {
+				// 				$sum: {
+				// 					$cond: [
+				// 						{ $eq: ["$type.name", "فوتی"] },
+				// 						1,
+				// 						0,
+				// 					],
+				// 				},
+				// 			},
+				// 			severeCount: { $sum: 1 },
+				// 		},
+				// 	},
+				// 	{
+				// 		$project: {
+				// 			_id: 0,
+				// 			name: "$_id",
+				// 			ratio: {
+				// 				$cond: {
+				// 					if: { $gt: ["$severeCount", 0] },
+				// 					then: {
+				// 						$multiply: [{
+				// 							$divide: [
+				// 								"$fatalCount",
+				// 								"$severeCount",
+				// 							],
+				// 						}, 100],
+				// 					},
+				// 					else: 0,
+				// 				},
+				// 			},
+				// 		},
+				// 	},
+				// ],
 				mapData: [
-					{ $match: { "type.name": { $in: ["فوتی", "جرحی"] } } },
+					// Remove the $match for "فوتی"/"جرحی"
 					{
 						$group: {
 							_id: "$city_zone.name",
@@ -396,7 +435,20 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 									],
 								},
 							},
-							severeCount: { $sum: 1 },
+							severeCount: {
+								$sum: {
+									$cond: [
+										{
+											$in: ["$type.name", [
+												"فوتی",
+												"جرحی",
+											]],
+										},
+										1,
+										0,
+									],
+								},
+							},
 						},
 					},
 					{
@@ -414,7 +466,7 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 											],
 										}, 100],
 									},
-									else: 0,
+									else: 0, // ← Show 0% instead of omitting the zone
 								},
 							},
 						},
