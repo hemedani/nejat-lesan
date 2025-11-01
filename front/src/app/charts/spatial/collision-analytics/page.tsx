@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 import ChartsFilterSidebar, {
   ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
@@ -41,14 +42,13 @@ const SpatialCollisionAnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState<
     SpatialCollisionAnalyticsResponse["analytics"] | null
   >(null);
-  const [geoJsonData, setGeoJsonData] = useState<object | null>(null);
+  const [geoJsonData, setGeoJsonData] = useState<GeoJsonData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Default filters with "اهواز" pre-selected for city and default collision type
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
     city: ["اهواز"],
-    collisionType: ["برخورد وسیله نقلیه با یک وسیله نقلیه"],
   });
 
   // Load initial data on component mount
@@ -64,46 +64,358 @@ const SpatialCollisionAnalyticsPage = () => {
     setError(null);
 
     try {
-      // Prepare request details for spatialCollisionAnalytics
-      const requestDetails: ReqType["main"]["accident"]["spatialCollisionAnalytics"] =
-        {
-          set: {},
-          get: {
-            analytics: 1,
-          },
-        };
+      // Build the payload dynamically, only including enabled filters
+      const filterPayload: Partial<
+        ReqType["main"]["accident"]["spatialCollisionAnalytics"]["set"]
+      > = {};
 
-      // Apply filters to the request
-      if (filters.city && filters.city.length > 0) {
-        requestDetails.set.city = filters.city;
-      }
-      if (filters.dateOfAccidentFrom) {
-        requestDetails.set.dateOfAccidentFrom = filters.dateOfAccidentFrom;
-      }
-      if (filters.dateOfAccidentTo) {
-        requestDetails.set.dateOfAccidentTo = filters.dateOfAccidentTo;
-      }
-      if (filters.province && filters.province.length > 0) {
-        requestDetails.set.province = filters.province;
-      }
-      if (filters.collisionType && filters.collisionType.length > 0) {
-        requestDetails.set.collisionType = filters.collisionType;
-      }
-      if (filters.lightStatus && filters.lightStatus.length > 0) {
-        requestDetails.set.lightStatus = filters.lightStatus;
-      }
-      if (filters.roadDefects && filters.roadDefects.length > 0) {
-        requestDetails.set.roadDefects = filters.roadDefects;
-      }
-      if (filters.humanReasons && filters.humanReasons.length > 0) {
-        requestDetails.set.humanReasons = filters.humanReasons;
-      }
-      if (filters.vehicleReasons && filters.vehicleReasons.length > 0) {
-        requestDetails.set.vehicleReasons = filters.vehicleReasons;
-      }
-      if (filters.areaUsages && filters.areaUsages.length > 0) {
-        requestDetails.set.areaUsages = filters.areaUsages;
-      }
+      // Helper function to check if a filter should be included
+      const includeFilter = (filterName: keyof ChartFilterState) => {
+        return ENABLED_FILTERS.includes(filterName);
+      };
+
+      // --- Core Accident Details ---
+      if (includeFilter("seri") && filters.seri !== undefined)
+        filterPayload.seri = filters.seri;
+      if (includeFilter("serial") && filters.serial !== undefined)
+        filterPayload.serial = filters.serial;
+      if (
+        includeFilter("dateOfAccidentFrom") &&
+        filters.dateOfAccidentFrom !== undefined
+      )
+        filterPayload.dateOfAccidentFrom = filters.dateOfAccidentFrom;
+      if (
+        includeFilter("dateOfAccidentTo") &&
+        filters.dateOfAccidentTo !== undefined
+      )
+        filterPayload.dateOfAccidentTo = filters.dateOfAccidentTo;
+      if (includeFilter("deadCount") && filters.deadCount !== undefined)
+        filterPayload.deadCount = filters.deadCount;
+      if (includeFilter("deadCountMin") && filters.deadCountMin !== undefined)
+        filterPayload.deadCountMin = filters.deadCountMin;
+      if (includeFilter("deadCountMax") && filters.deadCountMax !== undefined)
+        filterPayload.deadCountMax = filters.deadCountMax;
+      if (includeFilter("injuredCount") && filters.injuredCount !== undefined)
+        filterPayload.injuredCount = filters.injuredCount;
+      if (
+        includeFilter("injuredCountMin") &&
+        filters.injuredCountMin !== undefined
+      )
+        filterPayload.injuredCountMin = filters.injuredCountMin;
+      if (
+        includeFilter("injuredCountMax") &&
+        filters.injuredCountMax !== undefined
+      )
+        filterPayload.injuredCountMax = filters.injuredCountMax;
+      if (includeFilter("hasWitness") && filters.hasWitness !== undefined)
+        filterPayload.hasWitness = filters.hasWitness;
+      if (includeFilter("newsNumber") && filters.newsNumber !== undefined)
+        filterPayload.newsNumber = filters.newsNumber;
+      if (includeFilter("officer") && filters.officer !== undefined)
+        filterPayload.officer = filters.officer;
+      if (
+        includeFilter("completionDateFrom") &&
+        filters.completionDateFrom !== undefined
+      )
+        filterPayload.completionDateFrom = filters.completionDateFrom;
+      if (
+        includeFilter("completionDateTo") &&
+        filters.completionDateTo !== undefined
+      )
+        filterPayload.completionDateTo = filters.completionDateTo;
+
+      // --- Location & Context (multi-select) ---
+      if (includeFilter("province") && filters.province !== undefined)
+        filterPayload.province = filters.province;
+      if (includeFilter("city") && filters.city !== undefined)
+        filterPayload.city = filters.city;
+      if (includeFilter("road") && filters.road !== undefined)
+        filterPayload.road = filters.road;
+      if (includeFilter("trafficZone") && filters.trafficZone !== undefined)
+        filterPayload.trafficZone = filters.trafficZone;
+      if (includeFilter("cityZone") && filters.cityZone !== undefined)
+        filterPayload.cityZone = filters.cityZone;
+      if (includeFilter("accidentType") && filters.accidentType !== undefined)
+        filterPayload.accidentType = filters.accidentType;
+      if (includeFilter("position") && filters.position !== undefined)
+        filterPayload.position = filters.position;
+      if (includeFilter("rulingType") && filters.rulingType !== undefined)
+        filterPayload.rulingType = filters.rulingType;
+
+      // --- Environmental & Reason-based (multi-select) ---
+      if (includeFilter("lightStatus") && filters.lightStatus !== undefined)
+        filterPayload.lightStatus = filters.lightStatus;
+      if (includeFilter("collisionType") && filters.collisionType !== undefined)
+        filterPayload.collisionType = filters.collisionType;
+      if (includeFilter("roadSituation") && filters.roadSituation !== undefined)
+        filterPayload.roadSituation = filters.roadSituation;
+      if (
+        includeFilter("roadRepairType") &&
+        filters.roadRepairType !== undefined
+      )
+        filterPayload.roadRepairType = filters.roadRepairType;
+      if (
+        includeFilter("shoulderStatus") &&
+        filters.shoulderStatus !== undefined
+      )
+        filterPayload.shoulderStatus = filters.shoulderStatus;
+      if (includeFilter("areaUsages") && filters.areaUsages !== undefined)
+        filterPayload.areaUsages = filters.areaUsages;
+      if (includeFilter("airStatuses") && filters.airStatuses !== undefined)
+        filterPayload.airStatuses = filters.airStatuses;
+      if (includeFilter("roadDefects") && filters.roadDefects !== undefined)
+        filterPayload.roadDefects = filters.roadDefects;
+      if (includeFilter("humanReasons") && filters.humanReasons !== undefined)
+        filterPayload.humanReasons = filters.humanReasons;
+      if (
+        includeFilter("vehicleReasons") &&
+        filters.vehicleReasons !== undefined
+      )
+        filterPayload.vehicleReasons = filters.vehicleReasons;
+      if (
+        includeFilter("equipmentDamages") &&
+        filters.equipmentDamages !== undefined
+      )
+        filterPayload.equipmentDamages = filters.equipmentDamages;
+      if (
+        includeFilter("roadSurfaceConditions") &&
+        filters.roadSurfaceConditions !== undefined
+      )
+        filterPayload.roadSurfaceConditions = filters.roadSurfaceConditions;
+
+      // --- Attachments ---
+      if (
+        includeFilter("attachmentName") &&
+        filters.attachmentName !== undefined
+      )
+        filterPayload.attachmentName = filters.attachmentName;
+      if (
+        includeFilter("attachmentType") &&
+        filters.attachmentType !== undefined
+      )
+        filterPayload.attachmentType = filters.attachmentType;
+
+      // --- Vehicle DTOs Filters ---
+      if (includeFilter("vehicleColor") && filters.vehicleColor !== undefined)
+        filterPayload.vehicleColor = filters.vehicleColor;
+      if (includeFilter("vehicleSystem") && filters.vehicleSystem !== undefined)
+        filterPayload.vehicleSystem = filters.vehicleSystem;
+      if (
+        includeFilter("vehiclePlaqueType") &&
+        filters.vehiclePlaqueType !== undefined
+      )
+        filterPayload.vehiclePlaqueType = filters.vehiclePlaqueType;
+      if (
+        includeFilter("vehicleSystemType") &&
+        filters.vehicleSystemType !== undefined
+      )
+        filterPayload.vehicleSystemType = filters.vehicleSystemType;
+      if (
+        includeFilter("vehicleFaultStatus") &&
+        filters.vehicleFaultStatus !== undefined
+      )
+        filterPayload.vehicleFaultStatus = filters.vehicleFaultStatus;
+      if (
+        includeFilter("vehicleInsuranceCo") &&
+        filters.vehicleInsuranceCo !== undefined
+      )
+        filterPayload.vehicleInsuranceCo = filters.vehicleInsuranceCo;
+      if (
+        includeFilter("vehicleInsuranceNo") &&
+        filters.vehicleInsuranceNo !== undefined
+      )
+        filterPayload.vehicleInsuranceNo = filters.vehicleInsuranceNo;
+      if (
+        includeFilter("vehiclePlaqueUsage") &&
+        filters.vehiclePlaqueUsage !== undefined
+      )
+        filterPayload.vehiclePlaqueUsage = filters.vehiclePlaqueUsage;
+      if (
+        includeFilter("vehiclePrintNumber") &&
+        filters.vehiclePrintNumber !== undefined
+      )
+        filterPayload.vehiclePrintNumber = filters.vehiclePrintNumber;
+      if (
+        includeFilter("vehiclePlaqueSerialElement") &&
+        filters.vehiclePlaqueSerialElement !== undefined
+      )
+        filterPayload.vehiclePlaqueSerialElement =
+          filters.vehiclePlaqueSerialElement;
+      if (
+        includeFilter("vehicleInsuranceDateFrom") &&
+        filters.vehicleInsuranceDateFrom !== undefined
+      )
+        filterPayload.vehicleInsuranceDateFrom =
+          filters.vehicleInsuranceDateFrom;
+      if (
+        includeFilter("vehicleInsuranceDateTo") &&
+        filters.vehicleInsuranceDateTo !== undefined
+      )
+        filterPayload.vehicleInsuranceDateTo = filters.vehicleInsuranceDateTo;
+      if (
+        includeFilter("vehicleBodyInsuranceCo") &&
+        filters.vehicleBodyInsuranceCo !== undefined
+      )
+        filterPayload.vehicleBodyInsuranceCo = filters.vehicleBodyInsuranceCo;
+      if (
+        includeFilter("vehicleBodyInsuranceNo") &&
+        filters.vehicleBodyInsuranceNo !== undefined
+      )
+        filterPayload.vehicleBodyInsuranceNo = filters.vehicleBodyInsuranceNo;
+      if (
+        includeFilter("vehicleMotionDirection") &&
+        filters.vehicleMotionDirection !== undefined
+      )
+        filterPayload.vehicleMotionDirection = filters.vehicleMotionDirection;
+      if (
+        includeFilter("vehicleMaxDamageSections") &&
+        filters.vehicleMaxDamageSections !== undefined
+      )
+        filterPayload.vehicleMaxDamageSections =
+          filters.vehicleMaxDamageSections;
+      if (
+        includeFilter("vehicleDamageSectionOther") &&
+        filters.vehicleDamageSectionOther !== undefined
+      )
+        filterPayload.vehicleDamageSectionOther =
+          filters.vehicleDamageSectionOther;
+      if (
+        includeFilter("vehicleInsuranceWarrantyLimit") &&
+        filters.vehicleInsuranceWarrantyLimit !== undefined
+      )
+        filterPayload.vehicleInsuranceWarrantyLimit =
+          filters.vehicleInsuranceWarrantyLimit;
+      if (
+        includeFilter("vehicleInsuranceWarrantyLimitMin") &&
+        filters.vehicleInsuranceWarrantyLimitMin !== undefined
+      )
+        filterPayload.vehicleInsuranceWarrantyLimitMin =
+          filters.vehicleInsuranceWarrantyLimitMin;
+      if (
+        includeFilter("vehicleInsuranceWarrantyLimitMax") &&
+        filters.vehicleInsuranceWarrantyLimitMax !== undefined
+      )
+        filterPayload.vehicleInsuranceWarrantyLimitMax =
+          filters.vehicleInsuranceWarrantyLimitMax;
+
+      // --- Driver in Vehicle DTOs Filters ---
+      if (includeFilter("driverSex") && filters.driverSex !== undefined)
+        filterPayload.driverSex = filters.driverSex;
+      if (
+        includeFilter("driverFirstName") &&
+        filters.driverFirstName !== undefined
+      )
+        filterPayload.driverFirstName = filters.driverFirstName;
+      if (
+        includeFilter("driverLastName") &&
+        filters.driverLastName !== undefined
+      )
+        filterPayload.driverLastName = filters.driverLastName;
+      if (
+        includeFilter("driverNationalCode") &&
+        filters.driverNationalCode !== undefined
+      )
+        filterPayload.driverNationalCode = filters.driverNationalCode;
+      if (
+        includeFilter("driverLicenceNumber") &&
+        filters.driverLicenceNumber !== undefined
+      )
+        filterPayload.driverLicenceNumber = filters.driverLicenceNumber;
+      if (
+        includeFilter("driverLicenceType") &&
+        filters.driverLicenceType !== undefined
+      )
+        filterPayload.driverLicenceType = filters.driverLicenceType;
+      if (
+        includeFilter("driverInjuryType") &&
+        filters.driverInjuryType !== undefined
+      )
+        filterPayload.driverInjuryType = filters.driverInjuryType;
+      if (
+        includeFilter("driverTotalReason") &&
+        filters.driverTotalReason !== undefined
+      )
+        filterPayload.driverTotalReason = filters.driverTotalReason;
+
+      // --- Passenger in Vehicle DTOs Filters ---
+      if (includeFilter("passengerSex") && filters.passengerSex !== undefined)
+        filterPayload.passengerSex = filters.passengerSex;
+      if (
+        includeFilter("passengerFirstName") &&
+        filters.passengerFirstName !== undefined
+      )
+        filterPayload.passengerFirstName = filters.passengerFirstName;
+      if (
+        includeFilter("passengerLastName") &&
+        filters.passengerLastName !== undefined
+      )
+        filterPayload.passengerLastName = filters.passengerLastName;
+      if (
+        includeFilter("passengerNationalCode") &&
+        filters.passengerNationalCode !== undefined
+      )
+        filterPayload.passengerNationalCode = filters.passengerNationalCode;
+      if (
+        includeFilter("passengerInjuryType") &&
+        filters.passengerInjuryType !== undefined
+      )
+        filterPayload.passengerInjuryType = filters.passengerInjuryType;
+      if (
+        includeFilter("passengerFaultStatus") &&
+        filters.passengerFaultStatus !== undefined
+      )
+        filterPayload.passengerFaultStatus = filters.passengerFaultStatus;
+      if (
+        includeFilter("passengerTotalReason") &&
+        filters.passengerTotalReason !== undefined
+      )
+        filterPayload.passengerTotalReason = filters.passengerTotalReason;
+
+      // --- Pedestrian DTOs Filters ---
+      if (includeFilter("pedestrianSex") && filters.pedestrianSex !== undefined)
+        filterPayload.pedestrianSex = filters.pedestrianSex;
+      if (
+        includeFilter("pedestrianFirstName") &&
+        filters.pedestrianFirstName !== undefined
+      )
+        filterPayload.pedestrianFirstName = filters.pedestrianFirstName;
+      if (
+        includeFilter("pedestrianLastName") &&
+        filters.pedestrianLastName !== undefined
+      )
+        filterPayload.pedestrianLastName = filters.pedestrianLastName;
+      if (
+        includeFilter("pedestrianNationalCode") &&
+        filters.pedestrianNationalCode !== undefined
+      )
+        filterPayload.pedestrianNationalCode = filters.pedestrianNationalCode;
+      if (
+        includeFilter("pedestrianInjuryType") &&
+        filters.pedestrianInjuryType !== undefined
+      )
+        filterPayload.pedestrianInjuryType = filters.pedestrianInjuryType;
+      if (
+        includeFilter("pedestrianFaultStatus") &&
+        filters.pedestrianFaultStatus !== undefined
+      )
+        filterPayload.pedestrianFaultStatus = filters.pedestrianFaultStatus;
+      if (
+        includeFilter("pedestrianTotalReason") &&
+        filters.pedestrianTotalReason !== undefined
+      )
+        filterPayload.pedestrianTotalReason = filters.pedestrianTotalReason;
+
+      // Now cast to the full type since we know all possible fields are covered
+      const completeFilterPayload =
+        filterPayload as ReqType["main"]["accident"]["spatialCollisionAnalytics"]["set"];
+
+      // Remove undefined values
+      const cleanedParams = Object.fromEntries(
+        Object.entries(completeFilterPayload).filter(
+          ([, value]) =>
+            value !== undefined && (!Array.isArray(value) || value.length > 0),
+        ),
+      );
 
       // Get the city name for GeoJSON (default to "اهواز" if no city selected)
       const selectedCity =
@@ -111,7 +423,10 @@ const SpatialCollisionAnalyticsPage = () => {
 
       // Run both API calls concurrently
       const [analyticsResponse, geoJsonResponse] = await Promise.all([
-        spatialCollisionAnalytics(requestDetails),
+        spatialCollisionAnalytics({
+          set: cleanedParams,
+          get: { analytics: 1 },
+        }),
         getCityZonesGeoJSON(selectedCity),
       ]);
 
@@ -124,7 +439,11 @@ const SpatialCollisionAnalyticsPage = () => {
 
       // Handle GeoJSON response
       if (geoJsonResponse.success && geoJsonResponse.body) {
-        setGeoJsonData(geoJsonResponse.body);
+        // Type assertion to match our stricter GeoJsonData type
+        setGeoJsonData({
+          type: "FeatureCollection",
+          features: geoJsonResponse.body.features || [],
+        });
       } else {
         setGeoJsonData(null);
       }
