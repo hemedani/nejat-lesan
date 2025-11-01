@@ -1,18 +1,27 @@
 // Shared GeoJSON type definitions
 
+type GeoJsonGeometryType =
+  | "Point"
+  | "MultiPoint"
+  | "LineString"
+  | "MultiLineString"
+  | "Polygon"
+  | "MultiPolygon"
+  | "GeometryCollection";
+
 export interface GeoJsonFeature {
-  type: string;
+  type: "Feature";
   properties: {
     name: string;
     [key: string]: unknown;
   };
   geometry: {
-    type: string;
+    type: GeoJsonGeometryType;
     coordinates: number[][][] | number[][][][];
   };
 }
 
 export interface GeoJsonData {
-  type: string;
+  type: "FeatureCollection";
   features: GeoJsonFeature[];
 }

@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
@@ -30,10 +31,19 @@ interface MapData {
   ratio: number;
 }
 
+interface MapDataWithCount {
+  name: string;
+  count: number;
+}
+
+// Type guard to check if the object has 'ratio' or 'count'
+const hasRatioProperty = (obj: unknown): obj is MapData => {
+  return obj !== null && typeof obj === "object" && "ratio" in obj;
+};
+
 interface SpatialCollisionMapProps {
-  mapData: MapData[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  geoJsonData: any;
+  mapData: Array<MapData | MapDataWithCount>;
+  geoJsonData: GeoJsonData | null;
   barChartData: {
     categories: string[];
     series: Array<{
@@ -50,6 +60,62 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   barChartData,
   isLoading,
 }) => {
+  // Convert count-based mapData to ratio-based if needed
+  const normalizedMapData = useMemo(() => {
+    // Check if the incoming mapData has 'ratio' field (new format) or 'count' field (old format)
+    if (mapData.length > 0 && hasRatioProperty(mapData[0])) {
+      // Already has ratios, return as-is
+      return mapData as MapData[];
+    } else {
+      // Calculate ratios from counts
+      // We need to determine what the ratio represents - likely a percentage of some collision type
+      // For now, we'll convert based on the available bar chart data
+      const countData = mapData as MapDataWithCount[];
+
+      if (barChartData && barChartData.categories && barChartData.series) {
+        return countData.map((item: MapDataWithCount) => {
+          // Find the index of this zone in the categories
+          const zoneIndex = barChartData.categories.findIndex(
+            (cat) => cat === item.name,
+          );
+
+          if (zoneIndex !== -1) {
+            let total = 0;
+            let specificCollisionAccidents = 0; // This would be for a specific collision type
+
+            // Calculate total accidents for this zone across all collision types
+            for (const series of barChartData.series) {
+              total += series.data[zoneIndex] || 0;
+
+              // For ratio calculation we'll consider the first collision type as reference or
+              // calculate based on the most frequent collision type for this zone
+              // This is a simplified approach - in practice you might want to calculate
+              // the ratio differently based on your specific requirements
+              if (series.name === barChartData.series[0].name) {
+                specificCollisionAccidents = series.data[zoneIndex];
+              }
+            }
+
+            // Calculate ratio of specific collision type to total (or use count if total not available)
+            const ratio = total > 0 ? specificCollisionAccidents / total : 0;
+            return { name: item.name, ratio };
+          }
+
+          // If we can't find the zone in bar chart, return with ratio 0
+          return { name: item.name, ratio: 0 };
+        });
+      } else {
+        // If no bar chart data available, just convert counts with some normalization
+        // Find max count to normalize values to 0-1 range
+        const maxCount = Math.max(...countData.map((item) => item.count), 1);
+        return countData.map((item: MapDataWithCount) => ({
+          name: item.name,
+          ratio: item.count / maxCount,
+        }));
+      }
+    }
+  }, [mapData, barChartData]);
+
   // Color scale function: green (low collision ratio) to red (high collision ratio)
   // Handle both percentage (60-70) and decimal (0.6-0.7) values
   const getColor = (ratio: number): string => {
@@ -68,14 +134,14 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   const findZoneData = (zoneName: string) => {
     if (!zoneName) return null;
 
-    // Try exact match first
-    let zoneData = mapData.find((item) => item.name === zoneName);
+    // Try exact match first with normalized data
+    let zoneData = normalizedMapData.find((item) => item.name === zoneName);
     if (zoneData) return zoneData;
 
     // Try to extract number from zone name and match
     const zoneNumber = zoneName.match(/\d+/)?.[0];
     if (zoneNumber) {
-      zoneData = mapData.find((item) => item.name === zoneNumber);
+      zoneData = normalizedMapData.find((item) => item.name === zoneNumber);
       if (zoneData) return zoneData;
     }
 
@@ -83,7 +149,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
     const cleanZoneName = zoneName
       .replace(/^(منطقه|zone|district)\s*/i, "")
       .trim();
-    zoneData = mapData.find((item) => {
+    zoneData = normalizedMapData.find((item) => {
       const cleanItemName = item.name
         .replace(/^(منطقه|zone|district)\s*/i, "")
         .trim();
@@ -92,7 +158,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
     if (zoneData) return zoneData;
 
     // Try partial matching
-    zoneData = mapData.find(
+    zoneData = normalizedMapData.find(
       (item) => zoneName.includes(item.name) || item.name.includes(zoneName),
     );
 
@@ -190,14 +256,18 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
               ${getCollisionLevel(ratio)}
             </span>
           </div>
-          ${collisionBreakdown ? `
+          ${
+            collisionBreakdown
+              ? `
             <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #E5E7EB;">
               <span style="color: #6B7280; font-weight: 500; display: block; margin-bottom: 4px;">تفکیک برخورد:</span>
               <div style="font-size: 12px; color: #374151; line-height: 1.4;">
                 ${collisionBreakdown}
               </div>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
       </div>
     `;
@@ -467,32 +537,51 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
         <h4 className="font-medium text-gray-900 mb-3">راهنمای رنگ‌ها</h4>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: "#10B981" }}></div>
+            <div
+              className="w-4 h-4 rounded border border-gray-300"
+              style={{ backgroundColor: "#10B981" }}
+            ></div>
             <span className="text-xs text-gray-600">پایین</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: "#84CC16" }}></div>
+            <div
+              className="w-4 h-4 rounded border border-gray-300"
+              style={{ backgroundColor: "#84CC16" }}
+            ></div>
             <span className="text-xs text-gray-600">کم</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: "#F59E0B" }}></div>
+            <div
+              className="w-4 h-4 rounded border border-gray-300"
+              style={{ backgroundColor: "#F59E0B" }}
+            ></div>
             <span className="text-xs text-gray-600">متوسط</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: "#F97316" }}></div>
+            <div
+              className="w-4 h-4 rounded border border-gray-300"
+              style={{ backgroundColor: "#F97316" }}
+            ></div>
             <span className="text-xs text-gray-600">بالا</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: "#EF4444" }}></div>
+            <div
+              className="w-4 h-4 rounded border border-gray-300"
+              style={{ backgroundColor: "#EF4444" }}
+            ></div>
             <span className="text-xs text-gray-600">بحرانی</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded border border-gray-300" style={{ backgroundColor: "#E5E7EB" }}></div>
+            <div
+              className="w-4 h-4 rounded border border-gray-300"
+              style={{ backgroundColor: "#E5E7EB" }}
+            ></div>
             <span className="text-xs text-gray-600">بدون داده</span>
           </div>
         </div>
         <p className="text-xs text-gray-600 mt-2">
-          رنگ‌ها نسبت نوع برخورد غالب در هر منطقه را نشان می‌دهند. برای اطلاعات بیشتر روی مناطق کلیک کنید.
+          رنگ‌ها نسبت نوع برخورد غالب در هر منطقه را نشان می‌دهند. برای اطلاعات
+          بیشتر روی مناطق کلیک کنید.
         </p>
       </div>
     </div>

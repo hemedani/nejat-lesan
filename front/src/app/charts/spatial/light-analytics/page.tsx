@@ -440,7 +440,11 @@ const SpatialLightAnalyticsPage = () => {
 
       // Handle GeoJSON response
       if (geoJsonResponse.success && geoJsonResponse.body) {
-        setGeoJsonData(geoJsonResponse.body);
+        // Type assertion to match our stricter GeoJsonData type
+        setGeoJsonData({
+          type: "FeatureCollection",
+          features: geoJsonResponse.body.features || [],
+        });
       } else {
         setGeoJsonData(null);
       }
