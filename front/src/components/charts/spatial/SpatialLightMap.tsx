@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
@@ -30,10 +31,19 @@ interface MapData {
   ratio: number;
 }
 
+interface MapDataWithCount {
+  name: string;
+  count: number;
+}
+
+// Type guard to check if the object has 'ratio' or 'count'
+const hasRatioProperty = (obj: unknown): obj is MapData => {
+  return obj !== null && typeof obj === "object" && "ratio" in obj;
+};
+
 interface SpatialLightMapProps {
-  mapData: MapData[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  geoJsonData: any;
+  mapData: Array<MapData | MapDataWithCount>;
+  geoJsonData: GeoJsonData | null;
   barChartData: {
     categories: string[];
     series: Array<{
@@ -50,6 +60,59 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   barChartData,
   isLoading,
 }) => {
+  // Convert count-based mapData to ratio-based if needed
+  const normalizedMapData = useMemo(() => {
+    // Check if the incoming mapData has 'ratio' field (new format) or 'count' field (old format)
+    if (mapData.length > 0 && hasRatioProperty(mapData[0])) {
+      // Already has ratios, return as-is
+      return mapData as MapData[];
+    } else {
+      // Calculate ratios from counts
+      // We need to determine what the ratio represents - likely a percentage of some lighting condition
+      // For now, we'll convert based on the available bar chart data
+      const countData = mapData as MapDataWithCount[];
+
+      if (barChartData && barChartData.categories && barChartData.series) {
+        return countData.map((item: MapDataWithCount) => {
+          // Find the index of this zone in the categories
+          const zoneIndex = barChartData.categories.findIndex(
+            (cat) => cat === item.name,
+          );
+
+          if (zoneIndex !== -1) {
+            let total = 0;
+            let daytimeAccidents = 0;
+
+            // Calculate total accidents for this zone across all lighting conditions
+            for (const series of barChartData.series) {
+              total += series.data[zoneIndex] || 0;
+
+              // If this series is 'روز' (day), add to daytime accidents
+              if (series.name === "روز") {
+                daytimeAccidents = series.data[zoneIndex];
+              }
+            }
+
+            // Calculate ratio of day accidents to total (or use count if total not available)
+            const ratio = total > 0 ? daytimeAccidents / total : 0;
+            return { name: item.name, ratio };
+          }
+
+          // If we can't find the zone in bar chart, return with ratio 0
+          return { name: item.name, ratio: 0 };
+        });
+      } else {
+        // If no bar chart data available, just convert counts with some normalization
+        // Find max count to normalize values to 0-1 range
+        const maxCount = Math.max(...countData.map((item) => item.count), 1);
+        return countData.map((item: MapDataWithCount) => ({
+          name: item.name,
+          ratio: item.count / maxCount,
+        }));
+      }
+    }
+  }, [mapData, barChartData]);
+
   // Color scale function: blue (low) to yellow to orange (high)
   // Handle both percentage (60-70) and decimal (0.6-0.7) values
   const getColor = (ratio: number): string => {
@@ -68,14 +131,14 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   const findZoneData = (zoneName: string) => {
     if (!zoneName) return null;
 
-    // Try exact match first
-    let zoneData = mapData.find((item) => item.name === zoneName);
+    // Try exact match first with normalized data
+    let zoneData = normalizedMapData.find((item) => item.name === zoneName);
     if (zoneData) return zoneData;
 
     // Try to extract number from zone name and match
     const zoneNumber = zoneName.match(/\d+/)?.[0];
     if (zoneNumber) {
-      zoneData = mapData.find((item) => item.name === zoneNumber);
+      zoneData = normalizedMapData.find((item) => item.name === zoneNumber);
       if (zoneData) return zoneData;
     }
 
@@ -83,7 +146,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     const cleanZoneName = zoneName
       .replace(/^(منطقه|zone|district)\s*/i, "")
       .trim();
-    zoneData = mapData.find((item) => {
+    zoneData = normalizedMapData.find((item) => {
       const cleanItemName = item.name
         .replace(/^(منطقه|zone|district)\s*/i, "")
         .trim();
@@ -92,7 +155,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     if (zoneData) return zoneData;
 
     // Try partial matching
-    zoneData = mapData.find(
+    zoneData = normalizedMapData.find(
       (item) => zoneName.includes(item.name) || item.name.includes(zoneName),
     );
 
