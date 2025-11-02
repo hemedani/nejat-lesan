@@ -102,12 +102,14 @@ try {
 	console.error("Failed to create uploads directory:", error);
 }
 
-coreApp.runServer({
-	port: 1404,
-	typeGeneration: true,
-	playground: true,
-	staticPath: ["/uploads"],
-	cors: [
+// Environment variables for server configuration
+const PORT = parseInt(Deno.env.get("SERVER_PORT") || "1404");
+const TYPE_GENERATION = (Deno.env.get("TYPE_GENERATION") || "true").toLowerCase() !== "false";
+const PLAYGROUND = (Deno.env.get("PLAYGROUND") || "true").toLowerCase() !== "false";
+const CORS_ORIGINS_RAW = Deno.env.get("CORS_ORIGINS");
+const CORS_ORIGINS = CORS_ORIGINS_RAW
+  ? CORS_ORIGINS_RAW.split(",").map(origin => origin.trim())
+  : [
 		"http://localhost:3000",
 		"http://localhost:4000",
 		"http://frontend:3000",
@@ -118,5 +120,12 @@ coreApp.runServer({
 		"https://46.245.98.10:3795",
 		"http://46.245.98.10",
 		"https://46.245.98.10",
-	],
+	];
+
+coreApp.runServer({
+	port: PORT,
+	typeGeneration: TYPE_GENERATION,
+	playground: PLAYGROUND,
+	staticPath: ["/uploads"],
+	cors: CORS_ORIGINS,
 });
