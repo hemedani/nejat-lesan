@@ -3,3 +3,4 @@ export * from "https://deno.land/x/lesan@v0.1.22/mod.ts";
 // export * from '/home/erfan/Desktop/lesan/mod.ts';
 export * as jwt from "https://deno.land/x/djwt@v2.8/mod.ts";
 export * as redis from "https://deno.land/x/redis/mod.ts";
+export { JsonParseStream } from "https://deno.land/std@0.224.0/json/mod.ts";
