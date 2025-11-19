@@ -46,6 +46,7 @@ import {
 import { AccidentJson } from "../../../utils/sampleTypes.ts";
 import { accident_pure, accident_relations } from "@model";
 import { normalizePersianText } from "../../../utils/normalizePersianText.ts";
+import { JsonParseStream } from "@deps";
 
 export const seedFn: ActFn = async (body) => {
 	const { set: { fileID } } = body.details;
@@ -63,10 +64,22 @@ export const seedFn: ActFn = async (body) => {
 	});
 	if (!foundedJSONFile) throw new Error(`JSONFile ${fileID} not found.`);
 
-	const fileContent = await Deno.readTextFile(
-		`./uploads/json/${foundedJSONFile.name}`,
-	);
-	const readJSON: { accident_json: string }[] = JSON.parse(fileContent);
+	// Read file information to determine size and choose appropriate approach
+	const filePath = `./uploads/json/${foundedJSONFile.name}`;
+	const fileInfo = await Deno.stat(filePath);
+
+	// Check if the file is too large (> 490MB) and throw an error if so
+	const MAX_FILE_SIZE = 490 * 1024 * 1024; // 490MB in bytes
+	if (fileInfo.size > MAX_FILE_SIZE) {
+		throw new Error(
+			`File size ${fileInfo.size} bytes exceeds maximum allowed size of ${MAX_FILE_SIZE} bytes (490MB). Please split the file into smaller chunks.`,
+		);
+	}
+
+	let readJSON: { accident_json: string }[];
+
+	const content = await Deno.readTextFile(filePath);
+	readJSON = JSON.parse(content);
 
 	const modelMap = {
 		position,
@@ -168,7 +181,9 @@ export const seedFn: ActFn = async (body) => {
 					// Only log final failures occasionally to reduce noise
 					if (Math.random() < 0.2) {
 						console.warn(
-							`Failed after ${maxRetries} attempts: ${error.message}`,
+							`Failed after ${maxRetries} attempts: ${
+								(error as Error).message
+							}`,
 						);
 					}
 					throw error;
@@ -183,7 +198,9 @@ export const seedFn: ActFn = async (body) => {
 					console.log(
 						`Retry attempt ${
 							attempt + 1
-						}/${maxRetries} after ${delay}ms for: ${error.message}`,
+						}/${maxRetries} after ${delay}ms for: ${
+							(error as Error).message
+						}`,
 					);
 				}
 				await new Promise((resolve) => setTimeout(resolve, delay));
@@ -282,7 +299,7 @@ export const seedFn: ActFn = async (body) => {
 						redisCacheKey,
 						JSON.stringify({
 							_id: found._id.toString(),
-							name: found.name,
+							name: (found as any).name,
 						}),
 						{ ex: 3600 },
 					),
@@ -374,7 +391,7 @@ export const seedFn: ActFn = async (body) => {
 											redisCacheKey,
 											JSON.stringify({
 												_id: created._id.toString(),
-												name: created.name,
+												name: (created as any).name,
 											}),
 											{ ex: 3600 },
 										),
@@ -428,7 +445,7 @@ export const seedFn: ActFn = async (body) => {
 			if (Math.random() < 0.05) {
 				console.warn(
 					`Failed to normalize relation ${modelName} with name "${item.name}":`,
-					error.message,
+					(error as Error).message,
 				);
 			}
 			return null;
@@ -1246,7 +1263,9 @@ export const seedFn: ActFn = async (body) => {
 						}
 					} catch (e) {
 						console.warn(
-							`Invalid province ObjectId ${accidentRelations.province._ids} for accident ${parsedAccident.serialNO}`,
+							`Invalid province ObjectId ${
+								accidentRelations.province!._ids
+							} for accident ${parsedAccident.serialNO}`,
 						);
 						delete accidentRelations.province;
 					}
@@ -1295,9 +1314,9 @@ export const seedFn: ActFn = async (body) => {
 				}
 
 				// Remove invalid relations
-				invalidRelations.forEach((key) =>
-					delete accidentRelations[key]
-				);
+				invalidRelations.forEach((key) => {
+					delete (accidentRelations as any)[key];
+				});
 
 				await accident.insertOne({
 					doc: accidentDoc,
@@ -1311,7 +1330,7 @@ export const seedFn: ActFn = async (body) => {
 						`Failed to insert accident with serial ${
 							parsedAccident.serialNO || "unknown"
 						}:`,
-						error.message,
+						(error as Error).message,
 					);
 				}
 				// Don't throw error, just log it to continue processing other records
@@ -1326,14 +1345,19 @@ export const seedFn: ActFn = async (body) => {
 	// Process records in batches for better performance
 	let processedCount = 0;
 	let skippedCount = 0;
-	let totalRecords = readJSON.length;
+	let totalRecords = 0; // We'll count as we go since we can't know the total in advance with streaming
 
 	console.log(
-		`Starting to process ${totalRecords} accident records in batches of ${BATCH_SIZE}...`,
+		`Starting to process accident records in batches of ${BATCH_SIZE}...`,
 	);
 	console.log(
 		`Redis-based entity caching enabled with lock timeout and retry mechanism.`,
 	);
+
+	// Reset counters for the actual processing
+	processedCount = 0;
+	skippedCount = 0;
+	totalRecords = readJSON.length;
 
 	for (let i = 0; i < readJSON.length; i += BATCH_SIZE) {
 		const batchStartTime = Date.now();
@@ -1407,7 +1431,7 @@ export const seedFn: ActFn = async (body) => {
 
 	const endTime = Date.now();
 	const totalTime = endTime - startTime;
-	const avgTimePerRecord = totalTime / totalRecords;
+	const avgTimePerRecord = totalRecords > 0 ? totalTime / totalRecords : 0;
 
 	console.log(`\n=== SEEDING COMPLETED ===`);
 	console.log(`Total records processed: ${processedCount}`);
@@ -1416,14 +1440,18 @@ export const seedFn: ActFn = async (body) => {
 	console.log(`Records with invalid coordinates: ${invalidCoordinatesCount}`);
 	console.log(
 		`Coordinate validation success rate: ${
-			((validCoordinatesCount / totalRecords) * 100).toFixed(1)
+			totalRecords > 0
+				? ((validCoordinatesCount / totalRecords) * 100).toFixed(1)
+				: "0.0"
 		}%`,
 	);
 	console.log(`Total time: ${(totalTime / 1000).toFixed(2)} seconds`);
 	console.log(`Average time per record: ${avgTimePerRecord.toFixed(2)}ms`);
 	console.log(
 		`Records per second: ${
-			(processedCount / (totalTime / 1000)).toFixed(2)
+			totalTime > 0
+				? (processedCount / (totalTime / 1000)).toFixed(2)
+				: "0.00"
 		}`,
 	);
 
