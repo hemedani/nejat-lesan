@@ -185,8 +185,7 @@ const AccidentMap: React.FC<{
         {/* Conditional rendering based on zoom level */}
         {showHeatmap && heatmapPoints.length > 0 && (
           <HeatmapLayer
-            fitBoundsOnLoad
-            fitBoundsOnUpdate
+            fitBoundsOnLoad={false}
             points={heatmapPoints}
             longitudeExtractor={(m: [number, number, number]) => m[1]}
             latitudeExtractor={(m: [number, number, number]) => m[0]}
