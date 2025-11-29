@@ -52,6 +52,33 @@ export const Navbar = () => {
       ),
     },
     {
+      href: "/maps/accidents",
+      label: "نقشه تصادفات",
+      icon: (
+        <svg
+          className="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M17.657 16.657L13.414 20.9a1.996 1.996 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M9 9l3 3 3-3"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
       href: "/chatbot",
       label: "چت‌بات",
       icon: (
@@ -101,15 +128,12 @@ export const Navbar = () => {
         </div>
 
         {/* Desktop Navigation - elegant hover effects and RTL support */}
-        <nav
-          className="hidden md:flex items-center space-x-8 space-x-reverse"
-          dir="rtl"
-        >
+        <nav className="hidden md:flex items-center" dir="rtl">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="group flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300"
+              className="group flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300 ml-8"
             >
               <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
                 {link.icon}
@@ -122,7 +146,7 @@ export const Navbar = () => {
           ))}
 
           {/* Elegant dropdown for additional links */}
-          <div className="relative group">
+          <div className="relative group ml-8">
             <button className="flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300">
               <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
                 <svg
