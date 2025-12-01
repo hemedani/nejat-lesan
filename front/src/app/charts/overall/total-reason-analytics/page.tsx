@@ -488,7 +488,7 @@ const TotalReasonAnalyticsPage = () => {
       disableSeverityFilter: false,
       disableCollisionTypeFilter: false,
       disableLightingFilter: false,
-      lockToSevereAccidents: true, // Lock to severe accidents as per requirements
+      lockToSevereAccidents: false, // Allow all accidents, not just severe ones
     };
   };
 

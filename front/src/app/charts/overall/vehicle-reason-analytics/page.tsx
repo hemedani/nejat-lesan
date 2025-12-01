@@ -510,7 +510,7 @@ const VehicleReasonAnalyticsPage = () => {
       disableSeverityFilter: false,
       disableCollisionTypeFilter: false,
       disableLightingFilter: false,
-      lockToSevereAccidents: true, // Lock to severe accidents as per backend requirements
+      lockToSevereAccidents: false, // Allow all accidents, not just severe ones
     };
   };
 

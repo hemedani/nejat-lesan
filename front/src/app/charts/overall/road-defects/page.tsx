@@ -160,7 +160,7 @@ const RoadDefectsPage = () => {
       disableSeverityFilter: false,
       disableCollisionTypeFilter: false,
       disableLightingFilter: false,
-      lockToSevereAccidents: true, // Lock to severe accidents for road defects analysis
+      lockToSevereAccidents: false, // Allow all accidents, not just severe ones
     };
   };
 
