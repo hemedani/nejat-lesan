@@ -490,6 +490,14 @@
     stroke-opacity: 1 !important;
 }
 
+/* Zaman Date Picker Styles - Fix for modal overlay */
+.persian-date-picker__calendar,
+.persian-date-picker__time-picker,
+.persian-date-picker__year-month-picker,
+div[class*="persian-date-picker"] {
+    z-index: 3000 !important;
+}
+
 /* Custom Scrollbar Styles */
 ::-webkit-scrollbar {
     width: 6px;

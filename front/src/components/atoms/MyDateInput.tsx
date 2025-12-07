@@ -22,7 +22,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
   placeholder,
   control,
   disabled = false,
-  customShowDateFormat = "YYYY/MM/DD"
+  customShowDateFormat = "YYYY/MM/DD",
 }: DateInputProps<T>) => {
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
@@ -37,44 +37,55 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
         name={name}
         control={control}
         render={({ field: { onChange, value } }) => (
-          <DatePicker
-            defaultValue={value ? new Date(value) : undefined}
-            onChange={(e) => {
-              if (e && e.value) {
-                // Convert to ISO string for consistent storage
-                onChange(new Date(e.value).toISOString().split('T')[0]);
-              } else {
-                onChange(null);
+          <div className="relative z-[2500]">
+            <DatePicker
+              defaultValue={
+                value
+                  ? typeof value === "string"
+                    ? new Date(value)
+                    : value
+                  : undefined
               }
-            }}
-            customShowDateFormat={customShowDateFormat}
-            className="z-999"
-            inputClass={`
-              w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
-              placeholder:text-slate-400 text-right
-              transition-all duration-200 ease-in-out
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
-              hover:border-slate-400 z-999
-              ${disabled
-                ? "bg-slate-100 cursor-not-allowed opacity-60"
-                : "hover:bg-slate-50/50"
-              }
-              ${errMsg
-                ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
-                : "border-slate-300"
-              }
-            `}
-            inputAttributes={{
-              placeholder: placeholder || label,
-              disabled: disabled,
-              readOnly: disabled
-            }}
-            round="x2"
-            accentColor="#3b82f6"
-            locale="fa"
-            direction="rtl"
-            show={false}
-          />
+              onChange={(e) => {
+                if (e && e.value) {
+                  // Convert to ISO string for consistent storage
+                  const dateValue = new Date(e.value);
+                  onChange(dateValue.toISOString());
+                } else {
+                  onChange(null);
+                }
+              }}
+              customShowDateFormat={customShowDateFormat}
+              className="z-2500 not-close-modal"
+              inputClass={`
+                w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
+                placeholder:text-slate-400 text-right
+                transition-all duration-200 ease-in-out
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
+                hover:border-slate-400
+                ${
+                  disabled
+                    ? "bg-slate-100 cursor-not-allowed opacity-60"
+                    : "hover:bg-slate-50/50"
+                }
+                ${
+                  errMsg
+                    ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
+                    : "border-slate-300"
+                }
+              `}
+              inputAttributes={{
+                placeholder: placeholder || label,
+                disabled: disabled,
+                readOnly: disabled,
+              }}
+              round="x2"
+              accentColor="#3b82f6"
+              locale="fa"
+              direction="rtl"
+              show={false}
+            />
+          </div>
         )}
       />
 

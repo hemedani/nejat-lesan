@@ -1,28 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useRef } from "react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
-export interface ModalProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
-  description: string;
-  confirmText: string;
-  cancelText: string;
-  onConfirm: () => void;
-  confirmButtonClassName?: string;
+  children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  title,
-  description,
-  confirmText,
-  cancelText,
-  onConfirm,
-  confirmButtonClassName = "bg-blue-600 hover:bg-blue-700",
-}) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,9 +20,29 @@ const Modal: React.FC<ModalProps> = ({
     };
 
     const handleClickOutside = (e: MouseEvent) => {
+      // Check if the click is on a date picker element
+      const target = e.target as Node;
+      const isDatePickerElement =
+        target instanceof Element &&
+        (target.classList.contains("not-close-modal") ||
+          target.closest(".not-close-modal") !== null ||
+          target.classList.contains("zm-DaysButton") ||
+          target.classList.contains("zm-Header") ||
+          target.classList.contains("zm-MonthYearButton") ||
+          target.classList.contains("zm-IconPrevButton") ||
+          target.classList.contains("zm-IconNextButton") ||
+          target.classList.contains("zm-DaysButton") ||
+          target.closest(".zm-Header") !== null ||
+          target.closest(".zm-DaysButton") !== null ||
+          target.closest(".zm-MonthYearButton") !== null ||
+          target.closest(".css-1m8qzkt") !== null || // Main container
+          target.closest(".css-817hxt") !== null || // Calendar wrapper
+          target.closest(".zm-Wrap") !== null); // Wrapper element
+
       if (
         modalRef.current &&
         !modalRef.current.contains(e.target as Node) &&
+        !isDatePickerElement &&
         isOpen
       ) {
         onClose();
@@ -60,25 +67,9 @@ const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
         ref={modalRef}
-        className="bg-white rounded-lg p-6 shadow-xl max-w-md w-full mx-4 transform transition-all"
+        className="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 transform transition-all max-h-[90vh] overflow-hidden"
       >
-        <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
-        <p className="text-gray-600 mb-6">{description}</p>
-
-        <div className="flex gap-2 justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-          >
-            {cancelText}
-          </button>
-          <button
-            onClick={onConfirm}
-            className={`px-4 py-2 text-white rounded-md transition-colors ${confirmButtonClassName}`}
-          >
-            {confirmText}
-          </button>
-        </div>
+        {children}
       </div>
     </div>
   );
