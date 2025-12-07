@@ -186,6 +186,85 @@ The system includes robust geographic features:
 
 3. **Type Safety**: Strong TypeScript typing throughout the codebase
 
+## 📊 Analytics and Charts System
+
+The most important section of this project is the analytics and charts system, located in `src/accident/charts/`. This comprehensive analytics system provides:
+
+### Key Analytics Categories:
+
+- **Temporal Analytics**: Time-based analysis including monthly, hourly, and seasonal trends
+  - `temporalCountAnalytics`: Monthly accident counts over time
+  - `temporalSeverityAnalytics`: Accident severity trends over time
+  - `temporalCollisionAnalytics`: Collision type trends over time
+  - `hourlyDayOfWeekAnalytics`: Time-of-day and day-of-week patterns
+  - `temporalNightAnalytics`: Nighttime accident patterns
+  - `temporalUnlicensedDriversAnalytics`: Unlicensed driver incident trends
+  - `monthlyHolidayAnalytics`: Holiday-related accident patterns
+
+- **Spatial Analytics**: Geographic and location-based analysis
+  - `spatialSeverityAnalytics`: Geographic distribution of accident severity
+  - `spatialCollisionAnalytics`: Geographic collision patterns
+  - `spatialLightAnalytics`: Lighting condition impact by location
+  - `spatialSingleVehicleAnalytics`: Single-vehicle accident locations
+  - `spatialSafetyIndexAnalytics`: Safety index mapping by area
+  - `areaUsageAnalytics`: Area usage patterns and accident correlations
+
+- **Severity and Classification Analytics**:
+  - `accidentSeverityAnalytics`: Breakdown of accidents by severity (Fatal, Injury, Damage)
+  - `collisionAnalytics`: Analysis of different collision types
+  - `totalReasonAnalytics`: Comprehensive reason analysis
+  - `humanReasonAnalytics`: Human factor analysis
+  - `vehicleReasonAnalytics`: Vehicle-related factor analysis
+
+- **Specialized Analytics**:
+  - `roadDefectsAnalytics`: Road defects and their impact on accidents
+  - `eventCollisionAnalytics`: Collision analysis in specific events
+  - `eventSeverityAnalytics`: Severity analysis in specific events
+  - `companyPerformanceAnalytics`: Insurance company performance metrics
+  - `temporalDamageAnalytics`: Damage type trends over time
+
+### Technical Implementation:
+
+Each analytics module follows a consistent pattern:
+
+1. **mod.ts**: Sets up the act using `coreApp.acts.setAct` with appropriate permissions
+2. **.fn.ts**: Contains the main analytics function implementing complex MongoDB aggregation
+3. **.val.ts**: Provides comprehensive validation with all possible filter parameters
+
+### Key Features of Analytics Modules:
+
+- **Comprehensive Filtering**: All analytics endpoints support the same extensive set of filters for consistency:
+  - Date ranges (from/to)
+  - Geographic filters (province, city, road, traffic zones, etc.)
+  - Vehicle-related filters (color, system, insurance, driver information)
+  - Pedestrian-related filters
+  - Environmental conditions (light, weather, road conditions)
+  - Accident details (severity, collision type, etc.)
+
+- **Multi-select Support**: All categorical filters support array inputs for multi-select functionality
+
+- **Flexible Date Handling**: Most modules have default date ranges (e.g., last 3 Jalali years) but allow custom ranges
+
+- **Advanced MongoDB Operations**: Uses sophisticated aggregation pipelines, $elemMatch for array fields, and proper indexing
+
+- **Consistent Output Format**: Each analytics module returns data in a standardized format suitable for charting libraries
+
+- **Security**: All analytics endpoints require "Manager" level access via `grantAccess`
+
+- **Performance Optimization**: Uses efficient MongoDB operations like parallel countDocument calls for simple analytics
+
+### Filter Consistency:
+
+The analytics system ensures UI consistency through a shared filter schema that supports:
+
+- Text search with partial matching
+- Range filters for numeric values (Min/Max suffixes)
+- Multi-select categorical filtering
+- Embedded document filtering (for vehicle_dtos, pedestrian_dtos)
+- Spatial filters (polygon-based, though reserved for future)
+
+This analytics system provides the core functionality for the traffic management dashboard, enabling data-driven decisions for traffic safety improvements.
+
 ## 📁 File Management
 
 - File uploads are stored in the "uploads" directory

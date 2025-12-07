@@ -4,17 +4,25 @@
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
  * The comprehensive validator for the event trend analytics endpoint. It includes
- * specific fields for defining the event's date range and all possible general filters.
+ * specific fields for selecting an event from the event model and all possible general filters.
  */
-import { array, enums, number, object, optional, string } from "@deps";
+import {
+	array,
+	enums,
+	number,
+	object,
+	objectIdValidation,
+	optional,
+	string,
+} from "@deps";
+import { coreApp } from "../../../../mod.ts";
 import { geoJSONStruct } from "@model";
 
 export const eventSeverityAnalyticsValidator = () => {
 	return object({
 		set: object({
 			// --- Event-Specific Filters ---
-			eventDateFrom: optional(string()), // Start date of the event (e.g., Nowruz)
-			eventDateTo: optional(string()), // End date of the event
+			eventId: optional(objectIdValidation), // ID of the event from the event model
 
 			// --- Comprehensive General Filters ---
 			seri: optional(number()),

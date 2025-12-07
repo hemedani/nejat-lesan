@@ -9,13 +9,27 @@
  * It now includes a comprehensive set of filters.
  */
 import type { ActFn, Document } from "@deps";
-import { accident } from "../../../../mod.ts";
+import { accident, event } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { ObjectId } from "@deps";
 
 export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
 
-	// --- 1. Define Date Ranges ---
+	// --- 1. Get event details if eventId is provided ---
+	let eventDateRanges: string[][] = [];
+	if (filters.eventId) {
+		const eventDoc = await event.findOne({
+			filters: { _id: new ObjectId(filters.eventId) },
+			projection: { dates: 1 },
+		});
+
+		if (eventDoc && eventDoc.dates && Array.isArray(eventDoc.dates)) {
+			eventDateRanges = eventDoc.dates;
+		}
+	}
+
+	// --- 2. Define Date Ranges ---
 	const overallStartDate = filters.dateOfAccidentFrom
 		? moment(filters.dateOfAccidentFrom).startOf("day").toDate()
 		: moment().subtract(1, "year").startOf("day").toDate();
@@ -23,11 +37,7 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 		? moment(filters.dateOfAccidentTo).endOf("day").toDate()
 		: moment().endOf("day").toDate();
 
-	const eventStartDate = moment(filters.eventDateFrom).startOf("day")
-		.toDate();
-	const eventEndDate = moment(filters.eventDateTo).endOf("day").toDate();
-
-	// --- 2. Build Comprehensive Base Filter ---
+	// --- 3. Build Comprehensive Base Filter ---
 	const matchFilter: Document = {
 		date_of_accident: { $gte: overallStartDate, $lte: overallEndDate },
 	};
@@ -106,7 +116,42 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 		matchFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
 	}
 
-	// --- 3. Define and Execute the Aggregation Pipeline ---
+	// --- 4. Define event date filters based on the event data ---
+	let eventDateFilter: Document = {};
+
+	if (eventDateRanges.length > 0) {
+		// Create an OR condition for all date ranges in the event
+		const dateConditions = eventDateRanges.map(([startDate, endDate]) => ({
+			date_of_accident: {
+				$gte: moment(startDate).startOf("day").toDate(),
+				$lte: moment(endDate).endOf("day").toDate(),
+			},
+		}));
+
+		if (dateConditions.length === 1) {
+			eventDateFilter = dateConditions[0];
+		} else {
+			eventDateFilter = { $or: dateConditions };
+		}
+	} else if (filters.dateOfAccidentFrom && filters.dateOfAccidentTo) {
+		// Fallback to the original overall date range if no event is specified
+		eventDateFilter = {
+			date_of_accident: {
+				$gte: overallStartDate,
+				$lte: overallEndDate,
+			},
+		};
+	} else {
+		// If no specific event and no date range, use a default range
+		eventDateFilter = {
+			date_of_accident: {
+				$gte: overallStartDate,
+				$lte: overallEndDate,
+			},
+		};
+	}
+
+	// --- 5. Define and Execute the Aggregation Pipeline ---
 	const pipeline: Document[] = [
 		{ $match: matchFilter },
 		{
@@ -114,12 +159,7 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 				// --- Part 1: Data for accidents WITHIN the event period ---
 				eventData: [
 					{
-						$match: {
-							date_of_accident: {
-								$gte: eventStartDate,
-								$lte: eventEndDate,
-							},
-						},
+						$match: eventDateFilter,
 					},
 					{ $group: { _id: "$type.name", count: { $sum: 1 } } },
 					{ $project: { _id: 0, name: "$_id", count: "$count" } },
@@ -128,12 +168,15 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 				nonEventData: [
 					{
 						$match: {
-							date_of_accident: {
-								$not: {
-									$gte: eventStartDate,
-									$lte: eventEndDate,
-								},
-							},
+							$and: [
+								{ $not: eventDateFilter }, // Exclude the event dates
+								{
+									date_of_accident: {
+										$gte: overallStartDate,
+										$lte: overallEndDate,
+									},
+								}, // But within overall range
+							],
 						},
 					},
 					{ $group: { _id: "$type.name", count: { $sum: 1 } } },
@@ -146,7 +189,7 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 	const results = await accident.aggregation({ pipeline }).toArray();
 	const analyticsData = results[0] || { eventData: [], nonEventData: [] };
 
-	// --- 4. Helper function to ensure all severity types are present ---
+	// --- 6. Helper function to ensure all severity types are present ---
 	const formatSeverityData = (data: { name: string; count: number }[]) => {
 		const severities = ["فوتی", "جرحی", "خسارتی"];
 		const dataMap = new Map(data.map((item) => [item.name, item.count]));
@@ -156,7 +199,7 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 		}));
 	};
 
-	// --- 5. Format and Return the Final Payload ---
+	// --- 7. Format and Return the Final Payload ---
 	return {
 		analytics: {
 			eventData: formatSeverityData(analyticsData.eventData),
