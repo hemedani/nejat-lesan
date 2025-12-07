@@ -16,6 +16,7 @@ export * from "./body_insurance_co.ts";
 export * from "./collision_type.ts";
 export * from "./color.ts";
 export * from "./equipment_damage.ts";
+export * from "./event.ts";
 export * from "./fault_status.ts";
 export * from "./human_reason.ts";
 export * from "./insurance_co.ts";

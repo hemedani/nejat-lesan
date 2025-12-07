@@ -1946,6 +1946,33 @@ is_verified: boolean;
 ;
 
 
+    export type eventInp = {
+      registrer?: number | userInp
+      
+    }
+
+
+    export type eventSchema = {
+_id?: string;
+name: string;
+description: string;
+dates: string[];
+registrer?: {
+_id?: string;
+first_name: string;
+last_name: string;
+father_name: string;
+mobile: string;
+gender: ("Male" | "Female" );
+national_number: string;
+address: string;
+level: ("Ghost" | "Manager" | "Editor" | "Ordinary" );
+is_verified: boolean;
+};
+};
+;
+
+
     export type ReqType = {
 
   
@@ -4898,6 +4925,141 @@ name?: string;
 };
 get: {
 qty?: (0 | 1 );
+};
+};
+
+          
+          }
+
+        
+        event: {
+
+      
+            add: {
+set: {
+name: string;
+description: string;
+dates: string[];
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+dates?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+};
+
+          
+            update: {
+set: {
+_id: string;
+name?: string;
+description?: string;
+dates?: string[];
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+dates?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+};
+
+          
+            get: {
+set: {
+_id: string;
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+dates?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+};
+
+          
+            gets: {
+set: {
+page: number;
+limit: number;
+skip?: number;
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+dates?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+};
+
+          
+            remove: {
+set: {
+_id: string;
+hardCascade?: boolean;
+};
+get: {
+success?: (0 | 1 );
+};
+};
+
+          
+            count: {
+set: {
+filters?: {
+};
+};
+get: {
+count: number;
 };
 };
 
@@ -14333,8 +14495,7 @@ analytics: (1 );
           
             eventSeverityAnalytics: {
 set: {
-eventDateFrom?: string;
-eventDateTo?: string;
+eventId?: string;
 seri?: number;
 serial?: number;
 dateOfAccidentFrom?: string;

@@ -83,6 +83,7 @@ export type ModelName =
   | "collision_type"
   | "color"
   | "equipment_damage"
+  | "event"
   | "fault_status"
   | "human_reason"
   | "insurance_co"
@@ -134,6 +135,8 @@ function translateModelNameToPersian(modelName: ModelName): string {
       return "رنگ";
     case "equipment_damage":
       return "خسارت تجهیزات";
+    case "event":
+      return "رویداد";
     case "fault_status":
       return "وضعیت مقصر";
     case "human_reason":
