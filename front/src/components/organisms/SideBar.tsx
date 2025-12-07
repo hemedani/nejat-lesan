@@ -80,6 +80,11 @@ const defaultMenuItems: MenuItem[] = [
     icon: <UserIcon className="w-5 h-5" />,
   },
   {
+    label: translateModelNameToPersian("event"),
+    href: `/admin/${snakeToKebabCase("event")}`,
+    icon: <UserIcon className="w-5 h-5" />,
+  },
+  {
     label: translateModelNameToPersian("fault_status"),
     href: `/admin/${snakeToKebabCase("fault_status")}`,
     icon: <UserIcon className="w-5 h-5" />,
