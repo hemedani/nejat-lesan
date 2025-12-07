@@ -1,3 +1,4 @@
+import { eventSetup } from "./event/mod.ts";
 import { fileSetup } from "./file/mod.ts";
 import { userSetup } from "./user/mod.ts";
 import { citySetup } from "./city/mod.ts";
@@ -44,6 +45,7 @@ export const functionsSetup = () => {
 	collisionTypeSetup();
 	colorSetup();
 	equipmentDamageSetup();
+	eventSetup();
 	faultStatusSetup();
 	fileSetup();
 	humanReasonSetup();

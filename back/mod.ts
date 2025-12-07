@@ -10,6 +10,7 @@ import {
 	collision_types,
 	colors,
 	equipment_damages,
+	events,
 	fault_statuses,
 	files,
 	human_reasons,
@@ -92,6 +93,8 @@ export const { setAct, setService, getAtcsWithServices } = coreApp.acts;
 
 export const { selectStruct, getSchemas } = coreApp.schemas;
 
+export const event = events();
+
 functionsSetup();
 
 // Ensure uploads directory exists
@@ -104,12 +107,14 @@ try {
 
 // Environment variables for server configuration
 const PORT = parseInt(Deno.env.get("SERVER_PORT") || "1404");
-const TYPE_GENERATION = (Deno.env.get("TYPE_GENERATION") || "true").toLowerCase() !== "false";
-const PLAYGROUND = (Deno.env.get("PLAYGROUND") || "true").toLowerCase() !== "false";
+const TYPE_GENERATION =
+	(Deno.env.get("TYPE_GENERATION") || "true").toLowerCase() !== "false";
+const PLAYGROUND =
+	(Deno.env.get("PLAYGROUND") || "true").toLowerCase() !== "false";
 const CORS_ORIGINS_RAW = Deno.env.get("CORS_ORIGINS");
 const CORS_ORIGINS = CORS_ORIGINS_RAW
-  ? CORS_ORIGINS_RAW.split(",").map(origin => origin.trim())
-  : [
+	? CORS_ORIGINS_RAW.split(",").map((origin) => origin.trim())
+	: [
 		"http://localhost:3000",
 		"http://localhost:4000",
 		"http://frontend:3000",
