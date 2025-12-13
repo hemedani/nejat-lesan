@@ -1956,7 +1956,12 @@ export type eventSchema = {
   _id?: string;
   name: string;
   description: string;
-  dates: string[];
+  dates: {
+    from: string;
+    to: string;
+    startEntireRange: string;
+    endEntireRange: string;
+  }[];
   registrer?: {
     _id?: string;
     first_name: string;
@@ -4939,7 +4944,12 @@ export type ReqType = {
         set: {
           name: string;
           description: string;
-          dates: string[];
+          dates: {
+            from: string;
+            to: string;
+            startEntireRange: string;
+            endEntireRange: string;
+          }[];
         };
         get: {
           _id?: (0 | 1);
@@ -4967,7 +4977,12 @@ export type ReqType = {
           _id: string;
           name?: string;
           description?: string;
-          dates?: string[];
+          dates?: {
+            from: string;
+            to: string;
+            startEntireRange: string;
+            endEntireRange: string;
+          }[];
         };
         get: {
           _id?: (0 | 1);
@@ -5020,6 +5035,7 @@ export type ReqType = {
           page: number;
           limit: number;
           skip?: number;
+          name?: string;
         };
         get: {
           _id?: (0 | 1);
@@ -5055,11 +5071,10 @@ export type ReqType = {
 
       count: {
         set: {
-          filters?: {
-          };
+          name?: string;
         };
         get: {
-          count: number;
+          qty?: (0 | 1);
         };
       };
 

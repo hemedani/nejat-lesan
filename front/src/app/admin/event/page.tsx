@@ -12,7 +12,7 @@ import { translateModelNameToPersian } from "@/utils/helper";
 export default async function EventDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<ReqType["main"]["event"]["gets"]["set"]>;
+  searchParams: Promise<{ limit?: string; page?: string; name?: string }>;
 }) {
   const { limit = "20", page = "1", name } = await searchParams;
 
@@ -31,7 +31,7 @@ export default async function EventDashboardPage({
   const data = await gets({ set, get });
   const counted = await count({
     set: { ...(name && { name }) },
-    get: { count: 1 },
+    get: { qty: 1 },
   });
 
   const token = (await cookies()).get("token");
@@ -61,7 +61,7 @@ export default async function EventDashboardPage({
         token={token?.value}
         lesanUrl={lesanUrl}
       />
-      <Pagination countPage={counted?.body.count} initialPage={+page} />
+      <Pagination countPage={counted?.body.qty} initialPage={+page} />
     </div>
   );
 }
