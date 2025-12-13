@@ -7,7 +7,12 @@ export const updateValidator = () => {
 			_id: objectIdValidation,
 			name: optional(string()),
 			description: optional(string()),
-			dates: optional(array(array(string()))), // Array of date ranges [[startDate, endDate], [startDate, endDate], ...]
+			dates: optional(array(object({
+				from: string(),
+				to: string(),
+				startEntireRange: string(),
+				endEntireRange: string(),
+			}))), // Array of date ranges [[startDate, endDate], [startDate, endDate], ...]
 		}),
 		get: coreApp.schemas.selectStruct("event", 1),
 	});

@@ -6,7 +6,12 @@ export const update = async (
   _id: string,
   name?: string,
   description?: string,
-  dates?: [string, string][],
+  dates?: Array<{
+    from: string;
+    to: string;
+    startEntireRange: string;
+    endEntireRange: string;
+  }>,
 ) => {
   const token = (await cookies()).get("token");
   return await AppApi().send(

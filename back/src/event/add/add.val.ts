@@ -1,12 +1,11 @@
-import { array, object, string } from "@deps";
+import { object } from "@deps";
 import { coreApp } from "../../../mod.ts";
+import { event_pure } from "@model";
 
 export const addValidator = () => {
 	return object({
 		set: object({
-			name: string(),
-			description: string(),
-			dates: array(array(string())), // Array of date ranges [[startDate, endDate], [startDate, endDate], ...]
+			...event_pure,
 		}),
 		get: coreApp.schemas.selectStruct("event", 1),
 	});

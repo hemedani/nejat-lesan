@@ -1,4 +1,4 @@
-import { number, object, optional } from "@deps";
+import { number, object, optional, string } from "@deps";
 import { coreApp } from "../../../mod.ts";
 
 export const getsValidator = () => {
@@ -7,6 +7,7 @@ export const getsValidator = () => {
 			page: number(),
 			limit: number(),
 			skip: optional(number()),
+			name: optional(string()),
 		}),
 		get: coreApp.schemas.selectStruct("event", 1),
 	});

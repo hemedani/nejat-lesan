@@ -1,13 +1,10 @@
-import { number, object, optional } from "@deps";
-import { coreApp } from "../../../mod.ts";
+import { enums, object, optional, string } from "@deps";
 
 export const countValidator = () => {
 	return object({
 		set: object({
-			filters: optional(object({})),
+			name: optional(string()),
 		}),
-		get: object({
-			count: number(),
-		}),
+		get: object({ qty: optional(enums([0, 1])) }),
 	});
 };

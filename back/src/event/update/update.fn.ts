@@ -1,4 +1,4 @@
-import type { ActFn } from "@deps";
+import { type ActFn, ObjectId } from "@deps";
 import { event } from "../../../mod.ts";
 
 export const updateFn: ActFn = async (body) => {
@@ -6,7 +6,7 @@ export const updateFn: ActFn = async (body) => {
 	const get = body.details.get;
 
 	return await event.findOneAndUpdate({
-		filter: { _id: _id },
+		filter: { _id: new ObjectId(_id as string) },
 		projection: get,
 		update: {
 			$set: {

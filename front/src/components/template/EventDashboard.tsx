@@ -16,7 +16,12 @@ interface TData {
   _id: string;
   name: string;
   description: string;
-  dates: [string, string][]; // Array of date pairs [start, end]
+  dates: Array<{
+    from: string;
+    to: string;
+    startEntireRange: string;
+    endEntireRange: string;
+  }>; // Array of objects with individual and overall date ranges
 }
 
 interface EventDashboardProps {
@@ -105,12 +110,17 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
           </thead>
           <tbody>
             {data?.map((item) => {
-              // Format the dates - dates are now an array of [start, end] pairs
-              const dateRanges = item.dates.map(([startStr, endStr]) => {
-                const start = new Date(startStr);
-                const end = new Date(endStr);
-                return formatDateTimeRange(start, end);
-              });
+              // Determine the overall start date for the event - use the earliest startEntireRange
+              const overallStartDate =
+                item.dates.length > 0
+                  ? new Date(
+                      Math.min(
+                        ...item.dates.map((dateObj) =>
+                          new Date(dateObj.startEntireRange).getTime(),
+                        ),
+                      ),
+                    )
+                  : new Date();
 
               return (
                 <tr key={item._id} className="border-b hover:bg-gray-50">
@@ -122,22 +132,40 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                     {item.description}
                   </td>
                   <td className="py-3 px-4 text-right">
-                    {dateRanges.length > 0 ? (
-                      <ul className="list-disc pr-4">
-                        {dateRanges.map((range, idx) => (
-                          <li key={idx} className="text-sm text-gray-600">
-                            {range}
-                          </li>
-                        ))}
-                      </ul>
+                    {item.dates.length > 0 ? (
+                      <div className="space-y-2">
+                        {/* Individual date ranges with their respective overall ranges */}
+                        <div>
+                          <span className="text-sm text-gray-600">
+                            بازه‌های فعال:
+                          </span>
+                          <ul className="list-disc pr-4 mt-1 space-y-2">
+                            {item.dates.map((dateObj, idx) => {
+                              const start = new Date(dateObj.from);
+                              const end = new Date(dateObj.to);
+                              const range = formatDateTimeRange(start, end);
+                              return (
+                                <li key={idx} className="text-sm text-gray-600">
+                                  <div className="font-medium">{range}</div>
+                                  <div className="text-xs text-gray-500">
+                                    بازه کلی:{" "}
+                                    {formatDateTimeRange(
+                                      new Date(dateObj.startEntireRange),
+                                      new Date(dateObj.endEntireRange),
+                                    )}
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      </div>
                     ) : (
                       <span className="text-gray-400">بدون تاریخ</span>
                     )}
                   </td>
                   <td className="py-3 px-4 text-right">
-                    {item.dates && item.dates.length > 0
-                      ? new Date(item.dates[0][0]).toLocaleDateString("fa-IR") // First date range, first date (start)
-                      : new Date().toLocaleDateString("fa-IR")}
+                    {overallStartDate.toLocaleDateString("fa-IR")}
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex space-x-2 justify-end">

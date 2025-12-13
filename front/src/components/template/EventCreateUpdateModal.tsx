@@ -20,11 +20,15 @@ const eventSchema = z.object({
     .string()
     .max(500, "توضیحات نباید بیشتر از 500 کاراکتر باشد")
     .optional(),
+  startEntireRange: z.string().optional(),
+  endEntireRange: z.string().optional(),
   dates: z
     .array(
       z.object({
-        start: z.string().min(1, "تاریخ شروع الزامی است"),
-        end: z.string().min(1, "تاریخ پایان الزامی است"),
+        from: z.string().min(1, "تاریخ شروع الزامی است"),
+        to: z.string().min(1, "تاریخ پایان الزامی است"),
+        startEntireRange: z.string().min(1, "تاریخ شروع کلی الزامی است"),
+        endEntireRange: z.string().min(1, "تاریخ پایان کلی الزامی است"),
       }),
     )
     .min(1, "حداقل یک بازه تاریخی باید وارد شود"),
@@ -39,7 +43,12 @@ interface EventCreateUpdateModalProps {
     _id: string;
     name: string;
     description: string;
-    dates: [string, string][];
+    dates: Array<{
+      from: string;
+      to: string;
+      startEntireRange: string;
+      endEntireRange: string;
+    }>;
   } | null;
   model: string;
   token?: string;
@@ -62,12 +71,15 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
     formState: { errors },
     setError,
     setValue,
+    watch,
   } = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       name: "",
       description: "",
-      dates: [{ start: "", end: "" }],
+      startEntireRange: "",
+      endEntireRange: "",
+      dates: [{ from: "", to: "", startEntireRange: "", endEntireRange: "" }],
     },
   });
 
@@ -82,30 +94,207 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
       setValue("name", itemToEdit.name);
       setValue("description", itemToEdit.description);
 
-      // Convert the dates array of pairs to DateRange format
-      const dateRanges = itemToEdit.dates.map(([start, end]) => ({
-        start,
-        end,
+      // Set the dates array with all 4 fields
+      const dateRangesWithAllFields = itemToEdit.dates.map((dateObj) => ({
+        from: dateObj.from,
+        to: dateObj.to,
+        startEntireRange: dateObj.startEntireRange,
+        endEntireRange: dateObj.endEntireRange,
       }));
+
+      // Determine and set the overall range based on the earliest start and latest end of all ranges
+      if (itemToEdit.dates && itemToEdit.dates.length > 0) {
+        // Filter out invalid dates and convert to Date objects
+        const validStartDates = itemToEdit.dates
+          .map((d) => d.startEntireRange)
+          .filter((dateStr): dateStr is string =>
+            Boolean(dateStr && !isNaN(Date.parse(dateStr || ""))),
+          )
+          .map((dateStr) => new Date(dateStr));
+
+        const validEndDates = itemToEdit.dates
+          .map((d) => d.endEntireRange)
+          .filter((dateStr): dateStr is string =>
+            Boolean(dateStr && !isNaN(Date.parse(dateStr || ""))),
+          )
+          .map((dateStr) => new Date(dateStr));
+
+        if (validStartDates.length > 0 && validEndDates.length > 0) {
+          const earliestStart = new Date(
+            Math.min(...validStartDates.map((date) => date.getTime())),
+          );
+          const latestEnd = new Date(
+            Math.max(...validEndDates.map((date) => date.getTime())),
+          );
+
+          setValue(
+            "startEntireRange",
+            earliestStart.toISOString().split("T")[0],
+          );
+          setValue("endEntireRange", latestEnd.toISOString().split("T")[0]);
+        }
+      }
+
       // Set dates after component mounts
       setValue(
         "dates",
-        dateRanges.length > 0 ? dateRanges : [{ start: "", end: "" }],
+        dateRangesWithAllFields.length > 0
+          ? dateRangesWithAllFields
+          : [{ from: "", to: "", startEntireRange: "", endEntireRange: "" }],
       );
     } else {
       // For new event, set empty values
       setValue("name", "");
       setValue("description", "");
-      setValue("dates", [{ start: "", end: "" }]);
+      setValue("startEntireRange", "");
+      setValue("endEntireRange", "");
+      setValue("dates", [
+        { from: "", to: "", startEntireRange: "", endEntireRange: "" },
+      ]);
     }
   }, [isEdit, itemToEdit, setValue]);
 
+  // Update overall range when dates change
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name && name.startsWith("dates.")) {
+        // If a date field changes
+        const dates = value.dates;
+        if (dates && dates.length > 0) {
+          // Filter out invalid dates and convert to Date objects
+          const validStartDates = dates
+            .map((date) => date!.startEntireRange) // Get the startEntireRange string
+            .filter((dateStr): dateStr is string =>
+              Boolean(dateStr && !isNaN(Date.parse(dateStr))),
+            ) // Filter valid date strings
+            .map((dateStr) => new Date(dateStr)); // Convert to Date objects
+
+          const validEndDates = dates
+            .map((date) => date!.endEntireRange) // Get the endEntireRange string
+            .filter((dateStr): dateStr is string =>
+              Boolean(dateStr && !isNaN(Date.parse(dateStr))),
+            ) // Filter valid date strings
+            .map((dateStr) => new Date(dateStr)); // Convert to Date objects
+
+          if (validStartDates.length > 0 && validEndDates.length > 0) {
+            const earliestStart = new Date(
+              Math.min(...validStartDates.map((date) => date.getTime())),
+            );
+            const latestEnd = new Date(
+              Math.max(...validEndDates.map((date) => date.getTime())),
+            );
+
+            // Update the overall range fields
+            setValue(
+              "startEntireRange",
+              earliestStart.toISOString().split("T")[0],
+            );
+            setValue("endEntireRange", latestEnd.toISOString().split("T")[0]);
+          }
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setValue, watch]);
+
   const onSubmit = async (data: EventFormValues) => {
-    // Validate date ranges - ensuring end date is after start date
-    const invalidRanges = data.dates.filter(
-      (range) =>
-        range.start && range.end && new Date(range.end) < new Date(range.start),
-    );
+    // Validate individual date ranges - ensuring 'to' date is after 'from' date
+    const invalidRanges = data.dates.filter((range) => {
+      // Only validate if all fields have some content (not empty strings)
+      if (
+        !range.from ||
+        !range.to ||
+        !range.startEntireRange ||
+        !range.endEntireRange
+      )
+        return false; // Don't mark as invalid if fields are empty, just skip
+      const fromDate = new Date(range.from);
+      const toDate = new Date(range.to);
+      return (
+        isNaN(fromDate.getTime()) ||
+        isNaN(toDate.getTime()) ||
+        toDate < fromDate
+      );
+    });
+
+    // Validate that individual ranges are within their respective entire range
+    for (const range of data.dates) {
+      // Only validate if all fields have content (not empty strings)
+      if (
+        range.from &&
+        range.to &&
+        range.startEntireRange &&
+        range.endEntireRange
+      ) {
+        // Validate that dates are valid
+        const fromDate = new Date(range.from);
+        const toDate = new Date(range.to);
+        const startEntireRangeDate = new Date(range.startEntireRange);
+        const endEntireRangeDate = new Date(range.endEntireRange);
+
+        if (
+          isNaN(fromDate.getTime()) ||
+          isNaN(toDate.getTime()) ||
+          isNaN(startEntireRangeDate.getTime()) ||
+          isNaN(endEntireRangeDate.getTime())
+        ) {
+          setError("dates", {
+            message: "تاریخ‌های وارد شده معتبر نیستند",
+          });
+          return;
+        }
+
+        // Create dates with just the date portion (year, month, day) for comparison
+        const compareFromDate = new Date(
+          fromDate.getFullYear(),
+          fromDate.getMonth(),
+          fromDate.getDate(),
+        );
+        const compareStartEntireRangeDate = new Date(
+          startEntireRangeDate.getFullYear(),
+          startEntireRangeDate.getMonth(),
+          startEntireRangeDate.getDate(),
+        );
+        const compareToDate = new Date(
+          toDate.getFullYear(),
+          toDate.getMonth(),
+          toDate.getDate(),
+        );
+        const compareEndEntireRangeDate = new Date(
+          endEntireRangeDate.getFullYear(),
+          endEntireRangeDate.getMonth(),
+          endEntireRangeDate.getDate(),
+        );
+
+        if (compareFromDate.getTime() < compareStartEntireRangeDate.getTime()) {
+          setError("startEntireRange", {
+            message:
+              "تاریخ شروع بازه نمی‌تواند قبل از تاریخ شروع کلی بازه باشد",
+          });
+          return;
+        }
+
+        if (compareToDate.getTime() > compareEndEntireRangeDate.getTime()) {
+          setError("endEntireRange", {
+            message:
+              "تاریخ پایان بازه نمی‌تواند بعد از تاریخ پایان کلی بازه باشد",
+          });
+          return;
+        }
+
+        // Also validate that the range's overall range is valid
+        if (
+          compareEndEntireRangeDate.getTime() <
+          compareStartEntireRangeDate.getTime()
+        ) {
+          setError("endEntireRange", {
+            message: "تاریخ پایان کلی نمی‌تواند قبل از تاریخ شروع کلی باشد",
+          });
+          return;
+        }
+      }
+    }
 
     if (invalidRanges.length > 0) {
       setError("dates", {
@@ -115,24 +304,37 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
     }
 
     try {
-      // Convert date ranges to array of arrays format for API - [[start1, end1], [start2, end2], ...]
-      const dateArray: [string, string][] = [];
-      data.dates.forEach((range) => {
-        if (range.start && range.end) {
-          dateArray.push([range.start, range.end]);
-        }
-      });
+      // Prepare the new date structure for the API
+      // At this point, all ranges should have all 4 values due to validation
+      const dateObjects = data.dates.map((range) => ({
+        from: range.from,
+        to: range.to,
+        startEntireRange: range.startEntireRange,
+        endEntireRange: range.endEntireRange,
+      }));
 
       if (isEdit && itemToEdit) {
-        await update(
+        const result = await update(
           itemToEdit._id,
           data.name,
           data.description || "",
-          dateArray,
+          dateObjects,
         );
-        ToastNotify("success", "رویداد با موفقیت به‌روزرسانی شد");
+        if (result.success) {
+          ToastNotify("success", "رویداد با موفقیت به‌روزرسانی شد");
+        } else {
+          ToastNotify(
+            "error",
+            result.body?.message || "خطا در به‌روزرسانی رویداد",
+          );
+          return; // Don't proceed if there was an error
+        }
       } else {
-        const result = await add(data.name, data.description || "", dateArray);
+        const result = await add(
+          data.name,
+          data.description || "",
+          dateObjects,
+        );
         if (result.success) {
           ToastNotify("success", "رویداد جدید با موفقیت ایجاد شد");
         } else {
@@ -183,11 +385,18 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
             <div className="space-y-5">
               <div className="flex justify-between items-center">
                 <h3 className="text-base font-semibold text-gray-700">
-                  بازه‌های تاریخی
+                  بازه‌های تاریخی فعال
                 </h3>
                 <button
                   type="button"
-                  onClick={() => append({ start: "", end: "" })}
+                  onClick={() => {
+                    append({
+                      from: "",
+                      to: "",
+                      startEntireRange: "",
+                      endEntireRange: "",
+                    });
+                  }}
                   className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium"
                 >
                   + افزودن بازه جدید
@@ -198,35 +407,63 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="flex flex-col sm:flex-row gap-4"
+                    className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg"
                   >
-                    <div className="flex-1">
-                      <MyDateInput
-                        label={`تاریخ شروع ${index + 1}`}
-                        name={`dates.${index}.start` as const}
-                        control={control}
-                        errMsg={errors?.dates?.[index]?.start?.message}
-                        placeholder="تاریخ شروع را انتخاب کنید"
-                        customShowDateFormat="YYYY/MM/DD"
-                      />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div>
+                        <MyDateInput
+                          label={`تاریخ شروع ${index + 1}`}
+                          name={`dates.${index}.from` as const}
+                          control={control}
+                          errMsg={errors?.dates?.[index]?.from?.message}
+                          placeholder="تاریخ شروع را انتخاب کنید"
+                          customShowDateFormat="YYYY/MM/DD"
+                        />
+                      </div>
 
-                    <div className="flex-1">
-                      <MyDateInput
-                        label={`تاریخ پایان ${index + 1}`}
-                        name={`dates.${index}.end` as const}
-                        control={control}
-                        errMsg={errors?.dates?.[index]?.end?.message}
-                        placeholder="تاریخ پایان را انتخاب کنید"
-                        customShowDateFormat="YYYY/MM/DD"
-                      />
+                      <div>
+                        <MyDateInput
+                          label={`تاریخ پایان ${index + 1}`}
+                          name={`dates.${index}.to` as const}
+                          control={control}
+                          errMsg={errors?.dates?.[index]?.to?.message}
+                          placeholder="تاریخ پایان را انتخاب کنید"
+                          customShowDateFormat="YYYY/MM/DD"
+                        />
+                      </div>
+
+                      <div>
+                        <MyDateInput
+                          label={`شروع کلی بازه ${index + 1}`}
+                          name={`dates.${index}.startEntireRange` as const}
+                          control={control}
+                          errMsg={
+                            errors?.dates?.[index]?.startEntireRange?.message
+                          }
+                          placeholder="تاریخ شروع کلی را انتخاب کنید"
+                          customShowDateFormat="YYYY/MM/DD"
+                        />
+                      </div>
+
+                      <div>
+                        <MyDateInput
+                          label={`پایان کلی بازه ${index + 1}`}
+                          name={`dates.${index}.endEntireRange` as const}
+                          control={control}
+                          errMsg={
+                            errors?.dates?.[index]?.endEntireRange?.message
+                          }
+                          placeholder="تاریخ پایان کلی را انتخاب کنید"
+                          customShowDateFormat="YYYY/MM/DD"
+                        />
+                      </div>
                     </div>
 
                     {fields.length > 1 && (
                       <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="p-2 text-red-500 hover:text-red-700 self-start sm:self-end"
+                        className="p-2 text-red-500 hover:text-red-700 self-start"
                         title="حذف بازه"
                       >
                         <svg
