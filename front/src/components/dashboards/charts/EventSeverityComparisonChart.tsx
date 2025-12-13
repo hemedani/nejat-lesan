@@ -3,6 +3,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import { format } from "date-fns-jalali";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -23,11 +24,19 @@ interface EventRange {
   to: string;
 }
 
+interface EventDateRange {
+  from: string;
+  to: string;
+  startEntireRange?: string;
+  endEntireRange?: string;
+}
+
 interface ChartProps {
   data: EventSeverityData | null;
   isLoading: boolean;
   eventRange: EventRange;
   selectedEventType: string;
+  eventDateRanges?: EventDateRange[]; // Additional prop to pass all date ranges of an event
 }
 
 // Helper function to calculate percentages
@@ -46,6 +55,18 @@ const calculatePercentages = (data: SeverityData[]) => {
   return { percentages, labels, counts };
 };
 
+// Helper function to convert Gregorian date to Jalali and format it
+const formatJalaliDate = (dateString: string): string => {
+  if (!dateString) return "";
+  try {
+    // Convert to Jalali date and format as YYYY/MM/DD
+    return format(new Date(dateString), "yyyy/MM/dd");
+  } catch (error) {
+    console.error("Error converting date to Jalali:", error);
+    return dateString; // Return original if conversion fails
+  }
+};
+
 // Helper function to get event type label
 const getEventTypeLabel = (eventType: string): string => {
   switch (eventType) {
@@ -55,6 +76,8 @@ const getEventTypeLabel = (eventType: string): string => {
       return "طرح اربعین";
     case "custom":
       return "بازه دلخواه";
+    case "event":
+      return "رویداد انتخاب شده";
     default:
       return "رویداد";
   }
@@ -65,6 +88,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
   isLoading,
   eventRange,
   selectedEventType,
+  eventDateRanges,
 }) => {
   // Early return for loading state
   if (isLoading) {
@@ -299,14 +323,59 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
           <h3 className="text-lg font-semibold text-gray-900">
             مقایسه سهم شدت تصادفات در رویداد
           </h3>
-          <div className="text-sm text-gray-600">
-            <span className="font-medium">
-              {getEventTypeLabel(selectedEventType)}
-            </span>
-            <span className="mx-2">|</span>
-            <span>
-              {eventRange.from} تا {eventRange.to}
-            </span>
+          <div className="text-sm text-gray-600 flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-wrap">
+            <div className="flex items-center flex-wrap gap-2">
+              <span className="font-medium bg-blue-50 px-2 py-1 rounded-md">
+                {getEventTypeLabel(selectedEventType)}
+              </span>
+              <span className="hidden sm:inline-block mx-1">|</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {selectedEventType === "event" &&
+              eventDateRanges &&
+              eventDateRanges.length > 0 ? (
+                // Show all date ranges for an event
+                eventDateRanges.map((range, index) => (
+                  <div key={index} className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1">
+                      <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                        {formatJalaliDate(range.from)}
+                      </span>
+                      <span className="text-gray-400 self-center">تا</span>
+                      <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                        {formatJalaliDate(range.to)}
+                      </span>
+                    </div>
+                    {range.startEntireRange && range.endEntireRange && (
+                      <div className="text-xs flex items-center text-gray-500">
+                        <span className="font-medium">کل بازه:</span>
+                        <span className="mx-1">
+                          {formatJalaliDate(range.startEntireRange)}
+                        </span>
+                        <span>تا</span>
+                        <span className="mx-1">
+                          {formatJalaliDate(range.endEntireRange)}
+                        </span>
+                      </div>
+                    )}
+                    {index < eventDateRanges.length - 1 && (
+                      <div className="w-full my-1 border-t border-gray-200"></div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                // Show overall date range for other types
+                <div className="flex items-center gap-1">
+                  <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                    {formatJalaliDate(eventRange.from)}
+                  </span>
+                  <span className="text-gray-400 self-center">تا</span>
+                  <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                    {formatJalaliDate(eventRange.to)}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
