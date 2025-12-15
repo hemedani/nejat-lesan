@@ -146,6 +146,7 @@ export const Navbar = () => {
           ))}
 
           {/* Elegant dropdown for additional links */}
+          {/*
           <div className="relative group ml-8">
             <button className="flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300">
               <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
@@ -181,6 +182,7 @@ export const Navbar = () => {
               ))}
             </div>
           </div>
+          */}
         </nav>
 
         {/* User Links with elegant styling */}

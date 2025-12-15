@@ -61,9 +61,9 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
   // Map section navigation
   const mapSections: NavigationItem[] = [
     { id: "accidents", label: "نقشه تصادفات", href: "/maps/accidents" },
-    { id: "heatmap", label: "نقشه حرارتی", href: "/maps/heatmap" },
-    { id: "clusters", label: "تحلیل خوشه‌ای", href: "/maps/clusters" },
-    { id: "regional", label: "تحلیل منطقه‌ای", href: "/maps/regional" },
+    // { id: "heatmap", label: "نقشه حرارتی", href: "/maps/heatmap" },
+    // { id: "clusters", label: "تحلیل خوشه‌ای", href: "/maps/clusters" },
+    // { id: "regional", label: "تحلیل منطقه‌ای", href: "/maps/regional" },
     { id: "comparison", label: "مقایسه نقشه‌ها", href: "/maps/comparison" },
   ];
 
@@ -163,16 +163,16 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
         ];
       case "spatial":
         return [
-          {
-            id: "regional",
-            label: "تحلیل منطقه‌ای",
-            href: "/charts/spatial/regional",
-          },
-          {
-            id: "hotspots",
-            label: "نقاط داغ",
-            href: "/charts/spatial/hotspots",
-          },
+          // {
+          //   id: "regional",
+          //   label: "تحلیل منطقه‌ای",
+          //   href: "/charts/spatial/regional",
+          // },
+          // {
+          //   id: "hotspots",
+          //   label: "نقاط داغ",
+          //   href: "/charts/spatial/hotspots",
+          // },
           {
             id: "severity-analytics",
             label: "سهم شدت تصادفات",
@@ -201,16 +201,16 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
         ];
       case "trend":
         return [
-          {
-            id: "monthly-trend",
-            label: "روند ماهانه",
-            href: "/charts/trend/monthly-trend",
-          },
-          {
-            id: "yearly-trend",
-            label: "روند سالانه",
-            href: "/charts/trend/yearly-trend",
-          },
+          // {
+          //   id: "monthly-trend",
+          //   label: "روند ماهانه",
+          //   href: "/charts/trend/monthly-trend",
+          // },
+          // {
+          //   id: "yearly-trend",
+          //   label: "روند سالانه",
+          //   href: "/charts/trend/yearly-trend",
+          // },
           {
             id: "severity-analytics",
             label: "سهم شدت تصادفات",
