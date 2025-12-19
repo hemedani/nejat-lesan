@@ -78,26 +78,26 @@ export const Navbar = () => {
         </svg>
       ),
     },
-    {
-      href: "/chatbot",
-      label: "چت‌بات",
-      icon: (
-        <svg
-          className="w-4 h-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M8 10.5h8m-8 3.5h5.5m-9-10h14a2 2 0 012 2v10a2 2 0 01-2 2h-4l-4 4v-4H4a2 2 0 01-2-2V6a2 2 0 012-2z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
+    // {
+    //   href: "/chatbot",
+    //   label: "چت‌بات",
+    //   icon: (
+    //     <svg
+    //       className="w-4 h-4"
+    //       viewBox="0 0 24 24"
+    //       fill="none"
+    //       xmlns="http://www.w3.org/2000/svg"
+    //     >
+    //       <path
+    //         d="M8 10.5h8m-8 3.5h5.5m-9-10h14a2 2 0 012 2v10a2 2 0 01-2 2h-4l-4 4v-4H4a2 2 0 01-2-2V6a2 2 0 012-2z"
+    //         stroke="currentColor"
+    //         strokeWidth="1.5"
+    //         strokeLinecap="round"
+    //         strokeLinejoin="round"
+    //       />
+    //     </svg>
+    //   ),
+    // },
   ];
 
   // Additional dropdown links
@@ -111,7 +111,7 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-gray-600 py-3 shadow-lg border-b border-gray-500`}
+      className={`fixed top-0 left-0 w-full z-9999 transition-all duration-300 bg-gray-600 py-3 shadow-lg border-b border-gray-500`}
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 relative">
         {/* Logo with subtle animation */}
@@ -290,19 +290,16 @@ export const Navbar = () => {
           >
             <div className="relative w-6 h-6">
               <span
-                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
-                  isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
-                }`}
+                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                  }`}
               ></span>
               <span
-                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${
-                  isMobileMenuOpen ? "opacity-0" : "opacity-100"
-                }`}
+                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                  }`}
               ></span>
               <span
-                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
-                  isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                }`}
+                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                  }`}
               ></span>
             </div>
           </button>
@@ -311,11 +308,10 @@ export const Navbar = () => {
 
       {/* Mobile Menu with smooth animation */}
       <div
-        className={`md:hidden absolute left-0 w-full bg-gray-600 shadow-xl transition-all duration-500 ease-in-out transform ${
-          isMobileMenuOpen
-            ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
-            : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
-        }`}
+        className={`md:hidden absolute left-0 w-full bg-gray-600 shadow-xl transition-all duration-500 ease-in-out transform ${isMobileMenuOpen
+          ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
+          : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
+          }`}
       >
         <nav className="flex flex-col items-center py-6 space-y-1" dir="rtl">
           {navLinks.map((link) => (

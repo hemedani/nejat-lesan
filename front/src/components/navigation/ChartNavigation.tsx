@@ -54,7 +54,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
   const chartSections: NavigationItem[] = [
     { id: "overall", label: "دید کلی", href: "/charts/overall" },
     { id: "temporal", label: "مقایسه زمانی", href: "/charts/temporal" },
-    { id: "spatial", label: "مقایسه مکانی", href: "/charts/spatial" },
+    // { id: "spatial", label: "مقایسه مکانی", href: "/charts/spatial" },
     { id: "trend", label: "روند رویداد", href: "/charts/trend" },
   ];
 
@@ -140,11 +140,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             label: "تصادفات در شب",
             href: "/charts/temporal/night-analytics",
           },
-          {
-            id: "damage-analytics",
-            label: "مقایسه زمانی صدمات",
-            href: "/charts/temporal/damage-analytics",
-          },
+          // {
+          //   id: "damage-analytics",
+          //   label: "مقایسه زمانی صدمات",
+          //   href: "/charts/temporal/damage-analytics",
+          // },
           {
             id: "collision-analytics",
             label: "نحوه و نوع برخورد",
