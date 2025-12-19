@@ -177,6 +177,7 @@ const RoadDefectsPage = () => {
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
               enabledFilters={ENABLED_FILTERS}
+              activeAdvancedFilters={false}
             />
           </div>
         )}
@@ -297,10 +298,10 @@ const RoadDefectsPage = () => {
                 const defectPercentage =
                   totalAccidents > 0
                     ? (
-                        (chartData.defectDistribution.withDefect /
-                          totalAccidents) *
-                        100
-                      ).toFixed(1)
+                      (chartData.defectDistribution.withDefect /
+                        totalAccidents) *
+                      100
+                    ).toFixed(1)
                     : "0.0";
                 const mostCommonDefect =
                   chartData.defectCounts.length > 0
