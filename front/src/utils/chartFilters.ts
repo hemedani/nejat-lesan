@@ -18,7 +18,8 @@ export const COMMON_FILTER_SETS = {
     "dateOfAccidentTo",
     "province",
     "city",
-    "officer",
+
+    // "officer",
   ] as EnabledFilters,
 
   // Geographic filters - for spatial analysis
@@ -31,36 +32,31 @@ export const COMMON_FILTER_SETS = {
     "trafficZone",
     "cityZone",
     "position",
-    "officer",
+
+    // "officer",
   ] as EnabledFilters,
 
   // Severity analysis filters
   SEVERITY: [
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
     "province",
     "city",
     "accidentType",
-    "officer",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Comprehensive filters - all available filters
   ALL: [
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
-    "officer",
     "province",
     "city",
     "road",
@@ -68,7 +64,6 @@ export const COMMON_FILTER_SETS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -85,6 +80,15 @@ export const COMMON_FILTER_SETS = {
     "driverSex",
     "driverLicenceType",
     "driverInjuryType",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 };
 
@@ -93,19 +97,12 @@ export const CHART_SPECIFIC_FILTERS = {
   // Spatial Light Analytics - Based on spatialLightAnalytics API
   SPATIAL_LIGHT_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -117,7 +114,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus", // Key filter for light analytics
@@ -186,19 +182,21 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Collision Analytics - Based on collisionAnalytics API
   COLLISION_ANALYTICS: [
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
-    "officer",
     "province",
     "city",
     "road",
@@ -206,7 +204,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -241,16 +238,21 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Road Defects Analytics
   ROAD_DEFECTS_ANALYTICS: [
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
     "province",
     "city",
     "road",
@@ -258,7 +260,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -285,25 +286,24 @@ export const CHART_SPECIFIC_FILTERS = {
     "driverLicenceType",
     "driverInjuryType",
     "driverTotalReason",
-    "officer",
+
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Human Reason Analytics
   HUMAN_REASON_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -315,7 +315,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -384,24 +383,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Vehicle Reason Analytics - Based on vehicleReasonAnalytics API
   VEHICLE_REASON_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -413,7 +414,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -482,24 +482,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Area Usage Analytics
   AREA_USAGE_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -511,7 +513,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -580,24 +581,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Accident Severity Analytics - Now includes all available filters
   ACCIDENT_SEVERITY_ANALYTICS: [
     // Core Accident Details
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -609,7 +612,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // Environmental & Reason-based
     "lightStatus",
@@ -680,19 +682,21 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Monthly/Holiday Analytics - Based on monthlyHolidayAnalytics API
   MONTHLY_HOLIDAY_ANALYTICS: [
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
-    "officer",
     "province",
     "city",
     "road",
@@ -700,7 +704,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -727,19 +730,21 @@ export const CHART_SPECIFIC_FILTERS = {
     "driverLicenceType",
     "driverInjuryType",
     "driverTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Hourly/Day of Week Analytics - Based on hourlyDayOfWeekAnalytics API
   HOURLY_DAY_ANALYTICS: [
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
-    "officer",
     "province",
     "city",
     "road",
@@ -747,7 +752,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -774,24 +778,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "driverLicenceType",
     "driverInjuryType",
     "driverTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Company Performance Analytics
   COMPANY_PERFORMANCE_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -803,7 +809,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -872,24 +877,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Total Reason Analytics - Based on totalReasonAnalytics API
   TOTAL_REASON_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -901,7 +908,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -970,24 +976,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Spatial Collision Analytics - Based on spatialCollisionAnalytics API
   SPATIAL_COLLISION_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -999,7 +1007,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1068,6 +1075,15 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Hotspots Analytics - Using comprehensive filters for geographic analysis
@@ -1080,13 +1096,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "trafficZone",
     "cityZone", // Key filters for geographic hotspot analysis
     "accidentType",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
-    "officer",
     "limit",
     "skip",
+
+    // "officer",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Regional Analytics
@@ -1101,25 +1118,19 @@ export const CHART_SPECIFIC_FILTERS = {
     "accidentType",
     "collisionType",
     "areaUsages",
-    "officer",
+
+    // "officer",
   ] as EnabledFilters,
 
   // Safety Index Analytics - Based on spatialSafetyIndexAnalytics API
   SAFETY_INDEX_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1131,7 +1142,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1200,24 +1210,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Count Analytics - Based on temporalCountAnalytics API
   TEMPORAL_COUNT_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1229,7 +1241,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1298,24 +1309,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Severity Analytics - Based on temporalSeverityAnalytics API
   TEMPORAL_SEVERITY_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1327,7 +1340,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1396,24 +1408,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Night Analytics - Based on temporalNightAnalytics API
   TEMPORAL_NIGHT_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1425,7 +1439,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -1494,24 +1507,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Collision Analytics - Based on temporalCollisionAnalytics API
   TEMPORAL_COLLISION_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1523,7 +1538,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -1592,23 +1606,25 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Damage Analytics - Based on temporalDamageAnalytics API
   TEMPORAL_DAMAGE_ANALYTICS: [
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
     "province",
@@ -1618,7 +1634,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
     "lightStatus",
     "collisionType",
     "roadSituation",
@@ -1675,24 +1690,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Total Reason Analytics - Based on temporalTotalReasonAnalytics API
   TEMPORAL_TOTAL_REASON_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1704,7 +1721,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1773,24 +1789,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Unlicensed Drivers Analytics - Based on temporalUnlicensedDriversAnalytics API
   TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1802,7 +1820,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1871,24 +1888,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Spatial Severity Analytics - Based on spatialSeverityAnalytics API
   SPATIAL_SEVERITY_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1900,7 +1919,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone", // ← spatial unit for this chart
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -1969,24 +1987,26 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Spatial Single Vehicle Analytics - Based on spatialSingleVehicleAnalytics API
   SPATIAL_SINGLE_VEHICLE_ANALYTICS: [
     // --- Core Accident Details ---
-    "seri",
-    "serial",
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "deadCount",
-    "deadCountMin",
-    "deadCountMax",
     "injuredCount",
-    "injuredCountMin",
-    "injuredCountMax",
     "hasWitness",
     "newsNumber",
-    "officer",
     "completionDateFrom",
     "completionDateTo",
 
@@ -1998,7 +2018,6 @@ export const CHART_SPECIFIC_FILTERS = {
     "cityZone",
     "accidentType",
     "position",
-    "rulingType",
 
     // --- Environmental & Reason-based (multi-select) ---
     "lightStatus",
@@ -2067,6 +2086,15 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianInjuryType",
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
+
+    // "seri",
+    // "serial",
+    // "officer",
+    // "rulingType",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Trend Collision Analytics - For trend analysis of collision types
@@ -2080,23 +2108,25 @@ export const CHART_SPECIFIC_FILTERS = {
     "lightStatus",
     "areaUsages",
     "roadSituation",
-    "officer",
+
+    // "officer",
   ] as EnabledFilters,
 
   // Trend Severity Analytics - For trend analysis of accident severity
   TREND_SEVERITY_ANALYTICS: [
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
-    "deadCountMin",
-    "deadCountMax",
-    "injuredCountMin",
-    "injuredCountMax",
     "province",
     "city",
     "road",
     "accidentType",
     "collisionType",
-    "officer",
+
+    // "officer",
+    // "deadCountMin",
+    // "deadCountMax",
+    // "injuredCountMin",
+    // "injuredCountMax",
   ] as EnabledFilters,
 
   // Monthly Trend Analytics - For monthly trend analysis
@@ -2110,7 +2140,8 @@ export const CHART_SPECIFIC_FILTERS = {
     "collisionType",
     "lightStatus",
     "areaUsages",
-    "officer",
+
+    // "officer",
   ] as EnabledFilters,
 
   // Yearly Trend Analytics - For yearly trend analysis
@@ -2124,7 +2155,8 @@ export const CHART_SPECIFIC_FILTERS = {
     "collisionType",
     "lightStatus",
     "areaUsages",
-    "officer",
+
+    // "officer",
   ] as EnabledFilters,
 };
 
