@@ -197,3 +197,17 @@ docker-compose -f docker-compose.dev.yml down
 - Type generation: Automatic TypeScript type generation for API contracts
 
 This system is designed for comprehensive traffic management with robust data models for accident reporting, traffic analysis, and geographic information systems.
+
+## Git commit
+
+When I say `git commit` please do the following:
+```
+Please act as an expert Git commit assistant. Your task is to carefully review the recent project changes (e.g., via git diff or staged files) and generate a series of clear, conventional commit messages following best practices. Use Gitmoji emojis at the start of each commit message to make them more expressive and readable (e.g., :sparkles: for new features, :bug: for fixes).
+Key guidelines:
+Conventional structure: Each commit message should start with a Gitmoji, followed by a type (e.g., feat, fix, refactor, docs, test, chore), a scope in parentheses if applicable (e.g., (ui)), a colon, and a concise description. Include a body if needed for more details, and reference issues if relevant.
+Grouping: Break changes into logical, atomic commits. Group related files or changes together (e.g., one commit for UI updates, another for bug fixes), rather than lumping everything into a single commit. Avoid overly large or unrelated groupings.
+Exclusions: Do not include any "Co-authored-by" lines, such as Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>, in the commit messages.
+Execution: Directly output and execute the necessary Git shell commands (e.g., git add for specific files, followed by git commit -m "message") to apply these commits. Do not ask for confirmation, additional input, or perform unrelated actions like rebasing, squashing, or amending existing commits. Only create new commits on the current branch.
+Best practices: Ensure messages are imperative, concise (50 chars for subject), and descriptive. Focus on what changed and why, not how.
+Proceed step-by-step: First, analyze the changes, then propose the grouped commits, and finally execute the Git commands in sequence.
+```
