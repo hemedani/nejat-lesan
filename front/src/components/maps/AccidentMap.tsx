@@ -1,14 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  Marker,
-  Popup,
-  FeatureGroup,
-} from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, Marker, Popup, FeatureGroup } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { EditControl } from "react-leaflet-draw";
 import L from "leaflet";
@@ -47,9 +40,7 @@ const damageIcon = createCustomIcon("#EAB308"); // Yellow
 const defaultIcon = createCustomIcon("#6B7280"); // Gray
 
 // Map event handler component
-const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({
-  onZoomChange,
-}) => {
+const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({ onZoomChange }) => {
   const map = useMapEvents({
     zoomend: () => {
       onZoomChange(map.getZoom());
@@ -63,13 +54,10 @@ const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({
 const AccidentMap: React.FC<{
   accidents: accidentSchema[];
   isLoading: boolean;
-  onShapeDrawn?: (
-    geoJSON: GeoJSON.Feature,
-    layer?: { getRadius?(): number },
-  ) => void;
+  onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
 }> = ({ accidents, isLoading, onShapeDrawn }) => {
   const [currentZoom, setCurrentZoom] = useState(6);
-  const showHeatmap = currentZoom < 10;
+  const [viewMode, setViewMode] = useState<"heatmap" | "dots">("heatmap"); // 'heatmap' or 'dots'
 
   // Handle drawing events
   const handleShapeCreated = (e: DrawCreatedEvent) => {
@@ -182,8 +170,8 @@ const AccidentMap: React.FC<{
           />
         </FeatureGroup>
 
-        {/* Conditional rendering based on zoom level */}
-        {showHeatmap && heatmapPoints.length > 0 && (
+        {/* Conditional rendering based on view mode */}
+        {viewMode === "heatmap" && heatmapPoints.length > 0 && (
           <HeatmapLayer
             fitBoundsOnLoad={false}
             points={heatmapPoints}
@@ -205,7 +193,7 @@ const AccidentMap: React.FC<{
           />
         )}
 
-        {!showHeatmap && (
+        {viewMode === "dots" && (
           <>
             {accidents.map((accident, index) => {
               const coords = accident.location?.coordinates;
@@ -219,9 +207,7 @@ const AccidentMap: React.FC<{
                 >
                   <Popup>
                     <div className="p-2 max-w-xs">
-                      <h3 className="font-semibold text-lg mb-2 text-gray-800">
-                        جزئیات تصادف
-                      </h3>
+                      <h3 className="font-semibold text-lg mb-2 text-gray-800">جزئیات تصادف</h3>
 
                       <div className="space-y-1 text-sm">
                         <div className="flex justify-between">
@@ -231,9 +217,7 @@ const AccidentMap: React.FC<{
 
                         <div className="flex justify-between">
                           <span className="text-gray-600">تاریخ:</span>
-                          <span className="font-medium">
-                            {formatDate(accident.date_of_accident)}
-                          </span>
+                          <span className="font-medium">{formatDate(accident.date_of_accident)}</span>
                         </div>
 
                         <div className="flex justify-between">
@@ -255,60 +239,46 @@ const AccidentMap: React.FC<{
 
                         <div className="flex justify-between">
                           <span className="text-gray-600">فوتی:</span>
-                          <span className="font-medium text-red-600">
-                            {accident.dead_count}
-                          </span>
+                          <span className="font-medium text-red-600">{accident.dead_count}</span>
                         </div>
 
                         <div className="flex justify-between">
                           <span className="text-gray-600">مجروح:</span>
-                          <span className="font-medium text-orange-600">
-                            {accident.injured_count}
-                          </span>
+                          <span className="font-medium text-orange-600">{accident.injured_count}</span>
                         </div>
 
                         {accident.collision_type?.name && (
                           <div className="flex justify-between">
                             <span className="text-gray-600">نوع برخورد:</span>
-                            <span className="font-medium">
-                              {accident.collision_type.name}
-                            </span>
+                            <span className="font-medium">{accident.collision_type.name}</span>
                           </div>
                         )}
 
                         {accident.province?.name && (
                           <div className="flex justify-between">
                             <span className="text-gray-600">استان:</span>
-                            <span className="font-medium">
-                              {accident.province.name}
-                            </span>
+                            <span className="font-medium">{accident.province.name}</span>
                           </div>
                         )}
 
                         {accident.city?.name && (
                           <div className="flex justify-between">
                             <span className="text-gray-600">شهر:</span>
-                            <span className="font-medium">
-                              {accident.city.name}
-                            </span>
+                            <span className="font-medium">{accident.city.name}</span>
                           </div>
                         )}
 
                         {accident.road?.name && (
                           <div className="flex justify-between">
                             <span className="text-gray-600">راه:</span>
-                            <span className="font-medium">
-                              {accident.road.name}
-                            </span>
+                            <span className="font-medium">{accident.road.name}</span>
                           </div>
                         )}
 
                         {accident.light_status?.name && (
                           <div className="flex justify-between">
                             <span className="text-gray-600">وضعیت نور:</span>
-                            <span className="font-medium">
-                              {accident.light_status.name}
-                            </span>
+                            <span className="font-medium">{accident.light_status.name}</span>
                           </div>
                         )}
                       </div>
@@ -320,6 +290,16 @@ const AccidentMap: React.FC<{
           </>
         )}
       </MapContainer>
+
+      {/* Toggle Button */}
+      <div className="absolute top-4 left-4 z-[1000]">
+        <button
+          onClick={() => setViewMode(viewMode === "heatmap" ? "dots" : "heatmap")}
+          className="bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-medium"
+        >
+          {viewMode === "heatmap" ? "تغییر به نمایش نقاط" : "تغییر به نمایش حرارتی"}
+        </button>
+      </div>
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg z-[1000]">
@@ -339,7 +319,7 @@ const AccidentMap: React.FC<{
           </div>
         </div>
         <div className="mt-2 pt-2 border-t text-xs text-gray-600">
-          {showHeatmap ? "نمایش حرارتی" : "نمایش نقاط"}
+          {viewMode === "heatmap" ? "نمایش حرارتی" : "نمایش نقاط"}
         </div>
         <div className="mt-2 pt-2 border-t text-xs">
           <div className="font-medium text-gray-700 mb-1">ابزار ترسیم:</div>
@@ -360,7 +340,7 @@ const AccidentMap: React.FC<{
             تعداد تصادفات: {accidents.length.toLocaleString("fa-IR")}
           </div>
           <div className="text-xs text-gray-600 mt-1">
-            زوم: {currentZoom} | {showHeatmap ? "حرارتی" : "نقاط"}
+            زوم: {currentZoom} | {viewMode === "heatmap" ? "حرارتی" : "نقاط"}
           </div>
         </div>
       </div>
