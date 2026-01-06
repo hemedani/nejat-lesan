@@ -1,29 +1,30 @@
-'use client'
+"use client";
 
-import React from 'react'
-import MainCollisionChart from './charts/MainCollisionChart'
-import SingleVehicleChart from './charts/SingleVehicleChart'
-import OtherCollisionTypesChart from './charts/OtherCollisionTypesChart'
+import React from "react";
+import { formatNumber } from "@/utils/formatters";
+import MainCollisionChart from "./charts/MainCollisionChart";
+import SingleVehicleChart from "./charts/SingleVehicleChart";
+import OtherCollisionTypesChart from "./charts/OtherCollisionTypesChart";
 
 // Props interface for the dashboard component
 interface CollisionAnalyticsData {
   mainChart: Array<{
-    name: string
-    count: number
-  }>
+    name: string;
+    count: number;
+  }>;
   singleVehicleChart: Array<{
-    name: string
-    count: number
-  }>
+    name: string;
+    count: number;
+  }>;
   otherTypesChart: Array<{
-    name: string
-    count: number
-  }>
+    name: string;
+    count: number;
+  }>;
 }
 
 interface DashboardProps {
-  data: CollisionAnalyticsData | null
-  isLoading: boolean
+  data: CollisionAnalyticsData | null;
+  isLoading: boolean;
 }
 
 const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading }) => {
@@ -40,7 +41,7 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Early return for no data state
@@ -50,8 +51,18 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <svg
+                className="w-16 h-16 text-gray-400 mx-auto mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
               </svg>
               <h3 className="text-lg font-medium text-gray-900 mb-2">داده‌ای یافت نشد</h3>
               <p className="text-gray-600">لطفاً فیلترهای مناسب را اعمال کرده و دوباره تلاش کنید.</p>
@@ -59,22 +70,28 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Calculate summary statistics
-  const totalMainCollisions = data.mainChart.reduce((sum, item) => sum + item.count, 0)
-  const totalSingleVehicle = data.singleVehicleChart.reduce((sum, item) => sum + item.count, 0)
-  const totalOtherTypes = data.otherTypesChart.reduce((sum, item) => sum + item.count, 0)
-  const grandTotal = totalMainCollisions + totalSingleVehicle + totalOtherTypes
+  const totalMainCollisions = data.mainChart.reduce((sum, item) => sum + item.count, 0);
+  const totalSingleVehicle = data.singleVehicleChart.reduce((sum, item) => sum + item.count, 0);
+  const totalOtherTypes = data.otherTypesChart.reduce((sum, item) => sum + item.count, 0);
+  const grandTotal = totalMainCollisions + totalSingleVehicle + totalOtherTypes;
 
-  const mostCommonMainType = data.mainChart.length > 0
-    ? data.mainChart.reduce((max, item) => item.count > max.count ? item : max, data.mainChart[0]).name
-    : 'نامشخص'
+  const mostCommonMainType =
+    data.mainChart.length > 0
+      ? data.mainChart.reduce((max, item) => (item.count > max.count ? item : max), data.mainChart[0])
+          .name
+      : "نامشخص";
 
-  const mostCommonSingleVehicleType = data.singleVehicleChart.length > 0
-    ? data.singleVehicleChart.reduce((max, item) => item.count > max.count ? item : max, data.singleVehicleChart[0]).name
-    : 'نامشخص'
+  const mostCommonSingleVehicleType =
+    data.singleVehicleChart.length > 0
+      ? data.singleVehicleChart.reduce(
+          (max, item) => (item.count > max.count ? item : max),
+          data.singleVehicleChart[0],
+        ).name
+      : "نامشخص";
 
   return (
     <div className="space-y-6">
@@ -84,11 +101,15 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">کل تصادفات</p>
-              <p className="text-2xl font-bold text-gray-900">{grandTotal.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatNumber(grandTotal)}</p>
             </div>
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
           </div>
@@ -98,11 +119,15 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">برخوردهای اصلی</p>
-              <p className="text-2xl font-bold text-gray-900">{totalMainCollisions.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatNumber(totalMainCollisions)}</p>
             </div>
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
           </div>
@@ -112,11 +137,15 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">تک وسیله‌ای</p>
-              <p className="text-2xl font-bold text-gray-900">{totalSingleVehicle.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatNumber(totalSingleVehicle)}</p>
             </div>
             <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
           </div>
@@ -126,11 +155,15 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">سایر انواع</p>
-              <p className="text-2xl font-bold text-gray-900">{totalOtherTypes.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{formatNumber(totalOtherTypes)}</p>
             </div>
             <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
               <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1-2H8l-1 2H5V5z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1-2H8l-1 2H5V5z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
           </div>
@@ -170,7 +203,7 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CollisionAnalyticsDashboard
+export default CollisionAnalyticsDashboard;

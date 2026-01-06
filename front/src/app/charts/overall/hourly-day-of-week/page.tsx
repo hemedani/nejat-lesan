@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import HourlyDayOfWeekHeatmap from "@/components/charts/HourlyDayOfWeekHeatmap";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { hourlyDayOfWeekAnalytics } from "@/app/actions/accident/hourlyDayOfWeekAnalytics";
+import { formatNumber } from "@/utils/formatters";
 
 // Get enabled filters for hourly day of week analytics
 const ENABLED_FILTERS = getEnabledFiltersForChart("HOURLY_DAY_ANALYTICS");
@@ -37,15 +36,12 @@ interface HourlyDayOfWeekAnalyticsData {
 
 const HourlyDayOfWeekPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [chartData, setChartData] =
-    useState<HourlyDayOfWeekAnalyticsData | null>(null);
+  const [chartData, setChartData] = useState<HourlyDayOfWeekAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Transform raw data to chart format and calculate statistics
-  const transformData = (
-    rawData: HourlyDayOfWeekAnalyticsRawData,
-  ): HourlyDayOfWeekAnalyticsData => {
+  const transformData = (rawData: HourlyDayOfWeekAnalyticsRawData): HourlyDayOfWeekAnalyticsData => {
     // Transform series data to include hour labels
     const transformedSeries = rawData.series.map((day) => ({
       name: day.name,
@@ -68,16 +64,14 @@ const HourlyDayOfWeekPage = () => {
       });
     });
     const peakHourIndex = hourlyTotals.indexOf(Math.max(...hourlyTotals));
-    const peakHour = `${peakHourIndex}:00`;
+    const peakHour = `${formatNumber(peakHourIndex)}:${formatNumber(0)}${formatNumber(0)}`;
 
     // Find peak day (day with most accidents)
     const dayTotals = rawData.series.map((day) => ({
       name: day.name,
       total: day.data.reduce((sum, count) => sum + count, 0),
     }));
-    const peakDay = dayTotals.reduce((max, day) =>
-      day.total > max.total ? day : max,
-    ).name;
+    const peakDay = dayTotals.reduce((max, day) => (day.total > max.total ? day : max)).name;
 
     // Calculate average hourly accidents
     const averageHourly = totalAccidents / (rawData.series.length * 24);
@@ -113,9 +107,7 @@ const HourlyDayOfWeekPage = () => {
         const transformedData = transformData(result.body);
         setChartData(transformedData);
       } else {
-        setError(
-          result.error || "خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته",
-        );
+        setError(result.error || "خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته");
       }
     } catch {
       setError("خطا در برقراری ارتباط با سرور");
@@ -198,9 +190,7 @@ const HourlyDayOfWeekPage = () => {
         setChartData(transformedData);
         console.log(result.body);
       } else {
-        setError(
-          result.error || "خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته",
-        );
+        setError(result.error || "خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته");
       }
     } catch {
       setError("خطا در برقراری ارتباط با سرور");
@@ -227,10 +217,7 @@ const HourlyDayOfWeekPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="overall"
-        currentChart="hourly-day-of-week"
-      />
+      <ChartNavigation currentSection="overall" currentChart="hourly-day-of-week" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -252,12 +239,9 @@ const HourlyDayOfWeekPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  تحلیل ساعتی روز هفته
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">تحلیل ساعتی روز هفته</h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  نمایش توزیع تصادفات بر اساس ساعت و روز هفته به صورت نمودار
-                  حرارتی
+                  نمایش توزیع تصادفات بر اساس ساعت و روز هفته به صورت نمودار حرارتی
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -267,11 +251,7 @@ const HourlyDayOfWeekPage = () => {
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
-                    <svg
-                      className="w-5 h-5 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -287,12 +267,7 @@ const HourlyDayOfWeekPage = () => {
                       ></path>
                     </svg>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -307,12 +282,7 @@ const HourlyDayOfWeekPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -332,11 +302,7 @@ const HourlyDayOfWeekPage = () => {
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -356,21 +322,17 @@ const HourlyDayOfWeekPage = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <svg
-                          className="w-5 h-5 text-blue-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
+                        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                         </svg>
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">
-                        کل تصادفات
-                      </div>
+                      <div className="text-sm font-medium text-gray-500">کل تصادفات</div>
                       <div className="text-2xl font-bold text-gray-900">
-                        {chartData.totalAccidents?.toLocaleString() || "0"}
+                        {chartData.totalAccidents !== undefined
+                          ? formatNumber(chartData.totalAccidents)
+                          : "0"}
                       </div>
                     </div>
                   </div>
@@ -380,11 +342,7 @@ const HourlyDayOfWeekPage = () => {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                        <svg
-                          className="w-5 h-5 text-red-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
+                        <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                           <path
                             fillRule="evenodd"
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
@@ -394,9 +352,7 @@ const HourlyDayOfWeekPage = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">
-                        ساعت اوج
-                      </div>
+                      <div className="text-sm font-medium text-gray-500">ساعت اوج</div>
                       <div className="text-2xl font-bold text-gray-900">
                         {chartData.peakHour || "نامشخص"}
                       </div>
@@ -422,9 +378,7 @@ const HourlyDayOfWeekPage = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">
-                        روز اوج
-                      </div>
+                      <div className="text-sm font-medium text-gray-500">روز اوج</div>
                       <div className="text-lg font-bold text-gray-900">
                         {chartData.peakDay || "نامشخص"}
                       </div>
@@ -450,11 +404,11 @@ const HourlyDayOfWeekPage = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">
-                        میانگین ساعتی
-                      </div>
+                      <div className="text-sm font-medium text-gray-500">میانگین ساعتی</div>
                       <div className="text-2xl font-bold text-gray-900">
-                        {chartData.averageHourly?.toFixed(1) || "0"}
+                        {chartData.averageHourly !== undefined
+                          ? formatNumber(parseFloat(chartData.averageHourly.toFixed(1)))
+                          : "0"}
                       </div>
                     </div>
                   </div>
@@ -466,11 +420,7 @@ const HourlyDayOfWeekPage = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
-                  <svg
-                    className="w-6 h-6 text-blue-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -479,14 +429,11 @@ const HourlyDayOfWeekPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-blue-800 mb-2">
-                    درباره این تحلیل
-                  </h3>
+                  <h3 className="font-medium text-blue-800 mb-2">درباره این تحلیل</h3>
                   <p className="text-sm text-blue-700">
-                    این نمودار حرارتی توزیع تصادفات را بر اساس ساعت روز و روز
-                    هفته نمایش می‌دهد. این تحلیل برای شناسایی الگوهای زمانی
-                    تصادفات، ساعات و روزهای پر خطر، و برنامه‌ریزی بهتر منابع
-                    امدادی بسیار مفید است.
+                    این نمودار حرارتی توزیع تصادفات را بر اساس ساعت روز و روز هفته نمایش می‌دهد. این
+                    تحلیل برای شناسایی الگوهای زمانی تصادفات، ساعات و روزهای پر خطر، و برنامه‌ریزی بهتر
+                    منابع امدادی بسیار مفید است.
                   </p>
                 </div>
               </div>

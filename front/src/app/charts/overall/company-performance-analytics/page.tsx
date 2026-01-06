@@ -1,23 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { companyPerformanceAnalytics } from "@/app/actions/accident/companyPerformanceAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
+import { formatNumber } from "@/utils/formatters";
 import dynamic from "next/dynamic";
 
 // Dynamic import for ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 // Get enabled filters for company performance analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart(
-  "COMPANY_PERFORMANCE_ANALYTICS",
-);
+const ENABLED_FILTERS = getEnabledFiltersForChart("COMPANY_PERFORMANCE_ANALYTICS");
 
 // Backend response interface for company performance analytics
 interface CompanyPerformanceAnalyticsResponse {
@@ -103,19 +100,16 @@ interface CompanyPerformanceBubbleChartProps {
   isLoading: boolean;
 }
 
-const CompanyPerformanceBubbleChart: React.FC<
-  CompanyPerformanceBubbleChartProps
-> = ({ data, isLoading }) => {
+const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps> = ({
+  data,
+  isLoading,
+}) => {
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-center h-96">
           <div className="flex flex-col items-center gap-4">
-            <svg
-              className="w-12 h-12 animate-spin text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-12 h-12 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -156,9 +150,7 @@ const CompanyPerformanceBubbleChart: React.FC<
               />
             </svg>
             <p className="text-gray-600 mb-2">داده‌ای برای نمایش وجود ندارد</p>
-            <p className="text-sm text-gray-500">
-              لطفاً فیلترهای مختلف را امتحان کنید
-            </p>
+            <p className="text-sm text-gray-500">لطفاً فیلترهای مختلف را امتحان کنید</p>
           </div>
         </div>
       </div>
@@ -169,11 +161,7 @@ const CompanyPerformanceBubbleChart: React.FC<
   const series = data.map((company) => ({
     name: company.companyName,
     data: [
-      [
-        parseFloat(company.xAxis.toFixed(2)),
-        parseFloat(company.yAxis.toFixed(2)),
-        company.bubbleSize,
-      ],
+      [parseFloat(company.xAxis.toFixed(2)), parseFloat(company.yAxis.toFixed(2)), company.bubbleSize],
     ],
   }));
 
@@ -235,10 +223,7 @@ const CompanyPerformanceBubbleChart: React.FC<
       labels: {
         formatter: function (val: string) {
           const numVal = parseFloat(val);
-          return numVal.toLocaleString("fa-IR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
+          return formatNumber(parseFloat(numVal.toFixed(2)));
         },
       },
     },
@@ -253,10 +238,7 @@ const CompanyPerformanceBubbleChart: React.FC<
       },
       labels: {
         formatter: function (val: number) {
-          return val.toLocaleString("fa-IR", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
+          return formatNumber(parseFloat(val.toFixed(2)));
         },
       },
     },
@@ -271,16 +253,12 @@ const CompanyPerformanceBubbleChart: React.FC<
         w: unknown;
       }) {
         const companyData = data[seriesIndex];
-        const totalYears = companyData.yearDistribution.reduce(
-          (sum, item) => sum + item.count,
-          0,
-        );
+        const totalYears = companyData.yearDistribution.reduce((sum, item) => sum + item.count, 0);
 
         // Create a simple pie chart representation in text
         const yearPercentages = companyData.yearDistribution.map((item) => ({
           ...item,
-          percentage:
-            totalYears > 0 ? ((item.count / totalYears) * 100).toFixed(1) : "0",
+          percentage: totalYears > 0 ? ((item.count / totalYears) * 100).toFixed(1) : "0",
         }));
 
         return `
@@ -292,15 +270,15 @@ const CompanyPerformanceBubbleChart: React.FC<
             <div class="space-y-2 mb-4">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">سهم عامل وسیله:</span>
-                <span class="font-medium text-blue-600">${companyData.xAxis.toLocaleString("fa-IR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span class="font-medium text-blue-600">${formatNumber(parseFloat(companyData.xAxis.toFixed(2)))}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">سهم تصادفات فوتی:</span>
-                <span class="font-medium text-red-600">${companyData.yAxis.toLocaleString("fa-IR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span class="font-medium text-red-600">${formatNumber(parseFloat(companyData.yAxis.toFixed(2)))}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">تعداد تصادفات:</span>
-                <span class="font-medium text-gray-900">${companyData.bubbleSize.toLocaleString("fa-IR")}</span>
+                <span class="font-medium text-gray-900">${formatNumber(companyData.bubbleSize)}</span>
               </div>
             </div>
 
@@ -313,7 +291,7 @@ const CompanyPerformanceBubbleChart: React.FC<
                   <div class="flex justify-between items-center text-xs">
                     <span class="text-gray-600">${item.name}:</span>
                     <div class="flex items-center gap-2">
-                      <span class="text-gray-900">${item.count.toLocaleString("fa-IR")}</span>
+                      <span class="text-gray-900">${formatNumber(item.count)}</span>
                       <span class="text-gray-500">(${item.percentage}%)</span>
                     </div>
                   </div>
@@ -354,9 +332,9 @@ const CompanyPerformanceBubbleChart: React.FC<
 
 const CompanyPerformanceAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [chartData, setChartData] = useState<
-    CompanyPerformanceAnalyticsResponse["analytics"] | null
-  >(null);
+  const [chartData, setChartData] = useState<CompanyPerformanceAnalyticsResponse["analytics"] | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
@@ -385,31 +363,19 @@ const CompanyPerformanceAnalyticsPage = () => {
       // --- Core Accident Details ---
       if (includeFilter("seri")) initialFilterPayload.seri = undefined;
       if (includeFilter("serial")) initialFilterPayload.serial = undefined;
-      if (includeFilter("dateOfAccidentFrom"))
-        initialFilterPayload.dateOfAccidentFrom = "";
-      if (includeFilter("dateOfAccidentTo"))
-        initialFilterPayload.dateOfAccidentTo = "";
-      if (includeFilter("deadCount"))
-        initialFilterPayload.deadCount = undefined;
-      if (includeFilter("deadCountMin"))
-        initialFilterPayload.deadCountMin = undefined;
-      if (includeFilter("deadCountMax"))
-        initialFilterPayload.deadCountMax = undefined;
-      if (includeFilter("injuredCount"))
-        initialFilterPayload.injuredCount = undefined;
-      if (includeFilter("injuredCountMin"))
-        initialFilterPayload.injuredCountMin = undefined;
-      if (includeFilter("injuredCountMax"))
-        initialFilterPayload.injuredCountMax = undefined;
-      if (includeFilter("hasWitness"))
-        initialFilterPayload.hasWitness = undefined;
-      if (includeFilter("newsNumber"))
-        initialFilterPayload.newsNumber = undefined;
+      if (includeFilter("dateOfAccidentFrom")) initialFilterPayload.dateOfAccidentFrom = "";
+      if (includeFilter("dateOfAccidentTo")) initialFilterPayload.dateOfAccidentTo = "";
+      if (includeFilter("deadCount")) initialFilterPayload.deadCount = undefined;
+      if (includeFilter("deadCountMin")) initialFilterPayload.deadCountMin = undefined;
+      if (includeFilter("deadCountMax")) initialFilterPayload.deadCountMax = undefined;
+      if (includeFilter("injuredCount")) initialFilterPayload.injuredCount = undefined;
+      if (includeFilter("injuredCountMin")) initialFilterPayload.injuredCountMin = undefined;
+      if (includeFilter("injuredCountMax")) initialFilterPayload.injuredCountMax = undefined;
+      if (includeFilter("hasWitness")) initialFilterPayload.hasWitness = undefined;
+      if (includeFilter("newsNumber")) initialFilterPayload.newsNumber = undefined;
       if (includeFilter("officer")) initialFilterPayload.officer = undefined;
-      if (includeFilter("completionDateFrom"))
-        initialFilterPayload.completionDateFrom = undefined;
-      if (includeFilter("completionDateTo"))
-        initialFilterPayload.completionDateTo = undefined;
+      if (includeFilter("completionDateFrom")) initialFilterPayload.completionDateFrom = undefined;
+      if (includeFilter("completionDateTo")) initialFilterPayload.completionDateTo = undefined;
 
       // --- Location & Context (multi-select) ---
       if (includeFilter("province")) initialFilterPayload.province = [];
@@ -423,61 +389,42 @@ const CompanyPerformanceAnalyticsPage = () => {
 
       // --- Environmental & Reason-based (multi-select) ---
       if (includeFilter("lightStatus")) initialFilterPayload.lightStatus = [];
-      if (includeFilter("collisionType"))
-        initialFilterPayload.collisionType = [];
-      if (includeFilter("roadSituation"))
-        initialFilterPayload.roadSituation = [];
-      if (includeFilter("roadRepairType"))
-        initialFilterPayload.roadRepairType = [];
-      if (includeFilter("shoulderStatus"))
-        initialFilterPayload.shoulderStatus = [];
+      if (includeFilter("collisionType")) initialFilterPayload.collisionType = [];
+      if (includeFilter("roadSituation")) initialFilterPayload.roadSituation = [];
+      if (includeFilter("roadRepairType")) initialFilterPayload.roadRepairType = [];
+      if (includeFilter("shoulderStatus")) initialFilterPayload.shoulderStatus = [];
       if (includeFilter("areaUsages")) initialFilterPayload.areaUsages = [];
       if (includeFilter("airStatuses")) initialFilterPayload.airStatuses = [];
       if (includeFilter("roadDefects")) initialFilterPayload.roadDefects = [];
       if (includeFilter("humanReasons")) initialFilterPayload.humanReasons = [];
-      if (includeFilter("vehicleReasons"))
-        initialFilterPayload.vehicleReasons = [];
-      if (includeFilter("equipmentDamages"))
-        initialFilterPayload.equipmentDamages = [];
-      if (includeFilter("roadSurfaceConditions"))
-        initialFilterPayload.roadSurfaceConditions = [];
+      if (includeFilter("vehicleReasons")) initialFilterPayload.vehicleReasons = [];
+      if (includeFilter("equipmentDamages")) initialFilterPayload.equipmentDamages = [];
+      if (includeFilter("roadSurfaceConditions")) initialFilterPayload.roadSurfaceConditions = [];
 
       // --- Attachments ---
-      if (includeFilter("attachmentName"))
-        initialFilterPayload.attachmentName = undefined;
-      if (includeFilter("attachmentType"))
-        initialFilterPayload.attachmentType = undefined;
+      if (includeFilter("attachmentName")) initialFilterPayload.attachmentName = undefined;
+      if (includeFilter("attachmentType")) initialFilterPayload.attachmentType = undefined;
 
       // --- Vehicle DTOs Filters ---
       if (includeFilter("vehicleColor")) initialFilterPayload.vehicleColor = [];
-      if (includeFilter("vehicleSystem"))
-        initialFilterPayload.vehicleSystem = []; // ← main grouping field (manufacturer)
-      if (includeFilter("vehiclePlaqueType"))
-        initialFilterPayload.vehiclePlaqueType = [];
-      if (includeFilter("vehicleSystemType"))
-        initialFilterPayload.vehicleSystemType = [];
-      if (includeFilter("vehicleFaultStatus"))
-        initialFilterPayload.vehicleFaultStatus = [];
-      if (includeFilter("vehicleInsuranceCo"))
-        initialFilterPayload.vehicleInsuranceCo = [];
-      if (includeFilter("vehicleInsuranceNo"))
-        initialFilterPayload.vehicleInsuranceNo = undefined;
-      if (includeFilter("vehiclePlaqueUsage"))
-        initialFilterPayload.vehiclePlaqueUsage = [];
-      if (includeFilter("vehiclePrintNumber"))
-        initialFilterPayload.vehiclePrintNumber = undefined;
+      if (includeFilter("vehicleSystem")) initialFilterPayload.vehicleSystem = []; // ← main grouping field (manufacturer)
+      if (includeFilter("vehiclePlaqueType")) initialFilterPayload.vehiclePlaqueType = [];
+      if (includeFilter("vehicleSystemType")) initialFilterPayload.vehicleSystemType = [];
+      if (includeFilter("vehicleFaultStatus")) initialFilterPayload.vehicleFaultStatus = [];
+      if (includeFilter("vehicleInsuranceCo")) initialFilterPayload.vehicleInsuranceCo = [];
+      if (includeFilter("vehicleInsuranceNo")) initialFilterPayload.vehicleInsuranceNo = undefined;
+      if (includeFilter("vehiclePlaqueUsage")) initialFilterPayload.vehiclePlaqueUsage = [];
+      if (includeFilter("vehiclePrintNumber")) initialFilterPayload.vehiclePrintNumber = undefined;
       if (includeFilter("vehiclePlaqueSerialElement"))
         initialFilterPayload.vehiclePlaqueSerialElement = undefined;
       if (includeFilter("vehicleInsuranceDateFrom"))
         initialFilterPayload.vehicleInsuranceDateFrom = undefined;
       if (includeFilter("vehicleInsuranceDateTo"))
         initialFilterPayload.vehicleInsuranceDateTo = undefined;
-      if (includeFilter("vehicleBodyInsuranceCo"))
-        initialFilterPayload.vehicleBodyInsuranceCo = [];
+      if (includeFilter("vehicleBodyInsuranceCo")) initialFilterPayload.vehicleBodyInsuranceCo = [];
       if (includeFilter("vehicleBodyInsuranceNo"))
         initialFilterPayload.vehicleBodyInsuranceNo = undefined;
-      if (includeFilter("vehicleMotionDirection"))
-        initialFilterPayload.vehicleMotionDirection = [];
+      if (includeFilter("vehicleMotionDirection")) initialFilterPayload.vehicleMotionDirection = [];
       if (includeFilter("vehicleMaxDamageSections"))
         initialFilterPayload.vehicleMaxDamageSections = [];
       if (includeFilter("vehicleDamageSectionOther"))
@@ -491,51 +438,33 @@ const CompanyPerformanceAnalyticsPage = () => {
 
       // --- Driver in Vehicle DTOs Filters ---
       if (includeFilter("driverSex")) initialFilterPayload.driverSex = [];
-      if (includeFilter("driverFirstName"))
-        initialFilterPayload.driverFirstName = undefined;
-      if (includeFilter("driverLastName"))
-        initialFilterPayload.driverLastName = undefined;
-      if (includeFilter("driverNationalCode"))
-        initialFilterPayload.driverNationalCode = undefined;
-      if (includeFilter("driverLicenceNumber"))
-        initialFilterPayload.driverLicenceNumber = undefined;
-      if (includeFilter("driverLicenceType"))
-        initialFilterPayload.driverLicenceType = [];
-      if (includeFilter("driverInjuryType"))
-        initialFilterPayload.driverInjuryType = [];
-      if (includeFilter("driverTotalReason"))
-        initialFilterPayload.driverTotalReason = [];
+      if (includeFilter("driverFirstName")) initialFilterPayload.driverFirstName = undefined;
+      if (includeFilter("driverLastName")) initialFilterPayload.driverLastName = undefined;
+      if (includeFilter("driverNationalCode")) initialFilterPayload.driverNationalCode = undefined;
+      if (includeFilter("driverLicenceNumber")) initialFilterPayload.driverLicenceNumber = undefined;
+      if (includeFilter("driverLicenceType")) initialFilterPayload.driverLicenceType = [];
+      if (includeFilter("driverInjuryType")) initialFilterPayload.driverInjuryType = [];
+      if (includeFilter("driverTotalReason")) initialFilterPayload.driverTotalReason = [];
 
       // --- Passenger in Vehicle DTOs Filters ---
       if (includeFilter("passengerSex")) initialFilterPayload.passengerSex = [];
-      if (includeFilter("passengerFirstName"))
-        initialFilterPayload.passengerFirstName = undefined;
-      if (includeFilter("passengerLastName"))
-        initialFilterPayload.passengerLastName = undefined;
+      if (includeFilter("passengerFirstName")) initialFilterPayload.passengerFirstName = undefined;
+      if (includeFilter("passengerLastName")) initialFilterPayload.passengerLastName = undefined;
       if (includeFilter("passengerNationalCode"))
         initialFilterPayload.passengerNationalCode = undefined;
-      if (includeFilter("passengerInjuryType"))
-        initialFilterPayload.passengerInjuryType = [];
-      if (includeFilter("passengerFaultStatus"))
-        initialFilterPayload.passengerFaultStatus = [];
-      if (includeFilter("passengerTotalReason"))
-        initialFilterPayload.passengerTotalReason = [];
+      if (includeFilter("passengerInjuryType")) initialFilterPayload.passengerInjuryType = [];
+      if (includeFilter("passengerFaultStatus")) initialFilterPayload.passengerFaultStatus = [];
+      if (includeFilter("passengerTotalReason")) initialFilterPayload.passengerTotalReason = [];
 
       // --- Pedestrian DTOs Filters ---
-      if (includeFilter("pedestrianSex"))
-        initialFilterPayload.pedestrianSex = [];
-      if (includeFilter("pedestrianFirstName"))
-        initialFilterPayload.pedestrianFirstName = undefined;
-      if (includeFilter("pedestrianLastName"))
-        initialFilterPayload.pedestrianLastName = undefined;
+      if (includeFilter("pedestrianSex")) initialFilterPayload.pedestrianSex = [];
+      if (includeFilter("pedestrianFirstName")) initialFilterPayload.pedestrianFirstName = undefined;
+      if (includeFilter("pedestrianLastName")) initialFilterPayload.pedestrianLastName = undefined;
       if (includeFilter("pedestrianNationalCode"))
         initialFilterPayload.pedestrianNationalCode = undefined;
-      if (includeFilter("pedestrianInjuryType"))
-        initialFilterPayload.pedestrianInjuryType = [];
-      if (includeFilter("pedestrianFaultStatus"))
-        initialFilterPayload.pedestrianFaultStatus = [];
-      if (includeFilter("pedestrianTotalReason"))
-        initialFilterPayload.pedestrianTotalReason = [];
+      if (includeFilter("pedestrianInjuryType")) initialFilterPayload.pedestrianInjuryType = [];
+      if (includeFilter("pedestrianFaultStatus")) initialFilterPayload.pedestrianFaultStatus = [];
+      if (includeFilter("pedestrianTotalReason")) initialFilterPayload.pedestrianTotalReason = [];
 
       // Now cast to the full type for the API call
       const completeInitialPayload =
@@ -576,9 +505,8 @@ const CompanyPerformanceAnalyticsPage = () => {
 
     try {
       // Build the payload dynamically, only including enabled filters
-      const filterPayload: Partial<
-        ReqType["main"]["accident"]["companyPerformanceAnalytics"]["set"]
-      > = {};
+      const filterPayload: Partial<ReqType["main"]["accident"]["companyPerformanceAnalytics"]["set"]> =
+        {};
 
       // Helper function to check if a filter should be included
       const includeFilter = (filterName: keyof ChartFilterState) => {
@@ -592,82 +520,52 @@ const CompanyPerformanceAnalyticsPage = () => {
         filterPayload.dateOfAccidentFrom = filters.dateOfAccidentFrom || "";
       if (includeFilter("dateOfAccidentTo"))
         filterPayload.dateOfAccidentTo = filters.dateOfAccidentTo || "";
-      if (includeFilter("deadCount"))
-        filterPayload.deadCount = filters.deadCount;
-      if (includeFilter("deadCountMin"))
-        filterPayload.deadCountMin = filters.deadCountMin;
-      if (includeFilter("deadCountMax"))
-        filterPayload.deadCountMax = filters.deadCountMax;
-      if (includeFilter("injuredCount"))
-        filterPayload.injuredCount = filters.injuredCount;
-      if (includeFilter("injuredCountMin"))
-        filterPayload.injuredCountMin = filters.injuredCountMin;
-      if (includeFilter("injuredCountMax"))
-        filterPayload.injuredCountMax = filters.injuredCountMax;
-      if (includeFilter("hasWitness"))
-        filterPayload.hasWitness = filters.hasWitness;
-      if (includeFilter("newsNumber"))
-        filterPayload.newsNumber = filters.newsNumber;
+      if (includeFilter("deadCount")) filterPayload.deadCount = filters.deadCount;
+      if (includeFilter("deadCountMin")) filterPayload.deadCountMin = filters.deadCountMin;
+      if (includeFilter("deadCountMax")) filterPayload.deadCountMax = filters.deadCountMax;
+      if (includeFilter("injuredCount")) filterPayload.injuredCount = filters.injuredCount;
+      if (includeFilter("injuredCountMin")) filterPayload.injuredCountMin = filters.injuredCountMin;
+      if (includeFilter("injuredCountMax")) filterPayload.injuredCountMax = filters.injuredCountMax;
+      if (includeFilter("hasWitness")) filterPayload.hasWitness = filters.hasWitness;
+      if (includeFilter("newsNumber")) filterPayload.newsNumber = filters.newsNumber;
       if (includeFilter("officer")) filterPayload.officer = filters.officer;
       if (includeFilter("completionDateFrom"))
         filterPayload.completionDateFrom = filters.completionDateFrom;
-      if (includeFilter("completionDateTo"))
-        filterPayload.completionDateTo = filters.completionDateTo;
+      if (includeFilter("completionDateTo")) filterPayload.completionDateTo = filters.completionDateTo;
 
       // --- Location & Context (multi-select) ---
-      if (includeFilter("province"))
-        filterPayload.province = filters.province || [];
+      if (includeFilter("province")) filterPayload.province = filters.province || [];
       if (includeFilter("city")) filterPayload.city = filters.city || [];
       if (includeFilter("road")) filterPayload.road = filters.road || [];
-      if (includeFilter("trafficZone"))
-        filterPayload.trafficZone = filters.trafficZone || [];
-      if (includeFilter("cityZone"))
-        filterPayload.cityZone = filters.cityZone || [];
-      if (includeFilter("accidentType"))
-        filterPayload.accidentType = filters.accidentType || [];
-      if (includeFilter("position"))
-        filterPayload.position = filters.position || [];
-      if (includeFilter("rulingType"))
-        filterPayload.rulingType = filters.rulingType || [];
+      if (includeFilter("trafficZone")) filterPayload.trafficZone = filters.trafficZone || [];
+      if (includeFilter("cityZone")) filterPayload.cityZone = filters.cityZone || [];
+      if (includeFilter("accidentType")) filterPayload.accidentType = filters.accidentType || [];
+      if (includeFilter("position")) filterPayload.position = filters.position || [];
+      if (includeFilter("rulingType")) filterPayload.rulingType = filters.rulingType || [];
 
       // --- Environmental & Reason-based (multi-select) ---
-      if (includeFilter("lightStatus"))
-        filterPayload.lightStatus = filters.lightStatus || [];
-      if (includeFilter("collisionType"))
-        filterPayload.collisionType = filters.collisionType || [];
-      if (includeFilter("roadSituation"))
-        filterPayload.roadSituation = filters.roadSituation || [];
-      if (includeFilter("roadRepairType"))
-        filterPayload.roadRepairType = filters.roadRepairType || [];
-      if (includeFilter("shoulderStatus"))
-        filterPayload.shoulderStatus = filters.shoulderStatus || [];
-      if (includeFilter("areaUsages"))
-        filterPayload.areaUsages = filters.areaUsages || [];
-      if (includeFilter("airStatuses"))
-        filterPayload.airStatuses = filters.airStatuses || [];
-      if (includeFilter("roadDefects"))
-        filterPayload.roadDefects = filters.roadDefects || [];
-      if (includeFilter("humanReasons"))
-        filterPayload.humanReasons = filters.humanReasons || [];
-      if (includeFilter("vehicleReasons"))
-        filterPayload.vehicleReasons = filters.vehicleReasons || [];
+      if (includeFilter("lightStatus")) filterPayload.lightStatus = filters.lightStatus || [];
+      if (includeFilter("collisionType")) filterPayload.collisionType = filters.collisionType || [];
+      if (includeFilter("roadSituation")) filterPayload.roadSituation = filters.roadSituation || [];
+      if (includeFilter("roadRepairType")) filterPayload.roadRepairType = filters.roadRepairType || [];
+      if (includeFilter("shoulderStatus")) filterPayload.shoulderStatus = filters.shoulderStatus || [];
+      if (includeFilter("areaUsages")) filterPayload.areaUsages = filters.areaUsages || [];
+      if (includeFilter("airStatuses")) filterPayload.airStatuses = filters.airStatuses || [];
+      if (includeFilter("roadDefects")) filterPayload.roadDefects = filters.roadDefects || [];
+      if (includeFilter("humanReasons")) filterPayload.humanReasons = filters.humanReasons || [];
+      if (includeFilter("vehicleReasons")) filterPayload.vehicleReasons = filters.vehicleReasons || [];
       if (includeFilter("equipmentDamages"))
         filterPayload.equipmentDamages = filters.equipmentDamages || [];
       if (includeFilter("roadSurfaceConditions"))
-        filterPayload.roadSurfaceConditions =
-          filters.roadSurfaceConditions || [];
+        filterPayload.roadSurfaceConditions = filters.roadSurfaceConditions || [];
 
       // --- Attachments ---
-      if (includeFilter("attachmentName"))
-        filterPayload.attachmentName = filters.attachmentName;
-      if (includeFilter("attachmentType"))
-        filterPayload.attachmentType = filters.attachmentType;
+      if (includeFilter("attachmentName")) filterPayload.attachmentName = filters.attachmentName;
+      if (includeFilter("attachmentType")) filterPayload.attachmentType = filters.attachmentType;
 
       // --- Vehicle DTOs Filters ---
-      if (includeFilter("vehicleColor"))
-        filterPayload.vehicleColor = filters.vehicleColor || [];
-      if (includeFilter("vehicleSystem"))
-        filterPayload.vehicleSystem = filters.vehicleSystem || []; // ← main grouping field (manufacturer)
+      if (includeFilter("vehicleColor")) filterPayload.vehicleColor = filters.vehicleColor || [];
+      if (includeFilter("vehicleSystem")) filterPayload.vehicleSystem = filters.vehicleSystem || []; // ← main grouping field (manufacturer)
       if (includeFilter("vehiclePlaqueType"))
         filterPayload.vehiclePlaqueType = filters.vehiclePlaqueType || [];
       if (includeFilter("vehicleSystemType"))
@@ -683,44 +581,32 @@ const CompanyPerformanceAnalyticsPage = () => {
       if (includeFilter("vehiclePrintNumber"))
         filterPayload.vehiclePrintNumber = filters.vehiclePrintNumber;
       if (includeFilter("vehiclePlaqueSerialElement"))
-        filterPayload.vehiclePlaqueSerialElement =
-          filters.vehiclePlaqueSerialElement;
+        filterPayload.vehiclePlaqueSerialElement = filters.vehiclePlaqueSerialElement;
       if (includeFilter("vehicleInsuranceDateFrom"))
-        filterPayload.vehicleInsuranceDateFrom =
-          filters.vehicleInsuranceDateFrom;
+        filterPayload.vehicleInsuranceDateFrom = filters.vehicleInsuranceDateFrom;
       if (includeFilter("vehicleInsuranceDateTo"))
         filterPayload.vehicleInsuranceDateTo = filters.vehicleInsuranceDateTo;
       if (includeFilter("vehicleBodyInsuranceCo"))
-        filterPayload.vehicleBodyInsuranceCo =
-          filters.vehicleBodyInsuranceCo || [];
+        filterPayload.vehicleBodyInsuranceCo = filters.vehicleBodyInsuranceCo || [];
       if (includeFilter("vehicleBodyInsuranceNo"))
         filterPayload.vehicleBodyInsuranceNo = filters.vehicleBodyInsuranceNo;
       if (includeFilter("vehicleMotionDirection"))
-        filterPayload.vehicleMotionDirection =
-          filters.vehicleMotionDirection || [];
+        filterPayload.vehicleMotionDirection = filters.vehicleMotionDirection || [];
       if (includeFilter("vehicleMaxDamageSections"))
-        filterPayload.vehicleMaxDamageSections =
-          filters.vehicleMaxDamageSections || [];
+        filterPayload.vehicleMaxDamageSections = filters.vehicleMaxDamageSections || [];
       if (includeFilter("vehicleDamageSectionOther"))
-        filterPayload.vehicleDamageSectionOther =
-          filters.vehicleDamageSectionOther;
+        filterPayload.vehicleDamageSectionOther = filters.vehicleDamageSectionOther;
       if (includeFilter("vehicleInsuranceWarrantyLimit"))
-        filterPayload.vehicleInsuranceWarrantyLimit =
-          filters.vehicleInsuranceWarrantyLimit;
+        filterPayload.vehicleInsuranceWarrantyLimit = filters.vehicleInsuranceWarrantyLimit;
       if (includeFilter("vehicleInsuranceWarrantyLimitMin"))
-        filterPayload.vehicleInsuranceWarrantyLimitMin =
-          filters.vehicleInsuranceWarrantyLimitMin;
+        filterPayload.vehicleInsuranceWarrantyLimitMin = filters.vehicleInsuranceWarrantyLimitMin;
       if (includeFilter("vehicleInsuranceWarrantyLimitMax"))
-        filterPayload.vehicleInsuranceWarrantyLimitMax =
-          filters.vehicleInsuranceWarrantyLimitMax;
+        filterPayload.vehicleInsuranceWarrantyLimitMax = filters.vehicleInsuranceWarrantyLimitMax;
 
       // --- Driver in Vehicle DTOs Filters ---
-      if (includeFilter("driverSex"))
-        filterPayload.driverSex = filters.driverSex || [];
-      if (includeFilter("driverFirstName"))
-        filterPayload.driverFirstName = filters.driverFirstName;
-      if (includeFilter("driverLastName"))
-        filterPayload.driverLastName = filters.driverLastName;
+      if (includeFilter("driverSex")) filterPayload.driverSex = filters.driverSex || [];
+      if (includeFilter("driverFirstName")) filterPayload.driverFirstName = filters.driverFirstName;
+      if (includeFilter("driverLastName")) filterPayload.driverLastName = filters.driverLastName;
       if (includeFilter("driverNationalCode"))
         filterPayload.driverNationalCode = filters.driverNationalCode;
       if (includeFilter("driverLicenceNumber"))
@@ -733,8 +619,7 @@ const CompanyPerformanceAnalyticsPage = () => {
         filterPayload.driverTotalReason = filters.driverTotalReason || [];
 
       // --- Passenger in Vehicle DTOs Filters ---
-      if (includeFilter("passengerSex"))
-        filterPayload.passengerSex = filters.passengerSex || [];
+      if (includeFilter("passengerSex")) filterPayload.passengerSex = filters.passengerSex || [];
       if (includeFilter("passengerFirstName"))
         filterPayload.passengerFirstName = filters.passengerFirstName;
       if (includeFilter("passengerLastName"))
@@ -749,8 +634,7 @@ const CompanyPerformanceAnalyticsPage = () => {
         filterPayload.passengerTotalReason = filters.passengerTotalReason || [];
 
       // --- Pedestrian DTOs Filters ---
-      if (includeFilter("pedestrianSex"))
-        filterPayload.pedestrianSex = filters.pedestrianSex || [];
+      if (includeFilter("pedestrianSex")) filterPayload.pedestrianSex = filters.pedestrianSex || [];
       if (includeFilter("pedestrianFirstName"))
         filterPayload.pedestrianFirstName = filters.pedestrianFirstName;
       if (includeFilter("pedestrianLastName"))
@@ -760,11 +644,9 @@ const CompanyPerformanceAnalyticsPage = () => {
       if (includeFilter("pedestrianInjuryType"))
         filterPayload.pedestrianInjuryType = filters.pedestrianInjuryType || [];
       if (includeFilter("pedestrianFaultStatus"))
-        filterPayload.pedestrianFaultStatus =
-          filters.pedestrianFaultStatus || [];
+        filterPayload.pedestrianFaultStatus = filters.pedestrianFaultStatus || [];
       if (includeFilter("pedestrianTotalReason"))
-        filterPayload.pedestrianTotalReason =
-          filters.pedestrianTotalReason || [];
+        filterPayload.pedestrianTotalReason = filters.pedestrianTotalReason || [];
 
       // Now cast to the full type since we know all possible fields are covered
       const completeFilterPayload =
@@ -840,8 +722,8 @@ const CompanyPerformanceAnalyticsPage = () => {
                   مقایسه عملکرد کمپانی‌های سازنده خودرو
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  تحلیل مقایسه‌ای کمپانی‌ها بر اساس سهم تصادفات شدید و میزان
-                  آسیب‌پذیری در قالب نمودار حبابی
+                  تحلیل مقایسه‌ای کمپانی‌ها بر اساس سهم تصادفات شدید و میزان آسیب‌پذیری در قالب نمودار
+                  حبابی
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -851,11 +733,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
-                    <svg
-                      className="w-5 h-5 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -871,12 +749,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                       ></path>
                     </svg>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -896,12 +769,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                     }}
                     className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -916,12 +784,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -946,11 +809,7 @@ const CompanyPerformanceAnalyticsPage = () => {
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -967,11 +826,7 @@ const CompanyPerformanceAnalyticsPage = () => {
             {isDemoMode && chartData && (
               <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-yellow-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -981,9 +836,8 @@ const CompanyPerformanceAnalyticsPage = () => {
                   <h3 className="font-medium text-yellow-800">حالت نمایشی</h3>
                 </div>
                 <p className="text-sm text-yellow-700">
-                  در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای
-                  دریافت داده‌های واقعی، دکمه &quot;تلاش مجدد API&quot; را فشار
-                  دهید.
+                  در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای دریافت داده‌های واقعی،
+                  دکمه &quot;تلاش مجدد API&quot; را فشار دهید.
                 </p>
               </div>
             )}
@@ -994,56 +848,40 @@ const CompanyPerformanceAnalyticsPage = () => {
               !isDemoMode &&
               (() => {
                 const totalCompanies = chartData.length;
-                const totalAccidents = chartData.reduce(
-                  (sum, company) => sum + company.bubbleSize,
-                  0,
-                );
+                const totalAccidents = chartData.reduce((sum, company) => sum + company.bubbleSize, 0);
                 const avgVehicleFaultShare =
-                  chartData.reduce((sum, company) => sum + company.xAxis, 0) /
-                  totalCompanies;
+                  chartData.reduce((sum, company) => sum + company.xAxis, 0) / totalCompanies;
                 const avgFatalityShare =
-                  chartData.reduce((sum, company) => sum + company.yAxis, 0) /
-                  totalCompanies;
+                  chartData.reduce((sum, company) => sum + company.yAxis, 0) / totalCompanies;
 
                 return (
                   <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <svg
-                        className="w-5 h-5 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
+                      <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <h3 className="font-medium text-green-800">
-                        داده‌ها بارگذاری شد
-                      </h3>
+                      <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
                     </div>
                     <p className="text-sm text-green-700">
-                      تحلیل {totalCompanies} کمپانی با مجموع{" "}
-                      {totalAccidents.toLocaleString("fa-IR")} تصادف - میانگین
-                      سهم عامل وسیله: {avgVehicleFaultShare.toFixed(2)}% -
-                      میانگین سهم فوتی: {avgFatalityShare.toFixed(2)}%
+                      تحلیل {formatNumber(totalCompanies)} کمپانی با مجموع{" "}
+                      {formatNumber(totalAccidents)} تصادف - میانگین سهم عامل وسیله:{" "}
+                      {formatNumber(parseFloat(avgVehicleFaultShare.toFixed(2)))}% - میانگین سهم فوتی:{" "}
+                      {formatNumber(parseFloat(avgFatalityShare.toFixed(2)))}%
                     </p>
                   </div>
                 );
               })()}
 
             {/* Bubble Chart */}
-            <CompanyPerformanceBubbleChart
-              data={chartData}
-              isLoading={isLoading}
-            />
+            <CompanyPerformanceBubbleChart data={chartData} isLoading={isLoading} />
 
             {/* Chart Interpretation Guide */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                راهنمای تفسیر نمودار
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">راهنمای تفسیر نمودار</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
@@ -1062,12 +900,9 @@ const CompanyPerformanceAnalyticsPage = () => {
                       <div className="w-3 h-3 bg-red-600 rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">
-                        محور عمودی (Y)
-                      </h4>
+                      <h4 className="font-medium text-gray-900">محور عمودی (Y)</h4>
                       <p className="text-sm text-gray-600">
-                        سهم تصادفات فوتی از تصادفات شدید - هر چه بالاتر،
-                        خطرناک‌تر
+                        سهم تصادفات فوتی از تصادفات شدید - هر چه بالاتر، خطرناک‌تر
                       </p>
                     </div>
                   </div>
@@ -1078,12 +913,9 @@ const CompanyPerformanceAnalyticsPage = () => {
                       <div className="w-3 h-3 bg-green-600 rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">
-                        محور افقی (X)
-                      </h4>
+                      <h4 className="font-medium text-gray-900">محور افقی (X)</h4>
                       <p className="text-sm text-gray-600">
-                        سهم عامل وسیله نقلیه در تصادفات شدید - هر چه بالاتر،
-                        مشکل‌آفرین‌تر
+                        سهم عامل وسیله نقلیه در تصادفات شدید - هر چه بالاتر، مشکل‌آفرین‌تر
                       </p>
                     </div>
                   </div>
@@ -1092,12 +924,9 @@ const CompanyPerformanceAnalyticsPage = () => {
                       <div className="w-3 h-3 bg-amber-600 rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">
-                        توزیع سال ساخت
-                      </h4>
+                      <h4 className="font-medium text-gray-900">توزیع سال ساخت</h4>
                       <p className="text-sm text-gray-600">
-                        با کلیک روی هر حباب، توزیع سال ساخت وسایل نقلیه آن
-                        کمپانی نمایش داده می‌شود
+                        با کلیک روی هر حباب، توزیع سال ساخت وسایل نقلیه آن کمپانی نمایش داده می‌شود
                       </p>
                     </div>
                   </div>
@@ -1110,16 +939,11 @@ const CompanyPerformanceAnalyticsPage = () => {
               !isLoading &&
               (() => {
                 const totalCompanies = chartData.length;
-                const totalAccidents = chartData.reduce(
-                  (sum, company) => sum + company.bubbleSize,
-                  0,
-                );
+                const totalAccidents = chartData.reduce((sum, company) => sum + company.bubbleSize, 0);
                 const avgVehicleFaultShare =
-                  chartData.reduce((sum, company) => sum + company.xAxis, 0) /
-                  totalCompanies;
+                  chartData.reduce((sum, company) => sum + company.xAxis, 0) / totalCompanies;
                 const avgFatalityShare =
-                  chartData.reduce((sum, company) => sum + company.yAxis, 0) /
-                  totalCompanies;
+                  chartData.reduce((sum, company) => sum + company.yAxis, 0) / totalCompanies;
                 const maxAccidentsCompany = chartData.reduce((max, company) =>
                   company.bubbleSize > max.bubbleSize ? company : max,
                 );
@@ -1129,74 +953,50 @@ const CompanyPerformanceAnalyticsPage = () => {
 
                 return (
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      خلاصه آماری
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">خلاصه آماری</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                       <div className="bg-blue-50 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-blue-600">
-                          {totalCompanies.toLocaleString("fa-IR")}
+                          {formatNumber(totalCompanies)}
                         </div>
-                        <div className="text-sm text-blue-800">
-                          تعداد کمپانی‌ها
-                        </div>
+                        <div className="text-sm text-blue-800">تعداد کمپانی‌ها</div>
                       </div>
                       <div className="bg-red-50 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-red-600">
-                          {totalAccidents.toLocaleString("fa-IR")}
+                          {formatNumber(totalAccidents)}
                         </div>
-                        <div className="text-sm text-red-800">
-                          مجموع تصادفات
-                        </div>
+                        <div className="text-sm text-red-800">مجموع تصادفات</div>
                       </div>
                       <div className="bg-green-50 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-green-600">
-                          {avgVehicleFaultShare.toFixed(2)}
+                          {formatNumber(parseFloat(avgVehicleFaultShare.toFixed(2)))}
                         </div>
-                        <div className="text-sm text-green-800">
-                          میانگین سهم عامل وسیله
-                        </div>
+                        <div className="text-sm text-green-800">میانگین سهم عامل وسیله</div>
                       </div>
                       <div className="bg-amber-50 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-amber-600">
-                          {avgFatalityShare.toFixed(2)}
+                          {formatNumber(parseFloat(avgFatalityShare.toFixed(2)))}
                         </div>
-                        <div className="text-sm text-amber-800">
-                          میانگین سهم فوتی
-                        </div>
+                        <div className="text-sm text-amber-800">میانگین سهم فوتی</div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-900 mb-2">
-                          بیشترین تصادفات
-                        </h4>
+                        <h4 className="font-medium text-gray-900 mb-2">بیشترین تصادفات</h4>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700">
-                            {maxAccidentsCompany.companyName}
-                          </span>
+                          <span className="text-gray-700">{maxAccidentsCompany.companyName}</span>
                           <span className="font-bold text-gray-900">
-                            {maxAccidentsCompany.bubbleSize.toLocaleString(
-                              "fa-IR",
-                            )}{" "}
-                            تصادف
+                            {formatNumber(maxAccidentsCompany.bubbleSize)} تصادف
                           </span>
                         </div>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-900 mb-2">
-                          کمترین تصادفات
-                        </h4>
+                        <h4 className="font-medium text-gray-900 mb-2">کمترین تصادفات</h4>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700">
-                            {minAccidentsCompany.companyName}
-                          </span>
+                          <span className="text-gray-700">{minAccidentsCompany.companyName}</span>
                           <span className="font-bold text-gray-900">
-                            {minAccidentsCompany.bubbleSize.toLocaleString(
-                              "fa-IR",
-                            )}{" "}
-                            تصادف
+                            {formatNumber(minAccidentsCompany.bubbleSize)} تصادف
                           </span>
                         </div>
                       </div>
@@ -1211,24 +1011,18 @@ const CompanyPerformanceAnalyticsPage = () => {
               (() => {
                 const totalCompanies = chartData.length;
                 const avgVehicleFaultShare =
-                  chartData.reduce((sum, company) => sum + company.xAxis, 0) /
-                  totalCompanies;
+                  chartData.reduce((sum, company) => sum + company.xAxis, 0) / totalCompanies;
                 const avgFatalityShare =
-                  chartData.reduce((sum, company) => sum + company.yAxis, 0) /
-                  totalCompanies;
+                  chartData.reduce((sum, company) => sum + company.yAxis, 0) / totalCompanies;
 
                 return (
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      جدول عملکرد کمپانی‌ها
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">جدول عملکرد کمپانی‌ها</h3>
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
                           <tr className="border-b border-gray-200">
-                            <th className="text-right py-3 px-4 font-medium text-gray-900">
-                              کمپانی
-                            </th>
+                            <th className="text-right py-3 px-4 font-medium text-gray-900">کمپانی</th>
                             <th className="text-center py-3 px-4 font-medium text-gray-900">
                               تعداد تصادفات
                             </th>
@@ -1245,9 +1039,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                         </thead>
                         <tbody>
                           {chartData
-                            .sort(
-                              (a, b) => a.xAxis + a.yAxis - (b.xAxis + b.yAxis),
-                            ) // Sort by combined risk score
+                            .sort((a, b) => a.xAxis + a.yAxis - (b.xAxis + b.yAxis)) // Sort by combined risk score
                             .map((company, index) => (
                               <tr
                                 key={company.companyName}
@@ -1257,7 +1049,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                                   {company.companyName}
                                 </td>
                                 <td className="py-3 px-4 text-center text-gray-700">
-                                  {company.bubbleSize.toLocaleString("fa-IR")}
+                                  {formatNumber(company.bubbleSize)}
                                 </td>
                                 <td className="py-3 px-4 text-center">
                                   <span
@@ -1267,7 +1059,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                                         : "bg-green-100 text-green-800"
                                     }`}
                                   >
-                                    {company.xAxis.toFixed(2)}
+                                    {formatNumber(parseFloat(company.xAxis.toFixed(2)))}
                                   </span>
                                 </td>
                                 <td className="py-3 px-4 text-center">
@@ -1278,7 +1070,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                                         : "bg-green-100 text-green-800"
                                     }`}
                                   >
-                                    {company.yAxis.toFixed(2)}
+                                    {formatNumber(parseFloat(company.yAxis.toFixed(2)))}
                                   </span>
                                 </td>
                                 <td className="py-3 px-4 text-center">
@@ -1293,7 +1085,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                                             : "bg-gray-100 text-gray-800"
                                     }`}
                                   >
-                                    {index + 1}
+                                    {formatNumber(index + 1)}
                                   </div>
                                 </td>
                               </tr>

@@ -18,8 +18,7 @@ export const formatFileSize = (bytes: number): string => {
  */
 export const formatDate = (dateString: string | Date): string => {
   try {
-    const date =
-      typeof dateString === "string" ? new Date(dateString) : dateString;
+    const date = typeof dateString === "string" ? new Date(dateString) : dateString;
 
     return date.toLocaleDateString("fa-IR", {
       year: "numeric",
@@ -29,4 +28,13 @@ export const formatDate = (dateString: string | Date): string => {
   } catch {
     return "";
   }
+};
+
+/**
+ * Formats a number with Persian digits
+ * @param num - Number to format
+ * @returns Formatted number with Persian digits
+ */
+export const formatNumber = (num: number): string => {
+  return num.toLocaleString("fa-IR");
 };

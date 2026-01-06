@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import EffectiveRoadDefectsDashboard from "@/components/dashboards/EffectiveRoadDefectsDashboard";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { roadDefectsAnalytics } from "@/app/actions/accident/roadDefectsAnalytics";
+import { formatNumber } from "@/utils/formatters";
 
 // Get enabled filters for road defects analytics
 const ENABLED_FILTERS = getEnabledFiltersForChart("ROAD_DEFECTS_ANALYTICS");
@@ -32,9 +31,7 @@ interface RoadDefectsAnalyticsData {
 
 const RoadDefectsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [chartData, setChartData] = useState<RoadDefectsAnalyticsData | null>(
-    null,
-  );
+  const [chartData, setChartData] = useState<RoadDefectsAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
@@ -188,9 +185,7 @@ const RoadDefectsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  تحلیل نقص راه
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">تحلیل نقص راه</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   تحلیل تفصیلی نقص‌های راه و تأثیر آن بر وقوع تصادفات
                 </p>
@@ -202,11 +197,7 @@ const RoadDefectsPage = () => {
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
-                    <svg
-                      className="w-5 h-5 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -222,12 +213,7 @@ const RoadDefectsPage = () => {
                       ></path>
                     </svg>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -242,12 +228,7 @@ const RoadDefectsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -272,11 +253,7 @@ const RoadDefectsPage = () => {
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -293,20 +270,13 @@ const RoadDefectsPage = () => {
             {chartData &&
               (() => {
                 const totalAccidents =
-                  chartData.defectDistribution.withDefect +
-                  chartData.defectDistribution.withoutDefect;
+                  chartData.defectDistribution.withDefect + chartData.defectDistribution.withoutDefect;
                 const defectPercentage =
                   totalAccidents > 0
-                    ? (
-                      (chartData.defectDistribution.withDefect /
-                        totalAccidents) *
-                      100
-                    ).toFixed(1)
+                    ? ((chartData.defectDistribution.withDefect / totalAccidents) * 100).toFixed(1)
                     : "0.0";
                 const mostCommonDefect =
-                  chartData.defectCounts.length > 0
-                    ? chartData.defectCounts[0].name
-                    : "نامشخص";
+                  chartData.defectCounts.length > 0 ? chartData.defectCounts[0].name : "نامشخص";
 
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -324,11 +294,9 @@ const RoadDefectsPage = () => {
                           </div>
                         </div>
                         <div className="mr-4">
-                          <div className="text-sm font-medium text-gray-500">
-                            کل تصادفات
-                          </div>
+                          <div className="text-sm font-medium text-gray-500">کل تصادفات</div>
                           <div className="text-2xl font-bold text-gray-900">
-                            {totalAccidents.toLocaleString()}
+                            {formatNumber(totalAccidents)}
                           </div>
                         </div>
                       </div>
@@ -352,11 +320,9 @@ const RoadDefectsPage = () => {
                           </div>
                         </div>
                         <div className="mr-4">
-                          <div className="text-sm font-medium text-gray-500">
-                            نرخ نقص راه
-                          </div>
+                          <div className="text-sm font-medium text-gray-500">نرخ نقص راه</div>
                           <div className="text-2xl font-bold text-gray-900">
-                            {defectPercentage}%
+                            {Number(defectPercentage).toLocaleString("fa-IR")}%
                           </div>
                         </div>
                       </div>
@@ -380,12 +346,8 @@ const RoadDefectsPage = () => {
                           </div>
                         </div>
                         <div className="mr-4">
-                          <div className="text-sm font-medium text-gray-500">
-                            شایع‌ترین نقص
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">
-                            {mostCommonDefect}
-                          </div>
+                          <div className="text-sm font-medium text-gray-500">شایع‌ترین نقص</div>
+                          <div className="text-lg font-bold text-gray-900">{mostCommonDefect}</div>
                         </div>
                       </div>
                     </div>
@@ -397,11 +359,7 @@ const RoadDefectsPage = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
-                  <svg
-                    className="w-6 h-6 text-blue-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -410,23 +368,18 @@ const RoadDefectsPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-blue-800 mb-2">
-                    درباره این تحلیل
-                  </h3>
+                  <h3 className="font-medium text-blue-800 mb-2">درباره این تحلیل</h3>
                   <p className="text-sm text-blue-700">
-                    این نمودار تحلیل جامعی از نقص‌های راه و تأثیر آن‌ها بر وقوع
-                    تصادفات ارائه می‌دهد. شامل توزیع تصادفات با و بدون نقص راه،
-                    انواع نقص‌های شایع، و تحلیل بر اساس شدت تصادفات می‌باشد.
+                    این نمودار تحلیل جامعی از نقص‌های راه و تأثیر آن‌ها بر وقوع تصادفات ارائه می‌دهد.
+                    شامل توزیع تصادفات با و بدون نقص راه، انواع نقص‌های شایع، و تحلیل بر اساس شدت
+                    تصادفات می‌باشد.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Road Defects Dashboard */}
-            <EffectiveRoadDefectsDashboard
-              data={chartData}
-              isLoading={isLoading}
-            />
+            <EffectiveRoadDefectsDashboard data={chartData} isLoading={isLoading} />
           </div>
         </div>
       </div>

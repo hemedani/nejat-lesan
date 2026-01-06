@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChart } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { collisionAnalytics } from "@/app/actions/accident/collisionAnalytics";
 import CollisionAnalyticsDashboard from "@/components/dashboards/CollisionAnalyticsDashboard";
+import { formatNumber } from "@/utils/formatters";
 
 // Backend response interface for collision analytics
 interface CollisionAnalyticsResponse {
@@ -31,8 +30,7 @@ const ENABLED_FILTERS = getEnabledFiltersForChart("COLLISION_ANALYTICS");
 
 const CollisionAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [collisionData, setCollisionData] =
-    useState<CollisionAnalyticsResponse | null>(null);
+  const [collisionData, setCollisionData] = useState<CollisionAnalyticsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
@@ -216,12 +214,9 @@ const CollisionAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  تحلیل انواع برخورد
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">تحلیل انواع برخورد</h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  تحلیل جامع انواع برخورد، تصادفات تک وسیله‌ای و سایر رویدادهای
-                  تصادف
+                  تحلیل جامع انواع برخورد، تصادفات تک وسیله‌ای و سایر رویدادهای تصادف
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -231,11 +226,7 @@ const CollisionAnalyticsPage = () => {
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
-                    <svg
-                      className="w-5 h-5 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -251,12 +242,7 @@ const CollisionAnalyticsPage = () => {
                       ></path>
                     </svg>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -271,12 +257,7 @@ const CollisionAnalyticsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -301,11 +282,7 @@ const CollisionAnalyticsPage = () => {
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -322,34 +299,25 @@ const CollisionAnalyticsPage = () => {
             {collisionData && !isLoading && (
               <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-green-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-green-800">
-                    داده‌ها بارگذاری شد
-                  </h3>
+                  <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
                 </div>
                 <p className="text-sm text-green-700">
-                  تحلیل انواع برخورد با {collisionData.mainChart.length} نوع
-                  اصلی، {collisionData.singleVehicleChart.length} نوع تک
-                  وسیله‌ای و {collisionData.otherTypesChart.length} نوع دیگر
+                  تحلیل انواع برخورد با {formatNumber(collisionData.mainChart.length)} نوع اصلی،{" "}
+                  {formatNumber(collisionData.singleVehicleChart.length)} نوع تک وسیله‌ای و{" "}
+                  {formatNumber(collisionData.otherTypesChart.length)} نوع دیگر
                 </p>
               </div>
             )}
 
             {/* Collision Analytics Dashboard */}
-            <CollisionAnalyticsDashboard
-              data={collisionData}
-              isLoading={isLoading}
-            />
+            <CollisionAnalyticsDashboard data={collisionData} isLoading={isLoading} />
           </div>
         </div>
       </div>
