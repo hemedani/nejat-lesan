@@ -5,6 +5,7 @@
 
 * {
     font-family: vazir-matn;
+    font-feature-settings: "ss01";
 }
 
 @font-face {
