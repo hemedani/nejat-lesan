@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, TileLayer, useMapEvents, Marker, Popup, FeatureGroup } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, FeatureGroup } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { EditControl } from "react-leaflet-draw";
 import L from "leaflet";
@@ -11,33 +11,12 @@ import "leaflet-draw/dist/leaflet.draw.css";
 // Import leaflet-draw types
 import "leaflet-draw";
 
+// Components
+import ClusteredAccidentMarkers from "./ClusteredAccidentMarkers";
+
 // Types
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { DrawCreatedEvent } from "@/types/leaflet-draw";
-
-// Custom marker icons
-const createCustomIcon = (color: string) => {
-  return L.divIcon({
-    html: `
-      <div style="
-        background-color: ${color};
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      "></div>
-    `,
-    className: "custom-marker",
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-  });
-};
-
-const fatalIcon = createCustomIcon("#EF4444"); // Red
-const injuryIcon = createCustomIcon("#F97316"); // Orange
-const damageIcon = createCustomIcon("#EAB308"); // Yellow
-const defaultIcon = createCustomIcon("#6B7280"); // Gray
 
 // Map event handler component
 const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({ onZoomChange }) => {
@@ -82,25 +61,6 @@ const AccidentMap: React.FC<{
       return [coords[1], coords[0], weight]; // [lat, lng, weight]
     })
     .filter(Boolean) as [number, number, number][];
-
-  // Get marker icon based on accident type
-  const getMarkerIcon = (accident: accidentSchema) => {
-    switch (accident.type?.name) {
-      case "فوتی":
-        return fatalIcon;
-      case "جرحی":
-        return injuryIcon;
-      case "خسارتی":
-        return damageIcon;
-      default:
-        return defaultIcon;
-    }
-  };
-
-  // Format date for display
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("fa-IR");
-  };
 
   return (
     <div className="relative w-full h-full">
@@ -193,102 +153,7 @@ const AccidentMap: React.FC<{
           />
         )}
 
-        {viewMode === "dots" && (
-          <>
-            {accidents.map((accident, index) => {
-              const coords = accident.location?.coordinates;
-              if (!coords || coords.length < 2) return null;
-
-              return (
-                <Marker
-                  key={`${accident._id}-${index}`}
-                  position={[coords[1], coords[0]]}
-                  icon={getMarkerIcon(accident)}
-                >
-                  <Popup>
-                    <div className="p-2 max-w-xs">
-                      <h3 className="font-semibold text-lg mb-2 text-gray-800">جزئیات تصادف</h3>
-
-                      <div className="space-y-1 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">سریال:</span>
-                          <span className="font-medium">{accident.serial}</span>
-                        </div>
-
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">تاریخ:</span>
-                          <span className="font-medium">{formatDate(accident.date_of_accident)}</span>
-                        </div>
-
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">نوع:</span>
-                          <span
-                            className={`font-medium ${
-                              accident.type?.name === "فوتی"
-                                ? "text-red-600"
-                                : accident.type?.name === "جرحی"
-                                  ? "text-orange-600"
-                                  : accident.type?.name === "خسارتی"
-                                    ? "text-yellow-600"
-                                    : "text-gray-600"
-                            }`}
-                          >
-                            {accident.type?.name || "نامشخص"}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">فوتی:</span>
-                          <span className="font-medium text-red-600">{accident.dead_count}</span>
-                        </div>
-
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">مجروح:</span>
-                          <span className="font-medium text-orange-600">{accident.injured_count}</span>
-                        </div>
-
-                        {accident.collision_type?.name && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">نوع برخورد:</span>
-                            <span className="font-medium">{accident.collision_type.name}</span>
-                          </div>
-                        )}
-
-                        {accident.province?.name && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">استان:</span>
-                            <span className="font-medium">{accident.province.name}</span>
-                          </div>
-                        )}
-
-                        {accident.city?.name && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">شهر:</span>
-                            <span className="font-medium">{accident.city.name}</span>
-                          </div>
-                        )}
-
-                        {accident.road?.name && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">راه:</span>
-                            <span className="font-medium">{accident.road.name}</span>
-                          </div>
-                        )}
-
-                        {accident.light_status?.name && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">وضعیت نور:</span>
-                            <span className="font-medium">{accident.light_status.name}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </>
-        )}
+        {viewMode === "dots" && <ClusteredAccidentMarkers accidents={accidents} />}
       </MapContainer>
 
       {/* Toggle Button */}

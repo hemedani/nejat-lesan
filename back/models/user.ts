@@ -16,9 +16,78 @@ import {
 	union,
 } from "@deps";
 import { createUpdateAt, isValidNationalNumber } from "@lib";
-import { geoJSONStruct, pure_location } from "@model";
+import { geoJSONStruct } from "@model";
+import {
+	accidentSeverityAnalyticFilters,
+	areaUsageAnalyticFilters,
+	collisionAnalyticFilters,
+	companyPerformanceAnalyticFilters,
+	eventCollisionAnalyticFilters,
+	eventSeverityAnalyticFilters,
+	hourlyDayOfWeekAnalyticFilters,
+	humanReasonAnalyticFilters,
+	monthlyHolidayAnalyticFilters,
+	roadDefectsAnalyticFilters,
+	spatialCollisionAnalyticFilters,
+	spatialLightAnalyticFilters,
+	spatialSafetyIndexAnalyticFilters,
+	spatialSeverityAnalyticFilters,
+	spatialSingleVehicleAnalyticFilters,
+	temporalCollisionAnalyticFilters,
+	temporalCountAnalyticFilters,
+	temporalDamageAnalyticFilters,
+	temporalNightAnalyticFilters,
+	temporalSeverityAnalyticFilters,
+	temporalTotalReasonAnalyticFilters,
+	temporalUnlicensedDriversAnalyticFilters,
+	totalReasonAnalyticFilters,
+	vehicleReasonAnalyticFilters,
+} from "./utils/accidentFilters.ts";
 
-export const user_level_array = ["Ghost", "Manager", "Editor", "Ordinary"];
+export const availableCharts = optional(object({
+	accidentSeverityAnalytics: optional(accidentSeverityAnalyticFilters),
+	areaUsageAnalytics: optional(areaUsageAnalyticFilters),
+	collisionAnalytics: optional(collisionAnalyticFilters),
+	companyPerformanceAnalytics: optional(
+		companyPerformanceAnalyticFilters,
+	),
+	eventCollisionAnalytics: optional(eventCollisionAnalyticFilters),
+	eventSeverityAnalytics: optional(eventSeverityAnalyticFilters),
+	hourlyDayOfWeekAnalytics: optional(hourlyDayOfWeekAnalyticFilters),
+	humanReasonAnalytics: optional(humanReasonAnalyticFilters),
+	monthlyHolidayAnalytics: optional(monthlyHolidayAnalyticFilters),
+	roadDefectsAnalytics: optional(roadDefectsAnalyticFilters),
+	spatialCollisionAnalytics: optional(spatialCollisionAnalyticFilters),
+	spatialLightAnalytics: optional(spatialLightAnalyticFilters),
+	spatialSafetyIndexAnalytics: optional(
+		spatialSafetyIndexAnalyticFilters,
+	),
+	spatialSeverityAnalytics: optional(spatialSeverityAnalyticFilters),
+	spatialSingleVehicleAnalytics: optional(
+		spatialSingleVehicleAnalyticFilters,
+	),
+	temporalCollisionAnalytics: optional(temporalCollisionAnalyticFilters),
+	temporalCountAnalytics: optional(temporalCountAnalyticFilters),
+	temporalDamageAnalytics: optional(temporalDamageAnalyticFilters),
+	temporalNightAnalytics: optional(temporalNightAnalyticFilters),
+	temporalSeverityAnalytics: optional(temporalSeverityAnalyticFilters),
+	temporalTotalReasonAnalytics: optional(
+		temporalTotalReasonAnalyticFilters,
+	),
+	temporalUnlicensedDriversAnalytics: optional(
+		temporalUnlicensedDriversAnalyticFilters,
+	),
+	totalReasonAnalytics: optional(totalReasonAnalyticFilters),
+	vehicleReasonAnalytics: optional(vehicleReasonAnalyticFilters),
+}));
+
+export const user_level_array = [
+	"Ghost",
+	"Manager",
+	"Editor",
+	"Ordinary",
+	"Enterprise",
+];
 export const user_level_emums = enums(user_level_array);
 
 export const mobile_pattern = pattern(
@@ -69,6 +138,7 @@ export const user_pure = {
 			name: string(),
 			center_location: geoJSONStruct("Point"),
 		}),
+		availableCharts,
 	}),
 	...createUpdateAt,
 };

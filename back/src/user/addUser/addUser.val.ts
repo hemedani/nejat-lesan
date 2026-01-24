@@ -10,6 +10,7 @@ import {
 } from "@deps";
 import { selectStruct } from "../../../mod.ts";
 import {
+	availableCharts,
 	is_valid_national_number_struct,
 	mobile_pattern,
 	user_genders,
@@ -38,6 +39,7 @@ export const addUserValidator = () => {
 			nationalCard: optional(objectIdValidation),
 			avatar: optional(objectIdValidation),
 			citySettingId: optional(objectIdValidation),
+			availableCharts,
 		}),
 		get: selectStruct("user", 1),
 	});

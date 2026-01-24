@@ -5,7 +5,8 @@ import type { user_relations } from "@model";
 export const addUserFn: ActFn = async (body) => {
 	const { set, get } = body.details;
 
-	const { nationalCard, avatar, citySettingId, ...rest } = set;
+	const { nationalCard, avatar, citySettingId, availableCharts, ...rest } =
+		set;
 
 	const relations: TInsertRelations<typeof user_relations> = {};
 
@@ -37,6 +38,12 @@ export const addUserFn: ActFn = async (body) => {
 					name: foundedCity.name,
 					center_location: foundedCity.center_location,
 				},
+			};
+		}
+		if (availableCharts) {
+			rest.settings = {
+				...rest.settings,
+				availableCharts,
 			};
 		}
 	}
