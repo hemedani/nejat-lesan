@@ -20,6 +20,7 @@ import {
   comprehensiveFilterFields,
   eventFilterFields,
 } from "@/utils/filterConstants";
+import MultiStepForm from "./MultiStepForm";
 
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
@@ -86,6 +87,8 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     control,
     watch,
     formState: { errors, isValid, isSubmitting },
+    getValues,
+    trigger,
   } = useForm<UserFormData>({
     resolver: zodResolver(UserCreateSchema),
     defaultValues: {
@@ -94,6 +97,8 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
       birth_date: "",
       nationalCard: "",
       avatar: "",
+      level: "Ordinary", // Default to Ordinary level
+      availableCharts: {},
     },
     mode: "onChange",
   });
@@ -145,17 +150,70 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     [setValue],
   );
 
+  // Helper function to remove empty values and false checkboxes from objects
+  const cleanObject = (obj: Record<string, unknown>): Record<string, unknown> => {
+    const cleaned: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (value === null || value === undefined) {
+        continue;
+      }
+
+      // Skip empty strings and false boolean values
+      if (
+        (typeof value === "string" && value.trim() === "") ||
+        (typeof value === "boolean" && value === false)
+      ) {
+        continue;
+      }
+
+      // If value is an object, recursively clean it
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        const cleanedNested = cleanObject(value as Record<string, unknown>);
+        // Only add the nested object if it has properties
+        if (Object.keys(cleanedNested).length > 0) {
+          cleaned[key] = cleanedNested;
+        }
+      } else {
+        // For arrays or primitive values, add them directly
+        cleaned[key] = value;
+      }
+    }
+
+    return cleaned;
+  };
+
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
     try {
-      // Convert form data to backend format
-      const backendData: UserSetObj = {
-        ...data,
-        birth_date: data.birth_date ? new Date(data.birth_date) : undefined,
-        // Only include availableCharts if level is Enterprise
-        ...(data.level === "Enterprise" && {
-          availableCharts: data.availableCharts,
-        }),
-      };
+      // Create a copy of the data to manipulate
+      const backendData = { ...data } as ReqType["main"]["user"]["addUser"]["set"];
+
+      // Remove empty strings for avatar and nationalCard
+      if (!data.avatar || data.avatar.trim() === "") {
+        delete backendData.avatar;
+      }
+      if (!data.nationalCard || data.nationalCard.trim() === "") {
+        delete backendData.nationalCard;
+      }
+
+      // Convert birth_date to Date object if present
+      if (data.birth_date) {
+        backendData.birth_date = new Date(data.birth_date);
+      } else {
+        delete backendData.birth_date;
+      }
+
+      // Clean availableCharts if level is Enterprise
+      if (data.level === "Enterprise" && data.availableCharts) {
+        const cleanedCharts = cleanObject(data.availableCharts);
+        if (Object.keys(cleanedCharts).length > 0) {
+          backendData.availableCharts = cleanedCharts;
+        } else {
+          delete backendData.availableCharts;
+        }
+      } else {
+        delete backendData.availableCharts;
+      }
 
       const createdUser = await createUser(backendData);
 
@@ -315,6 +373,749 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     [errors],
   );
 
+  // Define steps for Enterprise level
+  const enterpriseSteps = [
+    {
+      id: "basic-info",
+      title: "اطلاعات پایه کاربر",
+      component: (
+        <div className="space-y-4">
+          <div className="w-full flex flex-wrap">
+            <div className="w-1/2 p-2">
+              <span className="text-sm font-medium text-gray-700">عکس پروفایل</span>
+              <UploadImage
+                inputName="avatar"
+                setUploadedImage={(uploaded: string) => setValue("avatar", uploaded)}
+                type="image"
+                token={token}
+              />
+            </div>
+            <div className="w-1/2 p-2">
+              <span className="text-sm font-medium text-gray-700">عکس کارت ملی</span>
+              <UploadImage
+                inputName="nationalCard"
+                setUploadedImage={(uploaded: string) => setValue("nationalCard", uploaded)}
+                type="image"
+                token={token}
+              />
+            </div>
+
+            <MyInput
+              label="نام"
+              register={register}
+              name="first_name"
+              errMsg={errors.first_name?.message}
+              className="w-1/2 p-2"
+            />
+            <MyInput
+              label="نام خانوادگی"
+              register={register}
+              name="last_name"
+              errMsg={errors.last_name?.message}
+              className="w-1/2 p-2"
+            />
+            <MyInput
+              label="نام پدر"
+              register={register}
+              name="father_name"
+              errMsg={errors.father_name?.message}
+              className="w-1/2 p-2"
+            />
+            <MyInput
+              label="شماره موبایل"
+              register={register}
+              name="mobile"
+              type="text"
+              errMsg={errors.mobile?.message}
+              className="w-1/2 p-2"
+              placeholder="مثال: 9123456789"
+            />
+            <MyInput
+              label="کد ملی"
+              register={register}
+              name="national_number"
+              type="text"
+              errMsg={errors.national_number?.message}
+              className="w-1/2 p-2"
+              placeholder="مثال: 1234567890"
+            />
+            <MyInput
+              label="آدرس"
+              register={register}
+              name="address"
+              errMsg={errors.address?.message}
+              className="w-1/2 p-2"
+            />
+            <MyInput
+              label="توضیحات"
+              register={register}
+              name="summary"
+              errMsg={errors.summary?.message}
+              className="w-1/2 p-2"
+              type="textarea"
+            />
+
+            <MyDateInput
+              label="تاریخ تولد"
+              name="birth_date"
+              control={control}
+              errMsg={errors.birth_date?.message}
+              className="w-1/2 p-2"
+              placeholder="انتخاب تاریخ تولد"
+            />
+
+            <SelectBox
+              label="جنسیت"
+              name="gender"
+              setValue={setValue}
+              errMsg={errors.gender?.message}
+              options={[
+                { value: "Male", label: "مرد" },
+                { value: "Female", label: "زن" },
+              ]}
+              className="w-1/2 p-2"
+            />
+            <SelectBox
+              label="سطح دسترسی"
+              name="level"
+              setValue={setValue}
+              errMsg={errors.level?.message}
+              options={[
+                { value: "Manager", label: "مدیر" },
+                { value: "Editor", label: "ویرایشگر" },
+                { value: "Ordinary", label: "عادی" },
+                { value: "Ghost", label: "مخفی" },
+                { value: "Enterprise", label: "سازمانی" },
+              ]}
+              className="w-1/2 p-2"
+            />
+            <SelectBox
+              label="وضعیت تایید"
+              name="is_verified"
+              setValue={(fieldName, value) => {
+                setValue("is_verified", value === "true");
+              }}
+              errMsg={errors.is_verified?.message}
+              options={[
+                { value: "false", label: "تایید نشده" },
+                { value: "true", label: "تایید شده" },
+              ]}
+              defaultValue={{ value: "false", label: "تایید نشده" }}
+              className="w-1/2 p-2"
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "city-settings",
+      title: "تنظیمات شهر",
+      component: (
+        <div className="flex flex-col gap-2">
+          <h4 className="text-lg font-semibold text-gray-700 mb-2">تنظیمات کاربری</h4>
+          <label className="text-sm font-medium text-slate-700 text-right">
+            انتخاب شهر تحت مدیریت کاربر
+          </label>
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            value={selectedCity}
+            loadOptions={loadCitiesOptions}
+            onChange={(newValue) => handleCitySelect(newValue as SelectOption | null)}
+            placeholder="شهر را انتخاب کنید"
+            noOptionsMessage={() => "شهری یافت نشد"}
+            loadingMessage={() => "در حال بارگذاری..."}
+            isRtl={true}
+            isClearable
+            styles={selectStyles}
+          />
+          {errors.citySettingId && (
+            <span className="text-red-500 text-xs font-medium text-right mt-1">
+              {errors.citySettingId.message}
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: "accident-severity-analytics",
+      title: "تحلیل‌های شدت تصادف",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های شدت تصادف</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`accident-severity-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.accidentSeverityAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "area-usage-analytics",
+      title: "تحلیل‌های استفاده از منطقه",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های استفاده از منطقه</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`area-usage-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.areaUsageAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "collision-analytics",
+      title: "تحلیل‌های برخورد",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های برخورد</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`collision-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.collisionAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "company-performance-analytics",
+      title: "تحلیل‌های عملکرد شرکت",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های عملکرد شرکت</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`company-performance-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.companyPerformanceAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "hourly-day-of-week-analytics",
+      title: "تحلیل‌های زمانی",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`hourly-day-of-week-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.hourlyDayOfWeekAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "human-reason-analytics",
+      title: "تحلیل‌های دلیل انسانی",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های دلیل انسانی</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`human-reason-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.humanReasonAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "event-collision-analytics",
+      title: "تحلیل‌های تصادف رویداد",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های تصادف رویداد</h5>
+          <div className="space-y-2">
+            {eventFilterFields.map((field) => (
+              <label key={`event-collision-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.eventCollisionAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "event-severity-analytics",
+      title: "تحلیل‌های شدت رویداد",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های شدت رویداد</h5>
+          <div className="space-y-2">
+            {eventFilterFields.map((field) => (
+              <label key={`event-severity-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.eventSeverityAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "monthly-holiday-analytics",
+      title: "تحلیل‌های تعطیلات ماهانه",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های تعطیلات ماهانه</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`monthly-holiday-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.monthlyHolidayAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "road-defects-analytics",
+      title: "تحلیل‌های نقص جاده",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های نقص جاده</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`road-defects-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.roadDefectsAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "spatial-collision-analytics",
+      title: "تحلیل‌های مکانی - برخورد",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های مکانی - برخورد</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`spatial-collision-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.spatialCollisionAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "spatial-light-analytics",
+      title: "تحلیل‌های مکانی - نور",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های مکانی - نور</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`spatial-light-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.spatialLightAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "spatial-safety-index-analytics",
+      title: "تحلیل‌های مکانی - شاخص ایمنی",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های مکانی - شاخص ایمنی</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`spatial-safety-index-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.spatialSafetyIndexAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "spatial-severity-analytics",
+      title: "تحلیل‌های مکانی - شدت",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های مکانی - شدت</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`spatial-severity-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.spatialSeverityAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "spatial-single-vehicle-analytics",
+      title: "تحلیل‌های مکانی - تک وسیله",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های مکانی - تک وسیله</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label
+                key={`spatial-single-vehicle-${field.key}`}
+                className="flex items-center space-x-2"
+              >
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.spatialSingleVehicleAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-collision-analytics",
+      title: "تحلیل‌های زمانی - برخورد",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - برخورد</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`temporal-collision-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalCollisionAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-count-analytics",
+      title: "تحلیل‌های زمانی - تعداد",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - تعداد</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`temporal-count-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalCountAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-damage-analytics",
+      title: "تحلیل‌های زمانی - خسارت",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - خسارت</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`temporal-damage-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalDamageAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-night-analytics",
+      title: "تحلیل‌های زمانی - شب",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - شب</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`temporal-night-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalNightAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-severity-analytics",
+      title: "تحلیل‌های زمانی - شدت",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - شدت</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`temporal-severity-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalSeverityAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-total-reason-analytics",
+      title: "تحلیل‌های زمانی - دلیل کل",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - دلیل کل</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label
+                key={`temporal-total-reason-${field.key}`}
+                className="flex items-center space-x-2"
+              >
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalTotalReasonAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "temporal-unlicensed-drivers-analytics",
+      title: "تحلیل‌های زمانی - رانندگان فاقد گواهینامه",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های زمانی - رانندگان فاقد گواهینامه</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label
+                key={`temporal-unlicensed-drivers-${field.key}`}
+                className="flex items-center space-x-2"
+              >
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.temporalUnlicensedDriversAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "total-reason-analytics",
+      title: "تحلیل‌های دلیل کل",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های دلیل کل</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`total-reason-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.totalReasonAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "vehicle-reason-analytics",
+      title: "تحلیل‌های دلیل وسیله نقلیه",
+      component: (
+        <div className="border rounded p-3">
+          <h5 className="font-medium mb-2">تحلیل‌های دلیل وسیله نقلیه</h5>
+          <div className="space-y-2">
+            {comprehensiveFilterFields.map((field) => (
+              <label key={`vehicle-reason-${field.key}`} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  {...register(
+                    `availableCharts.vehicleReasonAnalytics.${field.key}` as keyof UserFormData,
+                  )}
+                  className="rounded text-blue-600"
+                />
+                <span>{field.label}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  // Render multi-step form for Enterprise level, single form for others
+  if (watchedLevel === "Enterprise") {
+    return (
+      <div className="p-8 mb-42">
+        <MultiStepForm
+          steps={enterpriseSteps}
+          formData={getValues()}
+          onSubmit={onSubmit}
+          isSubmitting={isSubmitting}
+          triggerValidation={trigger}
+        />
+      </div>
+    );
+  }
+
+  // Original single-step form for non-enterprise users
   return (
     <div className="p-8 mb-42">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-gray-100 p-6 border rounded-lg">
@@ -439,499 +1240,6 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             defaultValue={{ value: "false", label: "تایید نشده" }}
           />
         </div>
-
-        <hr className="my-4" />
-        {/* City Selection */}
-        <div className="flex flex-col gap-2">
-          <h4 className="text-lg font-semibold text-gray-700 mb-2">تنظیمات کاربری</h4>
-          <label className="text-sm font-medium text-slate-700 text-right">
-            انتخاب شهر تحت مدیریت کاربر
-          </label>
-          <AsyncSelect
-            cacheOptions
-            defaultOptions
-            value={selectedCity}
-            loadOptions={loadCitiesOptions}
-            onChange={(newValue) => handleCitySelect(newValue as SelectOption | null)}
-            placeholder="شهر را انتخاب کنید"
-            noOptionsMessage={() => "شهری یافت نشد"}
-            loadingMessage={() => "در حال بارگذاری..."}
-            isRtl={true}
-            isClearable
-            styles={selectStyles}
-          />
-          {errors.citySettingId && (
-            <span className="text-red-500 text-xs font-medium text-right mt-1">
-              {errors.citySettingId.message}
-            </span>
-          )}
-        </div>
-
-        {/* Conditional Chart Settings for Enterprise Level */}
-        {watchedLevel === "Enterprise" && (
-          <div className="mt-6 p-4 border rounded-lg bg-white">
-            <h4 className="text-lg font-semibold text-gray-700 mb-4">تنظیمات چارت‌های قابل دسترس</h4>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Accident Severity Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های شدت تصادف</h5>
-
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.accidentSeverityAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Area Usage Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های استفاده از منطقه</h5>
-
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.areaUsageAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Collision Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های برخورد</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.collisionAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Company Performance Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های عملکرد شرکت</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.companyPerformanceAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Hourly Day Of Week Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.hourlyDayOfWeekAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Human Reason Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های دلیل انسانی</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.humanReasonAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              {/* Event Collision Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های تصادف رویداد</h5>
-                <div className="space-y-2">
-                  {eventFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.eventCollisionAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Event Severity Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های شدت رویداد</h5>
-                <div className="space-y-2">
-                  {eventFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.eventSeverityAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Monthly Holiday Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های تعطیلات ماهانه</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.monthlyHolidayAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Road Defects Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های نقص جاده</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.roadDefectsAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Spatial Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های مکانی - برخورد</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.spatialCollisionAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Spatial Light Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های مکانی - نور</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.spatialLightAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Spatial Safety Index Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های مکانی - شاخص ایمنی</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.spatialSafetyIndexAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Spatial Severity Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های مکانی - شدت</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.spatialSeverityAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Spatial Single Vehicle Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های مکانی - تک وسیله</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.spatialSingleVehicleAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Collision Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - برخورد</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalCollisionAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Count Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - تعداد</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalCountAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Damage Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - خسارت</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalDamageAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Night Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - شب</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalNightAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Severity Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - شدت</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalSeverityAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Total Reason Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - دلیل کل</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalTotalReasonAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Temporal Unlicensed Drivers Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های زمانی - رانندگان فاقد گواهینامه</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.temporalUnlicensedDriversAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Total Reason Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های دلیل کل</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.totalReasonAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Vehicle Reason Analytics */}
-              <div className="border rounded p-3">
-                <h5 className="font-medium mb-2">تحلیل‌های دلیل وسیله نقلیه</h5>
-                <div className="space-y-2">
-                  {comprehensiveFilterFields.map((field) => (
-                    <label key={field.key} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register(
-                          `availableCharts.vehicleReasonAnalytics.${field.key}` as keyof UserFormData,
-                        )}
-                        className="rounded text-blue-600"
-                      />
-                      <span>{field.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="w-full flex gap-4 justify-end">
           {!isValid && Object.keys(errors).length > 0 && (
