@@ -30,12 +30,16 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
     const isValid = await triggerValidation();
     if (isValid && currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Scroll to top when moving to the next step
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Scroll to top when moving to the previous step
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -43,6 +47,8 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
     // Validate all fields before submitting
     const isValid = await triggerValidation();
     if (isValid) {
+      // Scroll to top before submitting
+      window.scrollTo({ top: 0, behavior: "smooth" });
       onSubmit(formData);
     }
   };

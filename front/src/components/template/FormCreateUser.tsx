@@ -15,6 +15,7 @@ import { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import { useCallback, useState, useMemo } from "react";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import type { StylesConfig } from "react-select";
+import CustomCheckbox from "../atoms/CustomCheckbox";
 import {
   ALL_ANALYTIC_FILTERS,
   comprehensiveFilterFields,
@@ -545,16 +546,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های شدت تصادف</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`accident-severity-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`accident-severity-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.accidentSeverityAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.accidentSeverityAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -568,16 +574,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های استفاده از منطقه</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`area-usage-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`area-usage-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.areaUsageAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.areaUsageAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -591,16 +600,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های برخورد</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`collision-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`collision-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.collisionAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.collisionAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -614,16 +626,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های عملکرد شرکت</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`company-performance-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`company-performance-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.companyPerformanceAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.companyPerformanceAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -637,16 +654,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`hourly-day-of-week-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`hourly-day-of-week-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.hourlyDayOfWeekAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.hourlyDayOfWeekAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -660,16 +682,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های دلیل انسانی</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`human-reason-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`human-reason-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.humanReasonAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.humanReasonAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -683,16 +708,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های تصادف رویداد</h5>
           <div className="space-y-2">
             {eventFilterFields.map((field) => (
-              <label key={`event-collision-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`event-collision-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.eventCollisionAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.eventCollisionAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -706,16 +734,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های شدت رویداد</h5>
           <div className="space-y-2">
             {eventFilterFields.map((field) => (
-              <label key={`event-severity-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`event-severity-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.eventSeverityAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.eventSeverityAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -729,16 +760,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های تعطیلات ماهانه</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`monthly-holiday-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`monthly-holiday-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.monthlyHolidayAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.monthlyHolidayAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -752,16 +786,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های نقص جاده</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`road-defects-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`road-defects-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.roadDefectsAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.roadDefectsAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -775,16 +812,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های مکانی - برخورد</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`spatial-collision-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`spatial-collision-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.spatialCollisionAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.spatialCollisionAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -798,16 +840,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های مکانی - نور</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`spatial-light-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`spatial-light-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.spatialLightAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.spatialLightAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -821,16 +866,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های مکانی - شاخص ایمنی</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`spatial-safety-index-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`spatial-safety-index-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.spatialSafetyIndexAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.spatialSafetyIndexAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -844,16 +894,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های مکانی - شدت</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`spatial-severity-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`spatial-severity-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.spatialSeverityAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.spatialSeverityAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -867,19 +922,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های مکانی - تک وسیله</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label
+              <CustomCheckbox
                 key={`spatial-single-vehicle-${field.key}`}
-                className="flex items-center space-x-2"
-              >
-                <input
-                  type="checkbox"
-                  {...register(
+                checked={
+                  !!watch(
                     `availableCharts.spatialSingleVehicleAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.spatialSingleVehicleAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -893,16 +950,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - برخورد</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`temporal-collision-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`temporal-collision-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.temporalCollisionAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.temporalCollisionAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -916,16 +978,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - تعداد</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`temporal-count-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`temporal-count-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.temporalCountAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.temporalCountAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -939,16 +1004,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - خسارت</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`temporal-damage-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`temporal-damage-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.temporalDamageAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.temporalDamageAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -962,16 +1030,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - شب</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`temporal-night-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`temporal-night-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.temporalNightAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.temporalNightAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -985,16 +1056,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - شدت</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`temporal-severity-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`temporal-severity-${field.key}`}
+                checked={
+                  !!watch(
                     `availableCharts.temporalSeverityAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.temporalSeverityAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -1008,19 +1084,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - دلیل کل</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label
+              <CustomCheckbox
                 key={`temporal-total-reason-${field.key}`}
-                className="flex items-center space-x-2"
-              >
-                <input
-                  type="checkbox"
-                  {...register(
+                checked={
+                  !!watch(
                     `availableCharts.temporalTotalReasonAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.temporalTotalReasonAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -1034,19 +1112,21 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های زمانی - رانندگان فاقد گواهینامه</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label
+              <CustomCheckbox
                 key={`temporal-unlicensed-drivers-${field.key}`}
-                className="flex items-center space-x-2"
-              >
-                <input
-                  type="checkbox"
-                  {...register(
+                checked={
+                  !!watch(
                     `availableCharts.temporalUnlicensedDriversAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                  )
+                }
+                onChange={(checked) =>
+                  setValue(
+                    `availableCharts.temporalUnlicensedDriversAnalytics.${field.key}` as keyof UserFormData,
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -1060,16 +1140,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های دلیل کل</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`total-reason-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`total-reason-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.totalReasonAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.totalReasonAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
@@ -1083,16 +1166,19 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           <h5 className="font-medium mb-2">تحلیل‌های دلیل وسیله نقلیه</h5>
           <div className="space-y-2">
             {comprehensiveFilterFields.map((field) => (
-              <label key={`vehicle-reason-${field.key}`} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  {...register(
+              <CustomCheckbox
+                key={`vehicle-reason-${field.key}`}
+                checked={
+                  !!watch(`availableCharts.vehicleReasonAnalytics.${field.key}` as keyof UserFormData)
+                }
+                onChange={(checked) =>
+                  setValue(
                     `availableCharts.vehicleReasonAnalytics.${field.key}` as keyof UserFormData,
-                  )}
-                  className="rounded text-blue-600"
-                />
-                <span>{field.label}</span>
-              </label>
+                    checked,
+                  )
+                }
+                label={field.label}
+              />
             ))}
           </div>
         </div>
