@@ -14,6 +14,7 @@ interface MultiStepFormProps {
   onSubmit: (data: UserFormData) => void;
   isSubmitting: boolean;
   triggerValidation: UseFormTrigger<UserFormData>;
+  isEnterprise?: boolean; // Determines if the last step should show "Submit" or "Next" button
 }
 
 const MultiStepForm: React.FC<MultiStepFormProps> = ({
@@ -22,6 +23,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
   onSubmit,
   isSubmitting,
   triggerValidation,
+  isEnterprise = false,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -52,6 +54,12 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
       onSubmit(formData);
     }
   };
+
+  // Determine if this is the last step that should show submit button
+  // For non-enterprise users, the last step is the city settings step (index 1)
+  // For enterprise users, the last step is the final analytics step
+  const isLastStep = currentStep === steps.length - 1;
+  const shouldShowSubmitButton = isEnterprise ? isLastStep : currentStep >= 1;
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -86,7 +94,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
           قبلی
         </button>
 
-        {currentStep === steps.length - 1 ? (
+        {shouldShowSubmitButton ? (
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
