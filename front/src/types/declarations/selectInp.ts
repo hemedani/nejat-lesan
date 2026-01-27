@@ -23,14 +23,22 @@ export type userSchema = {
   level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
   is_verified: boolean;
   settings: {
-    city: {
+    cities: {
       _id: string;
       name: string;
       center_location: {
         type: "Point";
         coordinates: any[];
       };
-    };
+    }[];
+    provinces: {
+      _id: string;
+      name: string;
+      center_location: {
+        type: "Point";
+        coordinates: any[];
+      };
+    }[];
     availableCharts?: {
       accidentSeverityAnalytics?: {
         seri?: boolean;
@@ -114,6 +122,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       areaUsageAnalytics?: {
         seri?: boolean;
@@ -197,6 +206,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       collisionAnalytics?: {
         seri?: boolean;
@@ -280,6 +290,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       companyPerformanceAnalytics?: {
         seri?: boolean;
@@ -363,178 +374,49 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       eventCollisionAnalytics?: {
         eventId?: boolean;
         eventDateFrom?: boolean;
         eventDateTo?: boolean;
-        seri?: boolean;
-        serial?: boolean;
         dateOfAccidentFrom?: boolean;
         dateOfAccidentTo?: boolean;
-        deadCount?: boolean;
-        deadCountMin?: boolean;
-        deadCountMax?: boolean;
-        injuredCount?: boolean;
-        injuredCountMin?: boolean;
-        injuredCountMax?: boolean;
-        hasWitness?: boolean;
-        newsNumber?: boolean;
         officer?: boolean;
-        completionDateFrom?: boolean;
-        completionDateTo?: boolean;
         province?: boolean;
         city?: boolean;
         road?: boolean;
-        trafficZone?: boolean;
-        cityZone?: boolean;
         accidentType?: boolean;
         position?: boolean;
-        rulingType?: boolean;
         lightStatus?: boolean;
         collisionType?: boolean;
         roadSituation?: boolean;
-        roadRepairType?: boolean;
-        shoulderStatus?: boolean;
-        areaUsages?: boolean;
-        airStatuses?: boolean;
-        roadDefects?: boolean;
         humanReasons?: boolean;
-        vehicleReasons?: boolean;
-        equipmentDamages?: boolean;
-        roadSurfaceConditions?: boolean;
-        attachmentName?: boolean;
-        attachmentType?: boolean;
-        vehicleColor?: boolean;
+        roadDefects?: boolean;
         vehicleSystem?: boolean;
-        vehiclePlaqueType?: boolean;
-        vehicleSystemType?: boolean;
-        vehicleFaultStatus?: boolean;
-        vehicleInsuranceCo?: boolean;
-        vehicleInsuranceNo?: boolean;
-        vehiclePlaqueUsage?: boolean;
-        vehiclePrintNumber?: boolean;
-        vehiclePlaqueSerialElement?: boolean;
-        vehicleInsuranceDateFrom?: boolean;
-        vehicleInsuranceDateTo?: boolean;
-        vehicleBodyInsuranceCo?: boolean;
-        vehicleBodyInsuranceNo?: boolean;
-        vehicleMotionDirection?: boolean;
-        vehicleMaxDamageSections?: boolean;
-        vehicleDamageSectionOther?: boolean;
-        vehicleInsuranceWarrantyLimit?: boolean;
-        vehicleInsuranceWarrantyLimitMin?: boolean;
-        vehicleInsuranceWarrantyLimitMax?: boolean;
-        vehicleBodyInsuranceDateFrom?: boolean;
-        vehicleBodyInsuranceDateTo?: boolean;
         driverSex?: boolean;
-        driverFirstName?: boolean;
-        driverLastName?: boolean;
-        driverNationalCode?: boolean;
-        driverLicenceNumber?: boolean;
         driverLicenceType?: boolean;
-        driverInjuryType?: boolean;
-        driverTotalReason?: boolean;
-        passengerSex?: boolean;
-        passengerFirstName?: boolean;
-        passengerLastName?: boolean;
-        passengerNationalCode?: boolean;
-        passengerInjuryType?: boolean;
-        passengerFaultStatus?: boolean;
-        passengerTotalReason?: boolean;
-        pedestrianSex?: boolean;
-        pedestrianFirstName?: boolean;
-        pedestrianLastName?: boolean;
-        pedestrianNationalCode?: boolean;
-        pedestrianInjuryType?: boolean;
-        pedestrianFaultStatus?: boolean;
-        pedestrianTotalReason?: boolean;
       };
       eventSeverityAnalytics?: {
         eventId?: boolean;
         eventDateFrom?: boolean;
         eventDateTo?: boolean;
-        seri?: boolean;
-        serial?: boolean;
         dateOfAccidentFrom?: boolean;
         dateOfAccidentTo?: boolean;
-        deadCount?: boolean;
-        deadCountMin?: boolean;
-        deadCountMax?: boolean;
-        injuredCount?: boolean;
-        injuredCountMin?: boolean;
-        injuredCountMax?: boolean;
-        hasWitness?: boolean;
-        newsNumber?: boolean;
         officer?: boolean;
-        completionDateFrom?: boolean;
-        completionDateTo?: boolean;
         province?: boolean;
         city?: boolean;
         road?: boolean;
-        trafficZone?: boolean;
-        cityZone?: boolean;
         accidentType?: boolean;
         position?: boolean;
-        rulingType?: boolean;
         lightStatus?: boolean;
         collisionType?: boolean;
         roadSituation?: boolean;
-        roadRepairType?: boolean;
-        shoulderStatus?: boolean;
-        areaUsages?: boolean;
-        airStatuses?: boolean;
-        roadDefects?: boolean;
         humanReasons?: boolean;
-        vehicleReasons?: boolean;
-        equipmentDamages?: boolean;
-        roadSurfaceConditions?: boolean;
-        attachmentName?: boolean;
-        attachmentType?: boolean;
-        vehicleColor?: boolean;
+        roadDefects?: boolean;
         vehicleSystem?: boolean;
-        vehiclePlaqueType?: boolean;
-        vehicleSystemType?: boolean;
-        vehicleFaultStatus?: boolean;
-        vehicleInsuranceCo?: boolean;
-        vehicleInsuranceNo?: boolean;
-        vehiclePlaqueUsage?: boolean;
-        vehiclePrintNumber?: boolean;
-        vehiclePlaqueSerialElement?: boolean;
-        vehicleInsuranceDateFrom?: boolean;
-        vehicleInsuranceDateTo?: boolean;
-        vehicleBodyInsuranceCo?: boolean;
-        vehicleBodyInsuranceNo?: boolean;
-        vehicleMotionDirection?: boolean;
-        vehicleMaxDamageSections?: boolean;
-        vehicleDamageSectionOther?: boolean;
-        vehicleInsuranceWarrantyLimit?: boolean;
-        vehicleInsuranceWarrantyLimitMin?: boolean;
-        vehicleInsuranceWarrantyLimitMax?: boolean;
-        vehicleBodyInsuranceDateFrom?: boolean;
-        vehicleBodyInsuranceDateTo?: boolean;
         driverSex?: boolean;
-        driverFirstName?: boolean;
-        driverLastName?: boolean;
-        driverNationalCode?: boolean;
-        driverLicenceNumber?: boolean;
         driverLicenceType?: boolean;
-        driverInjuryType?: boolean;
-        driverTotalReason?: boolean;
-        passengerSex?: boolean;
-        passengerFirstName?: boolean;
-        passengerLastName?: boolean;
-        passengerNationalCode?: boolean;
-        passengerInjuryType?: boolean;
-        passengerFaultStatus?: boolean;
-        passengerTotalReason?: boolean;
-        pedestrianSex?: boolean;
-        pedestrianFirstName?: boolean;
-        pedestrianLastName?: boolean;
-        pedestrianNationalCode?: boolean;
-        pedestrianInjuryType?: boolean;
-        pedestrianFaultStatus?: boolean;
-        pedestrianTotalReason?: boolean;
       };
       hourlyDayOfWeekAnalytics?: {
         seri?: boolean;
@@ -618,6 +500,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       humanReasonAnalytics?: {
         seri?: boolean;
@@ -701,6 +584,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       monthlyHolidayAnalytics?: {
         seri?: boolean;
@@ -784,6 +668,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       roadDefectsAnalytics?: {
         seri?: boolean;
@@ -867,6 +752,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       spatialCollisionAnalytics?: {
         seri?: boolean;
@@ -950,6 +836,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       spatialLightAnalytics?: {
         seri?: boolean;
@@ -1033,6 +920,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       spatialSafetyIndexAnalytics?: {
         seri?: boolean;
@@ -1116,6 +1004,8 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        groupBy?: boolean;
+        polygon?: boolean;
       };
       spatialSeverityAnalytics?: {
         seri?: boolean;
@@ -1199,6 +1089,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       spatialSingleVehicleAnalytics?: {
         seri?: boolean;
@@ -1282,6 +1173,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalCollisionAnalytics?: {
         seri?: boolean;
@@ -1365,6 +1257,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalCountAnalytics?: {
         seri?: boolean;
@@ -1448,6 +1341,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalDamageAnalytics?: {
         seri?: boolean;
@@ -1531,6 +1425,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalNightAnalytics?: {
         seri?: boolean;
@@ -1614,6 +1509,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalSeverityAnalytics?: {
         seri?: boolean;
@@ -1697,6 +1593,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalTotalReasonAnalytics?: {
         seri?: boolean;
@@ -1780,6 +1677,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       temporalUnlicensedDriversAnalytics?: {
         seri?: boolean;
@@ -1863,6 +1761,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       totalReasonAnalytics?: {
         seri?: boolean;
@@ -1946,6 +1845,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
       vehicleReasonAnalytics?: {
         seri?: boolean;
@@ -2029,6 +1929,7 @@ export type userSchema = {
         pedestrianInjuryType?: boolean;
         pedestrianFaultStatus?: boolean;
         pedestrianTotalReason?: boolean;
+        polygon?: boolean;
       };
     };
   };
@@ -2489,14 +2390,22 @@ export type townshipSchema = {
     level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
     is_verified: boolean;
     settings: {
-      city: {
+      cities: {
         _id: string;
         name: string;
         center_location: {
           type: "Point";
           coordinates: any[];
         };
-      };
+      }[];
+      provinces: {
+        _id: string;
+        name: string;
+        center_location: {
+          type: "Point";
+          coordinates: any[];
+        };
+      }[];
       availableCharts?: {
         accidentSeverityAnalytics?: {
           seri?: boolean;
@@ -2580,6 +2489,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         areaUsageAnalytics?: {
           seri?: boolean;
@@ -2663,6 +2573,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         collisionAnalytics?: {
           seri?: boolean;
@@ -2746,6 +2657,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         companyPerformanceAnalytics?: {
           seri?: boolean;
@@ -2829,178 +2741,49 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         eventCollisionAnalytics?: {
           eventId?: boolean;
           eventDateFrom?: boolean;
           eventDateTo?: boolean;
-          seri?: boolean;
-          serial?: boolean;
           dateOfAccidentFrom?: boolean;
           dateOfAccidentTo?: boolean;
-          deadCount?: boolean;
-          deadCountMin?: boolean;
-          deadCountMax?: boolean;
-          injuredCount?: boolean;
-          injuredCountMin?: boolean;
-          injuredCountMax?: boolean;
-          hasWitness?: boolean;
-          newsNumber?: boolean;
           officer?: boolean;
-          completionDateFrom?: boolean;
-          completionDateTo?: boolean;
           province?: boolean;
           city?: boolean;
           road?: boolean;
-          trafficZone?: boolean;
-          cityZone?: boolean;
           accidentType?: boolean;
           position?: boolean;
-          rulingType?: boolean;
           lightStatus?: boolean;
           collisionType?: boolean;
           roadSituation?: boolean;
-          roadRepairType?: boolean;
-          shoulderStatus?: boolean;
-          areaUsages?: boolean;
-          airStatuses?: boolean;
-          roadDefects?: boolean;
           humanReasons?: boolean;
-          vehicleReasons?: boolean;
-          equipmentDamages?: boolean;
-          roadSurfaceConditions?: boolean;
-          attachmentName?: boolean;
-          attachmentType?: boolean;
-          vehicleColor?: boolean;
+          roadDefects?: boolean;
           vehicleSystem?: boolean;
-          vehiclePlaqueType?: boolean;
-          vehicleSystemType?: boolean;
-          vehicleFaultStatus?: boolean;
-          vehicleInsuranceCo?: boolean;
-          vehicleInsuranceNo?: boolean;
-          vehiclePlaqueUsage?: boolean;
-          vehiclePrintNumber?: boolean;
-          vehiclePlaqueSerialElement?: boolean;
-          vehicleInsuranceDateFrom?: boolean;
-          vehicleInsuranceDateTo?: boolean;
-          vehicleBodyInsuranceCo?: boolean;
-          vehicleBodyInsuranceNo?: boolean;
-          vehicleMotionDirection?: boolean;
-          vehicleMaxDamageSections?: boolean;
-          vehicleDamageSectionOther?: boolean;
-          vehicleInsuranceWarrantyLimit?: boolean;
-          vehicleInsuranceWarrantyLimitMin?: boolean;
-          vehicleInsuranceWarrantyLimitMax?: boolean;
-          vehicleBodyInsuranceDateFrom?: boolean;
-          vehicleBodyInsuranceDateTo?: boolean;
           driverSex?: boolean;
-          driverFirstName?: boolean;
-          driverLastName?: boolean;
-          driverNationalCode?: boolean;
-          driverLicenceNumber?: boolean;
           driverLicenceType?: boolean;
-          driverInjuryType?: boolean;
-          driverTotalReason?: boolean;
-          passengerSex?: boolean;
-          passengerFirstName?: boolean;
-          passengerLastName?: boolean;
-          passengerNationalCode?: boolean;
-          passengerInjuryType?: boolean;
-          passengerFaultStatus?: boolean;
-          passengerTotalReason?: boolean;
-          pedestrianSex?: boolean;
-          pedestrianFirstName?: boolean;
-          pedestrianLastName?: boolean;
-          pedestrianNationalCode?: boolean;
-          pedestrianInjuryType?: boolean;
-          pedestrianFaultStatus?: boolean;
-          pedestrianTotalReason?: boolean;
         };
         eventSeverityAnalytics?: {
           eventId?: boolean;
           eventDateFrom?: boolean;
           eventDateTo?: boolean;
-          seri?: boolean;
-          serial?: boolean;
           dateOfAccidentFrom?: boolean;
           dateOfAccidentTo?: boolean;
-          deadCount?: boolean;
-          deadCountMin?: boolean;
-          deadCountMax?: boolean;
-          injuredCount?: boolean;
-          injuredCountMin?: boolean;
-          injuredCountMax?: boolean;
-          hasWitness?: boolean;
-          newsNumber?: boolean;
           officer?: boolean;
-          completionDateFrom?: boolean;
-          completionDateTo?: boolean;
           province?: boolean;
           city?: boolean;
           road?: boolean;
-          trafficZone?: boolean;
-          cityZone?: boolean;
           accidentType?: boolean;
           position?: boolean;
-          rulingType?: boolean;
           lightStatus?: boolean;
           collisionType?: boolean;
           roadSituation?: boolean;
-          roadRepairType?: boolean;
-          shoulderStatus?: boolean;
-          areaUsages?: boolean;
-          airStatuses?: boolean;
-          roadDefects?: boolean;
           humanReasons?: boolean;
-          vehicleReasons?: boolean;
-          equipmentDamages?: boolean;
-          roadSurfaceConditions?: boolean;
-          attachmentName?: boolean;
-          attachmentType?: boolean;
-          vehicleColor?: boolean;
+          roadDefects?: boolean;
           vehicleSystem?: boolean;
-          vehiclePlaqueType?: boolean;
-          vehicleSystemType?: boolean;
-          vehicleFaultStatus?: boolean;
-          vehicleInsuranceCo?: boolean;
-          vehicleInsuranceNo?: boolean;
-          vehiclePlaqueUsage?: boolean;
-          vehiclePrintNumber?: boolean;
-          vehiclePlaqueSerialElement?: boolean;
-          vehicleInsuranceDateFrom?: boolean;
-          vehicleInsuranceDateTo?: boolean;
-          vehicleBodyInsuranceCo?: boolean;
-          vehicleBodyInsuranceNo?: boolean;
-          vehicleMotionDirection?: boolean;
-          vehicleMaxDamageSections?: boolean;
-          vehicleDamageSectionOther?: boolean;
-          vehicleInsuranceWarrantyLimit?: boolean;
-          vehicleInsuranceWarrantyLimitMin?: boolean;
-          vehicleInsuranceWarrantyLimitMax?: boolean;
-          vehicleBodyInsuranceDateFrom?: boolean;
-          vehicleBodyInsuranceDateTo?: boolean;
           driverSex?: boolean;
-          driverFirstName?: boolean;
-          driverLastName?: boolean;
-          driverNationalCode?: boolean;
-          driverLicenceNumber?: boolean;
           driverLicenceType?: boolean;
-          driverInjuryType?: boolean;
-          driverTotalReason?: boolean;
-          passengerSex?: boolean;
-          passengerFirstName?: boolean;
-          passengerLastName?: boolean;
-          passengerNationalCode?: boolean;
-          passengerInjuryType?: boolean;
-          passengerFaultStatus?: boolean;
-          passengerTotalReason?: boolean;
-          pedestrianSex?: boolean;
-          pedestrianFirstName?: boolean;
-          pedestrianLastName?: boolean;
-          pedestrianNationalCode?: boolean;
-          pedestrianInjuryType?: boolean;
-          pedestrianFaultStatus?: boolean;
-          pedestrianTotalReason?: boolean;
         };
         hourlyDayOfWeekAnalytics?: {
           seri?: boolean;
@@ -3084,6 +2867,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         humanReasonAnalytics?: {
           seri?: boolean;
@@ -3167,6 +2951,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         monthlyHolidayAnalytics?: {
           seri?: boolean;
@@ -3250,6 +3035,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         roadDefectsAnalytics?: {
           seri?: boolean;
@@ -3333,6 +3119,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         spatialCollisionAnalytics?: {
           seri?: boolean;
@@ -3416,6 +3203,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         spatialLightAnalytics?: {
           seri?: boolean;
@@ -3499,6 +3287,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         spatialSafetyIndexAnalytics?: {
           seri?: boolean;
@@ -3582,6 +3371,8 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          groupBy?: boolean;
+          polygon?: boolean;
         };
         spatialSeverityAnalytics?: {
           seri?: boolean;
@@ -3665,6 +3456,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         spatialSingleVehicleAnalytics?: {
           seri?: boolean;
@@ -3748,6 +3540,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalCollisionAnalytics?: {
           seri?: boolean;
@@ -3831,6 +3624,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalCountAnalytics?: {
           seri?: boolean;
@@ -3914,6 +3708,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalDamageAnalytics?: {
           seri?: boolean;
@@ -3997,6 +3792,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalNightAnalytics?: {
           seri?: boolean;
@@ -4080,6 +3876,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalSeverityAnalytics?: {
           seri?: boolean;
@@ -4163,6 +3960,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalTotalReasonAnalytics?: {
           seri?: boolean;
@@ -4246,6 +4044,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         temporalUnlicensedDriversAnalytics?: {
           seri?: boolean;
@@ -4329,6 +4128,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         totalReasonAnalytics?: {
           seri?: boolean;
@@ -4412,6 +4212,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
         vehicleReasonAnalytics?: {
           seri?: boolean;
@@ -4495,6 +4296,7 @@ export type townshipSchema = {
           pedestrianInjuryType?: boolean;
           pedestrianFaultStatus?: boolean;
           pedestrianTotalReason?: boolean;
+          polygon?: boolean;
         };
       };
     };
@@ -14055,7 +13857,8 @@ export type ReqType = {
           is_verified: boolean;
           nationalCard?: string;
           avatar?: string;
-          citySettingId?: string;
+          citySettingIds?: string[];
+          provinceSettingIds?: string[];
           availableCharts?: {
             accidentSeverityAnalytics?: {
               seri?: boolean;
@@ -14139,6 +13942,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             areaUsageAnalytics?: {
               seri?: boolean;
@@ -14222,6 +14026,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             collisionAnalytics?: {
               seri?: boolean;
@@ -14305,6 +14110,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             companyPerformanceAnalytics?: {
               seri?: boolean;
@@ -14388,178 +14194,49 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             eventCollisionAnalytics?: {
               eventId?: boolean;
               eventDateFrom?: boolean;
               eventDateTo?: boolean;
-              seri?: boolean;
-              serial?: boolean;
               dateOfAccidentFrom?: boolean;
               dateOfAccidentTo?: boolean;
-              deadCount?: boolean;
-              deadCountMin?: boolean;
-              deadCountMax?: boolean;
-              injuredCount?: boolean;
-              injuredCountMin?: boolean;
-              injuredCountMax?: boolean;
-              hasWitness?: boolean;
-              newsNumber?: boolean;
               officer?: boolean;
-              completionDateFrom?: boolean;
-              completionDateTo?: boolean;
               province?: boolean;
               city?: boolean;
               road?: boolean;
-              trafficZone?: boolean;
-              cityZone?: boolean;
               accidentType?: boolean;
               position?: boolean;
-              rulingType?: boolean;
               lightStatus?: boolean;
               collisionType?: boolean;
               roadSituation?: boolean;
-              roadRepairType?: boolean;
-              shoulderStatus?: boolean;
-              areaUsages?: boolean;
-              airStatuses?: boolean;
-              roadDefects?: boolean;
               humanReasons?: boolean;
-              vehicleReasons?: boolean;
-              equipmentDamages?: boolean;
-              roadSurfaceConditions?: boolean;
-              attachmentName?: boolean;
-              attachmentType?: boolean;
-              vehicleColor?: boolean;
+              roadDefects?: boolean;
               vehicleSystem?: boolean;
-              vehiclePlaqueType?: boolean;
-              vehicleSystemType?: boolean;
-              vehicleFaultStatus?: boolean;
-              vehicleInsuranceCo?: boolean;
-              vehicleInsuranceNo?: boolean;
-              vehiclePlaqueUsage?: boolean;
-              vehiclePrintNumber?: boolean;
-              vehiclePlaqueSerialElement?: boolean;
-              vehicleInsuranceDateFrom?: boolean;
-              vehicleInsuranceDateTo?: boolean;
-              vehicleBodyInsuranceCo?: boolean;
-              vehicleBodyInsuranceNo?: boolean;
-              vehicleMotionDirection?: boolean;
-              vehicleMaxDamageSections?: boolean;
-              vehicleDamageSectionOther?: boolean;
-              vehicleInsuranceWarrantyLimit?: boolean;
-              vehicleInsuranceWarrantyLimitMin?: boolean;
-              vehicleInsuranceWarrantyLimitMax?: boolean;
-              vehicleBodyInsuranceDateFrom?: boolean;
-              vehicleBodyInsuranceDateTo?: boolean;
               driverSex?: boolean;
-              driverFirstName?: boolean;
-              driverLastName?: boolean;
-              driverNationalCode?: boolean;
-              driverLicenceNumber?: boolean;
               driverLicenceType?: boolean;
-              driverInjuryType?: boolean;
-              driverTotalReason?: boolean;
-              passengerSex?: boolean;
-              passengerFirstName?: boolean;
-              passengerLastName?: boolean;
-              passengerNationalCode?: boolean;
-              passengerInjuryType?: boolean;
-              passengerFaultStatus?: boolean;
-              passengerTotalReason?: boolean;
-              pedestrianSex?: boolean;
-              pedestrianFirstName?: boolean;
-              pedestrianLastName?: boolean;
-              pedestrianNationalCode?: boolean;
-              pedestrianInjuryType?: boolean;
-              pedestrianFaultStatus?: boolean;
-              pedestrianTotalReason?: boolean;
             };
             eventSeverityAnalytics?: {
               eventId?: boolean;
               eventDateFrom?: boolean;
               eventDateTo?: boolean;
-              seri?: boolean;
-              serial?: boolean;
               dateOfAccidentFrom?: boolean;
               dateOfAccidentTo?: boolean;
-              deadCount?: boolean;
-              deadCountMin?: boolean;
-              deadCountMax?: boolean;
-              injuredCount?: boolean;
-              injuredCountMin?: boolean;
-              injuredCountMax?: boolean;
-              hasWitness?: boolean;
-              newsNumber?: boolean;
               officer?: boolean;
-              completionDateFrom?: boolean;
-              completionDateTo?: boolean;
               province?: boolean;
               city?: boolean;
               road?: boolean;
-              trafficZone?: boolean;
-              cityZone?: boolean;
               accidentType?: boolean;
               position?: boolean;
-              rulingType?: boolean;
               lightStatus?: boolean;
               collisionType?: boolean;
               roadSituation?: boolean;
-              roadRepairType?: boolean;
-              shoulderStatus?: boolean;
-              areaUsages?: boolean;
-              airStatuses?: boolean;
-              roadDefects?: boolean;
               humanReasons?: boolean;
-              vehicleReasons?: boolean;
-              equipmentDamages?: boolean;
-              roadSurfaceConditions?: boolean;
-              attachmentName?: boolean;
-              attachmentType?: boolean;
-              vehicleColor?: boolean;
+              roadDefects?: boolean;
               vehicleSystem?: boolean;
-              vehiclePlaqueType?: boolean;
-              vehicleSystemType?: boolean;
-              vehicleFaultStatus?: boolean;
-              vehicleInsuranceCo?: boolean;
-              vehicleInsuranceNo?: boolean;
-              vehiclePlaqueUsage?: boolean;
-              vehiclePrintNumber?: boolean;
-              vehiclePlaqueSerialElement?: boolean;
-              vehicleInsuranceDateFrom?: boolean;
-              vehicleInsuranceDateTo?: boolean;
-              vehicleBodyInsuranceCo?: boolean;
-              vehicleBodyInsuranceNo?: boolean;
-              vehicleMotionDirection?: boolean;
-              vehicleMaxDamageSections?: boolean;
-              vehicleDamageSectionOther?: boolean;
-              vehicleInsuranceWarrantyLimit?: boolean;
-              vehicleInsuranceWarrantyLimitMin?: boolean;
-              vehicleInsuranceWarrantyLimitMax?: boolean;
-              vehicleBodyInsuranceDateFrom?: boolean;
-              vehicleBodyInsuranceDateTo?: boolean;
               driverSex?: boolean;
-              driverFirstName?: boolean;
-              driverLastName?: boolean;
-              driverNationalCode?: boolean;
-              driverLicenceNumber?: boolean;
               driverLicenceType?: boolean;
-              driverInjuryType?: boolean;
-              driverTotalReason?: boolean;
-              passengerSex?: boolean;
-              passengerFirstName?: boolean;
-              passengerLastName?: boolean;
-              passengerNationalCode?: boolean;
-              passengerInjuryType?: boolean;
-              passengerFaultStatus?: boolean;
-              passengerTotalReason?: boolean;
-              pedestrianSex?: boolean;
-              pedestrianFirstName?: boolean;
-              pedestrianLastName?: boolean;
-              pedestrianNationalCode?: boolean;
-              pedestrianInjuryType?: boolean;
-              pedestrianFaultStatus?: boolean;
-              pedestrianTotalReason?: boolean;
             };
             hourlyDayOfWeekAnalytics?: {
               seri?: boolean;
@@ -14643,6 +14320,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             humanReasonAnalytics?: {
               seri?: boolean;
@@ -14726,6 +14404,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             monthlyHolidayAnalytics?: {
               seri?: boolean;
@@ -14809,6 +14488,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             roadDefectsAnalytics?: {
               seri?: boolean;
@@ -14892,6 +14572,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             spatialCollisionAnalytics?: {
               seri?: boolean;
@@ -14975,6 +14656,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             spatialLightAnalytics?: {
               seri?: boolean;
@@ -15058,6 +14740,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             spatialSafetyIndexAnalytics?: {
               seri?: boolean;
@@ -15141,6 +14824,8 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              groupBy?: boolean;
+              polygon?: boolean;
             };
             spatialSeverityAnalytics?: {
               seri?: boolean;
@@ -15224,6 +14909,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             spatialSingleVehicleAnalytics?: {
               seri?: boolean;
@@ -15307,6 +14993,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalCollisionAnalytics?: {
               seri?: boolean;
@@ -15390,6 +15077,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalCountAnalytics?: {
               seri?: boolean;
@@ -15473,6 +15161,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalDamageAnalytics?: {
               seri?: boolean;
@@ -15556,6 +15245,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalNightAnalytics?: {
               seri?: boolean;
@@ -15639,6 +15329,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalSeverityAnalytics?: {
               seri?: boolean;
@@ -15722,6 +15413,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalTotalReasonAnalytics?: {
               seri?: boolean;
@@ -15805,6 +15497,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             temporalUnlicensedDriversAnalytics?: {
               seri?: boolean;
@@ -15888,6 +15581,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             totalReasonAnalytics?: {
               seri?: boolean;
@@ -15971,6 +15665,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
             vehicleReasonAnalytics?: {
               seri?: boolean;
@@ -16054,6 +15749,7 @@ export type ReqType = {
               pedestrianInjuryType?: boolean;
               pedestrianFaultStatus?: boolean;
               pedestrianTotalReason?: boolean;
+              polygon?: boolean;
             };
           };
         };

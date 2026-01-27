@@ -1,4 +1,5 @@
 import {
+	array,
 	boolean,
 	coerce,
 	date,
@@ -38,7 +39,8 @@ export const addUserValidator = () => {
 			is_verified: defaulted(boolean(), false),
 			nationalCard: optional(objectIdValidation),
 			avatar: optional(objectIdValidation),
-			citySettingId: optional(objectIdValidation),
+			citySettingIds: optional(array(objectIdValidation)),
+			provinceSettingIds: optional(array(objectIdValidation)),
 			availableCharts,
 		}),
 		get: selectStruct("user", 1),

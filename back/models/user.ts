@@ -1,5 +1,6 @@
 import { coreApp } from "../mod.ts";
 import {
+	array,
 	boolean,
 	coerce,
 	date,
@@ -133,11 +134,16 @@ export const user_pure = {
 	level: user_level_emums,
 	is_verified: defaulted(boolean(), false),
 	settings: object({
-		city: object({
+		cities: array(object({
 			_id: objectIdValidation,
 			name: string(),
 			center_location: geoJSONStruct("Point"),
-		}),
+		})),
+		provinces: array(object({
+			_id: objectIdValidation,
+			name: string(),
+			center_location: geoJSONStruct("Point"),
+		})),
 		availableCharts,
 	}),
 	...createUpdateAt,

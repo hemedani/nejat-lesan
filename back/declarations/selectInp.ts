@@ -23,14 +23,22 @@ address: string;
 level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise" );
 is_verified: boolean;
 settings: {
-city: {
+cities: {
 _id: string;
 name: string;
 center_location: {
 type: "Point";
 coordinates: any[];
 };
+}[];
+provinces: {
+_id: string;
+name: string;
+center_location: {
+type: "Point";
+coordinates: any[];
 };
+}[];
 availableCharts?: {
 accidentSeverityAnalytics?: {
 seri?: boolean;
@@ -2382,14 +2390,22 @@ address: string;
 level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise" );
 is_verified: boolean;
 settings: {
-city: {
+cities: {
 _id: string;
 name: string;
 center_location: {
 type: "Point";
 coordinates: any[];
 };
+}[];
+provinces: {
+_id: string;
+name: string;
+center_location: {
+type: "Point";
+coordinates: any[];
 };
+}[];
 availableCharts?: {
 accidentSeverityAnalytics?: {
 seri?: boolean;
@@ -13841,7 +13857,8 @@ level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise" );
 is_verified: boolean;
 nationalCard?: string;
 avatar?: string;
-citySettingId?: string;
+citySettingIds?: string[];
+provinceSettingIds?: string[];
 availableCharts?: {
 accidentSeverityAnalytics?: {
 seri?: boolean;
