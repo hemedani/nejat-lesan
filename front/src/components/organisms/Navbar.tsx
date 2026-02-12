@@ -1,13 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import Cookies from "js-cookie";
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, userLevel, logout } = useAuth();
+
+  // Get user details from cookies
+  const nationalNumber = Cookies.get("national_number") || "";
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Custom navigation links with icons
   const navLinks = [
@@ -15,12 +35,7 @@ export const Navbar = () => {
       href: "/",
       label: "خانه",
       icon: (
-        <svg
-          className="w-4 h-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
             stroke="currentColor"
@@ -35,12 +50,7 @@ export const Navbar = () => {
       href: "/charts/overall",
       label: "نمودار",
       icon: (
-        <svg
-          className="w-4 h-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M9 20l-5.447-17.916m0 0A1 1 0 013.465 1H4.5a1 1 0 011 .97V2m13.5 8A8.5 8.5 0 015.5 10M16 19l5-5m0 0l-5-5m5 5H9"
             stroke="currentColor"
@@ -55,12 +65,7 @@ export const Navbar = () => {
       href: "/maps/accidents",
       label: "نقشه تصادفات",
       icon: (
-        <svg
-          className="w-4 h-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M17.657 16.657L13.414 20.9a1.996 1.996 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"
             stroke="currentColor"
@@ -117,13 +122,7 @@ export const Navbar = () => {
         {/* Logo with subtle animation */}
         <div className="text-xl font-bold transform transition-all duration-500 hover:scale-105">
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-            />
+            <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
           </Link>
         </div>
 
@@ -189,9 +188,8 @@ export const Navbar = () => {
         <div className="flex items-center gap-6">
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated &&
-              (userLevel === "Ghost" ||
-                userLevel === "Manager" ||
-                userLevel === "Editor") && (
+              userLevel !== "Enterprise" && // Hide admin panel for Enterprise users
+              (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") && (
                 <Link
                   href="/admin"
                   className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
@@ -214,7 +212,7 @@ export const Navbar = () => {
                 </Link>
               )}
 
-            {isAuthenticated && userLevel === "Normal" && (
+            {isAuthenticated && (
               <Link
                 href="/user"
                 className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
@@ -238,26 +236,99 @@ export const Navbar = () => {
             )}
 
             {isAuthenticated ? (
-              <button
-                onClick={logout}
-                className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-red-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
                 >
-                  <path
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>خروج</span>
-              </button>
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>پروفایل</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${isProfileDropdownOpen ? "rotate-180" : ""}`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6 9l6 6 6-6"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-gray-500 rounded-xl overflow-hidden shadow-xl z-20 border border-gray-400">
+                    <div className="p-4 bg-gray-600">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                          <svg
+                            className="w-6 h-6 text-gray-700"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="font-medium text-white">کاربر</p>
+                          <p className="text-sm text-gray-300">سطح دسترسی: {userLevel}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="py-2">
+                      <div className="px-4 py-2 border-b border-gray-400">
+                        <p className="text-xs text-gray-300">کد ملی</p>
+                        <p className="text-white">{nationalNumber}</p>
+                      </div>
+
+                      <button
+                        onClick={logout}
+                        className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-red-400 transition-colors duration-200"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>خروج</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 href="/login"
@@ -290,16 +361,19 @@ export const Navbar = () => {
           >
             <div className="relative w-6 h-6">
               <span
-                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
-                  }`}
+                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                }`}
               ></span>
               <span
-                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : "opacity-100"
-                  }`}
+                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${
+                  isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                }`}
               ></span>
               <span
-                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                  }`}
+                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                }`}
               ></span>
             </div>
           </button>
@@ -308,10 +382,11 @@ export const Navbar = () => {
 
       {/* Mobile Menu with smooth animation */}
       <div
-        className={`md:hidden absolute left-0 w-full bg-gray-600 shadow-xl transition-all duration-500 ease-in-out transform ${isMobileMenuOpen
-          ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
-          : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
-          }`}
+        className={`md:hidden absolute left-0 w-full bg-gray-600 shadow-xl transition-all duration-500 ease-in-out transform ${
+          isMobileMenuOpen
+            ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
+            : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
+        }`}
       >
         <nav className="flex flex-col items-center py-6 space-y-1" dir="rtl">
           {navLinks.map((link) => (
@@ -343,9 +418,8 @@ export const Navbar = () => {
 
           {/* Admin/User Panel Links */}
           {isAuthenticated &&
-            (userLevel === "Ghost" ||
-              userLevel === "Manager" ||
-              userLevel === "Editor") && (
+            userLevel !== "Enterprise" && // Hide admin panel for Enterprise users
+            (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") && (
               <Link
                 href="/admin"
                 className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
@@ -369,7 +443,7 @@ export const Navbar = () => {
               </Link>
             )}
 
-          {isAuthenticated && userLevel === "Normal" && (
+          {isAuthenticated && (
             <Link
               href="/user"
               className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
@@ -395,29 +469,31 @@ export const Navbar = () => {
 
           {/* Auth Button */}
           {isAuthenticated ? (
-            <button
-              className="flex items-center gap-2 w-full py-3 px-6 text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                logout();
-              }}
-            >
-              <svg
-                className="w-4 h-4 text-rose-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="w-full px-6 py-3">
+              <button
+                className="flex items-center gap-2 w-full py-3 text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  logout();
+                }}
               >
-                <path
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>خروج</span>
-            </button>
+                <svg
+                  className="w-4 h-4 text-rose-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>خروج</span>
+              </button>
+            </div>
           ) : (
             <Link
               href="/login"

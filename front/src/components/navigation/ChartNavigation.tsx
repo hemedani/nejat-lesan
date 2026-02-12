@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavigationItem {
   id: string;
@@ -16,11 +17,60 @@ interface ChartNavigationProps {
   currentChart?: string;
 }
 
-const ChartNavigation: React.FC<ChartNavigationProps> = ({
-  currentSection,
-  currentChart,
-}) => {
+const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, currentChart }) => {
   const pathname = usePathname();
+  const { userLevel, enterpriseSettings } = useAuth();
+
+  // Mapping from navigation IDs to permission keys
+  const navigationIdToPermissionKey: Record<string, string> = {
+    // Overall section
+    "road-defects": "roadDefectsAnalytics",
+    "accident-severity": "accidentSeverityAnalytics",
+    "collision-analytics": "collisionAnalytics",
+    "area-usage-analytics": "areaUsageAnalytics",
+    "human-reason-analytics": "humanReasonAnalytics",
+    "vehicle-reason-analytics": "vehicleReasonAnalytics",
+    "company-performance-analytics": "companyPerformanceAnalytics",
+    "total-reason-analytics": "totalReasonAnalytics",
+    "monthly-holiday": "monthlyHolidayAnalytics",
+    "hourly-day-of-week": "hourlyDayOfWeekAnalytics",
+
+    // Temporal section
+    "count-analytics": "temporalCountAnalytics", // This might not exist in permissions
+    "severity-analytics-temporal": "temporalSeverityAnalytics", // This might not exist in permissions
+    "night-analytics": "temporalNightAnalytics", // This might not exist in permissions
+    "collision-analytics-temporal": "temporalCollisionAnalytics", // This might not exist in permissions
+    "total-reason-analytics-temporal": "temporalTotalReasonAnalytics", // This might not exist in permissions
+    "unlicensed-drivers-analytics": "temporalUnlicensedDriversAnalytics", // This might not exist in permissions
+
+    // Spatial section
+    "severity-analytics-spatial": "spatialSeverityAnalytics", // This might not exist in permissions
+    "light-analytics": "spatialLightAnalytics", // This might not exist in permissions
+    "collision-analytics-spatial": "spatialCollisionAnalytics", // Different ID to distinguish from others
+    "single-vehicle-analytics": "spatialSingleVehicleAnalytics", // This might not exist in permissions
+    "safety-index": "spatialSafetyIndexAnalytics", // This might not exist in permissions
+
+    // Trend section
+    "severity-analytics-trend": "eventSeverityAnalytics",
+    "collision-analytics-trend": "eventCollisionAnalytics",
+
+    // Overall section (continued)
+    "total-reason-analytics-overall": "totalReasonAnalytics", // Different ID to distinguish from temporal
+  };
+
+  // Helper function to check if a chart is accessible for enterprise users
+  const isChartAccessible = (chartId: string): boolean => {
+    if (userLevel !== "Enterprise" || !enterpriseSettings?.availableCharts) {
+      // If not an enterprise user or no available charts defined, allow access
+      return true;
+    }
+
+    // Get the permission key for this chart ID, or use the chartId directly if no mapping exists
+    const permissionKey = navigationIdToPermissionKey[chartId] || chartId;
+
+    // Check if the specific chart is allowed in availableCharts
+    return !!enterpriseSettings.availableCharts?.[permissionKey];
+  };
 
   // Main navigation items
   const mainNavigation: NavigationItem[] = [
@@ -50,28 +100,13 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
     },
   ];
 
-  // Chart section navigation
-  const chartSections: NavigationItem[] = [
-    { id: "overall", label: "دید کلی", href: "/charts/overall" },
-    { id: "temporal", label: "مقایسه زمانی", href: "/charts/temporal" },
-    // { id: "spatial", label: "مقایسه مکانی", href: "/charts/spatial" },
-    { id: "trend", label: "روند رویداد", href: "/charts/trend" },
-  ];
-
-  // Map section navigation
-  const mapSections: NavigationItem[] = [
-    { id: "accidents", label: "نقشه تصادفات", href: "/maps/accidents" },
-    // { id: "heatmap", label: "نقشه حرارتی", href: "/maps/heatmap" },
-    // { id: "clusters", label: "تحلیل خوشه‌ای", href: "/maps/clusters" },
-    // { id: "regional", label: "تحلیل منطقه‌ای", href: "/maps/regional" },
-    { id: "comparison", label: "مقایسه نقشه‌ها", href: "/maps/comparison" },
-  ];
-
   // Chart-specific navigation for each section
   const getChartNavigation = (section: string): NavigationItem[] => {
+    let charts: NavigationItem[] = [];
+
     switch (section) {
       case "overall":
-        return [
+        charts = [
           {
             id: "road-defects",
             label: "نقص راه",
@@ -79,7 +114,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           },
           {
             id: "monthly-holiday",
-            label: "تحلیل ماهانه تعطیلات",
+            label: "تحلیл ماهانه تعطیلات",
             href: "/charts/overall/monthly-holiday",
           },
           {
@@ -103,7 +138,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             href: "/charts/overall/area-usage-analytics",
           },
           {
-            id: "total-reason-analytics",
+            id: "total-reason-analytics-overall",
             label: "علل تامه تصادفات",
             href: "/charts/overall/total-reason-analytics",
           },
@@ -123,15 +158,16 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             href: "/charts/overall/company-performance-analytics",
           },
         ];
+        break;
       case "temporal":
-        return [
+        charts = [
           {
             id: "count-analytics",
             label: "شمار تصادفات",
             href: "/charts/temporal/count-analytics",
           },
           {
-            id: "severity-analytics",
+            id: "severity-analytics-temporal",
             label: "سهم تصادفات فوتی از شدید",
             href: "/charts/temporal/severity-analytics",
           },
@@ -146,12 +182,12 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           //   href: "/charts/temporal/damage-analytics",
           // },
           {
-            id: "collision-analytics",
+            id: "collision-analytics-temporal",
             label: "نحوه و نوع برخورد",
             href: "/charts/temporal/collision-analytics",
           },
           {
-            id: "total-reason-analytics",
+            id: "total-reason-analytics-temporal",
             label: "علت تامه",
             href: "/charts/temporal/total-reason-analytics",
           },
@@ -161,8 +197,9 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             href: "/charts/temporal/unlicensed-drivers-analytics",
           },
         ];
+        break;
       case "spatial":
-        return [
+        charts = [
           // {
           //   id: "regional",
           //   label: "تحلیل منطقه‌ای",
@@ -174,7 +211,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           //   href: "/charts/spatial/hotspots",
           // },
           {
-            id: "severity-analytics",
+            id: "severity-analytics-spatial",
             label: "سهم شدت تصادفات",
             href: "/charts/spatial/severity-analytics",
           },
@@ -184,7 +221,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             href: "/charts/spatial/light-analytics",
           },
           {
-            id: "collision-analytics",
+            id: "collision-analytics-spatial",
             label: "نحوه و نوع برخورد",
             href: "/charts/spatial/collision-analytics",
           },
@@ -199,8 +236,9 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             href: "/charts/spatial/safety-index",
           },
         ];
+        break;
       case "trend":
-        return [
+        charts = [
           // {
           //   id: "monthly-trend",
           //   label: "روند ماهانه",
@@ -212,20 +250,52 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
           //   href: "/charts/trend/yearly-trend",
           // },
           {
-            id: "severity-analytics",
+            id: "severity-analytics-trend",
             label: "سهم شدت تصادفات",
             href: "/charts/trend/severity-analytics",
           },
           {
-            id: "collision-analytics",
+            id: "collision-analytics-trend",
             label: "نحوه و نوع برخورد",
             href: "/charts/trend/collision-analytics",
           },
         ];
+        break;
       default:
-        return [];
+        charts = [];
     }
+
+    // Filter charts based on enterprise permissions
+    if (userLevel === "Enterprise" && enterpriseSettings?.availableCharts) {
+      return charts.filter((chart) => isChartAccessible(chart.id));
+    }
+
+    return charts;
   };
+
+  // Chart section navigation - filtered based on enterprise permissions
+  const chartSections: NavigationItem[] = [
+    { id: "overall", label: "دید کلی", href: "/charts/overall" },
+    { id: "temporal", label: "مقایسه زمانی", href: "/charts/temporal" },
+    { id: "spatial", label: "مقایسه مکانی", href: "/charts/spatial" },
+    { id: "trend", label: "روند رویداد", href: "/charts/trend" },
+  ].filter((section) => {
+    // For enterprise users, only show sections if they have access to at least one chart within that section
+    if (userLevel === "Enterprise" && enterpriseSettings?.availableCharts) {
+      const sectionCharts = getChartNavigation(section.id);
+      return sectionCharts.some((chart) => isChartAccessible(chart.id));
+    }
+    return true;
+  });
+
+  // Map section navigation
+  const mapSections: NavigationItem[] = [
+    { id: "accidents", label: "نقشه تصادفات", href: "/maps/accidents" },
+    // { id: "heatmap", label: "نقشه حرارتی", href: "/maps/heatmap" },
+    // { id: "clusters", label: "تحلیل خوشه‌ای", href: "/maps/clusters" },
+    // { id: "regional", label: "تحلیل منطقه‌ای", href: "/maps/regional" },
+    { id: "comparison", label: "مقایسه نقشه‌ها", href: "/maps/comparison" },
+  ];
 
   // Generate breadcrumbs
   const generateBreadcrumbs = () => {
@@ -236,22 +306,28 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
 
       if (currentSection) {
         const sectionLabel =
-          chartSections.find((s) => s.id === currentSection)?.label ||
-          currentSection;
+          chartSections.find((s) => s.id === currentSection)?.label || currentSection;
         breadcrumbs.push({
           label: sectionLabel,
           href: `/charts/${currentSection}`,
         });
 
         if (currentChart) {
-          const chartLabel =
-            getChartNavigation(currentSection).find(
-              (c) => c.id === currentChart,
-            )?.label || currentChart;
-          breadcrumbs.push({
-            label: chartLabel,
-            href: `/charts/${currentSection}/${currentChart}`,
-          });
+          // Check if the current chart is accessible
+          const isCurrentChartAccessible = isChartAccessible(currentChart);
+
+          if (isCurrentChartAccessible) {
+            const chartLabel =
+              getChartNavigation(currentSection).find((c) => c.id === currentChart)?.label ||
+              currentChart;
+            breadcrumbs.push({
+              label: chartLabel,
+              href: `/charts/${currentSection}/${currentChart}`,
+            });
+          } else {
+            // If the chart is not accessible, redirect or show an error
+            // For now, we'll just not add the chart to breadcrumbs
+          }
         }
       }
     } else if (pathname.includes("/maps")) {
@@ -260,8 +336,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
       // Extract current map section from pathname
       const mapSection = pathname.split("/maps/")[1]?.split("/")[0];
       if (mapSection) {
-        const sectionLabel =
-          mapSections.find((s) => s.id === mapSection)?.label || mapSection;
+        const sectionLabel = mapSections.find((s) => s.id === mapSection)?.label || mapSection;
         breadcrumbs.push({
           label: sectionLabel,
           href: `/maps/${mapSection}`,
@@ -273,9 +348,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
   };
 
   const breadcrumbs = generateBreadcrumbs();
-  const chartNavigation = currentSection
-    ? getChartNavigation(currentSection)
-    : [];
+  const chartNavigation = currentSection ? getChartNavigation(currentSection) : [];
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -286,11 +359,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
             {breadcrumbs.map((crumb, index) => (
               <li key={index} className="flex items-center">
                 {index > 0 && (
-                  <svg
-                    className="w-5 h-5 text-gray-400 mx-2"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
@@ -299,9 +368,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
                   </svg>
                 )}
                 {index === breadcrumbs.length - 1 ? (
-                  <span className="text-sm font-medium text-gray-500">
-                    {crumb.label}
-                  </span>
+                  <span className="text-sm font-medium text-gray-500">{crumb.label}</span>
                 ) : (
                   <Link
                     href={crumb.href}
@@ -319,23 +386,40 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
       {/* Main Tab Navigation */}
       <div className="px-6">
         <nav className="flex space-x-8 space-x-reverse">
-          {mainNavigation.map((item) => {
-            const isActive = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  isActive
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                {item.icon}
-                {item.label}
-              </Link>
-            );
-          })}
+          {mainNavigation
+            .filter((item) => {
+              // For enterprise users, only show charts tab if they have access to at least one chart
+              if (
+                item.id === "charts" &&
+                userLevel === "Enterprise" &&
+                enterpriseSettings?.availableCharts
+              ) {
+                // Check if there's at least one accessible chart across all sections
+                const allSections = ["overall", "temporal", "spatial", "trend"];
+                return allSections.some((section) => {
+                  const sectionCharts = getChartNavigation(section);
+                  return sectionCharts.length > 0; // If any charts are accessible in this section
+                });
+              }
+              return true;
+            })
+            .map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    isActive
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
+              );
+            })}
         </nav>
       </div>
 
@@ -388,33 +472,29 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({
       )}
 
       {/* Chart-specific Navigation */}
-      {pathname.includes("/charts") &&
-        currentSection &&
-        chartNavigation.length > 0 && (
-          <div className="px-6 py-3 bg-gray-25 border-t border-gray-100">
-            <nav className="flex space-x-4 space-x-reverse">
-              <span className="text-sm font-medium text-gray-700 py-2">
-                نمودارها:
-              </span>
-              {chartNavigation.map((chart) => {
-                const isActive = pathname === chart.href;
-                return (
-                  <Link
-                    key={chart.id}
-                    href={chart.href}
-                    className={`py-2 px-3 rounded-md text-sm transition-colors ${
-                      isActive
-                        ? "bg-blue-50 text-blue-700 font-medium"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`}
-                  >
-                    {chart.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        )}
+      {pathname.includes("/charts") && currentSection && chartNavigation.length > 0 && (
+        <div className="px-6 py-3 bg-gray-25 border-t border-gray-100">
+          <nav className="flex space-x-4 space-x-reverse">
+            <span className="text-sm font-medium text-gray-700 py-2">نمودارها:</span>
+            {chartNavigation.map((chart) => {
+              const isActive = pathname === chart.href;
+              return (
+                <Link
+                  key={chart.id}
+                  href={chart.href}
+                  className={`py-2 px-3 rounded-md text-sm transition-colors ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700 font-medium"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
+                  {chart.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      )}
     </div>
   );
 };
