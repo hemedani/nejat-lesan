@@ -6,6 +6,7 @@ import {
 import { getLesanBaseUrl } from "@/services/api";
 import React, { useState } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,8 @@ interface IUploadImage {
   inputName: string;
   type?: "video" | "image" | "doc" | "geo" | "json";
   filePath?: string;
+  label?: string;
+  isRequired?: boolean;
 }
 
 export const UploadImage = ({
@@ -23,6 +26,8 @@ export const UploadImage = ({
   setUploadedImage,
   type,
   filePath,
+  label,
+  isRequired,
 }: IUploadImage) => {
   const [isUploaded, setIsUploaded] = useState<"uploading" | boolean>(false);
   const [file, setFile] = useState<File | null>(null);
@@ -38,32 +43,39 @@ export const UploadImage = ({
     if (!file) return;
     setIsUploaded("uploading");
 
-    const lesanBody = {
-      service: "main",
-      model: "file",
-      act: "uploadFile",
-      details: {
-        get: { type: 1, _id: 1 },
-        set: type ? { type } : {},
-      },
-    };
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("lesan-body", JSON.stringify(lesanBody));
-
     try {
-      const response = await fetch(`${getLesanBaseUrl()}/lesan`, {
+      // Prepare the lesan body for the file upload
+      const lesanBody = {
+        service: "main",
+        model: "file",
+        act: "uploadFile",
+        details: {
+          get: { _id: 1 },
+          set: type ? { type } : {},
+        },
+      };
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("lesan-body", JSON.stringify(lesanBody));
+
+      // Get the auth token
+      const authToken = token || Cookies.get("token");
+
+      // Make the request to the proxy endpoint
+      const response = await fetch("/api/proxy", {
         method: "POST",
         body: formData,
         headers: {
-          token: token || "",
+          // Only include token header if a token is available
+          ...(authToken ? { token: authToken } : {}),
         },
       });
+
       const data = await response.json();
 
       if (data.success) {
-        setUploadedImage(data.body._id); // اینجا باید _id برگشتی رو ست کنیم
+        setUploadedImage(data.body._id);
         setIsUploaded(true);
       } else {
         console.error("Upload failed", data);
@@ -77,6 +89,13 @@ export const UploadImage = ({
 
   return (
     <div className="w-full p-4 border rounded-lg shadow-md flex flex-col items-center">
+      {label && (
+        <label className="w-full text-sm font-medium text-gray-700 mb-2">
+          {label}
+          {isRequired && <span className="text-red-500 mr-1">*</span>}
+        </label>
+      )}
+
       <label
         htmlFor={inputName}
         className="w-full py-3 bg-gray-200 flex items-center justify-center rounded-lg cursor-pointer hover:bg-gray-300"
@@ -113,10 +132,7 @@ export const UploadImage = ({
         </div>
       ) : file && file.type === "application/pdf" ? (
         <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border">
-          <embed
-            className="w-full h-full object-cover"
-            src={URL.createObjectURL(file)}
-          />
+          <embed className="w-full h-full object-cover" src={URL.createObjectURL(file)} />
         </div>
       ) : file &&
         (file.type === "application/json" ||
