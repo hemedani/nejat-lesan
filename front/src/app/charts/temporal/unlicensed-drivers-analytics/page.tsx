@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { temporalUnlicensedDriversAnalytics } from "@/app/actions/accident/temporalUnlicensedDriversAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
 import dynamic from "next/dynamic";
+import { useAuth } from "@/context/AuthContext";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -32,20 +31,16 @@ interface TemporalUnlicensedDriversResponse {
   success: boolean;
 }
 
-// Get enabled filters for temporal unlicensed drivers analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart(
-  "TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS",
-);
-
 // Chart component
 interface TemporalUnlicensedDriversChartProps {
   data: TemporalUnlicensedDriversData | null;
   isLoading: boolean;
 }
 
-const TemporalUnlicensedDriversChart: React.FC<
-  TemporalUnlicensedDriversChartProps
-> = ({ data, isLoading }) => {
+const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartProps> = ({
+  data,
+  isLoading,
+}) => {
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -78,9 +73,7 @@ const TemporalUnlicensedDriversChart: React.FC<
               />
             </svg>
             <p className="text-gray-600">هیچ داده‌ای برای نمایش وجود ندارد</p>
-            <p className="text-sm text-gray-500 mt-1">
-              لطفاً فیلترهای مناسب را انتخاب کنید
-            </p>
+            <p className="text-sm text-gray-500 mt-1">لطفاً فیلترهای مناسب را انتخاب کنید</p>
           </div>
         </div>
       </div>
@@ -200,18 +193,21 @@ const TemporalUnlicensedDriversChart: React.FC<
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <Chart
-        options={chartOptions}
-        series={data.series}
-        type="line"
-        height={400}
-      />
+      <Chart options={chartOptions} series={data.series} type="line" height={400} />
     </div>
   );
 };
 
 // Main page component
 const TemporalUnlicensedDriversAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+
+  // Get enabled filters for temporal unlicensed drivers analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
   const getDefaultFilters = (): ChartFilterState => {
     return {
       // --- Core Accident Details ---
@@ -313,11 +309,9 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
 
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [chartData, setChartData] =
-    useState<TemporalUnlicensedDriversData | null>(null);
+  const [chartData, setChartData] = useState<TemporalUnlicensedDriversData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [appliedFilters, setAppliedFilters] =
-    useState<ChartFilterState>(getDefaultFilters());
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>(getDefaultFilters());
 
   // Load initial data on component mount
   const loadInitialData = useCallback(async () => {
@@ -343,66 +337,31 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         initialFilterPayload.seri = defaultFilters.seri;
       if (includeFilter("serial") && defaultFilters.serial !== undefined)
         initialFilterPayload.serial = defaultFilters.serial;
-      if (
-        includeFilter("dateOfAccidentFrom") &&
-        defaultFilters.dateOfAccidentFrom !== undefined
-      )
-        initialFilterPayload.dateOfAccidentFrom =
-          defaultFilters.dateOfAccidentFrom;
-      if (
-        includeFilter("dateOfAccidentTo") &&
-        defaultFilters.dateOfAccidentTo !== undefined
-      )
+      if (includeFilter("dateOfAccidentFrom") && defaultFilters.dateOfAccidentFrom !== undefined)
+        initialFilterPayload.dateOfAccidentFrom = defaultFilters.dateOfAccidentFrom;
+      if (includeFilter("dateOfAccidentTo") && defaultFilters.dateOfAccidentTo !== undefined)
         initialFilterPayload.dateOfAccidentTo = defaultFilters.dateOfAccidentTo;
       if (includeFilter("deadCount") && defaultFilters.deadCount !== undefined)
         initialFilterPayload.deadCount = defaultFilters.deadCount;
-      if (
-        includeFilter("deadCountMin") &&
-        defaultFilters.deadCountMin !== undefined
-      )
+      if (includeFilter("deadCountMin") && defaultFilters.deadCountMin !== undefined)
         initialFilterPayload.deadCountMin = defaultFilters.deadCountMin;
-      if (
-        includeFilter("deadCountMax") &&
-        defaultFilters.deadCountMax !== undefined
-      )
+      if (includeFilter("deadCountMax") && defaultFilters.deadCountMax !== undefined)
         initialFilterPayload.deadCountMax = defaultFilters.deadCountMax;
-      if (
-        includeFilter("injuredCount") &&
-        defaultFilters.injuredCount !== undefined
-      )
+      if (includeFilter("injuredCount") && defaultFilters.injuredCount !== undefined)
         initialFilterPayload.injuredCount = defaultFilters.injuredCount;
-      if (
-        includeFilter("injuredCountMin") &&
-        defaultFilters.injuredCountMin !== undefined
-      )
+      if (includeFilter("injuredCountMin") && defaultFilters.injuredCountMin !== undefined)
         initialFilterPayload.injuredCountMin = defaultFilters.injuredCountMin;
-      if (
-        includeFilter("injuredCountMax") &&
-        defaultFilters.injuredCountMax !== undefined
-      )
+      if (includeFilter("injuredCountMax") && defaultFilters.injuredCountMax !== undefined)
         initialFilterPayload.injuredCountMax = defaultFilters.injuredCountMax;
-      if (
-        includeFilter("hasWitness") &&
-        defaultFilters.hasWitness !== undefined
-      )
+      if (includeFilter("hasWitness") && defaultFilters.hasWitness !== undefined)
         initialFilterPayload.hasWitness = defaultFilters.hasWitness;
-      if (
-        includeFilter("newsNumber") &&
-        defaultFilters.newsNumber !== undefined
-      )
+      if (includeFilter("newsNumber") && defaultFilters.newsNumber !== undefined)
         initialFilterPayload.newsNumber = defaultFilters.newsNumber;
       if (includeFilter("officer") && defaultFilters.officer !== undefined)
         initialFilterPayload.officer = defaultFilters.officer;
-      if (
-        includeFilter("completionDateFrom") &&
-        defaultFilters.completionDateFrom !== undefined
-      )
-        initialFilterPayload.completionDateFrom =
-          defaultFilters.completionDateFrom;
-      if (
-        includeFilter("completionDateTo") &&
-        defaultFilters.completionDateTo !== undefined
-      )
+      if (includeFilter("completionDateFrom") && defaultFilters.completionDateFrom !== undefined)
+        initialFilterPayload.completionDateFrom = defaultFilters.completionDateFrom;
+      if (includeFilter("completionDateTo") && defaultFilters.completionDateTo !== undefined)
         initialFilterPayload.completionDateTo = defaultFilters.completionDateTo;
 
       // --- Location & Context (multi-select) ---
@@ -412,202 +371,108 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         initialFilterPayload.city = defaultFilters.city;
       if (includeFilter("road") && defaultFilters.road !== undefined)
         initialFilterPayload.road = defaultFilters.road;
-      if (
-        includeFilter("trafficZone") &&
-        defaultFilters.trafficZone !== undefined
-      )
+      if (includeFilter("trafficZone") && defaultFilters.trafficZone !== undefined)
         initialFilterPayload.trafficZone = defaultFilters.trafficZone;
       if (includeFilter("cityZone") && defaultFilters.cityZone !== undefined)
         initialFilterPayload.cityZone = defaultFilters.cityZone;
-      if (
-        includeFilter("accidentType") &&
-        defaultFilters.accidentType !== undefined
-      )
+      if (includeFilter("accidentType") && defaultFilters.accidentType !== undefined)
         initialFilterPayload.accidentType = defaultFilters.accidentType;
       if (includeFilter("position") && defaultFilters.position !== undefined)
         initialFilterPayload.position = defaultFilters.position;
-      if (
-        includeFilter("rulingType") &&
-        defaultFilters.rulingType !== undefined
-      )
+      if (includeFilter("rulingType") && defaultFilters.rulingType !== undefined)
         initialFilterPayload.rulingType = defaultFilters.rulingType;
 
       // --- Environmental & Reason-based (multi-select) ---
-      if (
-        includeFilter("lightStatus") &&
-        defaultFilters.lightStatus !== undefined
-      )
+      if (includeFilter("lightStatus") && defaultFilters.lightStatus !== undefined)
         initialFilterPayload.lightStatus = defaultFilters.lightStatus;
-      if (
-        includeFilter("collisionType") &&
-        defaultFilters.collisionType !== undefined
-      )
+      if (includeFilter("collisionType") && defaultFilters.collisionType !== undefined)
         initialFilterPayload.collisionType = defaultFilters.collisionType;
-      if (
-        includeFilter("roadSituation") &&
-        defaultFilters.roadSituation !== undefined
-      )
+      if (includeFilter("roadSituation") && defaultFilters.roadSituation !== undefined)
         initialFilterPayload.roadSituation = defaultFilters.roadSituation;
-      if (
-        includeFilter("roadRepairType") &&
-        defaultFilters.roadRepairType !== undefined
-      )
+      if (includeFilter("roadRepairType") && defaultFilters.roadRepairType !== undefined)
         initialFilterPayload.roadRepairType = defaultFilters.roadRepairType;
-      if (
-        includeFilter("shoulderStatus") &&
-        defaultFilters.shoulderStatus !== undefined
-      )
+      if (includeFilter("shoulderStatus") && defaultFilters.shoulderStatus !== undefined)
         initialFilterPayload.shoulderStatus = defaultFilters.shoulderStatus;
-      if (
-        includeFilter("areaUsages") &&
-        defaultFilters.areaUsages !== undefined
-      )
+      if (includeFilter("areaUsages") && defaultFilters.areaUsages !== undefined)
         initialFilterPayload.areaUsages = defaultFilters.areaUsages;
-      if (
-        includeFilter("airStatuses") &&
-        defaultFilters.airStatuses !== undefined
-      )
+      if (includeFilter("airStatuses") && defaultFilters.airStatuses !== undefined)
         initialFilterPayload.airStatuses = defaultFilters.airStatuses;
-      if (
-        includeFilter("roadDefects") &&
-        defaultFilters.roadDefects !== undefined
-      )
+      if (includeFilter("roadDefects") && defaultFilters.roadDefects !== undefined)
         initialFilterPayload.roadDefects = defaultFilters.roadDefects;
-      if (
-        includeFilter("humanReasons") &&
-        defaultFilters.humanReasons !== undefined
-      )
+      if (includeFilter("humanReasons") && defaultFilters.humanReasons !== undefined)
         initialFilterPayload.humanReasons = defaultFilters.humanReasons;
-      if (
-        includeFilter("vehicleReasons") &&
-        defaultFilters.vehicleReasons !== undefined
-      )
+      if (includeFilter("vehicleReasons") && defaultFilters.vehicleReasons !== undefined)
         initialFilterPayload.vehicleReasons = defaultFilters.vehicleReasons;
-      if (
-        includeFilter("equipmentDamages") &&
-        defaultFilters.equipmentDamages !== undefined
-      )
+      if (includeFilter("equipmentDamages") && defaultFilters.equipmentDamages !== undefined)
         initialFilterPayload.equipmentDamages = defaultFilters.equipmentDamages;
-      if (
-        includeFilter("roadSurfaceConditions") &&
-        defaultFilters.roadSurfaceConditions !== undefined
-      )
-        initialFilterPayload.roadSurfaceConditions =
-          defaultFilters.roadSurfaceConditions;
+      if (includeFilter("roadSurfaceConditions") && defaultFilters.roadSurfaceConditions !== undefined)
+        initialFilterPayload.roadSurfaceConditions = defaultFilters.roadSurfaceConditions;
 
       // --- Attachments ---
-      if (
-        includeFilter("attachmentName") &&
-        defaultFilters.attachmentName !== undefined
-      )
+      if (includeFilter("attachmentName") && defaultFilters.attachmentName !== undefined)
         initialFilterPayload.attachmentName = defaultFilters.attachmentName;
-      if (
-        includeFilter("attachmentType") &&
-        defaultFilters.attachmentType !== undefined
-      )
+      if (includeFilter("attachmentType") && defaultFilters.attachmentType !== undefined)
         initialFilterPayload.attachmentType = defaultFilters.attachmentType;
 
       // --- Vehicle DTOs Filters ---
-      if (
-        includeFilter("vehicleColor") &&
-        defaultFilters.vehicleColor !== undefined
-      )
+      if (includeFilter("vehicleColor") && defaultFilters.vehicleColor !== undefined)
         initialFilterPayload.vehicleColor = defaultFilters.vehicleColor;
-      if (
-        includeFilter("vehicleSystem") &&
-        defaultFilters.vehicleSystem !== undefined
-      )
+      if (includeFilter("vehicleSystem") && defaultFilters.vehicleSystem !== undefined)
         initialFilterPayload.vehicleSystem = defaultFilters.vehicleSystem;
-      if (
-        includeFilter("vehiclePlaqueType") &&
-        defaultFilters.vehiclePlaqueType !== undefined
-      )
-        initialFilterPayload.vehiclePlaqueType =
-          defaultFilters.vehiclePlaqueType;
-      if (
-        includeFilter("vehicleSystemType") &&
-        defaultFilters.vehicleSystemType !== undefined
-      )
-        initialFilterPayload.vehicleSystemType =
-          defaultFilters.vehicleSystemType;
-      if (
-        includeFilter("vehicleFaultStatus") &&
-        defaultFilters.vehicleFaultStatus !== undefined
-      )
-        initialFilterPayload.vehicleFaultStatus =
-          defaultFilters.vehicleFaultStatus;
-      if (
-        includeFilter("vehicleInsuranceCo") &&
-        defaultFilters.vehicleInsuranceCo !== undefined
-      )
-        initialFilterPayload.vehicleInsuranceCo =
-          defaultFilters.vehicleInsuranceCo;
-      if (
-        includeFilter("vehicleInsuranceNo") &&
-        defaultFilters.vehicleInsuranceNo !== undefined
-      )
-        initialFilterPayload.vehicleInsuranceNo =
-          defaultFilters.vehicleInsuranceNo;
-      if (
-        includeFilter("vehiclePlaqueUsage") &&
-        defaultFilters.vehiclePlaqueUsage !== undefined
-      )
-        initialFilterPayload.vehiclePlaqueUsage =
-          defaultFilters.vehiclePlaqueUsage;
-      if (
-        includeFilter("vehiclePrintNumber") &&
-        defaultFilters.vehiclePrintNumber !== undefined
-      )
-        initialFilterPayload.vehiclePrintNumber =
-          defaultFilters.vehiclePrintNumber;
+      if (includeFilter("vehiclePlaqueType") && defaultFilters.vehiclePlaqueType !== undefined)
+        initialFilterPayload.vehiclePlaqueType = defaultFilters.vehiclePlaqueType;
+      if (includeFilter("vehicleSystemType") && defaultFilters.vehicleSystemType !== undefined)
+        initialFilterPayload.vehicleSystemType = defaultFilters.vehicleSystemType;
+      if (includeFilter("vehicleFaultStatus") && defaultFilters.vehicleFaultStatus !== undefined)
+        initialFilterPayload.vehicleFaultStatus = defaultFilters.vehicleFaultStatus;
+      if (includeFilter("vehicleInsuranceCo") && defaultFilters.vehicleInsuranceCo !== undefined)
+        initialFilterPayload.vehicleInsuranceCo = defaultFilters.vehicleInsuranceCo;
+      if (includeFilter("vehicleInsuranceNo") && defaultFilters.vehicleInsuranceNo !== undefined)
+        initialFilterPayload.vehicleInsuranceNo = defaultFilters.vehicleInsuranceNo;
+      if (includeFilter("vehiclePlaqueUsage") && defaultFilters.vehiclePlaqueUsage !== undefined)
+        initialFilterPayload.vehiclePlaqueUsage = defaultFilters.vehiclePlaqueUsage;
+      if (includeFilter("vehiclePrintNumber") && defaultFilters.vehiclePrintNumber !== undefined)
+        initialFilterPayload.vehiclePrintNumber = defaultFilters.vehiclePrintNumber;
       if (
         includeFilter("vehiclePlaqueSerialElement") &&
         defaultFilters.vehiclePlaqueSerialElement !== undefined
       )
-        initialFilterPayload.vehiclePlaqueSerialElement =
-          defaultFilters.vehiclePlaqueSerialElement;
+        initialFilterPayload.vehiclePlaqueSerialElement = defaultFilters.vehiclePlaqueSerialElement;
       if (
         includeFilter("vehicleInsuranceDateFrom") &&
         defaultFilters.vehicleInsuranceDateFrom !== undefined
       )
-        initialFilterPayload.vehicleInsuranceDateFrom =
-          defaultFilters.vehicleInsuranceDateFrom;
+        initialFilterPayload.vehicleInsuranceDateFrom = defaultFilters.vehicleInsuranceDateFrom;
       if (
         includeFilter("vehicleInsuranceDateTo") &&
         defaultFilters.vehicleInsuranceDateTo !== undefined
       )
-        initialFilterPayload.vehicleInsuranceDateTo =
-          defaultFilters.vehicleInsuranceDateTo;
+        initialFilterPayload.vehicleInsuranceDateTo = defaultFilters.vehicleInsuranceDateTo;
       if (
         includeFilter("vehicleBodyInsuranceCo") &&
         defaultFilters.vehicleBodyInsuranceCo !== undefined
       )
-        initialFilterPayload.vehicleBodyInsuranceCo =
-          defaultFilters.vehicleBodyInsuranceCo;
+        initialFilterPayload.vehicleBodyInsuranceCo = defaultFilters.vehicleBodyInsuranceCo;
       if (
         includeFilter("vehicleBodyInsuranceNo") &&
         defaultFilters.vehicleBodyInsuranceNo !== undefined
       )
-        initialFilterPayload.vehicleBodyInsuranceNo =
-          defaultFilters.vehicleBodyInsuranceNo;
+        initialFilterPayload.vehicleBodyInsuranceNo = defaultFilters.vehicleBodyInsuranceNo;
       if (
         includeFilter("vehicleMotionDirection") &&
         defaultFilters.vehicleMotionDirection !== undefined
       )
-        initialFilterPayload.vehicleMotionDirection =
-          defaultFilters.vehicleMotionDirection;
+        initialFilterPayload.vehicleMotionDirection = defaultFilters.vehicleMotionDirection;
       if (
         includeFilter("vehicleMaxDamageSections") &&
         defaultFilters.vehicleMaxDamageSections !== undefined
       )
-        initialFilterPayload.vehicleMaxDamageSections =
-          defaultFilters.vehicleMaxDamageSections;
+        initialFilterPayload.vehicleMaxDamageSections = defaultFilters.vehicleMaxDamageSections;
       if (
         includeFilter("vehicleDamageSectionOther") &&
         defaultFilters.vehicleDamageSectionOther !== undefined
       )
-        initialFilterPayload.vehicleDamageSectionOther =
-          defaultFilters.vehicleDamageSectionOther;
+        initialFilterPayload.vehicleDamageSectionOther = defaultFilters.vehicleDamageSectionOther;
       if (
         includeFilter("vehicleInsuranceWarrantyLimit") &&
         defaultFilters.vehicleInsuranceWarrantyLimit !== undefined
@@ -630,131 +495,55 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
       // --- Driver in Vehicle DTOs Filters ---
       if (includeFilter("driverSex") && defaultFilters.driverSex !== undefined)
         initialFilterPayload.driverSex = defaultFilters.driverSex;
-      if (
-        includeFilter("driverFirstName") &&
-        defaultFilters.driverFirstName !== undefined
-      )
+      if (includeFilter("driverFirstName") && defaultFilters.driverFirstName !== undefined)
         initialFilterPayload.driverFirstName = defaultFilters.driverFirstName;
-      if (
-        includeFilter("driverLastName") &&
-        defaultFilters.driverLastName !== undefined
-      )
+      if (includeFilter("driverLastName") && defaultFilters.driverLastName !== undefined)
         initialFilterPayload.driverLastName = defaultFilters.driverLastName;
-      if (
-        includeFilter("driverNationalCode") &&
-        defaultFilters.driverNationalCode !== undefined
-      )
-        initialFilterPayload.driverNationalCode =
-          defaultFilters.driverNationalCode;
-      if (
-        includeFilter("driverLicenceNumber") &&
-        defaultFilters.driverLicenceNumber !== undefined
-      )
-        initialFilterPayload.driverLicenceNumber =
-          defaultFilters.driverLicenceNumber;
-      if (
-        includeFilter("driverLicenceType") &&
-        defaultFilters.driverLicenceType !== undefined
-      )
-        initialFilterPayload.driverLicenceType =
-          defaultFilters.driverLicenceType;
-      if (
-        includeFilter("driverInjuryType") &&
-        defaultFilters.driverInjuryType !== undefined
-      )
+      if (includeFilter("driverNationalCode") && defaultFilters.driverNationalCode !== undefined)
+        initialFilterPayload.driverNationalCode = defaultFilters.driverNationalCode;
+      if (includeFilter("driverLicenceNumber") && defaultFilters.driverLicenceNumber !== undefined)
+        initialFilterPayload.driverLicenceNumber = defaultFilters.driverLicenceNumber;
+      if (includeFilter("driverLicenceType") && defaultFilters.driverLicenceType !== undefined)
+        initialFilterPayload.driverLicenceType = defaultFilters.driverLicenceType;
+      if (includeFilter("driverInjuryType") && defaultFilters.driverInjuryType !== undefined)
         initialFilterPayload.driverInjuryType = defaultFilters.driverInjuryType;
-      if (
-        includeFilter("driverTotalReason") &&
-        defaultFilters.driverTotalReason !== undefined
-      )
-        initialFilterPayload.driverTotalReason =
-          defaultFilters.driverTotalReason;
+      if (includeFilter("driverTotalReason") && defaultFilters.driverTotalReason !== undefined)
+        initialFilterPayload.driverTotalReason = defaultFilters.driverTotalReason;
 
       // --- Passenger in Vehicle DTOs Filters ---
-      if (
-        includeFilter("passengerSex") &&
-        defaultFilters.passengerSex !== undefined
-      )
+      if (includeFilter("passengerSex") && defaultFilters.passengerSex !== undefined)
         initialFilterPayload.passengerSex = defaultFilters.passengerSex;
-      if (
-        includeFilter("passengerFirstName") &&
-        defaultFilters.passengerFirstName !== undefined
-      )
-        initialFilterPayload.passengerFirstName =
-          defaultFilters.passengerFirstName;
-      if (
-        includeFilter("passengerLastName") &&
-        defaultFilters.passengerLastName !== undefined
-      )
-        initialFilterPayload.passengerLastName =
-          defaultFilters.passengerLastName;
-      if (
-        includeFilter("passengerNationalCode") &&
-        defaultFilters.passengerNationalCode !== undefined
-      )
-        initialFilterPayload.passengerNationalCode =
-          defaultFilters.passengerNationalCode;
-      if (
-        includeFilter("passengerInjuryType") &&
-        defaultFilters.passengerInjuryType !== undefined
-      )
-        initialFilterPayload.passengerInjuryType =
-          defaultFilters.passengerInjuryType;
-      if (
-        includeFilter("passengerFaultStatus") &&
-        defaultFilters.passengerFaultStatus !== undefined
-      )
-        initialFilterPayload.passengerFaultStatus =
-          defaultFilters.passengerFaultStatus;
-      if (
-        includeFilter("passengerTotalReason") &&
-        defaultFilters.passengerTotalReason !== undefined
-      )
-        initialFilterPayload.passengerTotalReason =
-          defaultFilters.passengerTotalReason;
+      if (includeFilter("passengerFirstName") && defaultFilters.passengerFirstName !== undefined)
+        initialFilterPayload.passengerFirstName = defaultFilters.passengerFirstName;
+      if (includeFilter("passengerLastName") && defaultFilters.passengerLastName !== undefined)
+        initialFilterPayload.passengerLastName = defaultFilters.passengerLastName;
+      if (includeFilter("passengerNationalCode") && defaultFilters.passengerNationalCode !== undefined)
+        initialFilterPayload.passengerNationalCode = defaultFilters.passengerNationalCode;
+      if (includeFilter("passengerInjuryType") && defaultFilters.passengerInjuryType !== undefined)
+        initialFilterPayload.passengerInjuryType = defaultFilters.passengerInjuryType;
+      if (includeFilter("passengerFaultStatus") && defaultFilters.passengerFaultStatus !== undefined)
+        initialFilterPayload.passengerFaultStatus = defaultFilters.passengerFaultStatus;
+      if (includeFilter("passengerTotalReason") && defaultFilters.passengerTotalReason !== undefined)
+        initialFilterPayload.passengerTotalReason = defaultFilters.passengerTotalReason;
 
       // --- Pedestrian DTOs Filters ---
-      if (
-        includeFilter("pedestrianSex") &&
-        defaultFilters.pedestrianSex !== undefined
-      )
+      if (includeFilter("pedestrianSex") && defaultFilters.pedestrianSex !== undefined)
         initialFilterPayload.pedestrianSex = defaultFilters.pedestrianSex;
-      if (
-        includeFilter("pedestrianFirstName") &&
-        defaultFilters.pedestrianFirstName !== undefined
-      )
-        initialFilterPayload.pedestrianFirstName =
-          defaultFilters.pedestrianFirstName;
-      if (
-        includeFilter("pedestrianLastName") &&
-        defaultFilters.pedestrianLastName !== undefined
-      )
-        initialFilterPayload.pedestrianLastName =
-          defaultFilters.pedestrianLastName;
+      if (includeFilter("pedestrianFirstName") && defaultFilters.pedestrianFirstName !== undefined)
+        initialFilterPayload.pedestrianFirstName = defaultFilters.pedestrianFirstName;
+      if (includeFilter("pedestrianLastName") && defaultFilters.pedestrianLastName !== undefined)
+        initialFilterPayload.pedestrianLastName = defaultFilters.pedestrianLastName;
       if (
         includeFilter("pedestrianNationalCode") &&
         defaultFilters.pedestrianNationalCode !== undefined
       )
-        initialFilterPayload.pedestrianNationalCode =
-          defaultFilters.pedestrianNationalCode;
-      if (
-        includeFilter("pedestrianInjuryType") &&
-        defaultFilters.pedestrianInjuryType !== undefined
-      )
-        initialFilterPayload.pedestrianInjuryType =
-          defaultFilters.pedestrianInjuryType;
-      if (
-        includeFilter("pedestrianFaultStatus") &&
-        defaultFilters.pedestrianFaultStatus !== undefined
-      )
-        initialFilterPayload.pedestrianFaultStatus =
-          defaultFilters.pedestrianFaultStatus;
-      if (
-        includeFilter("pedestrianTotalReason") &&
-        defaultFilters.pedestrianTotalReason !== undefined
-      )
-        initialFilterPayload.pedestrianTotalReason =
-          defaultFilters.pedestrianTotalReason;
+        initialFilterPayload.pedestrianNationalCode = defaultFilters.pedestrianNationalCode;
+      if (includeFilter("pedestrianInjuryType") && defaultFilters.pedestrianInjuryType !== undefined)
+        initialFilterPayload.pedestrianInjuryType = defaultFilters.pedestrianInjuryType;
+      if (includeFilter("pedestrianFaultStatus") && defaultFilters.pedestrianFaultStatus !== undefined)
+        initialFilterPayload.pedestrianFaultStatus = defaultFilters.pedestrianFaultStatus;
+      if (includeFilter("pedestrianTotalReason") && defaultFilters.pedestrianTotalReason !== undefined)
+        initialFilterPayload.pedestrianTotalReason = defaultFilters.pedestrianTotalReason;
 
       // Now cast to the full type for the API call
       const completeInitialPayload =
@@ -762,8 +551,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
 
       const cleanedParams = Object.fromEntries(
         Object.entries(completeInitialPayload).filter(
-          ([, value]) =>
-            value !== undefined && (!Array.isArray(value) || value.length > 0),
+          ([, value]) => value !== undefined && (!Array.isArray(value) || value.length > 0),
         ),
       );
 
@@ -813,42 +601,21 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         filterPayload.seri = filterState.seri;
       if (includeFilter("serial") && filterState.serial !== undefined)
         filterPayload.serial = filterState.serial;
-      if (
-        includeFilter("dateOfAccidentFrom") &&
-        filterState.dateOfAccidentFrom !== undefined
-      )
+      if (includeFilter("dateOfAccidentFrom") && filterState.dateOfAccidentFrom !== undefined)
         filterPayload.dateOfAccidentFrom = filterState.dateOfAccidentFrom;
-      if (
-        includeFilter("dateOfAccidentTo") &&
-        filterState.dateOfAccidentTo !== undefined
-      )
+      if (includeFilter("dateOfAccidentTo") && filterState.dateOfAccidentTo !== undefined)
         filterPayload.dateOfAccidentTo = filterState.dateOfAccidentTo;
       if (includeFilter("deadCount") && filterState.deadCount !== undefined)
         filterPayload.deadCount = filterState.deadCount;
-      if (
-        includeFilter("deadCountMin") &&
-        filterState.deadCountMin !== undefined
-      )
+      if (includeFilter("deadCountMin") && filterState.deadCountMin !== undefined)
         filterPayload.deadCountMin = filterState.deadCountMin;
-      if (
-        includeFilter("deadCountMax") &&
-        filterState.deadCountMax !== undefined
-      )
+      if (includeFilter("deadCountMax") && filterState.deadCountMax !== undefined)
         filterPayload.deadCountMax = filterState.deadCountMax;
-      if (
-        includeFilter("injuredCount") &&
-        filterState.injuredCount !== undefined
-      )
+      if (includeFilter("injuredCount") && filterState.injuredCount !== undefined)
         filterPayload.injuredCount = filterState.injuredCount;
-      if (
-        includeFilter("injuredCountMin") &&
-        filterState.injuredCountMin !== undefined
-      )
+      if (includeFilter("injuredCountMin") && filterState.injuredCountMin !== undefined)
         filterPayload.injuredCountMin = filterState.injuredCountMin;
-      if (
-        includeFilter("injuredCountMax") &&
-        filterState.injuredCountMax !== undefined
-      )
+      if (includeFilter("injuredCountMax") && filterState.injuredCountMax !== undefined)
         filterPayload.injuredCountMax = filterState.injuredCountMax;
       if (includeFilter("hasWitness") && filterState.hasWitness !== undefined)
         filterPayload.hasWitness = filterState.hasWitness;
@@ -856,15 +623,9 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         filterPayload.newsNumber = filterState.newsNumber;
       if (includeFilter("officer") && filterState.officer !== undefined)
         filterPayload.officer = filterState.officer;
-      if (
-        includeFilter("completionDateFrom") &&
-        filterState.completionDateFrom !== undefined
-      )
+      if (includeFilter("completionDateFrom") && filterState.completionDateFrom !== undefined)
         filterPayload.completionDateFrom = filterState.completionDateFrom;
-      if (
-        includeFilter("completionDateTo") &&
-        filterState.completionDateTo !== undefined
-      )
+      if (includeFilter("completionDateTo") && filterState.completionDateTo !== undefined)
         filterPayload.completionDateTo = filterState.completionDateTo;
 
       // --- Location & Context (multi-select) ---
@@ -878,10 +639,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         filterPayload.trafficZone = filterState.trafficZone;
       if (includeFilter("cityZone") && filterState.cityZone !== undefined)
         filterPayload.cityZone = filterState.cityZone;
-      if (
-        includeFilter("accidentType") &&
-        filterState.accidentType !== undefined
-      )
+      if (includeFilter("accidentType") && filterState.accidentType !== undefined)
         filterPayload.accidentType = filterState.accidentType;
       if (includeFilter("position") && filterState.position !== undefined)
         filterPayload.position = filterState.position;
@@ -891,25 +649,13 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
       // --- Environmental & Reason-based (multi-select) ---
       if (includeFilter("lightStatus") && filterState.lightStatus !== undefined)
         filterPayload.lightStatus = filterState.lightStatus;
-      if (
-        includeFilter("collisionType") &&
-        filterState.collisionType !== undefined
-      )
+      if (includeFilter("collisionType") && filterState.collisionType !== undefined)
         filterPayload.collisionType = filterState.collisionType;
-      if (
-        includeFilter("roadSituation") &&
-        filterState.roadSituation !== undefined
-      )
+      if (includeFilter("roadSituation") && filterState.roadSituation !== undefined)
         filterPayload.roadSituation = filterState.roadSituation;
-      if (
-        includeFilter("roadRepairType") &&
-        filterState.roadRepairType !== undefined
-      )
+      if (includeFilter("roadRepairType") && filterState.roadRepairType !== undefined)
         filterPayload.roadRepairType = filterState.roadRepairType;
-      if (
-        includeFilter("shoulderStatus") &&
-        filterState.shoulderStatus !== undefined
-      )
+      if (includeFilter("shoulderStatus") && filterState.shoulderStatus !== undefined)
         filterPayload.shoulderStatus = filterState.shoulderStatus;
       if (includeFilter("areaUsages") && filterState.areaUsages !== undefined)
         filterPayload.areaUsages = filterState.areaUsages;
@@ -917,264 +663,132 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         filterPayload.airStatuses = filterState.airStatuses;
       if (includeFilter("roadDefects") && filterState.roadDefects !== undefined)
         filterPayload.roadDefects = filterState.roadDefects;
-      if (
-        includeFilter("humanReasons") &&
-        filterState.humanReasons !== undefined
-      )
+      if (includeFilter("humanReasons") && filterState.humanReasons !== undefined)
         filterPayload.humanReasons = filterState.humanReasons;
-      if (
-        includeFilter("vehicleReasons") &&
-        filterState.vehicleReasons !== undefined
-      )
+      if (includeFilter("vehicleReasons") && filterState.vehicleReasons !== undefined)
         filterPayload.vehicleReasons = filterState.vehicleReasons;
-      if (
-        includeFilter("equipmentDamages") &&
-        filterState.equipmentDamages !== undefined
-      )
+      if (includeFilter("equipmentDamages") && filterState.equipmentDamages !== undefined)
         filterPayload.equipmentDamages = filterState.equipmentDamages;
-      if (
-        includeFilter("roadSurfaceConditions") &&
-        filterState.roadSurfaceConditions !== undefined
-      )
+      if (includeFilter("roadSurfaceConditions") && filterState.roadSurfaceConditions !== undefined)
         filterPayload.roadSurfaceConditions = filterState.roadSurfaceConditions;
 
       // --- Attachments ---
-      if (
-        includeFilter("attachmentName") &&
-        filterState.attachmentName !== undefined
-      )
+      if (includeFilter("attachmentName") && filterState.attachmentName !== undefined)
         filterPayload.attachmentName = filterState.attachmentName;
-      if (
-        includeFilter("attachmentType") &&
-        filterState.attachmentType !== undefined
-      )
+      if (includeFilter("attachmentType") && filterState.attachmentType !== undefined)
         filterPayload.attachmentType = filterState.attachmentType;
 
       // --- Vehicle DTOs Filters ---
-      if (
-        includeFilter("vehicleColor") &&
-        filterState.vehicleColor !== undefined
-      )
+      if (includeFilter("vehicleColor") && filterState.vehicleColor !== undefined)
         filterPayload.vehicleColor = filterState.vehicleColor;
-      if (
-        includeFilter("vehicleSystem") &&
-        filterState.vehicleSystem !== undefined
-      )
+      if (includeFilter("vehicleSystem") && filterState.vehicleSystem !== undefined)
         filterPayload.vehicleSystem = filterState.vehicleSystem;
-      if (
-        includeFilter("vehiclePlaqueType") &&
-        filterState.vehiclePlaqueType !== undefined
-      )
+      if (includeFilter("vehiclePlaqueType") && filterState.vehiclePlaqueType !== undefined)
         filterPayload.vehiclePlaqueType = filterState.vehiclePlaqueType;
-      if (
-        includeFilter("vehicleSystemType") &&
-        filterState.vehicleSystemType !== undefined
-      )
+      if (includeFilter("vehicleSystemType") && filterState.vehicleSystemType !== undefined)
         filterPayload.vehicleSystemType = filterState.vehicleSystemType;
-      if (
-        includeFilter("vehicleFaultStatus") &&
-        filterState.vehicleFaultStatus !== undefined
-      )
+      if (includeFilter("vehicleFaultStatus") && filterState.vehicleFaultStatus !== undefined)
         filterPayload.vehicleFaultStatus = filterState.vehicleFaultStatus;
-      if (
-        includeFilter("vehicleInsuranceCo") &&
-        filterState.vehicleInsuranceCo !== undefined
-      )
+      if (includeFilter("vehicleInsuranceCo") && filterState.vehicleInsuranceCo !== undefined)
         filterPayload.vehicleInsuranceCo = filterState.vehicleInsuranceCo;
-      if (
-        includeFilter("vehicleInsuranceNo") &&
-        filterState.vehicleInsuranceNo !== undefined
-      )
+      if (includeFilter("vehicleInsuranceNo") && filterState.vehicleInsuranceNo !== undefined)
         filterPayload.vehicleInsuranceNo = filterState.vehicleInsuranceNo;
-      if (
-        includeFilter("vehiclePlaqueUsage") &&
-        filterState.vehiclePlaqueUsage !== undefined
-      )
+      if (includeFilter("vehiclePlaqueUsage") && filterState.vehiclePlaqueUsage !== undefined)
         filterPayload.vehiclePlaqueUsage = filterState.vehiclePlaqueUsage;
-      if (
-        includeFilter("vehiclePrintNumber") &&
-        filterState.vehiclePrintNumber !== undefined
-      )
+      if (includeFilter("vehiclePrintNumber") && filterState.vehiclePrintNumber !== undefined)
         filterPayload.vehiclePrintNumber = filterState.vehiclePrintNumber;
       if (
         includeFilter("vehiclePlaqueSerialElement") &&
         filterState.vehiclePlaqueSerialElement !== undefined
       )
-        filterPayload.vehiclePlaqueSerialElement =
-          filterState.vehiclePlaqueSerialElement;
+        filterPayload.vehiclePlaqueSerialElement = filterState.vehiclePlaqueSerialElement;
       if (
         includeFilter("vehicleInsuranceDateFrom") &&
         filterState.vehicleInsuranceDateFrom !== undefined
       )
-        filterPayload.vehicleInsuranceDateFrom =
-          filterState.vehicleInsuranceDateFrom;
-      if (
-        includeFilter("vehicleInsuranceDateTo") &&
-        filterState.vehicleInsuranceDateTo !== undefined
-      )
-        filterPayload.vehicleInsuranceDateTo =
-          filterState.vehicleInsuranceDateTo;
-      if (
-        includeFilter("vehicleBodyInsuranceCo") &&
-        filterState.vehicleBodyInsuranceCo !== undefined
-      )
-        filterPayload.vehicleBodyInsuranceCo =
-          filterState.vehicleBodyInsuranceCo;
-      if (
-        includeFilter("vehicleBodyInsuranceNo") &&
-        filterState.vehicleBodyInsuranceNo !== undefined
-      )
-        filterPayload.vehicleBodyInsuranceNo =
-          filterState.vehicleBodyInsuranceNo;
-      if (
-        includeFilter("vehicleMotionDirection") &&
-        filterState.vehicleMotionDirection !== undefined
-      )
-        filterPayload.vehicleMotionDirection =
-          filterState.vehicleMotionDirection;
+        filterPayload.vehicleInsuranceDateFrom = filterState.vehicleInsuranceDateFrom;
+      if (includeFilter("vehicleInsuranceDateTo") && filterState.vehicleInsuranceDateTo !== undefined)
+        filterPayload.vehicleInsuranceDateTo = filterState.vehicleInsuranceDateTo;
+      if (includeFilter("vehicleBodyInsuranceCo") && filterState.vehicleBodyInsuranceCo !== undefined)
+        filterPayload.vehicleBodyInsuranceCo = filterState.vehicleBodyInsuranceCo;
+      if (includeFilter("vehicleBodyInsuranceNo") && filterState.vehicleBodyInsuranceNo !== undefined)
+        filterPayload.vehicleBodyInsuranceNo = filterState.vehicleBodyInsuranceNo;
+      if (includeFilter("vehicleMotionDirection") && filterState.vehicleMotionDirection !== undefined)
+        filterPayload.vehicleMotionDirection = filterState.vehicleMotionDirection;
       if (
         includeFilter("vehicleMaxDamageSections") &&
         filterState.vehicleMaxDamageSections !== undefined
       )
-        filterPayload.vehicleMaxDamageSections =
-          filterState.vehicleMaxDamageSections;
+        filterPayload.vehicleMaxDamageSections = filterState.vehicleMaxDamageSections;
       if (
         includeFilter("vehicleDamageSectionOther") &&
         filterState.vehicleDamageSectionOther !== undefined
       )
-        filterPayload.vehicleDamageSectionOther =
-          filterState.vehicleDamageSectionOther;
+        filterPayload.vehicleDamageSectionOther = filterState.vehicleDamageSectionOther;
       if (
         includeFilter("vehicleInsuranceWarrantyLimit") &&
         filterState.vehicleInsuranceWarrantyLimit !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimit =
-          filterState.vehicleInsuranceWarrantyLimit;
+        filterPayload.vehicleInsuranceWarrantyLimit = filterState.vehicleInsuranceWarrantyLimit;
       if (
         includeFilter("vehicleInsuranceWarrantyLimitMin") &&
         filterState.vehicleInsuranceWarrantyLimitMin !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimitMin =
-          filterState.vehicleInsuranceWarrantyLimitMin;
+        filterPayload.vehicleInsuranceWarrantyLimitMin = filterState.vehicleInsuranceWarrantyLimitMin;
       if (
         includeFilter("vehicleInsuranceWarrantyLimitMax") &&
         filterState.vehicleInsuranceWarrantyLimitMax !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimitMax =
-          filterState.vehicleInsuranceWarrantyLimitMax;
+        filterPayload.vehicleInsuranceWarrantyLimitMax = filterState.vehicleInsuranceWarrantyLimitMax;
 
       // --- Driver in Vehicle DTOs Filters ---
       if (includeFilter("driverSex") && filterState.driverSex !== undefined)
         filterPayload.driverSex = filterState.driverSex;
-      if (
-        includeFilter("driverFirstName") &&
-        filterState.driverFirstName !== undefined
-      )
+      if (includeFilter("driverFirstName") && filterState.driverFirstName !== undefined)
         filterPayload.driverFirstName = filterState.driverFirstName;
-      if (
-        includeFilter("driverLastName") &&
-        filterState.driverLastName !== undefined
-      )
+      if (includeFilter("driverLastName") && filterState.driverLastName !== undefined)
         filterPayload.driverLastName = filterState.driverLastName;
-      if (
-        includeFilter("driverNationalCode") &&
-        filterState.driverNationalCode !== undefined
-      )
+      if (includeFilter("driverNationalCode") && filterState.driverNationalCode !== undefined)
         filterPayload.driverNationalCode = filterState.driverNationalCode;
-      if (
-        includeFilter("driverLicenceNumber") &&
-        filterState.driverLicenceNumber !== undefined
-      )
+      if (includeFilter("driverLicenceNumber") && filterState.driverLicenceNumber !== undefined)
         filterPayload.driverLicenceNumber = filterState.driverLicenceNumber;
-      if (
-        includeFilter("driverLicenceType") &&
-        filterState.driverLicenceType !== undefined
-      )
+      if (includeFilter("driverLicenceType") && filterState.driverLicenceType !== undefined)
         filterPayload.driverLicenceType = filterState.driverLicenceType;
-      if (
-        includeFilter("driverInjuryType") &&
-        filterState.driverInjuryType !== undefined
-      )
+      if (includeFilter("driverInjuryType") && filterState.driverInjuryType !== undefined)
         filterPayload.driverInjuryType = filterState.driverInjuryType;
-      if (
-        includeFilter("driverTotalReason") &&
-        filterState.driverTotalReason !== undefined
-      )
+      if (includeFilter("driverTotalReason") && filterState.driverTotalReason !== undefined)
         filterPayload.driverTotalReason = filterState.driverTotalReason;
 
       // --- Passenger in Vehicle DTOs Filters ---
-      if (
-        includeFilter("passengerSex") &&
-        filterState.passengerSex !== undefined
-      )
+      if (includeFilter("passengerSex") && filterState.passengerSex !== undefined)
         filterPayload.passengerSex = filterState.passengerSex;
-      if (
-        includeFilter("passengerFirstName") &&
-        filterState.passengerFirstName !== undefined
-      )
+      if (includeFilter("passengerFirstName") && filterState.passengerFirstName !== undefined)
         filterPayload.passengerFirstName = filterState.passengerFirstName;
-      if (
-        includeFilter("passengerLastName") &&
-        filterState.passengerLastName !== undefined
-      )
+      if (includeFilter("passengerLastName") && filterState.passengerLastName !== undefined)
         filterPayload.passengerLastName = filterState.passengerLastName;
-      if (
-        includeFilter("passengerNationalCode") &&
-        filterState.passengerNationalCode !== undefined
-      )
+      if (includeFilter("passengerNationalCode") && filterState.passengerNationalCode !== undefined)
         filterPayload.passengerNationalCode = filterState.passengerNationalCode;
-      if (
-        includeFilter("passengerInjuryType") &&
-        filterState.passengerInjuryType !== undefined
-      )
+      if (includeFilter("passengerInjuryType") && filterState.passengerInjuryType !== undefined)
         filterPayload.passengerInjuryType = filterState.passengerInjuryType;
-      if (
-        includeFilter("passengerFaultStatus") &&
-        filterState.passengerFaultStatus !== undefined
-      )
+      if (includeFilter("passengerFaultStatus") && filterState.passengerFaultStatus !== undefined)
         filterPayload.passengerFaultStatus = filterState.passengerFaultStatus;
-      if (
-        includeFilter("passengerTotalReason") &&
-        filterState.passengerTotalReason !== undefined
-      )
+      if (includeFilter("passengerTotalReason") && filterState.passengerTotalReason !== undefined)
         filterPayload.passengerTotalReason = filterState.passengerTotalReason;
 
       // --- Pedestrian DTOs Filters ---
-      if (
-        includeFilter("pedestrianSex") &&
-        filterState.pedestrianSex !== undefined
-      )
+      if (includeFilter("pedestrianSex") && filterState.pedestrianSex !== undefined)
         filterPayload.pedestrianSex = filterState.pedestrianSex;
-      if (
-        includeFilter("pedestrianFirstName") &&
-        filterState.pedestrianFirstName !== undefined
-      )
+      if (includeFilter("pedestrianFirstName") && filterState.pedestrianFirstName !== undefined)
         filterPayload.pedestrianFirstName = filterState.pedestrianFirstName;
-      if (
-        includeFilter("pedestrianLastName") &&
-        filterState.pedestrianLastName !== undefined
-      )
+      if (includeFilter("pedestrianLastName") && filterState.pedestrianLastName !== undefined)
         filterPayload.pedestrianLastName = filterState.pedestrianLastName;
-      if (
-        includeFilter("pedestrianNationalCode") &&
-        filterState.pedestrianNationalCode !== undefined
-      )
-        filterPayload.pedestrianNationalCode =
-          filterState.pedestrianNationalCode;
-      if (
-        includeFilter("pedestrianInjuryType") &&
-        filterState.pedestrianInjuryType !== undefined
-      )
+      if (includeFilter("pedestrianNationalCode") && filterState.pedestrianNationalCode !== undefined)
+        filterPayload.pedestrianNationalCode = filterState.pedestrianNationalCode;
+      if (includeFilter("pedestrianInjuryType") && filterState.pedestrianInjuryType !== undefined)
         filterPayload.pedestrianInjuryType = filterState.pedestrianInjuryType;
-      if (
-        includeFilter("pedestrianFaultStatus") &&
-        filterState.pedestrianFaultStatus !== undefined
-      )
+      if (includeFilter("pedestrianFaultStatus") && filterState.pedestrianFaultStatus !== undefined)
         filterPayload.pedestrianFaultStatus = filterState.pedestrianFaultStatus;
-      if (
-        includeFilter("pedestrianTotalReason") &&
-        filterState.pedestrianTotalReason !== undefined
-      )
+      if (includeFilter("pedestrianTotalReason") && filterState.pedestrianTotalReason !== undefined)
         filterPayload.pedestrianTotalReason = filterState.pedestrianTotalReason;
 
       // Now cast to the full type since we know all possible fields are covered
@@ -1184,8 +798,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
       // Remove undefined values
       const cleanedParams = Object.fromEntries(
         Object.entries(completeFilterPayload).filter(
-          ([, value]) =>
-            value !== undefined && (!Array.isArray(value) || value.length > 0),
+          ([, value]) => value !== undefined && (!Array.isArray(value) || value.length > 0),
         ),
       );
 
@@ -1220,10 +833,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="temporal"
-        currentChart="unlicensed-drivers-analytics"
-      />
+      <ChartNavigation currentSection="temporal" currentChart="unlicensed-drivers-analytics" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -1235,6 +845,8 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
               enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل رانندگان بدون گواهینامه"
               description="برای تحلیل تصادفات رانندگان بدون گواهینامه، فیلترهای مورد نظر را اعمال کنید"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -1257,12 +869,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1304,20 +911,15 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
             )}
 
             {/* Chart */}
-            <TemporalUnlicensedDriversChart
-              data={chartData}
-              isLoading={isLoading}
-            />
+            <TemporalUnlicensedDriversChart data={chartData} isLoading={isLoading} />
 
             {/* Analysis Information */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-2">
-                📊 درباره این تحلیل
-              </h3>
+              <h3 className="font-semibold text-blue-900 mb-2">📊 درباره این تحلیل</h3>
               <p className="text-blue-800 text-sm">
-                این نمودار روند زمانی تصادفات ناشی از رانندگان فاقد گواهینامه
-                معتبر را نشان می‌دهد. این تحلیل به شناسایی الگوهای زمانی و
-                روندهای تصادفات مرتبط با عدم داشتن گواهینامه کمک می‌کند.
+                این نمودار روند زمانی تصادفات ناشی از رانندگان فاقد گواهینامه معتبر را نشان می‌دهد. این
+                تحلیل به شناسایی الگوهای زمانی و روندهای تصادفات مرتبط با عدم داشتن گواهینامه کمک
+                می‌کند.
               </p>
             </div>
           </div>

@@ -13,9 +13,16 @@ import SpatialSeverityBarChart from "@/components/charts/spatial/SpatialSeverity
 import SpatialSeverityMap from "@/components/charts/spatial/SpatialSeverityMap";
 import { ReqType, userSchema } from "@/types/declarations/selectInp";
 import { getMe } from "@/app/actions/user/getMe";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
+import { useAuth } from "@/context/AuthContext";
 
-// Get enabled filters for spatial severity analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("SPATIAL_SEVERITY_ANALYTICS");
+const SpatialSeverityAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for spatial severity analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "SPATIAL_SEVERITY_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
 
 // Response interface for spatial severity analytics
 interface SpatialSeverityAnalyticsResponse {
@@ -35,7 +42,6 @@ interface SpatialSeverityAnalyticsResponse {
   };
 }
 
-const SpatialSeverityAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [analyticsData, setAnalyticsData] = useState<
     SpatialSeverityAnalyticsResponse["analytics"] | null
@@ -635,6 +641,8 @@ const SpatialSeverityAnalyticsPage = () => {
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به تحلیل شدت تصادفات"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

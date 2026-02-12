@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { areaUsageAnalytics } from "@/app/actions/accident/areaUsageAnalytics";
 import AreaUsageChart from "@/components/charts/AreaUsageChart";
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for area usage analytics
 interface AreaUsageAnalyticsResponse {
@@ -19,7 +20,7 @@ interface AreaUsageAnalyticsResponse {
 }
 
 // Get enabled filters for area usage analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("AREA_USAGE_ANALYTICS");
+// const ENABLED_FILTERS = getEnabledFiltersForChart("AREA_USAGE_ANALYTICS");
 
 // Demo data for development and fallback
 const DEMO_DATA: AreaUsageAnalyticsResponse["analytics"] = [
@@ -36,6 +37,11 @@ const DEMO_DATA: AreaUsageAnalyticsResponse["analytics"] = [
 ];
 
 const AreaUsageAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "AREA_USAGE_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<AreaUsageAnalyticsResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -306,6 +312,8 @@ const AreaUsageAnalyticsPage = () => {
               title="فیلترهای تحلیل کاربری محل"
               description="برای مشاهده سهم تصادفات به تفکیک کاربری محل، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

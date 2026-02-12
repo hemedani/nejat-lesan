@@ -13,10 +13,16 @@ import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 import SpatialLightBarChart from "@/components/charts/spatial/SpatialLightBarChart";
 import SpatialLightMap from "@/components/charts/spatial/SpatialLightMap";
 import { ReqType } from "@/types/declarations/selectInp";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
+import { useAuth } from "@/context/AuthContext";
 
-// Get enabled filters for spatial light analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("SPATIAL_LIGHT_ANALYTICS");
+const SpatialLightAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for spatial light analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "SPATIAL_LIGHT_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
 
 // Response interface for spatial light analytics
 interface SpatialLightAnalyticsResponse {
@@ -35,7 +41,6 @@ interface SpatialLightAnalyticsResponse {
   };
 }
 
-const SpatialLightAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [analyticsData, setAnalyticsData] = useState<
     SpatialLightAnalyticsResponse["analytics"] | null
@@ -485,6 +490,8 @@ const SpatialLightAnalyticsPage = () => {
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به تحلیل وضعیت روشنایی"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

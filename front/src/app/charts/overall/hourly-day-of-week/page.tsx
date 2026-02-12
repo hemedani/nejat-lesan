@@ -3,38 +3,44 @@
 import React, { useState, useEffect, useCallback } from "react";
 import HourlyDayOfWeekHeatmap from "@/components/charts/HourlyDayOfWeekHeatmap";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { hourlyDayOfWeekAnalytics } from "@/app/actions/accident/hourlyDayOfWeekAnalytics";
 import { formatNumber } from "@/utils/formatters";
+import { useAuth } from "@/context/AuthContext";
 
-// Get enabled filters for hourly day of week analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("HOURLY_DAY_ANALYTICS");
-
-// Backend response interface for hourly day of week analytics
-interface HourlyDayOfWeekAnalyticsRawData {
-  series: Array<{
-    name: string;
-    data: number[];
-  }>;
-}
-
-// Transformed data interface for the chart component
-interface HourlyDayOfWeekAnalyticsData {
-  series: Array<{
-    name: string;
-    data: Array<{
-      x: string;
-      y: number;
-    }>;
-  }>;
-  totalAccidents: number;
-  peakHour: string;
-  peakDay: string;
-  averageHourly: number;
-}
-
+// Get enabled filters for hourly day of week analytics considering enterprise settings
 const HourlyDayOfWeekPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "HOURLY_DAY_OF_WEEK_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+  console.log({ enterpriseSettings, ENABLED_FILTERS });
+
+  // Backend response interface for hourly day of week analytics
+  interface HourlyDayOfWeekAnalyticsRawData {
+    series: Array<{
+      name: string;
+      data: number[];
+    }>;
+  }
+
+  // Transformed data interface for the chart component
+  interface HourlyDayOfWeekAnalyticsData {
+    series: Array<{
+      name: string;
+      data: Array<{
+        x: string;
+        y: number;
+      }>;
+    }>;
+    totalAccidents: number;
+    peakHour: string;
+    peakDay: string;
+    averageHourly: number;
+  }
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<HourlyDayOfWeekAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -229,6 +235,8 @@ const HourlyDayOfWeekPage = () => {
               title="فیلترهای تحلیل ساعتی روز هفته"
               description="برای مشاهده توزیع تصادفات بر اساس ساعت و روز هفته، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

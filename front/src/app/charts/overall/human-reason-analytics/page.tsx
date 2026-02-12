@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { humanReasonAnalytics } from "@/app/actions/accident/humanReasonAnalytics";
 import HumanReasonTreemapChart from "@/components/charts/HumanReasonTreemapChart";
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for human reason analytics
 interface HumanReasonAnalyticsResponse {
@@ -17,9 +18,6 @@ interface HumanReasonAnalyticsResponse {
     count: number;
   }>;
 }
-
-// Get enabled filters for human reason analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("HUMAN_REASON_ANALYTICS");
 
 // Demo data for development and fallback
 const DEMO_DATA: HumanReasonAnalyticsResponse["analytics"] = [
@@ -34,6 +32,12 @@ const DEMO_DATA: HumanReasonAnalyticsResponse["analytics"] = [
 ];
 
 const HumanReasonAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for human reason analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "HUMAN_REASON_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<HumanReasonAnalyticsResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -407,6 +411,8 @@ const HumanReasonAnalyticsPage = () => {
               title="فیلترهای تحلیل عامل انسانی"
               description="برای مشاهده توزیع عامل انسانی مؤثر در تصادفات، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

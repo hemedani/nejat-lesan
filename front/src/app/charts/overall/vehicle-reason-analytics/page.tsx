@@ -4,15 +4,13 @@ import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, {
   ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { vehicleReasonAnalytics } from "@/app/actions/accident/vehicleReasonAnalytics";
 import VehicleReasonDashboard from "@/components/dashboards/VehicleReasonDashboard";
 import { ReqType } from "@/types/declarations/selectInp";
-
-// Get enabled filters for vehicle reason analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("VEHICLE_REASON_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for vehicle reason analytics
 interface VehicleReasonAnalyticsResponse {
@@ -56,6 +54,12 @@ const DEMO_DATA: VehicleReasonAnalyticsResponse["analytics"] = {
 };
 
 const VehicleReasonAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for vehicle reason analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "VEHICLE_REASON_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<
     VehicleReasonAnalyticsResponse["analytics"] | null
@@ -529,6 +533,8 @@ const VehicleReasonAnalyticsPage = () => {
               title="فیلترهای تحلیل عامل وسیله نقلیه"
               description="برای مشاهده توزیع عامل وسیله نقلیه مؤثر در تصادفات، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

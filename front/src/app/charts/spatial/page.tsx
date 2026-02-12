@@ -1,89 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import React from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 
-// Get enabled filters for spatial charts (use geographic filters)
-const ENABLED_FILTERS = getEnabledFiltersForChart("SPATIAL_LIGHT_ANALYTICS");
-
 const SpatialChartsPage = () => {
-  const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [, setIsLoading] = useState(false);
-
-  // Handle filter submission (placeholder)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleFilterSubmit = async (filters: ChartFilterState) => {
-    setIsLoading(true);
-    // TODO: Implement spatial analytics API calls
-    setTimeout(() => setIsLoading(false), 1000);
-  };
-
-  // Filter configuration
-  const getFilterConfig = () => {
-    return {
-      disableSeverityFilter: false,
-      disableCollisionTypeFilter: false,
-      disableLightingFilter: false,
-      lockToSevereAccidents: false,
-    };
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <ChartNavigation currentSection="spatial" />
 
       <div className="flex">
-        {/* Filter Sidebar */}
-        {showFilterSidebar && (
-          <div className="w-80 flex-shrink-0">
-            <ChartsFilterSidebar
-              onApplyFilters={handleFilterSubmit}
-              config={getFilterConfig()}
-              enabledFilters={ENABLED_FILTERS}
-              title="فیلترهای تحلیل مکانی"
-              description="فیلترهای عمومی برای تحلیل‌های مکانی تصادفات"
-            />
-          </div>
-        )}
-
         {/* Main Content */}
         <div className="flex-1 p-6">
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  مقایسه مکانی
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">مقایسه مکانی</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   تحلیل جغرافیایی تصادفات و شناسایی نقاط پرخطر
                 </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
-                    />
-                  </svg>
-                  {showFilterSidebar ? "مخفی کردن فیلتر" : "نمایش فیلتر"}
-                </button>
               </div>
             </div>
           </div>
@@ -92,9 +28,7 @@ const SpatialChartsPage = () => {
           <div className="space-y-6">
             {/* Quick Navigation to Spatial Charts */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                تحلیل‌های مکانی
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">تحلیل‌های مکانی</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <a
                   href="/charts/spatial/regional"
@@ -117,12 +51,8 @@ const SpatialChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        تحلیل منطقه‌ای
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه تصادفات در مناطق مختلف شهر
-                      </p>
+                      <h3 className="font-medium text-gray-900">تحلیل منطقه‌ای</h3>
+                      <p className="text-sm text-gray-600">مقایسه تصادفات در مناطق مختلف شهر</p>
                     </div>
                   </div>
                 </a>
@@ -154,9 +84,7 @@ const SpatialChartsPage = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">نقاط داغ</h3>
-                      <p className="text-sm text-gray-600">
-                        شناسایی مکان‌های پرخطر و نقاط بحرانی
-                      </p>
+                      <p className="text-sm text-gray-600">شناسایی مکان‌های پرخطر و نقاط بحرانی</p>
                     </div>
                   </div>
                 </a>
@@ -181,12 +109,8 @@ const SpatialChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        سهم شدت تصادفات
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه مکانی سهم شدت تصادفات
-                      </p>
+                      <h3 className="font-medium text-gray-900">سهم شدت تصادفات</h3>
+                      <p className="text-sm text-gray-600">مقایسه مکانی سهم شدت تصادفات</p>
                     </div>
                   </div>
                 </a>
@@ -211,12 +135,8 @@ const SpatialChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        وضعیت روشنایی
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه مکانی وضعیت روشنایی
-                      </p>
+                      <h3 className="font-medium text-gray-900">وضعیت روشنایی</h3>
+                      <p className="text-sm text-gray-600">مقایسه مکانی وضعیت روشنایی</p>
                     </div>
                   </div>
                 </a>
@@ -241,12 +161,8 @@ const SpatialChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        نحوه و نوع برخورد
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه مکانی نحوه و نوع برخورد
-                      </p>
+                      <h3 className="font-medium text-gray-900">نحوه و نوع برخورد</h3>
+                      <p className="text-sm text-gray-600">مقایسه مکانی نحوه و نوع برخورد</p>
                     </div>
                   </div>
                 </a>
@@ -271,12 +187,8 @@ const SpatialChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        تصادفات تک وسیله ای
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه مکانی تصادفات تک وسیله ای
-                      </p>
+                      <h3 className="font-medium text-gray-900">تصادفات تک وسیله ای</h3>
+                      <p className="text-sm text-gray-600">مقایسه مکانی تصادفات تک وسیله ای</p>
                     </div>
                   </div>
                 </a>
@@ -301,12 +213,8 @@ const SpatialChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        شاخص ناحیه‌ای ایمنی
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه مکانی شاخص ناحیه‌ای ایمنی
-                      </p>
+                      <h3 className="font-medium text-gray-900">شاخص ناحیه‌ای ایمنی</h3>
+                      <p className="text-sm text-gray-600">مقایسه مکانی شاخص ناحیه‌ای ایمنی</p>
                     </div>
                   </div>
                 </a>
@@ -331,30 +239,21 @@ const SpatialChartsPage = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  تحلیل‌های مکانی
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">تحلیل‌های مکانی</h3>
                 <p className="text-gray-600">
                   تحلیل‌های مقایسه مکانی در حال توسعه می‌باشد.
                   <br />
-                  شامل نقشه‌های حرارتی، تحلیل منطقه‌ای، و شناسایی نقاط بحرانی
-                  خواهد بود.
+                  شامل نقشه‌های حرارتی، تحلیل منطقه‌ای، و شناسایی نقاط بحرانی خواهد بود.
                 </p>
               </div>
             </div>
 
             {/* Features Coming Soon */}
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-              <h3 className="font-medium text-purple-800 mb-3">
-                ویژگی‌های در دست توسعه
-              </h3>
+              <h3 className="font-medium text-purple-800 mb-3">ویژگی‌های در دست توسعه</h3>
               <ul className="space-y-2 text-sm text-purple-700">
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-purple-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -364,11 +263,7 @@ const SpatialChartsPage = () => {
                   نقشه حرارتی تراکم تصادفات
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-purple-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -378,11 +273,7 @@ const SpatialChartsPage = () => {
                   تحلیل منطقه‌ای و مقایسه محله‌ها
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-purple-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -392,11 +283,7 @@ const SpatialChartsPage = () => {
                   شناسایی نقاط داغ و بحرانی
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-purple-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -406,11 +293,7 @@ const SpatialChartsPage = () => {
                   تحلیل کریدورهای ترافیکی
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-purple-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -424,9 +307,7 @@ const SpatialChartsPage = () => {
 
             {/* Geographic Insights */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                بینش‌های جغرافیایی
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های جغرافیایی</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -444,12 +325,8 @@ const SpatialChartsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    توزیع منطقه‌ای
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    بررسی توزیع تصادفات در مناطق مختلف
-                  </p>
+                  <h4 className="font-medium text-gray-900 mb-1">توزیع منطقه‌ای</h4>
+                  <p className="text-sm text-gray-600">بررسی توزیع تصادفات در مناطق مختلف</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -467,12 +344,8 @@ const SpatialChartsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    نقاط خطرناک
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    شناسایی محل‌های با بالاترین نرخ تصادف
-                  </p>
+                  <h4 className="font-medium text-gray-900 mb-1">نقاط خطرناک</h4>
+                  <p className="text-sm text-gray-600">شناسایی محل‌های با بالاترین نرخ تصادف</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -491,9 +364,7 @@ const SpatialChartsPage = () => {
                     </svg>
                   </div>
                   <h4 className="font-medium text-gray-900 mb-1">مناطق امن</h4>
-                  <p className="text-sm text-gray-600">
-                    شناسایی مناطق با کمترین نرخ تصادف
-                  </p>
+                  <p className="text-sm text-gray-600">شناسایی مناطق با کمترین نرخ تصادف</p>
                 </div>
               </div>
             </div>

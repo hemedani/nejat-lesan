@@ -3,14 +3,12 @@
 import React, { useState, useEffect } from "react";
 import EffectiveRoadDefectsDashboard from "@/components/dashboards/EffectiveRoadDefectsDashboard";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { roadDefectsAnalytics } from "@/app/actions/accident/roadDefectsAnalytics";
 import { formatNumber } from "@/utils/formatters";
-
-// Get enabled filters for road defects analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("ROAD_DEFECTS_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for road defects analytics
 interface RoadDefectsAnalyticsData {
@@ -30,6 +28,12 @@ interface RoadDefectsAnalyticsData {
 }
 
 const RoadDefectsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for road defects analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "ROAD_DEFECTS_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<RoadDefectsAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -174,7 +178,8 @@ const RoadDefectsPage = () => {
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
               enabledFilters={ENABLED_FILTERS}
-              activeAdvancedFilters={false}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

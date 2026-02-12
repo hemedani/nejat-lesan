@@ -4,13 +4,18 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
-
-// Get enabled filters for regional analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("REGIONAL_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 const RegionalAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for regional analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "REGIONAL_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 
   // Handle filter submission (placeholder)
@@ -43,6 +48,8 @@ const RegionalAnalyticsPage = () => {
               enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل منطقه‌ای"
               description="فیلترهای مربوط به مقایسه مناطق مختلف"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

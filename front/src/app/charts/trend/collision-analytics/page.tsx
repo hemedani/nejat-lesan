@@ -1,18 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { eventCollisionAnalytics } from "@/app/actions/accident/eventCollisionAnalytics";
 import EventCollisionComparisonChart from "../../../../components/dashboards/charts/EventCollisionComparisonChart";
 import { DatePicker } from "zaman";
-
-// Get enabled filters for trend collision analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("TREND_COLLISION_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for event collision analytics
 interface EventCollisionResponse {
@@ -98,15 +94,11 @@ const EventSelector: React.FC<EventSelectorProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        انتخاب رویداد
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">انتخاب رویداد</h3>
 
       {/* Event Type Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          نوع رویداد
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">نوع رویداد</label>
         <div className="grid grid-cols-3 gap-3">
           {EVENT_TYPES.map((eventType) => (
             <button
@@ -127,13 +119,9 @@ const EventSelector: React.FC<EventSelectorProps> = ({
       {/* Date Range Selection */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            تاریخ شروع
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ شروع</label>
           <DatePicker
-            defaultValue={
-              eventRange.from ? new Date(eventRange.from) : undefined
-            }
+            defaultValue={eventRange.from ? new Date(eventRange.from) : undefined}
             onChange={(e) => {
               if (e && e.value) {
                 onEventRangeChange({
@@ -175,9 +163,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            تاریخ پایان
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ پایان</label>
           <DatePicker
             defaultValue={eventRange.to ? new Date(eventRange.to) : undefined}
             onChange={(e) => {
@@ -226,14 +212,18 @@ const EventSelector: React.FC<EventSelectorProps> = ({
 };
 
 const EventCollisionAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+
+  // Get enabled filters for trend collision analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "TREND_COLLISION_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [selectedEventType, setSelectedEventType] = useState("nowruz");
-  const [eventRange, setEventRange] = useState<EventRange>(
-    calculateNowruzRange(),
-  );
-  const [chartData, setChartData] = useState<
-    EventCollisionResponse["analytics"] | null
-  >(null);
+  const [eventRange, setEventRange] = useState<EventRange>(calculateNowruzRange());
+  const [chartData, setChartData] = useState<EventCollisionResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
@@ -359,10 +349,7 @@ const EventCollisionAnalyticsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="trend"
-        currentChart="collision-analytics"
-      />
+      <ChartNavigation currentSection="trend" currentChart="collision-analytics" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -374,6 +361,8 @@ const EventCollisionAnalyticsPage = () => {
               enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل روند برخورد"
               description="فیلترهای مربوط به تحلیل روند نوع برخورد در رویدادها"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -384,9 +373,7 @@ const EventCollisionAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  روند رویداد نحوه و نوع برخورد
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">روند رویداد نحوه و نوع برخورد</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   مقایسه سهم نحوه و نوع برخورد در دوره رویداد با سایر ایام سال
                 </p>
@@ -396,12 +383,7 @@ const EventCollisionAnalyticsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"

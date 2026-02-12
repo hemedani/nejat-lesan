@@ -5,7 +5,7 @@ import { GeoJsonData } from "@/types/GeoJsonTypes";
 import ChartsFilterSidebar, {
   ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialCollisionAnalytics } from "@/app/actions/accident/spatialCollisionAnalytics";
@@ -14,11 +14,15 @@ import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 import SpatialCollisionBarChart from "@/components/charts/spatial/SpatialCollisionBarChart";
 import SpatialCollisionMap from "@/components/charts/spatial/SpatialCollisionMap";
 import { ReqType } from "@/types/declarations/selectInp";
+import { useAuth } from "@/context/AuthContext";
 
-// Get enabled filters for spatial collision analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart(
-  "SPATIAL_COLLISION_ANALYTICS",
-);
+const SpatialCollisionAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for spatial collision analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "SPATIAL_COLLISION_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
 
 // Response interface for spatial collision analytics
 interface SpatialCollisionAnalyticsResponse {
@@ -37,7 +41,6 @@ interface SpatialCollisionAnalyticsResponse {
   };
 }
 
-const SpatialCollisionAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [analyticsData, setAnalyticsData] = useState<
     SpatialCollisionAnalyticsResponse["analytics"] | null
@@ -484,6 +487,8 @@ const SpatialCollisionAnalyticsPage = () => {
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به تحلیل نحوه و نوع برخورد"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

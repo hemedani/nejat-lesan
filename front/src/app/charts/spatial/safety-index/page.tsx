@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSafetyIndexAnalytics } from "@/app/actions/accident/spatialSafetyIndexAnalytics";
@@ -13,14 +11,18 @@ import { getGeoJSON } from "@/app/actions/getGeoJSON";
 import dynamic from "next/dynamic";
 import SpatialSafetyBarChart from "@/components/charts/spatial/SpatialSafetyBarChart";
 import { ReqType } from "@/types/declarations/selectInp";
+import { useAuth } from "@/context/AuthContext";
 
-// Get enabled filters for spatial safety index analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("SAFETY_INDEX_ANALYTICS");
+const SpatialSafetyIndexAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for spatial safety index analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "SPATIAL_SAFETY_INDEX_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
 
-// Dynamic import for map component to avoid SSR issues with Leaflet
-const SpatialSafetyMap = dynamic(
-  () => import("@/components/charts/spatial/SpatialSafetyMap"),
-  {
+  // Dynamic import for map component to avoid SSR issues with Leaflet
+  const SpatialSafetyMap = dynamic(() => import("@/components/charts/spatial/SpatialSafetyMap"), {
     ssr: false,
     loading: () => (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -30,21 +32,19 @@ const SpatialSafetyMap = dynamic(
         </div>
       </div>
     ),
-  },
-);
+  });
 
-// Response interface for spatial safety index analytics
-interface SpatialSafetyIndexAnalyticsResponse {
-  analytics: Array<{
-    name: string;
-    barChartMetric: number;
-    mapChartMetric: number;
-  }>;
-}
+  // Response interface for spatial safety index analytics
+  interface SpatialSafetyIndexAnalyticsResponse {
+    analytics: Array<{
+      name: string;
+      barChartMetric: number;
+      mapChartMetric: number;
+    }>;
+  }
 
-type GroupByType = "province" | "city" | "city_zone";
+  type GroupByType = "province" | "city" | "city_zone";
 
-const SpatialSafetyIndexAnalyticsPage = () => {
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [analyticsData, setAnalyticsData] = useState<
     SpatialSafetyIndexAnalyticsResponse["analytics"] | null
@@ -100,9 +100,8 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
     try {
       // Build the payload dynamically, only including enabled filters
-      const filterPayload: Partial<
-        ReqType["main"]["accident"]["spatialSafetyIndexAnalytics"]["set"]
-      > = {};
+      const filterPayload: Partial<ReqType["main"]["accident"]["spatialSafetyIndexAnalytics"]["set"]> =
+        {};
 
       // Helper function to check if a filter should be included
       const includeFilter = (filterName: keyof ChartFilterState) => {
@@ -110,19 +109,12 @@ const SpatialSafetyIndexAnalyticsPage = () => {
       };
 
       // --- Core Accident Details ---
-      if (includeFilter("seri") && filters.seri !== undefined)
-        filterPayload.seri = filters.seri;
+      if (includeFilter("seri") && filters.seri !== undefined) filterPayload.seri = filters.seri;
       if (includeFilter("serial") && filters.serial !== undefined)
         filterPayload.serial = filters.serial;
-      if (
-        includeFilter("dateOfAccidentFrom") &&
-        filters.dateOfAccidentFrom !== undefined
-      )
+      if (includeFilter("dateOfAccidentFrom") && filters.dateOfAccidentFrom !== undefined)
         filterPayload.dateOfAccidentFrom = filters.dateOfAccidentFrom;
-      if (
-        includeFilter("dateOfAccidentTo") &&
-        filters.dateOfAccidentTo !== undefined
-      )
+      if (includeFilter("dateOfAccidentTo") && filters.dateOfAccidentTo !== undefined)
         filterPayload.dateOfAccidentTo = filters.dateOfAccidentTo;
       if (includeFilter("deadCount") && filters.deadCount !== undefined)
         filterPayload.deadCount = filters.deadCount;
@@ -132,15 +124,9 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         filterPayload.deadCountMax = filters.deadCountMax;
       if (includeFilter("injuredCount") && filters.injuredCount !== undefined)
         filterPayload.injuredCount = filters.injuredCount;
-      if (
-        includeFilter("injuredCountMin") &&
-        filters.injuredCountMin !== undefined
-      )
+      if (includeFilter("injuredCountMin") && filters.injuredCountMin !== undefined)
         filterPayload.injuredCountMin = filters.injuredCountMin;
-      if (
-        includeFilter("injuredCountMax") &&
-        filters.injuredCountMax !== undefined
-      )
+      if (includeFilter("injuredCountMax") && filters.injuredCountMax !== undefined)
         filterPayload.injuredCountMax = filters.injuredCountMax;
       if (includeFilter("hasWitness") && filters.hasWitness !== undefined)
         filterPayload.hasWitness = filters.hasWitness;
@@ -148,24 +134,16 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         filterPayload.newsNumber = filters.newsNumber;
       if (includeFilter("officer") && filters.officer !== undefined)
         filterPayload.officer = filters.officer;
-      if (
-        includeFilter("completionDateFrom") &&
-        filters.completionDateFrom !== undefined
-      )
+      if (includeFilter("completionDateFrom") && filters.completionDateFrom !== undefined)
         filterPayload.completionDateFrom = filters.completionDateFrom;
-      if (
-        includeFilter("completionDateTo") &&
-        filters.completionDateTo !== undefined
-      )
+      if (includeFilter("completionDateTo") && filters.completionDateTo !== undefined)
         filterPayload.completionDateTo = filters.completionDateTo;
 
       // --- Location & Context (multi-select) ---
       if (includeFilter("province") && filters.province !== undefined)
         filterPayload.province = filters.province;
-      if (includeFilter("city") && filters.city !== undefined)
-        filterPayload.city = filters.city;
-      if (includeFilter("road") && filters.road !== undefined)
-        filterPayload.road = filters.road;
+      if (includeFilter("city") && filters.city !== undefined) filterPayload.city = filters.city;
+      if (includeFilter("road") && filters.road !== undefined) filterPayload.road = filters.road;
       if (includeFilter("trafficZone") && filters.trafficZone !== undefined)
         filterPayload.trafficZone = filters.trafficZone;
       if (includeFilter("cityZone") && filters.cityZone !== undefined)
@@ -184,15 +162,9 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         filterPayload.collisionType = filters.collisionType;
       if (includeFilter("roadSituation") && filters.roadSituation !== undefined)
         filterPayload.roadSituation = filters.roadSituation;
-      if (
-        includeFilter("roadRepairType") &&
-        filters.roadRepairType !== undefined
-      )
+      if (includeFilter("roadRepairType") && filters.roadRepairType !== undefined)
         filterPayload.roadRepairType = filters.roadRepairType;
-      if (
-        includeFilter("shoulderStatus") &&
-        filters.shoulderStatus !== undefined
-      )
+      if (includeFilter("shoulderStatus") && filters.shoulderStatus !== undefined)
         filterPayload.shoulderStatus = filters.shoulderStatus;
       if (includeFilter("areaUsages") && filters.areaUsages !== undefined)
         filterPayload.areaUsages = filters.areaUsages;
@@ -202,32 +174,17 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         filterPayload.roadDefects = filters.roadDefects;
       if (includeFilter("humanReasons") && filters.humanReasons !== undefined)
         filterPayload.humanReasons = filters.humanReasons;
-      if (
-        includeFilter("vehicleReasons") &&
-        filters.vehicleReasons !== undefined
-      )
+      if (includeFilter("vehicleReasons") && filters.vehicleReasons !== undefined)
         filterPayload.vehicleReasons = filters.vehicleReasons;
-      if (
-        includeFilter("equipmentDamages") &&
-        filters.equipmentDamages !== undefined
-      )
+      if (includeFilter("equipmentDamages") && filters.equipmentDamages !== undefined)
         filterPayload.equipmentDamages = filters.equipmentDamages;
-      if (
-        includeFilter("roadSurfaceConditions") &&
-        filters.roadSurfaceConditions !== undefined
-      )
+      if (includeFilter("roadSurfaceConditions") && filters.roadSurfaceConditions !== undefined)
         filterPayload.roadSurfaceConditions = filters.roadSurfaceConditions;
 
       // --- Attachments ---
-      if (
-        includeFilter("attachmentName") &&
-        filters.attachmentName !== undefined
-      )
+      if (includeFilter("attachmentName") && filters.attachmentName !== undefined)
         filterPayload.attachmentName = filters.attachmentName;
-      if (
-        includeFilter("attachmentType") &&
-        filters.attachmentType !== undefined
-      )
+      if (includeFilter("attachmentType") && filters.attachmentType !== undefined)
         filterPayload.attachmentType = filters.attachmentType;
 
       // --- Vehicle DTOs Filters ---
@@ -235,209 +192,106 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         filterPayload.vehicleColor = filters.vehicleColor;
       if (includeFilter("vehicleSystem") && filters.vehicleSystem !== undefined)
         filterPayload.vehicleSystem = filters.vehicleSystem;
-      if (
-        includeFilter("vehiclePlaqueType") &&
-        filters.vehiclePlaqueType !== undefined
-      )
+      if (includeFilter("vehiclePlaqueType") && filters.vehiclePlaqueType !== undefined)
         filterPayload.vehiclePlaqueType = filters.vehiclePlaqueType;
-      if (
-        includeFilter("vehicleSystemType") &&
-        filters.vehicleSystemType !== undefined
-      )
+      if (includeFilter("vehicleSystemType") && filters.vehicleSystemType !== undefined)
         filterPayload.vehicleSystemType = filters.vehicleSystemType;
-      if (
-        includeFilter("vehicleFaultStatus") &&
-        filters.vehicleFaultStatus !== undefined
-      )
+      if (includeFilter("vehicleFaultStatus") && filters.vehicleFaultStatus !== undefined)
         filterPayload.vehicleFaultStatus = filters.vehicleFaultStatus;
-      if (
-        includeFilter("vehicleInsuranceCo") &&
-        filters.vehicleInsuranceCo !== undefined
-      )
+      if (includeFilter("vehicleInsuranceCo") && filters.vehicleInsuranceCo !== undefined)
         filterPayload.vehicleInsuranceCo = filters.vehicleInsuranceCo;
-      if (
-        includeFilter("vehicleInsuranceNo") &&
-        filters.vehicleInsuranceNo !== undefined
-      )
+      if (includeFilter("vehicleInsuranceNo") && filters.vehicleInsuranceNo !== undefined)
         filterPayload.vehicleInsuranceNo = filters.vehicleInsuranceNo;
-      if (
-        includeFilter("vehiclePlaqueUsage") &&
-        filters.vehiclePlaqueUsage !== undefined
-      )
+      if (includeFilter("vehiclePlaqueUsage") && filters.vehiclePlaqueUsage !== undefined)
         filterPayload.vehiclePlaqueUsage = filters.vehiclePlaqueUsage;
-      if (
-        includeFilter("vehiclePrintNumber") &&
-        filters.vehiclePrintNumber !== undefined
-      )
+      if (includeFilter("vehiclePrintNumber") && filters.vehiclePrintNumber !== undefined)
         filterPayload.vehiclePrintNumber = filters.vehiclePrintNumber;
       if (
         includeFilter("vehiclePlaqueSerialElement") &&
         filters.vehiclePlaqueSerialElement !== undefined
       )
-        filterPayload.vehiclePlaqueSerialElement =
-          filters.vehiclePlaqueSerialElement;
-      if (
-        includeFilter("vehicleInsuranceDateFrom") &&
-        filters.vehicleInsuranceDateFrom !== undefined
-      )
-        filterPayload.vehicleInsuranceDateFrom =
-          filters.vehicleInsuranceDateFrom;
-      if (
-        includeFilter("vehicleInsuranceDateTo") &&
-        filters.vehicleInsuranceDateTo !== undefined
-      )
+        filterPayload.vehiclePlaqueSerialElement = filters.vehiclePlaqueSerialElement;
+      if (includeFilter("vehicleInsuranceDateFrom") && filters.vehicleInsuranceDateFrom !== undefined)
+        filterPayload.vehicleInsuranceDateFrom = filters.vehicleInsuranceDateFrom;
+      if (includeFilter("vehicleInsuranceDateTo") && filters.vehicleInsuranceDateTo !== undefined)
         filterPayload.vehicleInsuranceDateTo = filters.vehicleInsuranceDateTo;
-      if (
-        includeFilter("vehicleBodyInsuranceCo") &&
-        filters.vehicleBodyInsuranceCo !== undefined
-      )
+      if (includeFilter("vehicleBodyInsuranceCo") && filters.vehicleBodyInsuranceCo !== undefined)
         filterPayload.vehicleBodyInsuranceCo = filters.vehicleBodyInsuranceCo;
-      if (
-        includeFilter("vehicleBodyInsuranceNo") &&
-        filters.vehicleBodyInsuranceNo !== undefined
-      )
+      if (includeFilter("vehicleBodyInsuranceNo") && filters.vehicleBodyInsuranceNo !== undefined)
         filterPayload.vehicleBodyInsuranceNo = filters.vehicleBodyInsuranceNo;
-      if (
-        includeFilter("vehicleMotionDirection") &&
-        filters.vehicleMotionDirection !== undefined
-      )
+      if (includeFilter("vehicleMotionDirection") && filters.vehicleMotionDirection !== undefined)
         filterPayload.vehicleMotionDirection = filters.vehicleMotionDirection;
-      if (
-        includeFilter("vehicleMaxDamageSections") &&
-        filters.vehicleMaxDamageSections !== undefined
-      )
-        filterPayload.vehicleMaxDamageSections =
-          filters.vehicleMaxDamageSections;
+      if (includeFilter("vehicleMaxDamageSections") && filters.vehicleMaxDamageSections !== undefined)
+        filterPayload.vehicleMaxDamageSections = filters.vehicleMaxDamageSections;
       if (
         includeFilter("vehicleDamageSectionOther") &&
         filters.vehicleDamageSectionOther !== undefined
       )
-        filterPayload.vehicleDamageSectionOther =
-          filters.vehicleDamageSectionOther;
+        filterPayload.vehicleDamageSectionOther = filters.vehicleDamageSectionOther;
       if (
         includeFilter("vehicleInsuranceWarrantyLimit") &&
         filters.vehicleInsuranceWarrantyLimit !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimit =
-          filters.vehicleInsuranceWarrantyLimit;
+        filterPayload.vehicleInsuranceWarrantyLimit = filters.vehicleInsuranceWarrantyLimit;
       if (
         includeFilter("vehicleInsuranceWarrantyLimitMin") &&
         filters.vehicleInsuranceWarrantyLimitMin !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimitMin =
-          filters.vehicleInsuranceWarrantyLimitMin;
+        filterPayload.vehicleInsuranceWarrantyLimitMin = filters.vehicleInsuranceWarrantyLimitMin;
       if (
         includeFilter("vehicleInsuranceWarrantyLimitMax") &&
         filters.vehicleInsuranceWarrantyLimitMax !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimitMax =
-          filters.vehicleInsuranceWarrantyLimitMax;
+        filterPayload.vehicleInsuranceWarrantyLimitMax = filters.vehicleInsuranceWarrantyLimitMax;
 
       // --- Driver in Vehicle DTOs Filters ---
       if (includeFilter("driverSex") && filters.driverSex !== undefined)
         filterPayload.driverSex = filters.driverSex;
-      if (
-        includeFilter("driverFirstName") &&
-        filters.driverFirstName !== undefined
-      )
+      if (includeFilter("driverFirstName") && filters.driverFirstName !== undefined)
         filterPayload.driverFirstName = filters.driverFirstName;
-      if (
-        includeFilter("driverLastName") &&
-        filters.driverLastName !== undefined
-      )
+      if (includeFilter("driverLastName") && filters.driverLastName !== undefined)
         filterPayload.driverLastName = filters.driverLastName;
-      if (
-        includeFilter("driverNationalCode") &&
-        filters.driverNationalCode !== undefined
-      )
+      if (includeFilter("driverNationalCode") && filters.driverNationalCode !== undefined)
         filterPayload.driverNationalCode = filters.driverNationalCode;
-      if (
-        includeFilter("driverLicenceNumber") &&
-        filters.driverLicenceNumber !== undefined
-      )
+      if (includeFilter("driverLicenceNumber") && filters.driverLicenceNumber !== undefined)
         filterPayload.driverLicenceNumber = filters.driverLicenceNumber;
-      if (
-        includeFilter("driverLicenceType") &&
-        filters.driverLicenceType !== undefined
-      )
+      if (includeFilter("driverLicenceType") && filters.driverLicenceType !== undefined)
         filterPayload.driverLicenceType = filters.driverLicenceType;
-      if (
-        includeFilter("driverInjuryType") &&
-        filters.driverInjuryType !== undefined
-      )
+      if (includeFilter("driverInjuryType") && filters.driverInjuryType !== undefined)
         filterPayload.driverInjuryType = filters.driverInjuryType;
-      if (
-        includeFilter("driverTotalReason") &&
-        filters.driverTotalReason !== undefined
-      )
+      if (includeFilter("driverTotalReason") && filters.driverTotalReason !== undefined)
         filterPayload.driverTotalReason = filters.driverTotalReason;
 
       // --- Passenger in Vehicle DTOs Filters ---
       if (includeFilter("passengerSex") && filters.passengerSex !== undefined)
         filterPayload.passengerSex = filters.passengerSex;
-      if (
-        includeFilter("passengerFirstName") &&
-        filters.passengerFirstName !== undefined
-      )
+      if (includeFilter("passengerFirstName") && filters.passengerFirstName !== undefined)
         filterPayload.passengerFirstName = filters.passengerFirstName;
-      if (
-        includeFilter("passengerLastName") &&
-        filters.passengerLastName !== undefined
-      )
+      if (includeFilter("passengerLastName") && filters.passengerLastName !== undefined)
         filterPayload.passengerLastName = filters.passengerLastName;
-      if (
-        includeFilter("passengerNationalCode") &&
-        filters.passengerNationalCode !== undefined
-      )
+      if (includeFilter("passengerNationalCode") && filters.passengerNationalCode !== undefined)
         filterPayload.passengerNationalCode = filters.passengerNationalCode;
-      if (
-        includeFilter("passengerInjuryType") &&
-        filters.passengerInjuryType !== undefined
-      )
+      if (includeFilter("passengerInjuryType") && filters.passengerInjuryType !== undefined)
         filterPayload.passengerInjuryType = filters.passengerInjuryType;
-      if (
-        includeFilter("passengerFaultStatus") &&
-        filters.passengerFaultStatus !== undefined
-      )
+      if (includeFilter("passengerFaultStatus") && filters.passengerFaultStatus !== undefined)
         filterPayload.passengerFaultStatus = filters.passengerFaultStatus;
-      if (
-        includeFilter("passengerTotalReason") &&
-        filters.passengerTotalReason !== undefined
-      )
+      if (includeFilter("passengerTotalReason") && filters.passengerTotalReason !== undefined)
         filterPayload.passengerTotalReason = filters.passengerTotalReason;
 
       // --- Pedestrian DTOs Filters ---
       if (includeFilter("pedestrianSex") && filters.pedestrianSex !== undefined)
         filterPayload.pedestrianSex = filters.pedestrianSex;
-      if (
-        includeFilter("pedestrianFirstName") &&
-        filters.pedestrianFirstName !== undefined
-      )
+      if (includeFilter("pedestrianFirstName") && filters.pedestrianFirstName !== undefined)
         filterPayload.pedestrianFirstName = filters.pedestrianFirstName;
-      if (
-        includeFilter("pedestrianLastName") &&
-        filters.pedestrianLastName !== undefined
-      )
+      if (includeFilter("pedestrianLastName") && filters.pedestrianLastName !== undefined)
         filterPayload.pedestrianLastName = filters.pedestrianLastName;
-      if (
-        includeFilter("pedestrianNationalCode") &&
-        filters.pedestrianNationalCode !== undefined
-      )
+      if (includeFilter("pedestrianNationalCode") && filters.pedestrianNationalCode !== undefined)
         filterPayload.pedestrianNationalCode = filters.pedestrianNationalCode;
-      if (
-        includeFilter("pedestrianInjuryType") &&
-        filters.pedestrianInjuryType !== undefined
-      )
+      if (includeFilter("pedestrianInjuryType") && filters.pedestrianInjuryType !== undefined)
         filterPayload.pedestrianInjuryType = filters.pedestrianInjuryType;
-      if (
-        includeFilter("pedestrianFaultStatus") &&
-        filters.pedestrianFaultStatus !== undefined
-      )
+      if (includeFilter("pedestrianFaultStatus") && filters.pedestrianFaultStatus !== undefined)
         filterPayload.pedestrianFaultStatus = filters.pedestrianFaultStatus;
-      if (
-        includeFilter("pedestrianTotalReason") &&
-        filters.pedestrianTotalReason !== undefined
-      )
+      if (includeFilter("pedestrianTotalReason") && filters.pedestrianTotalReason !== undefined)
         filterPayload.pedestrianTotalReason = filters.pedestrianTotalReason;
 
       // Add the required groupBy property to filterPayload before casting
@@ -449,19 +303,12 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
       // Remove undefined values but keep empty arrays (excluding groupBy for now)
       const cleanedParamsWithoutGroupBy: Omit<
-        Partial<
-          ReqType["main"]["accident"]["spatialSafetyIndexAnalytics"]["set"]
-        >,
+        Partial<ReqType["main"]["accident"]["spatialSafetyIndexAnalytics"]["set"]>,
         "groupBy"
       > = {};
       for (const [key, value] of Object.entries(completeFilterPayload)) {
-        if (
-          key !== "groupBy" &&
-          value !== undefined &&
-          (!Array.isArray(value) || value.length > 0)
-        ) {
-          (cleanedParamsWithoutGroupBy as Record<string, unknown>)[key] =
-            value as unknown;
+        if (key !== "groupBy" && value !== undefined && (!Array.isArray(value) || value.length > 0)) {
+          (cleanedParamsWithoutGroupBy as Record<string, unknown>)[key] = value as unknown;
         }
       }
 
@@ -498,10 +345,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         const geoData = geoJsonResponse.body;
 
         // Validate GeoJSON structure
-        if (
-          geoData.type === "FeatureCollection" &&
-          Array.isArray(geoData.features)
-        ) {
+        if (geoData.type === "FeatureCollection" && Array.isArray(geoData.features)) {
           console.log(`GeoJSON loaded: ${geoData.features.length} features`);
 
           // Log sample feature for debugging
@@ -518,9 +362,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
       } else {
         console.error("GeoJSON API error:", geoJsonResponse.error);
         setGeoJsonData(null);
-        setError(
-          `خطا در دریافت داده‌های نقشه: ${geoJsonResponse.error || "Unknown error"}`,
-        );
+        setError(`خطا در دریافت داده‌های نقشه: ${geoJsonResponse.error || "Unknown error"}`);
       }
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -570,6 +412,8 @@ const SpatialSafetyIndexAnalyticsPage = () => {
               initialFilters={appliedFilters}
               title="فیلترهای مقایسه مکانی"
               description="فیلترهای مربوط به شاخص ناحیه‌ای ایمنی"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -580,24 +424,15 @@ const SpatialSafetyIndexAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  مقایسه مکانی شاخص ناحیه‌ای ایمنی
-                </h1>
-                <p className="text-sm text-gray-600 mt-1">
-                  تحلیل و مقایسه شاخص ایمنی در مناطق مختلف
-                </p>
+                <h1 className="text-2xl font-bold text-gray-900">مقایسه مکانی شاخص ناحیه‌ای ایمنی</h1>
+                <p className="text-sm text-gray-600 mt-1">تحلیل و مقایسه شاخص ایمنی در مناطق مختلف</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -614,9 +449,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
           {/* GroupBy Selector */}
           <div className="mb-6">
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">
-                سطح تحلیل مکانی
-              </h3>
+              <h3 className="text-sm font-medium text-gray-900 mb-3">سطح تحلیل مکانی</h3>
               <div className="flex gap-2">
                 {[
                   { value: "province", label: "استان" },
@@ -646,20 +479,14 @@ const SpatialSafetyIndexAnalyticsPage = () => {
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
               <div className="flex items-center gap-2">
-                <svg
-                  className="w-5 h-5 text-red-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-red-800 font-medium">
-                  خطا در دریافت داده‌ها
-                </span>
+                <span className="text-red-800 font-medium">خطا در دریافت داده‌ها</span>
               </div>
               <p className="text-red-700 mt-2">{error}</p>
             </div>
@@ -691,9 +518,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
           {/* Insights Section */}
           {analyticsData && !isLoading && (
             <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                بینش‌های کلیدی
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های کلیدی</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -714,9 +539,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                   <h4 className="font-medium text-gray-900 mb-1">
                     کل {getGroupByDisplayName(groupBy)} بررسی شده
                   </h4>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {analyticsData.length}
-                  </p>
+                  <p className="text-2xl font-bold text-blue-600">{analyticsData.length}</p>
                 </div>
                 <div className="text-center p-4 bg-red-50 rounded-lg">
                   <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -734,14 +557,10 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    بالاترین نرخ متوفیان
-                  </h4>
+                  <h4 className="font-medium text-gray-900 mb-1">بالاترین نرخ متوفیان</h4>
                   <p className="text-2xl font-bold text-red-600">
                     {analyticsData.length > 0
-                      ? Math.max(
-                          ...analyticsData.map((d) => d.barChartMetric),
-                        ).toFixed(2)
+                      ? Math.max(...analyticsData.map((d) => d.barChartMetric)).toFixed(2)
                       : "0"}
                   </p>
                 </div>
@@ -761,14 +580,10 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    بالاترین شاخص ایمنی
-                  </h4>
+                  <h4 className="font-medium text-gray-900 mb-1">بالاترین شاخص ایمنی</h4>
                   <p className="text-2xl font-bold text-green-600">
                     {analyticsData.length > 0
-                      ? Math.max(
-                          ...analyticsData.map((d) => d.mapChartMetric),
-                        ).toFixed(2)
+                      ? Math.max(...analyticsData.map((d) => d.mapChartMetric)).toFixed(2)
                       : "0"}
                   </p>
                 </div>
@@ -777,14 +592,11 @@ const SpatialSafetyIndexAnalyticsPage = () => {
               {/* Additional insights */}
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">
-                    📊 تحلیل شاخص ایمنی منطقه‌ای
-                  </h4>
+                  <h4 className="font-medium text-blue-900 mb-2">📊 تحلیل شاخص ایمنی منطقه‌ای</h4>
                   <p className="text-sm text-blue-800">
-                    این داشبورد شاخص ایمنی را در سطح{" "}
-                    {getGroupByDisplayName(groupBy)} نشان می‌دهد. نمودار ستونی
-                    نسبت متوفیان به جمعیت و نقشه شاخص ایمنی کلی را نمایش می‌دهد.
-                    مناطق با شاخص ایمنی پایین نیاز به توجه بیشتری دارند.
+                    این داشبورد شاخص ایمنی را در سطح {getGroupByDisplayName(groupBy)} نشان می‌دهد.
+                    نمودار ستونی نسبت متوفیان به جمعیت و نقشه شاخص ایمنی کلی را نمایش می‌دهد. مناطق با
+                    شاخص ایمنی پایین نیاز به توجه بیشتری دارند.
                   </p>
                 </div>
               </div>

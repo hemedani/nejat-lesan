@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { collisionAnalytics } from "@/app/actions/accident/collisionAnalytics";
 import CollisionAnalyticsDashboard from "@/components/dashboards/CollisionAnalyticsDashboard";
 import { formatNumber } from "@/utils/formatters";
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for collision analytics
 interface CollisionAnalyticsResponse {
@@ -25,10 +26,13 @@ interface CollisionAnalyticsResponse {
   }>;
 }
 
-// Get enabled filters for collision analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("COLLISION_ANALYTICS");
-
 const CollisionAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for collision analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "COLLISION_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [collisionData, setCollisionData] = useState<CollisionAnalyticsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -204,6 +208,8 @@ const CollisionAnalyticsPage = () => {
               title="فیلترهای تحلیل برخورد"
               description="برای مشاهده تحلیل دقیق انواع برخورد، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

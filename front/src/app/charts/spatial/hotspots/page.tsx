@@ -4,13 +4,18 @@ import React, { useState } from "react";
 import ChartsFilterSidebar, {
   ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
-
-// Get enabled filters for hotspots analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("HOTSPOTS_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 const HotspotsAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for hotspots analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "HOTSPOTS_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
 
   // Handle filter submission (placeholder)
@@ -43,6 +48,8 @@ const HotspotsAnalyticsPage = () => {
               title="فیلترهای نقاط داغ"
               description="فیلترهای مربوط به شناسایی نقاط پرخطر"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

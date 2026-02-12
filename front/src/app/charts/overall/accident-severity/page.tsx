@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { accidentSeverityAnalytics } from "@/app/actions/accident/accidentSeverityAnalytics";
 import AccidentSeverityChart from "@/components/dashboards/charts/AccidentSeverityChart";
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for accident severity analytics
 interface AccidentSeverityResponse {
@@ -18,20 +17,18 @@ interface AccidentSeverityResponse {
   }>;
 }
 
-// Get enabled filters for accident severity analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart(
-  "ACCIDENT_SEVERITY_ANALYTICS",
-);
-
 const AccidentSeverityPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for accident severity analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "ACCIDENT_SEVERITY_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [chartData, setChartData] = useState<
-    AccidentSeverityResponse["analytics"] | null
-  >(null);
+  const [chartData, setChartData] = useState<AccidentSeverityResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isDamageFilterActive, setIsDamageFilterActive] =
-    useState<boolean>(false);
+  const [isDamageFilterActive, setIsDamageFilterActive] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
@@ -76,10 +73,8 @@ const AccidentSeverityPage = () => {
     // Check if damage filter is active based on severity constraints
     // If no minimum death/injury counts are set (or they are 0), include damage-only accidents
     // This means showing all three types (Fatal, Injury, Damage) in the chart
-    const noMinimumDeathCount =
-      !filters.deadCountMin || filters.deadCountMin === 0;
-    const noMinimumInjuryCount =
-      !filters.injuredCountMin || filters.injuredCountMin === 0;
+    const noMinimumDeathCount = !filters.deadCountMin || filters.deadCountMin === 0;
+    const noMinimumInjuryCount = !filters.injuredCountMin || filters.injuredCountMin === 0;
     const damageActive = noMinimumDeathCount && noMinimumInjuryCount;
 
     setIsDamageFilterActive(damageActive);
@@ -134,6 +129,8 @@ const AccidentSeverityPage = () => {
               title="فیلترهای شدت تصادفات"
               description="برای مشاهده تحلیل دقیق سهم شدت تصادفات، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -144,9 +141,7 @@ const AccidentSeverityPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  سهم شدت تصادفات
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">سهم شدت تصادفات</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   تحلیل جامع توزیع شدت تصادفات شامل فوتی، جرحی و خسارتی
                 </p>
@@ -158,11 +153,7 @@ const AccidentSeverityPage = () => {
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
-                    <svg
-                      className="w-5 h-5 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -178,12 +169,7 @@ const AccidentSeverityPage = () => {
                       ></path>
                     </svg>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -198,12 +184,7 @@ const AccidentSeverityPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -228,11 +209,7 @@ const AccidentSeverityPage = () => {
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -249,26 +226,18 @@ const AccidentSeverityPage = () => {
             {chartData && !isLoading && (
               <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-green-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-green-800">
-                    داده‌ها بارگذاری شد
-                  </h3>
+                  <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
                 </div>
                 <p className="text-sm text-green-700">
                   تحلیل شدت تصادفات با {chartData.length} نوع شدت بارگذاری شد
-                  {isDamageFilterActive
-                    ? " (شامل تصادفات خسارتی)"
-                    : " (فقط تصادفات فوتی و جرحی)"}
+                  {isDamageFilterActive ? " (شامل تصادفات خسارتی)" : " (فقط تصادفات فوتی و جرحی)"}
                 </p>
               </div>
             )}
@@ -276,11 +245,7 @@ const AccidentSeverityPage = () => {
             {/* Chart Info Banner */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <svg
-                  className="w-5 h-5 text-blue-600 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -291,12 +256,12 @@ const AccidentSeverityPage = () => {
                   <h4 className="font-medium mb-1">نحوه نمایش نمودار:</h4>
                   <ul className="list-disc list-inside space-y-1 text-blue-700">
                     <li>
-                      اگر حداقل تعداد فوتی یا جرحی تنظیم شده باشد: فقط نسبت
-                      تصادفات فوتی و جرحی نمایش داده می‌شود
+                      اگر حداقل تعداد فوتی یا جرحی تنظیم شده باشد: فقط نسبت تصادفات فوتی و جرحی نمایش
+                      داده می‌شود
                     </li>
                     <li>
-                      اگر هیچ حداقل تعداد تنظیم نشده باشد: نسبت هر سه نوع (فوتی،
-                      جرحی، خسارتی) نمایش داده می‌شود
+                      اگر هیچ حداقل تعداد تنظیم نشده باشد: نسبت هر سه نوع (فوتی، جرحی، خسارتی) نمایش
+                      داده می‌شود
                     </li>
                   </ul>
                 </div>

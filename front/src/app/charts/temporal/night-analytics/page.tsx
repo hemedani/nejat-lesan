@@ -2,70 +2,73 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalNightChart from "@/components/charts/TemporalNightChart";
 import { temporalNightAnalytics } from "@/app/actions/accident/temporalNightAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
-
-interface ChartSeries {
-  name: string;
-  data: number[];
-}
-
-interface TemporalNightData {
-  categories: string[];
-  series: ChartSeries[];
-}
-
-interface TemporalNightResponse {
-  body: {
-    analytics: TemporalNightData;
-  };
-  success: boolean;
-}
-
-// Get enabled filters for temporal night analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_NIGHT_ANALYTICS");
-
-// Demo data for fallback
-const DEMO_DATA: TemporalNightData = {
-  categories: [
-    "1401-01",
-    "1401-02",
-    "1401-03",
-    "1401-04",
-    "1401-05",
-    "1401-06",
-    "1401-07",
-    "1401-08",
-    "1401-09",
-    "1401-10",
-    "1401-11",
-    "1401-12",
-  ],
-  series: [
-    {
-      name: "شب با روشنایی کافی",
-      data: [120, 145, 98, 187, 234, 267, 298, 256, 189, 167, 134, 112],
-    },
-    {
-      name: "شب بدون روشنایی کافی",
-      data: [89, 112, 145, 198, 267, 234, 189, 212, 178, 134, 123, 98],
-    },
-  ],
-};
+import { useAuth } from "@/context/AuthContext";
 
 const TemporalNightAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for temporal night analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "TEMPORAL_NIGHT_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
+  interface ChartSeries {
+    name: string;
+    data: number[];
+  }
+
+  interface TemporalNightData {
+    categories: string[];
+    series: ChartSeries[];
+  }
+
+  interface TemporalNightResponse {
+    body: {
+      analytics: TemporalNightData;
+    };
+    success: boolean;
+  }
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [chartData, setChartData] = useState<TemporalNightData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
+
+  // Demo data for fallback
+  const DEMO_DATA: TemporalNightData = {
+    categories: [
+      "1401-01",
+      "1401-02",
+      "1401-03",
+      "1401-04",
+      "1401-05",
+      "1401-06",
+      "1401-07",
+      "1401-08",
+      "1401-09",
+      "1401-10",
+      "1401-11",
+      "1401-12",
+    ],
+    series: [
+      {
+        name: "شب با روشنایی کافی",
+        data: [120, 145, 98, 187, 234, 267, 298, 256, 189, 167, 134, 112],
+      },
+      {
+        name: "شب بدون روشنایی کافی",
+        data: [89, 112, 145, 198, 267, 234, 189, 212, 178, 134, 123, 98],
+      },
+    ],
+  };
 
   // Get default filters for initial load
   const getDefaultFilters = (): ChartFilterState => {
@@ -191,66 +194,31 @@ const TemporalNightAnalyticsPage = () => {
         initialFilterPayload.seri = defaultFilters.seri;
       if (includeFilter("serial") && defaultFilters.serial !== undefined)
         initialFilterPayload.serial = defaultFilters.serial;
-      if (
-        includeFilter("dateOfAccidentFrom") &&
-        defaultFilters.dateOfAccidentFrom !== undefined
-      )
-        initialFilterPayload.dateOfAccidentFrom =
-          defaultFilters.dateOfAccidentFrom;
-      if (
-        includeFilter("dateOfAccidentTo") &&
-        defaultFilters.dateOfAccidentTo !== undefined
-      )
+      if (includeFilter("dateOfAccidentFrom") && defaultFilters.dateOfAccidentFrom !== undefined)
+        initialFilterPayload.dateOfAccidentFrom = defaultFilters.dateOfAccidentFrom;
+      if (includeFilter("dateOfAccidentTo") && defaultFilters.dateOfAccidentTo !== undefined)
         initialFilterPayload.dateOfAccidentTo = defaultFilters.dateOfAccidentTo;
       if (includeFilter("deadCount") && defaultFilters.deadCount !== undefined)
         initialFilterPayload.deadCount = defaultFilters.deadCount;
-      if (
-        includeFilter("deadCountMin") &&
-        defaultFilters.deadCountMin !== undefined
-      )
+      if (includeFilter("deadCountMin") && defaultFilters.deadCountMin !== undefined)
         initialFilterPayload.deadCountMin = defaultFilters.deadCountMin;
-      if (
-        includeFilter("deadCountMax") &&
-        defaultFilters.deadCountMax !== undefined
-      )
+      if (includeFilter("deadCountMax") && defaultFilters.deadCountMax !== undefined)
         initialFilterPayload.deadCountMax = defaultFilters.deadCountMax;
-      if (
-        includeFilter("injuredCount") &&
-        defaultFilters.injuredCount !== undefined
-      )
+      if (includeFilter("injuredCount") && defaultFilters.injuredCount !== undefined)
         initialFilterPayload.injuredCount = defaultFilters.injuredCount;
-      if (
-        includeFilter("injuredCountMin") &&
-        defaultFilters.injuredCountMin !== undefined
-      )
+      if (includeFilter("injuredCountMin") && defaultFilters.injuredCountMin !== undefined)
         initialFilterPayload.injuredCountMin = defaultFilters.injuredCountMin;
-      if (
-        includeFilter("injuredCountMax") &&
-        defaultFilters.injuredCountMax !== undefined
-      )
+      if (includeFilter("injuredCountMax") && defaultFilters.injuredCountMax !== undefined)
         initialFilterPayload.injuredCountMax = defaultFilters.injuredCountMax;
-      if (
-        includeFilter("hasWitness") &&
-        defaultFilters.hasWitness !== undefined
-      )
+      if (includeFilter("hasWitness") && defaultFilters.hasWitness !== undefined)
         initialFilterPayload.hasWitness = defaultFilters.hasWitness;
-      if (
-        includeFilter("newsNumber") &&
-        defaultFilters.newsNumber !== undefined
-      )
+      if (includeFilter("newsNumber") && defaultFilters.newsNumber !== undefined)
         initialFilterPayload.newsNumber = defaultFilters.newsNumber;
       if (includeFilter("officer") && defaultFilters.officer !== undefined)
         initialFilterPayload.officer = defaultFilters.officer;
-      if (
-        includeFilter("completionDateFrom") &&
-        defaultFilters.completionDateFrom !== undefined
-      )
-        initialFilterPayload.completionDateFrom =
-          defaultFilters.completionDateFrom;
-      if (
-        includeFilter("completionDateTo") &&
-        defaultFilters.completionDateTo !== undefined
-      )
+      if (includeFilter("completionDateFrom") && defaultFilters.completionDateFrom !== undefined)
+        initialFilterPayload.completionDateFrom = defaultFilters.completionDateFrom;
+      if (includeFilter("completionDateTo") && defaultFilters.completionDateTo !== undefined)
         initialFilterPayload.completionDateTo = defaultFilters.completionDateTo;
 
       // --- Location & Context (multi-select) ---
@@ -260,202 +228,108 @@ const TemporalNightAnalyticsPage = () => {
         initialFilterPayload.city = defaultFilters.city;
       if (includeFilter("road") && defaultFilters.road !== undefined)
         initialFilterPayload.road = defaultFilters.road;
-      if (
-        includeFilter("trafficZone") &&
-        defaultFilters.trafficZone !== undefined
-      )
+      if (includeFilter("trafficZone") && defaultFilters.trafficZone !== undefined)
         initialFilterPayload.trafficZone = defaultFilters.trafficZone;
       if (includeFilter("cityZone") && defaultFilters.cityZone !== undefined)
         initialFilterPayload.cityZone = defaultFilters.cityZone;
-      if (
-        includeFilter("accidentType") &&
-        defaultFilters.accidentType !== undefined
-      )
+      if (includeFilter("accidentType") && defaultFilters.accidentType !== undefined)
         initialFilterPayload.accidentType = defaultFilters.accidentType;
       if (includeFilter("position") && defaultFilters.position !== undefined)
         initialFilterPayload.position = defaultFilters.position;
-      if (
-        includeFilter("rulingType") &&
-        defaultFilters.rulingType !== undefined
-      )
+      if (includeFilter("rulingType") && defaultFilters.rulingType !== undefined)
         initialFilterPayload.rulingType = defaultFilters.rulingType;
 
       // --- Environmental & Reason-based (multi-select) ---
-      if (
-        includeFilter("lightStatus") &&
-        defaultFilters.lightStatus !== undefined
-      )
+      if (includeFilter("lightStatus") && defaultFilters.lightStatus !== undefined)
         initialFilterPayload.lightStatus = defaultFilters.lightStatus;
-      if (
-        includeFilter("collisionType") &&
-        defaultFilters.collisionType !== undefined
-      )
+      if (includeFilter("collisionType") && defaultFilters.collisionType !== undefined)
         initialFilterPayload.collisionType = defaultFilters.collisionType;
-      if (
-        includeFilter("roadSituation") &&
-        defaultFilters.roadSituation !== undefined
-      )
+      if (includeFilter("roadSituation") && defaultFilters.roadSituation !== undefined)
         initialFilterPayload.roadSituation = defaultFilters.roadSituation;
-      if (
-        includeFilter("roadRepairType") &&
-        defaultFilters.roadRepairType !== undefined
-      )
+      if (includeFilter("roadRepairType") && defaultFilters.roadRepairType !== undefined)
         initialFilterPayload.roadRepairType = defaultFilters.roadRepairType;
-      if (
-        includeFilter("shoulderStatus") &&
-        defaultFilters.shoulderStatus !== undefined
-      )
+      if (includeFilter("shoulderStatus") && defaultFilters.shoulderStatus !== undefined)
         initialFilterPayload.shoulderStatus = defaultFilters.shoulderStatus;
-      if (
-        includeFilter("areaUsages") &&
-        defaultFilters.areaUsages !== undefined
-      )
+      if (includeFilter("areaUsages") && defaultFilters.areaUsages !== undefined)
         initialFilterPayload.areaUsages = defaultFilters.areaUsages;
-      if (
-        includeFilter("airStatuses") &&
-        defaultFilters.airStatuses !== undefined
-      )
+      if (includeFilter("airStatuses") && defaultFilters.airStatuses !== undefined)
         initialFilterPayload.airStatuses = defaultFilters.airStatuses;
-      if (
-        includeFilter("roadDefects") &&
-        defaultFilters.roadDefects !== undefined
-      )
+      if (includeFilter("roadDefects") && defaultFilters.roadDefects !== undefined)
         initialFilterPayload.roadDefects = defaultFilters.roadDefects;
-      if (
-        includeFilter("humanReasons") &&
-        defaultFilters.humanReasons !== undefined
-      )
+      if (includeFilter("humanReasons") && defaultFilters.humanReasons !== undefined)
         initialFilterPayload.humanReasons = defaultFilters.humanReasons;
-      if (
-        includeFilter("vehicleReasons") &&
-        defaultFilters.vehicleReasons !== undefined
-      )
+      if (includeFilter("vehicleReasons") && defaultFilters.vehicleReasons !== undefined)
         initialFilterPayload.vehicleReasons = defaultFilters.vehicleReasons;
-      if (
-        includeFilter("equipmentDamages") &&
-        defaultFilters.equipmentDamages !== undefined
-      )
+      if (includeFilter("equipmentDamages") && defaultFilters.equipmentDamages !== undefined)
         initialFilterPayload.equipmentDamages = defaultFilters.equipmentDamages;
-      if (
-        includeFilter("roadSurfaceConditions") &&
-        defaultFilters.roadSurfaceConditions !== undefined
-      )
-        initialFilterPayload.roadSurfaceConditions =
-          defaultFilters.roadSurfaceConditions;
+      if (includeFilter("roadSurfaceConditions") && defaultFilters.roadSurfaceConditions !== undefined)
+        initialFilterPayload.roadSurfaceConditions = defaultFilters.roadSurfaceConditions;
 
       // --- Attachments ---
-      if (
-        includeFilter("attachmentName") &&
-        defaultFilters.attachmentName !== undefined
-      )
+      if (includeFilter("attachmentName") && defaultFilters.attachmentName !== undefined)
         initialFilterPayload.attachmentName = defaultFilters.attachmentName;
-      if (
-        includeFilter("attachmentType") &&
-        defaultFilters.attachmentType !== undefined
-      )
+      if (includeFilter("attachmentType") && defaultFilters.attachmentType !== undefined)
         initialFilterPayload.attachmentType = defaultFilters.attachmentType;
 
       // --- Vehicle DTOs Filters ---
-      if (
-        includeFilter("vehicleColor") &&
-        defaultFilters.vehicleColor !== undefined
-      )
+      if (includeFilter("vehicleColor") && defaultFilters.vehicleColor !== undefined)
         initialFilterPayload.vehicleColor = defaultFilters.vehicleColor;
-      if (
-        includeFilter("vehicleSystem") &&
-        defaultFilters.vehicleSystem !== undefined
-      )
+      if (includeFilter("vehicleSystem") && defaultFilters.vehicleSystem !== undefined)
         initialFilterPayload.vehicleSystem = defaultFilters.vehicleSystem;
-      if (
-        includeFilter("vehiclePlaqueType") &&
-        defaultFilters.vehiclePlaqueType !== undefined
-      )
-        initialFilterPayload.vehiclePlaqueType =
-          defaultFilters.vehiclePlaqueType;
-      if (
-        includeFilter("vehicleSystemType") &&
-        defaultFilters.vehicleSystemType !== undefined
-      )
-        initialFilterPayload.vehicleSystemType =
-          defaultFilters.vehicleSystemType;
-      if (
-        includeFilter("vehicleFaultStatus") &&
-        defaultFilters.vehicleFaultStatus !== undefined
-      )
-        initialFilterPayload.vehicleFaultStatus =
-          defaultFilters.vehicleFaultStatus;
-      if (
-        includeFilter("vehicleInsuranceCo") &&
-        defaultFilters.vehicleInsuranceCo !== undefined
-      )
-        initialFilterPayload.vehicleInsuranceCo =
-          defaultFilters.vehicleInsuranceCo;
-      if (
-        includeFilter("vehicleInsuranceNo") &&
-        defaultFilters.vehicleInsuranceNo !== undefined
-      )
-        initialFilterPayload.vehicleInsuranceNo =
-          defaultFilters.vehicleInsuranceNo;
-      if (
-        includeFilter("vehiclePlaqueUsage") &&
-        defaultFilters.vehiclePlaqueUsage !== undefined
-      )
-        initialFilterPayload.vehiclePlaqueUsage =
-          defaultFilters.vehiclePlaqueUsage;
-      if (
-        includeFilter("vehiclePrintNumber") &&
-        defaultFilters.vehiclePrintNumber !== undefined
-      )
-        initialFilterPayload.vehiclePrintNumber =
-          defaultFilters.vehiclePrintNumber;
+      if (includeFilter("vehiclePlaqueType") && defaultFilters.vehiclePlaqueType !== undefined)
+        initialFilterPayload.vehiclePlaqueType = defaultFilters.vehiclePlaqueType;
+      if (includeFilter("vehicleSystemType") && defaultFilters.vehicleSystemType !== undefined)
+        initialFilterPayload.vehicleSystemType = defaultFilters.vehicleSystemType;
+      if (includeFilter("vehicleFaultStatus") && defaultFilters.vehicleFaultStatus !== undefined)
+        initialFilterPayload.vehicleFaultStatus = defaultFilters.vehicleFaultStatus;
+      if (includeFilter("vehicleInsuranceCo") && defaultFilters.vehicleInsuranceCo !== undefined)
+        initialFilterPayload.vehicleInsuranceCo = defaultFilters.vehicleInsuranceCo;
+      if (includeFilter("vehicleInsuranceNo") && defaultFilters.vehicleInsuranceNo !== undefined)
+        initialFilterPayload.vehicleInsuranceNo = defaultFilters.vehicleInsuranceNo;
+      if (includeFilter("vehiclePlaqueUsage") && defaultFilters.vehiclePlaqueUsage !== undefined)
+        initialFilterPayload.vehiclePlaqueUsage = defaultFilters.vehiclePlaqueUsage;
+      if (includeFilter("vehiclePrintNumber") && defaultFilters.vehiclePrintNumber !== undefined)
+        initialFilterPayload.vehiclePrintNumber = defaultFilters.vehiclePrintNumber;
       if (
         includeFilter("vehiclePlaqueSerialElement") &&
         defaultFilters.vehiclePlaqueSerialElement !== undefined
       )
-        initialFilterPayload.vehiclePlaqueSerialElement =
-          defaultFilters.vehiclePlaqueSerialElement;
+        initialFilterPayload.vehiclePlaqueSerialElement = defaultFilters.vehiclePlaqueSerialElement;
       if (
         includeFilter("vehicleInsuranceDateFrom") &&
         defaultFilters.vehicleInsuranceDateFrom !== undefined
       )
-        initialFilterPayload.vehicleInsuranceDateFrom =
-          defaultFilters.vehicleInsuranceDateFrom;
+        initialFilterPayload.vehicleInsuranceDateFrom = defaultFilters.vehicleInsuranceDateFrom;
       if (
         includeFilter("vehicleInsuranceDateTo") &&
         defaultFilters.vehicleInsuranceDateTo !== undefined
       )
-        initialFilterPayload.vehicleInsuranceDateTo =
-          defaultFilters.vehicleInsuranceDateTo;
+        initialFilterPayload.vehicleInsuranceDateTo = defaultFilters.vehicleInsuranceDateTo;
       if (
         includeFilter("vehicleBodyInsuranceCo") &&
         defaultFilters.vehicleBodyInsuranceCo !== undefined
       )
-        initialFilterPayload.vehicleBodyInsuranceCo =
-          defaultFilters.vehicleBodyInsuranceCo;
+        initialFilterPayload.vehicleBodyInsuranceCo = defaultFilters.vehicleBodyInsuranceCo;
       if (
         includeFilter("vehicleBodyInsuranceNo") &&
         defaultFilters.vehicleBodyInsuranceNo !== undefined
       )
-        initialFilterPayload.vehicleBodyInsuranceNo =
-          defaultFilters.vehicleBodyInsuranceNo;
+        initialFilterPayload.vehicleBodyInsuranceNo = defaultFilters.vehicleBodyInsuranceNo;
       if (
         includeFilter("vehicleMotionDirection") &&
         defaultFilters.vehicleMotionDirection !== undefined
       )
-        initialFilterPayload.vehicleMotionDirection =
-          defaultFilters.vehicleMotionDirection;
+        initialFilterPayload.vehicleMotionDirection = defaultFilters.vehicleMotionDirection;
       if (
         includeFilter("vehicleMaxDamageSections") &&
         defaultFilters.vehicleMaxDamageSections !== undefined
       )
-        initialFilterPayload.vehicleMaxDamageSections =
-          defaultFilters.vehicleMaxDamageSections;
+        initialFilterPayload.vehicleMaxDamageSections = defaultFilters.vehicleMaxDamageSections;
       if (
         includeFilter("vehicleDamageSectionOther") &&
         defaultFilters.vehicleDamageSectionOther !== undefined
       )
-        initialFilterPayload.vehicleDamageSectionOther =
-          defaultFilters.vehicleDamageSectionOther;
+        initialFilterPayload.vehicleDamageSectionOther = defaultFilters.vehicleDamageSectionOther;
       if (
         includeFilter("vehicleInsuranceWarrantyLimit") &&
         defaultFilters.vehicleInsuranceWarrantyLimit !== undefined
@@ -478,131 +352,55 @@ const TemporalNightAnalyticsPage = () => {
       // --- Driver in Vehicle DTOs Filters ---
       if (includeFilter("driverSex") && defaultFilters.driverSex !== undefined)
         initialFilterPayload.driverSex = defaultFilters.driverSex;
-      if (
-        includeFilter("driverFirstName") &&
-        defaultFilters.driverFirstName !== undefined
-      )
+      if (includeFilter("driverFirstName") && defaultFilters.driverFirstName !== undefined)
         initialFilterPayload.driverFirstName = defaultFilters.driverFirstName;
-      if (
-        includeFilter("driverLastName") &&
-        defaultFilters.driverLastName !== undefined
-      )
+      if (includeFilter("driverLastName") && defaultFilters.driverLastName !== undefined)
         initialFilterPayload.driverLastName = defaultFilters.driverLastName;
-      if (
-        includeFilter("driverNationalCode") &&
-        defaultFilters.driverNationalCode !== undefined
-      )
-        initialFilterPayload.driverNationalCode =
-          defaultFilters.driverNationalCode;
-      if (
-        includeFilter("driverLicenceNumber") &&
-        defaultFilters.driverLicenceNumber !== undefined
-      )
-        initialFilterPayload.driverLicenceNumber =
-          defaultFilters.driverLicenceNumber;
-      if (
-        includeFilter("driverLicenceType") &&
-        defaultFilters.driverLicenceType !== undefined
-      )
-        initialFilterPayload.driverLicenceType =
-          defaultFilters.driverLicenceType;
-      if (
-        includeFilter("driverInjuryType") &&
-        defaultFilters.driverInjuryType !== undefined
-      )
+      if (includeFilter("driverNationalCode") && defaultFilters.driverNationalCode !== undefined)
+        initialFilterPayload.driverNationalCode = defaultFilters.driverNationalCode;
+      if (includeFilter("driverLicenceNumber") && defaultFilters.driverLicenceNumber !== undefined)
+        initialFilterPayload.driverLicenceNumber = defaultFilters.driverLicenceNumber;
+      if (includeFilter("driverLicenceType") && defaultFilters.driverLicenceType !== undefined)
+        initialFilterPayload.driverLicenceType = defaultFilters.driverLicenceType;
+      if (includeFilter("driverInjuryType") && defaultFilters.driverInjuryType !== undefined)
         initialFilterPayload.driverInjuryType = defaultFilters.driverInjuryType;
-      if (
-        includeFilter("driverTotalReason") &&
-        defaultFilters.driverTotalReason !== undefined
-      )
-        initialFilterPayload.driverTotalReason =
-          defaultFilters.driverTotalReason;
+      if (includeFilter("driverTotalReason") && defaultFilters.driverTotalReason !== undefined)
+        initialFilterPayload.driverTotalReason = defaultFilters.driverTotalReason;
 
       // --- Passenger in Vehicle DTOs Filters ---
-      if (
-        includeFilter("passengerSex") &&
-        defaultFilters.passengerSex !== undefined
-      )
+      if (includeFilter("passengerSex") && defaultFilters.passengerSex !== undefined)
         initialFilterPayload.passengerSex = defaultFilters.passengerSex;
-      if (
-        includeFilter("passengerFirstName") &&
-        defaultFilters.passengerFirstName !== undefined
-      )
-        initialFilterPayload.passengerFirstName =
-          defaultFilters.passengerFirstName;
-      if (
-        includeFilter("passengerLastName") &&
-        defaultFilters.passengerLastName !== undefined
-      )
-        initialFilterPayload.passengerLastName =
-          defaultFilters.passengerLastName;
-      if (
-        includeFilter("passengerNationalCode") &&
-        defaultFilters.passengerNationalCode !== undefined
-      )
-        initialFilterPayload.passengerNationalCode =
-          defaultFilters.passengerNationalCode;
-      if (
-        includeFilter("passengerInjuryType") &&
-        defaultFilters.passengerInjuryType !== undefined
-      )
-        initialFilterPayload.passengerInjuryType =
-          defaultFilters.passengerInjuryType;
-      if (
-        includeFilter("passengerFaultStatus") &&
-        defaultFilters.passengerFaultStatus !== undefined
-      )
-        initialFilterPayload.passengerFaultStatus =
-          defaultFilters.passengerFaultStatus;
-      if (
-        includeFilter("passengerTotalReason") &&
-        defaultFilters.passengerTotalReason !== undefined
-      )
-        initialFilterPayload.passengerTotalReason =
-          defaultFilters.passengerTotalReason;
+      if (includeFilter("passengerFirstName") && defaultFilters.passengerFirstName !== undefined)
+        initialFilterPayload.passengerFirstName = defaultFilters.passengerFirstName;
+      if (includeFilter("passengerLastName") && defaultFilters.passengerLastName !== undefined)
+        initialFilterPayload.passengerLastName = defaultFilters.passengerLastName;
+      if (includeFilter("passengerNationalCode") && defaultFilters.passengerNationalCode !== undefined)
+        initialFilterPayload.passengerNationalCode = defaultFilters.passengerNationalCode;
+      if (includeFilter("passengerInjuryType") && defaultFilters.passengerInjuryType !== undefined)
+        initialFilterPayload.passengerInjuryType = defaultFilters.passengerInjuryType;
+      if (includeFilter("passengerFaultStatus") && defaultFilters.passengerFaultStatus !== undefined)
+        initialFilterPayload.passengerFaultStatus = defaultFilters.passengerFaultStatus;
+      if (includeFilter("passengerTotalReason") && defaultFilters.passengerTotalReason !== undefined)
+        initialFilterPayload.passengerTotalReason = defaultFilters.passengerTotalReason;
 
       // --- Pedestrian DTOs Filters ---
-      if (
-        includeFilter("pedestrianSex") &&
-        defaultFilters.pedestrianSex !== undefined
-      )
+      if (includeFilter("pedestrianSex") && defaultFilters.pedestrianSex !== undefined)
         initialFilterPayload.pedestrianSex = defaultFilters.pedestrianSex;
-      if (
-        includeFilter("pedestrianFirstName") &&
-        defaultFilters.pedestrianFirstName !== undefined
-      )
-        initialFilterPayload.pedestrianFirstName =
-          defaultFilters.pedestrianFirstName;
-      if (
-        includeFilter("pedestrianLastName") &&
-        defaultFilters.pedestrianLastName !== undefined
-      )
-        initialFilterPayload.pedestrianLastName =
-          defaultFilters.pedestrianLastName;
+      if (includeFilter("pedestrianFirstName") && defaultFilters.pedestrianFirstName !== undefined)
+        initialFilterPayload.pedestrianFirstName = defaultFilters.pedestrianFirstName;
+      if (includeFilter("pedestrianLastName") && defaultFilters.pedestrianLastName !== undefined)
+        initialFilterPayload.pedestrianLastName = defaultFilters.pedestrianLastName;
       if (
         includeFilter("pedestrianNationalCode") &&
         defaultFilters.pedestrianNationalCode !== undefined
       )
-        initialFilterPayload.pedestrianNationalCode =
-          defaultFilters.pedestrianNationalCode;
-      if (
-        includeFilter("pedestrianInjuryType") &&
-        defaultFilters.pedestrianInjuryType !== undefined
-      )
-        initialFilterPayload.pedestrianInjuryType =
-          defaultFilters.pedestrianInjuryType;
-      if (
-        includeFilter("pedestrianFaultStatus") &&
-        defaultFilters.pedestrianFaultStatus !== undefined
-      )
-        initialFilterPayload.pedestrianFaultStatus =
-          defaultFilters.pedestrianFaultStatus;
-      if (
-        includeFilter("pedestrianTotalReason") &&
-        defaultFilters.pedestrianTotalReason !== undefined
-      )
-        initialFilterPayload.pedestrianTotalReason =
-          defaultFilters.pedestrianTotalReason;
+        initialFilterPayload.pedestrianNationalCode = defaultFilters.pedestrianNationalCode;
+      if (includeFilter("pedestrianInjuryType") && defaultFilters.pedestrianInjuryType !== undefined)
+        initialFilterPayload.pedestrianInjuryType = defaultFilters.pedestrianInjuryType;
+      if (includeFilter("pedestrianFaultStatus") && defaultFilters.pedestrianFaultStatus !== undefined)
+        initialFilterPayload.pedestrianFaultStatus = defaultFilters.pedestrianFaultStatus;
+      if (includeFilter("pedestrianTotalReason") && defaultFilters.pedestrianTotalReason !== undefined)
+        initialFilterPayload.pedestrianTotalReason = defaultFilters.pedestrianTotalReason;
 
       // Now cast to the full type for the API call
       const completeInitialPayload =
@@ -610,8 +408,7 @@ const TemporalNightAnalyticsPage = () => {
 
       const cleanedParams = Object.fromEntries(
         Object.entries(completeInitialPayload).filter(
-          ([, value]) =>
-            value !== undefined && (!Array.isArray(value) || value.length > 0),
+          ([, value]) => value !== undefined && (!Array.isArray(value) || value.length > 0),
         ),
       );
 
@@ -654,9 +451,7 @@ const TemporalNightAnalyticsPage = () => {
 
     try {
       // Build the payload dynamically, only including enabled filters
-      const filterPayload: Partial<
-        ReqType["main"]["accident"]["temporalNightAnalytics"]["set"]
-      > = {};
+      const filterPayload: Partial<ReqType["main"]["accident"]["temporalNightAnalytics"]["set"]> = {};
 
       // Helper function to check if a filter should be included
       const includeFilter = (filterName: keyof ChartFilterState) => {
@@ -664,19 +459,12 @@ const TemporalNightAnalyticsPage = () => {
       };
 
       // --- Core Accident Details ---
-      if (includeFilter("seri") && filters.seri !== undefined)
-        filterPayload.seri = filters.seri;
+      if (includeFilter("seri") && filters.seri !== undefined) filterPayload.seri = filters.seri;
       if (includeFilter("serial") && filters.serial !== undefined)
         filterPayload.serial = filters.serial;
-      if (
-        includeFilter("dateOfAccidentFrom") &&
-        filters.dateOfAccidentFrom !== undefined
-      )
+      if (includeFilter("dateOfAccidentFrom") && filters.dateOfAccidentFrom !== undefined)
         filterPayload.dateOfAccidentFrom = filters.dateOfAccidentFrom;
-      if (
-        includeFilter("dateOfAccidentTo") &&
-        filters.dateOfAccidentTo !== undefined
-      )
+      if (includeFilter("dateOfAccidentTo") && filters.dateOfAccidentTo !== undefined)
         filterPayload.dateOfAccidentTo = filters.dateOfAccidentTo;
       if (includeFilter("deadCount") && filters.deadCount !== undefined)
         filterPayload.deadCount = filters.deadCount;
@@ -686,15 +474,9 @@ const TemporalNightAnalyticsPage = () => {
         filterPayload.deadCountMax = filters.deadCountMax;
       if (includeFilter("injuredCount") && filters.injuredCount !== undefined)
         filterPayload.injuredCount = filters.injuredCount;
-      if (
-        includeFilter("injuredCountMin") &&
-        filters.injuredCountMin !== undefined
-      )
+      if (includeFilter("injuredCountMin") && filters.injuredCountMin !== undefined)
         filterPayload.injuredCountMin = filters.injuredCountMin;
-      if (
-        includeFilter("injuredCountMax") &&
-        filters.injuredCountMax !== undefined
-      )
+      if (includeFilter("injuredCountMax") && filters.injuredCountMax !== undefined)
         filterPayload.injuredCountMax = filters.injuredCountMax;
       if (includeFilter("hasWitness") && filters.hasWitness !== undefined)
         filterPayload.hasWitness = filters.hasWitness;
@@ -702,24 +484,16 @@ const TemporalNightAnalyticsPage = () => {
         filterPayload.newsNumber = filters.newsNumber;
       if (includeFilter("officer") && filters.officer !== undefined)
         filterPayload.officer = filters.officer;
-      if (
-        includeFilter("completionDateFrom") &&
-        filters.completionDateFrom !== undefined
-      )
+      if (includeFilter("completionDateFrom") && filters.completionDateFrom !== undefined)
         filterPayload.completionDateFrom = filters.completionDateFrom;
-      if (
-        includeFilter("completionDateTo") &&
-        filters.completionDateTo !== undefined
-      )
+      if (includeFilter("completionDateTo") && filters.completionDateTo !== undefined)
         filterPayload.completionDateTo = filters.completionDateTo;
 
       // --- Location & Context (multi-select) ---
       if (includeFilter("province") && filters.province !== undefined)
         filterPayload.province = filters.province;
-      if (includeFilter("city") && filters.city !== undefined)
-        filterPayload.city = filters.city;
-      if (includeFilter("road") && filters.road !== undefined)
-        filterPayload.road = filters.road;
+      if (includeFilter("city") && filters.city !== undefined) filterPayload.city = filters.city;
+      if (includeFilter("road") && filters.road !== undefined) filterPayload.road = filters.road;
       if (includeFilter("trafficZone") && filters.trafficZone !== undefined)
         filterPayload.trafficZone = filters.trafficZone;
       if (includeFilter("cityZone") && filters.cityZone !== undefined)
@@ -738,15 +512,9 @@ const TemporalNightAnalyticsPage = () => {
         filterPayload.collisionType = filters.collisionType;
       if (includeFilter("roadSituation") && filters.roadSituation !== undefined)
         filterPayload.roadSituation = filters.roadSituation;
-      if (
-        includeFilter("roadRepairType") &&
-        filters.roadRepairType !== undefined
-      )
+      if (includeFilter("roadRepairType") && filters.roadRepairType !== undefined)
         filterPayload.roadRepairType = filters.roadRepairType;
-      if (
-        includeFilter("shoulderStatus") &&
-        filters.shoulderStatus !== undefined
-      )
+      if (includeFilter("shoulderStatus") && filters.shoulderStatus !== undefined)
         filterPayload.shoulderStatus = filters.shoulderStatus;
       if (includeFilter("areaUsages") && filters.areaUsages !== undefined)
         filterPayload.areaUsages = filters.areaUsages;
@@ -756,32 +524,17 @@ const TemporalNightAnalyticsPage = () => {
         filterPayload.roadDefects = filters.roadDefects;
       if (includeFilter("humanReasons") && filters.humanReasons !== undefined)
         filterPayload.humanReasons = filters.humanReasons;
-      if (
-        includeFilter("vehicleReasons") &&
-        filters.vehicleReasons !== undefined
-      )
+      if (includeFilter("vehicleReasons") && filters.vehicleReasons !== undefined)
         filterPayload.vehicleReasons = filters.vehicleReasons;
-      if (
-        includeFilter("equipmentDamages") &&
-        filters.equipmentDamages !== undefined
-      )
+      if (includeFilter("equipmentDamages") && filters.equipmentDamages !== undefined)
         filterPayload.equipmentDamages = filters.equipmentDamages;
-      if (
-        includeFilter("roadSurfaceConditions") &&
-        filters.roadSurfaceConditions !== undefined
-      )
+      if (includeFilter("roadSurfaceConditions") && filters.roadSurfaceConditions !== undefined)
         filterPayload.roadSurfaceConditions = filters.roadSurfaceConditions;
 
       // --- Attachments ---
-      if (
-        includeFilter("attachmentName") &&
-        filters.attachmentName !== undefined
-      )
+      if (includeFilter("attachmentName") && filters.attachmentName !== undefined)
         filterPayload.attachmentName = filters.attachmentName;
-      if (
-        includeFilter("attachmentType") &&
-        filters.attachmentType !== undefined
-      )
+      if (includeFilter("attachmentType") && filters.attachmentType !== undefined)
         filterPayload.attachmentType = filters.attachmentType;
 
       // --- Vehicle DTOs Filters ---
@@ -789,209 +542,106 @@ const TemporalNightAnalyticsPage = () => {
         filterPayload.vehicleColor = filters.vehicleColor;
       if (includeFilter("vehicleSystem") && filters.vehicleSystem !== undefined)
         filterPayload.vehicleSystem = filters.vehicleSystem;
-      if (
-        includeFilter("vehiclePlaqueType") &&
-        filters.vehiclePlaqueType !== undefined
-      )
+      if (includeFilter("vehiclePlaqueType") && filters.vehiclePlaqueType !== undefined)
         filterPayload.vehiclePlaqueType = filters.vehiclePlaqueType;
-      if (
-        includeFilter("vehicleSystemType") &&
-        filters.vehicleSystemType !== undefined
-      )
+      if (includeFilter("vehicleSystemType") && filters.vehicleSystemType !== undefined)
         filterPayload.vehicleSystemType = filters.vehicleSystemType;
-      if (
-        includeFilter("vehicleFaultStatus") &&
-        filters.vehicleFaultStatus !== undefined
-      )
+      if (includeFilter("vehicleFaultStatus") && filters.vehicleFaultStatus !== undefined)
         filterPayload.vehicleFaultStatus = filters.vehicleFaultStatus;
-      if (
-        includeFilter("vehicleInsuranceCo") &&
-        filters.vehicleInsuranceCo !== undefined
-      )
+      if (includeFilter("vehicleInsuranceCo") && filters.vehicleInsuranceCo !== undefined)
         filterPayload.vehicleInsuranceCo = filters.vehicleInsuranceCo;
-      if (
-        includeFilter("vehicleInsuranceNo") &&
-        filters.vehicleInsuranceNo !== undefined
-      )
+      if (includeFilter("vehicleInsuranceNo") && filters.vehicleInsuranceNo !== undefined)
         filterPayload.vehicleInsuranceNo = filters.vehicleInsuranceNo;
-      if (
-        includeFilter("vehiclePlaqueUsage") &&
-        filters.vehiclePlaqueUsage !== undefined
-      )
+      if (includeFilter("vehiclePlaqueUsage") && filters.vehiclePlaqueUsage !== undefined)
         filterPayload.vehiclePlaqueUsage = filters.vehiclePlaqueUsage;
-      if (
-        includeFilter("vehiclePrintNumber") &&
-        filters.vehiclePrintNumber !== undefined
-      )
+      if (includeFilter("vehiclePrintNumber") && filters.vehiclePrintNumber !== undefined)
         filterPayload.vehiclePrintNumber = filters.vehiclePrintNumber;
       if (
         includeFilter("vehiclePlaqueSerialElement") &&
         filters.vehiclePlaqueSerialElement !== undefined
       )
-        filterPayload.vehiclePlaqueSerialElement =
-          filters.vehiclePlaqueSerialElement;
-      if (
-        includeFilter("vehicleInsuranceDateFrom") &&
-        filters.vehicleInsuranceDateFrom !== undefined
-      )
-        filterPayload.vehicleInsuranceDateFrom =
-          filters.vehicleInsuranceDateFrom;
-      if (
-        includeFilter("vehicleInsuranceDateTo") &&
-        filters.vehicleInsuranceDateTo !== undefined
-      )
+        filterPayload.vehiclePlaqueSerialElement = filters.vehiclePlaqueSerialElement;
+      if (includeFilter("vehicleInsuranceDateFrom") && filters.vehicleInsuranceDateFrom !== undefined)
+        filterPayload.vehicleInsuranceDateFrom = filters.vehicleInsuranceDateFrom;
+      if (includeFilter("vehicleInsuranceDateTo") && filters.vehicleInsuranceDateTo !== undefined)
         filterPayload.vehicleInsuranceDateTo = filters.vehicleInsuranceDateTo;
-      if (
-        includeFilter("vehicleBodyInsuranceCo") &&
-        filters.vehicleBodyInsuranceCo !== undefined
-      )
+      if (includeFilter("vehicleBodyInsuranceCo") && filters.vehicleBodyInsuranceCo !== undefined)
         filterPayload.vehicleBodyInsuranceCo = filters.vehicleBodyInsuranceCo;
-      if (
-        includeFilter("vehicleBodyInsuranceNo") &&
-        filters.vehicleBodyInsuranceNo !== undefined
-      )
+      if (includeFilter("vehicleBodyInsuranceNo") && filters.vehicleBodyInsuranceNo !== undefined)
         filterPayload.vehicleBodyInsuranceNo = filters.vehicleBodyInsuranceNo;
-      if (
-        includeFilter("vehicleMotionDirection") &&
-        filters.vehicleMotionDirection !== undefined
-      )
+      if (includeFilter("vehicleMotionDirection") && filters.vehicleMotionDirection !== undefined)
         filterPayload.vehicleMotionDirection = filters.vehicleMotionDirection;
-      if (
-        includeFilter("vehicleMaxDamageSections") &&
-        filters.vehicleMaxDamageSections !== undefined
-      )
-        filterPayload.vehicleMaxDamageSections =
-          filters.vehicleMaxDamageSections;
+      if (includeFilter("vehicleMaxDamageSections") && filters.vehicleMaxDamageSections !== undefined)
+        filterPayload.vehicleMaxDamageSections = filters.vehicleMaxDamageSections;
       if (
         includeFilter("vehicleDamageSectionOther") &&
         filters.vehicleDamageSectionOther !== undefined
       )
-        filterPayload.vehicleDamageSectionOther =
-          filters.vehicleDamageSectionOther;
+        filterPayload.vehicleDamageSectionOther = filters.vehicleDamageSectionOther;
       if (
         includeFilter("vehicleInsuranceWarrantyLimit") &&
         filters.vehicleInsuranceWarrantyLimit !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimit =
-          filters.vehicleInsuranceWarrantyLimit;
+        filterPayload.vehicleInsuranceWarrantyLimit = filters.vehicleInsuranceWarrantyLimit;
       if (
         includeFilter("vehicleInsuranceWarrantyLimitMin") &&
         filters.vehicleInsuranceWarrantyLimitMin !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimitMin =
-          filters.vehicleInsuranceWarrantyLimitMin;
+        filterPayload.vehicleInsuranceWarrantyLimitMin = filters.vehicleInsuranceWarrantyLimitMin;
       if (
         includeFilter("vehicleInsuranceWarrantyLimitMax") &&
         filters.vehicleInsuranceWarrantyLimitMax !== undefined
       )
-        filterPayload.vehicleInsuranceWarrantyLimitMax =
-          filters.vehicleInsuranceWarrantyLimitMax;
+        filterPayload.vehicleInsuranceWarrantyLimitMax = filters.vehicleInsuranceWarrantyLimitMax;
 
       // --- Driver in Vehicle DTOs Filters ---
       if (includeFilter("driverSex") && filters.driverSex !== undefined)
         filterPayload.driverSex = filters.driverSex;
-      if (
-        includeFilter("driverFirstName") &&
-        filters.driverFirstName !== undefined
-      )
+      if (includeFilter("driverFirstName") && filters.driverFirstName !== undefined)
         filterPayload.driverFirstName = filters.driverFirstName;
-      if (
-        includeFilter("driverLastName") &&
-        filters.driverLastName !== undefined
-      )
+      if (includeFilter("driverLastName") && filters.driverLastName !== undefined)
         filterPayload.driverLastName = filters.driverLastName;
-      if (
-        includeFilter("driverNationalCode") &&
-        filters.driverNationalCode !== undefined
-      )
+      if (includeFilter("driverNationalCode") && filters.driverNationalCode !== undefined)
         filterPayload.driverNationalCode = filters.driverNationalCode;
-      if (
-        includeFilter("driverLicenceNumber") &&
-        filters.driverLicenceNumber !== undefined
-      )
+      if (includeFilter("driverLicenceNumber") && filters.driverLicenceNumber !== undefined)
         filterPayload.driverLicenceNumber = filters.driverLicenceNumber;
-      if (
-        includeFilter("driverLicenceType") &&
-        filters.driverLicenceType !== undefined
-      )
+      if (includeFilter("driverLicenceType") && filters.driverLicenceType !== undefined)
         filterPayload.driverLicenceType = filters.driverLicenceType;
-      if (
-        includeFilter("driverInjuryType") &&
-        filters.driverInjuryType !== undefined
-      )
+      if (includeFilter("driverInjuryType") && filters.driverInjuryType !== undefined)
         filterPayload.driverInjuryType = filters.driverInjuryType;
-      if (
-        includeFilter("driverTotalReason") &&
-        filters.driverTotalReason !== undefined
-      )
+      if (includeFilter("driverTotalReason") && filters.driverTotalReason !== undefined)
         filterPayload.driverTotalReason = filters.driverTotalReason;
 
       // --- Passenger in Vehicle DTOs Filters ---
       if (includeFilter("passengerSex") && filters.passengerSex !== undefined)
         filterPayload.passengerSex = filters.passengerSex;
-      if (
-        includeFilter("passengerFirstName") &&
-        filters.passengerFirstName !== undefined
-      )
+      if (includeFilter("passengerFirstName") && filters.passengerFirstName !== undefined)
         filterPayload.passengerFirstName = filters.passengerFirstName;
-      if (
-        includeFilter("passengerLastName") &&
-        filters.passengerLastName !== undefined
-      )
+      if (includeFilter("passengerLastName") && filters.passengerLastName !== undefined)
         filterPayload.passengerLastName = filters.passengerLastName;
-      if (
-        includeFilter("passengerNationalCode") &&
-        filters.passengerNationalCode !== undefined
-      )
+      if (includeFilter("passengerNationalCode") && filters.passengerNationalCode !== undefined)
         filterPayload.passengerNationalCode = filters.passengerNationalCode;
-      if (
-        includeFilter("passengerInjuryType") &&
-        filters.passengerInjuryType !== undefined
-      )
+      if (includeFilter("passengerInjuryType") && filters.passengerInjuryType !== undefined)
         filterPayload.passengerInjuryType = filters.passengerInjuryType;
-      if (
-        includeFilter("passengerFaultStatus") &&
-        filters.passengerFaultStatus !== undefined
-      )
+      if (includeFilter("passengerFaultStatus") && filters.passengerFaultStatus !== undefined)
         filterPayload.passengerFaultStatus = filters.passengerFaultStatus;
-      if (
-        includeFilter("passengerTotalReason") &&
-        filters.passengerTotalReason !== undefined
-      )
+      if (includeFilter("passengerTotalReason") && filters.passengerTotalReason !== undefined)
         filterPayload.passengerTotalReason = filters.passengerTotalReason;
 
       // --- Pedestrian DTOs Filters ---
       if (includeFilter("pedestrianSex") && filters.pedestrianSex !== undefined)
         filterPayload.pedestrianSex = filters.pedestrianSex;
-      if (
-        includeFilter("pedestrianFirstName") &&
-        filters.pedestrianFirstName !== undefined
-      )
+      if (includeFilter("pedestrianFirstName") && filters.pedestrianFirstName !== undefined)
         filterPayload.pedestrianFirstName = filters.pedestrianFirstName;
-      if (
-        includeFilter("pedestrianLastName") &&
-        filters.pedestrianLastName !== undefined
-      )
+      if (includeFilter("pedestrianLastName") && filters.pedestrianLastName !== undefined)
         filterPayload.pedestrianLastName = filters.pedestrianLastName;
-      if (
-        includeFilter("pedestrianNationalCode") &&
-        filters.pedestrianNationalCode !== undefined
-      )
+      if (includeFilter("pedestrianNationalCode") && filters.pedestrianNationalCode !== undefined)
         filterPayload.pedestrianNationalCode = filters.pedestrianNationalCode;
-      if (
-        includeFilter("pedestrianInjuryType") &&
-        filters.pedestrianInjuryType !== undefined
-      )
+      if (includeFilter("pedestrianInjuryType") && filters.pedestrianInjuryType !== undefined)
         filterPayload.pedestrianInjuryType = filters.pedestrianInjuryType;
-      if (
-        includeFilter("pedestrianFaultStatus") &&
-        filters.pedestrianFaultStatus !== undefined
-      )
+      if (includeFilter("pedestrianFaultStatus") && filters.pedestrianFaultStatus !== undefined)
         filterPayload.pedestrianFaultStatus = filters.pedestrianFaultStatus;
-      if (
-        includeFilter("pedestrianTotalReason") &&
-        filters.pedestrianTotalReason !== undefined
-      )
+      if (includeFilter("pedestrianTotalReason") && filters.pedestrianTotalReason !== undefined)
         filterPayload.pedestrianTotalReason = filters.pedestrianTotalReason;
 
       // Now cast to the full type since we know all possible fields are covered
@@ -1001,8 +651,7 @@ const TemporalNightAnalyticsPage = () => {
       // Remove undefined values
       const cleanedParams = Object.fromEntries(
         Object.entries(completeFilterPayload).filter(
-          ([, value]) =>
-            value !== undefined && (!Array.isArray(value) || value.length > 0),
+          ([, value]) => value !== undefined && (!Array.isArray(value) || value.length > 0),
         ),
       );
 
@@ -1047,56 +696,35 @@ const TemporalNightAnalyticsPage = () => {
 
   // Calculate statistics
   const getStatistics = () => {
-    if (!chartData || !chartData.series || chartData.series.length === 0)
-      return null;
+    if (!chartData || !chartData.series || chartData.series.length === 0) return null;
 
-    const wellLitSeries = chartData.series.find((s) =>
-      s.name.includes("با روشنایی کافی"),
-    );
-    const poorlyLitSeries = chartData.series.find((s) =>
-      s.name.includes("بدون روشنایی کافی"),
-    );
+    const wellLitSeries = chartData.series.find((s) => s.name.includes("با روشنایی کافی"));
+    const poorlyLitSeries = chartData.series.find((s) => s.name.includes("بدون روشنایی کافی"));
 
-    const wellLitTotal = wellLitSeries
-      ? wellLitSeries.data.reduce((sum, val) => sum + val, 0)
-      : 0;
+    const wellLitTotal = wellLitSeries ? wellLitSeries.data.reduce((sum, val) => sum + val, 0) : 0;
     const poorlyLitTotal = poorlyLitSeries
       ? poorlyLitSeries.data.reduce((sum, val) => sum + val, 0)
       : 0;
     const totalAccidents = wellLitTotal + poorlyLitTotal;
 
-    const wellLitAverage = wellLitSeries
-      ? Math.round(wellLitTotal / wellLitSeries.data.length)
-      : 0;
+    const wellLitAverage = wellLitSeries ? Math.round(wellLitTotal / wellLitSeries.data.length) : 0;
     const poorlyLitAverage = poorlyLitSeries
       ? Math.round(poorlyLitTotal / poorlyLitSeries.data.length)
       : 0;
 
     const wellLitMax = wellLitSeries ? Math.max(...wellLitSeries.data) : 0;
-    const poorlyLitMax = poorlyLitSeries
-      ? Math.max(...poorlyLitSeries.data)
-      : 0;
+    const poorlyLitMax = poorlyLitSeries ? Math.max(...poorlyLitSeries.data) : 0;
 
     const wellLitMin = wellLitSeries ? Math.min(...wellLitSeries.data) : 0;
-    const poorlyLitMin = poorlyLitSeries
-      ? Math.min(...poorlyLitSeries.data)
-      : 0;
+    const poorlyLitMin = poorlyLitSeries ? Math.min(...poorlyLitSeries.data) : 0;
 
-    const wellLitMaxIndex = wellLitSeries
-      ? wellLitSeries.data.indexOf(wellLitMax)
-      : -1;
-    const poorlyLitMaxIndex = poorlyLitSeries
-      ? poorlyLitSeries.data.indexOf(poorlyLitMax)
-      : -1;
+    const wellLitMaxIndex = wellLitSeries ? wellLitSeries.data.indexOf(wellLitMax) : -1;
+    const poorlyLitMaxIndex = poorlyLitSeries ? poorlyLitSeries.data.indexOf(poorlyLitMax) : -1;
 
     const wellLitPercentage =
-      totalAccidents > 0
-        ? Math.round((wellLitTotal / totalAccidents) * 100)
-        : 0;
+      totalAccidents > 0 ? Math.round((wellLitTotal / totalAccidents) * 100) : 0;
     const poorlyLitPercentage =
-      totalAccidents > 0
-        ? Math.round((poorlyLitTotal / totalAccidents) * 100)
-        : 0;
+      totalAccidents > 0 ? Math.round((poorlyLitTotal / totalAccidents) * 100) : 0;
 
     return {
       totalAccidents,
@@ -1108,19 +736,12 @@ const TemporalNightAnalyticsPage = () => {
       poorlyLitMax,
       wellLitMin,
       poorlyLitMin,
-      wellLitMaxPeriod:
-        wellLitMaxIndex >= 0 ? chartData.categories[wellLitMaxIndex] : "نامشخص",
-      poorlyLitMaxPeriod:
-        poorlyLitMaxIndex >= 0
-          ? chartData.categories[poorlyLitMaxIndex]
-          : "نامشخص",
+      wellLitMaxPeriod: wellLitMaxIndex >= 0 ? chartData.categories[wellLitMaxIndex] : "نامشخص",
+      poorlyLitMaxPeriod: poorlyLitMaxIndex >= 0 ? chartData.categories[poorlyLitMaxIndex] : "نامشخص",
       wellLitPercentage,
       poorlyLitPercentage,
       periods: chartData.categories.length,
-      riskRatio:
-        poorlyLitTotal > 0
-          ? Math.round((poorlyLitTotal / wellLitTotal) * 100) / 100
-          : 0,
+      riskRatio: poorlyLitTotal > 0 ? Math.round((poorlyLitTotal / wellLitTotal) * 100) / 100 : 0,
     };
   };
 
@@ -1129,10 +750,7 @@ const TemporalNightAnalyticsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="temporal"
-        currentChart="night-analytics"
-      />
+      <ChartNavigation currentSection="temporal" currentChart="night-analytics" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -1144,6 +762,8 @@ const TemporalNightAnalyticsPage = () => {
               enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل شبانه"
               description="برای تحلیل دقیق تصادفات شبانه، فیلترهای مورد نظر را اعمال کنید"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -1154,9 +774,7 @@ const TemporalNightAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  مقایسه زمانی تصادفات در شب
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">مقایسه زمانی تصادفات در شب</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   تحلیل مقایسه‌ای تصادفات شبانه بر اساس شرایط روشنایی محل حادثه
                 </p>
@@ -1168,11 +786,7 @@ const TemporalNightAnalyticsPage = () => {
                   className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
-                    <svg
-                      className="w-5 h-5 animate-spin"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle
                         className="opacity-25"
                         cx="12"
@@ -1188,12 +802,7 @@ const TemporalNightAnalyticsPage = () => {
                       ></path>
                     </svg>
                   ) : (
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -1213,12 +822,7 @@ const TemporalNightAnalyticsPage = () => {
                     }}
                     className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -1233,12 +837,7 @@ const TemporalNightAnalyticsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -1263,11 +862,7 @@ const TemporalNightAnalyticsPage = () => {
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -1284,11 +879,7 @@ const TemporalNightAnalyticsPage = () => {
             {isDemoMode && chartData && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-yellow-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -1298,9 +889,8 @@ const TemporalNightAnalyticsPage = () => {
                   <h3 className="font-medium text-yellow-800">حالت نمایشی</h3>
                 </div>
                 <p className="text-sm text-yellow-700">
-                  در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای
-                  دریافت داده‌های واقعی، دکمه &quot;تلاش مجدد API&quot; را فشار
-                  دهید.
+                  در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای دریافت داده‌های واقعی،
+                  دکمه &quot;تلاش مجدد API&quot; را فشار دهید.
                 </p>
               </div>
             )}
@@ -1309,26 +899,19 @@ const TemporalNightAnalyticsPage = () => {
             {chartData && !isLoading && !isDemoMode && stats && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg
-                    className="w-5 h-5 text-green-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-green-800">
-                    داده‌ها بارگذاری شد
-                  </h3>
+                  <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
                 </div>
                 <p className="text-sm text-green-700">
                   تحلیل {stats.periods} دوره زمانی با مجموع{" "}
-                  {stats.totalAccidents.toLocaleString("fa-IR")} تصادف شبانه -
-                  با روشنایی کافی: {stats.wellLitPercentage}% - بدون روشنایی
-                  کافی: {stats.poorlyLitPercentage}%
+                  {stats.totalAccidents.toLocaleString("fa-IR")} تصادف شبانه - با روشنایی کافی:{" "}
+                  {stats.wellLitPercentage}% - بدون روشنایی کافی: {stats.poorlyLitPercentage}%
                 </p>
               </div>
             )}
@@ -1356,29 +939,18 @@ const TemporalNightAnalyticsPage = () => {
                     />
                   </svg>
                   <div>
-                    <h3 className="font-medium text-blue-800 mb-2">
-                      راهنمای استفاده
-                    </h3>
+                    <h3 className="font-medium text-blue-800 mb-2">راهنمای استفاده</h3>
                     <ul className="space-y-1 text-sm text-blue-700">
                       <li>
-                        • از دکمه &quot;بارگذاری مجدد&quot; برای دریافت آخرین
-                        داده‌ها استفاده کنید
+                        • از دکمه &quot;بارگذاری مجدد&quot; برای دریافت آخرین داده‌ها استفاده کنید
                       </li>
+                      <li>• این تحلیل فقط تصادفات شبانه را بر اساس شرایط روشنایی مقایسه می‌کند</li>
                       <li>
-                        • این تحلیل فقط تصادفات شبانه را بر اساس شرایط روشنایی
-                        مقایسه می‌کند
+                        • می‌توانید از فیلترهای جانبی برای انتخاب بازه زمانی و معیارهای مورد نظر
+                        استفاده کنید
                       </li>
-                      <li>
-                        • می‌توانید از فیلترهای جانبی برای انتخاب بازه زمانی و
-                        معیارهای مورد نظر استفاده کنید
-                      </li>
-                      <li>
-                        • نمودار خطی به‌خوبی روند تغییرات در طول زمان را نشان
-                        می‌دهد
-                      </li>
-                      <li>
-                        • برای مشاهده جزئیات بیشتر، روی نقاط نمودار کلیک کنید
-                      </li>
+                      <li>• نمودار خطی به‌خوبی روند تغییرات در طول زمان را نشان می‌دهد</li>
+                      <li>• برای مشاهده جزئیات بیشتر، روی نقاط نمودار کلیک کنید</li>
                     </ul>
                   </div>
                 </div>
@@ -1416,15 +988,13 @@ const TemporalNightAnalyticsPage = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">با روشنایی کافی:</span>
                       <span className="font-semibold text-orange-600">
-                        {stats.wellLitTotal.toLocaleString("fa-IR")} (
-                        {stats.wellLitPercentage}%)
+                        {stats.wellLitTotal.toLocaleString("fa-IR")} ({stats.wellLitPercentage}%)
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">بدون روشنایی کافی:</span>
                       <span className="font-semibold text-gray-800">
-                        {stats.poorlyLitTotal.toLocaleString("fa-IR")} (
-                        {stats.poorlyLitPercentage}%)
+                        {stats.poorlyLitTotal.toLocaleString("fa-IR")} ({stats.poorlyLitPercentage}%)
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -1464,9 +1034,7 @@ const TemporalNightAnalyticsPage = () => {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">
-                        میانگین بدون روشنایی:
-                      </span>
+                      <span className="text-gray-600">میانگین بدون روشنایی:</span>
                       <span className="font-semibold text-gray-800">
                         {stats.poorlyLitAverage.toLocaleString("fa-IR")}
                       </span>
@@ -1474,15 +1042,13 @@ const TemporalNightAnalyticsPage = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">پیک با روشنایی:</span>
                       <span className="font-semibold text-orange-600">
-                        {stats.wellLitMax.toLocaleString("fa-IR")} (
-                        {stats.wellLitMaxPeriod})
+                        {stats.wellLitMax.toLocaleString("fa-IR")} ({stats.wellLitMaxPeriod})
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">پیک بدون روشنایی:</span>
                       <span className="font-semibold text-gray-800">
-                        {stats.poorlyLitMax.toLocaleString("fa-IR")} (
-                        {stats.poorlyLitMaxPeriod})
+                        {stats.poorlyLitMax.toLocaleString("fa-IR")} ({stats.poorlyLitMaxPeriod})
                       </span>
                     </div>
                   </div>
@@ -1511,9 +1077,7 @@ const TemporalNightAnalyticsPage = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div className="bg-white bg-opacity-50 rounded-lg p-4">
-                    <h4 className="font-medium text-orange-800 mb-2">
-                      تحلیل وضعیت
-                    </h4>
+                    <h4 className="font-medium text-orange-800 mb-2">تحلیل وضعیت</h4>
                     <ul className="space-y-1 text-orange-700">
                       {stats.poorlyLitPercentage > stats.wellLitPercentage ? (
                         <>
@@ -1531,9 +1095,7 @@ const TemporalNightAnalyticsPage = () => {
                     </ul>
                   </div>
                   <div className="bg-white bg-opacity-50 rounded-lg p-4">
-                    <h4 className="font-medium text-orange-800 mb-2">
-                      اقدامات پیشنهادی
-                    </h4>
+                    <h4 className="font-medium text-orange-800 mb-2">اقدامات پیشنهادی</h4>
                     <ul className="space-y-1 text-orange-700">
                       <li>• نصب و بهبود روشنایی معابر</li>
                       <li>• آموزش ایمنی رانندگی شبانه</li>
@@ -1572,15 +1134,11 @@ const TemporalNightAnalyticsPage = () => {
                     <div className="text-blue-600">کل تصادفات شبانه</div>
                   </div>
                   <div className="text-center p-3 bg-white bg-opacity-50 rounded-lg">
-                    <div className="text-lg font-bold text-orange-600">
-                      {stats.wellLitPercentage}%
-                    </div>
+                    <div className="text-lg font-bold text-orange-600">{stats.wellLitPercentage}%</div>
                     <div className="text-blue-600">با روشنایی کافی</div>
                   </div>
                   <div className="text-center p-3 bg-white bg-opacity-50 rounded-lg">
-                    <div className="text-lg font-bold text-gray-800">
-                      {stats.poorlyLitPercentage}%
-                    </div>
+                    <div className="text-lg font-bold text-gray-800">{stats.poorlyLitPercentage}%</div>
                     <div className="text-blue-600">بدون روشنایی کافی</div>
                   </div>
                 </div>

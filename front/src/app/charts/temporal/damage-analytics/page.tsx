@@ -5,11 +5,20 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, {
   ChartFilterState,
 } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import TemporalDamageChart from "@/components/charts/TemporalDamageChart";
 import { temporalDamageAnalytics } from "@/app/actions/accident/temporalDamageAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
+import { useAuth } from "@/context/AuthContext";
+
+const TemporalDamageAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for temporal damage analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "TEMPORAL_DAMAGE_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
 
 interface ChartSeries {
   name: string;
@@ -28,8 +37,12 @@ interface TemporalDamageResponse {
   success: boolean;
 }
 
-// Get enabled filters for temporal damage analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_DAMAGE_ANALYTICS");
+  const [showFilterSidebar, setShowFilterSidebar] = useState(true);
+  const [chartData, setChartData] = useState<TemporalDamageData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
 // Demo data for fallback
 const DEMO_DATA: TemporalDamageData = {
@@ -566,6 +579,8 @@ const TemporalDamageAnalyticsPage = () => {
                 pedestrianFaultStatus: [],
                 pedestrianTotalReason: [],
               }}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

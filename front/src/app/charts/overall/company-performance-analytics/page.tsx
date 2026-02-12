@@ -2,19 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { companyPerformanceAnalytics } from "@/app/actions/accident/companyPerformanceAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
 import dynamic from "next/dynamic";
+import { useAuth } from "@/context/AuthContext";
 
 // Dynamic import for ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
-
-// Get enabled filters for company performance analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("COMPANY_PERFORMANCE_ANALYTICS");
 
 // Backend response interface for company performance analytics
 interface CompanyPerformanceAnalyticsResponse {
@@ -331,6 +329,12 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
 };
 
 const CompanyPerformanceAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for company performance analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "COMPANY_PERFORMANCE_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<CompanyPerformanceAnalyticsResponse["analytics"] | null>(
     null,
@@ -708,6 +712,8 @@ const CompanyPerformanceAnalyticsPage = () => {
               title="فیلترهای مقایسه عملکرد کمپانی‌ها"
               description="برای مقایسه عملکرد کمپانی‌های مختلف خودروسازی، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

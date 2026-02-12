@@ -1,89 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import React from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 
-// Get enabled filters for temporal charts (use comprehensive temporal filters)
-const ENABLED_FILTERS = getEnabledFiltersForChart("TEMPORAL_COUNT_ANALYTICS");
-
 const TemporalChartsPage = () => {
-  const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [, setIsLoading] = useState(false);
-
-  // Handle filter submission (placeholder)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleFilterSubmit = async (filters: ChartFilterState) => {
-    setIsLoading(true);
-    // TODO: Implement temporal analytics API calls
-    setTimeout(() => setIsLoading(false), 1000);
-  };
-
-  // Filter configuration
-  const getFilterConfig = () => {
-    return {
-      disableSeverityFilter: false,
-      disableCollisionTypeFilter: false,
-      disableLightingFilter: false,
-      lockToSevereAccidents: false,
-    };
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <ChartNavigation currentSection="temporal" />
 
       <div className="flex">
-        {/* Filter Sidebar */}
-        {showFilterSidebar && (
-          <div className="w-80 flex-shrink-0">
-            <ChartsFilterSidebar
-              onApplyFilters={handleFilterSubmit}
-              config={getFilterConfig()}
-              enabledFilters={ENABLED_FILTERS}
-              title="فیلترهای تحلیل زمانی"
-              description="فیلترهای عمومی برای تحلیل‌های زمانی تصادفات"
-            />
-          </div>
-        )}
-
         {/* Main Content */}
         <div className="flex-1 p-6">
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  مقایسه زمانی
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">مقایسه زمانی</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   تحلیل روند زمانی تصادفات و مقایسه در بازه‌های مختلف
                 </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
-                    />
-                  </svg>
-                  {showFilterSidebar ? "مخفی کردن فیلتر" : "نمایش فیلتر"}
-                </button>
               </div>
             </div>
           </div>
@@ -92,9 +28,7 @@ const TemporalChartsPage = () => {
           <div className="space-y-6">
             {/* Quick Navigation to Temporal Charts */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                تحلیل‌های زمانی
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">تحلیل‌های زمانی</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <a
                   href="/charts/temporal/count-analytics"
@@ -117,12 +51,8 @@ const TemporalChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        شمار تصادفات
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه زمانی تعداد تصادفات
-                      </p>
+                      <h3 className="font-medium text-gray-900">شمار تصادفات</h3>
+                      <p className="text-sm text-gray-600">مقایسه زمانی تعداد تصادفات</p>
                     </div>
                   </div>
                 </a>
@@ -147,12 +77,8 @@ const TemporalChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        سهم تصادفات فوتی از شدید
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        تحلیل زمانی درصد تصادفات فوتی
-                      </p>
+                      <h3 className="font-medium text-gray-900">سهم تصادفات فوتی از شدید</h3>
+                      <p className="text-sm text-gray-600">تحلیل زمانی درصد تصادفات فوتی</p>
                     </div>
                   </div>
                 </a>
@@ -177,12 +103,8 @@ const TemporalChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        تصادفات در شب
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه تصادفات شبانه با/بدون روشنایی
-                      </p>
+                      <h3 className="font-medium text-gray-900">تصادفات در شب</h3>
+                      <p className="text-sm text-gray-600">مقایسه تصادفات شبانه با/بدون روشنایی</p>
                     </div>
                   </div>
                 </a>
@@ -207,12 +129,8 @@ const TemporalChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        مقایسه زمانی صدمات
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        تحلیل زمانی صدمات و نوع برخورد
-                      </p>
+                      <h3 className="font-medium text-gray-900">مقایسه زمانی صدمات</h3>
+                      <p className="text-sm text-gray-600">تحلیل زمانی صدمات و نوع برخورد</p>
                     </div>
                   </div>
                 </a>
@@ -237,12 +155,8 @@ const TemporalChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        نحوه و نوع برخورد
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه زمانی نحوه و نوع برخورد
-                      </p>
+                      <h3 className="font-medium text-gray-900">نحوه و نوع برخورد</h3>
+                      <p className="text-sm text-gray-600">مقایسه زمانی نحوه و نوع برخورد</p>
                     </div>
                   </div>
                 </a>
@@ -268,9 +182,7 @@ const TemporalChartsPage = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">علت تامه</h3>
-                      <p className="text-sm text-gray-600">
-                        مقایسه زمانی علت تامه تصادفات
-                      </p>
+                      <p className="text-sm text-gray-600">مقایسه زمانی علت تامه تصادفات</p>
                     </div>
                   </div>
                 </a>
@@ -295,9 +207,7 @@ const TemporalChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        کاربران فاقد گواهینامه
-                      </h3>
+                      <h3 className="font-medium text-gray-900">کاربران فاقد گواهینامه</h3>
                       <p className="text-sm text-gray-600">
                         مقایسه زمانی کاربران فاقد گواهینامه معتبر
                       </p>
@@ -310,16 +220,9 @@ const TemporalChartsPage = () => {
             {/* Sample Temporal Chart */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  نمودار روند زمانی تصادفات
-                </h2>
+                <h2 className="text-lg font-semibold text-gray-900">نمودار روند زمانی تصادفات</h2>
                 <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -345,9 +248,7 @@ const TemporalChartsPage = () => {
                       d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
                     />
                   </svg>
-                  <p className="text-gray-500">
-                    نمودار روند زمانی در حال توسعه
-                  </p>
+                  <p className="text-gray-500">نمودار روند زمانی در حال توسعه</p>
                 </div>
               </div>
             </div>
@@ -355,16 +256,9 @@ const TemporalChartsPage = () => {
             {/* Sample Comparison Chart */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  مقایسه ساليانه تصادفات
-                </h2>
+                <h2 className="text-lg font-semibold text-gray-900">مقایسه ساليانه تصادفات</h2>
                 <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -397,9 +291,7 @@ const TemporalChartsPage = () => {
 
             {/* Key Insights */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-              <h3 className="font-medium text-blue-800 mb-3">
-                نکات کلیدی تحلیل زمانی
-              </h3>
+              <h3 className="font-medium text-blue-800 mb-3">نکات کلیدی تحلیل زمانی</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div className="flex items-start gap-2">
                   <svg
@@ -415,9 +307,7 @@ const TemporalChartsPage = () => {
                   </svg>
                   <div>
                     <p className="font-medium text-blue-800">روند فصلی</p>
-                    <p className="text-blue-700">
-                      تصادفات در فصل تابستان بیشترین میزان را دارند
-                    </p>
+                    <p className="text-blue-700">تصادفات در فصل تابستان بیشترین میزان را دارند</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
@@ -434,9 +324,7 @@ const TemporalChartsPage = () => {
                   </svg>
                   <div>
                     <p className="font-medium text-blue-800">کاهش تصادفات</p>
-                    <p className="text-blue-700">
-                      در سال 1402 کاهش کلی تصادفات مشاهده شده است
-                    </p>
+                    <p className="text-blue-700">در سال 1402 کاهش کلی تصادفات مشاهده شده است</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
@@ -453,9 +341,7 @@ const TemporalChartsPage = () => {
                   </svg>
                   <div>
                     <p className="font-medium text-blue-800">تحلیل عمقی</p>
-                    <p className="text-blue-700">
-                      برای تحلیل دقیق‌تر از چارت‌های تخصصی استفاده کنید
-                    </p>
+                    <p className="text-blue-700">برای تحلیل دقیق‌تر از چارت‌های تخصصی استفاده کنید</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
@@ -471,12 +357,8 @@ const TemporalChartsPage = () => {
                     />
                   </svg>
                   <div>
-                    <p className="font-medium text-blue-800">
-                      فیلترهای پیشرفته
-                    </p>
-                    <p className="text-blue-700">
-                      از فیلترهای کناری برای تحلیل هدفمند استفاده کنید
-                    </p>
+                    <p className="font-medium text-blue-800">فیلترهای پیشرفته</p>
+                    <p className="text-blue-700">از فیلترهای کناری برای تحلیل هدفمند استفاده کنید</p>
                   </div>
                 </div>
               </div>

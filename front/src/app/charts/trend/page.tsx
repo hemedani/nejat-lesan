@@ -1,89 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import React from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 
-// Get enabled filters for trend charts (use basic trend filters)
-const ENABLED_FILTERS = getEnabledFiltersForChart("TREND_COLLISION_ANALYTICS");
-
 const TrendChartsPage = () => {
-  const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [, setIsLoading] = useState(false);
-
-  // Handle filter submission (placeholder)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleFilterSubmit = async (filters: ChartFilterState) => {
-    setIsLoading(true);
-    // TODO: Implement trend analytics API calls
-    setTimeout(() => setIsLoading(false), 1000);
-  };
-
-  // Filter configuration
-  const getFilterConfig = () => {
-    return {
-      disableSeverityFilter: false,
-      disableCollisionTypeFilter: false,
-      disableLightingFilter: false,
-      lockToSevereAccidents: false,
-    };
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
       <ChartNavigation currentSection="trend" />
 
       <div className="flex">
-        {/* Filter Sidebar */}
-        {showFilterSidebar && (
-          <div className="w-80 flex-shrink-0">
-            <ChartsFilterSidebar
-              onApplyFilters={handleFilterSubmit}
-              config={getFilterConfig()}
-              enabledFilters={ENABLED_FILTERS}
-              title="فیلترهای تحلیل روند"
-              description="فیلترهای عمومی برای تحلیل‌های روند تصادفات"
-            />
-          </div>
-        )}
-
         {/* Main Content */}
         <div className="flex-1 p-6">
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  روند رویداد
-                </h1>
-                <p className="text-sm text-gray-600 mt-1">
-                  تحلیل روند تصادفات و پیش‌بینی الگوهای آتی
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
-                    />
-                  </svg>
-                  {showFilterSidebar ? "مخفی کردن فیلتر" : "نمایش فیلتر"}
-                </button>
+                <h1 className="text-2xl font-bold text-gray-900">روند رویداد</h1>
+                <p className="text-sm text-gray-600 mt-1">تحلیل روند تصادفات و پیش‌بینی الگوهای آتی</p>
               </div>
             </div>
           </div>
@@ -92,9 +26,7 @@ const TrendChartsPage = () => {
           <div className="space-y-6">
             {/* Quick Navigation to Trend Charts */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                تحلیل‌های روند
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">تحلیل‌های روند</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <a
                   href="/charts/trend/monthly-trend"
@@ -118,9 +50,7 @@ const TrendChartsPage = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">روند ماهانه</h3>
-                      <p className="text-sm text-gray-600">
-                        تحلیل روند تصادفات در ماه‌های مختلف
-                      </p>
+                      <p className="text-sm text-gray-600">تحلیل روند تصادفات در ماه‌های مختلف</p>
                     </div>
                   </div>
                 </a>
@@ -146,9 +76,7 @@ const TrendChartsPage = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900">روند سالانه</h3>
-                      <p className="text-sm text-gray-600">
-                        بررسی تغییرات تصادفات در سال‌های مختلف
-                      </p>
+                      <p className="text-sm text-gray-600">بررسی تغییرات تصادفات در سال‌های مختلف</p>
                     </div>
                   </div>
                 </a>
@@ -173,9 +101,7 @@ const TrendChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        سهم شدت تصادفات
-                      </h3>
+                      <h3 className="font-medium text-gray-900">سهم شدت تصادفات</h3>
                       <p className="text-sm text-gray-600">
                         مقایسه سهم شدت تصادفات در رویداد با سایر ایام
                       </p>
@@ -203,9 +129,7 @@ const TrendChartsPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
-                        نحوه و نوع برخورد
-                      </h3>
+                      <h3 className="font-medium text-gray-900">نحوه و نوع برخورد</h3>
                       <p className="text-sm text-gray-600">
                         مقایسه سهم نحوه و نوع برخورد در رویداد با سایر ایام
                       </p>
@@ -236,12 +160,8 @@ const TrendChartsPage = () => {
                     </svg>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-2">
-                  کاهشی
-                </div>
-                <p className="text-sm text-gray-600">
-                  روند کلی تصادفات در حال کاهش است
-                </p>
+                <div className="text-2xl font-bold text-gray-900 mb-2">کاهشی</div>
+                <p className="text-sm text-gray-600">روند کلی تصادفات در حال کاهش است</p>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm p-6">
@@ -263,9 +183,7 @@ const TrendChartsPage = () => {
                     </svg>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-2">
-                  -3.2%
-                </div>
+                <div className="text-2xl font-bold text-gray-900 mb-2">-3.2%</div>
                 <p className="text-sm text-gray-600">کاهش نسبت به ماه قبل</p>
               </div>
 
@@ -288,12 +206,8 @@ const TrendChartsPage = () => {
                     </svg>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-2">
-                  پایدار
-                </div>
-                <p className="text-sm text-gray-600">
-                  روند فعلی ادامه خواهد یافت
-                </p>
+                <div className="text-2xl font-bold text-gray-900 mb-2">پایدار</div>
+                <p className="text-sm text-gray-600">روند فعلی ادامه خواهد یافت</p>
               </div>
             </div>
 
@@ -315,30 +229,21 @@ const TrendChartsPage = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  تحلیل‌های روند
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">تحلیل‌های روند</h3>
                 <p className="text-gray-600">
                   تحلیل‌های روند رویداد در حال توسعه می‌باشد.
                   <br />
-                  شامل نمودارهای روند، پیش‌بینی، و تحلیل الگوهای تکراری خواهد
-                  بود.
+                  شامل نمودارهای روند، پیش‌بینی، و تحلیل الگوهای تکراری خواهد بود.
                 </p>
               </div>
             </div>
 
             {/* Features Coming Soon */}
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-              <h3 className="font-medium text-orange-800 mb-3">
-                ویژگی‌های در دست توسعه
-              </h3>
+              <h3 className="font-medium text-orange-800 mb-3">ویژگی‌های در دست توسعه</h3>
               <ul className="space-y-2 text-sm text-orange-700">
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -348,11 +253,7 @@ const TrendChartsPage = () => {
                   نمودار روند ماهانه و سالانه
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -362,11 +263,7 @@ const TrendChartsPage = () => {
                   پیش‌بینی روند آتی با استفاده از مدل‌های آماری
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -376,11 +273,7 @@ const TrendChartsPage = () => {
                   تشخیص الگوهای تکراری و چرخه‌ای
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -390,11 +283,7 @@ const TrendChartsPage = () => {
                   تحلیل نقاط عطف و تغییرات مهم روند
                 </li>
                 <li className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -408,9 +297,7 @@ const TrendChartsPage = () => {
 
             {/* Trend Insights */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                بینش‌های روند
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های روند</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <h4 className="font-medium text-gray-900">روندهای مثبت</h4>
@@ -430,12 +317,8 @@ const TrendChartsPage = () => {
                         </svg>
                       </div>
                       <div>
-                        <div className="font-medium text-green-800">
-                          کاهش تصادفات شدید
-                        </div>
-                        <div className="text-sm text-green-600">
-                          15% کاهش در 6 ماه اخیر
-                        </div>
+                        <div className="font-medium text-green-800">کاهش تصادفات شدید</div>
+                        <div className="text-sm text-green-600">15% کاهش در 6 ماه اخیر</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
@@ -453,12 +336,8 @@ const TrendChartsPage = () => {
                         </svg>
                       </div>
                       <div>
-                        <div className="font-medium text-green-800">
-                          بهبود ایمنی راه‌ها
-                        </div>
-                        <div className="text-sm text-green-600">
-                          کاهش نقص‌های راه موثر
-                        </div>
+                        <div className="font-medium text-green-800">بهبود ایمنی راه‌ها</div>
+                        <div className="text-sm text-green-600">کاهش نقص‌های راه موثر</div>
                       </div>
                     </div>
                   </div>
@@ -481,21 +360,13 @@ const TrendChartsPage = () => {
                         </svg>
                       </div>
                       <div>
-                        <div className="font-medium text-yellow-800">
-                          افزایش در تعطیلات
-                        </div>
-                        <div className="text-sm text-yellow-600">
-                          نیاز به توجه ویژه
-                        </div>
+                        <div className="font-medium text-yellow-800">افزایش در تعطیلات</div>
+                        <div className="text-sm text-yellow-600">نیاز به توجه ویژه</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-4 h-4 text-blue-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
+                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                           <path
                             fillRule="evenodd"
                             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -504,12 +375,8 @@ const TrendChartsPage = () => {
                         </svg>
                       </div>
                       <div>
-                        <div className="font-medium text-blue-800">
-                          الگوی فصلی
-                        </div>
-                        <div className="text-sm text-blue-600">
-                          تکرار در فصول خاص
-                        </div>
+                        <div className="font-medium text-blue-800">الگوی فصلی</div>
+                        <div className="text-sm text-blue-600">تکرار در فصول خاص</div>
                       </div>
                     </div>
                   </div>

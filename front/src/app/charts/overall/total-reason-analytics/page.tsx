@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { totalReasonAnalytics } from "@/app/actions/accident/totalReasonAnalytics";
 import TotalReasonTreemapChart from "@/components/charts/TotalReasonTreemapChart";
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
-
-// Get enabled filters for total reason analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("TOTAL_REASON_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for total reason analytics
 interface TotalReasonAnalyticsResponse {
@@ -35,6 +33,12 @@ const DEMO_DATA: TotalReasonAnalyticsResponse["analytics"] = [
 ];
 
 const TotalReasonAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for total reason analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "TOTAL_REASON_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<TotalReasonAnalyticsResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -406,6 +410,8 @@ const TotalReasonAnalyticsPage = () => {
               title="فیلترهای تحلیل علت تامه"
               description="برای مشاهده توزیع علت تامه تصادفات شدید، فیلترهای مورد نظر را اعمال کنید"
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}

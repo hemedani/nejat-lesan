@@ -3,13 +3,11 @@
 import React, { useState, useEffect } from "react";
 import MonthlyHolidayAnalyticsDashboard from "@/components/dashboards/MonthlyHolidayAnalyticsDashboard";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { monthlyHolidayAnalytics } from "@/app/actions/accident/monthlyHolidayAnalytics";
 import { formatNumber } from "@/utils/formatters";
-
-// Get enabled filters for monthly holiday analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("MONTHLY_HOLIDAY_ANALYTICS");
+import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for monthly holiday analytics
 interface MonthlyHolidayAnalyticsData {
@@ -21,6 +19,12 @@ interface MonthlyHolidayAnalyticsData {
 }
 
 const MonthlyHolidayPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+  // Get enabled filters for monthly holiday analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "MONTHLY_HOLIDAY_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<MonthlyHolidayAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -198,6 +202,8 @@ const MonthlyHolidayPage = () => {
               onApplyFilters={handleFilterSubmit}
               config={getFilterConfig()}
               enabledFilters={ENABLED_FILTERS}
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
