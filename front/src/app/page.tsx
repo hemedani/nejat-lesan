@@ -539,12 +539,12 @@ export default function HomePage() {
         <>
           {/* Backdrop Overlay */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] animate-fade-in"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[10000] animate-fade-in"
             onClick={() => setIsSearchOpen(false)}
           />
 
           {/* Modal Container */}
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
+          <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 pointer-events-none">
             <div
               className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-2xl pointer-events-auto animate-pop-in"
               onClick={(e) => e.stopPropagation()}

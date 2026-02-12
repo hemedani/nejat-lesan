@@ -1,17 +1,20 @@
 # Advanced Search Modal Optimization
 
 ## Overview
+
 This document describes the optimization and redesign of the AdvancedSearch modal component to improve performance and user experience.
 
 ## Problem Statement
 
 ### Performance Issue
+
 - The AdvancedSearch component was mounted on initial page load even when closed
 - This caused **20-30+ backend API calls** on first page load
 - All API calls for various filter options (provinces, cities, accident types, etc.) were triggered immediately
 - Significant performance impact and unnecessary server load
 
 ### Design Issue
+
 - The search panel was implemented as a sliding sidebar
 - Not visually prominent or user-friendly
 - Limited screen space for form fields
@@ -20,24 +23,24 @@ This document describes the optimization and redesign of the AdvancedSearch moda
 ## Solution Implemented
 
 ### 1. Lazy Loading with Dynamic Imports
+
 ```tsx
 // Before: Direct import (always loaded)
 import AdvancedSearch from "@/components/molecules/AdvancedSearch";
 
 // After: Dynamic import (only loaded when needed)
-const AdvancedSearch = dynamic(
-  () => import("@/components/molecules/AdvancedSearch"), 
-  { ssr: false }
-);
+const AdvancedSearch = dynamic(() => import("@/components/molecules/AdvancedSearch"), { ssr: false });
 ```
 
 **Benefits:**
+
 - Component code and its dependencies are only loaded when user opens the modal
 - API calls inside AdvancedSearch component are deferred until modal is opened
 - Reduces initial bundle size and improves page load time
 - Eliminates 20-30+ unnecessary API requests on page load
 
 ### 2. Conditional Rendering
+
 ```tsx
 // Only render modal when isSearchOpen is true
 {isSearchOpen && (
@@ -51,6 +54,7 @@ const AdvancedSearch = dynamic(
 ```
 
 **Benefits:**
+
 - Component is only mounted when modal is open
 - Complete elimination of API calls until user interaction
 - Unmounts when closed, freeing memory resources
@@ -58,12 +62,14 @@ const AdvancedSearch = dynamic(
 ### 3. Redesigned Modal UI
 
 #### Previous Design (Sidebar)
+
 - Fixed sidebar sliding from right
 - Limited to 400px max width (`max-w-md`)
 - Header with dark gray background
 - Compact design with less breathing room
 
 #### New Design (Centered Modal)
+
 ```tsx
 <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
   <div className="w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-2xl">
@@ -73,6 +79,7 @@ const AdvancedSearch = dynamic(
 ```
 
 **Key Features:**
+
 1. **Centered Modal Dialog**
    - Appears in center of screen
    - Much larger (max-width: 1280px / `max-w-5xl`)
@@ -107,17 +114,21 @@ const AdvancedSearch = dynamic(
 ## Technical Details
 
 ### Z-Index Layers
-- Backdrop overlay: `z-[60]`
-- Modal container: `z-[70]`
-- Ensures modal appears above all other content
+
+- Navbar: `z-9999` (existing in layout)
+- Backdrop overlay: `z-[10000]` (above navbar)
+- Modal container: `z-[10001]` (above backdrop)
+- Ensures modal appears above navbar and all other content
 
 ### Accessibility Improvements
+
 - Click outside to close
 - Prominent close button
 - `aria-label` on close button
 - `stopPropagation` on modal content to prevent accidental closes
 
 ### Responsive Design
+
 - Padding on mobile devices (`p-4`)
 - Scrollable content area
 - Max height based on viewport (`90vh`)
@@ -126,11 +137,13 @@ const AdvancedSearch = dynamic(
 ## Performance Impact
 
 ### Before Optimization
+
 - **Initial Page Load:** 20-30+ API requests
 - **Component:** Always mounted
 - **Bundle Size:** Included in initial page load
 
 ### After Optimization
+
 - **Initial Page Load:** 0 API requests from AdvancedSearch
 - **Component:** Loaded and mounted only when opened
 - **Bundle Size:** Code-split, loaded on demand
@@ -138,9 +151,11 @@ const AdvancedSearch = dynamic(
 ## Code Changes
 
 ### File Modified
+
 - `front/src/app/page.tsx`
 
 ### Key Changes
+
 1. Replaced direct import with `dynamic()` import
 2. Wrapped modal in conditional render (`{isSearchOpen && ...}`)
 3. Redesigned from sidebar to centered modal
@@ -149,6 +164,7 @@ const AdvancedSearch = dynamic(
 6. Enhanced animations and transitions
 7. Increased modal width from `max-w-md` to `max-w-5xl`
 8. Removed compact mode for better UX
+9. Fixed z-index to appear above navbar (`z-[10000]` and `z-[10001]`)
 
 ## User Experience Improvements
 
@@ -207,6 +223,19 @@ const AdvancedSearch = dynamic(
    - Save form state when closing modal
    - Restore state when reopening
 
+## Issues Resolved
+
+### Z-Index Conflict with Navbar
+
+**Issue:** The navbar had a very high z-index (`z-9999`), causing the modal to appear behind it.
+
+**Solution:** Increased modal z-index values:
+
+- Backdrop overlay: `z-[10000]` (above navbar)
+- Modal container: `z-[10001]` (above backdrop)
+
+This ensures the modal always appears above all page elements including the navbar.
+
 ## Conclusion
 
-The optimization successfully eliminates performance bottlenecks while simultaneously improving the user interface. The lazy loading approach ensures the component and its API calls are deferred until actually needed, while the new modal design provides a much better user experience with more space and better visual appeal.
+The optimization successfully eliminates performance bottlenecks while simultaneously improving the user interface. The lazy loading approach ensures the component and its API calls are deferred until actually needed, while the new modal design provides a much better user experience with more space and better visual appeal. The z-index adjustment ensures the modal properly overlays all content including the navigation bar.
