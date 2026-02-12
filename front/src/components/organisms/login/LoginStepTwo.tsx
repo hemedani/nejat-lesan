@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 type TProps = {
   setStep: Dispatch<SetStateAction<number>>;
   phone: string;
-  onCodeEntered: (token: string, level: string, nationalNumber: string) => void;
+  onCodeEntered: (token: string, level: string, nationalNumber: string, settings?: any) => void;
 };
 
 const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
@@ -27,20 +27,27 @@ const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
         });
 
         if (userLoggedIn.success) {
-          const { user, token } = userLoggedIn.body
-          Cookies.set("user", JSON.stringify({
-            ...user,
-            level: user.level || "Normal",
-          }))
-          Cookies.set("national_number", user.national_number)
-          Cookies.set("token", token)
+          const { user, token } = userLoggedIn.body;
+          Cookies.set(
+            "user",
+            JSON.stringify({
+              ...user,
+              level: user.level || "Normal",
+            }),
+          );
+          Cookies.set("national_number", user.national_number);
+          Cookies.set("token", token);
 
-          onCodeEntered(userLoggedIn.body.token, userLoggedIn.body.user.level, userLoggedIn.body.user.national_number);
+          onCodeEntered(
+            userLoggedIn.body.token,
+            userLoggedIn.body.user.level,
+            userLoggedIn.body.user.national_number,
+            userLoggedIn.body.user.settings,
+          );
           router.replace("/");
         } else {
-          throw new Error(userLoggedIn.body)
+          throw new Error(userLoggedIn.body);
         }
-
       } catch (error) {
         console.error("Login error:", error);
         setLoading(false);
@@ -55,9 +62,7 @@ const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
     <form onSubmit={handleOtpSubmit}>
       <div className="mb-4">
         <div className="flex items-center justify-between py-6">
-          <p className="text-gray-500 text-sm text-right">
-            کدورود ارسال شده است
-          </p>
+          <p className="text-gray-500 text-sm text-right">کدورود ارسال شده است</p>
           <button
             type="button"
             onClick={() => setStep(1)}
@@ -79,8 +84,9 @@ const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
       </div>
       <button
         type="submit"
-        className={`w-full ${loading ? "bg-green-300" : "bg-green-500 hover:bg-green-600"
-          } text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
+        className={`w-full ${
+          loading ? "bg-green-300" : "bg-green-500 hover:bg-green-600"
+        } text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
         disabled={loading}
       >
         {loading ? "در حال پردازش..." : "تایید و وارد شوید"}
