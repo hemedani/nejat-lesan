@@ -148,7 +148,8 @@ The system is built on the LESEN framework with:
 ## 🛡️ Security Features
 
 - JWT-based authentication
-- Role-based access control with user levels (Ghost, Manager, Editor, Ordinary)
+- Role-based access control with user levels (Ghost, Manager, Editor, Enterprise)
+- Enterprise level includes additional settings field for limiting user access to provinces, cities, charts, and available filters
 - Input validation using schema definitions
 - National ID validation for Iranian users
 - Proper file upload handling and storage
@@ -442,31 +443,31 @@ Lesan is a web server and ODM (Object Document Model) framework designed to impl
 
 ```typescript
 const addEntityValidator = () => {
-  return object({
-    set: object({
-      ...pureFields,
-      relationField: objectIdValidation, // for single relations
-      // or relationField: array(objectIdValidation) for multiple
-    }),
-    get: coreApp.schemas.selectStruct("entity", 1),
-  });
+	return object({
+		set: object({
+			...pureFields,
+			relationField: objectIdValidation, // for single relations
+			// or relationField: array(objectIdValidation) for multiple
+		}),
+		get: coreApp.schemas.selectStruct("entity", 1),
+	});
 };
 
 const addEntity: ActFn = async (body) => {
-  const { relationField, ...otherFields } = body.details.set;
+	const { relationField, ...otherFields } = body.details.set;
 
-  return await model.insertOne({
-    doc: { ...otherFields },
-    projection: body.details.get,
-    relations: {
-      relationField: {
-        _ids: [new ObjectId(relationField)], // Always use arrays
-        relatedRelations: {
-          reverseRelation: true, // or false depending on requirements
-        },
-      },
-    },
-  });
+	return await model.insertOne({
+		doc: { ...otherFields },
+		projection: body.details.get,
+		relations: {
+			relationField: {
+				_ids: [new ObjectId(relationField)], // Always use arrays
+				relatedRelations: {
+					reverseRelation: true, // or false depending on requirements
+				},
+			},
+		},
+	});
 };
 ```
 
@@ -474,24 +475,24 @@ const addEntity: ActFn = async (body) => {
 
 ```typescript
 const getEntityValidator = () => {
-  return object({
-    set: object({
-      entityId: objectIdValidation, // Input parameters
-    }),
-    get: coreApp.schemas.selectStruct("entity", 1), // Projection structure
-  });
+	return object({
+		set: object({
+			entityId: objectIdValidation, // Input parameters
+		}),
+		get: coreApp.schemas.selectStruct("entity", 1), // Projection structure
+	});
 };
 
 const getEntity: ActFn = async (body) => {
-  const {
-    set: { entityId },
-    get,
-  } = body.details;
+	const {
+		set: { entityId },
+		get,
+	} = body.details;
 
-  return await model.findOne({
-    filters: { _id: new ObjectId(entityId) }, // Match/filters parameter
-    projection: get, // Get/projection parameter
-  });
+	return await model.findOne({
+		filters: { _id: new ObjectId(entityId) }, // Match/filters parameter
+		projection: get, // Get/projection parameter
+	});
 };
 ```
 
@@ -499,33 +500,33 @@ const getEntity: ActFn = async (body) => {
 
 ```typescript
 const getEntitiesValidator = () => {
-  return object({
-    set: object({
-      page: number().optional().default(1), // Pagination parameters
-      limit: number().optional().default(50),
-      skip: number().optional(),
-      // Additional filter parameters as needed
-    }),
-    get: coreApp.schemas.selectStruct("entity", 1), // Projection
-  });
+	return object({
+		set: object({
+			page: number().optional().default(1), // Pagination parameters
+			limit: number().optional().default(50),
+			skip: number().optional(),
+			// Additional filter parameters as needed
+		}),
+		get: coreApp.schemas.selectStruct("entity", 1), // Projection
+	});
 };
 
 const getEntities: ActFn = async (body) => {
-  let {
-    set: { page, limit, skip },
-    get,
-  } = body.details;
+	let {
+		set: { page, limit, skip },
+		get,
+	} = body.details;
 
-  skip = skip || limit * (page - 1);
+	skip = skip || limit * (page - 1);
 
-  return await model
-    .find({
-      filters: {}, // Match/filters parameter
-      projection: get, // Get/projection parameter
-    })
-    .skip(skip) // Skip parameter
-    .limit(limit) // Limit parameter
-    .toArray();
+	return await model
+		.find({
+			filters: {}, // Match/filters parameter
+			projection: get, // Get/projection parameter
+		})
+		.skip(skip) // Skip parameter
+		.limit(limit) // Limit parameter
+		.toArray();
 };
 ```
 

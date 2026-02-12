@@ -165,7 +165,8 @@ pnpm start
 
 ### Authentication System
 
-- Role-based access control (Ghost, Manager, Editor, Normal)
+- Role-based access control (Ghost, Manager, Editor, Enterprise, Normal)
+- Enterprise users have specific settings that limit their access to certain data
 - Cookie-based authentication
 - Context provider for global auth state
 
@@ -233,6 +234,10 @@ The Dockerfile includes three stages:
 - Modify auth context in `src/context/AuthContext.tsx`
 - Extend user roles and permissions
 - Customize login flow in `src/app/login`
+- Enterprise users have specific settings that limit their access to certain data:
+  - Cities: Array of city objects that the enterprise user can access
+  - Provinces: Array of province objects that the enterprise user can access
+  - Available Charts: Granular permissions for different analytics endpoints
 
 ## 🛡️ Security & Best Practices
 
@@ -414,6 +419,14 @@ Note: When handling API responses, the backend typically returns the actual data
    - Import and use the exact backend schema types (e.g. `accidentSchema`, `userSchema`, `citySchema`) to ensure consistency with the backend
    - This prevents synchronization issues and ensures type safety between frontend and backend
    - Example: Use `import { accidentSchema } from "@/types/declarations/selectInp";` and then `type Accident = accidentSchema;`
+
+6. **Enterprise User Settings**:
+   - Enterprise users have a `settings` field that limits their access to specific data
+   - The settings structure includes:
+     - `cities`: Array of city objects (with `_id`, `name`, and `center_location`) that the enterprise user can access
+     - `provinces`: Array of province objects (with `_id`, `name`, and `center_location`) that the enterprise user can access
+     - `availableCharts`: Object containing granular permissions for different analytics endpoints
+   - These settings are stored in the authentication context and can be accessed via `useAuth().enterpriseSettings`
 
 ## Development Guidelines
 

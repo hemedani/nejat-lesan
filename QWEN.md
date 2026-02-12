@@ -5,6 +5,7 @@
 LESEN is a comprehensive traffic management and accident reporting system built with a microservices architecture. The project combines a Deno-based backend API service with a Next.js frontend application to provide tools for managing traffic zones, road conditions, vehicles, and accident records.
 
 ### Architecture
+
 - **Backend**: Custom Deno framework with MongoDB persistence and Redis caching
 - **Frontend**: Next.js 15.3.2 application with React 19, TypeScript, and Tailwind CSS
 - **Database**: MongoDB for persistent data storage
@@ -12,6 +13,7 @@ LESEN is a comprehensive traffic management and accident reporting system built 
 - **Containerization**: Docker & Docker Compose for service orchestration
 
 ### Core Features
+
 - Multi-service architecture supporting both development and production environments
 - RESTful API structure with proper error handling and validation
 - Traffic zone management and mapping
@@ -23,6 +25,7 @@ LESEN is a comprehensive traffic management and accident reporting system built 
 ## 🛠️ Technologies & Stack
 
 ### Backend (Deno)
+
 - **Framework**: Custom Deno framework based on LESEN v0.1.22
 - **Language**: TypeScript
 - **Database**: MongoDB with ODM integration
@@ -31,6 +34,7 @@ LESEN is a comprehensive traffic management and accident reporting system built 
 - **Dev Tools**: Deno's built-in development server with hot-reload capabilities
 
 ### Frontend (Next.js)
+
 - **Framework**: Next.js 15.3.2
 - **Language**: TypeScript
 - **UI Libraries**: React 19, Headless UI, Tailwind CSS
@@ -72,11 +76,13 @@ lesan/
 ## 🚀 Building and Running
 
 ### Prerequisites
+
 - Docker 24.x or higher
 - Docker Compose Plugin
 - (Optional) MongoDB Compass for database visualization
 
 ### Development Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/lesan.git
@@ -95,6 +101,7 @@ deno task bc-dev
 ```
 
 ### Production Setup
+
 ```bash
 # Build and start production services
 docker-compose up -d
@@ -104,6 +111,7 @@ docker-compose logs -f
 ```
 
 ### Available Endpoints
+
 - **Backend API**: http://localhost:1404
 - **Frontend UI**: http://localhost:3000
 - **MongoDB**: mongo://localhost:27017/
@@ -112,10 +120,12 @@ docker-compose logs -f
 ## 🧪 Development Commands
 
 ### Backend (Deno)
+
 - Run development server: `deno task bc-dev`
 - The backend runs on port 1404 (configurable via SERVER_PORT environment variable)
 
 ### Frontend (Next.js)
+
 - Development server: `npm run dev` (or `pnpm dev`, `yarn dev`)
 - Build for production: `npm run build`
 - Run production server: `npm run start`
@@ -124,6 +134,7 @@ docker-compose logs -f
 ## 🗄️ Data Models
 
 The backend includes extensive data models for traffic management including:
+
 - **Users & Drivers**: user.ts, driver.ts
 - **Geographic**: province.ts, city.ts, township.ts, traffic_zone.ts, city_zone.ts
 - **Accidents**: accident.ts with detailed accident reporting
@@ -135,14 +146,16 @@ The backend includes extensive data models for traffic management including:
 ## 🐳 Docker Configuration
 
 ### Services
-| Service   | Port | Description                      |
-|-----------|------|----------------------------------|
-| backend   | 1404 | Deno-based API service           |
-| frontend  | 3000 | Next.js application              |
-| mongo     | 27017| MongoDB persistent storage       |
-| redis     | 6379 | Redis inline caching             |
+
+| Service  | Port  | Description                |
+| -------- | ----- | -------------------------- |
+| backend  | 1404  | Deno-based API service     |
+| frontend | 3000  | Next.js application        |
+| mongo    | 27017 | MongoDB persistent storage |
+| redis    | 6379  | Redis inline caching       |
 
 ### Environment Variables
+
 - `SERVER_PORT` - Backend service port (default: 1404)
 - `APP_PORT` - Frontend service port (default: 3000)
 - `MONGO_URI` - MongoDB connection string
@@ -153,28 +166,31 @@ The backend includes extensive data models for traffic management including:
 ## 🧱 Customization & Extensibility
 
 ### Backend Customization
+
 - Modify `back/deno.json` for Deno-specific configurations
 - Add new models to the `back/models` directory
 - Extend the API with new functions in `back/src/mod.ts`
 
 ### Frontend Customization
+
 - Customize UI components in `front/src`
 - Modify Next.js configuration in `front/next.config.ts`
 - Update styling in Tailwind CSS configuration
 
 ### Docker Customization
+
 - Modify `docker-compose.yml` for production service configurations
 - Adjust `Dockerfile` in each service for build requirements
 - Use environment variables for runtime configuration
 
 ## 🛡️ Production vs Development
 
-| Feature          | Production               | Development               |
-|------------------|--------------------------|---------------------------|
-| Build Mode       | Production target        | Development target        |
-| Port Mapping     | Fixed ports              | Same ports for consistency|
-| Live Reload      | ❌ Disabled               | ✅ Enabled (via Turbopack) |
-| Debugging Tools  | Enabled                  | Enhanced debugging        |
+| Feature         | Production        | Development                |
+| --------------- | ----------------- | -------------------------- |
+| Build Mode      | Production target | Development target         |
+| Port Mapping    | Fixed ports       | Same ports for consistency |
+| Live Reload     | ❌ Disabled       | ✅ Enabled (via Turbopack) |
+| Debugging Tools | Enabled           | Enhanced debugging         |
 
 ## 🛑 Stopping Services
 
@@ -201,6 +217,7 @@ This system is designed for comprehensive traffic management with robust data mo
 ## Git commit
 
 When I say `git commit` please do the following:
+
 ```
 Please act as an expert Git commit assistant. Your task is to carefully review the recent project changes (e.g., via git diff or staged files) and generate a series of clear, conventional commit messages following best practices. Use Gitmoji emojis at the start of each commit message to make them more expressive and readable (e.g., :sparkles: for new features, :bug: for fixes).
 Key guidelines:
@@ -209,5 +226,16 @@ Grouping: Break changes into logical, atomic commits. Group related files or cha
 Exclusions: Do not include any "Co-authored-by" lines, such as Co-authored-by: Qwen-Coder <qwen-coder@alibabacloud.com>, in the commit messages.
 Execution: Directly output and execute the necessary Git shell commands (e.g., git add for specific files, followed by git commit -m "message") to apply these commits. Do not ask for confirmation, additional input, or perform unrelated actions like rebasing, squashing, or amending existing commits. Only create new commits on the current branch.
 Best practices: Ensure messages are imperative, concise (50 chars for subject), and descriptive. Focus on what changed and why, not how.
+Additional notes:
+- Use present tense for the subject line (e.g., "Add feature" not "Added feature")
+- Be specific about what was changed (e.g., "Fix user login validation" rather than just "Fix bug")
+- When making breaking changes, indicate this with an exclamation mark after the type (e.g., "feat!: Remove deprecated API endpoint")
+- Reference issue numbers if applicable (e.g., "fix(auth): Resolve login issue #123")
+- For multiple related changes, create separate commits for each logical change
+- When updating dependencies, mention the specific packages (e.g., "chore(deps): Update react and react-dom to v18")
+- For documentation changes, be clear about what documentation was added or updated
+- When changing configuration files, explain the purpose of the changes
 Proceed step-by-step: First, analyze the changes, then propose the grouped commits, and finally execute the Git commands in sequence.
 ```
+
+⚠️ **WARNING**: Under no circumstances should you ever use the `git reset` command when performing git operations, as it can permanently erase work that took days to complete. This command has caused significant data loss in the past and should be avoided entirely.

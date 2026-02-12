@@ -20,7 +20,7 @@ export type userSchema = {
   summary?: string;
   national_number: string;
   address: string;
-  level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+  level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
   is_verified: boolean;
   settings: {
     cities: {
@@ -1983,7 +1983,7 @@ export type fileSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -2023,7 +2023,7 @@ export type provinceSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
   cities: {
@@ -2212,7 +2212,7 @@ export type citySchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
   province?: {
@@ -2387,7 +2387,7 @@ export type townshipSchema = {
     summary?: string;
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
     settings: {
       cities: {
@@ -4462,7 +4462,7 @@ export type traffic_zoneSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
   accidents: {
@@ -4619,7 +4619,7 @@ export type city_zoneSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
   city?: {
@@ -4781,7 +4781,7 @@ export type roadSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
   province?: {
@@ -4814,7 +4814,7 @@ export type typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -4841,7 +4841,7 @@ export type area_usageSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -4868,7 +4868,7 @@ export type positionSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -4895,7 +4895,7 @@ export type ruling_typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -4922,7 +4922,7 @@ export type air_statusSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -4949,7 +4949,7 @@ export type light_statusSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -4976,7 +4976,7 @@ export type road_defectSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5003,7 +5003,7 @@ export type human_reasonSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5030,7 +5030,7 @@ export type collision_typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5057,7 +5057,7 @@ export type road_situationSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5084,7 +5084,7 @@ export type road_repair_typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5111,7 +5111,7 @@ export type shoulder_statusSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5138,7 +5138,7 @@ export type vehicle_reasonSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5165,7 +5165,7 @@ export type equipment_damageSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5192,7 +5192,7 @@ export type road_surface_conditionSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5471,7 +5471,7 @@ export type body_insurance_coSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5498,7 +5498,7 @@ export type colorSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5525,7 +5525,7 @@ export type fault_statusSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5552,7 +5552,7 @@ export type insurance_coSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5579,7 +5579,7 @@ export type licence_typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5606,7 +5606,7 @@ export type max_damage_sectionSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5633,7 +5633,7 @@ export type motion_directionSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5660,7 +5660,7 @@ export type plaque_typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5687,7 +5687,7 @@ export type plaque_usageSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5714,7 +5714,7 @@ export type systemSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5741,7 +5741,7 @@ export type system_typeSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -5773,7 +5773,7 @@ export type eventSchema = {
     gender: ("Male" | "Female");
     national_number: string;
     address: string;
-    level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+    level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
     is_verified: boolean;
   };
 };
@@ -13853,7 +13853,7 @@ export type ReqType = {
           summary?: string;
           national_number: string;
           address: string;
-          level: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+          level: ("Ghost" | "Manager" | "Editor" | "Enterprise");
           is_verified: boolean;
           nationalCard?: string;
           avatar?: string;
@@ -16184,7 +16184,7 @@ export type ReqType = {
 
       getUsers: {
         set: {
-          levels?: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+          levels?: ("Ghost" | "Manager" | "Editor" | "Enterprise");
           page: number;
           limit: number;
         };
@@ -16279,7 +16279,7 @@ export type ReqType = {
 
       countUsers: {
         set: {
-          levels?: ("Ghost" | "Manager" | "Editor" | "Ordinary" | "Enterprise");
+          levels?: ("Ghost" | "Manager" | "Editor" | "Enterprise");
         };
         get: {
           qty: (0 | 1);
