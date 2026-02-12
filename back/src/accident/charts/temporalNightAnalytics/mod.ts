@@ -6,7 +6,7 @@
  * Registers the "temporalNightAnalytics" act. This endpoint provides time-series
  * data for the "Temporal Comparison of Accidents at Night" chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { temporalNightAnalyticsFn } from "./temporalNightAnalytics.fn.ts";
 import { temporalNightAnalyticsValidator } from "./temporalNightAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const temporalNightAnalyticsSetup = () =>
 		schema: "accident",
 		fn: temporalNightAnalyticsFn,
 		actName: "temporalNightAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("temporalNightAnalytics"),
 		],
 		validator: temporalNightAnalyticsValidator(),
 	});

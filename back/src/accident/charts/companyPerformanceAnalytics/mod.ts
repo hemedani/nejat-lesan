@@ -6,7 +6,7 @@
  * Registers the "companyPerformanceAnalytics" act. This endpoint provides all
  * the complex aggregated data needed for the bubble chart comparing car manufacturers.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { companyPerformanceAnalyticsFn } from "./companyPerformanceAnalytics.fn.ts";
 import { companyPerformanceAnalyticsValidator } from "./companyPerformanceAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const companyPerformanceAnalyticsSetup = () =>
 		schema: "accident",
 		fn: companyPerformanceAnalyticsFn,
 		actName: "companyPerformanceAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("companyPerformanceAnalytics"),
 		],
 		validator: companyPerformanceAnalyticsValidator(),
 	});

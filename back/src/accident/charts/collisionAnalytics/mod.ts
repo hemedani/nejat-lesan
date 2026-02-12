@@ -7,7 +7,7 @@
  * necessary aggregated data for the complex "Collision Type" dashboard, which
  * includes multiple doughnut and bar charts.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { collisionAnalyticsFn } from "./collisionAnalytics.fn.ts";
 import { collisionAnalyticsValidator } from "./collisionAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -17,12 +17,10 @@ export const collisionAnalyticsSetup = () =>
 		schema: "accident",
 		fn: collisionAnalyticsFn,
 		actName: "collisionAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("collisionAnalytics"),
 		],
 		validator: collisionAnalyticsValidator(),
 	});

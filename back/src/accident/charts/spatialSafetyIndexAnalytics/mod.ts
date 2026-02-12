@@ -6,7 +6,7 @@
  * Registers the "spatialSafetyIndexAnalytics" act. This endpoint provides data for
  * the "Spatial Comparison of Regional Safety Index" dashboard.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { spatialSafetyIndexAnalyticsFn } from "./spatialSafetyIndexAnalytics.fn.ts";
 import { spatialSafetyIndexAnalyticsValidator } from "./spatialSafetyIndexAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const spatialSafetyIndexAnalyticsSetup = () =>
 		schema: "accident",
 		fn: spatialSafetyIndexAnalyticsFn,
 		actName: "spatialSafetyIndexAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("spatialSafetyIndexAnalytics"),
 		],
 		validator: spatialSafetyIndexAnalyticsValidator(),
 	});

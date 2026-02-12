@@ -6,7 +6,7 @@
  * Registers the "eventCollisionAnalytics" act. This endpoint provides data for
  * comparing the share of collision types during a specific event vs. other times.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { eventCollisionAnalyticsFn } from "./eventCollisionAnalytics.fn.ts";
 import { eventCollisionAnalyticsValidator } from "./eventCollisionAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const eventCollisionAnalyticsSetup = () =>
 		schema: "accident",
 		fn: eventCollisionAnalyticsFn,
 		actName: "eventCollisionAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("eventCollisionAnalytics"),
 		],
 		validator: eventCollisionAnalyticsValidator(),
 	});

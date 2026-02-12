@@ -6,7 +6,7 @@
  * Registers the new "monthlyHolidayAnalytics" act. This endpoint provides data
  * for the "Count of accidents on holiday/non-holiday days by month" chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { monthlyHolidayAnalyticsFn } from "./monthlyHolidayAnalytics.fn.ts";
 import { monthlyHolidayAnalyticsValidator } from "./monthlyHolidayAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const monthlyHolidayAnalyticsSetup = () =>
 		schema: "accident",
 		fn: monthlyHolidayAnalyticsFn,
 		actName: "monthlyHolidayAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("monthlyHolidayAnalytics"),
 		],
 		validator: monthlyHolidayAnalyticsValidator(),
 	});

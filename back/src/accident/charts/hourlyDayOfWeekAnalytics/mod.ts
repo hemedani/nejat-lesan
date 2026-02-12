@@ -6,7 +6,7 @@
  * Registers the new "hourlyDayOfWeekAnalytics" act. This endpoint provides
  * data for the "Count of accidents by hour and day of the week" heatmap chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { hourlyDayOfWeekAnalyticsFn } from "./hourlyDayOfWeekAnalytics.fn.ts";
 import { hourlyDayOfWeekAnalyticsValidator } from "./hourlyDayOfWeekAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const hourlyDayOfWeekAnalyticsSetup = () =>
 		schema: "accident",
 		fn: hourlyDayOfWeekAnalyticsFn,
 		actName: "hourlyDayOfWeekAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("hourlyDayOfWeekAnalytics"),
 		],
 		validator: hourlyDayOfWeekAnalyticsValidator(),
 	});

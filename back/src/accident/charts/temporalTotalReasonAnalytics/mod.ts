@@ -6,7 +6,7 @@
  * Registers the "temporalTotalReasonAnalytics" act. This endpoint provides
  * time-series data for the top 10 ultimate causes of accidents.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { temporalTotalReasonAnalyticsFn } from "./temporalTotalReasonAnalytics.fn.ts";
 import { temporalTotalReasonAnalyticsValidator } from "./temporalTotalReasonAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const temporalTotalReasonAnalyticsSetup = () =>
 		schema: "accident",
 		fn: temporalTotalReasonAnalyticsFn,
 		actName: "temporalTotalReasonAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("temporalTotalReasonAnalytics"),
 		],
 		validator: temporalTotalReasonAnalyticsValidator(),
 	});

@@ -7,7 +7,7 @@
  * This act is specifically designed to provide aggregated data for the
  * "Effective Road Defects" chart on the dashboard.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { roadDefectsAnalyticsFnWithCount } from "./roadDefectsAnalyticsFnWithCount.fn.ts";
 import { roadDefectsAnalyticsWithCountValidator } from "./roadDefectsAnalyticsFnWithCount.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -17,12 +17,10 @@ export const roadDefectsAnalyticsWithCountSetup = () =>
 		schema: "accident",
 		fn: roadDefectsAnalyticsFnWithCount,
 		actName: "roadDefectsAnalyticsWithCount", // New, specific act name
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"], // Access control remains the same
-			}),
+			createChartAuthMiddleware("roadDefectsAnalyticsWithCount"),
 		],
 		validator: roadDefectsAnalyticsWithCountValidator(),
 	});

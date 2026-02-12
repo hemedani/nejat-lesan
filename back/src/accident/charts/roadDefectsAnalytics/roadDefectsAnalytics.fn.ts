@@ -19,7 +19,9 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	if (set.dateOfAccidentFrom || set.dateOfAccidentTo) {
 		matchFilter.date_of_accident = {};
 		if (set.dateOfAccidentFrom) {
-			matchFilter.date_of_accident.$gte = new Date(set.dateOfAccidentFrom);
+			matchFilter.date_of_accident.$gte = new Date(
+				set.dateOfAccidentFrom,
+			);
 		}
 		if (set.dateOfAccidentTo) {
 			matchFilter.date_of_accident.$lte = new Date(set.dateOfAccidentTo);
@@ -32,8 +34,12 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	} else {
 		if (set.deadCountMin !== undefined || set.deadCountMax !== undefined) {
 			matchFilter.dead_count = {};
-			if (set.deadCountMin !== undefined) matchFilter.dead_count.$gte = set.deadCountMin;
-			if (set.deadCountMax !== undefined) matchFilter.dead_count.$lte = set.deadCountMax;
+			if (set.deadCountMin !== undefined) {
+				matchFilter.dead_count.$gte = set.deadCountMin;
+			}
+			if (set.deadCountMax !== undefined) {
+				matchFilter.dead_count.$lte = set.deadCountMax;
+			}
 		}
 	}
 
@@ -41,10 +47,17 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	if (set.injuredCount !== undefined) {
 		matchFilter.injured_count = set.injuredCount;
 	} else {
-		if (set.injuredCountMin !== undefined || set.injuredCountMax !== undefined) {
+		if (
+			set.injuredCountMin !== undefined ||
+			set.injuredCountMax !== undefined
+		) {
 			matchFilter.injured_count = {};
-			if (set.injuredCountMin !== undefined) matchFilter.injured_count.$gte = set.injuredCountMin;
-			if (set.injuredCountMax !== undefined) matchFilter.injured_count.$lte = set.injuredCountMax;
+			if (set.injuredCountMin !== undefined) {
+				matchFilter.injured_count.$gte = set.injuredCountMin;
+			}
+			if (set.injuredCountMax !== undefined) {
+				matchFilter.injured_count.$lte = set.injuredCountMax;
+			}
 		}
 	}
 
@@ -113,7 +126,9 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 
 	// --- Attachments ---
 	if (set.attachmentName) {
-		matchFilter["attachments.name"] = { $regex: new RegExp(set.attachmentName, "i") };
+		matchFilter["attachments.name"] = {
+			$regex: new RegExp(set.attachmentName, "i"),
+		};
 	}
 	if (set.attachmentType) {
 		matchFilter["attachments.type"] = set.attachmentType;
@@ -142,44 +157,67 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	}
 
 	// Exact string matches
-	if (set.vehicleInsuranceNo) vehicleElemMatch["insurance_no"] = set.vehicleInsuranceNo;
-	if (set.vehiclePrintNumber) vehicleElemMatch["print_number"] = set.vehiclePrintNumber;
-	if (set.vehiclePlaqueSerialElement) vehicleElemMatch["plaque_serial_element"] = set.vehiclePlaqueSerialElement;
-	if (set.vehicleDamageSectionOther) vehicleElemMatch["damage_section_other"] = set.vehicleDamageSectionOther;
+	if (set.vehicleInsuranceNo) {
+		vehicleElemMatch["insurance_no"] = set.vehicleInsuranceNo;
+	}
+	if (set.vehiclePrintNumber) {
+		vehicleElemMatch["print_number"] = set.vehiclePrintNumber;
+	}
+	if (set.vehiclePlaqueSerialElement) {
+		vehicleElemMatch["plaque_serial_element"] =
+			set.vehiclePlaqueSerialElement;
+	}
+	if (set.vehicleDamageSectionOther) {
+		vehicleElemMatch["damage_section_other"] =
+			set.vehicleDamageSectionOther;
+	}
 
 	// Insurance date ranges
 	if (set.vehicleInsuranceDateFrom || set.vehicleInsuranceDateTo) {
 		vehicleElemMatch.insurance_date = {};
 		if (set.vehicleInsuranceDateFrom) {
-			vehicleElemMatch.insurance_date.$gte = new Date(set.vehicleInsuranceDateFrom);
+			vehicleElemMatch.insurance_date.$gte = new Date(
+				set.vehicleInsuranceDateFrom,
+			);
 		}
 		if (set.vehicleInsuranceDateTo) {
-			vehicleElemMatch.insurance_date.$lte = new Date(set.vehicleInsuranceDateTo);
+			vehicleElemMatch.insurance_date.$lte = new Date(
+				set.vehicleInsuranceDateTo,
+			);
 		}
 	}
 	if (set.vehicleBodyInsuranceDateFrom || set.vehicleBodyInsuranceDateTo) {
 		vehicleElemMatch.body_insurance_date = {};
 		if (set.vehicleBodyInsuranceDateFrom) {
-			vehicleElemMatch.body_insurance_date.$gte = new Date(set.vehicleBodyInsuranceDateFrom);
+			vehicleElemMatch.body_insurance_date.$gte = new Date(
+				set.vehicleBodyInsuranceDateFrom,
+			);
 		}
 		if (set.vehicleBodyInsuranceDateTo) {
-			vehicleElemMatch.body_insurance_date.$lte = new Date(set.vehicleBodyInsuranceDateTo);
+			vehicleElemMatch.body_insurance_date.$lte = new Date(
+				set.vehicleBodyInsuranceDateTo,
+			);
 		}
 	}
 
 	// Numeric range: insurance warranty limit
 	if (set.vehicleInsuranceWarrantyLimit !== undefined) {
-		vehicleElemMatch.insurance_warranty_limit = set.vehicleInsuranceWarrantyLimit;
+		vehicleElemMatch.insurance_warranty_limit =
+			set.vehicleInsuranceWarrantyLimit;
 	} else {
 		if (
 			set.vehicleInsuranceWarrantyLimitMin !== undefined ||
 			set.vehicleInsuranceWarrantyLimitMax !== undefined
 		) {
 			vehicleElemMatch.insurance_warranty_limit = {};
-			if (set.vehicleInsuranceWarrantyLimitMin !== undefined)
-				vehicleElemMatch.insurance_warranty_limit.$gte = set.vehicleInsuranceWarrantyLimitMin;
-			if (set.vehicleInsuranceWarrantyLimitMax !== undefined)
-				vehicleElemMatch.insurance_warranty_limit.$lte = set.vehicleInsuranceWarrantyLimitMax;
+			if (set.vehicleInsuranceWarrantyLimitMin !== undefined) {
+				vehicleElemMatch.insurance_warranty_limit.$gte =
+					set.vehicleInsuranceWarrantyLimitMin;
+			}
+			if (set.vehicleInsuranceWarrantyLimitMax !== undefined) {
+				vehicleElemMatch.insurance_warranty_limit.$lte =
+					set.vehicleInsuranceWarrantyLimitMax;
+			}
 		}
 	}
 
@@ -198,13 +236,21 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	}
 
 	if (set.driverFirstName) {
-		vehicleElemMatch["driver.first_name"] = { $regex: new RegExp(set.driverFirstName, "i") };
+		vehicleElemMatch["driver.first_name"] = {
+			$regex: new RegExp(set.driverFirstName, "i"),
+		};
 	}
 	if (set.driverLastName) {
-		vehicleElemMatch["driver.last_name"] = { $regex: new RegExp(set.driverLastName, "i") };
+		vehicleElemMatch["driver.last_name"] = {
+			$regex: new RegExp(set.driverLastName, "i"),
+		};
 	}
-	if (set.driverNationalCode) vehicleElemMatch["driver.national_code"] = set.driverNationalCode;
-	if (set.driverLicenceNumber) vehicleElemMatch["driver.licence_number"] = set.driverLicenceNumber;
+	if (set.driverNationalCode) {
+		vehicleElemMatch["driver.national_code"] = set.driverNationalCode;
+	}
+	if (set.driverLicenceNumber) {
+		vehicleElemMatch["driver.licence_number"] = set.driverLicenceNumber;
+	}
 
 	// Passenger in Vehicle
 	const passengerFields = [
@@ -221,12 +267,18 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	}
 
 	if (set.passengerFirstName) {
-		vehicleElemMatch["passenger.first_name"] = { $regex: new RegExp(set.passengerFirstName, "i") };
+		vehicleElemMatch["passenger.first_name"] = {
+			$regex: new RegExp(set.passengerFirstName, "i"),
+		};
 	}
 	if (set.passengerLastName) {
-		vehicleElemMatch["passenger.last_name"] = { $regex: new RegExp(set.passengerLastName, "i") };
+		vehicleElemMatch["passenger.last_name"] = {
+			$regex: new RegExp(set.passengerLastName, "i"),
+		};
 	}
-	if (set.passengerNationalCode) vehicleElemMatch["passenger.national_code"] = set.passengerNationalCode;
+	if (set.passengerNationalCode) {
+		vehicleElemMatch["passenger.national_code"] = set.passengerNationalCode;
+	}
 
 	// Pedestrian DTOs (handled via separate array, not nested in vehicle)
 	const pedestrianElemMatch: Document = {};
@@ -245,12 +297,18 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	}
 
 	if (set.pedestrianFirstName) {
-		pedestrianElemMatch.first_name = { $regex: new RegExp(set.pedestrianFirstName, "i") };
+		pedestrianElemMatch.first_name = {
+			$regex: new RegExp(set.pedestrianFirstName, "i"),
+		};
 	}
 	if (set.pedestrianLastName) {
-		pedestrianElemMatch.last_name = { $regex: new RegExp(set.pedestrianLastName, "i") };
+		pedestrianElemMatch.last_name = {
+			$regex: new RegExp(set.pedestrianLastName, "i"),
+		};
 	}
-	if (set.pedestrianNationalCode) pedestrianElemMatch.national_code = set.pedestrianNationalCode;
+	if (set.pedestrianNationalCode) {
+		pedestrianElemMatch.national_code = set.pedestrianNationalCode;
+	}
 
 	// Apply $elemMatch if filters exist
 	if (Object.keys(vehicleElemMatch).length > 0) {
@@ -277,34 +335,39 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 		],
 	};
 
-	const [withDefectCount, withoutDefectCount, barChartData] = await Promise.all([
-		accident.countDocument({ filter: withDefectQuery }),
-		accident.countDocument({ filter: withoutDefectQuery }),
-		accident
-			.aggregation({
-				pipeline: [
-					{ $match: matchFilter },
-					{ $match: { "road_defects.name": { $nin: ["ندارد", null] } } },
-					{ $unwind: "$road_defects" },
-					{
-						$group: {
-							_id: "$road_defects.name",
-							count: { $sum: 1 },
+	const [withDefectCount, withoutDefectCount, barChartData] = await Promise
+		.all([
+			accident.countDocument({ filter: withDefectQuery }),
+			accident.countDocument({ filter: withoutDefectQuery }),
+			accident
+				.aggregation({
+					pipeline: [
+						{ $match: matchFilter },
+						{
+							$match: {
+								"road_defects.name": { $nin: ["ندارد", null] },
+							},
 						},
-					},
-					{ $sort: { count: -1 } },
-					{ $limit: 10 },
-					{
-						$project: {
-							_id: 0,
-							name: "$_id",
-							count: "$count",
+						{ $unwind: "$road_defects" },
+						{
+							$group: {
+								_id: "$road_defects.name",
+								count: { $sum: 1 },
+							},
 						},
-					},
-				],
-			})
-			.toArray(),
-	]);
+						{ $sort: { count: -1 } },
+						{ $limit: 10 },
+						{
+							$project: {
+								_id: 0,
+								name: "$_id",
+								count: "$count",
+							},
+						},
+					],
+				})
+				.toArray(),
+		]);
 
 	// =========================================================================
 	// STEP 3: Format and Return

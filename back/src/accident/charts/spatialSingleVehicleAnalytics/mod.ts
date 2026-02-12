@@ -6,7 +6,7 @@
  * Registers the "spatialSingleVehicleAnalytics" act. This endpoint provides data for
  * the "Spatial Comparison of Single-Vehicle Accidents" dashboard.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { spatialSingleVehicleAnalyticsFn } from "./spatialSingleVehicleAnalytics.fn.ts";
 import { spatialSingleVehicleAnalyticsValidator } from "./spatialSingleVehicleAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const spatialSingleVehicleAnalyticsSetup = () =>
 		schema: "accident",
 		fn: spatialSingleVehicleAnalyticsFn,
 		actName: "spatialSingleVehicleAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("spatialSingleVehicleAnalytics"),
 		],
 		validator: spatialSingleVehicleAnalyticsValidator(),
 	});

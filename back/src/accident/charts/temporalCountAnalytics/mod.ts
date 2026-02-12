@@ -6,7 +6,7 @@
  * Registers the "temporalCountAnalytics" act. This endpoint provides time-series
  * data for the "Temporal Comparison of Accident Counts" chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { temporalCountAnalyticsFn } from "./temporalCountAnalytics.fn.ts";
 import { temporalCountAnalyticsValidator } from "./temporalCountAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const temporalCountAnalyticsSetup = () =>
 		schema: "accident",
 		fn: temporalCountAnalyticsFn,
 		actName: "temporalCountAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("temporalCountAnalytics"),
 		],
 		validator: temporalCountAnalyticsValidator(),
 	});

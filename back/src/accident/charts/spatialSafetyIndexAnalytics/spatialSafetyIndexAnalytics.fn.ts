@@ -40,7 +40,7 @@ export const spatialSafetyIndexAnalyticsFn: ActFn = async (body) => {
 	}
 
 	const baseFilter: Document = {
-	date_of_accident: { $gte: startDate, $lte: endDate },
+		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 
 	// =========================================================================

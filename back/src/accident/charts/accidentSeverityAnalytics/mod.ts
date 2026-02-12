@@ -6,7 +6,7 @@
  * Registers the "accidentSeverityAnalytics" act. This endpoint provides counts
  * for each accident severity type (Fatal, Injury, Damage) to power a doughnut chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { accidentSeverityAnalyticsFn } from "./accidentSeverityAnalytics.fn.ts";
 import { accidentSeverityAnalyticsValidator } from "./accidentSeverityAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const accidentSeverityAnalyticsSetup = () =>
 		schema: "accident",
 		fn: accidentSeverityAnalyticsFn,
 		actName: "accidentSeverityAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("accidentSeverityAnalytics"),
 		],
 		validator: accidentSeverityAnalyticsValidator(),
 	});

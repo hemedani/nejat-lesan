@@ -6,7 +6,7 @@
  * Registers the "vehicleReasonAnalytics" act. This endpoint provides data for
  * the two-part "Distribution of Effective Vehicle Factor in Severe Accidents" chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { vehicleReasonAnalyticsFn } from "./vehicleReasonAnalytics.fn.ts";
 import { vehicleReasonAnalyticsValidator } from "./vehicleReasonAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const vehicleReasonAnalyticsSetup = () =>
 		schema: "accident",
 		fn: vehicleReasonAnalyticsFn,
 		actName: "vehicleReasonAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("vehicleReasonAnalytics"),
 		],
 		validator: vehicleReasonAnalyticsValidator(),
 	});

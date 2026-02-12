@@ -6,7 +6,7 @@
  * Registers the "totalReasonAnalytics" act. This endpoint provides data for
  * the "Distribution of Ultimate Cause in Severe Accidents" treemap chart.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { totalReasonAnalyticsFn } from "./totalReasonAnalytics.fn.ts";
 import { totalReasonAnalyticsValidator } from "./totalReasonAnalytics.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -16,12 +16,10 @@ export const totalReasonAnalyticsSetup = () =>
 		schema: "accident",
 		fn: totalReasonAnalyticsFn,
 		actName: "totalReasonAnalytics",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager"],
-			}),
+			createChartAuthMiddleware("totalReasonAnalytics"),
 		],
 		validator: totalReasonAnalyticsValidator(),
 	});
