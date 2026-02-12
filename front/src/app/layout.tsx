@@ -18,22 +18,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // We still need to get the user on the server for initial state
+  // Get the user data on the server for initial state
   const me = await getMe();
   const isAuthenticated = me.success;
-  const userLevel = me.success ? me.body.level : null;
-  const enterpriseSettings = me.success ? me.body.settings : undefined;
+  const userData = me.success ? me.body : null;
 
   return (
     <html lang="fa" dir="rtl">
       <body>
         <MapComparisonProvider>
           <AuthProvider>
-            <AuthInitializer
-              isAuthenticated={isAuthenticated}
-              userLevel={userLevel}
-              enterpriseSettings={enterpriseSettings}
-            />
+            <AuthInitializer isAuthenticated={isAuthenticated} userData={userData} />
             <div className="h-screen flex flex-col">
               <Navbar />
               <div className="flex-1 bg-gray-200 mt-16">{children}</div>

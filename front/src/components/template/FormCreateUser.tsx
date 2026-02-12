@@ -1015,6 +1015,22 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             <div className="border rounded p-3">
               <h5 className="font-medium mb-2">تحلیل‌های مکانی - شاخص ایمنی</h5>
               <div className="space-y-2">
+                {/* Extra fields specific to spatial safety index analytics */}
+                <CustomCheckbox
+                  key="spatial-safety-index-groupBy"
+                  checked={
+                    !!watch(
+                      `availableCharts.spatialSafetyIndexAnalytics.groupBy` as keyof UserFormData,
+                    )
+                  }
+                  onChange={(checked) =>
+                    setValue(
+                      `availableCharts.spatialSafetyIndexAnalytics.groupBy` as keyof UserFormData,
+                      checked,
+                    )
+                  }
+                  label="گروه‌بندی بر اساس موقعیت مکانی"
+                />
                 {comprehensiveFilterFields.map((field) => (
                   <CustomCheckbox
                     key={`spatial-safety-index-${field.key}`}

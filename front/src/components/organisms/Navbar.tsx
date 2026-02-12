@@ -4,16 +4,30 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import Cookies from "js-cookie";
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, userLevel, logout } = useAuth();
+  const { isAuthenticated, userLevel, userData, logout } = useAuth();
 
-  // Get user details from cookies
-  const nationalNumber = Cookies.get("national_number") || "";
+  // Get user display name from context
+  const getUserDisplayName = () => {
+    if (!userData) return "کاربر";
+
+    if (userData.first_name || userData.last_name) {
+      return `${userData.first_name || ""} ${userData.last_name || ""}`.trim();
+    }
+
+    if (userData.national_number) {
+      return userData.national_number;
+    }
+
+    return "کاربر";
+  };
+
+  const userName = getUserDisplayName();
+  const userNationalNumber = userData?.national_number || "";
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -187,54 +201,6 @@ export const Navbar = () => {
         {/* User Links with elegant styling */}
         <div className="flex items-center gap-6">
           <div className="hidden md:flex items-center gap-4">
-            {isAuthenticated &&
-              userLevel !== "Enterprise" && // Hide admin panel for Enterprise users
-              (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") && (
-                <Link
-                  href="/admin"
-                  className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>پنل ادمین</span>
-                </Link>
-              )}
-
-            {isAuthenticated && (
-              <Link
-                href="/user"
-                className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>پنل کاربری</span>
-              </Link>
-            )}
-
             {isAuthenticated ? (
               <div className="relative" ref={profileRef}>
                 <button
@@ -255,7 +221,7 @@ export const Navbar = () => {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <span>پروفایل</span>
+                  <span>{userName}</span>
                   <svg
                     className={`w-4 h-4 transition-transform duration-200 ${isProfileDropdownOpen ? "rotate-180" : ""}`}
                     viewBox="0 0 24 24"
@@ -293,7 +259,7 @@ export const Navbar = () => {
                           </svg>
                         </div>
                         <div>
-                          <p className="font-medium text-white">کاربر</p>
+                          <p className="font-medium text-white">{userName}</p>
                           <p className="text-sm text-gray-300">سطح دسترسی: {userLevel}</p>
                         </div>
                       </div>
@@ -302,11 +268,72 @@ export const Navbar = () => {
                     <div className="py-2">
                       <div className="px-4 py-2 border-b border-gray-400">
                         <p className="text-xs text-gray-300">کد ملی</p>
-                        <p className="text-white">{nationalNumber}</p>
+                        <p className="text-white">{userNationalNumber}</p>
                       </div>
 
+                      {/* User Panel Link */}
+                      <Link
+                        href="/user"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-yellow-400 transition-colors duration-200"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>پنل کاربری</span>
+                      </Link>
+
+                      {/* Admin Panel Link */}
+                      {userLevel !== "Enterprise" &&
+                        (userLevel === "Ghost" ||
+                          userLevel === "Manager" ||
+                          userLevel === "Editor") && (
+                          <Link
+                            href="/admin"
+                            className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-yellow-400 transition-colors duration-200 border-b border-gray-400"
+                            onClick={() => setIsProfileDropdownOpen(false)}
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <span>پنل ادمین</span>
+                          </Link>
+                        )}
+
                       <button
-                        onClick={logout}
+                        onClick={() => {
+                          setIsProfileDropdownOpen(false);
+                          logout();
+                        }}
                         className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-red-400 transition-colors duration-200"
                       >
                         <svg

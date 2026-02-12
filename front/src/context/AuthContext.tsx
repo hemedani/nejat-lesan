@@ -3,52 +3,16 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-
-type UserLevel = "Ghost" | "Manager" | "Editor" | "Enterprise" | null;
-
-// Define the structure for enterprise user settings
-interface City {
-  _id: string;
-  name: string;
-  center_location: {
-    type: "Point";
-    coordinates: [number, number];
-  };
-}
-
-interface Province {
-  _id: string;
-  name: string;
-  center_location: {
-    type: "Point";
-    coordinates: [number, number];
-  };
-}
-
-interface ChartPermissions {
-  [key: string]: {
-    [filter: string]: boolean;
-  };
-}
-
-interface EnterpriseSettings {
-  cities?: City[];
-  provinces?: Province[];
-  availableCharts?: ChartPermissions;
-}
+import type { UserLevel, UserData, EnterpriseSettings } from "@/types/auth";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   userLevel: UserLevel;
+  userData: UserData | null;
   enterpriseSettings?: EnterpriseSettings;
-  login: (
-    token: string,
-    level: UserLevel,
-    nationalNumber: string,
-    settings?: EnterpriseSettings,
-  ) => void;
+  login: (token: string, userData: UserData) => void;
   logout: () => void;
-  setInitialAuthState: (isAuth: boolean, level: UserLevel, settings?: EnterpriseSettings) => void;
+  setInitialAuthState: (isAuth: boolean, userData: UserData | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -64,96 +28,65 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userLevel, setUserLevel] = useState<UserLevel>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [enterpriseSettings, setEnterpriseSettings] = useState<EnterpriseSettings | undefined>(
     undefined,
   );
   const router = useRouter();
 
   useEffect(() => {
-    // Check authentication status on initial load
+    // Check if token exists on initial load
     const token = Cookies.get("token");
-    const userCookie = Cookies.get("user");
 
-    if (token && userCookie) {
-      try {
-        // Handle different formats of the user cookie
-        let level: UserLevel = null;
-        let settings: EnterpriseSettings | undefined = undefined;
-
-        // First try to parse as JSON
-        try {
-          const userData = JSON.parse(userCookie);
-          level = userData.level || null;
-          settings = userData.settings || undefined;
-        } catch (parseError) {
-          // If it's not valid JSON, the server might have set it in a different format
-          // Just use the default level
-          console.warn("Could not parse user cookie as JSON, using default level " + parseError);
-        }
-
-        // Only update state if values have actually changed
-        if (!isAuthenticated || userLevel !== level || enterpriseSettings !== settings) {
-          setIsAuthenticated(true);
-          setUserLevel(level);
-          setEnterpriseSettings(settings);
-        }
-      } catch (error) {
-        console.error("Error processing user cookie:", error);
-        // Only update state if values have actually changed
-        if (isAuthenticated || userLevel !== null || enterpriseSettings !== undefined) {
-          setIsAuthenticated(false);
-          setUserLevel(null);
-          setEnterpriseSettings(undefined);
-        }
-      }
-    } else {
-      // Only update state if values have actually changed
-      if (isAuthenticated || userLevel !== null || enterpriseSettings !== undefined) {
+    if (!token) {
+      // No token means not authenticated
+      if (isAuthenticated || userData !== null) {
         setIsAuthenticated(false);
         setUserLevel(null);
+        setUserData(null);
         setEnterpriseSettings(undefined);
       }
     }
+    // If token exists, the layout.tsx will call setInitialAuthState with user data from getMe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array to run only once on mount
 
-  const setInitialAuthState = (isAuth: boolean, level: UserLevel, settings?: EnterpriseSettings) => {
+  const setInitialAuthState = (isAuth: boolean, user: UserData | null) => {
     setIsAuthenticated(isAuth);
-    setUserLevel(level);
-    setEnterpriseSettings(settings);
+    if (user) {
+      setUserLevel(user.level);
+      setUserData(user);
+      setEnterpriseSettings(user.settings);
+    } else {
+      setUserLevel(null);
+      setUserData(null);
+      setEnterpriseSettings(undefined);
+    }
   };
 
-  const login = (
-    token: string,
-    level: UserLevel,
-    nationalNumber: string,
-    settings?: EnterpriseSettings,
-  ) => {
-    // Set cookies
+  const login = (token: string, user: UserData) => {
+    // Set only token in cookie
     Cookies.set("token", token, { path: "/" });
-    Cookies.set("national_number", nationalNumber, { path: "/" });
-    Cookies.set("user", JSON.stringify({ level, settings }), { path: "/" });
 
-    // Update state
+    // Store all user data in context state
     setIsAuthenticated(true);
-    setUserLevel(level);
-    setEnterpriseSettings(settings);
+    setUserLevel(user.level);
+    setUserData(user);
+    setEnterpriseSettings(user.settings);
   };
 
   const logout = () => {
-    // Remove cookies
+    // Remove only the token cookie
     Cookies.remove("token", { path: "/" });
-    Cookies.remove("national_number", { path: "/" });
-    Cookies.remove("user", { path: "/" });
 
-    // Update state to reflect logout
+    // Clear all state
     setIsAuthenticated(false);
     setUserLevel(null);
+    setUserData(null);
     setEnterpriseSettings(undefined);
 
-    // Force a small delay to ensure state updates before redirect
-    setTimeout(() => {
-      router.push("/");
-    }, 0);
+    // Redirect to home
+    router.push("/");
   };
 
   return (
@@ -161,6 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isAuthenticated,
         userLevel,
+        userData,
         enterpriseSettings,
         login,
         logout,

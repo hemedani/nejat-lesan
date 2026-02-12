@@ -2,80 +2,44 @@
 
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-
-// Type definition for user levels
-type UserLevel = "Ghost" | "Manager" | "Editor" | "Enterprise" | null;
+import type { UserLevel, UserData } from "@/types/auth";
 
 // Valid user levels
 const validLevels = ["Ghost", "Manager", "Editor", "Enterprise"];
 
-interface EnterpriseSettings {
-  cities?: {
-    _id: string;
-    name: string;
-    center_location: {
-      type: "Point";
-      coordinates: [number, number];
-    };
-  }[];
-  provinces?: {
-    _id: string;
-    name: string;
-    center_location: {
-      type: "Point";
-      coordinates: [number, number];
-    };
-  }[];
-  availableCharts?: {
-    [key: string]: {
-      [filter: string]: boolean;
-    };
-  };
-}
-
 interface AuthInitializerProps {
   isAuthenticated: boolean;
-  userLevel: UserLevel; // Allow any type for server data
-  enterpriseSettings?: EnterpriseSettings;
+  userData: UserData | null;
 }
 
-export function AuthInitializer({
-  isAuthenticated,
-  userLevel,
-  enterpriseSettings,
-}: AuthInitializerProps) {
+export function AuthInitializer({ isAuthenticated, userData }: AuthInitializerProps) {
   const {
     setInitialAuthState,
     isAuthenticated: currentIsAuthenticated,
-    userLevel: currentUserLevel,
-    enterpriseSettings: currentEnterpriseSettings,
+    userData: currentUserData,
   } = useAuth();
 
   useEffect(() => {
-    // Ensure userLevel is a valid type
-    let normalizedLevel: UserLevel = null;
+    // Ensure userLevel is a valid type if userData exists
+    let normalizedUserData: UserData | null = null;
 
-    if (userLevel && typeof userLevel === "string" && validLevels.includes(userLevel)) {
-      normalizedLevel = userLevel as UserLevel;
+    if (userData && userData.level) {
+      if (typeof userData.level === "string" && validLevels.includes(userData.level)) {
+        normalizedUserData = {
+          ...userData,
+          level: userData.level as UserLevel,
+        };
+      }
     }
 
     // Only update if the values have actually changed compared to the current state
     if (
       isAuthenticated !== currentIsAuthenticated ||
-      normalizedLevel !== currentUserLevel ||
-      enterpriseSettings !== currentEnterpriseSettings
+      JSON.stringify(normalizedUserData) !== JSON.stringify(currentUserData)
     ) {
-      setInitialAuthState(isAuthenticated, normalizedLevel, enterpriseSettings);
+      setInitialAuthState(isAuthenticated, normalizedUserData);
     }
-  }, [
-    isAuthenticated,
-    userLevel,
-    enterpriseSettings,
-    setInitialAuthState,
-    currentIsAuthenticated,
-    currentUserLevel,
-    currentEnterpriseSettings,
-  ]);
+  }, [isAuthenticated, userData, setInitialAuthState, currentIsAuthenticated, currentUserData]);
 
   return null; // This component doesn't render anything
 }

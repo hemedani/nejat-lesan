@@ -4,11 +4,12 @@ import { loginAction } from "@/app/actions/login";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import type { UserData } from "@/types/auth";
 
 type TProps = {
   setStep: Dispatch<SetStateAction<number>>;
   phone: string;
-  onCodeEntered: (token: string, level: string, nationalNumber: string, settings?: any) => void;
+  onCodeEntered: (token: string, userData: UserData) => void;
 };
 
 const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
@@ -28,22 +29,13 @@ const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
 
         if (userLoggedIn.success) {
           const { user, token } = userLoggedIn.body;
-          Cookies.set(
-            "user",
-            JSON.stringify({
-              ...user,
-              level: user.level || "Normal",
-            }),
-          );
-          Cookies.set("national_number", user.national_number);
-          Cookies.set("token", token);
 
-          onCodeEntered(
-            userLoggedIn.body.token,
-            userLoggedIn.body.user.level,
-            userLoggedIn.body.user.national_number,
-            userLoggedIn.body.user.settings,
-          );
+          // Only save token in cookie
+          Cookies.set("token", token, { path: "/" });
+
+          // Pass full user data to context via onCodeEntered
+          onCodeEntered(token, user);
+
           router.replace("/");
         } else {
           throw new Error(userLoggedIn.body);

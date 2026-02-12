@@ -5,31 +5,22 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { gets as getAccidents } from "@/app/actions/accident/gets";
-import AdvancedSearch from "@/components/molecules/AdvancedSearch";
+// Lazy load AdvancedSearch to prevent API calls until modal is opened
+const AdvancedSearch = dynamic(() => import("@/components/molecules/AdvancedSearch"), { ssr: false });
 import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
 import { ReqType } from "@/types/declarations/selectInp";
 import { arrayKeys } from "@/utils/keys";
 
 // Dynamically import map components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false },
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false },
-);
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
+  ssr: false,
+});
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
-const Polygon = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Polygon),
-  { ssr: false },
-);
+const Polygon = dynamic(() => import("react-leaflet").then((mod) => mod.Polygon), { ssr: false });
 
 // Import SimpleDrawing component
 const SimpleDrawing = dynamic(() => import("@/components/SimpleDrawing"), {
@@ -107,8 +98,7 @@ export default function HomePage() {
         setError(null);
 
         // Build search parameters from URL
-        const searchFilters: Record<string, string | string[] | number | Date> =
-          {};
+        const searchFilters: Record<string, string | string[] | number | Date> = {};
 
         // Set required pagination fields
         const page = +(searchParams.get("page") || "1");
@@ -117,12 +107,7 @@ export default function HomePage() {
         // Add other search parameters if they exist
         for (const [key, value] of searchParams.entries()) {
           if (value) {
-            if (
-              key.includes("Min") ||
-              key.includes("Max") ||
-              key === "seri" ||
-              key === "serial"
-            ) {
+            if (key.includes("Min") || key.includes("Max") || key === "seri" || key === "serial") {
               searchFilters[key] = parseInt(value) || value;
             } else if (key.includes("Date")) {
               searchFilters[key] = new Date(value);
@@ -254,8 +239,7 @@ export default function HomePage() {
 
     const leafletDrawCSS = document.createElement("link");
     leafletDrawCSS.rel = "stylesheet";
-    leafletDrawCSS.href =
-      "https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css";
+    leafletDrawCSS.href = "https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css";
     document.head.appendChild(leafletDrawCSS);
 
     // Import Leaflet and fix icons
@@ -264,10 +248,8 @@ export default function HomePage() {
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-        iconUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-        shadowUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+        iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
       });
     });
 
@@ -293,12 +275,7 @@ export default function HomePage() {
                   : "bg-yellow-400 hover:bg-yellow-500"
               } text-gray-800 px-6 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center gap-2 font-medium`}
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -314,12 +291,7 @@ export default function HomePage() {
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-6 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center gap-2 font-medium"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -332,9 +304,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="text-gray-700 text-sm">
-              به سامانه مرصاد خوش آمدید
-            </div>
+            <div className="text-gray-700 text-sm">به سامانه مرصاد خوش آمدید</div>
             <div className="text-gray-600 text-sm">یکشنبه ۱۴ آبان ۱۴۰۳</div>
           </div>
         </div>
@@ -349,13 +319,9 @@ export default function HomePage() {
             <div className="absolute top-4 right-4 z-30 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="font-medium text-sm">
-                  حالت رسم چندضلعی فعال
-                </span>
+                <span className="font-medium text-sm">حالت رسم چندضلعی فعال</span>
               </div>
-              <div className="text-xs opacity-90">
-                کلیک: افزودن نقطه | راست‌کلیک: تمام | ESC: لغو
-              </div>
+              <div className="text-xs opacity-90">کلیک: افزودن نقطه | راست‌کلیک: تمام | ESC: لغو</div>
             </div>
           )}
 
@@ -380,10 +346,7 @@ export default function HomePage() {
               {/* Render drawn polygon */}
               {drawnPolygon && (
                 <Polygon
-                  positions={drawnPolygon.map((point: any) => [
-                    point.lat,
-                    point.lng,
-                  ])}
+                  positions={drawnPolygon.map((point: any) => [point.lat, point.lng])}
                   pathOptions={{
                     color: "#3b82f6",
                     weight: 3,
@@ -408,9 +371,7 @@ export default function HomePage() {
                     <Marker key={accident._id} position={[lat, lng]}>
                       <Popup className="text-right">
                         <div className="text-sm space-y-2 min-w-[200px]">
-                          <div className="font-bold text-blue-600">
-                            سری: {accident.seri}
-                          </div>
+                          <div className="font-bold text-blue-600">سری: {accident.seri}</div>
                           <div>
                             <span className="font-medium">تاریخ تصادف:</span>
                             <br />
@@ -420,20 +381,12 @@ export default function HomePage() {
                           </div>
                           <div className="grid grid-cols-2 gap-2 mt-2">
                             <div className="bg-red-50 p-2 rounded">
-                              <div className="text-red-600 font-medium text-xs">
-                                تعداد فوتی
-                              </div>
-                              <div className="text-red-800 font-bold">
-                                {accident.dead_count}
-                              </div>
+                              <div className="text-red-600 font-medium text-xs">تعداد فوتی</div>
+                              <div className="text-red-800 font-bold">{accident.dead_count}</div>
                             </div>
                             <div className="bg-orange-50 p-2 rounded">
-                              <div className="text-orange-600 font-medium text-xs">
-                                تعداد مجروح
-                              </div>
-                              <div className="text-orange-800 font-bold">
-                                {accident.injured_count}
-                              </div>
+                              <div className="text-orange-600 font-medium text-xs">تعداد مجروح</div>
+                              <div className="text-orange-800 font-bold">{accident.injured_count}</div>
                             </div>
                           </div>
                         </div>
@@ -449,9 +402,7 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-white flex items-center justify-center z-10">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-4 text-gray-600 font-medium">
-                  در حال بارگذاری نقشه...
-                </p>
+                <p className="mt-4 text-gray-600 font-medium">در حال بارگذاری نقشه...</p>
                 <p className="mt-2 text-sm text-gray-500">
                   {accidents.length > 0
                     ? `${accidents.length.toLocaleString("fa-IR")} تصادف یافت شد`
@@ -480,9 +431,7 @@ export default function HomePage() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">
-                  خطا در بارگذاری
-                </h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">خطا در بارگذاری</h3>
                 <p className="text-gray-600 mb-4">{error}</p>
                 <button
                   onClick={handleRetry}
@@ -513,9 +462,7 @@ export default function HomePage() {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">
-                  هیچ تصادفی یافت نشد
-                </h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">هیچ تصادفی یافت نشد</h3>
                 <p className="text-gray-600 mb-4">
                   با معیارهای جستجوی فعلی، هیچ تصادفی در دیتابیس موجود نیست.
                 </p>
@@ -549,11 +496,7 @@ export default function HomePage() {
                   <span className="text-slate-600 text-sm">کل فوتی‌ها:</span>
                   <span className="font-bold text-red-600">
                     {accidents
-                      .reduce(
-                        (sum: number, acc: AccidentData) =>
-                          sum + acc.dead_count,
-                        0,
-                      )
+                      .reduce((sum: number, acc: AccidentData) => sum + acc.dead_count, 0)
                       .toLocaleString("fa-IR")}
                   </span>
                 </div>
@@ -561,11 +504,7 @@ export default function HomePage() {
                   <span className="text-slate-600 text-sm">کل مجروحان:</span>
                   <span className="font-bold text-orange-600">
                     {accidents
-                      .reduce(
-                        (sum: number, acc: AccidentData) =>
-                          sum + acc.injured_count,
-                        0,
-                      )
+                      .reduce((sum: number, acc: AccidentData) => sum + acc.injured_count, 0)
                       .toLocaleString("fa-IR")}
                   </span>
                 </div>
@@ -574,9 +513,7 @@ export default function HomePage() {
                     <span className="text-slate-500">نمایش روی نقشه:</span>
                     <span className="text-emerald-600 font-medium">
                       {accidents
-                        .filter(
-                          (acc: AccidentData) => acc.location?.coordinates,
-                        )
+                        .filter((acc: AccidentData) => acc.location?.coordinates)
                         .length.toLocaleString("fa-IR")}
                     </span>
                   </div>
@@ -597,59 +534,84 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Advanced Search Sidebar */}
-      <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl transform transition-transform duration-300 z-50 border-l border-slate-200 ${
-          isSearchOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        {/* Sidebar Header */}
-        <div className="bg-gray-600 px-6 py-4 border-b border-gray-500">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">جستجوی پیشرفته</h2>
-            <button
-              onClick={() => setIsSearchOpen(false)}
-              className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-500 transition-colors duration-200"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Scrollable Content */}
-        <div
-          className="h-full overflow-y-auto pb-20"
-          style={{ height: "calc(100vh - 73px)" }}
-        >
-          <div className="p-2">
-            <AdvancedSearch
-              isOpen={isSearchOpen}
-              defaultSearchArrayValues={defaultSearchArrayValues}
-              pageAddress=""
-              compact={true}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Overlay for closing search panel on mobile */}
+      {/* Advanced Search Modal - Only render when open */}
       {isSearchOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40 lg:hidden"
-          onClick={() => setIsSearchOpen(false)}
-        />
+        <>
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] animate-fade-in"
+            onClick={() => setIsSearchOpen(false)}
+          />
+
+          {/* Modal Container */}
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-2xl pointer-events-auto animate-pop-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="sticky top-0 z-10 bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 rounded-t-2xl border-b border-blue-500 shadow-md">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">جستجوی پیشرفته</h2>
+                      <p className="text-blue-100 text-sm mt-1">فیلتر و جستجوی تصادفات</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsSearchOpen(false)}
+                    className="text-white/90 hover:text-white p-2.5 rounded-xl hover:bg-white/20 transition-all duration-200 backdrop-blur-sm group"
+                    aria-label="بستن"
+                  >
+                    <svg
+                      className="w-6 h-6 group-hover:rotate-90 transition-transform duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Scrollable Content */}
+              <div
+                className="overflow-y-auto overscroll-contain"
+                style={{ maxHeight: "calc(90vh - 100px)" }}
+              >
+                <div className="p-6">
+                  <AdvancedSearch
+                    isOpen={true}
+                    defaultSearchArrayValues={defaultSearchArrayValues}
+                    pageAddress=""
+                    compact={false}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

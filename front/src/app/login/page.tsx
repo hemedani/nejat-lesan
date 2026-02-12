@@ -4,6 +4,7 @@ import LoginStepTwo from "@/components/organisms/login/LoginStepTwo";
 import { useAutoReturnTimer } from "@/hook/useAutoReturnTimer";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import type { UserData } from "@/types/auth";
 
 const Login = ({}) => {
   const [phone, setPhone] = useState("");
@@ -12,14 +13,11 @@ const Login = ({}) => {
 
   const { clearAutoReturnTimer, remainingTime } = useAutoReturnTimer(step, setStep);
 
-  const handleCodeEntered = (token: string, level: string, nationalNumber: string, settings?: any) => {
+  const handleCodeEntered = (token: string, userData: UserData) => {
     clearAutoReturnTimer();
 
-    // Convert level to our UserLevel type
-    const userLevel = level as "Ghost" | "Manager" | "Editor" | "Enterprise" | null;
-
-    // Call login from auth context, passing enterprise settings if available
-    login(token, userLevel, nationalNumber, settings);
+    // Call login from auth context with full user data
+    login(token, userData);
   };
 
   return (
