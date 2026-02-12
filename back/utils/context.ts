@@ -9,7 +9,7 @@ type Merge<A, B> =
 	: never;
 
 const userPureObj = object(user_pure);
-type UserPure = Infer<typeof userPureObj>;
+export type UserPure = Infer<typeof userPureObj>;
 
 export interface MyContext extends LesanContenxt {
 	user: Merge<

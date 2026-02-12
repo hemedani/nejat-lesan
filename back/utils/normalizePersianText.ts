@@ -8,7 +8,6 @@ export function normalizePersianText(text: string): string {
 		.replace(/\u200F/g, "") // Right-to-Left mark
 		.replace(/\u200E/g, "") // Left-to-Right mark
 		.replace(/\u202A-\u202E/g, "") // Embedding and override characters
-
 		// Normalize Arabic/Persian characters
 		.replace(/ي/g, "ی") // ی عربی → ی فارسی
 		.replace(/ك/g, "ک") // ک عربی → ک فارسی
@@ -18,11 +17,21 @@ export function normalizePersianText(text: string): string {
 		.replace(/إ|أ|آ/g, "ا") // انواع الف همزه‌دار → ا
 		.replace(/ة/g, "ه") // تا مربوطه → ه
 		.replace(/ئ/g, "ی") // ی همزه‌دار → ی
-
 		// Normalize digits to English
-		.replace(/[۰-۹]/g, (match) => String.fromCharCode(match.charCodeAt(0) - '۰'.charCodeAt(0) + '0'.charCodeAt(0)))
-		.replace(/[٠-٩]/g, (match) => String.fromCharCode(match.charCodeAt(0) - '٠'.charCodeAt(0) + '0'.charCodeAt(0)))
-
+		.replace(
+			/[۰-۹]/g,
+			(match) =>
+				String.fromCharCode(
+					match.charCodeAt(0) - "۰".charCodeAt(0) + "0".charCodeAt(0),
+				),
+		)
+		.replace(
+			/[٠-٩]/g,
+			(match) =>
+				String.fromCharCode(
+					match.charCodeAt(0) - "٠".charCodeAt(0) + "0".charCodeAt(0),
+				),
+		)
 		// Normalize punctuation and symbols
 		.replace(/[‌]/g, " ") // نیم‌فاصله → space
 		.replace(/[−–—]/g, "-") // Different dashes → hyphen
@@ -32,7 +41,6 @@ export function normalizePersianText(text: string): string {
 		.replace(/[،]/g, ",") // Persian comma → standard comma
 		.replace(/[؛]/g, ";") // Persian semicolon → standard semicolon
 		.replace(/[؟]/g, "?") // Persian question mark → standard question mark
-
 		// Remove extra spaces and normalize whitespace
 		.replace(/\s+/g, " ") // حذف فاصله‌های اضافی
 		.trim() // حذف فاصله ابتدا و انتها

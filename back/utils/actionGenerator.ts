@@ -5,15 +5,15 @@ import { ensureDir } from "jsr:@std/fs";
 const model = Deno.env.get("MODEL");
 
 if (!model) {
-  console.error("MODEL not defined in .env");
-  Deno.exit(1);
+	console.error("MODEL not defined in .env");
+	Deno.exit(1);
 }
 
 const folder = `./${model}`;
 await ensureDir(folder);
 
 const files = {
-  "gets.ts": `\
+	"gets.ts": `\
 "use server";
 import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -40,7 +40,7 @@ export const gets = async ({
 };
 `,
 
-  "get.ts": `\
+	"get.ts": `\
 "use server";
 import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -69,7 +69,7 @@ export const get = async (_id: string, get?: ReqType["main"]["${model}"]["get"][
 };
 `,
 
-  "count.ts": `\
+	"count.ts": `\
 "use server";
 import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -92,7 +92,7 @@ export const count = async ({ set, get }: ReqType["main"]["${model}"]["count"]) 
 };
 `,
 
-  "update.ts": `\
+	"update.ts": `\
 "use server";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
@@ -119,7 +119,7 @@ export const update = async (_id: string, name: string) => {
 };
 `,
 
-  "add.ts": `\
+	"add.ts": `\
 "use server";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
@@ -145,7 +145,7 @@ export const add = async (name: string) => {
 };
 `,
 
-  "remove.ts": `\
+	"remove.ts": `\
 "use server";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
@@ -171,14 +171,13 @@ export const remove = async (_id: string, hardCascade: boolean) => {
 
 // Write each file
 for (const [fileName, content] of Object.entries(files)) {
-  const path = `${folder}/${fileName}`;
-  await Deno.writeTextFile(path, content);
-  console.log(`✅ Created: ${path}`);
+	const path = `${folder}/${fileName}`;
+	await Deno.writeTextFile(path, content);
+	console.log(`✅ Created: ${path}`);
 }
 
-
 function snakeToKebabCase(input: string): string {
-  return input.replace(/_/g, "-");
+	return input.replace(/_/g, "-");
 }
 
 const pageContent = `\
@@ -235,14 +234,19 @@ export default async function AirStatusDashboard({
     </div>
   );
 }
-`
+`;
 
 function removeLastSegment(path: string): string {
-  return path.replace(/\/actions\/?$/, "");
+	return path.replace(/\/actions\/?$/, "");
 }
 
-const pagePath = removeLastSegment(Deno.cwd())
+const pagePath = removeLastSegment(Deno.cwd());
 
-await ensureDir(`${pagePath}/admin/${snakeToKebabCase(model)}`)
-await Deno.writeTextFile(`${pagePath}/admin/${snakeToKebabCase(model)}/page.tsx`, pageContent);
-console.log(`✅ Page Created: ${pagePath}/admin/${snakeToKebabCase(model)}/page.tsx`);
+await ensureDir(`${pagePath}/admin/${snakeToKebabCase(model)}`);
+await Deno.writeTextFile(
+	`${pagePath}/admin/${snakeToKebabCase(model)}/page.tsx`,
+	pageContent,
+);
+console.log(
+	`✅ Page Created: ${pagePath}/admin/${snakeToKebabCase(model)}/page.tsx`,
+);
