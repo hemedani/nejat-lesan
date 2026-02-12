@@ -86,7 +86,6 @@ export const user_level_array = [
 	"Ghost",
 	"Manager",
 	"Editor",
-	"Ordinary",
 	"Enterprise",
 ];
 export const user_level_emums = enums(user_level_array);
