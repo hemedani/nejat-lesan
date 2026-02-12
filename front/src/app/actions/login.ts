@@ -26,7 +26,8 @@ export const loginAction = async ({
           last_name: 1,
           mobile: 1,
           national_number: 1,
-          level: 1
+          level: 1,
+          settings: 1,
         },
       },
     },

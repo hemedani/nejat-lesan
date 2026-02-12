@@ -13,6 +13,7 @@ export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
     mobile: 1,
     national_number: 1,
     level: 1,
+    settings: 1,
   };
 
   return await AppApi().send(
