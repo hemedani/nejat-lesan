@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { eventSeverityAnalytics } from "@/app/actions/accident/eventSeverityAnalytics";
@@ -14,6 +12,7 @@ import EventSeverityComparisonChart from "@/components/dashboards/charts/EventSe
 import { DatePicker } from "zaman";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
+import { useAuth } from "@/context/AuthContext";
 
 // Dynamically import AsyncSelect
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
@@ -76,9 +75,7 @@ const fetchEvents = async (): Promise<EventType[]> => {
 };
 
 // Function to load event options for AsyncSelect
-const loadEventsOptions = async (
-  inputValue?: string,
-): Promise<SelectOption[]> => {
+const loadEventsOptions = async (inputValue?: string): Promise<SelectOption[]> => {
   try {
     const result = await getEvents({
       set: {
@@ -105,7 +102,7 @@ const loadEventsOptions = async (
 };
 
 // Get enabled filters for trend severity analytics
-const ENABLED_FILTERS = getEnabledFiltersForChart("TREND_SEVERITY_ANALYTICS");
+// Note: This will be moved inside the component to access auth context
 
 // Backend response interface for event severity analytics
 interface EventSeverityResponse {
@@ -171,15 +168,11 @@ const EventSelector: React.FC<EventSelectorProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        انتخاب رویداد
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">انتخاب رویداد</h3>
 
       {/* Event Type Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          نوع رویداد
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">نوع رویداد</label>
         <div className="flex space-x-4 space-x-reverse">
           {EVENT_TYPES.map((eventType) => (
             <button
@@ -200,9 +193,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({
       {/* Event Selection (only shown when 'event' type is selected) */}
       {selectedEventType === "event" && (
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            انتخاب رویداد
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">انتخاب رویداد</label>
           <AsyncSelect
             cacheOptions
             defaultOptions
@@ -246,11 +237,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({
               }),
               option: (provided, state) => ({
                 ...provided,
-                backgroundColor: state.isSelected
-                  ? "#3b82f6"
-                  : state.isFocused
-                    ? "#eff6ff"
-                    : "white",
+                backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#eff6ff" : "white",
                 color: state.isSelected ? "white" : "#1e293b",
                 cursor: "pointer",
                 padding: "10px 12px",
@@ -268,13 +255,9 @@ const EventSelector: React.FC<EventSelectorProps> = ({
       {selectedEventType === "custom" && (
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              تاریخ شروع
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ شروع</label>
             <DatePicker
-              defaultValue={
-                eventRange.from ? new Date(eventRange.from) : undefined
-              }
+              defaultValue={eventRange.from ? new Date(eventRange.from) : undefined}
               onChange={(e) => {
                 if (e && e.value) {
                   onEventRangeChange({
@@ -309,9 +292,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              تاریخ پایان
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ پایان</label>
             <DatePicker
               defaultValue={eventRange.to ? new Date(eventRange.to) : undefined}
               onChange={(e) => {
@@ -354,6 +335,14 @@ const EventSelector: React.FC<EventSelectorProps> = ({
 };
 
 const EventSeverityAnalyticsPage = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+
+  // Get enabled filters for trend severity analytics considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "TREND_SEVERITY_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [selectedEventType, setSelectedEventType] = useState("event");
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
@@ -361,25 +350,16 @@ const EventSeverityAnalyticsPage = () => {
     from: "", // Default to empty which means no start limitation
     to: "", // Default to empty which means no end limitation
   });
-  const [eventDateRanges, setEventDateRanges] = useState<
-    { from: string; to: string }[]
-  >([]);
+  const [eventDateRanges, setEventDateRanges] = useState<{ from: string; to: string }[]>([]);
   const [availableEvents, setAvailableEvents] = useState<EventType[]>([]);
-  const [chartData, setChartData] = useState<
-    EventSeverityResponse["analytics"] | null
-  >(null);
+  const [chartData, setChartData] = useState<EventSeverityResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Create refs for functions using initializers that won't reference undefined functions
   const fetchDataRef = useRef<
-    | ((
-        filters: ChartFilterState,
-        range: EventRange,
-        eventId: string | null,
-      ) => Promise<void>)
-    | null
+    ((filters: ChartFilterState, range: EventRange, eventId: string | null) => Promise<void>) | null
   >(null);
   const loadInitialDataRef = useRef<(() => Promise<void>) | null>(null);
 
@@ -466,14 +446,7 @@ const EventSeverityAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    eventRange,
-    selectedEventType,
-    selectedEventId,
-    setIsLoading,
-    setError,
-    setChartData,
-  ]);
+  }, [eventRange, selectedEventType, selectedEventId, setIsLoading, setError, setChartData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
@@ -527,15 +500,11 @@ const EventSeverityAnalyticsPage = () => {
               let latestDate = new Date(event.dates[0].endEntireRange); // First overall end date
 
               for (const dateRange of event.dates) {
-                const startEntireRangeDate = new Date(
-                  dateRange.startEntireRange,
-                );
+                const startEntireRangeDate = new Date(dateRange.startEntireRange);
                 const endEntireRangeDate = new Date(dateRange.endEntireRange);
 
-                if (startEntireRangeDate < earliestDate)
-                  earliestDate = startEntireRangeDate;
-                if (endEntireRangeDate > latestDate)
-                  latestDate = endEntireRangeDate;
+                if (startEntireRangeDate < earliestDate) earliestDate = startEntireRangeDate;
+                if (endEntireRangeDate > latestDate) latestDate = endEntireRangeDate;
               }
 
               const overallStart = earliestDate.toISOString();
@@ -545,22 +514,16 @@ const EventSeverityAnalyticsPage = () => {
               setEventRange(newRange);
 
               // Store all the date ranges to display them in the chart header
-              const allDateRanges = (event as EventType).dates.map(
-                (dateRange) => ({
-                  from: dateRange.from,
-                  to: dateRange.to,
-                  startEntireRange: dateRange.startEntireRange,
-                  endEntireRange: dateRange.endEntireRange,
-                }),
-              );
+              const allDateRanges = (event as EventType).dates.map((dateRange) => ({
+                from: dateRange.from,
+                to: dateRange.to,
+                startEntireRange: dateRange.startEntireRange,
+                endEntireRange: dateRange.endEntireRange,
+              }));
               setEventDateRanges(allDateRanges);
 
               // When an event is selected, we pass the eventId to the backend and no date ranges
-              await fetchDataRef.current?.(
-                appliedFilters,
-                { from: "", to: "" },
-                eventId,
-              );
+              await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
             } else {
               // If no dates found in the event, still fetch data with only the event ID
               await fetchData(appliedFilters, { from: "", to: "" }, eventId);
@@ -571,20 +534,12 @@ const EventSeverityAnalyticsPage = () => {
               eventResponse?.error || "No response body",
             );
             // Still attempt to fetch data with the event ID even if we couldn't get dates
-            await fetchDataRef.current?.(
-              appliedFilters,
-              { from: "", to: "" },
-              eventId,
-            );
+            await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
           }
         } catch (error) {
           console.error("Error fetching event details:", error);
           // Even if there's an error, try to fetch data with the event ID
-          await fetchDataRef.current?.(
-            appliedFilters,
-            { from: "", to: "" },
-            eventId,
-          );
+          await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
         }
       } else {
         // If no event is selected, maintain the current range and no event ID
@@ -592,22 +547,11 @@ const EventSeverityAnalyticsPage = () => {
         await fetchDataRef.current?.(appliedFilters, eventRange, null);
       }
     },
-    [
-      appliedFilters,
-      eventRange,
-      fetchDataRef,
-      setEventDateRanges,
-      setEventRange,
-      setSelectedEventId,
-    ],
+    [appliedFilters, eventRange, fetchDataRef, setEventDateRanges, setEventRange, setSelectedEventId],
   );
 
   // Fetch data with current filters and event range
-  const fetchData = async (
-    filters: ChartFilterState,
-    range: EventRange,
-    eventId: string | null,
-  ) => {
+  const fetchData = async (filters: ChartFilterState, range: EventRange, eventId: string | null) => {
     // We need at least a date range or an event ID
     if (!range.from && !range.to && !eventId) return;
 
@@ -623,8 +567,7 @@ const EventSeverityAnalyticsPage = () => {
           ...(eventId
             ? {}
             : {
-                dateOfAccidentFrom:
-                  filters.dateOfAccidentFrom || range.from || "",
+                dateOfAccidentFrom: filters.dateOfAccidentFrom || range.from || "",
                 dateOfAccidentTo: filters.dateOfAccidentTo || range.to || "",
               }),
           officer: filters.officer || "",
@@ -684,10 +627,7 @@ const EventSeverityAnalyticsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <ChartNavigation
-        currentSection="trend"
-        currentChart="severity-analytics"
-      />
+      <ChartNavigation currentSection="trend" currentChart="severity-analytics" />
 
       <div className="flex">
         {/* Filter Sidebar */}
@@ -699,6 +639,8 @@ const EventSeverityAnalyticsPage = () => {
               enabledFilters={ENABLED_FILTERS}
               title="فیلترهای تحلیل روند شدت"
               description="فیلترهای مربوط به تحلیل روند شدت تصادفات در رویدادها"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -709,9 +651,7 @@ const EventSeverityAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  سهم شدت تصادفات در رویداد
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">سهم شدت تصادفات در رویداد</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   مقایسه سهم شدت تصادفات در دوره رویداد با سایر ایام سال
                 </p>
@@ -721,12 +661,7 @@ const EventSeverityAnalyticsPage = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
