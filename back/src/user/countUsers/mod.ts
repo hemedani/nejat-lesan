@@ -4,16 +4,16 @@ import { countUsersFn } from "./countUsers.fn.ts";
 import { countUsersValidator } from "./countUsers.val.ts";
 
 export const countUsersSetup = () =>
-  coreApp.acts.setAct({
-    schema: "user",
-    fn: countUsersFn,
-    actName: "countUsers",
-    preValidation: [
-      setTokens,
-      setUser,
-      grantAccess({
-        levels: ["Manager"],
-      }),
-    ],
-    validator: countUsersValidator(),
-  });
+	coreApp.acts.setAct({
+		schema: "user",
+		fn: countUsersFn,
+		actName: "countUsers",
+		preValidation: [
+			setTokens,
+			setUser,
+			grantAccess({
+				levels: ["Manager"],
+			}),
+		],
+		validator: countUsersValidator(),
+	});

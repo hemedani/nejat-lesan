@@ -5,18 +5,18 @@ import { updateUserRelationsValidator } from "./updateUserRelations.val.ts";
 import { checkGhostUser } from "../addUser/mod.ts";
 
 export const updateUserRelationsSetup = () =>
-  coreApp.acts.setAct({
-    schema: "user",
-    fn: updateUserRelationsFn,
-    actName: "updateUserRelations",
-    preAct: [
-      setTokens,
-      setUser,
-      grantAccess({
-        levels: ["Ghost", "Manager"],
-      }),
-      checkGhostUser,
-    ],
-    validator: updateUserRelationsValidator(),
-    validationRunType: "create",
-  });
+	coreApp.acts.setAct({
+		schema: "user",
+		fn: updateUserRelationsFn,
+		actName: "updateUserRelations",
+		preAct: [
+			setTokens,
+			setUser,
+			grantAccess({
+				levels: ["Ghost", "Manager"],
+			}),
+			checkGhostUser,
+		],
+		validator: updateUserRelationsValidator(),
+		validationRunType: "create",
+	});
