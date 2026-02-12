@@ -3,7 +3,10 @@ import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
 import { cookies } from "next/headers";
 
-export const get = async (_id: string, get?: ReqType["main"]["road_surface_condition"]["get"]["get"]) => {
+export const get = async (
+  _id: string,
+  get?: ReqType["main"]["road_surface_condition"]["get"]["get"],
+) => {
   const token = (await cookies()).get("token");
   return await AppApi().send(
     {
@@ -17,10 +20,10 @@ export const get = async (_id: string, get?: ReqType["main"]["road_surface_condi
         get: {
           _id: 1,
           name: 1,
-          ...get
+          ...get,
         },
       },
     },
-    { token }
+    { token: token?.value },
   );
 };

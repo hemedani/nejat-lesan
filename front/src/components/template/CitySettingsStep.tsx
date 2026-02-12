@@ -3,9 +3,12 @@ import { UserFormData } from "./FormCreateUser";
 import { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import { gets } from "@/app/actions/city/gets";
 import dynamic from "next/dynamic";
-import type { StylesConfig } from "react-select";
+import type { StylesConfig, MultiValue, GroupBase } from "react-select";
+import type { AsyncProps } from "react-select/async";
 
-const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
+const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false }) as React.ComponentType<
+  AsyncProps<SelectOption, true, GroupBase<SelectOption>>
+>;
 
 interface CitySettingsStepProps {
   formData: UserFormData;
@@ -13,8 +16,8 @@ interface CitySettingsStepProps {
 }
 
 const CitySettingsStep: React.FC<CitySettingsStepProps> = ({ formData, setFormData }) => {
-  const [selectedCity, setSelectedCity] = useState<SelectOption | null>(
-    formData.citySettingId ? { value: formData.citySettingId, label: "" } : null,
+  const [selectedCities, setSelectedCities] = useState<SelectOption[]>(
+    formData.citySettingIds ? formData.citySettingIds.map((id) => ({ value: id, label: "" })) : [],
   );
 
   const loadCitiesOptions = useCallback(async (inputValue?: string): Promise<SelectOption[]> => {
@@ -43,13 +46,12 @@ const CitySettingsStep: React.FC<CitySettingsStepProps> = ({ formData, setFormDa
   }, []);
 
   const handleCitySelect = useCallback(
-    async (selectedOption: SelectOption | null) => {
-      setSelectedCity(selectedOption);
-      if (selectedOption) {
-        setFormData((prev) => ({ ...prev, citySettingId: selectedOption.value }));
-      } else {
-        setFormData((prev) => ({ ...prev, citySettingId: undefined }));
-      }
+    (selectedOptions: MultiValue<SelectOption>) => {
+      const options = selectedOptions as SelectOption[];
+      setSelectedCities(options);
+
+      const cityIds = options.map((option) => option.value);
+      setFormData((prev) => ({ ...prev, citySettingIds: cityIds.length > 0 ? cityIds : undefined }));
     },
     [setFormData],
   );
@@ -160,7 +162,7 @@ const CitySettingsStep: React.FC<CitySettingsStepProps> = ({ formData, setFormDa
       textAlign: "right",
       transition: "all 0.15s ease-in-out",
     }),
-  } as StylesConfig;
+  } as StylesConfig<SelectOption, true, GroupBase<SelectOption>>;
 
   return (
     <div>
@@ -168,15 +170,16 @@ const CitySettingsStep: React.FC<CitySettingsStepProps> = ({ formData, setFormDa
 
       <div className="flex flex-col gap-2">
         <label className="text-sm font-medium text-slate-700 text-right">
-          انتخاب شهر تحت مدیریت کاربر
+          انتخاب شهرهای تحت مدیریت کاربر
         </label>
         <AsyncSelect
           cacheOptions
           defaultOptions
-          value={selectedCity}
+          isMulti
+          value={selectedCities}
           loadOptions={loadCitiesOptions}
-          onChange={(newValue) => handleCitySelect(newValue as SelectOption | null)}
-          placeholder="شهر را انتخاب کنید"
+          onChange={handleCitySelect}
+          placeholder="شهرها را انتخاب کنید"
           noOptionsMessage={() => "شهری یافت نشد"}
           loadingMessage={() => "در حال بارگذاری..."}
           isRtl={true}

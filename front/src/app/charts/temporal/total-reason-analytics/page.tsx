@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -191,9 +191,13 @@ const DEFAULT_FILTER_STATE: ChartFilterState = {
 const TemporalTotalReasonAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for temporal total reason analytics
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_TOTAL_REASON_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TEMPORAL_TOTAL_REASON_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -572,7 +576,7 @@ const TemporalTotalReasonAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [ENABLED_FILTERS]);
 
   // Transform API response to temporal format
   const transformToTemporalFormat = (analyticsData: ApiResponseData): TemporalTotalReasonData => {

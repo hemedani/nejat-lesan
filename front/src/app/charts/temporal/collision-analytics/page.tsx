@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import TemporalCollisionChart from "@/components/charts/TemporalCollisionChart";
@@ -26,34 +26,41 @@ interface TemporalCollisionData {
 const TemporalCollisionAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for temporal collision analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_COLLISION_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TEMPORAL_COLLISION_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
 
   // Demo data for fallback
-  const DEMO_DATA: TemporalCollisionData = {
-    categories: [
-      "1401-01",
-      "1401-02",
-      "1401-03",
-      "1401-04",
-      "1401-05",
-      "1401-06",
-      "1401-07",
-      "1401-08",
-      "1401-09",
-      "1401-10",
-      "1401-11",
-      "1401-12",
-    ],
-    series: [
-      {
-        name: "سهم از کل تصادفات",
-        data: [25.3, 28.1, 22.7, 31.4, 29.8, 26.2, 33.1, 27.9, 24.5, 30.2, 28.7, 32.1],
-      },
-    ],
-  };
+  const DEMO_DATA: TemporalCollisionData = useMemo(
+    () => ({
+      categories: [
+        "1401-01",
+        "1401-02",
+        "1401-03",
+        "1401-04",
+        "1401-05",
+        "1401-06",
+        "1401-07",
+        "1401-08",
+        "1401-09",
+        "1401-10",
+        "1401-11",
+        "1401-12",
+      ],
+      series: [
+        {
+          name: "سهم از کل تصادفات",
+          data: [25.3, 28.1, 22.7, 31.4, 29.8, 26.2, 33.1, 27.9, 24.5, 30.2, 28.7, 32.1],
+        },
+      ],
+    }),
+    [],
+  );
   interface TemporalCollisionResponse {
     body: {
       analytics: TemporalCollisionData;
@@ -69,15 +76,18 @@ const TemporalCollisionAnalyticsPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Default collision types as specified in requirements
-  const DEFAULT_COLLISION_TYPES = [
-    "برخورد وسیله نقلیه با شیء ثابت",
-    "واژگونی و سقوط",
-    "خروج از جاده",
-    "برخورد وسیله نقلیه با یک وسیله نقلیه",
-  ];
+  const DEFAULT_COLLISION_TYPES = useMemo(
+    () => [
+      "برخورد وسیله نقلیه با شیء ثابت",
+      "واژگونی و سقوط",
+      "خروج از جاده",
+      "برخورد وسیله نقلیه با یک وسیله نقلیه",
+    ],
+    [],
+  );
 
   // Get default filters for initial load
-  const getDefaultFilters = (): ChartFilterState => {
+  const getDefaultFilters = useCallback((): ChartFilterState => {
     return {
       // --- Core Accident Details ---
       seri: undefined,
@@ -174,7 +184,7 @@ const TemporalCollisionAnalyticsPage = () => {
       pedestrianFaultStatus: [],
       pedestrianTotalReason: [],
     };
-  };
+  }, [DEFAULT_COLLISION_TYPES]);
 
   // Load initial data on component mount
   const loadInitialData = useCallback(async () => {
@@ -437,7 +447,7 @@ const TemporalCollisionAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [getDefaultFilters, DEMO_DATA, ENABLED_FILTERS]);
 
   // Load data on component mount
   useEffect(() => {

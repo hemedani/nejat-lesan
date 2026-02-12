@@ -34,7 +34,7 @@ export const UserCreateSchema = z.object({
   summary: z.string().optional(),
   national_number: z.string().regex(/^[0-9]{10}$/, "کد ملی باید 10 رقم باشد"),
   address: z.string().min(1, "آدرس الزامی است"),
-  level: z.enum(["Ghost", "Manager", "Editor", "Ordinary", "Enterprise"], {
+  level: z.enum(["Ghost", "Manager", "Editor", "Enterprise"], {
     message: "سطح الزامی است",
   }),
   is_verified: z.boolean(),
@@ -97,7 +97,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
       birth_date: "",
       nationalCard: "",
       avatar: "",
-      level: "Ordinary", // Default to Ordinary level
+      level: "Editor", // Default to Editor level
       availableCharts: {},
     },
     mode: "onChange",
@@ -430,7 +430,6 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
               options={[
                 { value: "Manager", label: "مدیر" },
                 { value: "Editor", label: "ویرایشگر" },
-                { value: "Ordinary", label: "عادی" },
                 { value: "Ghost", label: "مخفی" },
                 { value: "Enterprise", label: "سازمانی" },
               ]}
@@ -1159,7 +1158,6 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             options={[
               { value: "Manager", label: "مدیر" },
               { value: "Editor", label: "ویرایشگر" },
-              { value: "Ordinary", label: "عادی" },
               { value: "Ghost", label: "مخفی" },
               { value: "Enterprise", label: "سازمانی" },
             ]}

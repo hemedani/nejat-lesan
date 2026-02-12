@@ -47,49 +47,52 @@ const HourlyDayOfWeekPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Transform raw data to chart format and calculate statistics
-  const transformData = (rawData: HourlyDayOfWeekAnalyticsRawData): HourlyDayOfWeekAnalyticsData => {
-    // Transform series data to include hour labels
-    const transformedSeries = rawData.series.map((day) => ({
-      name: day.name,
-      data: day.data.map((value, index) => ({
-        x: index.toString(), // Hour as string (0-23)
-        y: value,
-      })),
-    }));
+  const transformData = useCallback(
+    (rawData: HourlyDayOfWeekAnalyticsRawData): HourlyDayOfWeekAnalyticsData => {
+      // Transform series data to include hour labels
+      const transformedSeries = rawData.series.map((day) => ({
+        name: day.name,
+        data: day.data.map((value, index) => ({
+          x: index.toString(), // Hour as string (0-23)
+          y: value,
+        })),
+      }));
 
-    // Calculate total accidents
-    const totalAccidents = rawData.series.reduce((total, day) => {
-      return total + day.data.reduce((dayTotal, count) => dayTotal + count, 0);
-    }, 0);
+      // Calculate total accidents
+      const totalAccidents = rawData.series.reduce((total, day) => {
+        return total + day.data.reduce((dayTotal, count) => dayTotal + count, 0);
+      }, 0);
 
-    // Find peak hour (hour with most accidents across all days)
-    const hourlyTotals = Array(24).fill(0);
-    rawData.series.forEach((day) => {
-      day.data.forEach((count, hour) => {
-        hourlyTotals[hour] += count;
+      // Find peak hour (hour with most accidents across all days)
+      const hourlyTotals = Array(24).fill(0);
+      rawData.series.forEach((day) => {
+        day.data.forEach((count, hour) => {
+          hourlyTotals[hour] += count;
+        });
       });
-    });
-    const peakHourIndex = hourlyTotals.indexOf(Math.max(...hourlyTotals));
-    const peakHour = `${formatNumber(peakHourIndex)}:${formatNumber(0)}${formatNumber(0)}`;
+      const peakHourIndex = hourlyTotals.indexOf(Math.max(...hourlyTotals));
+      const peakHour = `${formatNumber(peakHourIndex)}:${formatNumber(0)}${formatNumber(0)}`;
 
-    // Find peak day (day with most accidents)
-    const dayTotals = rawData.series.map((day) => ({
-      name: day.name,
-      total: day.data.reduce((sum, count) => sum + count, 0),
-    }));
-    const peakDay = dayTotals.reduce((max, day) => (day.total > max.total ? day : max)).name;
+      // Find peak day (day with most accidents)
+      const dayTotals = rawData.series.map((day) => ({
+        name: day.name,
+        total: day.data.reduce((sum, count) => sum + count, 0),
+      }));
+      const peakDay = dayTotals.reduce((max, day) => (day.total > max.total ? day : max)).name;
 
-    // Calculate average hourly accidents
-    const averageHourly = totalAccidents / (rawData.series.length * 24);
+      // Calculate average hourly accidents
+      const averageHourly = totalAccidents / (rawData.series.length * 24);
 
-    return {
-      series: transformedSeries,
-      totalAccidents,
-      peakHour,
-      peakDay,
-      averageHourly,
-    };
-  };
+      return {
+        series: transformedSeries,
+        totalAccidents,
+        peakHour,
+        peakDay,
+        averageHourly,
+      };
+    },
+    [],
+  );
 
   // Load initial data on component mount
   const loadInitialData = useCallback(async () => {
@@ -120,7 +123,7 @@ const HourlyDayOfWeekPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [transformData]);
 
   useEffect(() => {
     loadInitialData();

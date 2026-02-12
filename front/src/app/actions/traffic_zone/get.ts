@@ -17,10 +17,10 @@ export const get = async (_id: string, get?: ReqType["main"]["traffic_zone"]["ge
         get: {
           _id: 1,
           name: 1,
-          ...get
+          ...get,
         },
       },
     },
-    { token }
+    { token: token?.value },
   );
 };

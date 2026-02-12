@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -203,9 +203,13 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
 
   // Get enabled filters for temporal unlicensed drivers analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
 
   const getDefaultFilters = (): ChartFilterState => {
@@ -572,7 +576,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [ENABLED_FILTERS]);
 
   useEffect(() => {
     loadInitialData();

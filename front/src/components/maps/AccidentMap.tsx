@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { MapContainer, TileLayer, useMapEvents, FeatureGroup } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { EditControl } from "react-leaflet-draw";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -13,9 +13,13 @@ import { useAuth } from "@/context/AuthContext";
 const TemporalNightAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for temporal night analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_NIGHT_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TEMPORAL_NIGHT_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
 
   interface ChartSeries {
@@ -43,32 +47,35 @@ const TemporalNightAnalyticsPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Demo data for fallback
-  const DEMO_DATA: TemporalNightData = {
-    categories: [
-      "1401-01",
-      "1401-02",
-      "1401-03",
-      "1401-04",
-      "1401-05",
-      "1401-06",
-      "1401-07",
-      "1401-08",
-      "1401-09",
-      "1401-10",
-      "1401-11",
-      "1401-12",
-    ],
-    series: [
-      {
-        name: "شب با روشنایی کافی",
-        data: [120, 145, 98, 187, 234, 267, 298, 256, 189, 167, 134, 112],
-      },
-      {
-        name: "شب بدون روشنایی کافی",
-        data: [89, 112, 145, 198, 267, 234, 189, 212, 178, 134, 123, 98],
-      },
-    ],
-  };
+  const DEMO_DATA: TemporalNightData = useMemo(
+    () => ({
+      categories: [
+        "1401-01",
+        "1401-02",
+        "1401-03",
+        "1401-04",
+        "1401-05",
+        "1401-06",
+        "1401-07",
+        "1401-08",
+        "1401-09",
+        "1401-10",
+        "1401-11",
+        "1401-12",
+      ],
+      series: [
+        {
+          name: "شب با روشنایی کافی",
+          data: [120, 145, 98, 187, 234, 267, 298, 256, 189, 167, 134, 112],
+        },
+        {
+          name: "شب بدون روشنایی کافی",
+          data: [89, 112, 145, 198, 267, 234, 189, 212, 178, 134, 123, 98],
+        },
+      ],
+    }),
+    [],
+  );
 
   // Get default filters for initial load
   const getDefaultFilters = (): ChartFilterState => {
@@ -434,7 +441,7 @@ const TemporalNightAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [ENABLED_FILTERS, DEMO_DATA]);
 
   // Handle manual data loading
   const handleLoadData = async () => {

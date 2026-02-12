@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -34,9 +34,13 @@ const DEMO_DATA: HumanReasonAnalyticsResponse["analytics"] = [
 const HumanReasonAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for human reason analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "HUMAN_REASON_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "HUMAN_REASON_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<HumanReasonAnalyticsResponse["analytics"] | null>(null);
@@ -46,11 +50,7 @@ const HumanReasonAnalyticsPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const loadInitialData = async () => {
+  const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -198,7 +198,11 @@ const HumanReasonAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [ENABLED_FILTERS]);
+
+  useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {

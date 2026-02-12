@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -331,9 +331,13 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
 const CompanyPerformanceAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for company performance analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "COMPANY_PERFORMANCE_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "COMPANY_PERFORMANCE_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<CompanyPerformanceAnalyticsResponse["analytics"] | null>(
@@ -345,11 +349,7 @@ const CompanyPerformanceAnalyticsPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const loadInitialData = async () => {
+  const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -498,7 +498,11 @@ const CompanyPerformanceAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [ENABLED_FILTERS]);
+
+  useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {

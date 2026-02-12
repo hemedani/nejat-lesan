@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -13,9 +13,13 @@ import { useAuth } from "@/context/AuthContext";
 const TemporalCountAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for temporal count analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_COUNT_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TEMPORAL_COUNT_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
 
   interface ChartSeries {
@@ -43,28 +47,31 @@ const TemporalCountAnalyticsPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Demo data for fallback
-  const DEMO_DATA: TemporalCountData = {
-    categories: [
-      "1401-01",
-      "1401-02",
-      "1401-03",
-      "1401-04",
-      "1401-05",
-      "1401-06",
-      "1401-07",
-      "1401-08",
-      "1401-09",
-      "1401-10",
-      "1401-11",
-      "1401-12",
-    ],
-    series: [
-      {
-        name: "تعداد تصادفات",
-        data: [245, 312, 189, 428, 567, 634, 712, 589, 456, 378, 298, 234],
-      },
-    ],
-  };
+  const DEMO_DATA: TemporalCountData = useMemo(
+    () => ({
+      categories: [
+        "1401-01",
+        "1401-02",
+        "1401-03",
+        "1401-04",
+        "1401-05",
+        "1401-06",
+        "1401-07",
+        "1401-08",
+        "1401-09",
+        "1401-10",
+        "1401-11",
+        "1401-12",
+      ],
+      series: [
+        {
+          name: "تعداد تصادفات",
+          data: [245, 312, 189, 428, 567, 634, 712, 589, 456, 378, 298, 234],
+        },
+      ],
+    }),
+    [],
+  );
 
   // Get default filters for initial load
   const getDefaultFilters = (): ChartFilterState => {
@@ -350,7 +357,7 @@ const TemporalCountAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [DEMO_DATA, ENABLED_FILTERS]);
 
   // Handle manual data loading
   const handleLoadData = async () => {

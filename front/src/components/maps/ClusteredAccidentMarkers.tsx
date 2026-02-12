@@ -55,22 +55,14 @@ interface ClusteredAccidentMarkersProps {
   accidents: accidentSchema[];
 }
 
+interface ClusteredAccident extends accidentSchema {
+  clusterSize?: number;
+}
+
 const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ accidents }) => {
   const map = useMap();
-  const [visibleMarkers, setVisibleMarkers] = useState<accidentSchema[]>([]);
-  const [zoomLevel, setZoomLevel] = useState(map.getZoom());
+  const [visibleMarkers, setVisibleMarkers] = useState<ClusteredAccident[]>([]);
   const boundsRef = useRef<L.LatLngBounds | null>(null);
-
-  // Calculate zoom-based density threshold
-  const getDensityThreshold = (zoom: number) => {
-    if (zoom <= 6) return 50; // Very zoomed out - show 1 per 50 accidents
-    if (zoom <= 8) return 20; // Moderately zoomed out - show 1 per 20 accidents
-    if (zoom <= 10) return 10; // Mid zoom - show 1 per 10 accidents
-    if (zoom <= 12) return 5; // Zoomed in - show 1 per 5 accidents
-    if (zoom <= 13) return 3; // More zoomed in - show 1 per 3 accidents
-    if (zoom <= 14) return 2; // Even more zoomed in - show 1 per 2 accidents
-    return 1; // Fully zoomed in - show all accidents
-  };
 
   // Group nearby accidents to create clusters using a grid-based approach for smoother transitions
   const groupNearbyAccidents = (accidents: accidentSchema[], zoom: number) => {
@@ -146,10 +138,6 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
 
       // Get current zoom level
       const currentZoom = map.getZoom();
-      setZoomLevel(currentZoom);
-
-      // Calculate density threshold based on zoom
-      const densityThreshold = getDensityThreshold(currentZoom);
 
       // Filter accidents that are within the current bounds
       const accidentsInBounds = accidents.filter((accident) => {
@@ -173,30 +161,30 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
 
       // At higher zoom levels, show more individual accidents rather than clusters
       // This creates a smoother transition as zoom increases
-      let clusterAccidents: any[] = [];
+      const clusterAccidents: ClusteredAccident[] = [];
 
       for (const cluster of filteredClusters) {
         // Gradually transition from clusters to individual markers based on zoom level
         // At zoom level 16+, always show individual accidents
         // At zoom level 12 and below, always show clusters
         // Between zoom 13-15, use a threshold based on cluster size
-        let shouldShowIndividual = false;
-
-        if (currentZoom >= 16) {
-          shouldShowIndividual = true;
-        } else if (currentZoom <= 12) {
-          shouldShowIndividual = false;
-        } else if (currentZoom === 13) {
-          // For zoom level 13, show individual markers only for very small clusters
-          shouldShowIndividual = cluster.accidents.length <= 2;
-        } else if (currentZoom === 14) {
-          // For zoom level 14, show individual markers for small clusters
-          shouldShowIndividual = cluster.accidents.length <= 3;
-        } else {
-          // zoom level 15
-          // For zoom level 15, show individual markers for medium clusters
-          shouldShowIndividual = cluster.accidents.length <= 5;
-        }
+        const shouldShowIndividual = (() => {
+          if (currentZoom >= 16) {
+            return true;
+          } else if (currentZoom <= 12) {
+            return false;
+          } else if (currentZoom === 13) {
+            // For zoom level 13, show individual markers only for very small clusters
+            return cluster.accidents.length <= 2;
+          } else if (currentZoom === 14) {
+            // For zoom level 14, show individual markers for small clusters
+            return cluster.accidents.length <= 3;
+          } else {
+            // zoom level 15
+            // For zoom level 15, show individual markers for medium clusters
+            return cluster.accidents.length <= 5;
+          }
+        })();
 
         if (shouldShowIndividual || cluster.accidents.length === 1) {
           // Show individual markers
@@ -248,7 +236,7 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
         if (!coords || coords.length < 2) return null;
 
         // Calculate marker size based on cluster size
-        const clusterSize = (accident as any).clusterSize || 1;
+        const clusterSize = accident.clusterSize || 1;
 
         // For individual accidents (clusterSize === 1), use a consistent size
         // For clusters, make the size proportional to the number of accidents
@@ -311,12 +299,10 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
                   </div>
 
                   {/* Show cluster size if this is a cluster */}
-                  {(accident as any).clusterSize && (accident as any).clusterSize > 1 && (
+                  {accident.clusterSize && accident.clusterSize > 1 && (
                     <div className="flex justify-between">
                       <span className="text-gray-600">تعداد تصادفات:</span>
-                      <span className="font-medium text-blue-600">
-                        {(accident as any).clusterSize}
-                      </span>
+                      <span className="font-medium text-blue-600">{accident.clusterSize}</span>
                     </div>
                   )}
 

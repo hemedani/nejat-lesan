@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -13,9 +13,13 @@ import { useAuth } from "@/context/AuthContext";
 const TemporalSeverityAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for temporal severity analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_SEVERITY_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TEMPORAL_SEVERITY_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
 
   interface ChartSeries {
@@ -43,28 +47,31 @@ const TemporalSeverityAnalyticsPage = () => {
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Demo data for fallback
-  const DEMO_DATA: TemporalSeverityData = {
-    categories: [
-      "1401-01",
-      "1401-02",
-      "1401-03",
-      "1401-04",
-      "1401-05",
-      "1401-06",
-      "1401-07",
-      "1401-08",
-      "1401-09",
-      "1401-10",
-      "1401-11",
-      "1401-12",
-    ],
-    series: [
-      {
-        name: "سهم تصادفات فوتی از شدید",
-        data: [12.5, 15.3, 18.2, 14.7, 16.8, 13.4, 19.1, 17.6, 15.9, 14.2, 16.3, 13.8],
-      },
-    ],
-  };
+  const DEMO_DATA: TemporalSeverityData = useMemo(
+    () => ({
+      categories: [
+        "1401-01",
+        "1401-02",
+        "1401-03",
+        "1401-04",
+        "1401-05",
+        "1401-06",
+        "1401-07",
+        "1401-08",
+        "1401-09",
+        "1401-10",
+        "1401-11",
+        "1401-12",
+      ],
+      series: [
+        {
+          name: "سهم تصادفات فوتی از شدید",
+          data: [12.5, 15.3, 18.2, 14.7, 16.8, 13.4, 19.1, 17.6, 15.9, 14.2, 16.3, 13.8],
+        },
+      ],
+    }),
+    [],
+  );
 
   // Get default filters for initial load
   const getDefaultFilters = (): ChartFilterState => {
@@ -350,7 +357,7 @@ const TemporalSeverityAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [ENABLED_FILTERS, DEMO_DATA]);
 
   // Handle manual data loading
   const handleLoadData = async () => {

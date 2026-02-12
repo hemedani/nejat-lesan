@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -35,9 +35,13 @@ const DEMO_DATA: TotalReasonAnalyticsResponse["analytics"] = [
 const TotalReasonAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
   // Get enabled filters for total reason analytics considering enterprise settings
-  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TOTAL_REASON_ANALYTICS",
-    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  const ENABLED_FILTERS = useMemo(
+    () =>
+      getEnabledFiltersForChartWithPermissions(
+        "TOTAL_REASON_ANALYTICS",
+        userLevel === "Enterprise" ? enterpriseSettings : undefined,
+      ),
+    [enterpriseSettings, userLevel],
   );
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [chartData, setChartData] = useState<TotalReasonAnalyticsResponse["analytics"] | null>(null);
@@ -46,11 +50,7 @@ const TotalReasonAnalyticsPage = () => {
   const [isDemoMode, setIsDemoMode] = useState(false);
 
   // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const loadInitialData = async () => {
+  const loadInitialData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -198,7 +198,11 @@ const TotalReasonAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [ENABLED_FILTERS]);
+
+  useEffect(() => {
+    loadInitialData();
+  }, [loadInitialData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
