@@ -17,4 +17,3 @@ export const getsSetup = () =>
 		],
 		validator: getsValidator(),
 	});
-

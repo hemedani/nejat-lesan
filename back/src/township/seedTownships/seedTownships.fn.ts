@@ -13,7 +13,7 @@
  * found accident, which is the correct and performant Lesan pattern.
  */
 import { type ActFn, ObjectId } from "@deps";
-import { accident, province, township, coreApp, file } from "../../../mod.ts";
+import { accident, coreApp, file, province, township } from "../../../mod.ts";
 import { MyContext } from "../../../utils/context.ts";
 
 export const seedTownshipsFn: ActFn = async (body) => {
@@ -48,7 +48,9 @@ export const seedTownshipsFn: ActFn = async (body) => {
 	// --- 3. Iterate Over Each Township in the GeoJSON ---
 	for (const feature of featureCollection.features) {
 		// Handle both "township" and "township en" properties, and both string and number types
-		const townshipName = (feature.properties.township ?? feature.properties["township en"] ?? "Unknown").toString();
+		const townshipName =
+			(feature.properties.township ?? feature.properties["township en"] ??
+				"Unknown").toString();
 		const townshipGeometry = feature.geometry;
 
 		console.log(`Processing Township: ${townshipName}`);
@@ -112,7 +114,9 @@ export const seedTownshipsFn: ActFn = async (body) => {
 				await Promise.all(batchPromises);
 
 				processedCount += batch.length;
-				console.log(`Processed ${processedCount}/${accidentsInTownship.length} accidents in Township ${townshipName}`);
+				console.log(
+					`Processed ${processedCount}/${accidentsInTownship.length} accidents in Township ${townshipName}`,
+				);
 			}
 
 			summary.accidentsUpdated += accidentsInTownship.length;

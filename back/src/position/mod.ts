@@ -6,10 +6,10 @@ import { removeSetup } from "./remove/mod.ts";
 import { countSetup } from "./count/mod.ts";
 
 export const positionSetup = () => {
-  addSetup();
-  updateSetup();
-  getSetup();
-  getsSetup();
-  removeSetup();
-  countSetup();
+	addSetup();
+	updateSetup();
+	getSetup();
+	getsSetup();
+	removeSetup();
+	countSetup();
 };

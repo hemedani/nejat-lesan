@@ -2,28 +2,28 @@ import type { ActFn } from "@deps";
 import { shoulder_status } from "../../../mod.ts";
 
 export const getsFn: ActFn = async (body) => {
-  const {
-    set: { page, limit, name },
-    get,
-  } = body.details;
+	const {
+		set: { page, limit, name },
+		get,
+	} = body.details;
 
-  const pipeline = [];
+	const pipeline = [];
 
-  name &&
-    pipeline.push({
-      $match: {
-        name: { $regex: new RegExp(name, "i") },
-      },
-    });
+	name &&
+		pipeline.push({
+			$match: {
+				name: { $regex: new RegExp(name, "i") },
+			},
+		});
 
-  pipeline.push({ $sort: { _id: -1 } });
-  pipeline.push({ $skip: (page - 1) * limit });
-  pipeline.push({ $limit: limit });
+	pipeline.push({ $sort: { _id: -1 } });
+	pipeline.push({ $skip: (page - 1) * limit });
+	pipeline.push({ $limit: limit });
 
-  return await shoulder_status
-    .aggregation({
-      pipeline,
-      projection: get,
-    })
-    .toArray();
+	return await shoulder_status
+		.aggregation({
+			pipeline,
+			projection: get,
+		})
+		.toArray();
 };

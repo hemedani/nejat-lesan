@@ -1,20 +1,21 @@
 import { type ActFn } from "@deps";
-import { shoulder_status, coreApp } from "../../../mod.ts";
+import { coreApp, shoulder_status } from "../../../mod.ts";
 import type { MyContext } from "@lib";
 
 export const addFn: ActFn = async (body) => {
-  const { set, get } = body.details;
-  const { user }: MyContext = coreApp.contextFns.getContextModel() as MyContext;
+	const { set, get } = body.details;
+	const { user }: MyContext = coreApp.contextFns
+		.getContextModel() as MyContext;
 
-  const { ...rest } = set;
+	const { ...rest } = set;
 
-  return await shoulder_status.insertOne({
-    doc: rest,
-    relations: {
-      registrer: {
-        _ids: user._id,
-      },
-    },
-    projection: get,
-  });
+	return await shoulder_status.insertOne({
+		doc: rest,
+		relations: {
+			registrer: {
+				_ids: user._id,
+			},
+		},
+		projection: get,
+	});
 };

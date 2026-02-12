@@ -3,10 +3,10 @@ import { selectStruct } from "../../../mod.ts";
 import { shared_relation_pure } from "@model";
 
 export const addValidator = () => {
-  return object({
-    set: object({
-      ...shared_relation_pure,
-    }),
-    get: selectStruct("equipment_damage", 1),
-  });
+	return object({
+		set: object({
+			...shared_relation_pure,
+		}),
+		get: selectStruct("equipment_damage", 1),
+	});
 };

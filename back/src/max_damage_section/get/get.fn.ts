@@ -2,15 +2,15 @@ import { type ActFn, ObjectId } from "@deps";
 import { max_damage_section } from "../../../mod.ts";
 
 export const getFn: ActFn = async (body) => {
-  const {
-    set: { _id },
-    get,
-  } = body.details;
+	const {
+		set: { _id },
+		get,
+	} = body.details;
 
-  return await max_damage_section
-    .aggregation({
-      pipeline: [{ $match: { _id: new ObjectId(_id as string) } }],
-      projection: get,
-    })
-    .toArray();
+	return await max_damage_section
+		.aggregation({
+			pipeline: [{ $match: { _id: new ObjectId(_id as string) } }],
+			projection: get,
+		})
+		.toArray();
 };

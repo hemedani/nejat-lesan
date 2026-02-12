@@ -10,7 +10,10 @@ import { enums, object, objectIdValidation } from "@deps";
 
 export const seedTownshipsValidator = () => {
 	return object({
-		set: object({ provinceId: objectIdValidation, geoId: objectIdValidation }),
+		set: object({
+			provinceId: objectIdValidation,
+			geoId: objectIdValidation,
+		}),
 		get: object({
 			summary: enums([1]),
 		}),

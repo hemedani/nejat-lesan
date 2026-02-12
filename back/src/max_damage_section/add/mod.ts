@@ -4,17 +4,17 @@ import { addFn } from "./add.fn.ts";
 import { addValidator } from "./add.val.ts";
 
 export const addSetup = () =>
-  coreApp.acts.setAct({
-    schema: "max_damage_section",
-    fn: addFn,
-    actName: "add",
-    preAct: [
-      setTokens,
-      setUser,
-      grantAccess({
-        levels: ["Manager"],
-      }),
-    ],
-    validator: addValidator(),
-    validationRunType: "create",
-  });
+	coreApp.acts.setAct({
+		schema: "max_damage_section",
+		fn: addFn,
+		actName: "add",
+		preAct: [
+			setTokens,
+			setUser,
+			grantAccess({
+				levels: ["Manager"],
+			}),
+		],
+		validator: addValidator(),
+		validationRunType: "create",
+	});

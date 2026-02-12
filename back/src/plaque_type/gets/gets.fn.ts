@@ -2,28 +2,28 @@ import type { ActFn } from "@deps";
 import { plaque_type } from "../../../mod.ts";
 
 export const getsFn: ActFn = async (body) => {
-  const {
-    set: { page, limit, name },
-    get,
-  } = body.details;
+	const {
+		set: { page, limit, name },
+		get,
+	} = body.details;
 
-  const pipeline = [];
+	const pipeline = [];
 
-  name &&
-    pipeline.push({
-      $match: {
-        name: { $regex: new RegExp(name, "i") },
-      },
-    });
+	name &&
+		pipeline.push({
+			$match: {
+				name: { $regex: new RegExp(name, "i") },
+			},
+		});
 
-  pipeline.push({ $sort: { _id: -1 } });
-  pipeline.push({ $skip: (page - 1) * limit });
-  pipeline.push({ $limit: limit });
+	pipeline.push({ $sort: { _id: -1 } });
+	pipeline.push({ $skip: (page - 1) * limit });
+	pipeline.push({ $limit: limit });
 
-  return await plaque_type
-    .aggregation({
-      pipeline,
-      projection: get,
-    })
-    .toArray();
+	return await plaque_type
+		.aggregation({
+			pipeline,
+			projection: get,
+		})
+		.toArray();
 };

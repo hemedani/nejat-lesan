@@ -1,5 +1,5 @@
 import { type ActFn } from "@deps";
-import { traffic_zone, coreApp } from "../../../mod.ts";
+import { coreApp, traffic_zone } from "../../../mod.ts";
 import type { MyContext } from "@lib";
 
 export const addFn: ActFn = async (body) => {

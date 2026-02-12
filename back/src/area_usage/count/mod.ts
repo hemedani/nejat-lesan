@@ -4,16 +4,16 @@ import { countValidator } from "./count.val.ts";
 import { coreApp } from "../../../mod.ts";
 
 export const countSetup = () =>
-  coreApp.acts.setAct({
-    schema: "area_usage",
-    fn: countFn,
-    actName: "count",
-    preAct: [
-      setTokens,
-      setUser,
-      grantAccess({
-        levels: ["Manager"],
-      }),
-    ],
-    validator: countValidator(),
-  });
+	coreApp.acts.setAct({
+		schema: "area_usage",
+		fn: countFn,
+		actName: "count",
+		preAct: [
+			setTokens,
+			setUser,
+			grantAccess({
+				levels: ["Manager"],
+			}),
+		],
+		validator: countValidator(),
+	});

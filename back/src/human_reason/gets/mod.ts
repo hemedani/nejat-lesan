@@ -3,9 +3,9 @@ import { getsFn } from "./gets.fn.ts";
 import { getsValidator } from "./gets.val.ts";
 
 export const getsSetup = () =>
-  coreApp.acts.setAct({
-    schema: "human_reason",
-    fn: getsFn,
-    actName: "gets",
-    validator: getsValidator(),
-  });
+	coreApp.acts.setAct({
+		schema: "human_reason",
+		fn: getsFn,
+		actName: "gets",
+		validator: getsValidator(),
+	});

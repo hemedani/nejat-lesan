@@ -68,10 +68,14 @@ export const addFn: ActFn = async (body) => {
 				await Promise.all(batchPromises);
 
 				processedCount += batch.length;
-				console.log(`Processed ${processedCount}/${accidentsInTownship.length} accidents in Township ${rest.name}`);
+				console.log(
+					`Processed ${processedCount}/${accidentsInTownship.length} accidents in Township ${rest.name}`,
+				);
 			}
 
-			console.log(`Successfully linked ${accidentsInTownship.length} accidents to Township ${rest.name}`);
+			console.log(
+				`Successfully linked ${accidentsInTownship.length} accidents to Township ${rest.name}`,
+			);
 		}
 	}
 

@@ -4,17 +4,17 @@ import { countValidator } from "./count.val.ts";
 import { coreApp } from "../../../mod.ts";
 
 export const countSetup = () =>
-  coreApp.acts.setAct({
-    schema: "plaque_type",
-    fn: countFn,
-    actName: "count",
-    preAct: [
-      setTokens,
-      setUser,
-      grantAccess({
-        levels: ["Manager"],
-      }),
-    ],
-    validator: countValidator(),
-    validationRunType: "create",
-  });
+	coreApp.acts.setAct({
+		schema: "plaque_type",
+		fn: countFn,
+		actName: "count",
+		preAct: [
+			setTokens,
+			setUser,
+			grantAccess({
+				levels: ["Manager"],
+			}),
+		],
+		validator: countValidator(),
+		validationRunType: "create",
+	});
