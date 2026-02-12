@@ -30,6 +30,7 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
   const nextStep = async () => {
     // Validate current step before moving to next step
     const isValid = await triggerValidation();
+    console.log("?inside nextStep: => ", { isValid });
     if (isValid && currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
       // Scroll to top when moving to the next step
@@ -56,10 +57,10 @@ const MultiStepForm: React.FC<MultiStepFormProps> = ({
   };
 
   // Determine if this is the last step that should show submit button
-  // For non-enterprise users, the last step is the city settings step (index 1)
+  // For non-enterprise users, the last step is the basic info step (index 0)
   // For enterprise users, the last step is the final analytics step
   const isLastStep = currentStep === steps.length - 1;
-  const shouldShowSubmitButton = isEnterprise ? isLastStep : currentStep >= 1;
+  const shouldShowSubmitButton = isEnterprise ? isLastStep : currentStep === 0;
 
   return (
     <div className="w-full max-w-4xl mx-auto">
