@@ -17,8 +17,6 @@ const coreAccidentDetailsFilterObj = {
   officer: z.boolean().optional(),
   completionDateFrom: z.boolean().optional(),
   completionDateTo: z.boolean().optional(),
-  polygon: z.boolean().optional(), // GeoJSON Spatial Filter
-  groupBy: z.boolean().optional(), // Spatial grouping unit
 };
 
 const locationAndContextFilterObj = {
@@ -375,7 +373,6 @@ export const comprehensiveFilterFields = [
   { key: "completionDateFrom", label: "تاریخ تکمیل از" },
   { key: "completionDateTo", label: "تاریخ تکمیل تا" },
   { key: "polygon", label: "محدوده مکانی" }, // NEW: GeoJSON Spatial Filter
-  { key: "groupBy", label: "گروه‌بندی مکانی" }, // NEW: Spatial grouping unit
   { key: "province", label: "استان" },
   { key: "city", label: "شهر" },
   { key: "road", label: "جاده" },

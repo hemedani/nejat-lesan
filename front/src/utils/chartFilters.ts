@@ -13,14 +13,7 @@ export type EnabledFilters = Array<keyof ChartFilterState>;
 // Common filter sets that can be reused across multiple charts
 export const COMMON_FILTER_SETS = {
   // Basic filters - common across most charts
-  BASIC: [
-    "dateOfAccidentFrom",
-    "dateOfAccidentTo",
-    "province",
-    "city",
-
-    // "officer",
-  ] as EnabledFilters,
+  BASIC: ["dateOfAccidentFrom", "dateOfAccidentTo", "province", "city", "officer"] as EnabledFilters,
 
   // Geographic filters - for spatial analysis
   GEOGRAPHIC: [
@@ -33,7 +26,7 @@ export const COMMON_FILTER_SETS = {
     "cityZone",
     "position",
 
-    // "officer",
+    "officer",
   ] as EnabledFilters,
 
   // Severity analysis filters
@@ -44,13 +37,13 @@ export const COMMON_FILTER_SETS = {
     "city",
     "accidentType",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Comprehensive filters - all available filters
@@ -81,14 +74,14 @@ export const COMMON_FILTER_SETS = {
     "driverLicenceType",
     "driverInjuryType",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 };
 
@@ -183,14 +176,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Collision Analytics - Based on collisionAnalytics API
@@ -239,14 +232,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Road Defects Analytics
@@ -287,12 +280,12 @@ export const CHART_SPECIFIC_FILTERS = {
     "driverInjuryType",
     "driverTotalReason",
 
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Human Reason Analytics
@@ -384,14 +377,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Vehicle Reason Analytics - Based on vehicleReasonAnalytics API
@@ -483,14 +476,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Area Usage Analytics
@@ -582,14 +575,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Accident Severity Analytics - Now includes all available filters
@@ -683,14 +676,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Monthly/Holiday Analytics - Based on monthlyHolidayAnalytics API
@@ -731,18 +724,18 @@ export const CHART_SPECIFIC_FILTERS = {
     "driverInjuryType",
     "driverTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Hourly/Day of Week Analytics - Based on hourlyDayOfWeekAnalytics API
-  HOURLY_DAY_ANALYTICS: [
+  HOURLY_DAY_OF_WEEK_ANALYTICS: [
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
     "province",
@@ -778,15 +771,19 @@ export const CHART_SPECIFIC_FILTERS = {
     "driverLicenceType",
     "driverInjuryType",
     "driverTotalReason",
+    "hasWitness",
+    "newsNumber",
+    "officer",
+    "completionDateFrom",
+    "completionDateTo",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Company Performance Analytics
@@ -878,14 +875,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Total Reason Analytics - Based on totalReasonAnalytics API
@@ -977,14 +974,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Spatial Collision Analytics - Based on spatialCollisionAnalytics API
@@ -1076,14 +1073,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Hotspots Analytics - Using comprehensive filters for geographic analysis
@@ -1099,11 +1096,11 @@ export const CHART_SPECIFIC_FILTERS = {
     "limit",
     "skip",
 
-    // "officer",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "officer",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Regional Analytics
@@ -1119,11 +1116,11 @@ export const CHART_SPECIFIC_FILTERS = {
     "collisionType",
     "areaUsages",
 
-    // "officer",
+    "officer",
   ] as EnabledFilters,
 
   // Safety Index Analytics - Based on spatialSafetyIndexAnalytics API
-  SAFETY_INDEX_ANALYTICS: [
+  SPATIAL_SAFETY_INDEX_ANALYTICS: [
     // --- Core Accident Details ---
     "dateOfAccidentFrom",
     "dateOfAccidentTo",
@@ -1211,14 +1208,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Count Analytics - Based on temporalCountAnalytics API
@@ -1310,14 +1307,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Severity Analytics - Based on temporalSeverityAnalytics API
@@ -1409,14 +1406,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Night Analytics - Based on temporalNightAnalytics API
@@ -1508,14 +1505,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Collision Analytics - Based on temporalCollisionAnalytics API
@@ -1607,14 +1604,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Damage Analytics - Based on temporalDamageAnalytics API
@@ -1691,14 +1688,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Total Reason Analytics - Based on temporalTotalReasonAnalytics API
@@ -1790,14 +1787,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Temporal Unlicensed Drivers Analytics - Based on temporalUnlicensedDriversAnalytics API
@@ -1889,14 +1886,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Spatial Severity Analytics - Based on spatialSeverityAnalytics API
@@ -1988,14 +1985,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Spatial Single Vehicle Analytics - Based on spatialSingleVehicleAnalytics API
@@ -2087,14 +2084,14 @@ export const CHART_SPECIFIC_FILTERS = {
     "pedestrianFaultStatus",
     "pedestrianTotalReason",
 
-    // "seri",
-    // "serial",
-    // "officer",
-    // "rulingType",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "seri",
+    "serial",
+    "officer",
+    "rulingType",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Trend Collision Analytics - For trend analysis of collision types
@@ -2109,7 +2106,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "areaUsages",
     "roadSituation",
 
-    // "officer",
+    "officer",
   ] as EnabledFilters,
 
   // Trend Severity Analytics - For trend analysis of accident severity
@@ -2122,11 +2119,11 @@ export const CHART_SPECIFIC_FILTERS = {
     "accidentType",
     "collisionType",
 
-    // "officer",
-    // "deadCountMin",
-    // "deadCountMax",
-    // "injuredCountMin",
-    // "injuredCountMax",
+    "officer",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
   ] as EnabledFilters,
 
   // Monthly Trend Analytics - For monthly trend analysis
@@ -2167,10 +2164,72 @@ export const getEnabledFiltersForChart = (
   return CHART_SPECIFIC_FILTERS[chartType];
 };
 
-// Helper function to combine multiple filter sets
-export const combineFilterSets = (
-  ...filterSets: EnabledFilters[]
+// Helper function to get enabled filters for a specific chart type considering enterprise settings
+export const getEnabledFiltersForChartWithPermissions = (
+  chartType: keyof typeof CHART_SPECIFIC_FILTERS,
+  enterpriseSettings?: {
+    availableCharts?: {
+      [key: string]: {
+        [filter: string]: boolean;
+      };
+    };
+  },
 ): EnabledFilters => {
+  // If no enterprise settings or no availableCharts, return all filters for the chart type
+  if (!enterpriseSettings?.availableCharts) {
+    return CHART_SPECIFIC_FILTERS[chartType];
+  }
+
+  // Convert chartType from UPPERCASE_WITH_UNDERSCORES to camelCase to match backend naming
+  // For example: "HOURLY_DAY_OF_WEEK_ANALYTICS" becomes "hourlyDayOfWeekAnalytics"
+  const camelCaseChartType = convertToCamelCase(chartType);
+
+  console.log(
+    `Getting enabled filters for chart type: ${chartType} (camelCase: ${camelCaseChartType})`,
+  );
+  console.log(
+    "Available charts in enterprise settings:",
+    Object.keys(enterpriseSettings.availableCharts || {}),
+  );
+
+  // Get the specific chart permissions
+  const chartPermissions = enterpriseSettings.availableCharts[camelCaseChartType];
+
+  console.log(`Permissions for ${camelCaseChartType}:`, chartPermissions);
+
+  // If no specific permissions for this chart, return all filters for the chart type
+  if (!chartPermissions) {
+    console.log(`No permissions found for chart: ${camelCaseChartType}`);
+    console.log(
+      `Checking if key exists in availableCharts:`,
+      camelCaseChartType in (enterpriseSettings.availableCharts || {}),
+    );
+    return CHART_SPECIFIC_FILTERS[chartType];
+  }
+
+  // Filter the chart's default filters based on permissions
+  // Only return filters that are explicitly set to true in the permissions
+  const defaultFilters = CHART_SPECIFIC_FILTERS[chartType];
+  return defaultFilters.filter((filter) => chartPermissions[filter] === true);
+};
+
+// Helper function to convert UPPERCASE_WITH_UNDERSCORES to camelCase
+// For example: "HOURLY_DAY_ANALYTICS" becomes "hourlyDayOfWeekAnalytics"
+const convertToCamelCase = (str: string): string => {
+  return str
+    .toLowerCase()
+    .split("_")
+    .map((word, index) => {
+      if (index === 0) {
+        return word;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join("");
+};
+
+// Helper function to combine multiple filter sets
+export const combineFilterSets = (...filterSets: EnabledFilters[]): EnabledFilters => {
   const combined = new Set<keyof ChartFilterState>();
   filterSets.forEach((set) => {
     set.forEach((filter) => combined.add(filter));

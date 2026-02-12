@@ -22,6 +22,7 @@ export default async function RootLayout({
   const me = await getMe();
   const isAuthenticated = me.success;
   const userLevel = me.success ? me.body.level : null;
+  const enterpriseSettings = me.success ? me.body.settings : undefined;
 
   return (
     <html lang="fa" dir="rtl">
@@ -31,6 +32,7 @@ export default async function RootLayout({
             <AuthInitializer
               isAuthenticated={isAuthenticated}
               userLevel={userLevel}
+              enterpriseSettings={enterpriseSettings}
             />
             <div className="h-screen flex flex-col">
               <Navbar />
