@@ -21,7 +21,7 @@ export const mapAccidentsSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager"],
+				levels: ["Manager", "Enterprise"],
 			}),
 		],
 		validator: mapAccidentsValidator(),
