@@ -5,13 +5,10 @@ import { useState } from "react";
 import EntityCard from "../organisms/EntityCard";
 import { DeleteModal } from "./DeleteModal";
 import { useRouter } from "next/navigation";
-import {
-  ModelName,
-  ToastNotify,
-  translateModelNameToPersian,
-} from "@/utils/helper";
+import { ModelName, ToastNotify, translateModelNameToPersian } from "@/utils/helper";
 import CityUpdateModal from "./CityUpdateModal";
 import SeedCityZonesModal from "./SeedCityZonesModal";
+import CityProvinceRelationModal from "./CityProvinceRelationModal";
 
 interface TData {
   _id: string;
@@ -26,24 +23,18 @@ interface CityDashboardProps {
   lesanUrl: string;
 }
 
-const CityDashboard: React.FC<CityDashboardProps> = ({
-  data,
-  model,
-  remove,
-  token,
-  lesanUrl,
-}) => {
+const CityDashboard: React.FC<CityDashboardProps> = ({ data, model, remove, token, lesanUrl }) => {
   const router = useRouter();
 
   const [activeModal, setActiveModal] = useState<
-    "edit" | "delete" | "seedZones" | null
+    "edit" | "delete" | "seedZones" | "provinceRelation" | null
   >(null);
   const [selectedItem, setSelectedItem] = useState<TData | null>(null);
 
   const [hardCascade, setHardCascade] = useState<boolean>(false);
 
   const openModal = (
-    type: "edit" | "delete" | "seedZones",
+    type: "edit" | "delete" | "seedZones" | "provinceRelation",
     item: TData | null = null,
   ) => {
     setSelectedItem(item);
@@ -61,10 +52,7 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
       const removedItem = await remove(selectedItem._id, hardCascade);
 
       if (removedItem.success) {
-        ToastNotify(
-          "success",
-          `${translateModelNameToPersian(model)} با موفقیت حذف شد`,
-        );
+        ToastNotify("success", `${translateModelNameToPersian(model)} با موفقیت حذف شد`);
       } else {
         ToastNotify(
           "error",
@@ -92,6 +80,7 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
             onDelete={() => openModal("delete", item)}
             onEdit={() => openModal("edit", item)}
             onSeedZones={() => openModal("seedZones", item)}
+            onProvinceRelation={() => openModal("provinceRelation", item)}
           />
         ))}
       </div>
@@ -125,6 +114,17 @@ const CityDashboard: React.FC<CityDashboardProps> = ({
           cityId={selectedItem._id}
           cityName={selectedItem.name}
           token={token}
+        />
+      )}
+
+      {activeModal === "provinceRelation" && selectedItem && (
+        <CityProvinceRelationModal
+          isOpen
+          onClose={closeModal}
+          cityId={selectedItem._id}
+          cityName={selectedItem.name}
+          token={token}
+          onSuccessAction={handleUpdateSuccess}
         />
       )}
     </div>
