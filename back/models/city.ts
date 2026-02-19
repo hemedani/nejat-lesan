@@ -2,15 +2,7 @@ import { coreApp } from "../mod.ts";
 import { type RelationDataType, type RelationSortOrderType } from "@deps";
 import { area_excludes, pure_location, user_excludes } from "@model";
 
-export const city_pure = {
-	...pure_location,
-	// native_area: geoJSONStruct("MultiPolygon"), // -- محدوده بومی (اگر متفاوت است)
-	// non_native_area: geoJSONStruct("MultiPolygon"), // -- محدوده غیربومی (اگر متفاوت است)
-	// population: number(),
-	// area_number: number(),
-
-	// ...createUpdateAt,
-};
+export const city_pure = { ...pure_location };
 
 export const city_relations = {
 	registrer: {

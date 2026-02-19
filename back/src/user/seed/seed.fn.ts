@@ -46,7 +46,6 @@ import {
 import { AccidentJson } from "../../../utils/sampleTypes.ts";
 import { accident_pure, accident_relations } from "@model";
 import { normalizePersianText } from "../../../utils/normalizePersianText.ts";
-import { JsonParseStream } from "@deps";
 
 export const seedFn: ActFn = async (body) => {
 	const { set: { fileID } } = body.details;
@@ -213,6 +212,7 @@ export const seedFn: ActFn = async (body) => {
 		name: string,
 		modelName: keyof typeof modelMap,
 		userId: ObjectId,
+		additionalRelations?: Record<string, any>,
 	): Promise<WithId<Document>> => {
 		// Validate input
 		if (!isValidString(name)) {
@@ -372,7 +372,10 @@ export const seedFn: ActFn = async (body) => {
 									createdAt: new Date(),
 									updatedAt: new Date(),
 								},
-								relations: { registrer: { _ids: userId } },
+								relations: {
+									registrer: { _ids: userId },
+									...additionalRelations,
+								},
 								projection: { name: 1, _id: 1 },
 							});
 
@@ -430,13 +433,19 @@ export const seedFn: ActFn = async (body) => {
 		item: any,
 		modelName: keyof typeof modelMap,
 		userId: ObjectId,
+		additionalRelations?: Record<string, any>,
 	) => {
 		if (
 			!item || !item.name || typeof item.name !== "string" ||
 			item.name.trim().length === 0
 		) return null;
 		try {
-			const result = await findOrCreate(item.name, modelName, userId);
+			const result = await findOrCreate(
+				item.name,
+				modelName,
+				userId,
+				additionalRelations,
+			);
 			relationSuccesses++;
 			return result;
 		} catch (error) {
@@ -633,37 +642,50 @@ export const seedFn: ActFn = async (body) => {
 			const relationPromises = [];
 
 			// Single relations
+			// Process province first, then city (city needs province relation)
+			let provinceId: ObjectId | undefined;
+
 			if (parsedAccident.province) {
-				relationPromises.push(
-					normalizeRelations(
-						parsedAccident.province,
-						"province",
-						userId,
-					).then((normalized) => {
-						if (normalized && normalized._id) {
-							accidentRelations.province = {
-								_ids: normalized._id,
-								relatedRelations: { accidents: true },
-							};
-						}
-					}),
+				const provinceNormalized = await normalizeRelations(
+					parsedAccident.province,
+					"province",
+					userId,
 				);
+				if (provinceNormalized && provinceNormalized._id) {
+					provinceId = provinceNormalized._id;
+					accidentRelations.province = {
+						_ids: provinceId,
+						relatedRelations: { accidents: true },
+					};
+				}
 			}
 
 			if (parsedAccident.township) {
-				relationPromises.push(
-					normalizeRelations(parsedAccident.township, "city", userId)
-						.then((normalized) => {
-							if (normalized && normalized._id) {
-								accidentRelations.city = {
-									_ids: normalized._id,
-									relatedRelations: { accidents: true },
-								};
-							}
-						}),
+				// Pass province relation when creating city
+				const cityRelations = provinceId
+					? {
+						province: {
+							_ids: provinceId,
+							relatedRelations: { cities: true },
+						},
+					}
+					: undefined;
+
+				const cityNormalized = await normalizeRelations(
+					parsedAccident.township,
+					"city",
+					userId,
+					cityRelations,
 				);
+				if (cityNormalized && cityNormalized._id) {
+					accidentRelations.city = {
+						_ids: cityNormalized._id,
+						relatedRelations: { accidents: true },
+					};
+				}
 			}
 
+			// Continue with other relations in parallel
 			if (parsedAccident.road) {
 				relationPromises.push(
 					normalizeRelations(parsedAccident.road, "road", userId)
