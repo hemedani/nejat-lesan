@@ -7,8 +7,8 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { eventCollisionAnalytics } from "@/app/actions/accident/eventCollisionAnalytics";
 import EventCollisionComparisonChart from "../../../../components/dashboards/charts/EventCollisionComparisonChart";
-import { DatePicker } from "zaman";
 import { useAuth } from "@/context/AuthContext";
+import MyStandaloneDatePicker from "@/components/atoms/MyStandaloneDatePicker";
 
 // Backend response interface for event collision analytics
 interface EventCollisionResponse {
@@ -119,14 +119,14 @@ const EventSelector: React.FC<EventSelectorProps> = ({
       {/* Date Range Selection */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ شروع</label>
-          <DatePicker
-            defaultValue={eventRange.from ? new Date(eventRange.from) : undefined}
-            onChange={(e) => {
-              if (e && e.value) {
+          <MyStandaloneDatePicker
+            label="تاریخ شروع"
+            value={eventRange.from ? new Date(eventRange.from) : null}
+            onChange={(date) => {
+              if (date) {
                 onEventRangeChange({
                   ...(eventRange || { from: "", to: "" }),
-                  from: new Date(e.value).toISOString().split("T")[0],
+                  from: date.toISOString().split("T")[0],
                 });
               } else {
                 onEventRangeChange({
@@ -135,42 +135,19 @@ const EventSelector: React.FC<EventSelectorProps> = ({
                 });
               }
             }}
-            customShowDateFormat="YYYY/MM/DD"
-            className="z-999"
-            inputClass={`
-              w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
-              placeholder:text-slate-400 text-right
-              transition-all duration-200 ease-in-out
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
-              hover:border-slate-400 z-999
-              ${
-                selectedEventType !== "custom"
-                  ? "bg-slate-100 cursor-not-allowed opacity-60"
-                  : "hover:bg-slate-50/50"
-              }
-              border-slate-300
-            `}
-            inputAttributes={{
-              placeholder: "تاریخ شروع",
-              disabled: selectedEventType !== "custom",
-              readOnly: selectedEventType !== "custom",
-            }}
-            round="x2"
-            accentColor="#3b82f6"
-            locale="fa"
-            direction="rtl"
-            show={false}
+            placeholder="تاریخ شروع"
+            disabled={selectedEventType !== "custom"}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ پایان</label>
-          <DatePicker
-            defaultValue={eventRange.to ? new Date(eventRange.to) : undefined}
-            onChange={(e) => {
-              if (e && e.value) {
+          <MyStandaloneDatePicker
+            label="تاریخ پایان"
+            value={eventRange.to ? new Date(eventRange.to) : null}
+            onChange={(date) => {
+              if (date) {
                 onEventRangeChange({
                   ...(eventRange || { from: "", to: "" }),
-                  to: new Date(e.value).toISOString().split("T")[0],
+                  to: date.toISOString().split("T")[0],
                 });
               } else {
                 onEventRangeChange({
@@ -179,31 +156,8 @@ const EventSelector: React.FC<EventSelectorProps> = ({
                 });
               }
             }}
-            customShowDateFormat="YYYY/MM/DD"
-            className="z-999"
-            inputClass={`
-              w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
-              placeholder:text-slate-400 text-right
-              transition-all duration-200 ease-in-out
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
-              hover:border-slate-400 z-999
-              ${
-                selectedEventType !== "custom"
-                  ? "bg-slate-100 cursor-not-allowed opacity-60"
-                  : "hover:bg-slate-50/50"
-              }
-              border-slate-300
-            `}
-            inputAttributes={{
-              placeholder: "تاریخ پایان",
-              disabled: selectedEventType !== "custom",
-              readOnly: selectedEventType !== "custom",
-            }}
-            round="x2"
-            accentColor="#3b82f6"
-            locale="fa"
-            direction="rtl"
-            show={false}
+            placeholder="تاریخ پایان"
+            disabled={selectedEventType !== "custom"}
           />
         </div>
       </div>

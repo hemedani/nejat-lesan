@@ -384,12 +384,6 @@ export const monthlyHolidayAnalyticsFn: ActFn = async (body) => {
 						timezone: "Asia/Tehran",
 					},
 				},
-				month: {
-					$month: {
-						date: "$date_of_accident",
-						timezone: "Asia/Tehran",
-					},
-				},
 				dateString: {
 					$dateToString: {
 						format: "%Y-%m-%d",
@@ -397,6 +391,7 @@ export const monthlyHolidayAnalyticsFn: ActFn = async (body) => {
 						timezone: "Asia/Tehran",
 					},
 				},
+				date_of_accident: 1,
 			},
 		},
 		{
@@ -417,24 +412,10 @@ export const monthlyHolidayAnalyticsFn: ActFn = async (body) => {
 		},
 		{
 			$group: {
-				_id: { month: "$month", status: "$holidayStatus" },
+				_id: { dateString: "$dateString", status: "$holidayStatus" },
 				count: { $sum: 1 },
 			},
 		},
-		{
-			$group: {
-				_id: "$_id.month",
-				counts: { $push: { k: "$_id.status", v: "$count" } },
-			},
-		},
-		{
-			$project: {
-				_id: 0,
-				month: "$_id",
-				stats: { $arrayToObject: "$counts" },
-			},
-		},
-		{ $sort: { month: 1 } },
 	];
 
 	const dbResults = await accident.aggregation({ pipeline }).toArray();
@@ -443,15 +424,23 @@ export const monthlyHolidayAnalyticsFn: ActFn = async (body) => {
 	// 9. FORMAT RESPONSE FOR CHARTING
 	//    - 12-month arrays (index 0 = Farvardin)
 	//    - Persian month names as categories
+	//    - Convert each date to Jalali month on the server side
 	// =========================================================================
 	const holidayData = Array(12).fill(0);
 	const nonHolidayData = Array(12).fill(0);
 
-	for (const { month, stats } of dbResults) {
-		const idx = month - 1; // MongoDB month: 1–12 → array index 0–11
+	for (const { _id, count } of dbResults) {
+		const { dateString, status } = _id;
+		// Convert Gregorian date to Jalali month (1-12)
+		const jalaliMonth = moment(dateString, "YYYY-MM-DD").jMonth() + 1; // jMonth() returns 0-11
+		const idx = jalaliMonth - 1; // Convert to array index 0-11
+
 		if (idx >= 0 && idx < 12) {
-			holidayData[idx] = stats["Holiday"] || 0;
-			nonHolidayData[idx] = stats["Non-Holiday"] || 0;
+			if (status === "Holiday") {
+				holidayData[idx] += count;
+			} else {
+				nonHolidayData[idx] += count;
+			}
 		}
 	}
 

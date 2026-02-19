@@ -114,7 +114,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
           },
           {
             id: "monthly-holiday",
-            label: "تحلیл ماهانه تعطیلات",
+            label: "تحلیل ماهانه تعطیلات",
             href: "/charts/overall/monthly-holiday",
           },
           {

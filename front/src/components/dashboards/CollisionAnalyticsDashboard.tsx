@@ -73,48 +73,15 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
     );
   }
 
-  // Calculate summary statistics
+  // Calculate summary statistics for the three categories
   const totalMainCollisions = data.mainChart.reduce((sum, item) => sum + item.count, 0);
   const totalSingleVehicle = data.singleVehicleChart.reduce((sum, item) => sum + item.count, 0);
   const totalOtherTypes = data.otherTypesChart.reduce((sum, item) => sum + item.count, 0);
-  const grandTotal = totalMainCollisions + totalSingleVehicle + totalOtherTypes;
-
-  const mostCommonMainType =
-    data.mainChart.length > 0
-      ? data.mainChart.reduce((max, item) => (item.count > max.count ? item : max), data.mainChart[0])
-          .name
-      : "نامشخص";
-
-  const mostCommonSingleVehicleType =
-    data.singleVehicleChart.length > 0
-      ? data.singleVehicleChart.reduce(
-          (max, item) => (item.count > max.count ? item : max),
-          data.singleVehicleChart[0],
-        ).name
-      : "نامشخص";
 
   return (
     <div className="space-y-6">
-      {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-sm p-4 border-r-4 border-blue-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">کل تصادفات</p>
-              <p className="text-2xl font-bold text-gray-900">{formatNumber(grandTotal)}</p>
-            </div>
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
+      {/* Summary Statistics - Three Categories */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg shadow-sm p-4 border-r-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
@@ -166,21 +133,6 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
                 />
               </svg>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Insights */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نکات کلیدی</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 mb-2">شایع‌ترین نوع برخورد اصلی</h4>
-            <p className="text-blue-700">{mostCommonMainType}</p>
-          </div>
-          <div className="bg-yellow-50 rounded-lg p-4">
-            <h4 className="font-medium text-yellow-900 mb-2">شایع‌ترین نوع تصادف تک وسیله‌ای</h4>
-            <p className="text-yellow-700">{mostCommonSingleVehicleType}</p>
           </div>
         </div>
       </div>

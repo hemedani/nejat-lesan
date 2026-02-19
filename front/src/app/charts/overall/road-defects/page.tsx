@@ -38,7 +38,10 @@ const RoadDefectsPage = () => {
   const [chartData, setChartData] = useState<RoadDefectsAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
+    dateOfAccidentFrom: "2024-03-20T00:00:00.000Z",
+    dateOfAccidentTo: "2025-03-19T23:59:59.999Z",
+  });
 
   // Load initial data on component mount
   useEffect(() => {
@@ -51,7 +54,59 @@ const RoadDefectsPage = () => {
 
     try {
       const result = await roadDefectsAnalytics({
-        set: {},
+        set: {
+          // Core Accident Details
+          dateOfAccidentFrom: "2024-03-20T00:00:00.000Z",
+          dateOfAccidentTo: "2025-03-19T23:59:59.999Z",
+          deadCountMin: undefined,
+          deadCountMax: undefined,
+          injuredCountMin: undefined,
+          injuredCountMax: undefined,
+
+          // Location & Context
+          province: [],
+          city: [],
+          road: [],
+          trafficZone: [],
+          cityZone: [],
+          accidentType: [],
+          position: [],
+          rulingType: [],
+
+          // Accident Characteristics
+          lightStatus: [],
+          collisionType: [],
+          roadSituation: [],
+          roadRepairType: [],
+          shoulderStatus: [],
+
+          // Environmental & Reason-based
+          areaUsages: [],
+          airStatuses: [],
+          roadDefects: [],
+          humanReasons: [],
+          vehicleReasons: [],
+          roadSurfaceConditions: [],
+          equipmentDamages: [],
+
+          // Vehicle DTOs Filters
+          vehicleColor: [],
+          vehicleSystem: [],
+          vehiclePlaqueType: [],
+          vehicleSystemType: [],
+          vehicleFaultStatus: [],
+          vehicleInsuranceCo: [],
+          vehiclePlaqueUsage: [],
+          vehicleBodyInsuranceCo: [],
+          vehicleMotionDirection: [],
+          vehicleMaxDamageSections: [],
+
+          // Driver in Vehicle DTOs Filters
+          driverSex: [],
+          driverLicenceType: [],
+          driverInjuryType: [],
+          driverTotalReason: [],
+        },
         get: {
           defectDistribution: 1,
           defectCounts: 1,

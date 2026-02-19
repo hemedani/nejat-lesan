@@ -71,7 +71,7 @@ const HourlyDayOfWeekPage = () => {
         });
       });
       const peakHourIndex = hourlyTotals.indexOf(Math.max(...hourlyTotals));
-      const peakHour = `${formatNumber(peakHourIndex)}:${formatNumber(0)}${formatNumber(0)}`;
+      const peakHour = `${formatNumber(peakHourIndex)}:۰۰`;
 
       // Find peak day (day with most accidents)
       const dayTotals = rawData.series.map((day) => ({
@@ -81,7 +81,7 @@ const HourlyDayOfWeekPage = () => {
       const peakDay = dayTotals.reduce((max, day) => (day.total > max.total ? day : max)).name;
 
       // Calculate average hourly accidents
-      const averageHourly = totalAccidents / (rawData.series.length * 24);
+      const averageHourly = Math.round(totalAccidents / (rawData.series.length * 24));
 
       return {
         series: transformedSeries,
@@ -418,7 +418,7 @@ const HourlyDayOfWeekPage = () => {
                       <div className="text-sm font-medium text-gray-500">میانگین ساعتی</div>
                       <div className="text-2xl font-bold text-gray-900">
                         {chartData.averageHourly !== undefined
-                          ? formatNumber(parseFloat(chartData.averageHourly.toFixed(1)))
+                          ? formatNumber(chartData.averageHourly)
                           : "0"}
                       </div>
                     </div>
