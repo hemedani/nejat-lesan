@@ -36,8 +36,6 @@ export const checkEnterpriseChartAccess = (
 		return { hasAccess: true }; // Managers and other levels have full access
 	}
 
-	console.log("Checking access for user:", user, "to chart:", chartName);
-
 	// Clean filters by removing empty arrays and strings - modifies the original object
 	if (requestedFilters) {
 		for (const [key, value] of Object.entries(requestedFilters)) {

@@ -66,12 +66,6 @@ export const createChartAuthMiddleware = (
 			}
 		}
 
-		console.log("Enterprise access check:", {
-			hasAccess,
-			defaultFilters,
-			chartName,
-		});
-
 		// Apply default filters for enterprise users if they exist
 		if (defaultFilters && Object.keys(defaultFilters).length > 0) {
 			// Merge default filters with user-provided filters

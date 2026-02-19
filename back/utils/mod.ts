@@ -8,3 +8,4 @@ export * from "./isValidNationalNumber.ts";
 export * from "./context.ts";
 export * from "./authorization.ts";
 export * from "./chartAuthorization.ts";
+export * from "./cityAuthorization.ts";
