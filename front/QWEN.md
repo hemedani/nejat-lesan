@@ -54,7 +54,8 @@ LESEN Frontend is a comprehensive traffic management and accident reporting syst
 ### Date & Localization
 
 - **date-fns-jalali**: Persian calendar date functions
-- **zaman**: Persian date picker
+- **react-multi-date-picker**: Persian date picker with full RTL support
+- **react-date-object**: Date object manipulation for Persian calendar
 - **Vazir Matn Font**: Persian typography
 
 ## 📁 Project Structure
@@ -458,3 +459,49 @@ You may still:
 - Suggest commands that could be run
 - Help debug configuration issues
 - Explain what different commands do
+
+## 📝 Recent Changes
+
+### Date Picker Migration (react-multi-date-picker)
+
+**Date**: Current
+**Component**: `MyDateInput.tsx`
+**Scope**: ChartsFilterSidebar.tsx (Step 1 of full migration)
+
+**Changes Made**:
+
+- Replaced `zaman` date picker with `react-multi-date-picker` throughout the entire project
+- Created `MyDateInput.tsx` for React Hook Form integration (form-based date inputs)
+- Created `MyStandaloneDatePicker.tsx` for standalone usage (non-form date inputs)
+- Added `react-multi-date-picker` (v4.5.2) and `react-date-object` (v2.1.4) packages
+- Removed `zaman` dependency from package.json
+- Updated global CSS with custom blue theme styles (no CSS import needed - library doesn't include blue.css)
+- Maintained Persian calendar support with full RTL (right-to-left) layout
+- Preserved all existing functionality including ISO date storage format
+- Enhanced styling to match existing UI design system with custom blue theme (#3b82f6)
+- Implemented proper TypeScript type handling for multiple date format conversions
+- Added `portal` prop for proper z-index handling (calendar renders in document.body)
+- Increased z-index to 9999 to ensure calendar appears above all other UI elements
+
+**Benefits**:
+
+- Better TypeScript support and type safety
+- More active maintenance and community support
+- Better integration with React 19
+- Improved RTL and Persian calendar handling
+- More customizable and flexible API
+
+**Migration Status**:
+
+- ✅ Step 1: MyDateInput.tsx component updated (React Hook Form integration)
+- ✅ Step 2: MyStandaloneDatePicker.tsx component created (standalone usage)
+- ✅ Step 3: ChartsFilterSidebar.tsx using updated MyDateInput component (8 date inputs)
+- ✅ Step 4: All components using MyDateInput automatically migrated (AdvancedSearch.tsx, FormCreateAccident.tsx, FormCreateUser.tsx, FormCreateUserUpdated.tsx, EventCreateUpdateModal.tsx, MainFormStep.tsx)
+- ✅ Step 5: Direct Zaman usage replaced with MyStandaloneDatePicker:
+  - charts/trend/collision-analytics/page.tsx (2 date pickers)
+  - charts/trend/severity-analytics/page.tsx (2 date pickers)
+  - organisms/user/EditUserPures.tsx (1 date picker)
+- ✅ Complete: All Zaman date pickers replaced project-wide
+
+**Installation Required**:
+Run `pnpm install` to install the new dependencies before testing.

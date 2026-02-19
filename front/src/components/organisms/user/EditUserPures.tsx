@@ -6,8 +6,8 @@ import { ReqType, userSchema } from "@/types/declarations/selectInp";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import MyInput from "@/components/atoms/MyInput";
-import { DatePicker } from "zaman";
 import SelectBox from "@/components/atoms/Select";
+import MyStandaloneDatePicker from "@/components/atoms/MyStandaloneDatePicker";
 import { updateUserPure } from "@/app/actions/user/updateUser";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
@@ -32,10 +32,7 @@ export const UpdateUserPureSchema = z.object({
 export type UpdateUserPureSchemaType = z.infer<typeof UpdateUserPureSchema>;
 export type UpdateUserPureSet = ReqType["main"]["user"]["updateUser"]["set"];
 
-export const EditUserPures = ({
-  isOwn,
-  ...rest
-}: userSchema & { isOwn?: boolean }) => {
+export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean }) => {
   const {
     handleSubmit,
     setValue,
@@ -50,9 +47,7 @@ export const EditUserPures = ({
   const [selectedCity, setSelectedCity] = useState<SelectOption | null>(null);
 
   // Load cities options
-  const loadCitiesOptions = async (
-    inputValue?: string,
-  ): Promise<SelectOption[]> => {
+  const loadCitiesOptions = async (inputValue?: string): Promise<SelectOption[]> => {
     const setParams: { limit: number; page: number; name?: string } = {
       limit: 20,
       page: 1,
@@ -140,11 +135,7 @@ export const EditUserPures = ({
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected
-        ? "#3b82f6"
-        : state.isFocused
-          ? "#f1f5f9"
-          : "transparent",
+      backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#f1f5f9" : "transparent",
       color: state.isSelected ? "white" : "#1e293b",
       direction: "rtl",
       textAlign: "right",
@@ -154,14 +145,7 @@ export const EditUserPures = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="flex flex-wrap w-full">
-        <input
-          {...register("_id")}
-          id="_id"
-          name="_id"
-          type="text"
-          disabled
-          hidden
-        />
+        <input {...register("_id")} id="_id" name="_id" type="text" disabled hidden />
 
         <MyInput
           label="نام"
@@ -181,33 +165,17 @@ export const EditUserPures = ({
           name="father_name"
           errMsg={errors.father_name?.message}
         />
-        <MyInput
-          label="آدرس"
-          register={register}
-          name="address"
-          errMsg={errors.address?.message}
-        />
-        <MyInput
-          label="توضیحات"
-          register={register}
-          name="summary"
-          errMsg={errors.summary?.message}
-        />
+        <MyInput label="آدرس" register={register} name="address" errMsg={errors.address?.message} />
+        <MyInput label="توضیحات" register={register} name="summary" errMsg={errors.summary?.message} />
 
         <div className={`w-1/2 p-4 flex flex-col gap-1`}>
-          <label htmlFor="birth_date">تاریخ تولد</label>
-          <DatePicker
-            className={`text-gray-600 border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700 bg-gray-100 ${
-              errors.birth_date?.message ? "border-red-500" : "border-gray-300"
-            }`}
-            defaultValue={rest.birth_date}
-            onChange={(e) => setValue("birth_date", e.value)}
+          <MyStandaloneDatePicker
+            label="تاریخ تولد"
+            value={rest.birth_date}
+            onChange={(date) => setValue("birth_date", date as Date)}
+            error={errors.birth_date?.message}
+            placeholder="تاریخ تولد"
           />
-          {errors.birth_date?.message && (
-            <span className="text-red-500 text-xs">
-              {errors.birth_date?.message}
-            </span>
-          )}
         </div>
 
         <SelectBox
@@ -229,9 +197,7 @@ export const EditUserPures = ({
       <hr className="my-4" />
       {/* City Selection */}
       <div className="flex flex-col gap-2">
-        <h4 className="text-lg font-semibold text-gray-700 mb-2">
-          تنظیمات کاربری
-        </h4>
+        <h4 className="text-lg font-semibold text-gray-700 mb-2">تنظیمات کاربری</h4>
         <label className="text-sm font-medium text-slate-700 text-right">
           انتخاب شهر تحت مدیریت کاربر
         </label>
@@ -240,9 +206,7 @@ export const EditUserPures = ({
           defaultOptions
           value={selectedCity}
           loadOptions={loadCitiesOptions}
-          onChange={(newValue) =>
-            handleCitySelect(newValue as SelectOption | null)
-          }
+          onChange={(newValue) => handleCitySelect(newValue as SelectOption | null)}
           placeholder="شهر را انتخاب کنید"
           noOptionsMessage={() => "شهری یافت نشد"}
           loadingMessage={() => "در حال بارگذاری..."}

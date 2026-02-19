@@ -1,4 +1,4 @@
-import { EditIcon, TrashIcon, MapIcon } from "../atoms/Icons";
+import { EditIcon, TrashIcon, MapIcon, LocationMarkerIcon } from "../atoms/Icons";
 
 interface SimpleCardProps {
   title: string;
@@ -6,6 +6,7 @@ interface SimpleCardProps {
   onDelete?: () => void; // تابع برای حذف (اختیاری)
   onSeedZones?: () => void; // تابع برای اضافه کردن مناطق شهر (اختیاری)
   onSeedTownships?: () => void; // تابع برای اضافه کردن شهرستان‌های استان (اختیاری)
+  onProvinceRelation?: () => void; // تابع برای مدیریت ارتباط با استان (اختیاری)
 }
 
 const EntityCard: React.FC<SimpleCardProps> = ({
@@ -14,11 +15,21 @@ const EntityCard: React.FC<SimpleCardProps> = ({
   onDelete,
   onSeedZones,
   onSeedTownships,
+  onProvinceRelation,
 }) => {
   return (
     <div className="border w-full max-w-sm bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
       <h3 className="text-lg font-semibold text-gray-800 truncate">{title}</h3>
       <div className="flex gap-2">
+        {onProvinceRelation && (
+          <button
+            onClick={onProvinceRelation}
+            className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-all duration-200 shadow"
+            title="مدیریت ارتباط با استان"
+          >
+            <LocationMarkerIcon />
+          </button>
+        )}
         {onSeedZones && (
           <button
             onClick={onSeedZones}
