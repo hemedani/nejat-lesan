@@ -491,12 +491,102 @@
     stroke-opacity: 1 !important;
 }
 
-/* Zaman Date Picker Styles - Fix for modal overlay */
-.persian-date-picker__calendar,
-.persian-date-picker__time-picker,
-.persian-date-picker__year-month-picker,
-div[class*="persian-date-picker"] {
-    z-index: 3000 !important;
+/* React Multi Date Picker Styles - Fix for modal overlay and RTL support with Blue Theme */
+.rmdp-container {
+    z-index: 9999999 !important;
+}
+
+.rmdp-wrapper {
+    direction: rtl !important;
+    font-family: vazir-matn !important;
+}
+
+.rmdp-calendar {
+    direction: rtl !important;
+}
+
+.rmdp-week-day {
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+.rmdp-day {
+    color: #334155 !important;
+}
+
+/* Blue Theme - Selected Date */
+.rmdp-day.rmdp-selected span:not(.highlight) {
+    background-color: #3b82f6 !important;
+    box-shadow: 0 0 3px #3b82f6 !important;
+    color: white !important;
+}
+
+/* Blue Theme - Today's Date */
+.rmdp-day.rmdp-today span {
+    background-color: #e0f2fe !important;
+    color: #0284c7 !important;
+    font-weight: 600 !important;
+}
+
+/* Blue Theme - Hover Effect */
+.rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+}
+
+/* Blue Theme - Range Selection */
+.rmdp-range {
+    background-color: #dbeafe !important;
+    box-shadow: 0 0 3px #93c5fd !important;
+}
+
+/* Blue Theme - Current Month/Year Selector */
+.rmdp-header-values {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+}
+
+/* Blue Theme - Arrow Buttons */
+.rmdp-arrow {
+    border-color: #64748b !important;
+}
+
+.rmdp-arrow-container:hover {
+    background-color: #dbeafe !important;
+    box-shadow: 0 0 3px #93c5fd !important;
+}
+
+.rmdp-arrow-container:hover .rmdp-arrow {
+    border-color: #3b82f6 !important;
+}
+
+/* Blue Theme - Disabled Days */
+.rmdp-day.rmdp-disabled {
+    color: #cbd5e1 !important;
+}
+
+/* Custom styles for better integration with the UI */
+.rmdp-input {
+    border-radius: 0.75rem !important;
+    font-family: vazir-matn !important;
+}
+
+.rmdp-shadow {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.75rem !important;
+}
+
+/* Blue Theme - Year and Month Selector */
+.rmdp-year.rmdp-selected,
+.rmdp-month.rmdp-selected {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+.rmdp-year:hover,
+.rmdp-month:hover {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
 }
 
 /* Custom Scrollbar Styles */
