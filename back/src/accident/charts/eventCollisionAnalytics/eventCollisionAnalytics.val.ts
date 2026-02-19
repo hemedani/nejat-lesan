@@ -3,33 +3,55 @@
  * FILE: eventCollisionAnalytics.val.ts
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
- * The comprehensive validator for the event trend collision analytics endpoint.
+ * The comprehensive validator for the event collision analytics endpoint. It includes
+ * specific fields for selecting an event from the event model and all possible general filters.
  */
-import { array, enums, number, object, optional, string } from "@deps";
-import { geoJSONStruct } from "@model";
+import {
+	array,
+	enums,
+	number,
+	object,
+	objectIdValidation,
+	optional,
+	string,
+} from "@deps";
 
 export const eventCollisionAnalyticsValidator = () => {
 	return object({
 		set: object({
 			// --- Event-Specific Filters ---
-			eventDateFrom: optional(string()),
-			eventDateTo: optional(string()),
+			eventId: optional(objectIdValidation), // ID of the event from the event model
 
 			// --- Comprehensive General Filters ---
+			seri: optional(number()),
+			serial: optional(number()),
 			dateOfAccidentFrom: optional(string()),
 			dateOfAccidentTo: optional(string()),
+			deadCountMin: optional(number()),
+			deadCountMax: optional(number()),
+			injuredCountMin: optional(number()),
+			injuredCountMax: optional(number()),
 			officer: optional(string()),
 			province: optional(array(string())),
 			city: optional(array(string())),
 			road: optional(array(string())),
+			trafficZone: optional(array(string())),
+			cityZone: optional(array(string())),
 			accidentType: optional(array(string())),
 			position: optional(array(string())),
+			rulingType: optional(array(string())),
 			lightStatus: optional(array(string())),
 			// This is the CRITICAL filter for this chart
 			collisionType: optional(array(string())),
 			roadSituation: optional(array(string())),
-			humanReasons: optional(array(string())),
+			roadRepairType: optional(array(string())),
+			shoulderStatus: optional(array(string())),
+			areaUsages: optional(array(string())),
+			airStatuses: optional(array(string())),
 			roadDefects: optional(array(string())),
+			humanReasons: optional(array(string())),
+			vehicleReasons: optional(array(string())),
+			roadSurfaceConditions: optional(array(string())),
 			vehicleSystem: optional(array(string())),
 			driverSex: optional(array(string())),
 			driverLicenceType: optional(array(string())),

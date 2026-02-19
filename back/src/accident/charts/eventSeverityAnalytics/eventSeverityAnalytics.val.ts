@@ -15,8 +15,6 @@ import {
 	optional,
 	string,
 } from "@deps";
-import { coreApp } from "../../../../mod.ts";
-import { geoJSONStruct } from "@model";
 
 export const eventSeverityAnalyticsValidator = () => {
 	return object({

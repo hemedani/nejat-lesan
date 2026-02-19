@@ -112,6 +112,7 @@
  *   }
  * }
  */
+
 import type { ActFn, Document } from "@deps";
 import { accident, event } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
