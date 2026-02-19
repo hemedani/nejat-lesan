@@ -10,7 +10,6 @@ import { gets as getEvents } from "@/app/actions/event/gets";
 import { get as getEvent } from "@/app/actions/event/get";
 import EventSeverityComparisonChart from "@/components/dashboards/charts/EventSeverityComparisonChart";
 import dynamic from "next/dynamic";
-import MyStandaloneDatePicker from "@/components/atoms/MyStandaloneDatePicker";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useAuth } from "@/context/AuthContext";
 
@@ -41,38 +40,6 @@ interface EventType {
     is_verified: boolean;
   };
 }
-
-// Function to fetch all events from the backend
-const fetchEvents = async (): Promise<EventType[]> => {
-  try {
-    const result = await getEvents({
-      set: {
-        limit: 100, // Get up to 100 events
-        page: 1,
-      },
-      get: {
-        _id: 1,
-        name: 1,
-        description: 1,
-        dates: 1,
-        registrer: {
-          first_name: 1,
-          last_name: 1,
-        },
-      },
-    });
-
-    if (result.success && result.body) {
-      return result.body.events || [];
-    } else {
-      console.error("Failed to fetch events:", result.error);
-      return [];
-    }
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    return [];
-  }
-};
 
 // Function to load event options for AsyncSelect
 const loadEventsOptions = async (inputValue?: string): Promise<SelectOption[]> => {
@@ -124,178 +91,72 @@ interface EventRange {
   to: string;
 }
 
-// Event type options
-const EVENT_TYPES = [
-  { id: "event", label: "انتخاب رخداد خاص", value: null },
-  { id: "custom", label: "بازه دلخواه", value: null },
-];
-
 // Event Selector Component
 interface EventSelectorProps {
-  selectedEventType: string;
-  selectedEventId: string | null;
-  eventRange: EventRange;
-  availableEvents: EventType[];
-  loadEventsOptions: (inputValue?: string) => Promise<SelectOption[]>;
-  onEventTypeChange: (eventType: string) => void;
   onEventIdChange: (eventId: string | null) => void;
-  onEventRangeChange: (range: EventRange) => void;
-  onEventTypeChangeWithClear: (eventType: string) => void; // New function that includes clearing event date ranges
 }
 
-const EventSelector: React.FC<EventSelectorProps> = ({
-  selectedEventType,
-  eventRange,
-  onEventTypeChangeWithClear,
-  onEventIdChange,
-  onEventRangeChange,
-}) => {
-  // Handle event type change (specific event, or custom range)
-  const handleEventTypeChange = (eventType: string) => {
-    // Call the parent function which handles clearing event date ranges
-    onEventTypeChangeWithClear(eventType);
-
-    // Reset event ID when type changes
-    if (eventType !== "event") {
-      onEventIdChange(null);
-    }
-
-    // Set default range based on type
-    if (eventType === "custom") {
-      onEventRangeChange({ from: "", to: "" });
-    }
-  };
-
+const EventSelector: React.FC<EventSelectorProps> = ({ onEventIdChange }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">انتخاب رویداد</h3>
 
-      {/* Event Type Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">نوع رویداد</label>
-        <div className="flex space-x-4 space-x-reverse">
-          {EVENT_TYPES.map((eventType) => (
-            <button
-              key={eventType.id}
-              onClick={() => handleEventTypeChange(eventType.id)}
-              className={`px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
-                selectedEventType === eventType.id
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <div className="text-sm font-medium">{eventType.label}</div>
-            </button>
-          ))}
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">انتخاب رویداد</label>
+        <AsyncSelect
+          cacheOptions
+          defaultOptions
+          loadOptions={loadEventsOptions}
+          onChange={(newValue) => {
+            const selectedOption = newValue as SelectOption | null;
+            const eventId = selectedOption?.value || null;
+            onEventIdChange(eventId);
+          }}
+          placeholder="رویداد را انتخاب کنید"
+          noOptionsMessage={() => "رویدادی یافت نشد"}
+          loadingMessage={() => "در حال بارگذاری..."}
+          isRtl={true}
+          isClearable
+          styles={{
+            control: (provided, state) => ({
+              ...provided,
+              minHeight: "48px",
+              borderColor: state.isFocused ? "#3b82f6" : "#cbd5e1",
+              borderRadius: "8px",
+              boxShadow: "none",
+              "&:hover": {
+                borderColor: "#94a3b8",
+              },
+            }),
+            valueContainer: (provided) => ({
+              ...provided,
+              padding: "2px 12px",
+            }),
+            placeholder: (provided) => ({
+              ...provided,
+              color: "#64748b",
+            }),
+            singleValue: (provided) => ({
+              ...provided,
+              color: "#1e293b",
+              overflow: "visible",
+              maxWidth: "100%",
+              fontWeight: 500,
+            }),
+            option: (provided, state) => ({
+              ...provided,
+              backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#eff6ff" : "white",
+              color: state.isSelected ? "white" : "#1e293b",
+              cursor: "pointer",
+              padding: "10px 12px",
+            }),
+            menu: (provided) => ({
+              ...provided,
+              zIndex: 9999,
+            }),
+          }}
+        />
       </div>
-
-      {/* Event Selection (only shown when 'event' type is selected) */}
-      {selectedEventType === "event" && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">انتخاب رویداد</label>
-          <AsyncSelect
-            cacheOptions
-            defaultOptions
-            loadOptions={loadEventsOptions}
-            onChange={(newValue) => {
-              const selectedOption = newValue as SelectOption | null;
-              const eventId = selectedOption?.value || null;
-              // Just call the parent function which handles getting full event details and updating date range
-              onEventIdChange(eventId);
-            }}
-            placeholder="رویداد را انتخاب کنید"
-            noOptionsMessage={() => "رویدادی یافت نشد"}
-            loadingMessage={() => "در حال بارگذاری..."}
-            isRtl={true}
-            isClearable
-            styles={{
-              control: (provided, state) => ({
-                ...provided,
-                minHeight: "48px",
-                borderColor: state.isFocused ? "#3b82f6" : "#cbd5e1",
-                borderRadius: "8px",
-                boxShadow: "none",
-                "&:hover": {
-                  borderColor: "#94a3b8",
-                },
-              }),
-              valueContainer: (provided) => ({
-                ...provided,
-                padding: "2px 12px",
-              }),
-              placeholder: (provided) => ({
-                ...provided,
-                color: "#64748b",
-              }),
-              singleValue: (provided) => ({
-                ...provided,
-                color: "#1e293b",
-                overflow: "visible", // Prevent text truncation
-                maxWidth: "100%",
-                fontWeight: 500,
-              }),
-              option: (provided, state) => ({
-                ...provided,
-                backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#eff6ff" : "white",
-                color: state.isSelected ? "white" : "#1e293b",
-                cursor: "pointer",
-                padding: "10px 12px",
-              }),
-              menu: (provided) => ({
-                ...provided,
-                zIndex: 9999,
-              }),
-            }}
-          />
-        </div>
-      )}
-
-      {/* Date Range Selection (only for custom type) */}
-      {selectedEventType === "custom" && (
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <MyStandaloneDatePicker
-              label="تاریخ شروع"
-              value={eventRange.from ? new Date(eventRange.from) : null}
-              onChange={(date) => {
-                if (date) {
-                  onEventRangeChange({
-                    ...(eventRange || { from: "", to: "" }),
-                    from: date.toISOString().split("T")[0],
-                  });
-                } else {
-                  onEventRangeChange({
-                    ...(eventRange || { from: "", to: "" }),
-                    from: "",
-                  });
-                }
-              }}
-              placeholder="تاریخ شروع"
-            />
-          </div>
-          <div>
-            <MyStandaloneDatePicker
-              label="تاریخ پایان"
-              value={eventRange.to ? new Date(eventRange.to) : null}
-              onChange={(date) => {
-                if (date) {
-                  onEventRangeChange({
-                    ...(eventRange || { from: "", to: "" }),
-                    to: date.toISOString().split("T")[0],
-                  });
-                } else {
-                  onEventRangeChange({
-                    ...(eventRange || { from: "", to: "" }),
-                    to: "",
-                  });
-                }
-              }}
-              placeholder="تاریخ پایان"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -310,14 +171,13 @@ const EventSeverityAnalyticsPage = () => {
   );
 
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [selectedEventType, setSelectedEventType] = useState("event");
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [eventRange, setEventRange] = useState<EventRange>({
-    from: "", // Default to empty which means no start limitation
-    to: "", // Default to empty which means no end limitation
+    from: "",
+    to: "",
   });
   const [eventDateRanges, setEventDateRanges] = useState<{ from: string; to: string }[]>([]);
-  const [availableEvents, setAvailableEvents] = useState<EventType[]>([]);
+
   const [chartData, setChartData] = useState<EventSeverityResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -343,15 +203,11 @@ const EventSeverityAnalyticsPage = () => {
     // Fetch available events and then load initial data
     const initializePage = async () => {
       try {
-        // Fetch events from backend
-        const events = await fetchEvents();
-        setAvailableEvents(events);
-
         // Load initial analytics data
         loadInitialDataRef.current?.();
       } catch (err) {
         console.log(err);
-        setError(`خطا در بارگذاری رویدادها`);
+        setError(`خطا در بارگذاری داده‌های اولیه`);
       }
     };
 
@@ -366,11 +222,6 @@ const EventSeverityAnalyticsPage = () => {
       // Use the current event range for initial data loading
       const result = await eventSeverityAnalytics({
         set: {
-          // Only include date ranges if no event is selected
-          ...(selectedEventType === "custom" && {
-            dateOfAccidentFrom: eventRange.from,
-            dateOfAccidentTo: eventRange.to,
-          }),
           officer: "",
           province: [],
           city: [],
@@ -412,32 +263,12 @@ const EventSeverityAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [eventRange, selectedEventType, selectedEventId, setIsLoading, setError, setChartData]);
+  }, [eventRange, selectedEventId, setIsLoading, setError, setChartData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
     await fetchDataRef.current?.(filters, eventRange, selectedEventId);
-  };
-
-  // Handle event type changes with clearing event date ranges
-  const handleEventTypeChangeWithClear = (eventType: string) => {
-    // Clear event date ranges when switching from event to another type
-    if (selectedEventType === "event" && eventType !== "event") {
-      setEventDateRanges([]);
-    }
-    setSelectedEventType(eventType);
-  };
-
-  // Handle event range changes
-  const handleEventRangeChange = async (range: EventRange) => {
-    setEventRange(range);
-    // Clear the event date ranges when custom date range is changed
-    // since we're now using a custom range instead of event ranges
-    setEventDateRanges([]);
-    if (range.from && range.to) {
-      await fetchDataRef.current?.(appliedFilters, range, selectedEventId);
-    }
   };
 
   // Handle event ID changes
@@ -518,8 +349,8 @@ const EventSeverityAnalyticsPage = () => {
 
   // Fetch data with current filters and event range
   const fetchData = async (filters: ChartFilterState, range: EventRange, eventId: string | null) => {
-    // We need at least a date range or an event ID
-    if (!range.from && !range.to && !eventId) return;
+    // We need at least a date range (from sidebar or event), an event ID, or sidebar date filters
+    if (!range.from && !range.to && !eventId && !filters.dateOfAccidentFrom) return;
 
     setIsLoading(true);
     setError(null);
@@ -642,17 +473,7 @@ const EventSeverityAnalyticsPage = () => {
           </div>
 
           {/* Event Selector */}
-          <EventSelector
-            selectedEventType={selectedEventType}
-            selectedEventId={selectedEventId}
-            eventRange={eventRange}
-            availableEvents={availableEvents}
-            loadEventsOptions={loadEventsOptions}
-            onEventTypeChange={setSelectedEventType}
-            onEventTypeChangeWithClear={handleEventTypeChangeWithClear}
-            onEventIdChange={handleEventIdChange}
-            onEventRangeChange={handleEventRangeChange}
-          />
+          <EventSelector onEventIdChange={handleEventIdChange} />
 
           {/* Applied Filters Display */}
           <AppliedFiltersDisplay filters={appliedFilters} />
@@ -684,7 +505,7 @@ const EventSeverityAnalyticsPage = () => {
             data={chartData}
             isLoading={isLoading}
             eventRange={eventRange}
-            selectedEventType={selectedEventType}
+            selectedEventType="event"
             eventDateRanges={eventDateRanges}
           />
         </div>

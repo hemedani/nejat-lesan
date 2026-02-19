@@ -1,14 +1,47 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { eventCollisionAnalytics } from "@/app/actions/accident/eventCollisionAnalytics";
+import { gets as getEvents } from "@/app/actions/event/gets";
+import { get as getEvent } from "@/app/actions/event/get";
 import EventCollisionComparisonChart from "../../../../components/dashboards/charts/EventCollisionComparisonChart";
+import dynamic from "next/dynamic";
+import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useAuth } from "@/context/AuthContext";
-import MyStandaloneDatePicker from "@/components/atoms/MyStandaloneDatePicker";
+
+// Dynamically import AsyncSelect
+const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
+
+// Function to load event options for AsyncSelect
+const loadEventsOptions = async (inputValue?: string): Promise<SelectOption[]> => {
+  try {
+    const result = await getEvents({
+      set: {
+        limit: 20,
+        page: 1,
+        ...(inputValue ? { name: inputValue } : {}),
+      },
+      get: {
+        _id: 1,
+        name: 1,
+      },
+    });
+
+    if (result.success && result.body) {
+      return result.body.map((event: { _id: string; name: string }) => ({
+        value: event._id,
+        label: event.name,
+      }));
+    }
+  } catch (error) {
+    console.error("Error loading events:", error);
+  }
+  return [];
+};
 
 // Backend response interface for event collision analytics
 interface EventCollisionResponse {
@@ -30,136 +63,71 @@ interface EventRange {
   to: string;
 }
 
-// Event type options
-const EVENT_TYPES = [
-  {
-    id: "nowruz",
-    label: "طرح نوروزی",
-    calculateRange: () => calculateNowruzRange(),
-  },
-  {
-    id: "arbaeen",
-    label: "طرح اربعین",
-    calculateRange: () => calculateArbaenRange(),
-  },
-  {
-    id: "custom",
-    label: "بازه دلخواه",
-    calculateRange: () => ({ from: "", to: "" }),
-  },
-];
-
-// Calculate current year's Nowruz range (March 20 - April 2)
-const calculateNowruzRange = (): EventRange => {
-  const currentYear = new Date().getFullYear();
-  return {
-    from: `${currentYear}-03-20`,
-    to: `${currentYear}-04-02`,
-  };
-};
-
-// Calculate current year's Arbaeen range (approximate)
-const calculateArbaenRange = (): EventRange => {
-  const currentYear = new Date().getFullYear();
-  // Arbaeen is usually in September/October, using approximate dates
-  return {
-    from: `${currentYear}-09-15`,
-    to: `${currentYear}-09-25`,
-  };
-};
-
 // Event Selector Component
 interface EventSelectorProps {
-  selectedEventType: string;
-  eventRange: EventRange;
-  onEventTypeChange: (eventType: string) => void;
-  onEventRangeChange: (range: EventRange) => void;
+  onEventIdChange: (eventId: string | null) => void;
 }
 
-const EventSelector: React.FC<EventSelectorProps> = ({
-  selectedEventType,
-  eventRange,
-  onEventTypeChange,
-  onEventRangeChange,
-}) => {
-  const handleEventTypeChange = (eventType: string) => {
-    onEventTypeChange(eventType);
-    if (eventType !== "custom") {
-      const eventConfig = EVENT_TYPES.find((e) => e.id === eventType);
-      if (eventConfig) {
-        onEventRangeChange(eventConfig.calculateRange());
-      }
-    }
-  };
-
+const EventSelector: React.FC<EventSelectorProps> = ({ onEventIdChange }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">انتخاب رویداد</h3>
 
-      {/* Event Type Selection */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">نوع رویداد</label>
-        <div className="grid grid-cols-3 gap-3">
-          {EVENT_TYPES.map((eventType) => (
-            <button
-              key={eventType.id}
-              onClick={() => handleEventTypeChange(eventType.id)}
-              className={`p-3 rounded-lg border-2 transition-all duration-200 ${
-                selectedEventType === eventType.id
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <div className="text-sm font-medium">{eventType.label}</div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Date Range Selection */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <MyStandaloneDatePicker
-            label="تاریخ شروع"
-            value={eventRange.from ? new Date(eventRange.from) : null}
-            onChange={(date) => {
-              if (date) {
-                onEventRangeChange({
-                  ...(eventRange || { from: "", to: "" }),
-                  from: date.toISOString().split("T")[0],
-                });
-              } else {
-                onEventRangeChange({
-                  ...(eventRange || { from: "", to: "" }),
-                  from: "",
-                });
-              }
-            }}
-            placeholder="تاریخ شروع"
-            disabled={selectedEventType !== "custom"}
-          />
-        </div>
-        <div>
-          <MyStandaloneDatePicker
-            label="تاریخ پایان"
-            value={eventRange.to ? new Date(eventRange.to) : null}
-            onChange={(date) => {
-              if (date) {
-                onEventRangeChange({
-                  ...(eventRange || { from: "", to: "" }),
-                  to: date.toISOString().split("T")[0],
-                });
-              } else {
-                onEventRangeChange({
-                  ...(eventRange || { from: "", to: "" }),
-                  to: "",
-                });
-              }
-            }}
-            placeholder="تاریخ پایان"
-            disabled={selectedEventType !== "custom"}
-          />
-        </div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">انتخاب رویداد</label>
+        <AsyncSelect
+          cacheOptions
+          defaultOptions
+          loadOptions={loadEventsOptions}
+          onChange={(newValue) => {
+            const selectedOption = newValue as SelectOption | null;
+            const eventId = selectedOption?.value || null;
+            onEventIdChange(eventId);
+          }}
+          placeholder="رویداد را انتخاب کنید"
+          noOptionsMessage={() => "رویدادی یافت نشد"}
+          loadingMessage={() => "در حال بارگذاری..."}
+          isRtl={true}
+          isClearable
+          styles={{
+            control: (provided, state) => ({
+              ...provided,
+              minHeight: "48px",
+              borderColor: state.isFocused ? "#3b82f6" : "#cbd5e1",
+              borderRadius: "8px",
+              boxShadow: "none",
+              "&:hover": {
+                borderColor: "#94a3b8",
+              },
+            }),
+            valueContainer: (provided) => ({
+              ...provided,
+              padding: "2px 12px",
+            }),
+            placeholder: (provided) => ({
+              ...provided,
+              color: "#64748b",
+            }),
+            singleValue: (provided) => ({
+              ...provided,
+              color: "#1e293b",
+              overflow: "visible",
+              maxWidth: "100%",
+              fontWeight: 500,
+            }),
+            option: (provided, state) => ({
+              ...provided,
+              backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#eff6ff" : "white",
+              color: state.isSelected ? "white" : "#1e293b",
+              cursor: "pointer",
+              padding: "10px 12px",
+            }),
+            menu: (provided) => ({
+              ...provided,
+              zIndex: 9999,
+            }),
+          }}
+        />
       </div>
     </div>
   );
@@ -175,24 +143,51 @@ const EventCollisionAnalyticsPage = () => {
   );
 
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
-  const [selectedEventType, setSelectedEventType] = useState("nowruz");
-  const [eventRange, setEventRange] = useState<EventRange>(calculateNowruzRange());
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [eventRange, setEventRange] = useState<EventRange>({
+    from: "",
+    to: "",
+  });
+
   const [chartData, setChartData] = useState<EventCollisionResponse["analytics"] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
+  // Create refs for functions using initializers that won't reference undefined functions
+  const fetchDataRef = useRef<
+    ((filters: ChartFilterState, range: EventRange, eventId: string | null) => Promise<void>) | null
+  >(null);
+  const loadInitialDataRef = useRef<(() => Promise<void>) | null>(null);
+
+  // Update refs when functions change
+  useEffect(() => {
+    fetchDataRef.current = fetchData;
+  });
+
+  useEffect(() => {
+    loadInitialDataRef.current = loadInitialData;
+  });
+
   // Load initial data on component mount
   useEffect(() => {
-    loadInitialData();
+    const initializePage = async () => {
+      try {
+        loadInitialDataRef.current?.();
+      } catch (err) {
+        console.log(err);
+        setError(`خطا در بارگذاری داده‌های اولیه`);
+      }
+    };
+
+    initializePage();
   }, []);
 
-  const loadInitialData = async () => {
+  const loadInitialData = React.useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const defaultRange = calculateNowruzRange();
       const result = await eventCollisionAnalytics({
         set: {
           dateOfAccidentFrom: "",
@@ -210,8 +205,8 @@ const EventCollisionAnalyticsPage = () => {
           vehicleSystem: [],
           driverSex: [],
           driverLicenceType: [],
-          eventDateFrom: defaultRange.from,
-          eventDateTo: defaultRange.to,
+          // Include the event ID if one is selected
+          ...(selectedEventId && { eventId: selectedEventId }),
         },
         get: {
           analytics: 1,
@@ -228,25 +223,80 @@ const EventCollisionAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [eventRange, selectedEventId, setIsLoading, setError, setChartData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
-    await fetchData(filters, eventRange);
+    await fetchDataRef.current?.(filters, eventRange, selectedEventId);
   };
 
-  // Handle event range changes
-  const handleEventRangeChange = async (range: EventRange) => {
-    setEventRange(range);
-    if (range.from && range.to) {
-      await fetchData(appliedFilters, range);
-    }
-  };
+  // Handle event ID changes
+  const handleEventIdChange = React.useCallback(
+    async (eventId: string | null) => {
+      setSelectedEventId(eventId);
+      if (eventId) {
+        try {
+          // Get the full event details to extract date ranges for UI display
+          const eventResponse = await getEvent(eventId, {
+            _id: 1,
+            name: 1,
+            description: 1,
+            dates: 1,
+          });
+
+          console.log({ eventResponse });
+
+          if (eventResponse && eventResponse.success && eventResponse.body) {
+            const event = eventResponse.body;
+            if (event.dates && event.dates.length > 0) {
+              // Calculate the overall date range encompassing all date ranges in the event
+              let earliestDate = new Date(event.dates[0].startEntireRange);
+              let latestDate = new Date(event.dates[0].endEntireRange);
+
+              for (const dateRange of event.dates) {
+                const startEntireRangeDate = new Date(dateRange.startEntireRange);
+                const endEntireRangeDate = new Date(dateRange.endEntireRange);
+
+                if (startEntireRangeDate < earliestDate) earliestDate = startEntireRangeDate;
+                if (endEntireRangeDate > latestDate) latestDate = endEntireRangeDate;
+              }
+
+              const overallStart = earliestDate.toISOString();
+              const overallEnd = latestDate.toISOString();
+
+              const newRange = { from: overallStart, to: overallEnd };
+              setEventRange(newRange);
+
+              // Pass only the eventId to the backend — it handles its own date ranges
+              await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
+            } else {
+              // If no dates found in the event, still fetch with the event ID
+              await fetchData(appliedFilters, { from: "", to: "" }, eventId);
+            }
+          } else {
+            console.error(
+              "Failed to fetch event details:",
+              eventResponse?.error || "No response body",
+            );
+            await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
+          }
+        } catch (error) {
+          console.error("Error fetching event details:", error);
+          await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
+        }
+      } else {
+        // No event selected — re-fetch with sidebar filters only
+        await fetchDataRef.current?.(appliedFilters, eventRange, null);
+      }
+    },
+    [appliedFilters, eventRange, fetchDataRef, setEventRange, setSelectedEventId],
+  );
 
   // Fetch data with current filters and event range
-  const fetchData = async (filters: ChartFilterState, range: EventRange) => {
-    if (!range.from || !range.to) return;
+  const fetchData = async (filters: ChartFilterState, range: EventRange, eventId: string | null) => {
+    // We need at least an event ID, a date range, or sidebar date filters
+    if (!range.from && !range.to && !eventId && !filters.dateOfAccidentFrom) return;
 
     setIsLoading(true);
     setError(null);
@@ -255,8 +305,14 @@ const EventCollisionAnalyticsPage = () => {
     try {
       const result = await eventCollisionAnalytics({
         set: {
-          dateOfAccidentFrom: filters.dateOfAccidentFrom || "",
-          dateOfAccidentTo: filters.dateOfAccidentTo || "",
+          // If an event ID is provided, the backend extracts its own date ranges;
+          // otherwise fall back to sidebar filters or the computed range
+          ...(eventId
+            ? {}
+            : {
+                dateOfAccidentFrom: filters.dateOfAccidentFrom || range.from || "",
+                dateOfAccidentTo: filters.dateOfAccidentTo || range.to || "",
+              }),
           officer: filters.officer || "",
           province: filters.province || [],
           city: filters.city || [],
@@ -270,8 +326,8 @@ const EventCollisionAnalyticsPage = () => {
           vehicleSystem: filters.vehicleSystem || [],
           driverSex: filters.driverSex || [],
           driverLicenceType: filters.driverLicenceType || [],
-          eventDateFrom: range.from,
-          eventDateTo: range.to,
+          // Include the event ID if one is selected
+          ...(eventId && { eventId }),
         },
         get: {
           analytics: 1,
@@ -283,7 +339,8 @@ const EventCollisionAnalyticsPage = () => {
       } else {
         setError(result.error || "خطا در بارگذاری داده‌های تحلیل نحوه برخورد");
       }
-    } catch {
+    } catch (err) {
+      console.error("Error fetching data:", err);
       setError("خطا در برقراری ارتباط با سرور");
     } finally {
       setIsLoading(false);
@@ -352,12 +409,7 @@ const EventCollisionAnalyticsPage = () => {
           </div>
 
           {/* Event Selector */}
-          <EventSelector
-            selectedEventType={selectedEventType}
-            eventRange={eventRange}
-            onEventTypeChange={setSelectedEventType}
-            onEventRangeChange={handleEventRangeChange}
-          />
+          <EventSelector onEventIdChange={handleEventIdChange} />
 
           {/* Applied Filters Display */}
           <AppliedFiltersDisplay filters={appliedFilters} />
@@ -389,7 +441,7 @@ const EventCollisionAnalyticsPage = () => {
             data={chartData}
             isLoading={isLoading}
             eventRange={eventRange}
-            selectedEventType={selectedEventType}
+            selectedEventType="event"
           />
         </div>
       </div>
