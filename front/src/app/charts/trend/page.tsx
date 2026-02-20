@@ -159,33 +159,6 @@ const TrendChartsPage = () => {
               </div>
             </div>
 
-            {/* Placeholder Content */}
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg
-                    className="w-8 h-8 text-orange-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">تحلیل‌های روند</h3>
-                <p className="text-gray-600">
-                  تحلیل‌های روند رویداد در حال توسعه می‌باشد.
-                  <br />
-                  شامل نمودارهای روند، پیش‌بینی، و تحلیل الگوهای تکراری خواهد بود.
-                </p>
-              </div>
-            </div>
-
             {/* Features Coming Soon */}
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
               <h3 className="font-medium text-orange-800 mb-3">ویژگی‌های در دست توسعه</h3>
