@@ -12,9 +12,14 @@ interface User {
   _id: string;
   first_name: string;
   last_name: string;
+  father_name: string;
+  mobile: string;
+  gender: "Male" | "Female";
   personnel_number: string;
   national_number: string;
-  level: string;
+  level: "Ghost" | "Manager" | "Editor" | "Enterprise";
+  is_verified: boolean;
+  summary?: string;
 }
 
 interface ClientDashboardProps {
@@ -25,9 +30,7 @@ interface ClientDashboardProps {
 const ClientUserDashboard: React.FC<ClientDashboardProps> = ({ users }) => {
   const router = useRouter();
 
-  const [activeModal, setActiveModal] = useState<"edit" | "delete" | null>(
-    null
-  );
+  const [activeModal, setActiveModal] = useState<"edit" | "delete" | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   // State for hard cascade
@@ -63,7 +66,8 @@ const ClientUserDashboard: React.FC<ClientDashboardProps> = ({ users }) => {
     <div>
       <Link
         href="/admin/users/createUser"
-        className="absolute top-1 left-5 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+        className="absolute top-1 left-5 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+      >
         ایجاد کاربر جدید
       </Link>
 
@@ -74,7 +78,13 @@ const ClientUserDashboard: React.FC<ClientDashboardProps> = ({ users }) => {
             id={user._id}
             first_name={user.first_name}
             last_name={user.last_name}
+            father_name={user.father_name}
+            mobile={user.mobile}
+            gender={user.gender}
             national_number={user.national_number}
+            level={user.level}
+            is_verified={user.is_verified}
+            summary={user.summary}
             onDelete={() => openModal("delete", user)}
           />
         ))}

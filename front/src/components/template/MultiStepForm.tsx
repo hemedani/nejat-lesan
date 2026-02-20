@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { UserFormData } from "./FormCreateUser";
-import { UseFormTrigger } from "react-hook-form";
+import { FieldValues, UseFormTrigger } from "react-hook-form";
 
 interface Step {
   id: string;
@@ -8,23 +7,23 @@ interface Step {
   component: React.ReactNode;
 }
 
-interface MultiStepFormProps {
+interface MultiStepFormProps<T extends FieldValues = FieldValues> {
   steps: Step[];
-  formData: UserFormData;
-  onSubmit: (data: UserFormData) => void;
+  formData: T;
+  onSubmit: (data: T) => void;
   isSubmitting: boolean;
-  triggerValidation: UseFormTrigger<UserFormData>;
-  isEnterprise?: boolean; // Determines if the last step should show "Submit" or "Next" button
+  triggerValidation: UseFormTrigger<T>;
+  isEnterprise?: boolean;
 }
 
-const MultiStepForm: React.FC<MultiStepFormProps> = ({
+const MultiStepForm = <T extends FieldValues = FieldValues>({
   steps,
   formData,
   onSubmit,
   isSubmitting,
   triggerValidation,
   isEnterprise = false,
-}) => {
+}: MultiStepFormProps<T>) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = async () => {
