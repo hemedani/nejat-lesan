@@ -2155,6 +2155,54 @@ export const CHART_SPECIFIC_FILTERS = {
 
     // "officer",
   ] as EnabledFilters,
+
+  // Map Accidents Analytics - Full filter set mirroring the mapAccidents validator
+  // Note: "limit" and "skip" are intentionally excluded — they are pagination controls, not data-access filters
+  MAP_ACCIDENTS_ANALYTICS: [
+    // --- Polygon (spatial query) ---
+    "polygon",
+
+    // --- Core Accident Details ---
+    "seri",
+    "serial",
+    "dateOfAccidentFrom",
+    "dateOfAccidentTo",
+    "deadCountMin",
+    "deadCountMax",
+    "injuredCountMin",
+    "injuredCountMax",
+    "officer",
+
+    // --- Location & Context (multi-select) ---
+    "province",
+    "city",
+    "road",
+    "trafficZone",
+    "cityZone",
+    "accidentType",
+    "position",
+    "rulingType",
+    "lightStatus",
+    "collisionType",
+    "roadSituation",
+    "roadRepairType",
+    "shoulderStatus",
+
+    // --- Environmental & Reason-based (multi-select) ---
+    "areaUsages",
+    "airStatuses",
+    "roadDefects",
+    "humanReasons",
+    "vehicleReasons",
+    "roadSurfaceConditions",
+
+    // --- Vehicle / Driver fields ---
+    "vehicleSystem",
+    "vehicleFaultStatus",
+    "driverSex",
+    "driverLicenceType",
+    "driverInjuryType",
+  ] as EnabledFilters,
 };
 
 // Helper function to get enabled filters for a specific chart type

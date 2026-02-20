@@ -21,6 +21,7 @@ import {
   ALL_ANALYTIC_FILTERS,
   comprehensiveFilterFields,
   eventFilterFields,
+  mapAccidentsFilterFields,
 } from "@/utils/filterConstants";
 import MultiStepForm from "./MultiStepForm";
 
@@ -74,6 +75,7 @@ export const UserCreateSchema = z
           ALL_ANALYTIC_FILTERS.temporalUnlicensedDriversAnalyticFilters.optional(),
         totalReasonAnalytics: ALL_ANALYTIC_FILTERS.totalReasonAnalyticFilters.optional(),
         vehicleReasonAnalytics: ALL_ANALYTIC_FILTERS.vehicleReasonAnalyticFilters.optional(),
+        mapAccidentsAnalytics: ALL_ANALYTIC_FILTERS.mapAccidentsAnalyticFilters.optional(),
       })
       .optional(),
   })
@@ -1350,6 +1352,34 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
                     onChange={(checked) =>
                       setValue(
                         `availableCharts.vehicleReasonAnalytics.${field.key}` as keyof UserFormData,
+                        checked,
+                      )
+                    }
+                    label={field.label}
+                  />
+                ))}
+              </div>
+            </div>
+          ),
+        },
+        {
+          id: "map-accidents-analytics",
+          title: "نقشه تصادفات",
+          component: (
+            <div className="border rounded p-3">
+              <h5 className="font-medium mb-2">نقشه تصادفات</h5>
+              <div className="space-y-2">
+                {mapAccidentsFilterFields.map((field) => (
+                  <CustomCheckbox
+                    key={`map-accidents-${field.key}`}
+                    checked={
+                      !!watch(
+                        `availableCharts.mapAccidentsAnalytics.${field.key}` as keyof UserFormData,
+                      )
+                    }
+                    onChange={(checked) =>
+                      setValue(
+                        `availableCharts.mapAccidentsAnalytics.${field.key}` as keyof UserFormData,
                         checked,
                       )
                     }

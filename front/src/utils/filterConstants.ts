@@ -327,6 +327,49 @@ export const vehicleReasonAnalyticFilters = z.object({
   polygon: z.boolean().optional(), // GeoJSON Spatial Filter
 });
 
+// Map accidents analytics filter — mirrors the mapAccidents validator exactly
+// Note: "limit" and "skip" are intentionally excluded (pagination controls, not data-access filters)
+export const mapAccidentsAnalyticFilters = z.object({
+  polygon: z.boolean().optional(), // GeoJSON Spatial Filter
+  // Core accident details
+  seri: z.boolean().optional(),
+  serial: z.boolean().optional(),
+  dateOfAccidentFrom: z.boolean().optional(),
+  dateOfAccidentTo: z.boolean().optional(),
+  deadCountMin: z.boolean().optional(),
+  deadCountMax: z.boolean().optional(),
+  injuredCountMin: z.boolean().optional(),
+  injuredCountMax: z.boolean().optional(),
+  officer: z.boolean().optional(),
+  // Location & context
+  province: z.boolean().optional(),
+  city: z.boolean().optional(),
+  road: z.boolean().optional(),
+  trafficZone: z.boolean().optional(),
+  cityZone: z.boolean().optional(),
+  accidentType: z.boolean().optional(),
+  position: z.boolean().optional(),
+  rulingType: z.boolean().optional(),
+  lightStatus: z.boolean().optional(),
+  collisionType: z.boolean().optional(),
+  roadSituation: z.boolean().optional(),
+  roadRepairType: z.boolean().optional(),
+  shoulderStatus: z.boolean().optional(),
+  // Environmental & reason-based
+  areaUsages: z.boolean().optional(),
+  airStatuses: z.boolean().optional(),
+  roadDefects: z.boolean().optional(),
+  humanReasons: z.boolean().optional(),
+  vehicleReasons: z.boolean().optional(),
+  roadSurfaceConditions: z.boolean().optional(),
+  // Vehicle / driver fields
+  vehicleSystem: z.boolean().optional(),
+  vehicleFaultStatus: z.boolean().optional(),
+  driverSex: z.boolean().optional(),
+  driverLicenceType: z.boolean().optional(),
+  driverInjuryType: z.boolean().optional(),
+});
+
 // Combined filter constants for easier access
 export const ALL_ANALYTIC_FILTERS = {
   accidentSeverityAnalyticFilters,
@@ -337,6 +380,7 @@ export const ALL_ANALYTIC_FILTERS = {
   eventSeverityAnalyticFilters,
   hourlyDayOfWeekAnalyticFilters,
   humanReasonAnalyticFilters,
+  mapAccidentsAnalyticFilters,
   monthlyHolidayAnalyticFilters,
   roadDefectsAnalyticFilters,
   spatialCollisionAnalyticFilters,
@@ -441,6 +485,45 @@ export const comprehensiveFilterFields = [
   { key: "pedestrianTotalReason", label: "دلیل کل عابر پیاده" },
 ];
 
+// Helper constant for map accidents filter fields with Persian labels
+// Only includes the fields the mapAccidents endpoint actually accepts
+export const mapAccidentsFilterFields = [
+  { key: "polygon", label: "محدوده مکانی" },
+  { key: "seri", label: "سری" },
+  { key: "serial", label: "سریال" },
+  { key: "dateOfAccidentFrom", label: "تاریخ تصادف از" },
+  { key: "dateOfAccidentTo", label: "تاریخ تصادف تا" },
+  { key: "deadCountMin", label: "حداقل تعداد کشته" },
+  { key: "deadCountMax", label: "حداکثر تعداد کشته" },
+  { key: "injuredCountMin", label: "حداقل تعداد مجروح" },
+  { key: "injuredCountMax", label: "حداکثر تعداد مجروح" },
+  { key: "officer", label: "افسر" },
+  { key: "province", label: "استان" },
+  { key: "city", label: "شهر" },
+  { key: "road", label: "جاده" },
+  { key: "trafficZone", label: "منطقه ترافیکی" },
+  { key: "cityZone", label: "منطقه شهری" },
+  { key: "accidentType", label: "نوع حادثه" },
+  { key: "position", label: "موقعیت" },
+  { key: "rulingType", label: "نوع حکم" },
+  { key: "lightStatus", label: "وضعیت نور" },
+  { key: "collisionType", label: "نوع برخورد" },
+  { key: "roadSituation", label: "وضعیت جاده" },
+  { key: "roadRepairType", label: "نوع تعمیر جاده" },
+  { key: "shoulderStatus", label: "وضعیت شانه" },
+  { key: "areaUsages", label: "کاربری منطقه" },
+  { key: "airStatuses", label: "وضعیت هوا" },
+  { key: "roadDefects", label: "نقص جاده" },
+  { key: "humanReasons", label: "دلایل انسانی" },
+  { key: "vehicleReasons", label: "دلایل وسیله نقلیه" },
+  { key: "roadSurfaceConditions", label: "شرایط سطح جاده" },
+  { key: "vehicleSystem", label: "سیستم وسیله نقلیه" },
+  { key: "vehicleFaultStatus", label: "وضعیت تقصیر وسیله نقلیه" },
+  { key: "driverSex", label: "جنسیت راننده" },
+  { key: "driverLicenceType", label: "نوع گواهینامه" },
+  { key: "driverInjuryType", label: "نوع آسیب راننده" },
+];
+
 // Helper constant for event filter fields with Persian labels
 export const eventFilterFields = [
   { key: "eventId", label: "شناسه رویداد" },
@@ -488,3 +571,4 @@ export type TemporalUnlicensedDriversAnalyticFilter = z.infer<
 >;
 export type TotalReasonAnalyticFilter = z.infer<typeof totalReasonAnalyticFilters>;
 export type VehicleReasonAnalyticFilter = z.infer<typeof vehicleReasonAnalyticFilters>;
+export type MapAccidentsAnalyticFilter = z.infer<typeof mapAccidentsAnalyticFilters>;

@@ -21,7 +21,13 @@ const UserDashboard = async ({
     _id: 1,
     first_name: 1,
     last_name: 1,
+    father_name: 1,
+    mobile: 1,
+    gender: 1,
+    national_number: 1,
     level: 1,
+    is_verified: 1,
+    summary: 1,
   };
   const users = await getUsers({ set, get });
   const countDataUsers = await CountUsers({
@@ -33,12 +39,8 @@ const UserDashboard = async ({
       <div className="flex items-start">
         <div className="bg-blue-500 w-1 h-8 ml-3 rounded-full"></div>
         <div>
-          <h1 className="text-2xl md:text-3xl text-gray-800 font-bold">
-            کاربران
-          </h1>
-          <p className="text-gray-500 mt-2 text-sm">
-            مدیریت تمامی کاربران وب‌سایت
-          </p>
+          <h1 className="text-2xl md:text-3xl text-gray-800 font-bold">کاربران</h1>
+          <p className="text-gray-500 mt-2 text-sm">مدیریت تمامی کاربران وب‌سایت</p>
         </div>
       </div>
       <SearchBox title="levels" defaultValue="" />

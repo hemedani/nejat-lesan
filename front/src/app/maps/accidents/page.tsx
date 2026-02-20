@@ -6,20 +6,16 @@ import html2canvas from "html2canvas";
 import toast from "react-hot-toast";
 
 // Components
-import ChartsFilterSidebar, {
-  ChartFilterState,
-} from "@/components/dashboards/ChartsFilterSidebar";
-import { getEnabledFiltersForChart } from "@/utils/chartFilters";
+import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
+import { useAuth } from "@/context/AuthContext";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import AccidentDetailsModal from "@/components/modals/AccidentDetailsModal";
 
 // Hooks
 import { useScrollLock } from "@/hooks/useScrollLock";
-import {
-  useMapComparison,
-  generateComparisonTitle,
-} from "@/context/MapComparisonContext";
+import { useMapComparison, generateComparisonTitle } from "@/context/MapComparisonContext";
 
 // Actions
 import { mapAccidents } from "@/app/actions/accident/mapAccidents";
@@ -28,8 +24,6 @@ import { mapAccidents } from "@/app/actions/accident/mapAccidents";
 import { accidentSchema } from "@/types/declarations/selectInp";
 
 // Dynamic import for map components (disable SSR)
-// Get enabled filters for accidents map (use comprehensive filters)
-const ENABLED_FILTERS = getEnabledFiltersForChart("HOTSPOTS_ANALYTICS");
 
 const AccidentMap = dynamic(() => import("@/components/maps/AccidentMap"), {
   ssr: false,
@@ -45,6 +39,14 @@ const AccidentMap = dynamic(() => import("@/components/maps/AccidentMap"), {
 
 // Main Page Component
 const AccidentsMapPage: React.FC = () => {
+  const { enterpriseSettings, userLevel } = useAuth();
+
+  // Get enabled filters for accidents map considering enterprise settings
+  const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
+    "MAP_ACCIDENTS_ANALYTICS",
+    userLevel === "Enterprise" ? enterpriseSettings : undefined,
+  );
+
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [accidents, setAccidents] = useState<accidentSchema[]>([]);
@@ -58,8 +60,7 @@ const AccidentsMapPage: React.FC = () => {
 
   // Map comparison context
   const { addComparison } = useMapComparison();
-  const [isCapturingSnapshot, setIsCapturingSnapshot] =
-    useState<boolean>(false);
+  const [isCapturingSnapshot, setIsCapturingSnapshot] = useState<boolean>(false);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
@@ -113,10 +114,7 @@ const AccidentsMapPage: React.FC = () => {
   useScrollLock(isPolygonLoading || isCapturingSnapshot);
 
   // Handle shape drawing
-  const handleShapeDrawn = async (
-    geoJSON: GeoJSON.Feature,
-    layer?: { getRadius?(): number },
-  ) => {
+  const handleShapeDrawn = async (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => {
     setIsPolygonLoading(true);
     try {
       // Extract coordinates from the GeoJSON based on geometry type
@@ -233,10 +231,7 @@ const AccidentsMapPage: React.FC = () => {
         const canvas = await html2canvas(mapContainer as HTMLElement, options);
         dataUrl = canvas.toDataURL("image/png", 0.9);
       } catch (error) {
-        console.warn(
-          "html2canvas capture failed, trying with basic options:",
-          error,
-        );
+        console.warn("html2canvas capture failed, trying with basic options:", error);
         // Fallback with minimal options
         const fallbackOptions = {
           backgroundColor: "#ffffff",
@@ -244,10 +239,7 @@ const AccidentsMapPage: React.FC = () => {
           useCORS: true,
           allowTaint: true,
         };
-        const fallbackCanvas = await html2canvas(
-          mapContainer as HTMLElement,
-          fallbackOptions,
-        );
+        const fallbackCanvas = await html2canvas(mapContainer as HTMLElement, fallbackOptions);
         dataUrl = fallbackCanvas.toDataURL("image/png", 0.8);
       }
 
@@ -295,6 +287,8 @@ const AccidentsMapPage: React.FC = () => {
               enabledFilters={ENABLED_FILTERS}
               title="فیلترهای نقشه تصادفات"
               description="فیلترهای مربوط به نمایش تصادفات روی نقشه"
+              enterpriseSettings={enterpriseSettings}
+              activeAdvancedFilters={true}
             />
           </div>
         )}
@@ -305,9 +299,7 @@ const AccidentsMapPage: React.FC = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  نقشه تصادفات
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-900">نقشه تصادفات</h1>
                 <p className="text-sm text-gray-600 mt-1">
                   نمایش جغرافیایی تصادفات با قابلیت فیلتر و تحلیل مکانی
                 </p>
@@ -325,12 +317,7 @@ const AccidentsMapPage: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -346,12 +333,7 @@ const AccidentsMapPage: React.FC = () => {
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -387,9 +369,7 @@ const AccidentsMapPage: React.FC = () => {
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span className="text-gray-700">
-                    در حال جستجو در منطقه انتخاب شده...
-                  </span>
+                  <span className="text-gray-700">در حال جستجو در منطقه انتخاب شده...</span>
                 </div>
               </div>
             </div>
@@ -401,9 +381,7 @@ const AccidentsMapPage: React.FC = () => {
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <div className="flex items-center gap-3">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
-                  <span className="text-gray-700">
-                    در حال ذخیره نقشه برای مقایسه...
-                  </span>
+                  <span className="text-gray-700">در حال ذخیره نقشه برای مقایسه...</span>
                 </div>
               </div>
             </div>
@@ -420,16 +398,12 @@ const AccidentsMapPage: React.FC = () => {
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <h3 className="font-semibold text-gray-900 mb-2">کل تصادفات</h3>
-              <p className="text-2xl font-bold text-blue-600">
-                {total.toLocaleString("fa-IR")}
-              </p>
+              <p className="text-2xl font-bold text-blue-600">{total.toLocaleString("fa-IR")}</p>
               <p className="text-sm text-gray-600">در پایگاه داده</p>
             </div>
 
             <div className="bg-white rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                نمایش داده شده
-              </h3>
+              <h3 className="font-semibold text-gray-900 mb-2">نمایش داده شده</h3>
               <p className="text-2xl font-bold text-green-600">
                 {accidents.length.toLocaleString("fa-IR")}
               </p>
@@ -439,10 +413,7 @@ const AccidentsMapPage: React.FC = () => {
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <h3 className="font-semibold text-gray-900 mb-2">درصد نمایش</h3>
               <p className="text-2xl font-bold text-purple-600">
-                {total > 0
-                  ? ((accidents.length / total) * 100).toFixed(1)
-                  : "0"}
-                %
+                {total > 0 ? ((accidents.length / total) * 100).toFixed(1) : "0"}%
               </p>
               <p className="text-sm text-gray-600">از کل داده‌ها</p>
             </div>
