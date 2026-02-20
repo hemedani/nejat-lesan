@@ -80,13 +80,6 @@ export const createProvinceGetsAuthMiddleware = () => {
 			// No _ids provided, set to all allowed provinces
 			details.set._ids = allowedProvinceIds;
 		}
-
-		console.log("Enterprise province access applied:", {
-			userId: user._id,
-			level: user.level,
-			allowedProvinces: allowedProvinceIds.length,
-			appliedProvinceIds: details.set._ids.length,
-		});
 	};
 };
 

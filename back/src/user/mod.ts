@@ -10,7 +10,6 @@ import { updateUserSetup } from "./updateUser/mod.ts";
 import { getUsersSetup } from "./getUsers/mod.ts";
 import { removeUserSetup } from "./removeUser/mod.ts";
 import { countUsersSetup } from "./countUsers/mod.ts";
-import { toggleFavArticleSetup } from "./toggleFavArticle/mod.ts";
 import { updateUserRelationsSetup } from "./updateUserRelations/mod.ts";
 import { dashboardStatisticSetup } from "./dashboardStatistic/mod.ts";
 import { seedSetup } from "./seed/mod.ts";
@@ -28,7 +27,6 @@ export const userSetup = () => {
 	getUsersSetup();
 	removeUserSetup();
 	countUsersSetup();
-	toggleFavArticleSetup();
 	updateUserRelationsSetup();
 	dashboardStatisticSetup();
 	seedSetup();

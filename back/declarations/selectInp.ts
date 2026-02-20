@@ -18388,52 +18388,6 @@ qty: (0 | 1 );
 };
 
           
-            toggleFavArticle: {
-set: {
-articleId: string;
-};
-get: {
-_id?: (0 | 1 );
-first_name?: (0 | 1 );
-last_name?: (0 | 1 );
-father_name?: (0 | 1 );
-mobile?: (0 | 1 );
-gender?: (0 | 1 );
-birth_date?: (0 | 1 );
-summary?: (0 | 1 );
-national_number?: (0 | 1 );
-address?: (0 | 1 );
-level?: (0 | 1 );
-is_verified?: (0 | 1 );
-settings?: (0 | 1 );
-createdAt?: (0 | 1 );
-updatedAt?: (0 | 1 );
-avatar?: {
-_id?: (0 | 1 );
-name?: (0 | 1 );
-type?: (0 | 1 );
-size?: (0 | 1 );
-createdAt?: (0 | 1 );
-updatedAt?: (0 | 1 );
-};
-national_card?: {
-_id?: (0 | 1 );
-name?: (0 | 1 );
-type?: (0 | 1 );
-size?: (0 | 1 );
-createdAt?: (0 | 1 );
-updatedAt?: (0 | 1 );
-};
-uploadedAssets?: {
-_id?: (0 | 1 );
-name?: (0 | 1 );
-type?: (0 | 1 );
-size?: (0 | 1 );
-};
-};
-};
-
-          
             updateUserRelations: {
 set: {
 _id: string;

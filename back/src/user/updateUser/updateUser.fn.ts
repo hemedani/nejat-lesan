@@ -122,8 +122,6 @@ export const updateUserFn: ActFn = async (body) => {
 		updateObj.settings = settings as any;
 	}
 
-	console.log("Update Object:", updateObj);
-
 	return await user.findOneAndUpdate({
 		filter: { _id: new ObjectId(_id as string) },
 		update: {
