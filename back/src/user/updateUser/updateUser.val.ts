@@ -1,4 +1,6 @@
 import {
+	array,
+	boolean,
 	coerce,
 	date,
 	object,
@@ -7,7 +9,7 @@ import {
 	string,
 } from "@deps";
 import { selectStruct } from "../../../mod.ts";
-import { geoJSONStruct, user_genders } from "@model";
+import { availableCharts, user_genders, user_level_emums } from "@model";
 
 export const updateUserValidator = () => {
 	return object({
@@ -21,9 +23,13 @@ export const updateUserValidator = () => {
 				coerce(date(), string(), (value) => new Date(value)),
 			),
 			summary: optional(string()),
-
 			address: optional(string()),
-			citySettingId: optional(objectIdValidation),
+
+			level: optional(user_level_emums),
+			is_verified: optional(boolean()),
+			citySettingIds: optional(array(objectIdValidation)),
+			provinceSettingIds: optional(array(objectIdValidation)),
+			availableCharts: optional(availableCharts),
 		}),
 		get: selectStruct("user", 1),
 	});

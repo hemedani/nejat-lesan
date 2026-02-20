@@ -27,6 +27,7 @@ import {
 	eventSeverityAnalyticFilters,
 	hourlyDayOfWeekAnalyticFilters,
 	humanReasonAnalyticFilters,
+	mapAccidentsAnalyticFilters,
 	monthlyHolidayAnalyticFilters,
 	roadDefectsAnalyticFilters,
 	spatialCollisionAnalyticFilters,
@@ -80,6 +81,7 @@ export const availableCharts = optional(object({
 	),
 	totalReasonAnalytics: optional(totalReasonAnalyticFilters),
 	vehicleReasonAnalytics: optional(vehicleReasonAnalyticFilters),
+	mapAccidentsAnalytics: optional(mapAccidentsAnalyticFilters),
 }));
 
 export const user_level_array = [

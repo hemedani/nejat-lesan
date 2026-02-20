@@ -332,3 +332,52 @@ export const vehicleReasonAnalyticFilters = object({
 	...comprehensiveAnalyticsFiltersObj,
 	polygon: optional(boolean()), // GeoJSON Spatial Filter
 });
+
+// Map accidents filter
+export const mapAccidentsAnalyticFilters = object({
+	// GeoJSON Spatial Filter
+	polygon: optional(boolean()),
+
+	// Core Accident Details
+	seri: optional(boolean()),
+	serial: optional(boolean()),
+	dateOfAccidentFrom: optional(boolean()),
+	dateOfAccidentTo: optional(boolean()),
+	deadCountMin: optional(boolean()),
+	deadCountMax: optional(boolean()),
+	injuredCountMin: optional(boolean()),
+	injuredCountMax: optional(boolean()),
+	officer: optional(boolean()),
+
+	// Location & Context
+	province: optional(boolean()),
+	city: optional(boolean()),
+	road: optional(boolean()),
+	trafficZone: optional(boolean()),
+	cityZone: optional(boolean()),
+	accidentType: optional(boolean()),
+	position: optional(boolean()),
+	rulingType: optional(boolean()),
+	lightStatus: optional(boolean()),
+	collisionType: optional(boolean()),
+	roadSituation: optional(boolean()),
+	roadRepairType: optional(boolean()),
+	shoulderStatus: optional(boolean()),
+
+	// Environmental & Reason-based
+	areaUsages: optional(boolean()),
+	airStatuses: optional(boolean()),
+	roadDefects: optional(boolean()),
+	humanReasons: optional(boolean()),
+	vehicleReasons: optional(boolean()),
+	roadSurfaceConditions: optional(boolean()),
+
+	// Vehicle DTOs Filters
+	vehicleSystem: optional(boolean()),
+	vehicleFaultStatus: optional(boolean()),
+
+	// Driver DTOs Filters
+	driverSex: optional(boolean()),
+	driverLicenceType: optional(boolean()),
+	driverInjuryType: optional(boolean()),
+});

@@ -36,7 +36,8 @@ export const createChartAuthMiddleware = (
 		| "totalReasonAnalytics"
 		| "humanReasonAnalytics"
 		| "vehicleReasonAnalytics"
-		| "monthlyHolidayAnalytics",
+		| "monthlyHolidayAnalytics"
+		| "mapAccidentsAnalytics",
 ) => {
 	return () => {
 		// Get user from context

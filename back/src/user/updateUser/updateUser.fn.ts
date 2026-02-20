@@ -1,12 +1,8 @@
 import { type ActFn, Infer, object, ObjectId } from "@deps";
-import { city, coreApp, user } from "../../../mod.ts";
+import { city, coreApp, province, user } from "../../../mod.ts";
 import { user_pure } from "../../../models/user.ts";
 
 export const updateUserFn: ActFn = async (body) => {
-	// const {
-	// 	user,
-	// }: MyContext = coreApp.contextFns.getContextModel() as MyContext;
-
 	const {
 		set: {
 			_id,
@@ -16,9 +12,12 @@ export const updateUserFn: ActFn = async (body) => {
 			gender,
 			birth_date,
 			summary,
-
 			address,
-			citySettingId,
+			level,
+			is_verified,
+			citySettingIds,
+			provinceSettingIds,
+			availableCharts,
 		},
 		get,
 	} = body.details;
@@ -33,29 +32,97 @@ export const updateUserFn: ActFn = async (body) => {
 		...(birth_date && { birth_date }),
 		...(summary && { summary }),
 		...(address && { address }),
+		...(level && { level }),
+		...(is_verified !== undefined && { is_verified }),
 	};
 
-	if (citySettingId) {
-		const cityPureProjection = coreApp.schemas.createProjection(
-			"city",
-			"Pure",
-		);
+	// Handle settings updates
+	if (citySettingIds || provinceSettingIds || availableCharts) {
+		const settings: {
+			cities?: {
+				_id: ObjectId;
+				name: string;
+				center_location: {
+					type: "Point";
+					coordinates: number[];
+				};
+			}[];
+			provinces?: {
+				_id: ObjectId;
+				name: string;
+				center_location: {
+					type: "Point";
+					coordinates: number[];
+				};
+			}[];
+			availableCharts?: typeof availableCharts;
+		} = {};
 
-		const foundedCity = await city.findOne({
-			filters: { _id: new ObjectId(citySettingId as string) },
-			projection: cityPureProjection,
-		});
+		// Handle multiple cities
+		if (
+			citySettingIds && Array.isArray(citySettingIds) &&
+			citySettingIds.length > 0
+		) {
+			const cityPureProjection = coreApp.schemas.createProjection(
+				"city",
+				"Pure",
+			);
 
-		if (foundedCity) {
-			updateObj.settings = {
-				city: {
-					_id: foundedCity._id,
-					name: foundedCity.name,
-					center_location: foundedCity.center_location,
-				},
-			};
+			// Convert string IDs to ObjectId instances
+			const objectIds = citySettingIds.map((id) =>
+				new ObjectId(id as string)
+			);
+
+			const foundedCities = await city.find({
+				filters: { _id: { $in: objectIds } },
+				projection: cityPureProjection,
+			}).toArray();
+
+			// Map the cities to the required format
+			settings.cities = foundedCities.map((city) => ({
+				_id: city._id,
+				name: city.name,
+				center_location: city.center_location,
+			}));
 		}
+
+		// Handle multiple provinces
+		if (
+			provinceSettingIds && Array.isArray(provinceSettingIds) &&
+			provinceSettingIds.length > 0
+		) {
+			const provincePureProjection = coreApp.schemas.createProjection(
+				"province",
+				"Pure",
+			);
+
+			// Convert string IDs to ObjectId instances
+			const objectIds = provinceSettingIds.map((id) =>
+				new ObjectId(id as string)
+			);
+
+			const foundedProvinces = await province.find({
+				filters: { _id: { $in: objectIds } },
+				projection: provincePureProjection,
+			}).toArray();
+
+			// Map the provinces to the required format
+			settings.provinces = foundedProvinces.map((province) => ({
+				_id: province._id,
+				name: province.name,
+				center_location: province.center_location,
+			}));
+		}
+
+		// Add availableCharts to settings if provided
+		if (availableCharts) {
+			settings.availableCharts = availableCharts;
+		}
+
+		updateObj.settings = settings as any;
 	}
+
+	console.log("Update Object:", updateObj);
 
 	return await user.findOneAndUpdate({
 		filter: { _id: new ObjectId(_id as string) },

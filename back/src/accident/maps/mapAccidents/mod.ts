@@ -7,7 +7,7 @@
  * a list of individual accident documents for plotting on a map, complete with
  * comprehensive filtering and pagination.
  */
-import { grantAccess, setTokens, setUser } from "@lib";
+import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { mapAccidentsFn } from "./mapAccidents.fn.ts";
 import { mapAccidentsValidator } from "./mapAccidents.val.ts";
 import { coreApp } from "../../../../mod.ts";
@@ -17,12 +17,10 @@ export const mapAccidentsSetup = () =>
 		schema: "accident",
 		fn: mapAccidentsFn,
 		actName: "mapAccidents",
-		preAct: [
+		preValidation: [
 			setTokens,
 			setUser,
-			grantAccess({
-				levels: ["Manager", "Enterprise"],
-			}),
+			createChartAuthMiddleware("mapAccidentsAnalytics"),
 		],
 		validator: mapAccidentsValidator(),
 	});
