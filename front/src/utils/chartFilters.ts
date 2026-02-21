@@ -2157,8 +2157,11 @@ export const CHART_SPECIFIC_FILTERS = {
   ] as EnabledFilters,
 
   // Map Accidents Analytics - Full filter set mirroring the mapAccidents validator
-  // Note: "limit" and "skip" are intentionally excluded — they are pagination controls, not data-access filters
   MAP_ACCIDENTS_ANALYTICS: [
+    // --- Pagination Controls ---
+    "limit",
+    "skip",
+
     // --- Polygon (spatial query) ---
     "polygon",
 

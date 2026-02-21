@@ -338,6 +338,10 @@ export const mapAccidentsAnalyticFilters = object({
 	// GeoJSON Spatial Filter
 	polygon: optional(boolean()),
 
+	// Pagination
+	limit: optional(boolean()),
+	skip: optional(boolean()),
+
 	// Core Accident Details
 	seri: optional(boolean()),
 	serial: optional(boolean()),

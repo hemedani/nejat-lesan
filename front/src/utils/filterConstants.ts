@@ -328,8 +328,10 @@ export const vehicleReasonAnalyticFilters = z.object({
 });
 
 // Map accidents analytics filter — mirrors the mapAccidents validator exactly
-// Note: "limit" and "skip" are intentionally excluded (pagination controls, not data-access filters)
 export const mapAccidentsAnalyticFilters = z.object({
+  // Pagination controls
+  limit: z.boolean().optional(),
+  skip: z.boolean().optional(),
   polygon: z.boolean().optional(), // GeoJSON Spatial Filter
   // Core accident details
   seri: z.boolean().optional(),
@@ -488,6 +490,8 @@ export const comprehensiveFilterFields = [
 // Helper constant for map accidents filter fields with Persian labels
 // Only includes the fields the mapAccidents endpoint actually accepts
 export const mapAccidentsFilterFields = [
+  { key: "limit", label: "تعداد نتایج" },
+  { key: "skip", label: "رد کردن نتایج" },
   { key: "polygon", label: "محدوده مکانی" },
   { key: "seri", label: "سری" },
   { key: "serial", label: "سریال" },

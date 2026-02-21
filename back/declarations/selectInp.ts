@@ -1933,6 +1933,8 @@ polygon?: boolean;
 };
 mapAccidentsAnalytics?: {
 polygon?: boolean;
+limit?: boolean;
+skip?: boolean;
 seri?: boolean;
 serial?: boolean;
 dateOfAccidentFrom?: boolean;
@@ -4336,6 +4338,8 @@ polygon?: boolean;
 };
 mapAccidentsAnalytics?: {
 polygon?: boolean;
+limit?: boolean;
+skip?: boolean;
 seri?: boolean;
 serial?: boolean;
 dateOfAccidentFrom?: boolean;
@@ -15886,6 +15890,8 @@ polygon?: boolean;
 };
 mapAccidentsAnalytics?: {
 polygon?: boolean;
+limit?: boolean;
+skip?: boolean;
 seri?: boolean;
 serial?: boolean;
 dateOfAccidentFrom?: boolean;
@@ -18146,6 +18152,8 @@ polygon?: boolean;
 };
 mapAccidentsAnalytics?: {
 polygon?: boolean;
+limit?: boolean;
+skip?: boolean;
 seri?: boolean;
 serial?: boolean;
 dateOfAccidentFrom?: boolean;
