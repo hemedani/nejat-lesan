@@ -11,7 +11,7 @@
  * Key features:
  * - Default date range = last 3 Jalali years up to today
  * - Applies **all filters** before aggregation
- * - Groups by Gregorian year/month (for consistent sorting)
+ * - Groups by Jalali year/month (for accurate Jalali calendar charting)
  * - Fills missing months with 0 for continuous charting
  * - Handles embedded `vehicle_dtos`, `pedestrian_dtos` via `$elemMatch`
  */
@@ -318,7 +318,7 @@ export const temporalCountAnalyticsFn: ActFn = async (body) => {
 
 	// =========================================================================
 	// 7. EXECUTE AGGREGATION PIPELINE
-	//    - Group by Gregorian year/month (for correct chronological order)
+	//    - Group by Gregorian year/month/day to allow accurate Jalali mapping
 	// =========================================================================
 	const pipeline: Document[] = [
 		{ $match: baseFilter },
@@ -337,43 +337,54 @@ export const temporalCountAnalyticsFn: ActFn = async (body) => {
 							timezone: "Asia/Tehran",
 						},
 					},
+					day: {
+						$dayOfMonth: {
+							date: "$date_of_accident",
+							timezone: "Asia/Tehran",
+						},
+					},
 				},
 				count: { $sum: 1 },
 			},
 		},
-		{ $sort: { "_id.year": 1, "_id.month": 1 } },
 	];
 
 	const dbResults = await accident.aggregation({ pipeline }).toArray();
 
 	// =========================================================================
-	// 8. BUILD CONTINUOUS MONTHLY SERIES (Gregorian months for sorting)
-	//    - But display as Jalali in categories (e.g., "1400-04")
+	// 8. BUILD CONTINUOUS MONTHLY SERIES (Jalali months)
 	// =========================================================================
 	const resultsMap = new Map<string, number>();
 	for (const r of dbResults) {
-		const key = `${r._id.year}-${String(r._id.month).padStart(2, "0")}`;
-		resultsMap.set(key, r.count);
+		// Convert Gregorian YYYY-MM-DD to Jalali YYYY-MM
+		const dateStr = `${r._id.year}-${
+			String(r._id.month).padStart(2, "0")
+		}-${String(r._id.day).padStart(2, "0")}`;
+		const m = moment(dateStr, "YYYY-MM-DD");
+		const jalaliKey = `${m.jYear()}-${
+			String(m.jMonth() + 1).padStart(2, "0")
+		}`;
+
+		resultsMap.set(jalaliKey, (resultsMap.get(jalaliKey) || 0) + r.count);
 	}
 
 	const categories: string[] = [];
 	const seriesData: number[] = [];
-	const current = startDate.clone();
 
-	while (current.isSameOrBefore(endDate, "month")) {
-		// Gregorian key for lookup
-		const gregKey = `${current.year()}-${
-			String(current.month() + 1).padStart(2, "0")
-		}`;
-		// Jalali label for display
-		const jalali = moment(current.toDate()).locale("fa");
-		const jalaliLabel = `${jalali.jYear()}-${
-			String(jalali.jMonth() + 1).padStart(2, "0")
+	// Start from the beginning of the Jalali month of startDate
+	const current = startDate.clone().startOf("jMonth");
+	// End at the end of the Jalali month of endDate
+	const end = endDate.clone().endOf("jMonth");
+
+	while (current.isSameOrBefore(end)) {
+		const jalaliKey = `${current.jYear()}-${
+			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
 
-		categories.push(jalaliLabel);
-		seriesData.push(resultsMap.get(gregKey) || 0);
-		current.add(1, "month");
+		categories.push(jalaliKey);
+		seriesData.push(resultsMap.get(jalaliKey) || 0);
+
+		current.add(1, "jMonth");
 	}
 
 	// =========================================================================

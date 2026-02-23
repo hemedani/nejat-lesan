@@ -359,6 +359,12 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 							timezone: "Asia/Tehran",
 						},
 					},
+					day: {
+						$dayOfMonth: {
+							date: "$date_of_accident",
+							timezone: "Asia/Tehran",
+						},
+					},
 				},
 				totalCount: { $sum: 1 },
 				selectedTypesCount: {
@@ -411,26 +417,32 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 	// =========================================================================
 	const resultsMap = new Map<string, number>();
 	for (const r of dbResults) {
-		const key = `${r._id.year}-${String(r._id.month).padStart(2, "0")}`;
-		resultsMap.set(key, r.ratio);
+		const dateStr = `${r._id.year}-${
+			String(r._id.month).padStart(2, "0")
+		}-${String(r._id.day).padStart(2, "0")}`;
+		const m = moment(dateStr, "YYYY-MM-DD");
+		const jalaliKey = `${m.jYear()}-${
+			String(m.jMonth() + 1).padStart(2, "0")
+		}`;
+
+		resultsMap.set(jalaliKey, (resultsMap.get(jalaliKey) || 0) + r.ratio);
 	}
 
 	const categories: string[] = [];
 	const seriesData: number[] = [];
-	const current = startDate.clone();
 
-	while (current.isSameOrBefore(endDate, "month")) {
-		const gregKey = `${current.year()}-${
-			String(current.month() + 1).padStart(2, "0")
-		}`;
-		const jalali = moment(current.toDate()).locale("fa");
-		const jalaliLabel = `${jalali.jYear()}-${
-			String(jalali.jMonth() + 1).padStart(2, "0")
+	const current = startDate.clone().startOf("jMonth");
+	const end = endDate.clone().endOf("jMonth");
+
+	while (current.isSameOrBefore(end)) {
+		const jalaliKey = `${current.jYear()}-${
+			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
 
-		categories.push(jalaliLabel);
-		seriesData.push(resultsMap.get(gregKey) || 0);
-		current.add(1, "month");
+		categories.push(jalaliKey);
+		seriesData.push(resultsMap.get(jalaliKey) || 0);
+
+		current.add(1, "jMonth");
 	}
 
 	// =========================================================================

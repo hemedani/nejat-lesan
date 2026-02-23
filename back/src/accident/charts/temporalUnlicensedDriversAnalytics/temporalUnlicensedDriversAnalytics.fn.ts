@@ -353,6 +353,12 @@ export const temporalUnlicensedDriversAnalyticsFn: ActFn = async (body) => {
 							timezone: "Asia/Tehran",
 						},
 					},
+					day: {
+						$dayOfMonth: {
+							date: "$date_of_accident",
+							timezone: "Asia/Tehran",
+						},
+					},
 				},
 				count: { $sum: 1 },
 			},

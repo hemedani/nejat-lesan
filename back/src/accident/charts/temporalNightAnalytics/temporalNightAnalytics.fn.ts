@@ -362,32 +362,38 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	const unlitMap = new Map<string, number>();
 
 	for (const r of dbResults) {
-		const key = `${r._id.year}-${String(r._id.month).padStart(2, "0")}`;
+		const dateStr = `${r._id.year}-${
+			String(r._id.month).padStart(2, "0")
+		}-${String(r._id.day).padStart(2, "0")}`;
+		const m = moment(dateStr, "YYYY-MM-DD");
+		const jalaliKey = `${m.jYear()}-${
+			String(m.jMonth() + 1).padStart(2, "0")
+		}`;
+
 		if (r._id.lightStatus === "شب با روشنایی کافی") {
-			litMap.set(key, r.count);
+			litMap.set(jalaliKey, (litMap.get(jalaliKey) || 0) + r.count);
 		} else if (r._id.lightStatus === "شب با نور ناکافی") {
-			unlitMap.set(key, r.count);
+			unlitMap.set(jalaliKey, (unlitMap.get(jalaliKey) || 0) + r.count);
 		}
 	}
 
 	const categories: string[] = [];
 	const litData: number[] = [];
 	const unlitData: number[] = [];
-	const current = startDate.clone();
 
-	while (current.isSameOrBefore(endDate, "month")) {
-		const gregKey = `${current.year()}-${
-			String(current.month() + 1).padStart(2, "0")
-		}`;
-		const jalali = moment(current.toDate()).locale("fa");
-		const jalaliLabel = `${jalali.jYear()}-${
-			String(jalali.jMonth() + 1).padStart(2, "0")
+	const current = startDate.clone().startOf("jMonth");
+	const end = endDate.clone().endOf("jMonth");
+
+	while (current.isSameOrBefore(end)) {
+		const jalaliKey = `${current.jYear()}-${
+			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
 
-		categories.push(jalaliLabel);
-		litData.push(litMap.get(gregKey) || 0);
-		unlitData.push(unlitMap.get(gregKey) || 0);
-		current.add(1, "month");
+		categories.push(jalaliKey);
+		litData.push(litMap.get(jalaliKey) || 0);
+		unlitData.push(unlitMap.get(jalaliKey) || 0);
+
+		current.add(1, "jMonth");
 	}
 
 	// =========================================================================

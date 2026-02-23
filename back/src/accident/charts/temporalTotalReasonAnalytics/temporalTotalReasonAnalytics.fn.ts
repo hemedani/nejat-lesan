@@ -353,6 +353,12 @@ export const temporalTotalReasonAnalyticsFn: ActFn = async (body) => {
 							timezone: "Asia/Tehran",
 						},
 					},
+					day: {
+						$dayOfMonth: {
+							date: "$date_of_accident",
+							timezone: "Asia/Tehran",
+						},
+					},
 				},
 				count: { $sum: 1 },
 			},
@@ -360,10 +366,11 @@ export const temporalTotalReasonAnalyticsFn: ActFn = async (body) => {
 		{
 			$group: {
 				_id: "$_id.reason",
-				monthlyData: {
+				dailyData: {
 					$push: {
 						year: "$_id.year",
 						month: "$_id.month",
+						day: "$_id.day",
 						count: "$count",
 					},
 				},
@@ -380,14 +387,15 @@ export const temporalTotalReasonAnalyticsFn: ActFn = async (body) => {
 	// 8. BUILD CONTINUOUS MONTHLY CATEGORIES (Jalali labels)
 	// =========================================================================
 	const categories: string[] = [];
-	const current = startDate.clone();
-	while (current.isSameOrBefore(endDate, "month")) {
-		const jalali = moment(current.toDate()).locale("fa");
-		const label = `${jalali.jYear()}-${
-			String(jalali.jMonth() + 1).padStart(2, "0")
+	const current = startDate.clone().startOf("jMonth");
+	const end = endDate.clone().endOf("jMonth");
+
+	while (current.isSameOrBefore(end)) {
+		const jalaliKey = `${current.jYear()}-${
+			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
-		categories.push(label);
-		current.add(1, "month");
+		categories.push(jalaliKey);
+		current.add(1, "jMonth");
 	}
 
 	// =========================================================================
@@ -395,18 +403,23 @@ export const temporalTotalReasonAnalyticsFn: ActFn = async (body) => {
 	// =========================================================================
 	const series = dbResults.map((doc) => {
 		const monthlyMap = new Map<string, number>();
-		for (const m of doc.monthlyData) {
-			const gregKey = `${m.year}-${String(m.month).padStart(2, "0")}`;
-			monthlyMap.set(gregKey, m.count);
+		for (const d of doc.dailyData) {
+			const dateStr = `${d.year}-${String(d.month).padStart(2, "0")}-${
+				String(d.day).padStart(2, "0")
+			}`;
+			const m = moment(dateStr, "YYYY-MM-DD");
+			const jalaliKey = `${m.jYear()}-${
+				String(m.jMonth() + 1).padStart(2, "0")
+			}`;
+
+			monthlyMap.set(
+				jalaliKey,
+				(monthlyMap.get(jalaliKey) || 0) + d.count,
+			);
 		}
 
 		const data = categories.map((cat) => {
-			const [jYear, jMonth] = cat.split("-").map(Number);
-			const gDate = moment(`${jYear}/${jMonth}/01`, "jYYYY/jMM/jDD");
-			const gregKey = `${gDate.year()}-${
-				String(gDate.month() + 1).padStart(2, "0")
-			}`;
-			return monthlyMap.get(gregKey) || 0;
+			return monthlyMap.get(cat) || 0;
 		});
 
 		return { name: doc._id, data };
