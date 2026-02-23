@@ -4,9 +4,7 @@
 	},
 	"fmt": {
 		"files": {
-			"exclude": [
-				"declaration"
-			]
+			"exclude": ["declaration"]
 		},
 		"options": {
 			"useTabs": true,
@@ -19,7 +17,8 @@
 	"imports": {
 		"@deps": "./deps.ts",
 		"@lib": "./utils/mod.ts",
-		"@model": "./models/mod.ts"
+		"@model": "./models/mod.ts",
+		"node-unrar-js": "npm:node-unrar-js@2.0.2"
 	},
 	"nodeModulesDir": "auto"
 }

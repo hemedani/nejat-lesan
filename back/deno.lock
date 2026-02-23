@@ -8,6 +8,8 @@
     "npm:@xtao-org/jsonstrum@0.3.0": "0.3.0",
     "npm:jalali-moment@*": "3.3.11",
     "npm:mongodb@6.3.0": "6.3.0",
+    "npm:node-unrar-js@*": "2.0.2",
+    "npm:node-unrar-js@2.0.2": "2.0.2",
     "npm:superstruct@1.0.3": "1.0.3",
     "npm:superstruct@2.0.2": "2.0.2",
     "npm:typescript@*": "5.7.3"
@@ -239,6 +241,9 @@
     },
     "mute-stream@0.0.8": {
       "integrity": "sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA=="
+    },
+    "node-unrar-js@2.0.2": {
+      "integrity": "sha512-hLNmoJzqaKJnod8yiTVGe9hnlNRHotUi0CreSv/8HtfRi/3JnRC8DvsmKfeGGguRjTEulhZK6zXX5PXoVuDZ2w=="
     },
     "onetime@5.1.2": {
       "integrity": "sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==",
@@ -1246,5 +1251,10 @@
     "https://raw.githubusercontent.com/MiaadTeam/lesan/refs/tags/v0.1.26/src/utils/mod.ts": "87a433588cffa6dbc56beb5c7a4f760afa4ea59dc0d8de645c40eb90fba51a2f",
     "https://raw.githubusercontent.com/MiaadTeam/lesan/refs/tags/v0.1.26/src/utils/serveLesan.ts": "629a41e22bc4d66305e2b67797acb5a08048974407a99b2e977d23a5c5b21be6",
     "https://raw.githubusercontent.com/MiaadTeam/lesan/refs/tags/v0.1.26/src/utils/throwError.ts": "ac15861392d754532c797aee010e30bc6070b346528f4f404ea4f956fe375dd0"
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:node-unrar-js@2.0.2"
+    ]
   }
 }

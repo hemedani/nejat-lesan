@@ -6,7 +6,7 @@ export const uploadFileValidator = () => {
 	return object({
 		set: object({
 			formData: instance(FormData),
-			type: enums(["video", "image", "doc", "geo", "json"]),
+			type: enums(["video", "image", "doc", "geo", "json", "rar"]),
 			...createUpdateAt,
 		}),
 		get: coreApp.schemas.selectStruct("file", 1),
