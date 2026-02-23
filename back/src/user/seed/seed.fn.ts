@@ -632,6 +632,8 @@ export const seedFn: ActFn = async (body) => {
 				injured_count: parsedAccident.injuredCount || 0,
 				vehicle_dtos: [],
 				pedestrian_dtos: [],
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			};
 
 			const accidentRelations: TInsertRelations<
@@ -687,8 +689,22 @@ export const seedFn: ActFn = async (body) => {
 
 			// Continue with other relations in parallel
 			if (parsedAccident.road) {
+				const roadRelations = provinceId
+					? {
+						province: {
+							_ids: provinceId,
+							relatedRelations: { axeses: true },
+						},
+					}
+					: undefined;
+
 				relationPromises.push(
-					normalizeRelations(parsedAccident.road, "road", userId)
+					normalizeRelations(
+						parsedAccident.road,
+						"road",
+						userId,
+						roadRelations,
+					)
 						.then((normalized) => {
 							if (normalized && normalized._id) {
 								accidentRelations.road = {
