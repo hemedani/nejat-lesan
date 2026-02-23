@@ -9253,7 +9253,7 @@ size?: (0 | 1 );
           
             uploadFile: {
 set: {
-type: ("video" | "image" | "doc" | "geo" | "json" );
+type: ("video" | "image" | "doc" | "geo" | "json" | "rar" );
 createdAt: Date;
 updatedAt: Date;
 };
