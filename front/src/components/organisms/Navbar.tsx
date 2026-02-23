@@ -130,7 +130,7 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-9999 transition-all duration-300 bg-gray-600 py-3 shadow-lg border-b border-gray-500`}
+      className={`fixed top-0 left-0 w-full z-[9999] transition-all duration-300 bg-slate-950/80 backdrop-blur-md py-3 shadow-lg border-b border-white/10`}
     >
       <div className="mx-auto max-w-7xl flex items-center justify-between px-6 relative">
         {/* Logo with subtle animation */}
@@ -146,14 +146,14 @@ export const Navbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="group flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300 ml-8"
+              className="group flex items-center gap-2 text-slate-300 hover:text-white transition-all duration-300 ml-8"
             >
-              <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
+              <span className="transform transition-all duration-300 group-hover:scale-110 text-blue-400">
                 {link.icon}
               </span>
               <span className="relative py-2">
                 {link.label}
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-300 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-300 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </span>
             </Link>
           ))}
@@ -205,7 +205,7 @@ export const Navbar = () => {
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-white hover:text-yellow-400 rounded-lg transition-all duration-300 hover:bg-gray-500"
+                  className="flex items-center gap-1.5 px-4 py-2 text-slate-300 hover:text-white rounded-lg transition-all duration-300 hover:bg-white/5"
                 >
                   <svg
                     className="w-4 h-4"
@@ -239,12 +239,12 @@ export const Navbar = () => {
                 </button>
 
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-gray-500 rounded-xl overflow-hidden shadow-xl z-20 border border-gray-400">
-                    <div className="p-4 bg-gray-600">
+                  <div className="absolute right-0 mt-2 w-64 bg-slate-800 rounded-xl overflow-hidden shadow-xl z-20 border border-white/10">
+                    <div className="p-4 bg-slate-900/50">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center">
                           <svg
-                            className="w-6 h-6 text-gray-700"
+                            className="w-6 h-6 text-slate-400"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -260,21 +260,21 @@ export const Navbar = () => {
                         </div>
                         <div>
                           <p className="font-medium text-white">{userName}</p>
-                          <p className="text-sm text-gray-300">سطح دسترسی: {userLevel}</p>
+                          <p className="text-sm text-slate-400">سطح دسترسی: {userLevel}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="py-2">
-                      <div className="px-4 py-2 border-b border-gray-400">
-                        <p className="text-xs text-gray-300">کد ملی</p>
+                      <div className="px-4 py-2 border-b border-white/10">
+                        <p className="text-xs text-slate-400">کد ملی</p>
                         <p className="text-white">{userNationalNumber}</p>
                       </div>
 
                       {/* User Panel Link */}
                       <Link
                         href="/user"
-                        className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-yellow-400 transition-colors duration-200"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-slate-300 hover:bg-white/5 hover:text-white transition-colors duration-200"
                         onClick={() => setIsProfileDropdownOpen(false)}
                       >
                         <svg
@@ -301,7 +301,7 @@ export const Navbar = () => {
                           userLevel === "Editor") && (
                           <Link
                             href="/admin"
-                            className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-yellow-400 transition-colors duration-200 border-b border-gray-400"
+                            className="w-full flex items-center gap-2 px-4 py-3 text-slate-300 hover:bg-white/5 hover:text-white transition-colors duration-200 border-b border-white/10"
                             onClick={() => setIsProfileDropdownOpen(false)}
                           >
                             <svg
@@ -334,7 +334,7 @@ export const Navbar = () => {
                           setIsProfileDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full flex items-center gap-2 px-4 py-3 text-white hover:bg-gray-400 hover:text-red-400 transition-colors duration-200"
+                        className="w-full flex items-center gap-2 px-4 py-3 text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors duration-200"
                       >
                         <svg
                           className="w-4 h-4"
@@ -359,7 +359,7 @@ export const Navbar = () => {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 px-4 py-2 text-gray-800 bg-yellow-400 hover:bg-yellow-300 rounded-lg transition-all duration-300"
+                className="flex items-center gap-1.5 px-4 py-2 text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-all duration-300"
               >
                 <svg
                   className="w-4 h-4"
@@ -382,7 +382,7 @@ export const Navbar = () => {
 
           {/* Mobile menu button with animation */}
           <button
-            className="md:hidden text-white hover:text-yellow-400 focus:outline-none transition-transform duration-300 hover:scale-110"
+            className="md:hidden text-slate-300 hover:text-white focus:outline-none transition-transform duration-300 hover:scale-110"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "بستن منو" : "باز کردن منو"}
           >
@@ -409,7 +409,7 @@ export const Navbar = () => {
 
       {/* Mobile Menu with smooth animation */}
       <div
-        className={`md:hidden absolute left-0 w-full bg-gray-600 shadow-xl transition-all duration-500 ease-in-out transform ${
+        className={`md:hidden absolute left-0 w-full bg-slate-900 shadow-xl transition-all duration-500 ease-in-out transform border-b border-white/10 ${
           isMobileMenuOpen
             ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
             : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
@@ -420,7 +420,7 @@ export const Navbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4 flex items-center justify-center gap-2"
+              className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4 flex items-center justify-center gap-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <span className="text-indigo-500">{link.icon}</span>
@@ -429,14 +429,14 @@ export const Navbar = () => {
           ))}
 
           {/* Separator */}
-          <div className="w-24 h-px bg-gray-200 my-2"></div>
+          <div className="w-24 h-px bg-white/10 my-2"></div>
 
           {/* Additional Links */}
           {dropdownLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
+              className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <span>{link.label}</span>
@@ -449,7 +449,7 @@ export const Navbar = () => {
             (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") && (
               <Link
                 href="/admin"
-                className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
+                className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <svg
@@ -473,7 +473,7 @@ export const Navbar = () => {
           {isAuthenticated && (
             <Link
               href="/user"
-              className="w-full px-6 py-3 text-white hover:text-yellow-400 hover:bg-gray-500 transition-all duration-300 text-center rounded-lg mx-4"
+              className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <svg
@@ -498,7 +498,7 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <div className="w-full px-6 py-3">
               <button
-                className="flex items-center gap-2 w-full py-3 text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200"
+                className="flex items-center gap-2 w-full py-3 text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors duration-200"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   logout();
@@ -524,7 +524,7 @@ export const Navbar = () => {
           ) : (
             <Link
               href="/login"
-              className="w-full px-6 py-3 text-gray-800 bg-yellow-400 hover:bg-yellow-300 transition-all duration-300 text-center rounded-lg mx-4"
+              className="w-full px-6 py-3 text-white bg-blue-600 hover:bg-blue-500 transition-all duration-300 text-center rounded-lg mx-4"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <svg

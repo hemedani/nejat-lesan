@@ -29,9 +29,9 @@ export default async function RootLayout({
         <MapComparisonProvider>
           <AuthProvider>
             <AuthInitializer isAuthenticated={isAuthenticated} userData={userData} />
-            <div className="h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col bg-slate-950">
               <Navbar />
-              <div className="flex-1 bg-gray-200 mt-16">{children}</div>
+              <div className="flex-1 mt-16">{children}</div>
               <Footer />
             </div>
             <Toaster position="top-center" reverseOrder={false} />
