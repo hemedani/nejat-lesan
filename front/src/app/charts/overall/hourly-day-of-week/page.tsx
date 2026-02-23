@@ -8,6 +8,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { hourlyDayOfWeekAnalytics } from "@/app/actions/accident/hourlyDayOfWeekAnalytics";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
+import { differenceInDays } from "date-fns-jalali";
 
 // Get enabled filters for hourly day of week analytics considering enterprise settings
 const HourlyDayOfWeekPage = () => {
@@ -48,7 +49,10 @@ const HourlyDayOfWeekPage = () => {
 
   // Transform raw data to chart format and calculate statistics
   const transformData = useCallback(
-    (rawData: HourlyDayOfWeekAnalyticsRawData): HourlyDayOfWeekAnalyticsData => {
+    (
+      rawData: HourlyDayOfWeekAnalyticsRawData,
+      daysCount: number = 365,
+    ): HourlyDayOfWeekAnalyticsData => {
       // Transform series data to include hour labels
       const transformedSeries = rawData.series.map((day) => ({
         name: day.name,
@@ -81,7 +85,7 @@ const HourlyDayOfWeekPage = () => {
       const peakDay = dayTotals.reduce((max, day) => (day.total > max.total ? day : max)).name;
 
       // Calculate average hourly accidents
-      const averageHourly = Math.round(totalAccidents / (rawData.series.length * 24));
+      const averageHourly = Number((totalAccidents / (daysCount * 24)).toFixed(2));
 
       return {
         series: transformedSeries,
@@ -113,7 +117,7 @@ const HourlyDayOfWeekPage = () => {
       });
 
       if (result.success) {
-        const transformedData = transformData(result.body);
+        const transformedData = transformData(result.body, 365);
         setChartData(transformedData);
       } else {
         setError(result.error || "خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته");
@@ -133,6 +137,18 @@ const HourlyDayOfWeekPage = () => {
   const handleFilterSubmit = async (filters: ChartFilterState) => {
     setIsLoading(true);
     setError(null);
+
+    let daysCount = 365;
+    if (filters.dateOfAccidentFrom && filters.dateOfAccidentTo) {
+      try {
+        const start = new Date(filters.dateOfAccidentFrom);
+        const end = new Date(filters.dateOfAccidentTo);
+        const diff = Math.abs(differenceInDays(end, start)) + 1;
+        if (diff > 0 && !isNaN(diff)) daysCount = diff;
+      } catch (e) {
+        console.error("Error parsing dates for days count", e);
+      }
+    }
 
     try {
       const result = await hourlyDayOfWeekAnalytics({
@@ -195,7 +211,7 @@ const HourlyDayOfWeekPage = () => {
       });
 
       if (result.success) {
-        const transformedData = transformData(result.body);
+        const transformedData = transformData(result.body, daysCount);
         setChartData(transformedData);
         console.log(result.body);
       } else {

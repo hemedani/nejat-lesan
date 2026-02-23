@@ -65,7 +65,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
               disabled={disabled}
               containerClassName="w-full"
               inputClass={`
-                w-full px-4 py-3 text-slate-800 bg-white border rounded-xl
+                w-full pr-4 pl-10 py-3 text-slate-800 bg-white border rounded-xl
                 placeholder:text-slate-400 text-right
                 transition-all duration-200 ease-in-out
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
@@ -100,6 +100,32 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
                 "اسفند",
               ]}
             />
+            {value && !disabled && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChange(null);
+                }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none p-1 rounded-full hover:bg-slate-100 transition-colors z-10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         )}
       />

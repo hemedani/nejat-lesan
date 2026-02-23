@@ -10,6 +10,7 @@ const AdvancedSearch = dynamic(() => import("@/components/molecules/AdvancedSear
 import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
 import { ReqType } from "@/types/declarations/selectInp";
 import { arrayKeys } from "@/utils/keys";
+import { formatJalaliDateTime } from "@/utils/formatters";
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
@@ -49,6 +50,7 @@ export default function HomePage() {
   const [retryCount, setRetryCount] = useState(0);
   const [isPolygonSearchMode, setIsPolygonSearchMode] = useState(false);
   const [drawnPolygon, setDrawnPolygon] = useState<any[] | null>(null);
+  const [currentDateTime, setCurrentDateTime] = useState<string>("");
 
   const searchParams = useSearchParams();
 
@@ -159,6 +161,19 @@ export default function HomePage() {
   useEffect(() => {
     fetchAccidents();
   }, [fetchAccidents, retryCount]);
+
+  // Update current date/time every second
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      setCurrentDateTime(formatJalaliDateTime(now));
+    };
+
+    updateDateTime(); // Initial call
+    const interval = setInterval(updateDateTime, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Retry function
   const handleRetry = () => {
@@ -305,7 +320,7 @@ export default function HomePage() {
 
           <div className="flex items-center gap-3">
             <div className="text-gray-700 text-sm">به سامانه مرصاد خوش آمدید</div>
-            <div className="text-gray-600 text-sm">یکشنبه ۱۴ آبان ۱۴۰۳</div>
+            <div className="text-gray-600 text-sm">{currentDateTime || "در حال بارگذاری..."}</div>
           </div>
         </div>
       </div>

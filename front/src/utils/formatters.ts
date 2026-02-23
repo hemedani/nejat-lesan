@@ -38,3 +38,28 @@ export const formatDate = (dateString: string | Date): string => {
 export const formatNumber = (num: number): string => {
   return num.toLocaleString("fa-IR");
 };
+
+/**
+ * Formats a date to Persian (Jalali) calendar format with time
+ * @param date - Date object
+ * @returns Formatted date string in Persian format with time (e.g., "یکشنبه ۱۴ آبان ۱۴۰۳ - ۱۵:۳۰:۴۵")
+ */
+export const formatJalaliDateTime = (date: Date): string => {
+  try {
+    const dayName = date.toLocaleDateString("fa-IR", { weekday: "long" });
+    const dateString = date.toLocaleDateString("fa-IR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    const timeString = date.toLocaleTimeString("fa-IR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    return `${dayName} ${dateString} - ${timeString}`;
+  } catch {
+    return "";
+  }
+};
