@@ -4,6 +4,11 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
+  { ssr: false },
+);
+
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -509,12 +514,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
             attributionControl={false}
             key={`map-${validFeatures.length}-${JSON.stringify(mapBounds)}`}
           >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              maxZoom={18}
-              minZoom={8}
-            />
+            <BasemapLayer />
 
             {/* Custom positioned zoom control */}
             <ZoomControl position="topright" />

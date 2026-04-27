@@ -20,6 +20,10 @@ const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false },
 );
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
+  { ssr: false },
+);
 const Polygon = dynamic(
   () => import("react-leaflet").then((mod) => mod.Polygon),
   { ssr: false },
@@ -404,12 +408,9 @@ const FormUpdateTownship: React.FC<FormUpdateTownshipProps> = ({
               key={mapKey}
               center={mapCenter}
               zoom={mapZoom}
-              className="h-full w-full"
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              />
+className="h-full w-full"
+              >
+                <BasemapLayer />
 
               <MapClickHandler
                 isActive={isCenterMode}

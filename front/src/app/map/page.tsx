@@ -22,13 +22,16 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
 const Polygon = dynamic(() => import("react-leaflet").then((mod) => mod.Polygon), { ssr: false });
+const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
+const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
 
 // Import SimpleDrawing component
 const SimpleDrawing = dynamic(() => import("@/components/SimpleDrawing"), {
   ssr: false,
 });
 
-// Leaflet will be imported dynamically to avoid SSR issues
+// Import basemap utilities and context
+import { BASEMAPS } from "@/utils/basemaps";
 
 // Define accident interface based on the schema
 interface AccidentData {
@@ -329,6 +332,13 @@ export default function HomePage() {
       <div className="relative flex-1 bg-gray-100 overflow-hidden">
         {/* Map Area */}
         <div className="absolute w-full h-full">
+          {/* Basemap Selector */}
+          {!loading && (
+            <div className="absolute top-4 left-4 z-30">
+              <BasemapSelector />
+            </div>
+          )}
+
           {/* Polygon Mode Notification Banner */}
           {isPolygonSearchMode && (
             <div className="absolute top-4 right-4 z-30 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500 flex items-center gap-3">
@@ -347,10 +357,7 @@ export default function HomePage() {
               style={{ height: "100%", width: "100%" }}
               className="z-0"
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              <BasemapLayer />
 
               <SimpleDrawing
                 isActive={isPolygonSearchMode}

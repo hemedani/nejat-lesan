@@ -4,6 +4,11 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
+  { ssr: false },
+);
+
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -513,10 +518,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
           zoomControl={false}
           attributionControl={false}
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <BasemapLayer />
 
           {geoJsonData && (
             <GeoJSON

@@ -63,6 +63,10 @@ const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false },
 );
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
+  { ssr: false },
+);
 
 // Draggable marker component
 const DraggableMarker = dynamic(
@@ -1394,10 +1398,7 @@ const FormCreateAccident = () => {
                   style={{ height: "100%", width: "100%" }}
                   className="rounded-lg z-10"
                 >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
+                  <BasemapLayer />
                   {watchedLat && watchedLng && (
                     <DraggableMarker
                       position={[watchedLat, watchedLng]}

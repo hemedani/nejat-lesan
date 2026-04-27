@@ -1,8 +1,14 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import dynamic from "next/dynamic";
+
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
+  { ssr: false },
+);
 
 interface SpatialSafetyMapProps {
   mapData: Array<{
@@ -416,11 +422,7 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
               attributionControl={true}
               key={`map-${geoJsonData?.features?.length || 0}-${groupBy}`}
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                errorTileUrl="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Cg fill='%23f3f4f6'%3E%3Crect width='256' height='256'/%3E%3Ctext x='128' y='128' text-anchor='middle' font-size='14' fill='%236b7280'%3ENo Map%3C/text%3E%3C/g%3E%3C/svg%3E"
-              />
+              <BasemapLayer />
 
               {geoJsonData &&
                 geoJsonData.features &&

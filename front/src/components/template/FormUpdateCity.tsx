@@ -22,6 +22,10 @@ const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false },
 );
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
+  { ssr: false },
+);
 const Polygon = dynamic(
   () => import("react-leaflet").then((mod) => mod.Polygon),
   { ssr: false },
@@ -549,12 +553,9 @@ export const FormUpdateCity = ({
               center={mapCenter}
               zoom={mapZoom}
               className="h-full w-full"
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+style={{ height: "100%", width: "100%" }}
+              >
+                <BasemapLayer />
               <MapClickHandler
                 isActive={isCenterMode}
                 onMapClick={handleMapClick}

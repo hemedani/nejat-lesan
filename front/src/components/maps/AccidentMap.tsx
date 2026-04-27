@@ -1,19 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, TileLayer, useMapEvents, FeatureGroup } from "react-leaflet";
+import { MapContainer, useMapEvents, FeatureGroup } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 
-// Import leaflet-draw types
 import "leaflet-draw";
 
-// Components
 import ClusteredAccidentMarkers from "./ClusteredAccidentMarkers";
+import BasemapLayer from "./BasemapLayer";
+import BasemapSelector from "./BasemapSelector";
 
-// Types
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { DrawCreatedEvent } from "@/types/leaflet-draw";
 
@@ -85,10 +84,7 @@ const AccidentMap: React.FC<{
         wheelDebounceTime={40}
         wheelPxPerZoomLevel={60}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <BasemapLayer />
 
         <MapEventHandler onZoomChange={setCurrentZoom} />
 
@@ -156,7 +152,8 @@ const AccidentMap: React.FC<{
       </MapContainer>
 
       {/* Toggle Button */}
-      <div className="absolute top-4 left-4 z-[1000]">
+      <div className="absolute top-4 left-4 z-[1000] flex flex-col gap-2">
+        <BasemapSelector />
         <button
           onClick={() => setViewMode(viewMode === "heatmap" ? "dots" : "heatmap")}
           className="bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-medium"

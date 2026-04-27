@@ -3,13 +3,12 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-// Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false },
 );
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
+const BasemapLayer = dynamic(
+  () => import("@/components/maps/BasemapLayer"),
   { ssr: false },
 );
 const GeoJSON = dynamic(
@@ -342,10 +341,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
               : undefined
           }
         >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          <BasemapLayer />
           {mapError ? (
             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
               <div className="text-center p-4">
