@@ -12,7 +12,7 @@ const BasemapSelector: React.FC = () => {
 
   return (
     <div className="flex items-center gap-1 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-slate-200 p-1">
-      {(["osm", "mapir"] as BasemapType[]).map((type) => (
+      {(["osm", "mapir", "neshan"] as BasemapType[]).map((type) => (
         <button
           key={type}
           onClick={() => handleSelect(type)}

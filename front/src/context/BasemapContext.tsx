@@ -29,7 +29,7 @@ export const BasemapProvider: React.FC<{ children: ReactNode }> = ({ children })
     setMounted(true);
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem(STORAGE_KEY) as BasemapType | null;
-      if (stored && (stored === "osm" || stored === "mapir")) {
+      if (stored && (stored === "osm" || stored === "mapir" || stored === "neshan")) {
         setBasemapState(stored);
       }
     }
@@ -46,7 +46,10 @@ export const BasemapProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   const toggleBasemap = useCallback(() => {
-    setBasemap(basemap === "osm" ? "mapir" : "osm");
+    const basemapOrder: BasemapType[] = ["osm", "mapir", "neshan"];
+    const currentIndex = basemapOrder.indexOf(basemap);
+    const nextIndex = (currentIndex + 1) % basemapOrder.length;
+    setBasemap(basemapOrder[nextIndex]);
   }, [basemap, setBasemap]);
 
   const basemapUrl = mounted ? getBasemapUrl(basemap) : getBasemapUrl(DEFAULT_BASEMAP);
