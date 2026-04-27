@@ -2,7 +2,6 @@
 
 import { loginAction } from "@/app/actions/login";
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import type { UserData } from "@/types/auth";
 
@@ -15,7 +14,6 @@ type TProps = {
 const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,13 +28,21 @@ const LoginStepTwo = ({ setStep, phone, onCodeEntered }: TProps) => {
         if (userLoggedIn.success) {
           const { user, token } = userLoggedIn.body;
 
-          // Only save token in cookie
-          Cookies.set("token", token, { path: "/" });
+          // Set cookie with proper settings
+          Cookies.set("token", token, {
+            path: "/",
+            expires: 7,
+            sameSite: "lax",
+          });
 
           // Pass full user data to context via onCodeEntered
           onCodeEntered(token, user);
 
-          router.replace("/");
+          // Store user data in sessionStorage as backup for server-side auth
+          sessionStorage.setItem("lesan_user", JSON.stringify(user));
+
+          // Redirect to home
+          window.location.href = "/";
         } else {
           throw new Error(userLoggedIn.body);
         }

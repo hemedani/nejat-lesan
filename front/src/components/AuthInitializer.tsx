@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import type { UserLevel, UserData } from "@/types/auth";
 
-// Valid user levels
 const validLevels = ["Ghost", "Manager", "Editor", "Enterprise"];
 
 interface AuthInitializerProps {
@@ -13,14 +12,9 @@ interface AuthInitializerProps {
 }
 
 export function AuthInitializer({ isAuthenticated, userData }: AuthInitializerProps) {
-  const {
-    setInitialAuthState,
-    isAuthenticated: currentIsAuthenticated,
-    userData: currentUserData,
-  } = useAuth();
+  const { setInitialAuthState } = useAuth();
 
   useEffect(() => {
-    // Ensure userLevel is a valid type if userData exists
     let normalizedUserData: UserData | null = null;
 
     if (userData && userData.level) {
@@ -32,14 +26,8 @@ export function AuthInitializer({ isAuthenticated, userData }: AuthInitializerPr
       }
     }
 
-    // Only update if the values have actually changed compared to the current state
-    if (
-      isAuthenticated !== currentIsAuthenticated ||
-      JSON.stringify(normalizedUserData) !== JSON.stringify(currentUserData)
-    ) {
-      setInitialAuthState(isAuthenticated, normalizedUserData);
-    }
-  }, [isAuthenticated, userData, setInitialAuthState, currentIsAuthenticated, currentUserData]);
+    setInitialAuthState(isAuthenticated, normalizedUserData);
+  }, [isAuthenticated, userData, setInitialAuthState]);
 
-  return null; // This component doesn't render anything
+  return null;
 }

@@ -12,7 +12,6 @@ interface AuthContextType {
   enterpriseSettings?: EnterpriseSettings;
   login: (token: string, userData: UserData) => void;
   logout: () => void;
-  setInitialAuthState: (isAuth: boolean, userData: UserData | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,63 +28,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userLevel, setUserLevel] = useState<UserLevel>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [enterpriseSettings, setEnterpriseSettings] = useState<EnterpriseSettings | undefined>(
-    undefined,
-  );
+  const [enterpriseSettings, setEnterpriseSettings] = useState<EnterpriseSettings | undefined>(undefined);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
+  // Initialize from cookie on mount
   useEffect(() => {
-    // Check if token exists on initial load
     const token = Cookies.get("token");
-
-    if (!token) {
-      // No token means not authenticated
-      if (isAuthenticated || userData !== null) {
-        setIsAuthenticated(false);
-        setUserLevel(null);
-        setUserData(null);
-        setEnterpriseSettings(undefined);
+    const storedUser = sessionStorage.getItem("lesan_user");
+    
+    if (token && storedUser) {
+      try {
+        const user = JSON.parse(storedUser) as UserData;
+        setIsAuthenticated(true);
+        setUserLevel(user.level);
+        setUserData(user);
+        setEnterpriseSettings(user.settings);
+      } catch (e) {
+        console.error("Failed to parse stored user:", e);
       }
     }
-    // If token exists, the layout.tsx will call setInitialAuthState with user data from getMe
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array to run only once on mount
-
-  const setInitialAuthState = (isAuth: boolean, user: UserData | null) => {
-    setIsAuthenticated(isAuth);
-    if (user) {
-      setUserLevel(user.level);
-      setUserData(user);
-      setEnterpriseSettings(user.settings);
-    } else {
-      setUserLevel(null);
-      setUserData(null);
-      setEnterpriseSettings(undefined);
-    }
-  };
+    setIsInitialized(true);
+  }, []);
 
   const login = (token: string, user: UserData) => {
-    // Set only token in cookie
-    Cookies.set("token", token, { path: "/" });
-
-    // Store all user data in context state
+    Cookies.set("token", token, { path: "/", expires: 7, sameSite: "lax" });
     setIsAuthenticated(true);
     setUserLevel(user.level);
     setUserData(user);
     setEnterpriseSettings(user.settings);
+    sessionStorage.setItem("lesan_user", JSON.stringify(user));
   };
 
   const logout = () => {
-    // Remove only the token cookie
     Cookies.remove("token", { path: "/" });
-
-    // Clear all state
+    sessionStorage.removeItem("lesan_user");
     setIsAuthenticated(false);
     setUserLevel(null);
     setUserData(null);
     setEnterpriseSettings(undefined);
-
-    // Redirect to home
     router.push("/");
   };
 
@@ -98,7 +79,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         enterpriseSettings,
         login,
         logout,
-        setInitialAuthState,
       }}
     >
       {children}

@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { MapComparisonProvider } from "@/context/MapComparisonContext";
-import { AuthInitializer } from "@/components/AuthInitializer";
+import { BasemapProvider } from "@/context/BasemapContext";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/organisms/Navbar";
-import { getMe } from "./actions/user/getMe";
 import { Footer } from "@/components/organisms/NewFooter";
 
 export const metadata: Metadata = {
@@ -18,25 +17,21 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get the user data on the server for initial state
-  const me = await getMe();
-  const isAuthenticated = me.success;
-  const userData = me.success ? me.body : null;
-
   return (
     <html lang="fa" dir="rtl">
       <body>
-        <MapComparisonProvider>
-          <AuthProvider>
-            <AuthInitializer isAuthenticated={isAuthenticated} userData={userData} />
-            <div className="min-h-screen flex flex-col bg-slate-950">
-              <Navbar />
-              <div className="flex-1 mt-16">{children}</div>
-              <Footer />
-            </div>
-            <Toaster position="top-center" reverseOrder={false} />
-          </AuthProvider>
-        </MapComparisonProvider>
+        <BasemapProvider>
+          <MapComparisonProvider>
+            <AuthProvider>
+              <div className="min-h-screen flex flex-col bg-slate-950">
+                <Navbar />
+                <div className="flex-1 mt-16">{children}</div>
+                <Footer />
+              </div>
+              <Toaster position="top-center" reverseOrder={false} />
+            </AuthProvider>
+          </MapComparisonProvider>
+        </BasemapProvider>
       </body>
     </html>
   );

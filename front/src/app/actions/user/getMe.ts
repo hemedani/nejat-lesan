@@ -5,7 +5,8 @@ import { cookies } from "next/headers";
 
 export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
   const token = (await cookies()).get("token");
-  get = get || {
+
+  const getFields = get || {
     _id: 1,
     first_name: 1,
     last_name: 1,
@@ -23,7 +24,7 @@ export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
       act: "getMe",
       details: {
         set: {},
-        get,
+        get: getFields,
       },
     },
     { token: token?.value },
