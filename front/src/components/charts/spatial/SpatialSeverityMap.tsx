@@ -5,18 +5,12 @@ import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
-);
-const BasemapLayer = dynamic(
-  () => import("@/components/maps/BasemapLayer"),
-  { ssr: false },
-);
-const GeoJSON = dynamic(
-  () => import("react-leaflet").then((mod) => mod.GeoJSON),
-  { ssr: false },
-);
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
+  ssr: false,
+});
+const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
+const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
+const GeoJSON = dynamic(() => import("react-leaflet").then((mod) => mod.GeoJSON), { ssr: false });
 
 interface MapData {
   zoneId: string;
@@ -44,10 +38,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       // Validate mapData structure
       if (mapData && Array.isArray(mapData)) {
         const invalidItems = mapData.filter(
-          (item) =>
-            !item ||
-            typeof item.zoneName !== "string" ||
-            item.zoneName.trim() === "",
+          (item) => !item || typeof item.zoneName !== "string" || item.zoneName.trim() === "",
         );
         if (invalidItems.length > 0) {
           console.warn("Found invalid map data items:", invalidItems);
@@ -73,29 +64,21 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     if (!zoneName || !mapData || mapData.length === 0) return null;
 
     // Try exact match first
-    let zoneData = mapData.find(
-      (item) => item.zoneName && item.zoneName === zoneName,
-    );
+    let zoneData = mapData.find((item) => item.zoneName && item.zoneName === zoneName);
     if (zoneData) return zoneData;
 
     // Try to extract number from zone name and match
     const zoneNumber = zoneName.match(/\d+/)?.[0];
     if (zoneNumber) {
-      zoneData = mapData.find(
-        (item) => item.zoneName && item.zoneName === zoneNumber,
-      );
+      zoneData = mapData.find((item) => item.zoneName && item.zoneName === zoneNumber);
       if (zoneData) return zoneData;
     }
 
     // Try fuzzy matching - remove common prefixes/suffixes
-    const cleanZoneName = zoneName
-      .replace(/^(منطقه|zone|district)\s*/i, "")
-      .trim();
+    const cleanZoneName = zoneName.replace(/^(منطقه|zone|district)\s*/i, "").trim();
     zoneData = mapData.find((item) => {
       if (!item.zoneName) return false;
-      const cleanItemName = item.zoneName
-        .replace(/^(منطقه|zone|district)\s*/i, "")
-        .trim();
+      const cleanItemName = item.zoneName.replace(/^(منطقه|zone|district)\s*/i, "").trim();
       return cleanItemName === cleanZoneName;
     });
     if (zoneData) return zoneData;
@@ -103,8 +86,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     // Try partial matching
     zoneData = mapData.find(
       (item) =>
-        item.zoneName &&
-        (zoneName.includes(item.zoneName) || item.zoneName.includes(zoneName)),
+        item.zoneName && (zoneName.includes(item.zoneName) || item.zoneName.includes(zoneName)),
     );
 
     return zoneData;
@@ -219,26 +201,26 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     if (ratio <= 0.4) return "متوسط";
     if (ratio <= 0.6) return "بالا";
     if (ratio <= 0.8) return "بسیار بالا";
-  return "بحرانی";
-};
+    return "بحرانی";
+  };
 
-// Syncs map bounds with geoJsonData changes
-const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
-  const map = useMap();
-  const prevGeoJsonDataRef = React.useRef<GeoJsonData | null>(geoJsonData);
+  // Syncs map bounds with geoJsonData changes
+  const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
+    const map = useMap();
+    const prevGeoJsonDataRef = React.useRef<GeoJsonData | null>(geoJsonData);
 
-  React.useEffect(() => {
-    if (geoJsonData === prevGeoJsonDataRef.current) return;
-    prevGeoJsonDataRef.current = geoJsonData;
+    React.useEffect(() => {
+      if (geoJsonData === prevGeoJsonDataRef.current) return;
+      prevGeoJsonDataRef.current = geoJsonData;
 
-    const bounds = getBounds(geoJsonData);
-    if (bounds) {
-      map.fitBounds(bounds, { padding: [20, 20] });
-    }
-  }, [geoJsonData, map]);
+      const bounds = getBounds(geoJsonData);
+      if (bounds) {
+        map.fitBounds(bounds, { padding: [20, 20] });
+      }
+    }, [geoJsonData, map]);
 
-  return null;
-};
+    return null;
+  };
 
   // Default center (Tehran coordinates)
   const defaultCenter: [number, number] = [35.6892, 51.389];
@@ -263,9 +245,7 @@ const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | 
   ) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          نقشه سهم شدت تصادفات
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه سهم شدت تصادفات</h3>
         <div className="text-center py-8">
           <p className="text-gray-500">داده‌های نقشه موجود نیست</p>
         </div>
@@ -274,74 +254,60 @@ const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | 
   }
 
   // Calculate bounds for the map if GeoJSON data is available
-const getBounds = (geoJsonData: GeoJsonData | null): [[number, number], [number, number]] | null => {
-  if (!geoJsonData || !geoJsonData.features) return null;
+  const getBounds = (geoJsonData: GeoJsonData | null): [[number, number], [number, number]] | null => {
+    if (!geoJsonData || !geoJsonData.features) return null;
 
-  try {
-    const features = geoJsonData.features;
-    let minLat = Infinity,
-      maxLat = -Infinity;
-    let minLng = Infinity,
-      maxLng = -Infinity;
+    try {
+      const features = geoJsonData.features;
+      let minLat = Infinity,
+        maxLat = -Infinity;
+      let minLng = Infinity,
+        maxLng = -Infinity;
 
-    features.forEach((feature: Record<string, unknown>) => {
-      if (
-        feature.geometry &&
-        typeof feature.geometry === "object" &&
-        feature.geometry !== null
-      ) {
-        const geometry = feature.geometry as { coordinates: unknown };
-        if (geometry.coordinates) {
-          const coords = geometry.coordinates;
-          const flatCoords = Array.isArray(coords) ? coords.flat(3) : [];
+      features.forEach((feature: Record<string, unknown>) => {
+        if (feature.geometry && typeof feature.geometry === "object" && feature.geometry !== null) {
+          const geometry = feature.geometry as { coordinates: unknown };
+          if (geometry.coordinates) {
+            const coords = geometry.coordinates;
+            const flatCoords = Array.isArray(coords) ? coords.flat(3) : [];
 
-          for (let i = 0; i < flatCoords.length; i += 2) {
-            const lng = flatCoords[i];
-            const lat = flatCoords[i + 1];
+            for (let i = 0; i < flatCoords.length; i += 2) {
+              const lng = flatCoords[i];
+              const lat = flatCoords[i + 1];
 
-            if (typeof lng === "number" && typeof lat === "number") {
-              minLat = Math.min(minLat, lat);
-              maxLat = Math.max(maxLat, lat);
-              minLng = Math.min(minLng, lng);
-              maxLng = Math.max(maxLng, lng);
+              if (typeof lng === "number" && typeof lat === "number") {
+                minLat = Math.min(minLat, lat);
+                maxLat = Math.max(maxLat, lat);
+                minLng = Math.min(minLng, lng);
+                maxLng = Math.max(maxLng, lng);
+              }
             }
           }
         }
+      });
+
+      if (minLat !== Infinity && maxLat !== -Infinity && minLng !== Infinity && maxLng !== -Infinity) {
+        return [
+          [minLat, minLng],
+          [maxLat, maxLng],
+        ];
       }
-    });
-
-    if (
-      minLat !== Infinity &&
-      maxLat !== -Infinity &&
-      minLng !== Infinity &&
-      maxLng !== -Infinity
-    ) {
-      return [
-        [minLat, minLng],
-        [maxLat, maxLng],
-      ];
+    } catch (error) {
+      console.warn("Error calculating bounds:", error);
     }
-  } catch (error) {
-    console.warn("Error calculating bounds:", error);
-  }
 
-  return null;
-};
+    return null;
+  };
 
   const bounds = getBounds(geoJsonData);
   const mapCenter = bounds
-    ? ([
-        (bounds[0][0] + bounds[1][0]) / 2,
-        (bounds[0][1] + bounds[1][1]) / 2,
-      ] as [number, number])
+    ? ([(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2] as [number, number])
     : defaultCenter;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          نقشه سهم شدت تصادفات
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900">نقشه سهم شدت تصادفات</h3>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
@@ -359,13 +325,12 @@ const getBounds = (geoJsonData: GeoJsonData | null): [[number, number], [number,
           center={mapCenter}
           zoom={defaultZoom}
           style={{ height: "100%", width: "100%" }}
-          bounds={
-            bounds
-              ? (bounds as [[number, number], [number, number]])
-              : undefined
-          }
+          bounds={bounds ? (bounds as [[number, number], [number, number]]) : undefined}
         >
           <BasemapLayer />
+          <div className="absolute top-4 left-4 z-[1000]">
+            <BasemapSelector />
+          </div>
           <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
           {mapError ? (
             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
@@ -412,7 +377,9 @@ const getBounds = (geoJsonData: GeoJsonData | null): [[number, number], [number,
       <div className="mt-3 pt-3 border-t border-gray-200">
         <div className="bg-green-50 rounded-lg p-3 text-xs text-green-800 leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نقشه:</p>
-          <p>این نقشه نسبت تصادفات فوتی به کل تصادفات شدید (فوتی + جرحی) را در هر منطقه نشان می‌دهد:</p>
+          <p>
+            این نقشه نسبت تصادفات فوتی به کل تصادفات شدید (فوتی + جرحی) را در هر منطقه نشان می‌دهد:
+          </p>
           <ul className="list-disc list-inside mt-1 space-y-0.5">
             <li>رنگ سبز = نسبت پایین فوتی (مناطق نسبتاً ایمن‌تر)</li>
             <li>رنگ قرمز = نسبت بالای فوتی (مناطق بحرانی نیازمند مداخله فوری)</li>

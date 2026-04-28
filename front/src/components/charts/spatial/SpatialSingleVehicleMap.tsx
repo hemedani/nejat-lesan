@@ -7,6 +7,7 @@ const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
   { ssr: false },
 );
+const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
 
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
@@ -394,6 +395,9 @@ const SpatialSingleVehicleMap: React.FC<SpatialSingleVehicleMapProps> = ({
             renderer={undefined}
           >
             <BasemapLayer />
+            <div className="absolute top-4 left-4 z-[1000]">
+              <BasemapSelector />
+            </div>
 
             {/* Custom positioned zoom control */}
             <ZoomControl position="topright" />

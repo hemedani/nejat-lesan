@@ -9,6 +9,7 @@ const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
   { ssr: false },
 );
+const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
 
 interface SpatialSafetyMapProps {
   mapData: Array<{
@@ -423,6 +424,9 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
               key={`map-${geoJsonData?.features?.length || 0}-${groupBy}`}
             >
               <BasemapLayer />
+              <div className="absolute top-4 left-4 z-[1000]">
+                <BasemapSelector />
+              </div>
 
               {geoJsonData &&
                 geoJsonData.features &&

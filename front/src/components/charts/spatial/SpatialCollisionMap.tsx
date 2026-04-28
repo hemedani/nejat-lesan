@@ -5,24 +5,20 @@ import dynamic from "next/dynamic";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { useMap } from "react-leaflet";
 
-const BasemapLayer = dynamic(
-  () => import("@/components/maps/BasemapLayer"),
-  { ssr: false },
-);
+const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
+const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
+          <div className="absolute top-4 left-4 z-[1000]">
+            <BasemapSelector />
+          </div>
 
 // Dynamically import react-leaflet components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
-);
-const GeoJSON = dynamic(
-  () => import("react-leaflet").then((mod) => mod.GeoJSON),
-  { ssr: false },
-);
-const ZoomControl = dynamic(
-  () => import("react-leaflet").then((mod) => mod.ZoomControl),
-  { ssr: false },
-);
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
+  ssr: false,
+});
+const GeoJSON = dynamic(() => import("react-leaflet").then((mod) => mod.GeoJSON), { ssr: false });
+const ZoomControl = dynamic(() => import("react-leaflet").then((mod) => mod.ZoomControl), {
+  ssr: false,
+});
 const AttributionControl = dynamic(
   () => import("react-leaflet").then((mod) => mod.AttributionControl),
   { ssr: false },
@@ -77,9 +73,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       if (barChartData && barChartData.categories && barChartData.series) {
         return countData.map((item: MapDataWithCount) => {
           // Find the index of this zone in the categories
-          const zoneIndex = barChartData.categories.findIndex(
-            (cat) => cat === item.name,
-          );
+          const zoneIndex = barChartData.categories.findIndex((cat) => cat === item.name);
 
           if (zoneIndex !== -1) {
             let total = 0;
@@ -148,13 +142,9 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
     }
 
     // Try fuzzy matching - remove common prefixes/suffixes
-    const cleanZoneName = zoneName
-      .replace(/^(منطقه|zone|district)\s*/i, "")
-      .trim();
+    const cleanZoneName = zoneName.replace(/^(منطقه|zone|district)\s*/i, "").trim();
     zoneData = normalizedMapData.find((item) => {
-      const cleanItemName = item.name
-        .replace(/^(منطقه|zone|district)\s*/i, "")
-        .trim();
+      const cleanItemName = item.name.replace(/^(منطقه|zone|district)\s*/i, "").trim();
       return cleanItemName === cleanZoneName;
     });
     if (zoneData) return zoneData;
@@ -204,15 +194,11 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       // Try different matching strategies
       const zoneNumber = zoneName.match(/\d+/)?.[0];
       if (zoneNumber) {
-        zoneIndex = barChartData.categories.findIndex(
-          (cat) => cat === zoneNumber,
-        );
+        zoneIndex = barChartData.categories.findIndex((cat) => cat === zoneNumber);
       }
 
       if (zoneIndex === -1) {
-        zoneIndex = barChartData.categories.findIndex(
-          (cat) => cat === zoneName,
-        );
+        zoneIndex = barChartData.categories.findIndex((cat) => cat === zoneName);
       }
 
       if (zoneIndex !== -1) {
@@ -236,8 +222,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       }
     }
 
-    const ratioDisplay =
-      ratio > 1 ? ratio.toFixed(1) : (ratio * 100).toFixed(1);
+    const ratioDisplay = ratio > 1 ? ratio.toFixed(1) : (ratio * 100).toFixed(1);
 
     // Create popup content with accident count and collision breakdown
     const popupContent = `
@@ -363,8 +348,10 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       if (!geoJsonData || !geoJsonData.features) return;
 
       // Calculate bounds from features
-      let minLat = Infinity, maxLat = -Infinity;
-      let minLng = Infinity, maxLng = -Infinity;
+      let minLat = Infinity,
+        maxLat = -Infinity;
+      let minLng = Infinity,
+        maxLng = -Infinity;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       geoJsonData.features.forEach((feature: any) => {
@@ -384,7 +371,13 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       });
 
       if (minLat !== Infinity && maxLat !== -Infinity && minLng !== Infinity && maxLng !== -Infinity) {
-        map.fitBounds([[minLat, minLng], [maxLat, maxLng]], { padding: [20, 20] });
+        map.fitBounds(
+          [
+            [minLat, minLng],
+            [maxLat, maxLng],
+          ],
+          { padding: [20, 20] },
+        );
       }
     }, [geoJsonData, map]);
 
@@ -442,12 +435,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       processCoordinates(coordinates);
     });
 
-    if (
-      minLat === Infinity ||
-      maxLat === -Infinity ||
-      minLng === Infinity ||
-      maxLng === -Infinity
-    ) {
+    if (minLat === Infinity || maxLat === -Infinity || minLng === Infinity || maxLng === -Infinity) {
       return null;
     }
 
@@ -480,9 +468,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
-            نقشه مقایسه مکانی نحوه و نوع برخورد
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">نقشه مقایسه مکانی نحوه و نوع برخورد</h3>
         </div>
         <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
           <div className="text-center">
@@ -499,12 +485,8 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
                 d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              نقشه در دسترس نیست
-            </h3>
-            <p className="text-gray-600">
-              داده‌های جغرافیایی برای شهر انتخاب شده موجود نمی‌باشد
-            </p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">نقشه در دسترس نیست</h3>
+            <p className="text-gray-600">داده‌های جغرافیایی برای شهر انتخاب شده موجود نمی‌باشد</p>
           </div>
         </div>
       </div>
@@ -516,20 +498,13 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            نقشه مقایسه مکانی نحوه و نوع برخورد
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">نقشه مقایسه مکانی نحوه و نوع برخورد</h3>
           <p className="text-sm text-gray-600 mt-1">
             توزیع درصد نوع برخورد انتخابی در مناطق مختلف شهر - هرچه رنگ قرمزتر باشد درصد بالاتر
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -542,7 +517,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       </div>
 
       {/* Map */}
-      <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
+      <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
         <MapContainer
           center={defaultCenter}
           zoom={defaultZoom}
@@ -552,6 +527,9 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
           attributionControl={false}
         >
           <BasemapLayer />
+          <div className="absolute top-4 left-4 z-[1000]">
+            <BasemapSelector />
+          </div>
           <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
 
           {geoJsonData && (
@@ -616,7 +594,9 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
           </div>
         </div>
         <p className="text-xs text-gray-600 mt-2">
-          این رنگ‌ها درصد نوع برخورد انتخابی (فیلتر شده) را در هر منطقه نشان می‌دهند. رنگ سبز = درصد پایین (ایمن‌تر)، رنگ قرمز = درصد بالا (نیاز به بررسی بیشتر). روی هر منطقه کلیک کنید برای مشاهده جزئیات.
+          این رنگ‌ها درصد نوع برخورد انتخابی (فیلتر شده) را در هر منطقه نشان می‌دهند. رنگ سبز = درصد
+          پایین (ایمن‌تر)، رنگ قرمز = درصد بالا (نیاز به بررسی بیشتر). روی هر منطقه کلیک کنید برای
+          مشاهده جزئیات.
         </p>
       </div>
     </div>
