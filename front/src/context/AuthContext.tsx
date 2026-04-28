@@ -29,14 +29,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userLevel, setUserLevel] = useState<UserLevel>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [enterpriseSettings, setEnterpriseSettings] = useState<EnterpriseSettings | undefined>(undefined);
-  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
   // Initialize from cookie on mount
   useEffect(() => {
     const token = Cookies.get("token");
     const storedUser = sessionStorage.getItem("lesan_user");
-    
+
     if (token && storedUser) {
       try {
         const user = JSON.parse(storedUser) as UserData;
@@ -48,7 +47,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error("Failed to parse stored user:", e);
       }
     }
-    setIsInitialized(true);
   }, []);
 
   const login = (token: string, user: UserData) => {

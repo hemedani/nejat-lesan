@@ -263,7 +263,7 @@ const EventSeverityAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [eventRange, selectedEventId, setIsLoading, setError, setChartData]);
+  }, [selectedEventId, setIsLoading, setError, setChartData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
@@ -364,9 +364,9 @@ const EventSeverityAnalyticsPage = () => {
           ...(eventId
             ? {}
             : {
-                dateOfAccidentFrom: filters.dateOfAccidentFrom || range.from || "",
-                dateOfAccidentTo: filters.dateOfAccidentTo || range.to || "",
-              }),
+              dateOfAccidentFrom: filters.dateOfAccidentFrom || range.from || "",
+              dateOfAccidentTo: filters.dateOfAccidentTo || range.to || "",
+            }),
           officer: filters.officer || "",
           province: filters.province || [],
           city: filters.city || [],

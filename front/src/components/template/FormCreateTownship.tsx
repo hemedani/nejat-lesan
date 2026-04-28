@@ -20,10 +20,6 @@ const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false },
 );
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false },
-);
 const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
   { ssr: false },
@@ -355,11 +351,10 @@ const FormCreateTownship = ({
                 setIsDrawingMode(!isDrawingMode);
                 setIsCenterMode(false);
               }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                isDrawingMode
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${isDrawingMode
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                }`}
             >
               {isDrawingMode ? "خروج از حالت ترسیم" : "ترسیم منطقه"}
             </button>
@@ -370,11 +365,10 @@ const FormCreateTownship = ({
                 setIsCenterMode(!isCenterMode);
                 setIsDrawingMode(false);
               }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                isCenterMode
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${isCenterMode
                   ? "bg-green-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                }`}
             >
               {isCenterMode
                 ? "خروج از حالت انتخاب مرکز"
@@ -440,9 +434,9 @@ const FormCreateTownship = ({
               key={mapKey}
               center={mapCenter}
               zoom={mapZoom}
-className="h-full w-full"
-              >
-                <BasemapLayer />
+              className="h-full w-full"
+            >
+              <BasemapLayer />
 
               <MapClickHandler
                 isActive={isCenterMode}
@@ -484,11 +478,10 @@ className="h-full w-full"
           <button
             type="submit"
             disabled={!isValid || isSubmitting}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-              isValid && !isSubmitting
+            className={`px-6 py-3 rounded-lg font-medium transition-colors ${isValid && !isSubmitting
                 ? "bg-blue-600 text-white hover:bg-blue-700"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+              }`}
           >
             {isSubmitting ? "در حال ایجاد..." : "ایجاد شهرستان"}
           </button>

@@ -59,10 +59,6 @@ const MapContainer = dynamic(
   { ssr: false },
 );
 
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false },
-);
 const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
   { ssr: false },
@@ -547,9 +543,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -564,9 +560,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -581,9 +577,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -598,9 +594,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -615,9 +611,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -632,9 +628,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -649,9 +645,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -666,9 +662,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -683,9 +679,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -700,9 +696,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -717,9 +713,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -734,9 +730,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -751,9 +747,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -769,9 +765,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -786,9 +782,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -803,9 +799,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -820,9 +816,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -837,9 +833,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -854,9 +850,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -871,9 +867,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -889,9 +885,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -906,9 +902,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -923,9 +919,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -940,9 +936,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -957,9 +953,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -974,9 +970,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -991,9 +987,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -1008,9 +1004,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -1025,9 +1021,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];
@@ -1042,9 +1038,9 @@ const FormCreateAccident = () => {
       });
       return response.success
         ? response.body.map((item: { _id: string; name: string }) => ({
-            value: item._id,
-            label: item.name,
-          }))
+          value: item._id,
+          label: item.name,
+        }))
         : [];
     } catch {
       return [];

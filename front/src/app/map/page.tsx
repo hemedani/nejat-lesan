@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { gets as getAccidents } from "@/app/actions/accident/gets";
@@ -16,7 +16,6 @@ import { formatJalaliDateTime } from "@/utils/formatters";
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
   ssr: false,
 });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
@@ -30,9 +29,6 @@ const SimpleDrawing = dynamic(() => import("@/components/SimpleDrawing"), {
   ssr: false,
 });
 
-// Import basemap utilities and context
-import { BASEMAPS } from "@/utils/basemaps";
-
 // Define accident interface based on the schema
 interface AccidentData {
   _id: string;
@@ -45,7 +41,7 @@ interface AccidentData {
 
 // Leaflet setup will be done dynamically in useEffect
 
-export default function HomePage() {
+function MapContent() {
   const [accidents, setAccidents] = useState<AccidentData[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -636,5 +632,13 @@ export default function HomePage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="w-full min-h-screen flex items-center justify-center">در حال بارگذاری...</div>}>
+      <MapContent />
+    </Suspense>
   );
 }
