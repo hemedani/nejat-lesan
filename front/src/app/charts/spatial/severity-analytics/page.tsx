@@ -6,9 +6,11 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSeverityAnalytics } from "@/app/actions/accident/spatialSeverityAnalytics";
 import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import SpatialSeverityBarChart from "@/components/charts/spatial/SpatialSeverityBarChart";
 import SpatialSeverityMap from "@/components/charts/spatial/SpatialSeverityMap";
 import { ReqType, userSchema } from "@/types/declarations/selectInp";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { getMe } from "@/app/actions/user/getMe";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import { useAuth } from "@/context/AuthContext";
@@ -43,12 +45,12 @@ const SpatialSeverityAnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState<
     SpatialSeverityAnalyticsResponse["analytics"] | null
   >(null);
-  const [geoJsonData, setGeoJsonData] = useState<object | null>(null);
+  const [geoJsonData, setGeoJsonData] = useState<GeoJsonData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false);
 
-  // Default filters with user's city or "اهواز" pre-selected
+  // Default filters - city will be set from user settings
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
     // --- Core Accident Details ---
     seri: undefined,
@@ -153,29 +155,40 @@ const SpatialSeverityAnalyticsPage = () => {
         const userResponse = await getMe();
         if (userResponse.success && userResponse.body) {
           const user: userSchema = userResponse.body;
-          const defaultCity =
-            user.settings?.cities && user.settings.cities.length > 0
-              ? user.settings.cities[0]?.name
-              : "اهواز";
-          setAppliedFilters((prevFilters) => ({
-            ...prevFilters,
-            city: [defaultCity],
-          }));
-        } else {
-          // If user data fetch fails, default to "اهواز"
-          setAppliedFilters((prevFilters) => ({
-            ...prevFilters,
-            city: ["اهواز"],
-          }));
+
+          // Check if user has cities in settings
+          if (user.settings?.cities && user.settings.cities.length > 0) {
+            const defaultCity = user.settings.cities[0]?.name;
+            setAppliedFilters((prevFilters) => ({
+              ...prevFilters,
+              city: [defaultCity],
+            }));
+          } else if (user.settings?.provinces && user.settings.provinces.length > 0) {
+            // User has provinces but no cities - fetch cities for the first province
+            const provinceId = user.settings.provinces[0]?._id;
+            if (provinceId) {
+              try {
+                const citiesResponse = await getCitiesAction({
+                  set: { page: 1, limit: 1, provinceIds: [provinceId] },
+                  get: { _id: 1, name: 1 },
+                });
+                if (citiesResponse.success && citiesResponse.body && citiesResponse.body.length > 0) {
+                  const defaultCity = citiesResponse.body[0].name;
+                  setAppliedFilters((prevFilters) => ({
+                    ...prevFilters,
+                    city: [defaultCity],
+                  }));
+                }
+              } catch (err) {
+                console.error("Error fetching cities for province:", err);
+              }
+            }
+          }
+          // If no cities and no provinces in settings, leave city filter empty
         }
         setInitialLoadCompleted(true);
       } catch (err) {
         console.error("Error fetching user data:", err);
-        // In case of error, default to "اهواز"
-        setAppliedFilters((prevFilters) => ({
-          ...prevFilters,
-          city: ["اهواز"],
-        }));
         setInitialLoadCompleted(true);
       }
     };
@@ -405,13 +418,15 @@ const SpatialSeverityAnalyticsPage = () => {
         },
       };
 
-      // Get the city ID for GeoJSON (default to "اهواز" if no city selected)
-      const selectedCity = filters.city && filters.city.length > 0 ? filters.city[0] : "اهواز";
+      // Get the city name for GeoJSON (only if city is selected)
+      const selectedCity = filters.city && filters.city.length > 0 ? filters.city[0] : null;
 
-      // Run both API calls concurrently
+      // Run API calls (conditionally fetch GeoJSON if city is selected)
       const [analyticsResponse, geoJsonResponse] = await Promise.all([
         spatialSeverityAnalytics(requestDetails),
-        getCityZonesGeoJSON(selectedCity),
+        selectedCity
+          ? getCityZonesGeoJSON(selectedCity)
+          : Promise.resolve({ success: false, body: null }),
       ]);
 
       // Handle analytics response
@@ -453,7 +468,10 @@ const SpatialSeverityAnalyticsPage = () => {
       if (geoJsonResponse.success && geoJsonResponse.body) {
         setGeoJsonData(geoJsonResponse.body);
       } else {
-        console.warn("Failed to fetch GeoJSON data:", geoJsonResponse.error);
+        const errorMsg = !geoJsonResponse.success
+          ? (geoJsonResponse as { success: false; error: string }).error
+          : "No data returned";
+        console.warn("Failed to fetch GeoJSON data:", errorMsg);
         setGeoJsonData(null);
       }
     } catch (err) {

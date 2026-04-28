@@ -58,6 +58,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
                   onChange(null);
                 }
               }}
+              arrowClassName="z-index-calendar"
               calendar={persian}
               locale={persian_fa}
               format={customShowDateFormat}
@@ -99,6 +100,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
                 "بهمن",
                 "اسفند",
               ]}
+              zIndex={9999}
             />
             {value && !disabled && (
               <button

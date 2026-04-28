@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
+import { useMap } from "react-leaflet";
 
 const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
@@ -12,10 +13,6 @@ const BasemapLayer = dynamic(
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false },
 );
 const GeoJSON = dynamic(
@@ -252,7 +249,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
             <span style="font-weight: 600; color: #111827;">${totalAccidents}</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
-            <span style="color: #6B7280;">نسبت برخورد خاص:</span>
+            <span style="color: #6B7280;">نسبت نوع انتخابی:</span>
             <span style="font-weight: 500; color: #111827;">${ratioDisplay}%</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
@@ -282,17 +279,15 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
 
     // Bind popup and tooltip
     layer.bindPopup(popupContent, {
-      direction: "top",
-      permanent: false,
-      sticky: true,
-      opacity: 0.9,
+      autoPan: true,
+      keepInView: true,
+      maxWidth: 300,
       className: "custom-popup",
     });
 
     layer.bindTooltip(tooltipContent, {
       direction: "top",
-      permanent: false,
-      sticky: true,
+      sticky: false,
       opacity: 0.9,
       className: "custom-tooltip",
     });
@@ -311,9 +306,8 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
           fillOpacity: 0.8,
         });
 
-        // Bring to front and show tooltip
+        // Bring to front
         currentLayer.bringToFront();
-        currentLayer.openTooltip();
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -322,7 +316,6 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
 
         // Reset style
         currentLayer.setStyle(style(feature));
-        currentLayer.closeTooltip();
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -356,6 +349,46 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
     if (normalizedRatio <= 0.6) return "بالا";
     if (normalizedRatio <= 0.8) return "بسیار بالا";
     return "بحرانی";
+  };
+
+  // Syncs map bounds with geoJsonData changes
+  const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
+    const map = useMap();
+    const prevGeoJsonDataRef = React.useRef(geoJsonData);
+
+    React.useEffect(() => {
+      if (geoJsonData === prevGeoJsonDataRef.current) return;
+      prevGeoJsonDataRef.current = geoJsonData;
+
+      if (!geoJsonData || !geoJsonData.features) return;
+
+      // Calculate bounds from features
+      let minLat = Infinity, maxLat = -Infinity;
+      let minLng = Infinity, maxLng = -Infinity;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      geoJsonData.features.forEach((feature: any) => {
+        if (!feature.geometry?.coordinates) return;
+        const coords = feature.geometry.coordinates as number[][][];
+        const flatCoords = coords.flat(3);
+        for (let i = 0; i < flatCoords.length; i += 2) {
+          const lng = flatCoords[i];
+          const lat = flatCoords[i + 1];
+          if (typeof lng === "number" && typeof lat === "number") {
+            minLat = Math.min(minLat, lat);
+            maxLat = Math.max(maxLat, lat);
+            minLng = Math.min(minLng, lng);
+            maxLng = Math.max(maxLng, lng);
+          }
+        }
+      });
+
+      if (minLat !== Infinity && maxLat !== -Infinity && minLng !== Infinity && maxLng !== -Infinity) {
+        map.fitBounds([[minLat, minLng], [maxLat, maxLng]], { padding: [20, 20] });
+      }
+    }, [geoJsonData, map]);
+
+    return null;
   };
 
   // Default center (Ahvaz coordinates)
@@ -487,7 +520,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
             نقشه مقایسه مکانی نحوه و نوع برخورد
           </h3>
           <p className="text-sm text-gray-600 mt-1">
-            توزیع نسبت انواع برخورد در مناطق مختلف شهر
+            توزیع درصد نوع برخورد انتخابی در مناطق مختلف شهر - هرچه رنگ قرمزتر باشد درصد بالاتر
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -519,10 +552,11 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
           attributionControl={false}
         >
           <BasemapLayer />
+          <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
 
           {geoJsonData && (
             <GeoJSON
-              data={geoJsonData}
+              data={geoJsonData as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}
               style={style}
               onEachFeature={onEachFeature}
               key={JSON.stringify(mapData)} // Force re-render when data changes
@@ -536,42 +570,42 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
 
       {/* Color Legend */}
       <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">راهنمای رنگ‌ها</h4>
+        <h4 className="font-medium text-gray-900 mb-3">راهنمای رنگ‌ها (درصد نوع برخورد انتخابی)</h4>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
           <div className="flex items-center gap-2">
             <div
               className="w-4 h-4 rounded border border-gray-300"
               style={{ backgroundColor: "#10B981" }}
             ></div>
-            <span className="text-xs text-gray-600">پایین</span>
+            <span className="text-xs text-gray-600">۰-۲۰٪ (پایین)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-4 h-4 rounded border border-gray-300"
               style={{ backgroundColor: "#84CC16" }}
             ></div>
-            <span className="text-xs text-gray-600">کم</span>
+            <span className="text-xs text-gray-600">۲۰-۴۰٪ (کم)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-4 h-4 rounded border border-gray-300"
               style={{ backgroundColor: "#F59E0B" }}
             ></div>
-            <span className="text-xs text-gray-600">متوسط</span>
+            <span className="text-xs text-gray-600">۴۰-۶۰٪ (متوسط)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-4 h-4 rounded border border-gray-300"
               style={{ backgroundColor: "#F97316" }}
             ></div>
-            <span className="text-xs text-gray-600">بالا</span>
+            <span className="text-xs text-gray-600">۶۰-۸۰٪ (بالا)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="w-4 h-4 rounded border border-gray-300"
               style={{ backgroundColor: "#EF4444" }}
             ></div>
-            <span className="text-xs text-gray-600">بحرانی</span>
+            <span className="text-xs text-gray-600">۸۰-۱۰۰٪ (بحرانی)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
@@ -582,8 +616,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
           </div>
         </div>
         <p className="text-xs text-gray-600 mt-2">
-          رنگ‌ها نسبت نوع برخورد غالب در هر منطقه را نشان می‌دهند. برای اطلاعات
-          بیشتر روی مناطق کلیک کنید.
+          این رنگ‌ها درصد نوع برخورد انتخابی (فیلتر شده) را در هر منطقه نشان می‌دهند. رنگ سبز = درصد پایین (ایمن‌تر)، رنگ قرمز = درصد بالا (نیاز به بررسی بیشتر). روی هر منطقه کلیک کنید برای مشاهده جزئیات.
         </p>
       </div>
     </div>

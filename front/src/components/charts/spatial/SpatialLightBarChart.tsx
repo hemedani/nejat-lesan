@@ -17,10 +17,7 @@ interface SpatialLightBarChartProps {
   isLoading: boolean;
 }
 
-const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({
-  data,
-  isLoading,
-}) => {
+const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoading }) => {
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -106,7 +103,7 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({
     fill: {
       opacity: 1,
     },
-    colors: ["#F59E0B", "#3B82F6", "#8B5CF6", "#EF4444", "#10B981"],
+    colors: ["#F59E0B", "#3B82F6", "#1E40AF", "#F97316", "#DC2626", "#8B5CF6", "#10B981"],
     grid: {
       show: true,
       borderColor: "#e5e7eb",
@@ -125,9 +122,7 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          شمار تصادفات به تفکیک وضعیت روشنایی
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900">شمار تصادفات به تفکیک وضعیت روشنایی</h3>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
@@ -141,37 +136,28 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({
       </div>
 
       <div className="mt-4">
-        <Chart
-          options={chartOptions}
-          series={data.series}
-          type="bar"
-          height={350}
-        />
+        <Chart options={chartOptions} series={data.series} type="bar" height={350} />
       </div>
 
-      {/* Chart Legend/Info */}
+      {/* Chart Analysis Guide */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-            <span>روز</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span>شب</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-            <span>طلوع آفتاب</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <span>غروب آفتاب</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>سایر</span>
-          </div>
+        <div className="bg-amber-50 rounded-lg p-3 text-xs text-amber-800 leading-relaxed">
+          <p className="font-semibold mb-1">نحوه تحلیل نمودار ستونی:</p>
+          <p>
+            این نمودار تعداد تصادفات را بر اساس وضعیت روشنایی (روز، شب، طلوع و غروب آفتاب) در هر منطقه
+            نشان می‌دهد:
+          </p>
+          <ul className="list-disc list-inside mt-1 space-y-0.5">
+            <li>ستون‌های زرد بلند = تصادفات روز بالا (مناطق با روشنایی کافی و شرایط ایمن)</li>
+            <li>ستون‌های آبی تیره بلند = تصادفات شب بالا (نیازمند بهبود روشنایی معابر)</li>
+            <li>ستون‌های نارنجی بلند = تصادفات طلوع آفتاب بالا (نیاز به هشدار رانندگان)</li>
+            <li>ستون‌های قرمز بلند = تصادفات غروب آفتاب بالا (خطر گذار از روز به شب)</li>
+            <li>مقایسه سهم هر وضعیت روشنایی بین مناطق برای اولویت‌بندی بهبود زیرساخت</li>
+            <li>مناطقی با نسبت بالا تصادفات شب نیاز به نصب یا تعمیر چراغ‌های خیابانی دارند</li>
+            <li>
+              مناطقی با نسبت بالا تصادفات طلوع/غروب ممکن است نیاز به علائم هشدار دهنده داشته باشند
+            </li>
+          </ul>
         </div>
       </div>
     </div>

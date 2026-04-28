@@ -4,28 +4,16 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 
-const BasemapLayer = dynamic(
-  () => import("@/components/maps/BasemapLayer"),
-  { ssr: false },
-);
+const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
 
 // Dynamically import react-leaflet components to avoid SSR issues
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false },
-);
-const GeoJSON = dynamic(
-  () => import("react-leaflet").then((mod) => mod.GeoJSON),
-  { ssr: false },
-);
-const ZoomControl = dynamic(
-  () => import("react-leaflet").then((mod) => mod.ZoomControl),
-  { ssr: false },
-);
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
+  ssr: false,
+});
+const GeoJSON = dynamic(() => import("react-leaflet").then((mod) => mod.GeoJSON), { ssr: false });
+const ZoomControl = dynamic(() => import("react-leaflet").then((mod) => mod.ZoomControl), {
+  ssr: false,
+});
 const AttributionControl = dynamic(
   () => import("react-leaflet").then((mod) => mod.AttributionControl),
   { ssr: false },
@@ -80,9 +68,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       if (barChartData && barChartData.categories && barChartData.series) {
         return countData.map((item: MapDataWithCount) => {
           // Find the index of this zone in the categories
-          const zoneIndex = barChartData.categories.findIndex(
-            (cat) => cat === item.name,
-          );
+          const zoneIndex = barChartData.categories.findIndex((cat) => cat === item.name);
 
           if (zoneIndex !== -1) {
             let total = 0;
@@ -118,18 +104,18 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     }
   }, [mapData, barChartData]);
 
-  // Color scale function: blue (low) to yellow to orange (high)
-  // Handle both percentage (60-70) and decimal (0.6-0.7) values
+  // Color scale: Red (dangerous - low daytime ratio) to Green (safe - high daytime ratio)
+  // Ratio = daytime accidents / total accidents (high = safer, low = more night accidents)
   const getColor = (ratio: number): string => {
     // Convert percentage to decimal if needed
     const normalizedRatio = ratio > 1 ? ratio / 100 : ratio;
 
     if (normalizedRatio === 0) return "#E5E7EB"; // Gray for no data
-    if (normalizedRatio <= 0.2) return "#3B82F6"; // Blue (low light condition ratio)
-    if (normalizedRatio <= 0.4) return "#06B6D4"; // Cyan
-    if (normalizedRatio <= 0.6) return "#10B981"; // Green
-    if (normalizedRatio <= 0.8) return "#F59E0B"; // Yellow
-    return "#F97316"; // Orange (high light condition ratio)
+    if (normalizedRatio <= 0.2) return "#EF4444"; // Red (dangerous - mostly night accidents)
+    if (normalizedRatio <= 0.4) return "#F97316"; // Orange
+    if (normalizedRatio <= 0.6) return "#EAB308"; // Yellow
+    if (normalizedRatio <= 0.8) return "#84CC16"; // Light green
+    return "#22C55E"; // Green (safe - mostly daytime accidents)
   };
 
   // Helper function to match zone names flexibly
@@ -148,13 +134,9 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     }
 
     // Try fuzzy matching - remove common prefixes/suffixes
-    const cleanZoneName = zoneName
-      .replace(/^(منطقه|zone|district)\s*/i, "")
-      .trim();
+    const cleanZoneName = zoneName.replace(/^(منطقه|zone|district)\s*/i, "").trim();
     zoneData = normalizedMapData.find((item) => {
-      const cleanItemName = item.name
-        .replace(/^(منطقه|zone|district)\s*/i, "")
-        .trim();
+      const cleanItemName = item.name.replace(/^(منطقه|zone|district)\s*/i, "").trim();
       return cleanItemName === cleanZoneName;
     });
     if (zoneData) return zoneData;
@@ -203,15 +185,11 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       // Try different matching strategies
       const zoneNumber = zoneName.match(/\d+/)?.[0];
       if (zoneNumber) {
-        zoneIndex = barChartData.categories.findIndex(
-          (cat) => cat === zoneNumber,
-        );
+        zoneIndex = barChartData.categories.findIndex((cat) => cat === zoneNumber);
       }
 
       if (zoneIndex === -1) {
-        zoneIndex = barChartData.categories.findIndex(
-          (cat) => cat === zoneName,
-        );
+        zoneIndex = barChartData.categories.findIndex((cat) => cat === zoneName);
       }
 
       if (zoneIndex !== -1) {
@@ -222,8 +200,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       }
     }
 
-    const ratioDisplay =
-      ratio > 1 ? ratio.toFixed(1) : (ratio * 100).toFixed(1);
+    const ratioDisplay = ratio > 1 ? ratio.toFixed(1) : (ratio * 100).toFixed(1);
 
     // Create popup content with accident count
     const popupContent = `
@@ -253,17 +230,15 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
 
     // Bind popup and tooltip
     layer.bindPopup(popupContent, {
-      direction: "top",
-      permanent: false,
-      sticky: true,
-      opacity: 0.9,
+      autoPan: true,
+      keepInView: true,
+      maxWidth: 300,
       className: "custom-popup",
     });
 
     layer.bindTooltip(tooltipContent, {
       direction: "top",
-      permanent: false,
-      sticky: true,
+      sticky: false,
       opacity: 0.9,
       className: "custom-tooltip",
     });
@@ -282,9 +257,8 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
           fillOpacity: 0.8,
         });
 
-        // Bring to front and show tooltip
+        // Bring to front
         currentLayer.bringToFront();
-        currentLayer.openTooltip();
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -293,7 +267,6 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
 
         // Reset style
         currentLayer.setStyle(style(feature));
-        currentLayer.closeTooltip();
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -382,12 +355,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       processCoordinates(coordinates);
     });
 
-    if (
-      minLat === Infinity ||
-      maxLat === -Infinity ||
-      minLng === Infinity ||
-      maxLng === -Infinity
-    ) {
+    if (minLat === Infinity || maxLat === -Infinity || minLng === Infinity || maxLng === -Infinity) {
       return null;
     }
 
@@ -417,9 +385,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     console.log("No GeoJSON data provided");
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          نقشه وضعیت روشنایی
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
           <p className="text-gray-500">داده‌های نقشه موجود نیست</p>
         </div>
@@ -431,9 +397,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     console.log("Invalid GeoJSON features structure:", geoJsonData);
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          نقشه وضعیت روشنایی
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
           <p className="text-gray-500">ساختار داده‌های نقشه نامعتبر است</p>
         </div>
@@ -445,9 +409,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     console.log("No features found in GeoJSON data");
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          نقشه وضعیت روشنایی
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
           <p className="text-gray-500">هیچ منطقه‌ای برای نمایش یافت نشد</p>
         </div>
@@ -470,9 +432,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     console.log("No valid features with geometry found");
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          نقشه وضعیت روشنایی
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
           <p className="text-gray-500">داده‌های جغرافیایی معتبر یافت نشد</p>
         </div>
@@ -483,9 +443,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 overflow-hidden">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          نقشه وضعیت روشنایی
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900">نقشه وضعیت روشنایی</h3>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
@@ -540,26 +498,42 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
         </div>
       </div>
 
-      {/* Color Legend */}
+      {/* Map Legend */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-sm font-medium text-gray-900">راهنمای رنگ‌ها</h4>
-          <span className="text-xs text-gray-500">نسبت تصادفات در روز</span>
-        </div>
-        <div className="flex items-center gap-1 text-xs">
-          <div className="flex items-center gap-1">
-            <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span>کم</span>
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span>کمتر روشن (تصادفات شب بالا)</span>
           </div>
-          <div className="flex-1 h-2 bg-gradient-to-r from-blue-500 via-yellow-500 to-orange-500 rounded mx-2"></div>
-          <div className="flex items-center gap-1">
-            <div className="w-4 h-4 bg-orange-500 rounded"></div>
-            <span>بالا</span>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+            <span>متوسط</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <span>روشن</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-lime-500 rounded-full"></div>
+            <span>بسیار روشن</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>کاملاً روشن (تصادفات روز بالا)</span>
           </div>
         </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>0%</span>
-          <span>100%</span>
+        <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800 leading-relaxed">
+          <p className="font-semibold mb-1">نحوه تحلیل نقشه کوروپلث:</p>
+          <p>این نقشه مناطق شهری را بر اساس نسبت تصادفات روز به کل تصادفات رنگ‌بندی می‌کند:</p>
+          <ul className="list-disc list-inside mt-1 space-y-0.5">
+            <li>مناطق قرمز = نسبت پایین تصادفات روز (اکثر تصادفات در شب رخ می‌دهد)</li>
+            <li>مناطق سبز = نسبت بالا تصادفات روز (اکثر تصادفات در روز رخ می‌دهد)</li>
+            <li>هرچه منطقه قرمزتر باشد، احتمال ضعف روشنایی بیشتر است</li>
+            <li>هرچه منطقه سبزتر باشد، شرایط روشنایی بهتر است</li>
+            <li>مناطق قرمز نیاز به اولویت‌بندی برای بهبود روشنایی معابر دارند</li>
+            <li>کلیک روی هر منطقه جزئیات دقیق شامل تعداد تصادفات و نسبت روز را نمایش می‌دهد</li>
+            <li>نگه داشتن ماوس روی منطقه اطلاعات سریع را نشان می‌دهد</li>
+          </ul>
         </div>
       </div>
 

@@ -135,7 +135,14 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 		if (eventDoc && eventDoc.dates && Array.isArray(eventDoc.dates)) {
 			// Extract from/to pairs for eventDateRanges
 			eventDateRanges = eventDoc.dates.map(
-				(dateObj: { from: string; to: string }) => ({
+				(
+					dateObj: {
+						from: string;
+						to: string;
+						startEntireRange: string;
+						endEntireRange: string;
+					},
+				) => ({
 					from: dateObj.from,
 					to: dateObj.to,
 				}),
@@ -145,10 +152,10 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 			if (eventDoc.dates.length > 0) {
 				// Find the minimum from and maximum to across all ranges
 				const startDates = eventDoc.dates.map((date) =>
-					moment(date.from).startOf("day").toDate()
+					moment(date.startEntireRange).startOf("day").toDate()
 				);
 				const endDates = eventDoc.dates.map((date) =>
-					moment(date.to).endOf("day").toDate()
+					moment(date.endEntireRange).endOf("day").toDate()
 				);
 
 				overallStartDate = new Date(

@@ -2,6 +2,8 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { useMap } from "react-leaflet";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -24,8 +26,7 @@ interface MapData {
 
 interface SpatialSeverityMapProps {
   mapData: MapData[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  geoJsonData: any;
+  geoJsonData: GeoJsonData | null;
   isLoading: boolean;
 }
 
@@ -184,7 +185,12 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       </div>
     `;
 
-    layer.bindPopup(popupContent);
+    layer.bindPopup(popupContent, {
+      autoPan: true,
+      keepInView: true,
+      maxWidth: 300,
+      className: "custom-popup",
+    });
 
     // Hover effects
     layer.on({
@@ -213,8 +219,26 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     if (ratio <= 0.4) return "متوسط";
     if (ratio <= 0.6) return "بالا";
     if (ratio <= 0.8) return "بسیار بالا";
-    return "بحرانی";
-  };
+  return "بحرانی";
+};
+
+// Syncs map bounds with geoJsonData changes
+const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
+  const map = useMap();
+  const prevGeoJsonDataRef = React.useRef<GeoJsonData | null>(geoJsonData);
+
+  React.useEffect(() => {
+    if (geoJsonData === prevGeoJsonDataRef.current) return;
+    prevGeoJsonDataRef.current = geoJsonData;
+
+    const bounds = getBounds(geoJsonData);
+    if (bounds) {
+      map.fitBounds(bounds, { padding: [20, 20] });
+    }
+  }, [geoJsonData, map]);
+
+  return null;
+};
 
   // Default center (Tehran coordinates)
   const defaultCenter: [number, number] = [35.6892, 51.389];
@@ -250,61 +274,61 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   }
 
   // Calculate bounds for the map if GeoJSON data is available
-  const getBounds = (): [[number, number], [number, number]] | null => {
-    if (!geoJsonData || !geoJsonData.features) return null;
+const getBounds = (geoJsonData: GeoJsonData | null): [[number, number], [number, number]] | null => {
+  if (!geoJsonData || !geoJsonData.features) return null;
 
-    try {
-      const features = geoJsonData.features;
-      let minLat = Infinity,
-        maxLat = -Infinity;
-      let minLng = Infinity,
-        maxLng = -Infinity;
+  try {
+    const features = geoJsonData.features;
+    let minLat = Infinity,
+      maxLat = -Infinity;
+    let minLng = Infinity,
+      maxLng = -Infinity;
 
-      features.forEach((feature: Record<string, unknown>) => {
-        if (
-          feature.geometry &&
-          typeof feature.geometry === "object" &&
-          feature.geometry !== null
-        ) {
-          const geometry = feature.geometry as { coordinates: unknown };
-          if (geometry.coordinates) {
-            const coords = geometry.coordinates;
-            const flatCoords = Array.isArray(coords) ? coords.flat(3) : [];
+    features.forEach((feature: Record<string, unknown>) => {
+      if (
+        feature.geometry &&
+        typeof feature.geometry === "object" &&
+        feature.geometry !== null
+      ) {
+        const geometry = feature.geometry as { coordinates: unknown };
+        if (geometry.coordinates) {
+          const coords = geometry.coordinates;
+          const flatCoords = Array.isArray(coords) ? coords.flat(3) : [];
 
-            for (let i = 0; i < flatCoords.length; i += 2) {
-              const lng = flatCoords[i];
-              const lat = flatCoords[i + 1];
+          for (let i = 0; i < flatCoords.length; i += 2) {
+            const lng = flatCoords[i];
+            const lat = flatCoords[i + 1];
 
-              if (typeof lng === "number" && typeof lat === "number") {
-                minLat = Math.min(minLat, lat);
-                maxLat = Math.max(maxLat, lat);
-                minLng = Math.min(minLng, lng);
-                maxLng = Math.max(maxLng, lng);
-              }
+            if (typeof lng === "number" && typeof lat === "number") {
+              minLat = Math.min(minLat, lat);
+              maxLat = Math.max(maxLat, lat);
+              minLng = Math.min(minLng, lng);
+              maxLng = Math.max(maxLng, lng);
             }
           }
         }
-      });
-
-      if (
-        minLat !== Infinity &&
-        maxLat !== -Infinity &&
-        minLng !== Infinity &&
-        maxLng !== -Infinity
-      ) {
-        return [
-          [minLat, minLng],
-          [maxLat, maxLng],
-        ];
       }
-    } catch (error) {
-      console.warn("Error calculating bounds:", error);
+    });
+
+    if (
+      minLat !== Infinity &&
+      maxLat !== -Infinity &&
+      minLng !== Infinity &&
+      maxLng !== -Infinity
+    ) {
+      return [
+        [minLat, minLng],
+        [maxLat, maxLng],
+      ];
     }
+  } catch (error) {
+    console.warn("Error calculating bounds:", error);
+  }
 
-    return null;
-  };
+  return null;
+};
 
-  const bounds = getBounds();
+  const bounds = getBounds(geoJsonData);
   const mapCenter = bounds
     ? ([
         (bounds[0][0] + bounds[1][0]) / 2,
@@ -342,6 +366,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
           }
         >
           <BasemapLayer />
+          <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
           {mapError ? (
             <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
               <div className="text-center p-4">
@@ -380,6 +405,20 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
         <div className="flex justify-between text-xs text-gray-500 mt-1">
           <span>0%</span>
           <span>100%</span>
+        </div>
+      </div>
+
+      {/* Map Analysis Explanation */}
+      <div className="mt-3 pt-3 border-t border-gray-200">
+        <div className="bg-green-50 rounded-lg p-3 text-xs text-green-800 leading-relaxed">
+          <p className="font-semibold mb-1">نحوه تحلیل نقشه:</p>
+          <p>این نقشه نسبت تصادفات فوتی به کل تصادفات شدید (فوتی + جرحی) را در هر منطقه نشان می‌دهد:</p>
+          <ul className="list-disc list-inside mt-1 space-y-0.5">
+            <li>رنگ سبز = نسبت پایین فوتی (مناطق نسبتاً ایمن‌تر)</li>
+            <li>رنگ قرمز = نسبت بالای فوتی (مناطق بحرانی نیازمند مداخله فوری)</li>
+            <li>با کلیک روی هر منطقه، درصد دقیق و سطح خطر نمایش داده می‌شود</li>
+            <li>اولویت بهبود زیرساخت با مناطقی است که رنگ نارنجی و قرمز دارند</li>
+          </ul>
         </div>
       </div>
 

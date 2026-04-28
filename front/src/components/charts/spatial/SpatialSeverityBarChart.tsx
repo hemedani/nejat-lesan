@@ -106,7 +106,7 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
     fill: {
       opacity: 1,
     },
-    colors: ["#10B981", "#F59E0B", "#EF4444", "#8B5CF6"],
+    colors: ["#EF4444", "#F59E0B", "#10B981"],
     grid: {
       show: true,
       borderColor: "#e5e7eb",
@@ -151,23 +151,28 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
 
       {/* Chart Legend/Info */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>خفیف</span>
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span>فوتی</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-            <span>متوسط</span>
+            <span>جرحی</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <span>شدید</span>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>خسارتی</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-            <span>فوتی</span>
-          </div>
+        </div>
+        <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800 leading-relaxed">
+          <p className="font-semibold mb-1">نحوه تحلیل نمودار ستونی:</p>
+          <p>این نمودار تعداد تصادفات را بر اساس شدت (فوتی، جرحی، خسارتی) در هر منطقه نشان می‌دهد. برای تحلیل:</p>
+          <ul className="list-disc list-inside mt-1 space-y-0.5">
+            <li>مناطق با ستون‌های قرمز بلند = نقاط پرخطر با تصادفات فوتی بالا</li>
+            <li>مقایسه ارتفاع ستون‌ها بین مناطق مختلف برای اولویت‌بندی مداخلات ایمنی</li>
+            <li>مناطقی که سهم خسارتی در آن‌ها بالاست نسبتاً ایمن‌تر محسوب می‌شوند</li>
+          </ul>
         </div>
       </div>
     </div>

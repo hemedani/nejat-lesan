@@ -324,14 +324,8 @@ const SpatialSafetyIndexAnalyticsPage = () => {
         getGeoJSON(groupBy),
       ]);
 
-      // Debug logging
-      console.log("Analytics Response:", analyticsResponse);
-      console.log("GeoJSON Response:", geoJsonResponse);
-      console.log("Current groupBy:", groupBy);
-
       // Handle analytics response
       if (analyticsResponse.success && analyticsResponse.body) {
-        console.log("Analytics data:", analyticsResponse.body.analytics);
         setAnalyticsData(analyticsResponse.body.analytics);
       } else {
         console.error("Analytics API error:", analyticsResponse.error);
@@ -346,13 +340,6 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
         // Validate GeoJSON structure
         if (geoData.type === "FeatureCollection" && Array.isArray(geoData.features)) {
-          console.log(`GeoJSON loaded: ${geoData.features.length} features`);
-
-          // Log sample feature for debugging
-          if (geoData.features.length > 0) {
-            console.log("Sample feature:", geoData.features[0]);
-          }
-
           setGeoJsonData(geoData);
         } else {
           console.warn("Invalid GeoJSON structure:", geoData);
@@ -593,11 +580,83 @@ const SpatialSafetyIndexAnalyticsPage = () => {
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="bg-blue-50 rounded-lg p-4">
                   <h4 className="font-medium text-blue-900 mb-2">📊 تحلیل شاخص ایمنی منطقه‌ای</h4>
-                  <p className="text-sm text-blue-800">
+                  <p className="text-sm text-blue-800 mb-3">
                     این داشبورد شاخص ایمنی را در سطح {getGroupByDisplayName(groupBy)} نشان می‌دهد.
                     نمودار ستونی نسبت متوفیان به جمعیت و نقشه شاخص ایمنی کلی را نمایش می‌دهد. مناطق با
                     شاخص ایمنی پایین نیاز به توجه بیشتری دارند.
                   </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="font-medium text-blue-900 mb-2">
+                        📈 نحوه تحلیل نمودار ستونی (متوفیان به جمعیت):
+                      </h5>
+                      <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                        <li>
+                          هر ستون نشان‌دهنده نسبت تعداد متوفیان تصادفات به جمعیت آن منطقه در هر ۱۰۰
+                          هزار نفر است
+                        </li>
+                        <li>
+                          ارتفاع ستون بالاتر نشان‌دهنده نرخ مرگومیر بالاتر و وضعیت ایمنی بدتر است
+                        </li>
+                        <li>
+                          برای مقایسه مناطق، به تفاوت ارتفاع ستون‌ها توجه کنید - اختلاف زیاد ممکن است
+                          نیاز به بررسی عوامل محلی داشته باشد
+                        </li>
+                        <li>
+                          مناطقی با ستون‌های بلند (قرمز تیره) اولویت بالاتری برای اقدامات ایمنی دارند
+                        </li>
+                        <li>
+                          این شاخص تحت تأثیر جمعیت منطقه است - مناطق پرجمعیت‌تر ممکن است تعداد مطلق
+                          بیشتری داشته باشند اما نرخ مشابهی
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h5 className="font-medium text-blue-900 mb-2">
+                        🗺️ نحوه تحلیل نقشه حرارتی (شاخص ایمنی کلی):
+                      </h5>
+                      <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                        <li>
+                          هر منطقه بر اساس نسبت کل تلفات (متوفیان + مجروحان) به جمعیت در هر ۱۰۰ هزار
+                          نفر رنگ‌بندی شده است
+                        </li>
+                        <li>رنگ زرد روشن: شاخص ایمنی خوب (نرخ تلفات پایین)</li>
+                        <li>رنگ قرمز تیره: شاخص ایمنی بد (نرخ تلفات بالا) - نیاز به اقدامات فوری</li>
+                        <li>
+                          برای تحلیل روندها، مناطق مجاور را مقایسه کنید - خوشه‌های قرمز ممکن است مشکلات
+                          سیستمی نشان دهند
+                        </li>
+                        <li>بر روی هر منطقه کلیک کنید تا جزئیات دقیق هر دو شاخص را ببینید</li>
+                        <li>
+                          ترکیب این شاخص با داده‌های جغرافیایی می‌تواند الگوهای خطر را شناسایی کند
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h5 className="font-medium text-blue-900 mb-2">
+                        💡 نکات کلیدی برای تصمیم‌گیری:
+                      </h5>
+                      <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                        <li>
+                          مناطقی که در هر دو نمودار وضعیت بدی دارند (ستون بلند + رنگ قرمز تیره) اولویت
+                          اصلی هستند
+                        </li>
+                        <li>
+                          تفاوت بین شاخص متوفیان و شاخص کلی ممکن است بر نوع تصادفات (کشنده یا غیرکشنده)
+                          اشاره کند
+                        </li>
+                        <li>برای تحلیل زمانی، این داده‌ها را با دوره‌های زمانی دیگر مقایسه کنید</li>
+                        <li>عوامل محلی مانند ترافیک، جاده‌ها و شرایط آب‌وهوایی را در نظر بگیرید</li>
+                        <li>
+                          استفاده از فیلترها می‌تواند تحلیل را بر گروه‌های خاصی متمرکز کند (مثل تصادفات
+                          شبانه یا نوع خاصی از جاده)
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

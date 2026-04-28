@@ -400,6 +400,15 @@
     border-top-color: rgba(17, 24, 39, 0.9) !important;
 }
 
+/* Ensure popups and tooltips appear above polygons */
+.custom-popup {
+    z-index: 10000 !important;
+}
+
+.custom-tooltip {
+    z-index: 10000 !important;
+}
+
 /* Enhanced Map Controls */
 .leaflet-control-zoom {
     border: none !important;
@@ -492,7 +501,8 @@
 }
 
 /* React Multi Date Picker Styles - Fix for modal overlay and RTL support with Blue Theme */
-.rmdp-container {
+.rmdp-container,
+.z-index-calendar {
     z-index: 9999999 !important;
 }
 

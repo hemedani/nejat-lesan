@@ -12,14 +12,8 @@ import MyDateInput from "../atoms/MyDateInput";
 
 // Define form schema that matches backend expectations
 const eventSchema = z.object({
-  name: z
-    .string()
-    .min(1, "نام الزامی است")
-    .min(2, "نام باید حداقل 2 کاراکتر باشد"),
-  description: z
-    .string()
-    .max(500, "توضیحات نباید بیشتر از 500 کاراکتر باشد")
-    .optional(),
+  name: z.string().min(1, "نام الزامی است").min(2, "نام باید حداقل 2 کاراکتر باشد"),
+  description: z.string().max(500, "توضیحات نباید بیشتر از 500 کاراکتر باشد").optional(),
   startEntireRange: z.string().optional(),
   endEntireRange: z.string().optional(),
   dates: z
@@ -120,17 +114,10 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
           .map((dateStr) => new Date(dateStr));
 
         if (validStartDates.length > 0 && validEndDates.length > 0) {
-          const earliestStart = new Date(
-            Math.min(...validStartDates.map((date) => date.getTime())),
-          );
-          const latestEnd = new Date(
-            Math.max(...validEndDates.map((date) => date.getTime())),
-          );
+          const earliestStart = new Date(Math.min(...validStartDates.map((date) => date.getTime())));
+          const latestEnd = new Date(Math.max(...validEndDates.map((date) => date.getTime())));
 
-          setValue(
-            "startEntireRange",
-            earliestStart.toISOString().split("T")[0],
-          );
+          setValue("startEntireRange", earliestStart.toISOString().split("T")[0]);
           setValue("endEntireRange", latestEnd.toISOString().split("T")[0]);
         }
       }
@@ -148,9 +135,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
       setValue("description", "");
       setValue("startEntireRange", "");
       setValue("endEntireRange", "");
-      setValue("dates", [
-        { from: "", to: "", startEntireRange: "", endEntireRange: "" },
-      ]);
+      setValue("dates", [{ from: "", to: "", startEntireRange: "", endEntireRange: "" }]);
     }
   }, [isEdit, itemToEdit, setValue]);
 
@@ -164,31 +149,20 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
           // Filter out invalid dates and convert to Date objects
           const validStartDates = dates
             .map((date) => date!.startEntireRange) // Get the startEntireRange string
-            .filter((dateStr): dateStr is string =>
-              Boolean(dateStr && !isNaN(Date.parse(dateStr))),
-            ) // Filter valid date strings
+            .filter((dateStr): dateStr is string => Boolean(dateStr && !isNaN(Date.parse(dateStr)))) // Filter valid date strings
             .map((dateStr) => new Date(dateStr)); // Convert to Date objects
 
           const validEndDates = dates
             .map((date) => date!.endEntireRange) // Get the endEntireRange string
-            .filter((dateStr): dateStr is string =>
-              Boolean(dateStr && !isNaN(Date.parse(dateStr))),
-            ) // Filter valid date strings
+            .filter((dateStr): dateStr is string => Boolean(dateStr && !isNaN(Date.parse(dateStr)))) // Filter valid date strings
             .map((dateStr) => new Date(dateStr)); // Convert to Date objects
 
           if (validStartDates.length > 0 && validEndDates.length > 0) {
-            const earliestStart = new Date(
-              Math.min(...validStartDates.map((date) => date.getTime())),
-            );
-            const latestEnd = new Date(
-              Math.max(...validEndDates.map((date) => date.getTime())),
-            );
+            const earliestStart = new Date(Math.min(...validStartDates.map((date) => date.getTime())));
+            const latestEnd = new Date(Math.max(...validEndDates.map((date) => date.getTime())));
 
             // Update the overall range fields
-            setValue(
-              "startEntireRange",
-              earliestStart.toISOString().split("T")[0],
-            );
+            setValue("startEntireRange", earliestStart.toISOString().split("T")[0]);
             setValue("endEntireRange", latestEnd.toISOString().split("T")[0]);
           }
         }
@@ -202,31 +176,16 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
     // Validate individual date ranges - ensuring 'to' date is after 'from' date
     const invalidRanges = data.dates.filter((range) => {
       // Only validate if all fields have some content (not empty strings)
-      if (
-        !range.from ||
-        !range.to ||
-        !range.startEntireRange ||
-        !range.endEntireRange
-      )
-        return false; // Don't mark as invalid if fields are empty, just skip
+      if (!range.from || !range.to || !range.startEntireRange || !range.endEntireRange) return false; // Don't mark as invalid if fields are empty, just skip
       const fromDate = new Date(range.from);
       const toDate = new Date(range.to);
-      return (
-        isNaN(fromDate.getTime()) ||
-        isNaN(toDate.getTime()) ||
-        toDate < fromDate
-      );
+      return isNaN(fromDate.getTime()) || isNaN(toDate.getTime()) || toDate < fromDate;
     });
 
     // Validate that individual ranges are within their respective entire range
     for (const range of data.dates) {
       // Only validate if all fields have content (not empty strings)
-      if (
-        range.from &&
-        range.to &&
-        range.startEntireRange &&
-        range.endEntireRange
-      ) {
+      if (range.from && range.to && range.startEntireRange && range.endEntireRange) {
         // Validate that dates are valid
         const fromDate = new Date(range.from);
         const toDate = new Date(range.to);
@@ -256,11 +215,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
           startEntireRangeDate.getMonth(),
           startEntireRangeDate.getDate(),
         );
-        const compareToDate = new Date(
-          toDate.getFullYear(),
-          toDate.getMonth(),
-          toDate.getDate(),
-        );
+        const compareToDate = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
         const compareEndEntireRangeDate = new Date(
           endEntireRangeDate.getFullYear(),
           endEntireRangeDate.getMonth(),
@@ -269,25 +224,20 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
 
         if (compareFromDate.getTime() < compareStartEntireRangeDate.getTime()) {
           setError("startEntireRange", {
-            message:
-              "تاریخ شروع بازه نمی‌تواند قبل از تاریخ شروع کلی بازه باشد",
+            message: "تاریخ شروع بازه نمی‌تواند قبل از تاریخ شروع کلی بازه باشد",
           });
           return;
         }
 
         if (compareToDate.getTime() > compareEndEntireRangeDate.getTime()) {
           setError("endEntireRange", {
-            message:
-              "تاریخ پایان بازه نمی‌تواند بعد از تاریخ پایان کلی بازه باشد",
+            message: "تاریخ پایان بازه نمی‌تواند بعد از تاریخ پایان کلی بازه باشد",
           });
           return;
         }
 
         // Also validate that the range's overall range is valid
-        if (
-          compareEndEntireRangeDate.getTime() <
-          compareStartEntireRangeDate.getTime()
-        ) {
+        if (compareEndEntireRangeDate.getTime() < compareStartEntireRangeDate.getTime()) {
           setError("endEntireRange", {
             message: "تاریخ پایان کلی نمی‌تواند قبل از تاریخ شروع کلی باشد",
           });
@@ -314,27 +264,15 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
       }));
 
       if (isEdit && itemToEdit) {
-        const result = await update(
-          itemToEdit._id,
-          data.name,
-          data.description || "",
-          dateObjects,
-        );
+        const result = await update(itemToEdit._id, data.name, data.description || "", dateObjects);
         if (result.success) {
           ToastNotify("success", "رویداد با موفقیت به‌روزرسانی شد");
         } else {
-          ToastNotify(
-            "error",
-            result.body?.message || "خطا در به‌روزرسانی رویداد",
-          );
+          ToastNotify("error", result.body?.message || "خطا در به‌روزرسانی رویداد");
           return; // Don't proceed if there was an error
         }
       } else {
-        const result = await add(
-          data.name,
-          data.description || "",
-          dateObjects,
-        );
+        const result = await add(data.name, data.description || "", dateObjects);
         if (result.success) {
           ToastNotify("success", "رویداد جدید با موفقیت ایجاد شد");
         } else {
@@ -356,10 +294,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
           {isEdit ? "ویرایش رویداد" : "ایجاد رویداد جدید"}
         </h2>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6 flex-1 flex flex-col"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex-1 flex flex-col">
           <div className="space-y-4">
             <MyInput
               className="w-full"
@@ -384,9 +319,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
           <div className="border-t border-gray-200 pt-6 flex-1">
             <div className="space-y-5">
               <div className="flex justify-between items-center">
-                <h3 className="text-base font-semibold text-gray-700">
-                  بازه‌های تاریخی فعال
-                </h3>
+                <h3 className="text-base font-semibold text-gray-700">بازه‌های تاریخی فعال</h3>
                 <button
                   type="button"
                   onClick={() => {
@@ -437,9 +370,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
                           label={`شروع کلی بازه ${index + 1}`}
                           name={`dates.${index}.startEntireRange` as const}
                           control={control}
-                          errMsg={
-                            errors?.dates?.[index]?.startEntireRange?.message
-                          }
+                          errMsg={errors?.dates?.[index]?.startEntireRange?.message}
                           placeholder="تاریخ شروع کلی را انتخاب کنید"
                           customShowDateFormat="YYYY/MM/DD"
                         />
@@ -450,9 +381,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
                           label={`پایان کلی بازه ${index + 1}`}
                           name={`dates.${index}.endEntireRange` as const}
                           control={control}
-                          errMsg={
-                            errors?.dates?.[index]?.endEntireRange?.message
-                          }
+                          errMsg={errors?.dates?.[index]?.endEntireRange?.message}
                           placeholder="تاریخ پایان کلی را انتخاب کنید"
                           customShowDateFormat="YYYY/MM/DD"
                         />

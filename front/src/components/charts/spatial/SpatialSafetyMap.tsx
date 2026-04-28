@@ -234,7 +234,7 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
 
         layer.bindTooltip(tooltipContent, {
           permanent: false,
-          sticky: true,
+          sticky: false,
           className: "custom-tooltip",
           direction: "top",
         });
@@ -248,7 +248,7 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
         `,
           {
             permanent: false,
-            sticky: true,
+            sticky: false,
             className: "custom-tooltip",
             direction: "top",
           },

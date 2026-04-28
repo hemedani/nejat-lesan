@@ -10,6 +10,9 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialCollisionAnalytics } from "@/app/actions/accident/spatialCollisionAnalytics";
 import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { getMe } from "@/app/actions/user/getMe";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
+import { userSchema } from "@/types/declarations/selectInp";
 
 import SpatialCollisionBarChart from "@/components/charts/spatial/SpatialCollisionBarChart";
 import SpatialCollisionMap from "@/components/charts/spatial/SpatialCollisionMap";
@@ -49,16 +52,65 @@ interface SpatialCollisionAnalyticsResponse {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Default filters with "اهواز" pre-selected for city and default collision type
-  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
-    city: ["اهواز"],
-  });
+  // Default filters
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
+  const [initialLoadCompleted, setInitialLoadCompleted] = useState(false);
 
-  // Load initial data on component mount
+  // Load user data and set default city on component mount
   useEffect(() => {
-    handleApplyFilters(appliedFilters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const loadUserData = async () => {
+      try {
+        const userResponse = await getMe();
+        if (userResponse.success && userResponse.body) {
+          const user: userSchema = userResponse.body;
+
+          // Check if user has cities in settings
+          if (user.settings?.cities && user.settings.cities.length > 0) {
+            const defaultCity = user.settings.cities[0]?.name;
+            setAppliedFilters((prevFilters) => ({
+              ...prevFilters,
+              city: [defaultCity],
+            }));
+          } else if (user.settings?.provinces && user.settings.provinces.length > 0) {
+            // User has provinces but no cities - fetch cities for the first province
+            const provinceId = user.settings.provinces[0]?._id;
+            if (provinceId) {
+              try {
+                const citiesResponse = await getCitiesAction({
+                  set: { page: 1, limit: 1, provinceIds: [provinceId] },
+                  get: { _id: 1, name: 1 },
+                });
+                if (citiesResponse.success && citiesResponse.body && citiesResponse.body.length > 0) {
+                  const defaultCity = citiesResponse.body[0].name;
+                  setAppliedFilters((prevFilters) => ({
+                    ...prevFilters,
+                    city: [defaultCity],
+                  }));
+                }
+              } catch (err) {
+                console.error("Error fetching cities for province:", err);
+              }
+            }
+          }
+          // If no cities and no provinces in settings, leave city filter empty
+        }
+        setInitialLoadCompleted(true);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setInitialLoadCompleted(true);
+      }
+    };
+
+    loadUserData();
   }, []);
+
+  // Load initial data on component mount after user data is loaded
+  useEffect(() => {
+    if (initialLoadCompleted) {
+      handleApplyFilters(appliedFilters);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLoadCompleted]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
@@ -420,17 +472,16 @@ interface SpatialCollisionAnalyticsResponse {
         ),
       );
 
-      // Get the city name for GeoJSON (default to "اهواز" if no city selected)
-      const selectedCity =
-        filters.city && filters.city.length > 0 ? filters.city[0] : "اهواز";
+      // Get the city name for GeoJSON (only if city is selected)
+      const selectedCity = filters.city && filters.city.length > 0 ? filters.city[0] : null;
 
-      // Run both API calls concurrently
+      // Run API calls (conditionally fetch GeoJSON if city is selected)
       const [analyticsResponse, geoJsonResponse] = await Promise.all([
         spatialCollisionAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
         }),
-        getCityZonesGeoJSON(selectedCity),
+        selectedCity ? getCityZonesGeoJSON(selectedCity) : Promise.resolve({ success: false, body: null }),
       ]);
 
       // Handle analytics response
@@ -484,8 +535,8 @@ interface SpatialCollisionAnalyticsResponse {
               onApplyFilters={handleApplyFilters}
               config={getFilterConfig()}
               initialFilters={appliedFilters}
-              title="فیلترهای مقایسه مکانی"
-              description="فیلترهای مربوط به تحلیل نحوه و نوع برخورد"
+              title="فیلترهای تحلیل مکانی برخورد"
+              description="فیلترهای مربوط به تحلیل نحوه و نوع برخورد - می‌توانید نوع برخورد مورد نظر را انتخاب کنید"
               enabledFilters={ENABLED_FILTERS}
               enterpriseSettings={enterpriseSettings}
               activeAdvancedFilters={true}
@@ -503,7 +554,7 @@ interface SpatialCollisionAnalyticsResponse {
                   مقایسه مکانی نحوه و نوع برخورد
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  تحلیل و مقایسه انواع برخورد در مناطق مختلف شهر
+                  تحلیل و مقایسه انواع برخورد در مناطق مختلف شهر - نمودار میله‌ای توزیع انواع برخورد و نقشه درصد نوع برخورد انتخابی
                 </p>
               </div>
               <div className="flex items-center gap-3">

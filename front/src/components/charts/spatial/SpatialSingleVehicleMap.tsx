@@ -166,9 +166,8 @@ const SpatialSingleVehicleMap: React.FC<SpatialSingleVehicleMapProps> = ({
           fillOpacity: 0.8,
         });
 
-        // Bring to front and show tooltip
+        // Bring to front
         currentLayer.bringToFront();
-        currentLayer.openTooltip();
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -177,7 +176,6 @@ const SpatialSingleVehicleMap: React.FC<SpatialSingleVehicleMapProps> = ({
 
         // Reset style
         currentLayer.setStyle(style(feature));
-        currentLayer.closeTooltip();
       },
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

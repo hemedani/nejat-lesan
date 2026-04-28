@@ -15,10 +15,7 @@ interface SpatialSafetyBarChartProps {
   isLoading: boolean;
 }
 
-const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
-  data,
-  isLoading,
-}) => {
+const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isLoading }) => {
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -33,9 +30,7 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
   if (!data || data.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          شاخص متوفیان به جمعیت
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">شاخص متوفیان به جمعیت</h3>
         <div className="text-center py-8">
           <p className="text-gray-500">داده‌ای برای نمایش موجود نیست</p>
         </div>
@@ -45,11 +40,13 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
 
   // Transform data for ApexCharts
   const chartData = {
-    categories: data.map(item => item.name),
-    series: [{
-      name: "نسبت متوفیان به جمعیت",
-      data: data.map(item => item.barChartMetric)
-    }]
+    categories: data.map((item) => item.name),
+    series: [
+      {
+        name: "نسبت متوفیان به جمعیت",
+        data: data.map((item) => item.barChartMetric),
+      },
+    ],
   };
 
   const chartOptions = {
@@ -73,9 +70,9 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
     plotOptions: {
       bar: {
         horizontal: false,
-        columnWidth: '60%',
+        columnWidth: "60%",
         dataLabels: {
-          position: 'top',
+          position: "top",
         },
       },
     },
@@ -102,7 +99,7 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
     },
     yaxis: {
       title: {
-        text: "نسبت متوفیان به جمعیت (در ده هزار نفر)",
+        text: "نسبت متوفیان به جمعیت (در صد هزار نفر)",
         style: {
           fontSize: "14px",
           fontWeight: 600,
@@ -130,7 +127,7 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
     tooltip: {
       y: {
         formatter: function (val: number) {
-          return val.toFixed(2) + " در ده هزار نفر";
+          return val.toFixed(2) + " در صد هزار نفر";
         },
       },
     },
@@ -139,9 +136,7 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          شاخص متوفیان به جمعیت
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900">شاخص متوفیان به جمعیت</h3>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
@@ -155,19 +150,14 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({
       </div>
 
       <div className="mt-4">
-        <Chart
-          options={chartOptions}
-          series={chartData.series}
-          type="bar"
-          height={350}
-        />
+        <Chart options={chartOptions} series={chartData.series} type="bar" height={350} />
       </div>
 
       {/* Chart Info */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <span>نسبت متوفیان به جمعیت در هر ده هزار نفر</span>
+          <span>نسبت متوفیان به جمعیت در هر صد هزار نفر</span>
         </div>
         <p className="text-xs text-gray-500 mt-2">
           این شاخص نسبت تعداد متوفیان تصادفات رانندگی به جمعیت هر منطقه را نشان می‌دهد

@@ -222,7 +222,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
             شمار تصادفات به تفکیک نوع برخورد
           </h3>
           <p className="text-sm text-gray-600 mt-1">
-            توزیع انواع برخورد در مناطق مختلف شهر
+            توزیع انواع برخورد در مناطق مختلف شهر - هر رنگ یک نوع برخورد را نشان می‌دهد
           </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -283,10 +283,9 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
 
       {/* Chart Legend */}
       <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-2">راهنمای نمودار</h4>
+        <h4 className="font-medium text-gray-900 mb-2">راهنمای نمودار میله‌ای انباشته</h4>
         <p className="text-sm text-gray-600 mb-2">
-          این نمودار میله‌ای انباشته، توزیع انواع برخورد در مناطق مختلف را نشان
-          می‌دهد.
+          این نمودار میله‌ای انباشته، توزیع انواع برخورد در مناطق مختلف را نشان می‌دهد. هر میله نمایانگر یک منطقه است و رنگ‌های مختلف روی میله نشان‌دهنده انواع مختلف برخورد در آن منطقه هستند. عدد روی هر میله مجموع کل تصادفات آن منطقه است.
         </p>
         <div className="flex flex-wrap gap-4 text-xs text-gray-600">
           <div className="flex items-center gap-1">

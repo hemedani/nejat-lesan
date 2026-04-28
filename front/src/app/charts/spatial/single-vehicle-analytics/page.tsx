@@ -6,11 +6,13 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSingleVehicleAnalytics } from "@/app/actions/accident/spatialSingleVehicleAnalytics";
 import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { getMe } from "@/app/actions/user/getMe";
 
 import SpatialSingleVehicleBarChart from "@/components/charts/spatial/SpatialSingleVehicleBarChart";
 import SpatialSingleVehicleMap from "@/components/charts/spatial/SpatialSingleVehicleMap";
 import { ReqType, userSchema } from "@/types/declarations/selectInp";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { useAuth } from "@/context/AuthContext";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 
@@ -19,7 +21,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
 
   // Get enabled filters for temporal unlicensed drivers analytics considering enterprise settings
   const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TEMPORAL_UNLICENSED_DRIVERS_ANALYTICS",
+    "SPATIAL_SINGLE_VEHICLE_ANALYTICS",
     userLevel === "Enterprise" ? enterpriseSettings : undefined,
   );
   // Response interface for spatial single vehicle analytics
@@ -43,14 +45,12 @@ const SpatialSingleVehicleAnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState<
     SpatialSingleVehicleAnalyticsResponse["analytics"] | null
   >(null);
-  const [geoJsonData, setGeoJsonData] = useState<object | null>(null);
+  const [geoJsonData, setGeoJsonData] = useState<GeoJsonData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Default filters with "اهواز" pre-selected for city and common single vehicle collision types
-  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
-    collisionType: ["خروج از جاده", "برخورد وسیله نقلیه با شی ثابت", "واژگونی و سقوط"],
-  });
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Load user data and set default city on component mount
   useEffect(() => {
@@ -59,29 +59,41 @@ const SpatialSingleVehicleAnalyticsPage = () => {
         const userResponse = await getMe();
         if (userResponse.success && userResponse.body) {
           const user: userSchema = userResponse.body;
-          const defaultCity = user.settings?.cities ? user.settings?.cities[0]?.name : "اهواز";
-          setAppliedFilters((prevFilters) => ({
-            ...prevFilters,
-            city: [defaultCity],
-          }));
-          // Apply filters with the user's default city
-          handleApplyFilters({ ...appliedFilters, city: [defaultCity] });
-        } else {
-          // If user data fetch fails, default to "اهواز" and apply filters
-          setAppliedFilters((prevFilters) => ({
-            ...prevFilters,
-            city: ["اهواز"],
-          }));
-          handleApplyFilters({ ...appliedFilters, city: ["اهواز"] });
+
+          // Check if user has cities in settings
+          if (user.settings?.cities && user.settings.cities.length > 0) {
+            const defaultCity = user.settings.cities[0]?.name;
+            setAppliedFilters((prevFilters) => ({
+              ...prevFilters,
+              city: [defaultCity],
+            }));
+            handleApplyFilters({ ...appliedFilters, city: [defaultCity] });
+          } else if (user.settings?.provinces && user.settings.provinces.length > 0) {
+            // User has provinces but no cities - fetch cities for the first province
+            const provinceId = user.settings.provinces[0]?._id;
+            if (provinceId) {
+              try {
+                const citiesResponse = await getCitiesAction({
+                  set: { page: 1, limit: 1, provinceIds: [provinceId] },
+                  get: { _id: 1, name: 1 },
+                });
+                if (citiesResponse.success && citiesResponse.body && citiesResponse.body.length > 0) {
+                  const defaultCity = citiesResponse.body[0].name;
+                  setAppliedFilters((prevFilters) => ({
+                    ...prevFilters,
+                    city: [defaultCity],
+                  }));
+                  handleApplyFilters({ ...appliedFilters, city: [defaultCity] });
+                }
+              } catch (err) {
+                console.error("Error fetching cities for province:", err);
+              }
+            }
+          }
+          // If no cities and no provinces in settings, leave city filter empty
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        // If there's an error, default to "اهواز" and apply filters
-        setAppliedFilters((prevFilters) => ({
-          ...prevFilters,
-          city: ["اهواز"],
-        }));
-        handleApplyFilters({ ...appliedFilters, city: ["اهواز"] });
       }
     };
 
@@ -303,16 +315,18 @@ const SpatialSingleVehicleAnalyticsPage = () => {
         ),
       );
 
-      // Get the city name for GeoJSON (default to "اهواز" if no city selected)
-      const selectedCity = filters.city && filters.city.length > 0 ? filters.city[0] : "اهواز";
+      // Get the city name for GeoJSON (only if city is selected)
+      const selectedCity = filters.city && filters.city.length > 0 ? filters.city[0] : null;
 
-      // Run both API calls concurrently
+      // Run API calls (conditionally fetch GeoJSON if city is selected)
       const [analyticsResponse, geoJsonResponse] = await Promise.all([
         spatialSingleVehicleAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
         }),
-        getCityZonesGeoJSON(selectedCity),
+        selectedCity
+          ? getCityZonesGeoJSON(selectedCity)
+          : Promise.resolve({ success: false, body: null }),
       ]);
 
       // Handle analytics response
@@ -476,15 +490,15 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق پرخطر خروج از جاده</h4>
+                  <h4 className="font-medium text-gray-900 mb-1">مناطق پرخطر تصادفات تک وسیله ای</h4>
                   <p className="text-2xl font-bold text-orange-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.7).length || 0}
+                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 60).length || 0}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-purple-600"
+                      className="w-6 h-6 text-green-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -493,13 +507,13 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با واژگونی بالا</h4>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio <= 0.3).length || 0}
+                  <h4 className="font-medium text-gray-900 mb-1">مناطق با وضعیت ایمنی مناسب</h4>
+                  <p className="text-2xl font-bold text-green-600">
+                    {analyticsData.mapChart?.filter((zone) => zone.ratio <= 40).length || 0}
                   </p>
                 </div>
               </div>
@@ -508,11 +522,77 @@ const SpatialSingleVehicleAnalyticsPage = () => {
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="bg-blue-50 rounded-lg p-4">
                   <h4 className="font-medium text-blue-900 mb-2">🚗 تحلیل تصادفات تک وسیله ای</h4>
-                  <p className="text-sm text-blue-800">
-                    این نمودار انواع مختلف تصادفات تک وسیله ای را نشان می‌دهد شامل برخورد با اجسام
-                    ثابت، واژگونی و سقوط، و خروج از جاده. مناطق با نرخ بالای این تصادفات نیاز به بهبود
-                    ایمنی جاده‌ای دارند.
+                  <p className="text-sm text-blue-800 mb-3">
+                    این تحلیل شامل دو بخش اصلی است: نمودار ستونی و نقشه مناطق.
                   </p>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <strong className="text-blue-900">نمودار ستونی (میله‌ای):</strong>
+                      <p className="mt-1">
+                        این نمودار تعداد هر نوع تصادف تک وسیله ای را در مناطق مختلف شهر نشان می‌دهد.
+                        محور افقی مناطق شهر و محور عمودی تعداد تصادفات را نمایش می‌دهد. هر ستون شامل سه
+                        بخش رنگی است که نشان‌دهنده انواع تصادفات تک وسیله ای می‌باشد:
+                      </p>
+                      <ul className="mt-2 ml-4 list-disc space-y-1">
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                          قرمز: برخورد وسیله نقلیه با شیء ثابت (مانند برخورد با درخت، ستون یا دیوار)
+                        </li>
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
+                          زرد: واژگونی و سقوط (چرخش و واژگونی خودرو یا سقوط از ارتفاع)
+                        </li>
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                          سبز: خروج از جاده (خروج خودرو از مسیر مجاز جاده)
+                        </li>
+                      </ul>
+                      <p className="mt-2">
+                        برای تحلیل صحیح، به مناطق با تعداد بالا در هر نوع تصادف توجه کنید و علل
+                        زمینه‌ای مانند وضعیت جاده، علائم راهنمایی، شرایط آب و هوایی و رفتار راننده را
+                        بررسی کنید.
+                      </p>
+                    </div>
+                    <div>
+                      <strong className="text-blue-900">نقشه مناطق:</strong>
+                      <p className="mt-1">
+                        این نقشه درصد نوع انتخابی تصادفات تک وسیله ای را نسبت به کل تصادفات تک وسیله ای
+                        هر منطقه نشان می‌دهد. به طور پیش‌فرض، نوع &quot;خروج از جاده&quot; انتخاب شده
+                        است، اما می‌توانید از فیلترها نوع دیگری را انتخاب کنید.
+                      </p>
+                      <p className="mt-2">
+                        <strong>راهنمای رنگ‌بندی:</strong>
+                      </p>
+                      <ul className="mt-1 ml-4 list-disc space-y-1">
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                          سبز تیره: مناطق با نسبت کم (کمتر از ۲۰٪) - وضعیت مناسب ایمنی
+                        </li>
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-green-400 rounded-full mr-2"></span>
+                          سبز روشن: نسبت متوسط (۲۰-۴۰٪)
+                        </li>
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
+                          زرد: نسبت نسبتاً بالا (۴۰-۶۰٪)
+                        </li>
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
+                          نارنجی: نسبت بالا (۶۰-۸۰٪)
+                        </li>
+                        <li>
+                          <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                          قرمز: نسبت بسیار بالا (بیشتر از ۸۰٪) - نیاز به اقدامات فوری ایمنی
+                        </li>
+                      </ul>
+                      <p className="mt-2">
+                        مناطق قرمز نشان‌دهنده نقاط بحرانی هستند که نیاز به بررسی عوامل محیطی مانند
+                        طراحی جاده، علائم ایمنی، شرایط دید و نگهداری راه دارند. برای تحلیل دقیق‌تر،
+                        داده‌های تکمیلی مانند شرایط آب و هوایی، ترافیک و ویژگی‌های جاده را نیز بررسی
+                        کنید.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
