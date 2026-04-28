@@ -12,7 +12,7 @@ export const getsSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager"],
+				levels: ["Manager", "Editor", "Enterprise"],
 			}),
 		],
 		validator: getsValidator(),
