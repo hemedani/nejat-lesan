@@ -24,7 +24,7 @@ export const BASEMAPS: Record<BasemapType, BasemapConfig> = {
     id: "mapir",
     name: "نقشه ایران",
     nameEn: "Iran Map",
-    url: "https://map.ir/tile/{z}/{x}/{y}",
+    url: "https://map.ir/shiveh/xyz/1.0.0/Shiveh:Shiveh@EPSG:3857@png/{z}/{x}/{y}.png",
     attribution: '&copy; <a href="https://map.ir">نقشه ایران</a>',
   },
   neshan: {
@@ -47,7 +47,7 @@ export const getBasemapUrl = (type: BasemapType): string => {
       console.warn("NEXT_PUBLIC_MAP_IR_TOKEN is not set, falling back to OSM");
       return BASEMAPS.osm.url;
     }
-    return `https://map.ir/tile/{z}/{x}/{y}?token=${token}`;
+    return `https://map.ir/shiveh/xyz/1.0.0/Shiveh:Shiveh@EPSG:3857@png/{z}/{x}/{y}.png?x-api-key=${token}`;
   }
 
   if (type === "neshan") {
