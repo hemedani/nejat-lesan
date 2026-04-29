@@ -8,6 +8,9 @@ export interface BasemapConfig {
   attribution: string;
 }
 
+const token = process.env.NEXT_PUBLIC_MAP_IR_TOKEN;
+const apiKey = process.env.NEXT_PUBLIC_NESHAN_API_KEY;
+
 export const BASEMAPS: Record<BasemapType, BasemapConfig> = {
   osm: {
     id: "osm",
@@ -40,7 +43,6 @@ export const getBasemapUrl = (type: BasemapType): string => {
   if (!basemap) return BASEMAPS.osm.url;
 
   if (type === "mapir") {
-    const token = process.env.NEXT_PUBLIC_MAP_IR_TOKEN;
     if (!token) {
       console.warn("NEXT_PUBLIC_MAP_IR_TOKEN is not set, falling back to OSM");
       return BASEMAPS.osm.url;
@@ -49,7 +51,6 @@ export const getBasemapUrl = (type: BasemapType): string => {
   }
 
   if (type === "neshan") {
-    const apiKey = process.env.NEXT_PUBLIC_NESHAN_API_KEY;
     if (!apiKey) {
       console.warn("NEXT_PUBLIC_NESHAN_API_KEY is not set, falling back to OSM");
       return BASEMAPS.osm.url;
