@@ -8104,6 +8104,8 @@ set: {
 page: number;
 limit: number;
 name?: string;
+cities?: string[];
+cityNames?: string[];
 };
 get: {
 _id?: (0 | 1 );
