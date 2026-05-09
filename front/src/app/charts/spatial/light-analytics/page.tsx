@@ -507,9 +507,9 @@ const SpatialLightAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با تصادفات روز بالا</h4>
+                  <h4 className="font-medium text-gray-900 mb-1">مناطق با روشنایی نامطلوب</h4>
                   <p className="text-2xl font-bold text-yellow-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.7).length || 0}
+                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.8).length || 0}
                   </p>
                 </div>
                 <div className="text-center p-4 bg-purple-50 rounded-lg">
@@ -528,9 +528,9 @@ const SpatialLightAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با تصادفات شب بالا</h4>
+                  <h4 className="font-medium text-gray-900 mb-1">مناطق با روشنایی مطلوب</h4>
                   <p className="text-2xl font-bold text-purple-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio <= 0.3).length || 0}
+                    {analyticsData.mapChart?.filter((zone) => zone.ratio <= 0.2).length || 0}
                   </p>
                 </div>
               </div>
@@ -545,13 +545,12 @@ const SpatialLightAnalyticsPage = () => {
                       ستون‌های بلند‌تر نشان‌دهنده مشکلات بیشتر در آن شرایط نوری هستند.
                     </p>
                     <p>
-                      <strong>نقشه:</strong> رنگ مناطق بر اساس نسبت تصادفات روز به کل تصادفات تعیین
-                      می‌شود. مناطق قرمز نیاز به بهبود فوری روشنایی دارند.
+                    <strong>نقشه:</strong> رنگ مناطق بر اساس نسبت تصادفات شب با روشنایی ناکافی
+                    به کل تصادفات شبانه تعیین می‌شود. مناطق قرمز نیاز به بهبود فوری روشنایی دارند.
                     </p>
                     <p>
-                      <strong>تجزیه و تحلیل:</strong> مناطقی که نسبت تصادفات شب در آن‌ها بالا است،
-                      اولویت اصلی برای نصب یا تعمیر چراغ‌های خیابانی هستند. مناطق با تصادفات طلوع/غروب
-                      بالا ممکن است نیاز به علائم هشدار یا بهبود دید داشته باشند.
+                    <strong>تجزیه و تحلیل:</strong> مناطقی که نسبت تصادفات شب با روشنایی ناکافی
+                    در آن‌ها بالا است، اولویت اصلی برای نصب یا تعمیر چراغ‌های خیابانی هستند.
                     </p>
                   </div>
                 </div>

@@ -30,11 +30,6 @@ interface MapDataWithCount {
   count: number;
 }
 
-// Type guard to check if the object has 'ratio' or 'count'
-const hasRatioProperty = (obj: unknown): obj is MapData => {
-  return obj !== null && typeof obj === "object" && "ratio" in obj;
-};
-
 interface SpatialLightMapProps {
   mapData: Array<MapData | MapDataWithCount>;
   geoJsonData: GeoJsonData | null;
@@ -54,69 +49,54 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   barChartData,
   isLoading,
 }) => {
-  // Convert count-based mapData to ratio-based if needed
   const normalizedMapData = useMemo(() => {
-    // Check if the incoming mapData has 'ratio' field (new format) or 'count' field (old format)
-    if (mapData.length > 0 && hasRatioProperty(mapData[0])) {
-      // Already has ratios, return as-is
-      return mapData as MapData[];
-    } else {
-      // Calculate ratios from counts
-      // We need to determine what the ratio represents - likely a percentage of some lighting condition
-      // For now, we'll convert based on the available bar chart data
-      const countData = mapData as MapDataWithCount[];
+    if (barChartData && barChartData.categories && barChartData.series) {
+      return mapData.map((item) => {
+        const zoneIndex = barChartData.categories.findIndex((cat) => cat === item.name);
 
-      if (barChartData && barChartData.categories && barChartData.series) {
-        return countData.map((item: MapDataWithCount) => {
-          // Find the index of this zone in the categories
-          const zoneIndex = barChartData.categories.findIndex((cat) => cat === item.name);
+        if (zoneIndex !== -1) {
+          let insufficientNight = 0;
+          let sufficientNight = 0;
 
-          if (zoneIndex !== -1) {
-            let total = 0;
-            let daytimeAccidents = 0;
-
-            // Calculate total accidents for this zone across all lighting conditions
-            for (const series of barChartData.series) {
-              total += series.data[zoneIndex] || 0;
-
-              // If this series is 'روز' (day), add to daytime accidents
-              if (series.name === "روز") {
-                daytimeAccidents = series.data[zoneIndex];
-              }
+          for (const series of barChartData.series) {
+            if (series.name === "شب با نور ناکافی") {
+              insufficientNight = series.data[zoneIndex] || 0;
             }
-
-            // Calculate ratio of day accidents to total (or use count if total not available)
-            const ratio = total > 0 ? daytimeAccidents / total : 0;
-            return { name: item.name, ratio };
+            if (series.name === "شب با نور کافی") {
+              sufficientNight = series.data[zoneIndex] || 0;
+            }
           }
 
-          // If we can't find the zone in bar chart, return with ratio 0
-          return { name: item.name, ratio: 0 };
-        });
-      } else {
-        // If no bar chart data available, just convert counts with some normalization
-        // Find max count to normalize values to 0-1 range
-        const maxCount = Math.max(...countData.map((item) => item.count), 1);
-        return countData.map((item: MapDataWithCount) => ({
-          name: item.name,
-          ratio: item.count / maxCount,
-        }));
-      }
+          const totalNight = insufficientNight + sufficientNight;
+          return { name: item.name, ratio: totalNight > 0 ? insufficientNight / totalNight : 0 };
+        }
+
+        return { name: item.name, ratio: 0 };
+      });
     }
+
+    const ratioData = mapData as MapData[];
+    if (ratioData.length > 0 && "ratio" in ratioData[0]) {
+      return ratioData;
+    }
+
+    const countData = mapData as MapDataWithCount[];
+    const maxCount = Math.max(...countData.map((item) => item.count), 1);
+    return countData.map((item: MapDataWithCount) => ({
+      name: item.name,
+      ratio: item.count / maxCount,
+    }));
   }, [mapData, barChartData]);
 
-  // Color scale: Red (dangerous - low daytime ratio) to Green (safe - high daytime ratio)
-  // Ratio = daytime accidents / total accidents (high = safer, low = more night accidents)
   const getColor = (ratio: number): string => {
-    // Convert percentage to decimal if needed
     const normalizedRatio = ratio > 1 ? ratio / 100 : ratio;
 
-    if (normalizedRatio === 0) return "#E5E7EB"; // Gray for no data
-    if (normalizedRatio <= 0.2) return "#EF4444"; // Red (dangerous - mostly night accidents)
-    if (normalizedRatio <= 0.4) return "#F97316"; // Orange
-    if (normalizedRatio <= 0.6) return "#EAB308"; // Yellow
-    if (normalizedRatio <= 0.8) return "#84CC16"; // Light green
-    return "#22C55E"; // Green (safe - mostly daytime accidents)
+    if (normalizedRatio === 0) return "#E5E7EB";
+    if (normalizedRatio <= 0.2) return "#22C55E";
+    if (normalizedRatio <= 0.4) return "#84CC16";
+    if (normalizedRatio <= 0.6) return "#EAB308";
+    if (normalizedRatio <= 0.8) return "#F97316";
+    return "#EF4444";
   };
 
   // Helper function to match zone names flexibly
@@ -177,13 +157,11 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;
 
-    // Calculate actual accident count from barChart data
-    let totalAccidents = 0;
+    let insufficientNightAccidents = 0;
+    let sufficientNightAccidents = 0;
     if (barChartData && barChartData.categories && barChartData.series) {
-      // Find the index of this zone in the categories
       let zoneIndex = -1;
 
-      // Try different matching strategies
       const zoneNumber = zoneName.match(/\d+/)?.[0];
       if (zoneNumber) {
         zoneIndex = barChartData.categories.findIndex((cat) => cat === zoneNumber);
@@ -194,26 +172,34 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       }
 
       if (zoneIndex !== -1) {
-        // Sum up all accident counts from all series for this zone
-        totalAccidents = barChartData.series.reduce((sum, series) => {
-          return sum + (series.data[zoneIndex] || 0);
-        }, 0);
+        for (const series of barChartData.series) {
+          if (series.name === "شب با نور ناکافی") {
+            insufficientNightAccidents = series.data[zoneIndex] || 0;
+          }
+          if (series.name === "شب با نور کافی") {
+            sufficientNightAccidents = series.data[zoneIndex] || 0;
+          }
+        }
       }
     }
+    const totalNightAccidents = insufficientNightAccidents + sufficientNightAccidents;
 
     const ratioDisplay = ratio > 1 ? ratio.toFixed(1) : (ratio * 100).toFixed(1);
 
-    // Create popup content with accident count
     const popupContent = `
       <div style="direction: rtl; text-align: right; font-family: vazir-matn; padding: 12px; min-width: 200px;">
         <h4 style="font-weight: 600; color: #111827; margin-bottom: 8px; font-size: 14px;">${zoneName}</h4>
         <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px;">
           <div style="display: flex; justify-content: space-between;">
-            <span style="color: #6B7280;">تعداد تصادفات:</span>
-            <span style="font-weight: 600; color: #111827;">${totalAccidents}</span>
+            <span style="color: #6B7280;">تصادفات شب با نور ناکافی:</span>
+            <span style="font-weight: 600; color: #111827;">${insufficientNightAccidents}</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
-            <span style="color: #6B7280;">نسبت روز:</span>
+            <span style="color: #6B7280;">کل تصادفات شبانه:</span>
+            <span style="font-weight: 600; color: #111827;">${totalNightAccidents}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: #6B7280;">نسبت روشنایی ناکافی:</span>
             <span style="font-weight: 500; color: #111827;">${ratioDisplay}%</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
@@ -226,8 +212,8 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       </div>
     `;
 
-    // Create tooltip for hover with accident count
-    const tooltipContent = `${zoneName}: ${totalAccidents} تصادف`;
+    // Create tooltip for hover with ratio info
+    const tooltipContent = `${zoneName}: ${ratioDisplay}% نسبت روشنایی ناکافی`;
 
     // Bind popup and tooltip
     layer.bindPopup(popupContent, {
@@ -290,17 +276,15 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     });
   };
 
-  // Get light level text based on ratio
   const getLightLevel = (ratio: number): string => {
-    // Convert percentage to decimal if needed
     const normalizedRatio = ratio > 1 ? ratio / 100 : ratio;
 
     if (normalizedRatio === 0) return "داده ناموجود";
-    if (normalizedRatio <= 0.2) return "کمتر روشن";
-    if (normalizedRatio <= 0.4) return "متوسط";
-    if (normalizedRatio <= 0.6) return "روشن";
-    if (normalizedRatio <= 0.8) return "بسیار روشن";
-    return "کاملاً روشن";
+    if (normalizedRatio <= 0.2) return "روشنایی کافی";
+    if (normalizedRatio <= 0.4) return "روشنایی نسبتاً کافی";
+    if (normalizedRatio <= 0.6) return "روشنایی متوسط";
+    if (normalizedRatio <= 0.8) return "روشنایی ناکافی";
+    return "روشنایی بسیار ناکافی";
   };
 
   // Default center (Ahvaz coordinates)
@@ -506,36 +490,39 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <span>کمتر روشن (تصادفات شب بالا)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span>متوسط</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-            <span>روشن</span>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>روشنایی کافی (۰-۲۰٪)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-lime-500 rounded-full"></div>
-            <span>بسیار روشن</span>
+            <span>روشنایی نسبتاً کافی (۲۰-۴۰٪)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>کاملاً روشن (تصادفات روز بالا)</span>
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <span>روشنایی متوسط (۴۰-۶۰٪)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+            <span>روشنایی ناکافی (۶۰-۸۰٪)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span>روشنایی بسیار ناکافی (۸۰-۱۰۰٪)</span>
           </div>
         </div>
         <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800 leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نقشه کوروپلث:</p>
-          <p>این نقشه مناطق شهری را بر اساس نسبت تصادفات روز به کل تصادفات رنگ‌بندی می‌کند:</p>
+          <p>این نقشه مناطق شهری را بر اساس نسبت تصادفات شبانه با روشنایی ناکافی به کل تصادفات شبانه رنگ‌بندی می‌کند:</p>
+          <div className="mt-2 mb-2 p-2 bg-white/50 rounded text-center font-mono text-blue-900" dir="ltr">
+            نسبت نور ناکافی = <span className="text-red-600">شب با نور ناکافی</span> ÷ (<span className="text-red-600">شب با نور ناکافی</span> + <span className="text-green-600">شب با نور کافی</span>)
+          </div>
           <ul className="list-disc list-inside mt-1 space-y-0.5">
-            <li>مناطق قرمز = نسبت پایین تصادفات روز (اکثر تصادفات در شب رخ می‌دهد)</li>
-            <li>مناطق سبز = نسبت بالا تصادفات روز (اکثر تصادفات در روز رخ می‌دهد)</li>
-            <li>هرچه منطقه قرمزتر باشد، احتمال ضعف روشنایی بیشتر است</li>
-            <li>هرچه منطقه سبزتر باشد، شرایط روشنایی بهتر است</li>
-            <li>مناطق قرمز نیاز به اولویت‌بندی برای بهبود روشنایی معابر دارند</li>
-            <li>کلیک روی هر منطقه جزئیات دقیق شامل تعداد تصادفات و نسبت روز را نمایش می‌دهد</li>
+            <li>مناطق سبز = درصد پایین تصادفات با روشنایی ناکافی (روشنایی مطلوب)</li>
+            <li>مناطق قرمز = درصد بالای تصادفات با روشنایی ناکافی (نیاز به بهبود)</li>
+            <li>هرچه منطقه قرمزتر باشد، وضعیت روشنایی معابر ضعیف‌تر است</li>
+            <li>هرچه منطقه سبزتر باشد، شرایط روشنایی معابر بهتر است</li>
+            <li>مناطق قرمز و نارنجی نیاز به اولویت‌بندی برای بهبود روشنایی معابر دارند</li>
+            <li>کلیک روی هر منطقه جزئیات دقیق شامل تعداد تصادفات با/بدون روشنایی کافی را نمایش می‌دهد</li>
             <li>نگه داشتن ماوس روی منطقه اطلاعات سریع را نشان می‌دهد</li>
           </ul>
         </div>
