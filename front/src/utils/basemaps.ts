@@ -31,7 +31,7 @@ export const BASEMAPS: Record<BasemapType, BasemapConfig> = {
     id: "neshan",
     name: "نقشه نشان",
     nameEn: "Neshan Map",
-    url: "https://tile.neshan.org/tile/{z}/{x}/{y}",
+    url: "https://api.neshan.org/v1/tiles/{z}/{x}/{y}.png",
     attribution: '&copy; <a href="https://neshan.org">نقشه نشان</a>',
   },
 };
@@ -55,7 +55,7 @@ export const getBasemapUrl = (type: BasemapType): string => {
       console.warn("NEXT_PUBLIC_NESHAN_API_KEY is not set, falling back to OSM");
       return BASEMAPS.osm.url;
     }
-    return `https://tile.neshan.org/tile/{z}/{x}/{y}?key=${apiKey}`;
+    return `https://api.neshan.org/v1/tiles/{z}/{x}/{y}.png?key=${apiKey}`;
   }
 
   return basemap.url;
