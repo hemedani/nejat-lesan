@@ -329,7 +329,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 	//    These mappings are based on Iranian traffic accident classification.
 	// =========================================================================
 	const singleVehicleTypes = [
-		"برخورد وسیله نقلیه با شیء ثابت",
+		"برخورد وسیله نقلیه با شی ثابت",
 		"واژگونی و سقوط",
 		"خروج از جاده",
 	];
