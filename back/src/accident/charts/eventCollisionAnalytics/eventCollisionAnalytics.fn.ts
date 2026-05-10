@@ -102,13 +102,13 @@
  * {
  *   analytics: {
  *     eventData: [
- *       { name: "برخورد وسیله نقلیه با شیء ثابت", share: 22.5 },
+ *       { name: "برخورد وسیله نقلیه با شی ثابت", share: 22.5 },
  *       { name: "واژگونی و سقوط", share: 18.3 },
  *       { name: "خروج از جاده", share: 15.7 },
  *       { name: "برخورد وسیله نقلیه با یک وسیله نقلیه", share: 43.5 }
  *     ],
  *     nonEventData: [
- *       { name: "برخورد وسیله نقلیه با شیء ثابت", share: 19.1 },
+ *       { name: "برخورد وسیله نقلیه با شی ثابت", share: 19.1 },
  *       { name: "واژگونی و سقوط", share: 14.6 },
  *       { name: "خروج از جاده", share: 12.0 },
  *       { name: "برخورد وسیله نقلیه با یک وسیله نقلیه", share: 54.3 }
@@ -138,7 +138,12 @@ export const eventCollisionAnalyticsFn: ActFn = async (body) => {
 		if (eventDoc && eventDoc.dates && Array.isArray(eventDoc.dates)) {
 			// Extract from/to pairs for eventDateRanges
 			eventDateRanges = eventDoc.dates.map(
-				(dateObj: { from: string; to: string }) => ({
+				(dateObj: {
+					from: string;
+					to: string;
+					startEntireRange: string;
+					endEntireRange: string;
+				}) => ({
 					from: dateObj.from,
 					to: dateObj.to,
 				}),
@@ -148,10 +153,10 @@ export const eventCollisionAnalyticsFn: ActFn = async (body) => {
 			if (eventDoc.dates.length > 0) {
 				// Find the minimum from and maximum to across all ranges
 				const startDates = eventDoc.dates.map((date) =>
-					moment(date.from).startOf("day").toDate()
+					moment(date.startEntireRange).startOf("day").toDate()
 				);
 				const endDates = eventDoc.dates.map((date) =>
-					moment(date.to).endOf("day").toDate()
+					moment(date.endEntireRange).endOf("day").toDate()
 				);
 
 				overallStartDate = new Date(
@@ -253,7 +258,7 @@ export const eventCollisionAnalyticsFn: ActFn = async (body) => {
 
 	// --- 3. Define Default Collision Types & Determine Which to Analyze ---
 	const defaultCollisionTypes = [
-		"برخورد وسیله نقلیه با شیء ثابت",
+		"برخورد وسیله نقلیه با شی ثابت",
 		"واژگونی و سقوط",
 		"خروج از جاده",
 		"برخورد وسیله نقلیه با یک وسیله نقلیه",
