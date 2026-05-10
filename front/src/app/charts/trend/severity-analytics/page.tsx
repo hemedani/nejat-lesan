@@ -205,8 +205,7 @@ const EventSeverityAnalyticsPage = () => {
       try {
         // Load initial analytics data
         loadInitialDataRef.current?.();
-      } catch (err) {
-        console.log(err);
+      } catch {
         setError(`خطا در بارگذاری داده‌های اولیه`);
       }
     };
@@ -286,8 +285,6 @@ const EventSeverityAnalyticsPage = () => {
             dates: 1,
           });
 
-          console.log({ eventResponse });
-
           if (eventResponse && eventResponse.success && eventResponse.body) {
             const event = eventResponse.body;
             if (event.dates && event.dates.length > 0) {
@@ -326,15 +323,10 @@ const EventSeverityAnalyticsPage = () => {
               await fetchData(appliedFilters, { from: "", to: "" }, eventId);
             }
           } else {
-            console.error(
-              "Failed to fetch event details:",
-              eventResponse?.error || "No response body",
-            );
             // Still attempt to fetch data with the event ID even if we couldn't get dates
             await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
           }
-        } catch (error) {
-          console.error("Error fetching event details:", error);
+        } catch {
           // Even if there's an error, try to fetch data with the event ID
           await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
         }
@@ -403,8 +395,7 @@ const EventSeverityAnalyticsPage = () => {
       } else {
         setError(result.error || "خطا در بارگذاری داده‌های تحلیل شدت رویداد");
       }
-    } catch (err) {
-      console.error("Error fetching data:", err);
+    } catch {
       setError("خطا در برقراری ارتباط با سرور");
     } finally {
       setIsLoading(false);

@@ -174,8 +174,7 @@ const EventCollisionAnalyticsPage = () => {
     const initializePage = async () => {
       try {
         loadInitialDataRef.current?.();
-      } catch (err) {
-        console.log(err);
+      } catch {
         setError(`خطا در بارگذاری داده‌های اولیه`);
       }
     };
@@ -245,8 +244,6 @@ const EventCollisionAnalyticsPage = () => {
             dates: 1,
           });
 
-          console.log({ eventResponse });
-
           if (eventResponse && eventResponse.success && eventResponse.body) {
             const event = eventResponse.body;
             if (event.dates && event.dates.length > 0) {
@@ -275,14 +272,9 @@ const EventCollisionAnalyticsPage = () => {
               await fetchData(appliedFilters, { from: "", to: "" }, eventId);
             }
           } else {
-            console.error(
-              "Failed to fetch event details:",
-              eventResponse?.error || "No response body",
-            );
             await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
           }
-        } catch (error) {
-          console.error("Error fetching event details:", error);
+        } catch {
           await fetchDataRef.current?.(appliedFilters, { from: "", to: "" }, eventId);
         }
       } else {
@@ -339,8 +331,7 @@ const EventCollisionAnalyticsPage = () => {
       } else {
         setError(result.error || "خطا در بارگذاری داده‌های تحلیل نحوه برخورد");
       }
-    } catch (err) {
-      console.error("Error fetching data:", err);
+    } catch {
       setError("خطا در برقراری ارتباط با سرور");
     } finally {
       setIsLoading(false);

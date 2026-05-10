@@ -2095,9 +2095,8 @@ export const CHART_SPECIFIC_FILTERS = {
   ] as EnabledFilters,
 
   // Trend Collision Analytics - For trend analysis of collision types
+  // Note: date range comes from the selected event, not sidebar filters
   TREND_COLLISION_ANALYTICS: [
-    "dateOfAccidentFrom",
-    "dateOfAccidentTo",
     "province",
     "city",
     "road",
@@ -2110,9 +2109,8 @@ export const CHART_SPECIFIC_FILTERS = {
   ] as EnabledFilters,
 
   // Trend Severity Analytics - For trend analysis of accident severity
+  // Note: date range comes from the selected event, not sidebar filters
   TREND_SEVERITY_ANALYTICS: [
-    "dateOfAccidentFrom",
-    "dateOfAccidentTo",
     "province",
     "city",
     "road",
@@ -2235,26 +2233,11 @@ export const getEnabledFiltersForChartWithPermissions = (
   // For example: "HOURLY_DAY_OF_WEEK_ANALYTICS" becomes "hourlyDayOfWeekAnalytics"
   const camelCaseChartType = convertToCamelCase(chartType);
 
-  console.log(
-    `Getting enabled filters for chart type: ${chartType} (camelCase: ${camelCaseChartType})`,
-  );
-  console.log(
-    "Available charts in enterprise settings:",
-    Object.keys(enterpriseSettings.availableCharts || {}),
-  );
-
   // Get the specific chart permissions
   const chartPermissions = enterpriseSettings.availableCharts[camelCaseChartType];
 
-  console.log(`Permissions for ${camelCaseChartType}:`, chartPermissions);
-
   // If no specific permissions for this chart, return all filters for the chart type
   if (!chartPermissions) {
-    console.log(`No permissions found for chart: ${camelCaseChartType}`);
-    console.log(
-      `Checking if key exists in availableCharts:`,
-      camelCaseChartType in (enterpriseSettings.availableCharts || {}),
-    );
     return CHART_SPECIFIC_FILTERS[chartType];
   }
 
