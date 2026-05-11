@@ -47,7 +47,7 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	const baseFilter: Document = {
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 		"light_status.name": {
-			$in: ["شب با روشنایی کافی", "شب با نور ناکافی"],
+			$in: ["شب با نور کافی", "شب با نور ناکافی"],
 		},
 	};
 
@@ -362,15 +362,15 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	const unlitMap = new Map<string, number>();
 
 	for (const r of dbResults) {
-		const dateStr = `${r._id.year}-${
-			String(r._id.month).padStart(2, "0")
-		}-${String(r._id.day).padStart(2, "0")}`;
-		const m = moment(dateStr, "YYYY-MM-DD");
+		const m = moment(
+			`${r._id.year}-${String(r._id.month).padStart(2, "0")}-01`,
+			"YYYY-MM-DD",
+		);
 		const jalaliKey = `${m.jYear()}-${
 			String(m.jMonth() + 1).padStart(2, "0")
 		}`;
 
-		if (r._id.lightStatus === "شب با روشنایی کافی") {
+		if (r._id.lightStatus === "شب با نور کافی") {
 			litMap.set(jalaliKey, (litMap.get(jalaliKey) || 0) + r.count);
 		} else if (r._id.lightStatus === "شب با نور ناکافی") {
 			unlitMap.set(jalaliKey, (unlitMap.get(jalaliKey) || 0) + r.count);
@@ -403,7 +403,7 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 		analytics: {
 			categories,
 			series: [
-				{ name: "شب با روشنایی کافی", data: litData },
+				{ name: "شب با نور کافی", data: litData },
 				{ name: "شب با نور ناکافی", data: unlitData },
 			],
 		},
