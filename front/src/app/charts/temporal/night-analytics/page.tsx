@@ -65,11 +65,11 @@ const TemporalNightAnalyticsPage = () => {
       ],
       series: [
         {
-          name: "شب با روشنایی کافی",
+          name: "شب با نور کافی",
           data: [120, 145, 98, 187, 234, 267, 298, 256, 189, 167, 134, 112],
         },
         {
-          name: "شب بدون روشنایی کافی",
+          name: "شب با نور ناکافی",
           data: [89, 112, 145, 198, 267, 234, 189, 212, 178, 134, 123, 98],
         },
       ],
@@ -705,8 +705,8 @@ const TemporalNightAnalyticsPage = () => {
   const getStatistics = () => {
     if (!chartData || !chartData.series || chartData.series.length === 0) return null;
 
-    const wellLitSeries = chartData.series.find((s) => s.name.includes("با روشنایی کافی"));
-    const poorlyLitSeries = chartData.series.find((s) => s.name.includes("بدون روشنایی کافی"));
+    const wellLitSeries = chartData.series.find((s) => s.name.includes("نور کافی"));
+    const poorlyLitSeries = chartData.series.find((s) => s.name.includes("نور ناکافی"));
 
     const wellLitTotal = wellLitSeries ? wellLitSeries.data.reduce((sum, val) => sum + val, 0) : 0;
     const poorlyLitTotal = poorlyLitSeries
@@ -1058,57 +1058,6 @@ const TemporalNightAnalyticsPage = () => {
                         {stats.poorlyLitMax.toLocaleString("fa-IR")} ({stats.poorlyLitMaxPeriod})
                       </span>
                     </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Safety Recommendations */}
-            {chartData && stats && (
-              <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-6">
-                <h3 className="font-medium text-orange-900 mb-4 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-orange-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 15.5c-.77.833.192 2.5 1.732 2.5z"
-                    />
-                  </svg>
-                  توصیه‌های ایمنی
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div className="bg-white bg-opacity-50 rounded-lg p-4">
-                    <h4 className="font-medium text-orange-800 mb-2">تحلیل وضعیت</h4>
-                    <ul className="space-y-1 text-orange-700">
-                      {stats.poorlyLitPercentage > stats.wellLitPercentage ? (
-                        <>
-                          <li>• تصادفات در نبود روشنایی کافی بیشتر است</li>
-                          <li>• نیاز فوری به بهبود روشنایی معابر</li>
-                          <li>• اولویت‌بندی مناطق پرخطر</li>
-                        </>
-                      ) : (
-                        <>
-                          <li>• تصادفات در حضور روشنایی کافی بیشتر است</li>
-                          <li>• بررسی عوامل دیگر مؤثر در تصادفات</li>
-                          <li>• توجه به سرعت و رفتار رانندگان</li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
-                  <div className="bg-white bg-opacity-50 rounded-lg p-4">
-                    <h4 className="font-medium text-orange-800 mb-2">اقدامات پیشنهادی</h4>
-                    <ul className="space-y-1 text-orange-700">
-                      <li>• نصب و بهبود روشنایی معابر</li>
-                      <li>• آموزش ایمنی رانندگی شبانه</li>
-                      <li>• نظارت بیشتر در ساعات شب</li>
-                      <li>• بهبود علائم ترافیکی با قابلیت بازتاب</li>
-                    </ul>
                   </div>
                 </div>
               </div>

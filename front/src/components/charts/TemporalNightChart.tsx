@@ -216,10 +216,10 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
   }, 0);
 
   const wellLitSeries = data.series.find((s) =>
-    s.name.includes("با روشنایی کافی"),
+    s.name.includes("نور کافی"),
   );
   const poorlyLitSeries = data.series.find((s) =>
-    s.name.includes("بدون روشنایی کافی"),
+    s.name.includes("نور ناکافی"),
   );
 
   const wellLitTotal = wellLitSeries
