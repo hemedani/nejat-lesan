@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 
-// Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface SpatialLightBarChartProps {
@@ -17,19 +16,65 @@ interface SpatialLightBarChartProps {
   isLoading: boolean;
 }
 
+const COLORS = [
+  "#F59E0B",
+  "#3B82F6",
+  "#1E40AF",
+  "#F97316",
+  "#DC2626",
+  "#8B5CF6",
+  "#10B981",
+];
+
+const sortData = (
+  categories: string[],
+  series: Array<{ name: string; data: number[] }>,
+  visible: Set<number>,
+) => {
+  const totals = categories.map((_, ci) => {
+    let t = 0;
+    for (let si = 0; si < series.length; si++) if (visible.has(si)) t += series[si].data[ci];
+    return t;
+  });
+  const order = totals
+    .map((t, i) => ({ t, i }))
+    .sort((a, b) => b.t - a.t)
+    .map((x) => x.i);
+  return {
+    categories: order.map((i) => categories[i]),
+    series: series.map((s) => ({ name: s.name, data: order.map((i) => s.data[i]) })),
+  };
+};
+
 const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoading }) => {
+  const [hidden, setHidden] = useState<Set<number>>(new Set());
+
+  const displayData = useMemo(() => {
+    if (!data || !data.categories || !data.series) return data;
+    const filtered = data.series.filter((_, i) => !hidden.has(i));
+    if (filtered.length === 0) return { categories: data.categories, series: [] };
+    return sortData(data.categories, filtered, new Set(filtered.map((_, i) => i)));
+  }, [data, hidden]);
+
+  const seriesColors = useMemo(() => {
+    if (!data) return COLORS;
+    const visible = data.series.map((_, i) => i).filter((i) => !hidden.has(i));
+    if (visible.length === 0) return COLORS;
+    return visible.map((i) => COLORS[i % COLORS.length]);
+  }, [data, hidden]);
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4" />
+          <div className="h-64 bg-gray-200 rounded" />
         </div>
       </div>
     );
   }
 
-  if (!data || !data.categories || !data.series) {
+  if (!displayData || !displayData.categories || !displayData.series) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -60,63 +105,41 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
         },
       },
       fontFamily: "inherit",
+      animations: {
+        enabled: true,
+        easing: "easeout" as const,
+        speed: 500,
+        dynamicAnimation: { enabled: true, speed: 400 },
+      },
     },
     plotOptions: {
       bar: {
         horizontal: false,
-        dataLabels: {
-          total: {
-            enabled: true,
-            style: {
-              fontSize: "12px",
-              fontWeight: 600,
-            },
-          },
-        },
+        dataLabels: { total: { enabled: true, style: { fontSize: "12px", fontWeight: 600 } } },
       },
     },
-    dataLabels: {
-      enabled: false,
-    },
+    dataLabels: { enabled: false },
     xaxis: {
-      categories: data.categories || [],
-      labels: {
-        style: {
-          fontSize: "12px",
-        },
-      },
+      categories: displayData.categories,
+      labels: { style: { fontSize: "12px" } },
     },
     yaxis: {
-      title: {
-        text: "تعداد تصادفات",
-        style: {
-          fontSize: "14px",
-          fontWeight: 600,
-        },
-      },
+      title: { text: "تعداد تصادفات", style: { fontSize: "14px", fontWeight: 600 } },
     },
-    legend: {
-      position: "top" as const,
-      horizontalAlign: "center" as const,
-      fontSize: "12px",
-    },
-    fill: {
-      opacity: 1,
-    },
-    colors: ["#F59E0B", "#3B82F6", "#1E40AF", "#F97316", "#DC2626", "#8B5CF6", "#10B981"],
-    grid: {
-      show: true,
-      borderColor: "#e5e7eb",
-      strokeDashArray: 0,
-      position: "back" as const,
-    },
-    tooltip: {
-      y: {
-        formatter: function (val: number) {
-          return val + " تصادف";
-        },
-      },
-    },
+    legend: { show: false },
+    fill: { opacity: 1 },
+    colors: seriesColors,
+    grid: { show: true, borderColor: "#e5e7eb", strokeDashArray: 0, position: "back" as const },
+    tooltip: { y: { formatter: (val: number) => val + " تصادف" } },
+  };
+
+  const handleToggle = (index: number) => {
+    setHidden((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
   };
 
   return (
@@ -135,18 +158,43 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
         </div>
       </div>
 
-      <div className="mt-4">
-        <Chart options={chartOptions} series={data.series} type="bar" height={350} />
+      <div className="flex justify-center gap-2 flex-wrap mb-4">
+        {data?.series.map((s, i) => {
+          const vis = !hidden.has(i);
+          const c = COLORS[i % COLORS.length];
+          return (
+            <button
+              key={s.name}
+              onClick={() => handleToggle(i)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 select-none ${
+                vis
+                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
+                  : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+              }`}
+            >
+              <span
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${vis ? "" : "opacity-30"}`}
+                style={{ backgroundColor: c }}
+              />
+              <span className={vis ? "" : "line-through opacity-50"}>{s.name}</span>
+              {!vis && (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Chart Analysis Guide */}
+      <div className="mt-4">
+        <Chart options={chartOptions} series={displayData.series} type="bar" height={350} />
+      </div>
+
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="bg-amber-50 rounded-lg p-3 text-xs text-amber-800 leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نمودار ستونی:</p>
-          <p>
-            این نمودار تعداد تصادفات را بر اساس وضعیت روشنایی (روز، شب، طلوع و غروب آفتاب) در هر منطقه
-            نشان می‌دهد:
-          </p>
+          <p>این نمودار تعداد تصادفات را بر اساس وضعیت روشنایی (روز، شب، طلوع و غروب آفتاب) در هر منطقه نشان می‌دهد:</p>
           <ul className="list-disc list-inside mt-1 space-y-0.5">
             <li>ستون‌های زرد بلند = تصادفات روز بالا (مناطق با روشنایی کافی و شرایط ایمن)</li>
             <li>ستون‌های آبی تیره بلند = تصادفات شب بالا (نیازمند بهبود روشنایی معابر)</li>
@@ -154,9 +202,7 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
             <li>ستون‌های قرمز بلند = تصادفات غروب آفتاب بالا (خطر گذار از روز به شب)</li>
             <li>مقایسه سهم هر وضعیت روشنایی بین مناطق برای اولویت‌بندی بهبود زیرساخت</li>
             <li>مناطقی با نسبت بالا تصادفات شب نیاز به نصب یا تعمیر چراغ‌های خیابانی دارند</li>
-            <li>
-              مناطقی با نسبت بالا تصادفات طلوع/غروب ممکن است نیاز به علائم هشدار دهنده داشته باشند
-            </li>
+            <li>مناطقی با نسبت بالا تصادفات طلوع/غروب ممکن است نیاز به علائم هشدار دهنده داشته باشند</li>
           </ul>
         </div>
       </div>
