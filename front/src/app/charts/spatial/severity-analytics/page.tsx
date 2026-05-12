@@ -418,14 +418,11 @@ const SpatialSeverityAnalyticsPage = () => {
         },
       };
 
-      // Get the city name for GeoJSON (only if city is selected)
-      const selectedCity = filters.city && filters.city.length > 0 ? filters.city[0] : null;
-
-      // Run API calls (conditionally fetch GeoJSON if city is selected)
+      // Run API calls (conditionally fetch GeoJSON if city IDs available)
       const [analyticsResponse, geoJsonResponse] = await Promise.all([
         spatialSeverityAnalytics(requestDetails),
-        selectedCity
-          ? getCityZonesGeoJSON(selectedCity)
+        filters.city && filters.city.length > 0
+          ? getCityZonesGeoJSON(filters.city)
           : Promise.resolve({ success: false, body: null }),
       ]);
 
