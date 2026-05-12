@@ -439,9 +439,12 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       return null;
     }
 
+    const latPadding = (maxLat - minLat) * 0.1;
+    const lngPadding = (maxLng - minLng) * 0.1;
+
     return [
-      [minLat, minLng],
-      [maxLat, maxLng],
+      [minLat - latPadding, minLng - lngPadding],
+      [maxLat + latPadding, maxLng + lngPadding],
     ] as [[number, number], [number, number]];
   }, [geoJsonData]);
 
