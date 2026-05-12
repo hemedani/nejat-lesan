@@ -510,16 +510,16 @@ interface SpatialCollisionAnalyticsResponse {
           const filteredBarChart = analytics.barChart;
 
           const totalByZone: Record<string, number> = {};
-          totalBarChart.categories.forEach((zone, idx) => {
+          totalBarChart.categories.forEach((zone: string, idx: number) => {
             totalByZone[zone] = totalBarChart.series.reduce(
-              (sum, s) => sum + (s.data[idx] || 0),
+              (sum: number, s: { data: number[] }) => sum + (s.data[idx] || 0),
               0,
             );
           });
 
-          const correctedMapChart = filteredBarChart.categories.map((zone, idx) => {
+          const correctedMapChart = filteredBarChart.categories.map((zone: string, idx: number) => {
             const filteredTotal = filteredBarChart.series.reduce(
-              (sum, s) => sum + (s.data[idx] || 0),
+              (sum: number, s: { data: number[] }) => sum + (s.data[idx] || 0),
               0,
             );
             const total = totalByZone[zone] || 0;
