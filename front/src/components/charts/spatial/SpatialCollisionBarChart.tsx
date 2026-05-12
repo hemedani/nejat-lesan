@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 
 // Dynamically import ApexCharts to avoid SSR issues
@@ -19,10 +19,67 @@ interface SpatialCollisionBarChartProps {
   isLoading: boolean;
 }
 
+const COLORS = [
+  "#3B82F6",
+  "#10B981",
+  "#F59E0B",
+  "#EF4444",
+  "#8B5CF6",
+  "#06B6D4",
+  "#F97316",
+  "#84CC16",
+  "#EC4899",
+  "#6B7280",
+];
+
+const sortData = (
+  categories: string[],
+  series: Array<{ name: string; data: number[] }>,
+  visible: Set<number>,
+) => {
+  const totals = categories.map((_, ci) => {
+    let t = 0;
+    for (let si = 0; si < series.length; si++) if (visible.has(si)) t += series[si].data[ci];
+    return t;
+  });
+  const order = totals
+    .map((t, i) => ({ t, i }))
+    .sort((a, b) => b.t - a.t)
+    .map((x) => x.i);
+  return {
+    categories: order.map((i) => categories[i]),
+    series: series.map((s) => ({ name: s.name, data: order.map((i) => s.data[i]) })),
+  };
+};
+
 const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   data,
   isLoading,
 }) => {
+  const [hidden, setHidden] = useState<Set<number>>(new Set());
+
+  const displayData = useMemo(() => {
+    if (!data || !data.categories || !data.series) return data;
+    const filtered = data.series.filter((_, i) => !hidden.has(i));
+    if (filtered.length === 0) return { categories: data.categories, series: [] };
+    return sortData(data.categories, filtered, new Set(filtered.map((_, i) => i)));
+  }, [data, hidden]);
+
+  const seriesColors = useMemo(() => {
+    if (!data) return COLORS;
+    const visible = data.series.map((_, i) => i).filter((i) => !hidden.has(i));
+    if (visible.length === 0) return COLORS;
+    return visible.map((i) => COLORS[i % COLORS.length]);
+  }, [data, hidden]);
+
+  const handleToggle = (index: number) => {
+    setHidden((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
   // Loading state
   if (isLoading) {
     return (
@@ -42,7 +99,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   }
 
   // No data state
-  if (!data || !data.categories || data.categories.length === 0) {
+  if (!displayData || !displayData.categories || displayData.categories.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
@@ -78,8 +135,8 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   }
 
   // Calculate total accidents for each category
-  const totalAccidents = data.categories.map((_, index) => {
-    return data.series.reduce(
+  const totalAccidents = displayData.categories.map((_, index) => {
+    return displayData.series.reduce(
       (sum, series) => sum + (series.data[index] || 0),
       0,
     );
@@ -88,7 +145,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   // Find the category with most accidents
   const maxAccidents = Math.max(...totalAccidents);
   const maxIndex = totalAccidents.indexOf(maxAccidents);
-  const topZone = data.categories[maxIndex];
+  const topZone = displayData.categories[maxIndex];
 
   // ApexCharts configuration
   const chartOptions = {
@@ -131,7 +188,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       enabled: false,
     },
     xaxis: {
-      categories: data.categories,
+      categories: displayData.categories,
       labels: {
         style: {
           fontSize: "12px",
@@ -170,18 +227,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
         shape: "circle" as const,
       },
     },
-    colors: [
-      "#3B82F6", // Blue
-      "#10B981", // Green
-      "#F59E0B", // Yellow
-      "#EF4444", // Red
-      "#8B5CF6", // Purple
-      "#06B6D4", // Cyan
-      "#F97316", // Orange
-      "#84CC16", // Lime
-      "#EC4899", // Pink
-      "#6B7280", // Gray
-    ],
+    colors: seriesColors,
     tooltip: {
       y: {
         formatter: function (val: number) {
@@ -239,15 +285,45 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
             />
           </svg>
-          {data.categories.length} منطقه
+          {displayData.categories.length} منطقه
         </div>
+      </div>
+
+      {/* Legend Toggle Buttons */}
+      <div className="flex justify-center gap-2 flex-wrap mb-4">
+        {data?.series.map((s, i) => {
+          const vis = !hidden.has(i);
+          const c = COLORS[i % COLORS.length];
+          return (
+            <button
+              key={s.name}
+              onClick={() => handleToggle(i)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 select-none ${
+                vis
+                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
+                  : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+              }`}
+            >
+              <span
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${vis ? "" : "opacity-30"}`}
+                style={{ backgroundColor: c }}
+              />
+              <span className={vis ? "" : "line-through opacity-50"}>{s.name}</span>
+              {!vis && (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Chart */}
       <div className="h-96 mb-6">
         <Chart
           options={chartOptions}
-          series={data.series}
+          series={displayData.series}
           type="bar"
           height="100%"
         />
@@ -257,13 +333,13 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
         <div className="text-center">
           <div className="text-2xl font-bold text-blue-600 mb-1">
-            {data.categories.length}
+            {displayData.categories.length}
           </div>
           <div className="text-sm text-gray-600">مناطق بررسی شده</div>
         </div>
         <div className="text-center">
           <div className="text-2xl font-bold text-green-600 mb-1">
-            {data.series.length}
+            {displayData.series.length}
           </div>
           <div className="text-sm text-gray-600">نوع برخورد</div>
         </div>
