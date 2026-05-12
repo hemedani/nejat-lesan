@@ -472,8 +472,18 @@ interface SpatialCollisionAnalyticsResponse {
         ),
       );
 
-      // Run API calls (conditionally fetch GeoJSON if city IDs available)
-      const [analyticsResponse, geoJsonResponse] = await Promise.all([
+      // Run API calls (conditionally fetch GeoJSON and total unfiltered data)
+      const needsTotalData = !!(cleanedParams.collisionType || cleanedParams.accidentType);
+
+      const totalParams = needsTotalData
+        ? Object.fromEntries(
+            Object.entries(cleanedParams).filter(
+              ([key]) => key !== "collisionType" && key !== "accidentType"
+            )
+          )
+        : null;
+
+      const [analyticsResponse, geoJsonResponse, totalResponse] = await Promise.all([
         spatialCollisionAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
@@ -481,11 +491,51 @@ interface SpatialCollisionAnalyticsResponse {
         filters.city && filters.city.length > 0
           ? getCityZonesGeoJSON(filters.city)
           : Promise.resolve({ success: false, body: null }),
+        needsTotalData
+          ? spatialCollisionAnalytics({
+              set: totalParams as ReqType["main"]["accident"]["spatialCollisionAnalytics"]["set"],
+              get: { analytics: 1 },
+            })
+          : Promise.resolve(null),
       ]);
 
       // Handle analytics response
       if (analyticsResponse.success && analyticsResponse.body) {
-        setAnalyticsData(analyticsResponse.body.analytics);
+        const analytics = analyticsResponse.body.analytics;
+
+        // Per-zone ratio: (filtered collisions in zone) / (total collisions in zone)
+        // When collision type filters are active, fetch unfiltered totals for correct denominator
+        if (totalResponse?.success && totalResponse.body?.analytics?.barChart && analytics.barChart) {
+          const totalBarChart = totalResponse.body.analytics.barChart;
+          const filteredBarChart = analytics.barChart;
+
+          const totalByZone: Record<string, number> = {};
+          totalBarChart.categories.forEach((zone, idx) => {
+            totalByZone[zone] = totalBarChart.series.reduce(
+              (sum, s) => sum + (s.data[idx] || 0),
+              0,
+            );
+          });
+
+          const correctedMapChart = filteredBarChart.categories.map((zone, idx) => {
+            const filteredTotal = filteredBarChart.series.reduce(
+              (sum, s) => sum + (s.data[idx] || 0),
+              0,
+            );
+            const total = totalByZone[zone] || 0;
+            return {
+              name: zone,
+              ratio: total > 0 ? filteredTotal / total : 0,
+            };
+          });
+
+          setAnalyticsData({
+            barChart: analytics.barChart,
+            mapChart: correctedMapChart,
+          });
+        } else {
+          setAnalyticsData(analytics);
+        }
       } else {
         throw new Error("Failed to fetch analytics data");
       }
