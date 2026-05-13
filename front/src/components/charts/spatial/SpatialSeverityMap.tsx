@@ -51,8 +51,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   }, [mapData, geoJsonData]);
   // Color scale function: green (low) to yellow to red (high)
   const getColor = (ratio: number): string => {
-    if (ratio === 0) return "#E5E7EB"; // Gray for no data
-    if (ratio <= 0.2) return "#10B981"; // Green
+    if (ratio <= 0.2) return "#10B981"; // Green (0% severity included here)
     if (ratio <= 0.4) return "#84CC16"; // Light green
     if (ratio <= 0.6) return "#F59E0B"; // Yellow
     if (ratio <= 0.8) return "#F97316"; // Orange
@@ -117,10 +116,19 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       };
 
     const zoneData = findZoneData(zoneName);
-    const ratio = zoneData?.ratio || 0;
+    if (!zoneData) {
+      return {
+        fillColor: "#E5E7EB",
+        weight: 2,
+        opacity: 1,
+        color: "#6B7280",
+        dashArray: "",
+        fillOpacity: 0.7,
+      };
+    }
 
     return {
-      fillColor: getColor(ratio),
+      fillColor: getColor(zoneData.ratio),
       weight: 2,
       opacity: 1,
       color: "#6B7280",
@@ -196,7 +204,6 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 
   // Get risk level text based on ratio
   const getRiskLevel = (ratio: number): string => {
-    if (ratio === 0) return "داده ناموجود";
     if (ratio <= 0.2) return "کم";
     if (ratio <= 0.4) return "متوسط";
     if (ratio <= 0.6) return "بالا";
@@ -352,24 +359,28 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 
       {/* Color Legend */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-sm font-medium text-gray-900">راهنمای رنگ‌ها</h4>
-          <span className="text-xs text-gray-500">نسبت شدت تصادفات</span>
-        </div>
-        <div className="flex items-center gap-1 text-xs">
-          <div className="flex items-center gap-1">
-            <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span>کم</span>
+        <h4 className="text-sm font-medium text-gray-900 mb-3">راهنمای رنگ‌ها</h4>
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#10B981" }}></div>
+            <span>خطر کم (۰-۲۰٪)</span>
           </div>
-          <div className="flex-1 h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded mx-2"></div>
-          <div className="flex items-center gap-1">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span>بالا</span>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#84CC16" }}></div>
+            <span>خطر متوسط (۲۰-۴۰٪)</span>
           </div>
-        </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>0%</span>
-          <span>100%</span>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F59E0B" }}></div>
+            <span>خطر بالا (۴۰-۶۰٪)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F97316" }}></div>
+            <span>خطر بسیار بالا (۶۰-۸۰٪)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#EF4444" }}></div>
+            <span>خطر بحرانی (۸۰-۱۰۰٪)</span>
+          </div>
         </div>
       </div>
 

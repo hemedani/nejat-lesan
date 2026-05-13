@@ -209,6 +209,8 @@ const SpatialSeverityAnalyticsPage = () => {
     setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
+    setAnalyticsData(null);
+    setGeoJsonData(null);
 
     try {
       // Build the payload dynamically, only including enabled filters
@@ -410,17 +412,19 @@ const SpatialSeverityAnalyticsPage = () => {
       const completeFilterPayload =
         filterPayload as ReqType["main"]["accident"]["spatialSeverityAnalytics"]["set"];
 
-      // Prepare request details for spatialSeverityAnalytics
-      const requestDetails: ReqType["main"]["accident"]["spatialSeverityAnalytics"] = {
-        set: completeFilterPayload,
-        get: {
-          analytics: 1,
-        },
-      };
+      // Remove undefined values and empty arrays
+      const cleanedParams = Object.fromEntries(
+        Object.entries(completeFilterPayload).filter(
+          ([, value]) => value !== undefined && (!Array.isArray(value) || value.length > 0),
+        ),
+      );
 
       // Run API calls (conditionally fetch GeoJSON if city IDs available)
       const [analyticsResponse, geoJsonResponse] = await Promise.all([
-        spatialSeverityAnalytics(requestDetails),
+        spatialSeverityAnalytics({
+          set: cleanedParams,
+          get: { analytics: 1 },
+        }),
         filters.city && filters.city.length > 0
           ? getCityZonesGeoJSON(filters.city)
           : Promise.resolve({ success: false, body: null }),
@@ -429,46 +433,61 @@ const SpatialSeverityAnalyticsPage = () => {
       // Handle analytics response
       if (analyticsResponse.success && analyticsResponse.body) {
         // Transform the response to fix the data structure for ApexCharts
-        const transformedAnalytics = {
+        const barSeries = analyticsResponse.body.analytics.barChart.series.map(
+          (seriesItem: {
+            name: string;
+            data?: number[];
+            fatalData?: number[];
+            injuryData?: number[];
+            damageData?: number[];
+          }) => ({
+            name: seriesItem.name,
+            data:
+              seriesItem.data ||
+              seriesItem.fatalData ||
+              seriesItem.injuryData ||
+              seriesItem.damageData ||
+              [],
+          }),
+        );
+        const categories = analyticsResponse.body.analytics.barChart.categories;
+
+        // Compute severity ratio from bar chart data: dead / (dead + injured)
+        const fatalSeries = barSeries.find((s) => s.name.includes("فوت"));
+        const injurySeries = barSeries.find((s) => s.name.includes("جرح"));
+        let mapChart: Array<{ zoneId: string; zoneName: string; ratio: number }> = [];
+
+        if (fatalSeries && injurySeries && categories) {
+          mapChart = categories.map((zoneName: string, idx: number) => {
+            const fatal = fatalSeries.data[idx] || 0;
+            const injury = injurySeries.data[idx] || 0;
+            const total = fatal + injury;
+            return {
+              zoneId: String(idx),
+              zoneName,
+              ratio: total > 0 ? fatal / total : 0,
+            };
+          });
+        }
+
+        setAnalyticsData({
           barChart: {
-            categories: analyticsResponse.body.analytics.barChart.categories,
-            series: analyticsResponse.body.analytics.barChart.series.map(
-              (seriesItem: {
-                name: string;
-                data?: number[];
-                fatalData?: number[];
-                injuryData?: number[];
-                damageData?: number[];
-              }) => ({
-                name: seriesItem.name,
-                // Use the appropriate data array based on the series name
-                data:
-                  seriesItem.data ||
-                  seriesItem.fatalData ||
-                  seriesItem.injuryData ||
-                  seriesItem.damageData ||
-                  [],
-              }),
-            ),
+            categories,
+            series: barSeries,
           },
-          mapChart: analyticsResponse.body.analytics.mapChart.filter(
-            (item: { zoneId: string; zoneName: string; ratio: number }) =>
-              item && item.zoneName && typeof item.zoneName === "string",
-          ),
-        };
-        setAnalyticsData(transformedAnalytics);
+          mapChart,
+        });
       } else {
         throw new Error("Failed to fetch analytics data");
       }
 
       // Handle GeoJSON response
       if (geoJsonResponse.success && geoJsonResponse.body) {
-        setGeoJsonData(geoJsonResponse.body);
+        setGeoJsonData({
+          type: "FeatureCollection",
+          features: geoJsonResponse.body.features || [],
+        });
       } else {
-        const errorMsg = !geoJsonResponse.success
-          ? (geoJsonResponse as { success: false; error: string }).error
-          : "No data returned";
-        console.warn("Failed to fetch GeoJSON data:", errorMsg);
         setGeoJsonData(null);
       }
     } catch (err) {
@@ -574,110 +593,6 @@ const SpatialSeverityAnalyticsPage = () => {
             />
           </div>
 
-          {/* Insights Section */}
-          {analyticsData && !isLoading && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های کلیدی</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">کل مناطق بررسی شده</h4>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {analyticsData.barChart?.categories?.length || 0}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-red-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با تصادفات شدید بالا</h4>
-                  <p className="text-2xl font-bold text-red-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.6).length || 0}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-orange-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با شدت متوسط</h4>
-                  <p className="text-2xl font-bold text-orange-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.3 && zone.ratio <= 0.6)
-                      .length || 0}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با تصادفات خفیف بالا</h4>
-                  <p className="text-2xl font-bold text-green-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio <= 0.3).length || 0}
-                  </p>
-                </div>
-              </div>
-
-              {/* Additional insights */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="bg-red-50 rounded-lg p-4">
-                  <h4 className="font-medium text-red-900 mb-2">📊 تحلیل شدت تصادفات</h4>
-                  <p className="text-sm text-red-800">
-                    این نمودار نسبت شدت تصادفات را در مناطق مختلف شهر نشان می‌دهد. مناطق با نسبت بالا
-                    تصادفات شدید، نیاز فوری به اقدامات ایمنی و بهبود زیرساخت‌های جاده‌ای دارند.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
