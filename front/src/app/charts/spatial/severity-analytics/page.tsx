@@ -453,8 +453,8 @@ const SpatialSeverityAnalyticsPage = () => {
         const categories = analyticsResponse.body.analytics.barChart.categories;
 
         // Compute severity ratio from bar chart data: dead / (dead + injured)
-        const fatalSeries = barSeries.find((s) => s.name.includes("فوت"));
-        const injurySeries = barSeries.find((s) => s.name.includes("جرح"));
+        const fatalSeries = barSeries.find((s: { name: string }) => s.name.includes("فوت"));
+        const injurySeries = barSeries.find((s: { name: string }) => s.name.includes("جرح"));
         let mapChart: Array<{ zoneId: string; zoneName: string; ratio: number }> = [];
 
         if (fatalSeries && injurySeries && categories) {
