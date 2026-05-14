@@ -3,9 +3,11 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { MapComparisonProvider } from "@/context/MapComparisonContext";
 import { BasemapProvider } from "@/context/BasemapContext";
+import { GlobalChartFiltersProvider } from "@/context/GlobalChartFiltersContext";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/organisms/Navbar";
 import { Footer } from "@/components/organisms/NewFooter";
+import GlobalFiltersBarWrapper from "@/components/dashboards/GlobalFiltersBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,12 +25,15 @@ export default async function RootLayout({
         <BasemapProvider>
           <MapComparisonProvider>
             <AuthProvider>
-              <div className="min-h-screen flex flex-col bg-slate-950">
-                <Navbar />
-                <div className="flex-1 mt-16">{children}</div>
-                <Footer />
-              </div>
-              <Toaster position="top-center" reverseOrder={false} />
+              <GlobalChartFiltersProvider>
+                <div className="min-h-screen flex flex-col bg-slate-950">
+                  <Navbar />
+                  <div className="flex-1 mt-16">{children}</div>
+                  <Footer />
+                </div>
+                <GlobalFiltersBarWrapper />
+                <Toaster position="top-center" reverseOrder={false} />
+              </GlobalChartFiltersProvider>
             </AuthProvider>
           </MapComparisonProvider>
         </BasemapProvider>
