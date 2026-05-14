@@ -212,14 +212,14 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
   };
 
   // Syncs map bounds with geoJsonData changes
+  // Calls fitBounds whenever geoJsonData updates (including on mount with data),
+  // fixing the bug where city changes didn't zoom the map to the new city boundaries.
+  // Previously relied on a prevGeoJsonDataRef that always matched on mount, skipping the call.
   const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
     const map = useMap();
-    const prevGeoJsonDataRef = React.useRef<GeoJsonData | null>(geoJsonData);
 
     React.useEffect(() => {
-      if (geoJsonData === prevGeoJsonDataRef.current) return;
-      prevGeoJsonDataRef.current = geoJsonData;
-
+      if (!geoJsonData) return;
       const bounds = getBounds(geoJsonData);
       if (bounds) {
         map.fitBounds(bounds, { padding: [20, 20] });

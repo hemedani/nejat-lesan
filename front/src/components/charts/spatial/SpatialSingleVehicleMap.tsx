@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useMap } from "react-leaflet";
 
 const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
@@ -197,6 +198,43 @@ const SpatialSingleVehicleMap: React.FC<SpatialSingleVehicleMapProps> = ({
         }
       },
     });
+  };
+
+  // Syncs map bounds with geoJsonData changes
+  const FitBoundsOnGeoJsonChange = ({ geoJsonData: data }: { geoJsonData: unknown }) => {
+    const map = useMap();
+
+    React.useEffect(() => {
+      const features = data && typeof data === "object" && "features" in data
+        ? (data as { features: unknown }).features
+        : null;
+      if (!features || !Array.isArray(features) || features.length === 0) return;
+
+      let minLat = Infinity, maxLat = -Infinity;
+      let minLng = Infinity, maxLng = -Infinity;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      features.forEach((feature: any) => {
+        if (!feature?.geometry?.coordinates) return;
+        const flatCoords = feature.geometry.coordinates.flat(3);
+        for (let i = 0; i < flatCoords.length; i += 2) {
+          const lng = flatCoords[i];
+          const lat = flatCoords[i + 1];
+          if (typeof lng === "number" && typeof lat === "number") {
+            minLat = Math.min(minLat, lat);
+            maxLat = Math.max(maxLat, lat);
+            minLng = Math.min(minLng, lng);
+            maxLng = Math.max(maxLng, lng);
+          }
+        }
+      });
+
+      if (minLat !== Infinity && maxLat !== -Infinity && minLng !== Infinity && maxLng !== -Infinity) {
+        map.fitBounds([[minLat, minLng], [maxLat, maxLng]], { padding: [20, 20] });
+      }
+    }, [data, map]);
+
+    return null;
   };
 
   // Default center (Ahvaz coordinates)
@@ -398,6 +436,7 @@ const SpatialSingleVehicleMap: React.FC<SpatialSingleVehicleMapProps> = ({
             <div className="absolute top-4 left-4 z-[1000]">
               <BasemapSelector />
             </div>
+            <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
 
             {/* Custom positioned zoom control */}
             <ZoomControl position="topright" />

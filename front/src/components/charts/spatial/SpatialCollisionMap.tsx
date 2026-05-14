@@ -337,14 +337,12 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   };
 
   // Syncs map bounds with geoJsonData changes
+  // Calls fitBounds whenever geoJsonData updates (including on mount with data),
+  // fixing the bug where city changes didn't zoom the map to the new city boundaries.
   const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
     const map = useMap();
-    const prevGeoJsonDataRef = React.useRef(geoJsonData);
 
     React.useEffect(() => {
-      if (geoJsonData === prevGeoJsonDataRef.current) return;
-      prevGeoJsonDataRef.current = geoJsonData;
-
       if (!geoJsonData || !geoJsonData.features) return;
 
       // Calculate bounds from features
