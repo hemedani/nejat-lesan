@@ -19,6 +19,7 @@ interface InputProps<Option, Group extends GroupBase<Option>, T extends FieldVal
   loadOptions?: (inputValue: string, callback: (options: OptionsOrGroups<Option, Group>) => void) => Promise<OptionsOrGroups<Option, Group>> | void;
   defaultOptions?: OptionsOrGroups<Option, Group> | boolean;
   defaultValue?: PropsValue<Option>;
+  value?: PropsValue<Option>;
   className?: string;
 }
 
@@ -31,6 +32,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
   labelAsValue,
   defaultOptions,
   defaultValue,
+  value,
   className,
   placeholder
 }: InputProps<Option, Group, T>) => {
@@ -211,6 +213,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
           isMulti
           cacheOptions
           defaultValue={defaultValue}
+          value={value}
           loadOptions={loadOptions}
           defaultOptions={defaultOptions}
           onChange={(newVal) =>
@@ -224,7 +227,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
           name={name}
           placeholder={placeholder || `${label} را انتخاب کنید`}
           styles={customStyles}
-          noOptionsMessage={() => "گزینه‌ای یافت نشد"}
+          noOptionsMessage={() => "گزینه‌یافت نشد"}
           loadingMessage={() => "در حال بارگذاری..."}
           isRtl={true}
           className="react-select-container"

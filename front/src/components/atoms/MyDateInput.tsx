@@ -15,6 +15,7 @@ interface DateInputProps<T extends FieldValues = FieldValues> {
   placeholder?: string;
   disabled?: boolean;
   customShowDateFormat?: string;
+  portalZIndex?: number;
 }
 
 const MyDateInput = <T extends FieldValues = FieldValues>({
@@ -26,6 +27,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
   control,
   disabled = false,
   customShowDateFormat = "YYYY/MM/DD",
+  portalZIndex = 9999,
 }: DateInputProps<T>) => {
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
@@ -100,7 +102,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
                 "بهمن",
                 "اسفند",
               ]}
-              zIndex={9999}
+              zIndex={portalZIndex}
             />
             {value && !disabled && (
               <button
