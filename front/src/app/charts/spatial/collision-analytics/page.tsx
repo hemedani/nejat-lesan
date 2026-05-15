@@ -55,6 +55,16 @@ interface SpatialCollisionAnalyticsResponse {
   // Default filters
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false);
+  const [hiddenCollisionTypes, setHiddenCollisionTypes] = useState<Set<number>>(new Set());
+
+  const handleToggleCollisionType = (index: number) => {
+    setHiddenCollisionTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   // Load user data and set default city on component mount
   useEffect(() => {
@@ -472,18 +482,8 @@ interface SpatialCollisionAnalyticsResponse {
         ),
       );
 
-      // Run API calls (conditionally fetch GeoJSON and total unfiltered data)
-      const needsTotalData = !!(cleanedParams.collisionType || cleanedParams.accidentType);
-
-      const totalParams = needsTotalData
-        ? Object.fromEntries(
-            Object.entries(cleanedParams).filter(
-              ([key]) => key !== "collisionType" && key !== "accidentType"
-            )
-          )
-        : null;
-
-      const [analyticsResponse, geoJsonResponse, totalResponse] = await Promise.all([
+      // Run API calls (fetch analytics and GeoJSON)
+      const [analyticsResponse, geoJsonResponse] = await Promise.all([
         spatialCollisionAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
@@ -491,51 +491,11 @@ interface SpatialCollisionAnalyticsResponse {
         filters.city && filters.city.length > 0
           ? getCityZonesGeoJSON(filters.city)
           : Promise.resolve({ success: false, body: null }),
-        needsTotalData
-          ? spatialCollisionAnalytics({
-              set: totalParams as ReqType["main"]["accident"]["spatialCollisionAnalytics"]["set"],
-              get: { analytics: 1 },
-            })
-          : Promise.resolve(null),
       ]);
 
-      // Handle analytics response
+      // Handle analytics response — store barChart data; mapChart is derived via useMemo
       if (analyticsResponse.success && analyticsResponse.body) {
-        const analytics = analyticsResponse.body.analytics;
-
-        // Per-zone ratio: (filtered collisions in zone) / (total collisions in zone)
-        // When collision type filters are active, fetch unfiltered totals for correct denominator
-        if (totalResponse?.success && totalResponse.body?.analytics?.barChart && analytics.barChart) {
-          const totalBarChart = totalResponse.body.analytics.barChart;
-          const filteredBarChart = analytics.barChart;
-
-          const totalByZone: Record<string, number> = {};
-          totalBarChart.categories.forEach((zone: string, idx: number) => {
-            totalByZone[zone] = totalBarChart.series.reduce(
-              (sum: number, s: { data: number[] }) => sum + (s.data[idx] || 0),
-              0,
-            );
-          });
-
-          const correctedMapChart = filteredBarChart.categories.map((zone: string, idx: number) => {
-            const filteredTotal = filteredBarChart.series.reduce(
-              (sum: number, s: { data: number[] }) => sum + (s.data[idx] || 0),
-              0,
-            );
-            const total = totalByZone[zone] || 0;
-            return {
-              name: zone,
-              ratio: total > 0 ? filteredTotal / total : 0,
-            };
-          });
-
-          setAnalyticsData({
-            barChart: analytics.barChart,
-            mapChart: correctedMapChart,
-          });
-        } else {
-          setAnalyticsData(analytics);
-        }
+        setAnalyticsData(analyticsResponse.body.analytics);
       } else {
         throw new Error("Failed to fetch analytics data");
       }
@@ -557,6 +517,35 @@ interface SpatialCollisionAnalyticsResponse {
       setIsLoading(false);
     }
   };
+
+  // Derive map chart: ratio for each zone = sum of visible types in zone / grand total across all zones
+  const derivedMapChart = React.useMemo(() => {
+    if (!analyticsData?.barChart) return [];
+    const barChart = analyticsData.barChart;
+    const visibleSeries = barChart.series.filter((_, i) => !hiddenCollisionTypes.has(i));
+    if (visibleSeries.length === 0) {
+      return barChart.categories.map((name) => ({ name, ratio: 0 }));
+    }
+    const zoneTotals = barChart.categories.map((_, zi) => {
+      let total = 0;
+      for (const s of visibleSeries) total += s.data[zi] || 0;
+      return total;
+    });
+    const grandTotal = zoneTotals.reduce((a, b) => a + b, 0);
+    return barChart.categories.map((name, i) => ({
+      name,
+      ratio: grandTotal > 0 ? zoneTotals[i] / grandTotal : 0,
+    }));
+  }, [analyticsData?.barChart, hiddenCollisionTypes]);
+
+  // Visible barChart series for map popup consistency
+  const visibleBarChartData = React.useMemo(() => {
+    if (!analyticsData?.barChart) return null;
+    return {
+      categories: analyticsData.barChart.categories,
+      series: analyticsData.barChart.series.filter((_, i) => !hiddenCollisionTypes.has(i)),
+    };
+  }, [analyticsData?.barChart, hiddenCollisionTypes]);
 
   // Filter configuration
   const getFilterConfig = () => {
@@ -662,12 +651,14 @@ interface SpatialCollisionAnalyticsResponse {
             <SpatialCollisionBarChart
               data={analyticsData?.barChart || null}
               isLoading={isLoading}
+              hidden={hiddenCollisionTypes}
+              onToggle={handleToggleCollisionType}
             />
 
             {/* Map */}
             <SpatialCollisionMap
-              mapData={analyticsData?.mapChart || []}
-              barChartData={analyticsData?.barChart || null}
+              mapData={derivedMapChart}
+              barChartData={visibleBarChartData}
               geoJsonData={geoJsonData}
               isLoading={isLoading}
             />
@@ -746,7 +737,7 @@ interface SpatialCollisionAnalyticsResponse {
                     مناطق با نسبت بالا
                   </h4>
                   <p className="text-2xl font-bold text-red-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.6)
+                    {derivedMapChart.filter((zone) => zone.ratio > 0.1)
                       .length || 0}
                   </p>
                 </div>

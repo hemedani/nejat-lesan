@@ -392,7 +392,55 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   const loadPositionsOptions = createLoadOptions(getPositionsAction);
   const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
   const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
-  const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
+  // Group collision type options into categories for better UX
+  const COLLISION_TYPE_GROUPS = [
+    { label: 'تصادفات عابر پیاده', keywords: ['عابر', 'پیاده'] },
+    { label: 'موتورسیکلت و دوچرخه', keywords: ['موتور', 'دوچرخه'] },
+    { label: 'وسایل نقلیه', keywords: ['خودرو', 'سواری', 'کامیون', 'اتوبوس', 'مینی‌بوس', 'وانت', 'ماشین'] },
+  ];
+
+  const groupCollisionTypeOptions = (options: SelectOption[]): { label: string; options: SelectOption[] }[] => {
+    const grouped: Record<string, SelectOption[]> = {};
+    const ungrouped: SelectOption[] = [];
+    for (const opt of options) {
+      let matched = false;
+      for (const group of COLLISION_TYPE_GROUPS) {
+        if (group.keywords.some((kw) => opt.label.includes(kw))) {
+          if (!grouped[group.label]) grouped[group.label] = [];
+          grouped[group.label].push(opt);
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) ungrouped.push(opt);
+    }
+    const result: { label: string; options: SelectOption[] }[] = [];
+    for (const [label, items] of Object.entries(grouped)) {
+      result.push({ label, options: items });
+    }
+    if (ungrouped.length > 0) result.push({ label: 'سایر', options: ungrouped });
+    return result;
+  };
+
+  const loadCollisionTypesGrouped = async (inputValue?: string) => {
+    const setParams = { limit: 20, page: 1, ...(inputValue ? { name: inputValue } : {}) };
+    try {
+      const response = await getCollisionTypesAction({
+        set: setParams,
+        get: { _id: 1, name: 1 },
+      });
+      if (response && response.success) {
+        const options: SelectOption[] = response.body.map((item: { _id: string; name: string }) => ({
+          value: item.name,
+          label: item.name,
+        }));
+        return groupCollisionTypeOptions(options);
+      }
+    } catch (error) {
+      console.error("Error loading options:", error);
+    }
+    return [];
+  };
   const loadRoadSituationsOptions = createLoadOptions(getRoadSituationsAction);
   const loadRoadRepairTypesOptions = createLoadOptions(getRoadRepairTypesAction);
   const loadShoulderStatusesOptions = createLoadOptions(getShoulderStatusesAction);
@@ -625,7 +673,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   name="collisionType"
                   label="نوع برخورد"
                   setValue={setValue}
-                  loadOptions={loadCollisionTypesOptions}
+                  loadOptions={loadCollisionTypesGrouped}
                   errMsg={errors.collisionType?.message}
                   placeholder="انتخاب نوع برخورد..."
                   defaultOptions

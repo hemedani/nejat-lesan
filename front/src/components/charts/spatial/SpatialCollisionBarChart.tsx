@@ -17,6 +17,8 @@ interface BarChartData {
 interface SpatialCollisionBarChartProps {
   data: BarChartData | null;
   isLoading: boolean;
+  hidden?: Set<number>;
+  onToggle?: (index: number) => void;
 }
 
 const COLORS = [
@@ -55,31 +57,38 @@ const sortData = (
 const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   data,
   isLoading,
+  hidden: externalHidden,
+  onToggle,
 }) => {
-  const [hidden, setHidden] = useState<Set<number>>(new Set());
+  const [internalHidden, setInternalHidden] = useState<Set<number>>(new Set());
+  const effectiveHidden = externalHidden ?? internalHidden;
+
+  const handleToggle = (index: number) => {
+    if (onToggle) {
+      onToggle(index);
+    } else {
+      setInternalHidden((prev) => {
+        const next = new Set(prev);
+        if (next.has(index)) next.delete(index);
+        else next.add(index);
+        return next;
+      });
+    }
+  };
 
   const displayData = useMemo(() => {
     if (!data || !data.categories || !data.series) return data;
-    const filtered = data.series.filter((_, i) => !hidden.has(i));
+    const filtered = data.series.filter((_, i) => !effectiveHidden.has(i));
     if (filtered.length === 0) return { categories: data.categories, series: [] };
     return sortData(data.categories, filtered, new Set(filtered.map((_, i) => i)));
-  }, [data, hidden]);
+  }, [data, effectiveHidden]);
 
   const seriesColors = useMemo(() => {
     if (!data) return COLORS;
-    const visible = data.series.map((_, i) => i).filter((i) => !hidden.has(i));
+    const visible = data.series.map((_, i) => i).filter((i) => !effectiveHidden.has(i));
     if (visible.length === 0) return COLORS;
     return visible.map((i) => COLORS[i % COLORS.length]);
-  }, [data, hidden]);
-
-  const handleToggle = (index: number) => {
-    setHidden((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
-      return next;
-    });
-  };
+  }, [data, effectiveHidden]);
   // Loading state
   if (isLoading) {
     return (
@@ -214,18 +223,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       },
     },
     legend: {
-      position: "top" as const,
-      horizontalAlign: "right" as const,
-      floating: false,
-      offsetY: -10,
-      labels: {
-        colors: "#374151",
-      },
-      markers: {
-        size: 6,
-        strokeWidth: 0,
-        shape: "circle" as const,
-      },
+      show: false,
     },
     colors: seriesColors,
     tooltip: {
@@ -250,9 +248,6 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
             bar: {
               columnWidth: "90%",
             },
-          },
-          legend: {
-            position: "bottom" as const,
           },
         },
       },
@@ -292,7 +287,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       {/* Legend Toggle Buttons */}
       <div className="flex justify-center gap-2 flex-wrap mb-4">
         {data?.series.map((s, i) => {
-          const vis = !hidden.has(i);
+          const vis = !effectiveHidden.has(i);
           const c = COLORS[i % COLORS.length];
           return (
             <button
