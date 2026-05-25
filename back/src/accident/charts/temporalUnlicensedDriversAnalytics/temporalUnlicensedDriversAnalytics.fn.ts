@@ -28,16 +28,26 @@ export const temporalUnlicensedDriversAnalyticsFn: ActFn = async (body) => {
 	// 1. DATE RANGE SETUP
 	// =========================================================================
 	let startDate: moment.Moment, endDate: moment.Moment;
-	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
+	if (filters.dateOfAccidentFrom && filters.dateOfAccidentTo) {
+		startDate = moment(filters.dateOfAccidentFrom).startOf("day");
+		endDate = moment(filters.dateOfAccidentTo).endOf("day");
+	} else if (filters.dateOfAccidentFrom) {
+		startDate = moment(filters.dateOfAccidentFrom).startOf("day");
+		endDate = moment().endOf("day");
+	} else if (filters.dateOfAccidentTo) {
+		const now = moment();
+		const startJalaliYear = now.jYear() - 3;
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		);
+		endDate = moment(filters.dateOfAccidentTo).endOf("day");
+	} else {
 		const now = moment();
 		const startJalaliYear = now.jYear() - 3;
 		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
 			"day",
 		);
 		endDate = moment().endOf("day");
-	} else {
-		startDate = moment(filters.dateOfAccidentFrom).startOf("day");
-		endDate = moment(filters.dateOfAccidentTo).endOf("day");
 	}
 
 	// =========================================================================
@@ -370,31 +380,39 @@ export const temporalUnlicensedDriversAnalyticsFn: ActFn = async (body) => {
 
 	// =========================================================================
 	// 9. BUILD CONTINUOUS MONTHLY SERIES
-	//    - Use Gregorian for lookup key
-	//    - Display as Jalali in categories
+	//    - Convert each Gregorian-month result bucket to a Jalali key,
+	//      aggregating counts that fall within the same Jalali month.
+	//    - Iterate using Jalali months so categories are always complete
+	//      and correctly ordered.
 	// =========================================================================
 	const resultsMap = new Map<string, number>();
 	for (const r of dbResults) {
-		const key = `${r._id.year}-${String(r._id.month).padStart(2, "0")}`;
-		resultsMap.set(key, r.count);
+		const dateStr = `${r._id.year}-${
+			String(r._id.month).padStart(2, "0")
+		}-${String(r._id.day).padStart(2, "0")}`;
+		const m = moment(dateStr, "YYYY-MM-DD");
+		const jalaliKey = `${m.jYear()}-${
+			String(m.jMonth() + 1).padStart(2, "0")
+		}`;
+
+		resultsMap.set(jalaliKey, (resultsMap.get(jalaliKey) || 0) + r.count);
 	}
 
 	const categories: string[] = [];
 	const seriesData: number[] = [];
-	let current = startDate.clone();
 
-	while (current.isSameOrBefore(endDate, "month")) {
-		const gregKey = `${current.year()}-${
-			String(current.month() + 1).padStart(2, "0")
-		}`;
-		const jalali = moment(current.toDate()).locale("fa");
-		const jalaliLabel = `${jalali.jYear()}-${
-			String(jalali.jMonth() + 1).padStart(2, "0")
+	const current = startDate.clone().startOf("jMonth");
+	const end = endDate.clone().endOf("jMonth");
+
+	while (current.isSameOrBefore(end)) {
+		const jalaliKey = `${current.jYear()}-${
+			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
 
-		categories.push(jalaliLabel);
-		seriesData.push(resultsMap.get(gregKey) || 0);
-		current.add(1, "month");
+		categories.push(jalaliKey);
+		seriesData.push(resultsMap.get(jalaliKey) || 0);
+
+		current.add(1, "jMonth");
 	}
 
 	// =========================================================================

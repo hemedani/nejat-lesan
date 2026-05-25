@@ -31,17 +31,22 @@ export const spatialLightAnalyticsFn: ActFn = async (body) => {
 	// 1. DATE RANGE SETUP
 	// =========================================================================
 	let startDate: Date, endDate: Date;
-	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
-		const now = moment();
-		const lastJalaliThreeYear = now.jYear() - 3;
-		startDate = moment(`${lastJalaliThreeYear}/01/01`, "jYYYY/jMM/jDD")
-			.startOf(
-				"day",
-			).toDate();
-		endDate = moment().endOf("day").toDate();
-	} else {
+	if (filters.dateOfAccidentFrom && filters.dateOfAccidentTo) {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
+	} else if (filters.dateOfAccidentFrom) {
+		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
+		endDate = moment().endOf("day").toDate();
+	} else if (filters.dateOfAccidentTo) {
+		const now = moment();
+		const lastJalaliThreeYear = now.jYear() - 3;
+		startDate = moment(`${lastJalaliThreeYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
+	} else {
+		const now = moment();
+		const lastJalaliThreeYear = now.jYear() - 3;
+		startDate = moment(`${lastJalaliThreeYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		endDate = moment().endOf("day").toDate();
 	}
 
 	const baseFilter: Document = {

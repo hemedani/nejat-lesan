@@ -29,18 +29,22 @@ export const totalReasonAnalyticsFn: ActFn = async (body) => {
 	// 1. DATE RANGE SETUP
 	// =========================================================================
 	let startDate: Date, endDate: Date;
-	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
-		const now = moment();
-		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
-			"day",
-		).toDate();
-		endDate = moment(`${lastJalaliYear}/12/01`, "jYYYY/jMM/jDD").endOf(
-			"jMonth",
-		).endOf("day").toDate();
-	} else {
+	if (filters.dateOfAccidentFrom && filters.dateOfAccidentTo) {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
+	} else if (filters.dateOfAccidentFrom) {
+		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
+		endDate = moment().endOf("day").toDate();
+	} else if (filters.dateOfAccidentTo) {
+		const now = moment();
+		const lastJalaliYear = now.jYear() - 1;
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
+	} else {
+		const now = moment();
+		const lastJalaliYear = now.jYear() - 1;
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		endDate = moment(`${lastJalaliYear}/12/01`, "jYYYY/jMM/jDD").endOf("jMonth").endOf("day").toDate();
 	}
 
 	// Start with date range + severe accident filter

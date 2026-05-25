@@ -29,16 +29,22 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	// 1. DATE RANGE SETUP
 	// =========================================================================
 	let startDate: moment.Moment, endDate: moment.Moment;
-	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
-		const now = moment();
-		const startJalaliYear = now.jYear() - 3;
-		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
-			"day",
-		);
-		endDate = moment().endOf("day");
-	} else {
+	if (filters.dateOfAccidentFrom && filters.dateOfAccidentTo) {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day");
 		endDate = moment(filters.dateOfAccidentTo).endOf("day");
+	} else if (filters.dateOfAccidentFrom) {
+		startDate = moment(filters.dateOfAccidentFrom).startOf("day");
+		endDate = moment().endOf("day");
+	} else if (filters.dateOfAccidentTo) {
+		const now = moment();
+		const startJalaliYear = now.jYear() - 3;
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day");
+		endDate = moment(filters.dateOfAccidentTo).endOf("day");
+	} else {
+		const now = moment();
+		const startJalaliYear = now.jYear() - 3;
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day");
+		endDate = moment().endOf("day");
 	}
 
 	// =========================================================================
