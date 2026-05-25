@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import html2canvas from "html2canvas";
 import toast from "react-hot-toast";
@@ -104,11 +104,6 @@ const AccidentsMapPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  // Initial load
-  useEffect(() => {
-    handleApplyFilters({});
-  }, []);
 
   // Prevent background scrolling when polygon loading overlay is open or when capturing snapshot
   useScrollLock(isPolygonLoading || isCapturingSnapshot);

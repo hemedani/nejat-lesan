@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
@@ -30,11 +30,6 @@ const AccidentSeverityPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDamageFilterActive, setIsDamageFilterActive] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
-
-  // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
 
   const loadInitialData = async () => {
     setIsLoading(true);

@@ -52,7 +52,6 @@ const SpatialLightAnalyticsPage = () => {
 
   // Default filters with basic options
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
-  const [initialLoadCompleted, setInitialLoadCompleted] = useState(false);
 
   // Load user data and set default city on component mount
   useEffect(() => {
@@ -69,6 +68,9 @@ const SpatialLightAnalyticsPage = () => {
               ...prevFilters,
               city: [defaultCity],
             }));
+            handleApplyFilters({
+              city: [defaultCity],
+            });
           } else if (user.settings?.provinces && user.settings.provinces.length > 0) {
             // User has provinces but no cities - fetch cities for the first province
             const provinceId = user.settings.provinces[0]?._id;
@@ -84,6 +86,9 @@ const SpatialLightAnalyticsPage = () => {
                     ...prevFilters,
                     city: [defaultCity],
                   }));
+                  handleApplyFilters({
+                    city: [defaultCity],
+                  });
                 }
               } catch (err) {
                 console.error("Error fetching cities for province:", err);
@@ -92,23 +97,14 @@ const SpatialLightAnalyticsPage = () => {
           }
           // If no cities and no provinces in settings, leave city filter empty
         }
-        setInitialLoadCompleted(true);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        setInitialLoadCompleted(true);
       }
     };
 
     loadUserData();
-  }, []);
-
-  // Load initial data on component mount after user data is loaded
-  useEffect(() => {
-    if (initialLoadCompleted) {
-      handleApplyFilters(appliedFilters);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialLoadCompleted]);
+  }, []);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {

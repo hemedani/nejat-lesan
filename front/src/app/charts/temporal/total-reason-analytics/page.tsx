@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -605,11 +605,6 @@ const TemporalTotalReasonAnalyticsPage = () => {
       return DEMO_DATA;
     }
   };
-
-  // Load initial data on mount
-  useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
 
   // Handle filter application
   const handleApplyFilters = async (filters: ChartFilterState) => {

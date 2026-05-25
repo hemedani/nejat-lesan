@@ -198,6 +198,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     hasGlobalFilters,
     globalFilterCount,
     globalFiltersVersion,
+    isInitialized,
   } = useGlobalChartFilters();
   const [localGlobalVersion, setLocalGlobalVersion] = useState(0);
 
@@ -361,23 +362,23 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   }, [globalFilters, hasGlobalFilters, setValue]);
 
   // Track which global version we've already processed to avoid double-fetch
-  const lastProcessedVersion = useRef(0);
+  const lastProcessedVersion = useRef(-1);
 
   // GLOBAL FILTERS: Auto-apply + auto-fetch when global filters version changes
   // This handles: initial mount with filters, save, clear, and external changes
   useEffect(() => {
+    if (!isInitialized) return;
     if (globalFiltersVersion === lastProcessedVersion.current) return;
     lastProcessedVersion.current = globalFiltersVersion;
 
     if (!hasGlobalFilters) {
-      handleReset();
       onApplyFilters({});
       return;
     }
     applyGlobalFiltersToLocal();
     // Submit with latest global filters to fetch data immediately
     onApplyFilters(globalFilters);
-  }, [globalFiltersVersion, hasGlobalFilters]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [globalFiltersVersion, hasGlobalFilters, isInitialized]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Key suffix for forcing re-mount on global filter change
   const gK = (key: string) => `${key}-gf-${localGlobalVersion}`;

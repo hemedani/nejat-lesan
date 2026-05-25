@@ -198,21 +198,6 @@ const EventSeverityAnalyticsPage = () => {
     loadInitialDataRef.current = loadInitialData;
   });
 
-  // Load initial data on component mount
-  useEffect(() => {
-    // Fetch available events and then load initial data
-    const initializePage = async () => {
-      try {
-        // Load initial analytics data
-        loadInitialDataRef.current?.();
-      } catch {
-        setError(`خطا در بارگذاری داده‌های اولیه`);
-      }
-    };
-
-    initializePage();
-  }, []);
-
   const loadInitialData = React.useCallback(async () => {
     setIsLoading(true);
     setError(null);

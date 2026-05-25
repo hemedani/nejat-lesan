@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -422,11 +422,6 @@ const TemporalDamageAnalyticsPage = () => {
       lockToSevereAccidents: false,
     };
   };
-
-  // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
 
   // Calculate statistics
   const getStatistics = () => {

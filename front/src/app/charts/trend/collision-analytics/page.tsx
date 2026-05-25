@@ -169,19 +169,6 @@ const EventCollisionAnalyticsPage = () => {
     loadInitialDataRef.current = loadInitialData;
   });
 
-  // Load initial data on component mount
-  useEffect(() => {
-    const initializePage = async () => {
-      try {
-        loadInitialDataRef.current?.();
-      } catch {
-        setError(`خطا در بارگذاری داده‌های اولیه`);
-      }
-    };
-
-    initializePage();
-  }, []);
-
   const loadInitialData = React.useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -222,7 +209,7 @@ const EventCollisionAnalyticsPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [eventRange, selectedEventId, setIsLoading, setError, setChartData]);
+  }, [selectedEventId, setIsLoading, setError, setChartData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {

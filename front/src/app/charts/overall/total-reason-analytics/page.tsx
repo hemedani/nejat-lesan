@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -199,10 +199,6 @@ const TotalReasonAnalyticsPage = () => {
       setIsLoading(false);
     }
   }, [ENABLED_FILTERS]);
-
-  useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {

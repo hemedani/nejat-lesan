@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import HourlyDayOfWeekHeatmap from "@/components/charts/HourlyDayOfWeekHeatmap";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -128,10 +128,6 @@ const HourlyDayOfWeekPage = () => {
       setIsLoading(false);
     }
   }, [transformData]);
-
-  useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
 
   // Handle filter submission
   const handleFilterSubmit = async (filters: ChartFilterState) => {

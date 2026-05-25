@@ -17,6 +17,7 @@ interface GlobalChartFiltersContextValue {
   hasGlobalFilters: boolean;
   globalFilterCount: number;
   globalFiltersVersion: number;
+  isInitialized: boolean;
 }
 
 const GlobalChartFiltersContext = createContext<GlobalChartFiltersContextValue | undefined>(undefined);
@@ -46,6 +47,7 @@ function saveToStorage(filters: ChartFilterState) {
 export function GlobalChartFiltersProvider({ children }: { children: ReactNode }) {
   const [globalFilters, setGlobalFiltersState] = useState<ChartFilterState>({});
   const [globalFiltersVersion, setGlobalFiltersVersion] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -54,6 +56,7 @@ export function GlobalChartFiltersProvider({ children }: { children: ReactNode }
       setGlobalFiltersState(stored);
       setGlobalFiltersVersion(1);
     }
+    setIsInitialized(true);
   }, []);
 
   const setGlobalFilters = useCallback((filters: ChartFilterState) => {
@@ -85,6 +88,7 @@ export function GlobalChartFiltersProvider({ children }: { children: ReactNode }
         hasGlobalFilters,
         globalFilterCount,
         globalFiltersVersion,
+        isInitialized,
       }}
     >
       {children}

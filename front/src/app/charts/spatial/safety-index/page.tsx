@@ -77,12 +77,6 @@ const SpatialSafetyIndexAnalyticsPage = () => {
     setIsMounted(true);
   }, []);
 
-  // Load initial data on component mount
-  useEffect(() => {
-    handleApplyFilters(appliedFilters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Reload data when groupBy changes
   useEffect(() => {
     if (appliedFilters) {

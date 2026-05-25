@@ -67,7 +67,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
               ...prevFilters,
               city: [defaultCity],
             }));
-            handleApplyFilters({ ...appliedFilters, city: [defaultCity] });
+            handleApplyFilters({ city: [defaultCity] });
           } else if (user.settings?.provinces && user.settings.provinces.length > 0) {
             // User has provinces but no cities - fetch cities for the first province
             const provinceId = user.settings.provinces[0]?._id;
@@ -83,7 +83,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                     ...prevFilters,
                     city: [defaultCity],
                   }));
-                  handleApplyFilters({ ...appliedFilters, city: [defaultCity] });
+                  handleApplyFilters({ city: [defaultCity] });
                 }
               } catch (err) {
                 console.error("Error fetching cities for province:", err);

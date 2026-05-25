@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MonthlyHolidayAnalyticsDashboard from "@/components/dashboards/MonthlyHolidayAnalyticsDashboard";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -29,11 +29,6 @@ const MonthlyHolidayPage = () => {
   const [chartData, setChartData] = useState<MonthlyHolidayAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
 
   const loadInitialData = async () => {
     setIsLoading(true);
