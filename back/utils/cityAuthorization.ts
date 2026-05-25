@@ -172,13 +172,6 @@ export const createCityGetsAuthMiddleware = () => {
 			// Remove _ids filter if present (province-based access doesn't use city _ids)
 			delete details.set._ids;
 
-			console.log("Enterprise province-based city access applied:", {
-				userId: user._id,
-				level: user.level,
-				allowedProvinces: allowedProvinceIds.length,
-				appliedProvinceIds: details.set.provinceIds.length,
-			});
-
 			return;
 		}
 
@@ -216,13 +209,6 @@ export const createCityGetsAuthMiddleware = () => {
 
 			// Remove provinceIds filter if present (city-based access doesn't use provinceIds)
 			delete details.set.provinceIds;
-
-			console.log("Enterprise city-based access applied:", {
-				userId: user._id,
-				level: user.level,
-				allowedCities: allowedCityIds.length,
-				appliedCityIds: details.set._ids.length,
-			});
 		}
 	};
 };
