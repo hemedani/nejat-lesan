@@ -20,7 +20,7 @@ import CustomCheckbox from "../atoms/CustomCheckbox";
 import {
   ALL_ANALYTIC_FILTERS,
   comprehensiveFilterFields,
-  eventFilterFields,
+  eventAnalyticFilterFields,
   mapAccidentsFilterFields,
 } from "@/utils/filterConstants";
 import MultiStepForm from "./MultiStepForm";
@@ -849,7 +849,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             <div className="border rounded p-3">
               <h5 className="font-medium mb-2">تحلیل‌های تصادف رویداد</h5>
               <div className="space-y-2">
-                {eventFilterFields.map((field) => (
+                {eventAnalyticFilterFields.map((field) => (
                   <CustomCheckbox
                     key={`event-collision-${field.key}`}
                     checked={
@@ -877,7 +877,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             <div className="border rounded p-3">
               <h5 className="font-medium mb-2">تحلیل‌های شدت رویداد</h5>
               <div className="space-y-2">
-                {eventFilterFields.map((field) => (
+                {eventAnalyticFilterFields.map((field) => (
                   <CustomCheckbox
                     key={`event-severity-${field.key}`}
                     checked={

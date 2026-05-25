@@ -535,6 +535,30 @@ export const eventFilterFields = [
   { key: "eventDateTo", label: "تاریخ رویداد تا" },
 ];
 
+// Helper constant for event-specific analytics filter fields with Persian labels
+// Matches the backend's eventSeverityAnalyticFilters / eventCollisionAnalyticFilters
+export const eventAnalyticFilterFields = [
+  { key: "eventId", label: "شناسه رویداد" },
+  { key: "eventDateFrom", label: "تاریخ رویداد از" },
+  { key: "eventDateTo", label: "تاریخ رویداد تا" },
+  { key: "dateOfAccidentFrom", label: "تاریخ تصادف از" },
+  { key: "dateOfAccidentTo", label: "تاریخ تصادف تا" },
+  { key: "officer", label: "افسر" },
+  { key: "province", label: "استان" },
+  { key: "city", label: "شهر" },
+  { key: "road", label: "جاده" },
+  { key: "accidentType", label: "نوع حادثه" },
+  { key: "position", label: "موقعیت" },
+  { key: "lightStatus", label: "وضعیت نور" },
+  { key: "collisionType", label: "نوع برخورد" },
+  { key: "roadSituation", label: "وضعیت جاده" },
+  { key: "humanReasons", label: "دلایل انسانی" },
+  { key: "roadDefects", label: "نقص جاده" },
+  { key: "vehicleSystem", label: "سیستم وسیله نقلیه" },
+  { key: "driverSex", label: "جنسیت راننده" },
+  { key: "driverLicenceType", label: "نوع گواهینامه" },
+];
+
 // Type definitions for filter objects
 export type CoreAccidentDetailsFilter = z.infer<typeof coreAccidentDetailsFilters>;
 export type LocationAndContextFilter = z.infer<typeof locationAndContextFilters>;

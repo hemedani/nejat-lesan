@@ -18,7 +18,7 @@ import type { StylesConfig } from "react-select";
 import {
   ALL_ANALYTIC_FILTERS,
   comprehensiveFilterFields,
-  eventFilterFields,
+  eventAnalyticFilterFields,
 } from "@/utils/filterConstants";
 import MultiStepForm from "./MultiStepForm";
 
@@ -628,7 +628,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
         <div className="border rounded p-3">
           <h5 className="font-medium mb-2">تحلیل‌های تصادف رویداد</h5>
           <div className="space-y-2">
-            {eventFilterFields.map((field) => (
+            {eventAnalyticFilterFields.map((field) => (
               <label key={field.key} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -651,7 +651,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
         <div className="border rounded p-3">
           <h5 className="font-medium mb-2">تحلیل‌های شدت رویداد</h5>
           <div className="space-y-2">
-            {eventFilterFields.map((field) => (
+            {eventAnalyticFilterFields.map((field) => (
               <label key={field.key} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
