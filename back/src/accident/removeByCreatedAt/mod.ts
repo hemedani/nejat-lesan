@@ -12,7 +12,7 @@ export const removeByCreatedAtSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Enterprise"],
+				levels: ["Manager", "Enterprise"],
 			}),
 		],
 		validator: removeByCreatedAtValidator(),

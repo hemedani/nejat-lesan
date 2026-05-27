@@ -12,7 +12,7 @@ export const getCreatedAtPeriodsSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager"],
+				levels: ["Manager", "Enterprise"],
 			}),
 		],
 		validator: getCreatedAtPeriodsValidator(),
