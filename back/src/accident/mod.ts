@@ -3,6 +3,8 @@ import { getSetup } from "./get/mod.ts";
 import { getsSetup } from "./gets/mod.ts";
 import { updateSetup } from "./update/mod.ts";
 import { removeSetup } from "./remove/mod.ts";
+import { removeByCreatedAtSetup } from "./removeByCreatedAt/mod.ts";
+import { getCreatedAtPeriodsSetup } from "./getCreatedAtPeriods/mod.ts";
 import { countSetup } from "./count/mod.ts";
 import { chartSetup } from "./charts/mod.ts";
 import { mapSetup } from "./maps/mod.ts";
@@ -13,6 +15,8 @@ export const accidentSetup = () => {
 	getSetup();
 	getsSetup();
 	removeSetup();
+	removeByCreatedAtSetup();
+	getCreatedAtPeriodsSetup();
 	countSetup();
 
 	//chart functions
