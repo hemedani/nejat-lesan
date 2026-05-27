@@ -27,6 +27,7 @@ const TemporalChartsPage = () => {
           {/* Content */}
           <div className="space-y-6">
             {/* Quick Navigation to Temporal Charts */}
+            {/*
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">تحلیل‌های زمانی</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -216,6 +217,7 @@ const TemporalChartsPage = () => {
                 </a>
               </div>
             </div>
+*/}
 
             {/* Key Insights */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">

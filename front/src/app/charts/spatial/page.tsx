@@ -27,6 +27,7 @@ const SpatialChartsPage = () => {
           {/* Content */}
           <div className="space-y-6">
             {/* Quick Navigation to Spatial Charts */}
+            {/*
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">تحلیل‌های مکانی</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -220,6 +221,7 @@ const SpatialChartsPage = () => {
                 </a>
               </div>
             </div>
+*/}
 
             {/* Features Coming Soon */}
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
