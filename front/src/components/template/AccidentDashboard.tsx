@@ -19,11 +19,17 @@ import AccidentMap from "../organisms/AccidentMap";
 import CreateUpdateAccidentModal from "./CreateUpdateAccidentModal";
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import BatchDeleteByPeriodModal from "./BatchDeleteByPeriodModal";
 
 interface AccidentDashboardProps {
   data: accidentSchema[];
   model: ModelName;
   remove: (_id: string, hardCascade: boolean) => Promise<any>;
+  removeByCreatedAt: (data: {
+    createdAt: number;
+    hoursBefore?: number;
+    hoursAfter?: number;
+  }) => Promise<any>;
   add: (data: any) => Promise<any>;
   update: (_id: string, data: any) => Promise<any>;
   totalCount: number;
@@ -35,6 +41,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
   data,
   model,
   remove,
+  removeByCreatedAt,
   add,
   update,
   totalCount,
@@ -43,7 +50,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 }) => {
   const router = useRouter();
   const [activeModal, setActiveModal] = useState<
-    "edit" | "delete" | "view" | null
+    "edit" | "delete" | "view" | "batchDelete" | null
   >(null);
   const [selectedItem, setSelectedItem] = useState<accidentSchema | null>(null);
   const [hardCascade, setHardCascade] = useState<boolean>(false);
@@ -53,7 +60,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
   useScrollLock(activeModal === "view");
 
   const openModal = (
-    type: "edit" | "delete" | "view",
+    type: "edit" | "delete" | "view" | "batchDelete",
     item: accidentSchema | null = null,
   ) => {
     setSelectedItem(item);
@@ -117,6 +124,24 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                 />
               </svg>
               ثبت {translateModelNameToPersian(model)} جدید
+            </button>
+            <button
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 flex items-center gap-2 shadow-sm"
+              onClick={() => openModal("batchDelete")}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              حذف دسته‌ای
             </button>
           </div>
         </div>
@@ -226,6 +251,14 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
           )} را حذف کنید؟ این عمل قابل بازگشت نیست.`}
           isHardCascade={hardCascade}
           onHardCascadeChange={setHardCascade}
+        />
+      )}
+
+      {activeModal === "batchDelete" && (
+        <BatchDeleteByPeriodModal
+          isVisible
+          onClose={closeModal}
+          removeByCreatedAt={removeByCreatedAt}
         />
       )}
 

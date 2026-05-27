@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ReqType } from "@/types/declarations/selectInp";
 import { count } from "@/app/actions/accident/count";
 import { remove } from "@/app/actions/accident/remove";
+import { removeByCreatedAt } from "@/app/actions/accident/removeByCreatedAt";
 import { add } from "@/app/actions/accident/add";
 import { update } from "@/app/actions/accident/update";
 import { translateModelNameToPersian } from "@/utils/helper";
@@ -124,6 +125,7 @@ export default async function AccidentDashboardPage({
           data={accidents.success ? accidents.body : []}
           model="accident"
           remove={remove}
+          removeByCreatedAt={removeByCreatedAt}
           add={add}
           update={update}
           totalCount={counted?.body.qty || 0}

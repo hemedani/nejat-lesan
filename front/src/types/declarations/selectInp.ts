@@ -20210,6 +20210,29 @@ export type ReqType = {
       };
 
 
+      removeByCreatedAt: {
+        set: {
+          createdAt: number;
+          hoursBefore?: number;
+          hoursAfter?: number;
+        };
+        get: {
+          success?: number;
+          deletedCount?: number;
+        };
+      };
+
+
+      getCreatedAtPeriods: {
+        set: {
+          intervalMinutes?: number;
+        };
+        get: {
+          periods?: (0 | 1);
+        };
+      };
+
+
       count: {
         set: {
           seri?: number;
