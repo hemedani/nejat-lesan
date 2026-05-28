@@ -239,9 +239,8 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
         useSeriesColors: false,
       },
       markers: {
-        width: 10,
-        height: 10,
-        radius: 2,
+        size: 8,
+        strokeWidth: 0,
       },
       itemMargin: {
         horizontal: 8,
