@@ -201,7 +201,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
         size: 7,
       },
     },
-    colors: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"],
+    colors: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316", "#6366f1", "#84cc16"],
     grid: {
       show: true,
       borderColor: "#e5e7eb",
