@@ -394,26 +394,45 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
   const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
   // Group collision type options into categories for better UX
-  const COLLISION_TYPE_GROUPS = [
-    { label: 'تصادفات عابر پیاده', keywords: ['عابر', 'پیاده'] },
-    { label: 'موتورسیکلت و دوچرخه', keywords: ['موتور', 'دوچرخه'] },
-    { label: 'وسایل نقلیه', keywords: ['خودرو', 'سواری', 'کامیون', 'اتوبوس', 'مینی‌بوس', 'وانت', 'ماشین'] },
-  ];
+  const COLLISION_TYPE_CATEGORIES: Record<string, string[]> = {
+    'تصادفات عابر پیاده': [
+      'برخورد وسیله نقلیه با عابر',
+      'بر خورد موتورسیکلت با عابر',
+      'برخورد دوچرخه با عابر',
+    ],
+    'موتورسیکلت و دوچرخه': [
+      'برخورد وسیله نقلیه با موتورسیکلت',
+    ],
+    'تصادفات وسایل نقلیه': [
+      'برخورد وسیله نقلیه با یک وسیله نقلیه',
+      'برخورد وسیله نقلیه با چند وسیله نقلیه',
+      'چند برخوردی',
+    ],
+    'برخورد با شیء ثابت': [
+      'برخورد وسیله نقلیه با شی ثابت',
+      'برخورد وسیله نقلیه با شیء ثابت',
+    ],
+    'سقوط و واژگونی': [
+      'واژگونی و سقوط',
+      'خروج از جاده',
+    ],
+  };
 
   const groupCollisionTypeOptions = (options: SelectOption[]): { label: string; options: SelectOption[] }[] => {
     const grouped: Record<string, SelectOption[]> = {};
     const ungrouped: SelectOption[] = [];
+    const nameToCategory: Record<string, string> = {};
+    for (const [category, names] of Object.entries(COLLISION_TYPE_CATEGORIES)) {
+      for (const name of names) nameToCategory[name] = category;
+    }
     for (const opt of options) {
-      let matched = false;
-      for (const group of COLLISION_TYPE_GROUPS) {
-        if (group.keywords.some((kw) => opt.label.includes(kw))) {
-          if (!grouped[group.label]) grouped[group.label] = [];
-          grouped[group.label].push(opt);
-          matched = true;
-          break;
-        }
+      const category = nameToCategory[opt.label];
+      if (category) {
+        if (!grouped[category]) grouped[category] = [];
+        grouped[category].push(opt);
+      } else {
+        ungrouped.push(opt);
       }
-      if (!matched) ungrouped.push(opt);
     }
     const result: { label: string; options: SelectOption[] }[] = [];
     for (const [label, items] of Object.entries(grouped)) {
