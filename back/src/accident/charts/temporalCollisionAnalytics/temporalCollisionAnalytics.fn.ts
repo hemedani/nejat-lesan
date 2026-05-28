@@ -343,86 +343,78 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 			: defaultCollisionTypes;
 
 	// =========================================================================
-	// 8. EXECUTE AGGREGATION PIPELINE
-	//    - Count total accidents per month
-	//    - Count accidents matching selected collision types
-	//    - Compute percentage
+	// 8. EXECUTE AGGREGATION PIPELINE WITH DYNAMIC $facet
+	//    - total: count ALL accidents per month (date range only)
+	//    - type_0..type_N: count accidents matching ALL filters + specific type
+	//    - Ratio = type_count / total * 100 for each month
 	// =========================================================================
+	const dateFilter: Document = {
+		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
+	};
+
+	const additionalFilters: Document = { ...baseFilter };
+	delete additionalFilters.date_of_accident;
+
+	const groupStage: Document = {
+		$group: {
+			_id: {
+				year: {
+					$year: {
+						date: "$date_of_accident",
+						timezone: "Asia/Tehran",
+					},
+				},
+				month: {
+					$month: {
+						date: "$date_of_accident",
+						timezone: "Asia/Tehran",
+					},
+				},
+				day: {
+					$dayOfMonth: {
+						date: "$date_of_accident",
+						timezone: "Asia/Tehran",
+					},
+				},
+			},
+			count: { $sum: 1 },
+		},
+	};
+
+	const facetStages: Record<string, Document[]> = {
+		total: [groupStage],
+	};
+
+	for (let i = 0; i < collisionTypesToAnalyze.length; i++) {
+		const typeFilter: Document = { "collision_type.name": collisionTypesToAnalyze[i] };
+		const mergedFilters: Document = { ...additionalFilters, ...typeFilter };
+		facetStages[`type_${i}`] = [
+			...(Object.keys(mergedFilters).length > 0
+				? [{ $match: mergedFilters }]
+				: []),
+			groupStage,
+		];
+	}
+
 	const pipeline: Document[] = [
-		{ $match: baseFilter },
-		{
-			$group: {
-				_id: {
-					year: {
-						$year: {
-							date: "$date_of_accident",
-							timezone: "Asia/Tehran",
-						},
-					},
-					month: {
-						$month: {
-							date: "$date_of_accident",
-							timezone: "Asia/Tehran",
-						},
-					},
-					day: {
-						$dayOfMonth: {
-							date: "$date_of_accident",
-							timezone: "Asia/Tehran",
-						},
-					},
-				},
-				totalCount: { $sum: 1 },
-				selectedTypesCount: {
-					$sum: {
-						$cond: {
-							if: {
-								$and: [
-									{ $ne: ["$collision_type.name", null] },
-									{ $ne: ["$collision_type.name", ""] },
-									{
-										$in: [
-											"$collision_type.name",
-											collisionTypesToAnalyze,
-										],
-									},
-								],
-							},
-							then: 1,
-							else: 0,
-						},
-					},
-				},
-			},
-		},
-		{
-			$project: {
-				_id: 1,
-				ratio: {
-					$cond: {
-						if: { $gt: ["$totalCount", 0] },
-						then: {
-							$multiply: [{
-								$divide: ["$selectedTypesCount", "$totalCount"],
-							}, 100],
-						},
-						else: 0,
-					},
-				},
-			},
-		},
-		{ $sort: { "_id.year": 1, "_id.month": 1 } },
+		{ $match: dateFilter },
+		{ $facet: facetStages },
 	];
 
-	const dbResults = await accident.aggregation({ pipeline }).toArray();
+	const dbResult = await accident.aggregation({ pipeline }).toArray();
+	const facetResult = dbResult[0] as Record<
+		string,
+		Array<{
+			_id: { year: number; month: number; day: number };
+			count: number;
+		}>
+	>;
 
 	// =========================================================================
-	// 9. BUILD CONTINUOUS MONTHLY SERIES
-	//    - Use Gregorian for lookup key
-	//    - Display as Jalali in categories
+	// 9. BUILD TOTAL MAP: Convert Gregorian day-grouped results to Jalali months
 	// =========================================================================
-	const resultsMap = new Map<string, number>();
-	for (const r of dbResults) {
+	const totalMap = new Map<string, number>();
+	for (const r of facetResult.total || []) {
 		const dateStr = `${r._id.year}-${
 			String(r._id.month).padStart(2, "0")
 		}-${String(r._id.day).padStart(2, "0")}`;
@@ -430,12 +422,13 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 		const jalaliKey = `${m.jYear()}-${
 			String(m.jMonth() + 1).padStart(2, "0")
 		}`;
-
-		resultsMap.set(jalaliKey, (resultsMap.get(jalaliKey) || 0) + r.ratio);
+		totalMap.set(jalaliKey, (totalMap.get(jalaliKey) || 0) + r.count);
 	}
 
+	// =========================================================================
+	// 10. BUILD CONTINUOUS MONTHLY CATEGORIES
+	// =========================================================================
 	const categories: string[] = [];
-	const seriesData: number[] = [];
 
 	const current = startDate.clone().startOf("jMonth");
 	const end = endDate.clone().endOf("jMonth");
@@ -444,20 +437,44 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 		const jalaliKey = `${current.jYear()}-${
 			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
-
 		categories.push(jalaliKey);
-		seriesData.push(resultsMap.get(jalaliKey) || 0);
-
 		current.add(1, "jMonth");
 	}
 
 	// =========================================================================
-	// 10. RETURN IN STANDARD FORMAT
+	// 11. BUILD PER-TYPE SERIES
+	// =========================================================================
+	const series: Array<{ name: string; data: number[] }> = [];
+
+	for (let i = 0; i < collisionTypesToAnalyze.length; i++) {
+		const typeName = collisionTypesToAnalyze[i];
+		const typeKey = `type_${i}`;
+
+		const typeMap = new Map<string, number>();
+		for (const r of facetResult[typeKey] || []) {
+			const dateStr = `${r._id.year}-${
+				String(r._id.month).padStart(2, "0")
+			}-${String(r._id.day).padStart(2, "0")}`;
+			const m = moment(dateStr, "YYYY-MM-DD");
+			const jalaliKey = `${m.jYear()}-${
+				String(m.jMonth() + 1).padStart(2, "0")
+			}`;
+			typeMap.set(jalaliKey, (typeMap.get(jalaliKey) || 0) + r.count);
+		}
+
+		const data = categories.map((key) => {
+			const total = totalMap.get(key) || 0;
+			const count = typeMap.get(key) || 0;
+			return total > 0 ? (count / total) * 100 : 0;
+		});
+
+		series.push({ name: typeName, data });
+	}
+
+	// =========================================================================
+	// 12. RETURN IN STANDARD FORMAT
 	// =========================================================================
 	return {
-		analytics: {
-			categories,
-			series: [{ name: "سهم از کل تصادفات", data: seriesData }],
-		},
+		analytics: { categories, series },
 	};
 };
