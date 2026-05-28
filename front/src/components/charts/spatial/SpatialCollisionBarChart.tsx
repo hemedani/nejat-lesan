@@ -174,6 +174,11 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
         },
       },
       fontFamily: "vazir-matn, Arial, sans-serif",
+      events: {
+        legendClick: (_chartContext: unknown, seriesIndex: number) => {
+          handleToggle(seriesIndex);
+        },
+      },
     },
     plotOptions: {
       bar: {
@@ -223,7 +228,25 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       },
     },
     legend: {
-      show: false,
+      show: true,
+      position: "bottom" as const,
+      horizontalAlign: "center" as const,
+      onItemClick: {
+        toggleDataSeries: false,
+      },
+      labels: {
+        colors: "#374151",
+        useSeriesColors: false,
+      },
+      markers: {
+        width: 10,
+        height: 10,
+        radius: 2,
+      },
+      itemMargin: {
+        horizontal: 8,
+        vertical: 4,
+      },
     },
     colors: seriesColors,
     tooltip: {
@@ -285,7 +308,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       </div>
 
       {/* Legend Toggle Buttons */}
-      <div className="flex justify-center gap-2 flex-wrap mb-4">
+      <div className="flex justify-center gap-2 flex-wrap mb-2">
         {data?.series.map((s, i) => {
           const vis = !effectiveHidden.has(i);
           const c = COLORS[i % COLORS.length];
@@ -313,6 +336,9 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
           );
         })}
       </div>
+      <p className="text-xs text-gray-500 text-center mb-4">
+        درصد نقشه نسبت به مجموع انواع برخورد قابل مشاهده محاسبه می‌شود
+      </p>
 
       {/* Chart */}
       <div className="h-96 mb-6">

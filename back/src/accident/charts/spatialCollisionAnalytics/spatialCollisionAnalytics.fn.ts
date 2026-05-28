@@ -140,6 +140,8 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 	};
 
 	for (const [filterKey, dbPath] of Object.entries(contextFields)) {
+		// Skip collisionType — it's used in the map analytics logic, not as a pre-filter
+		if (filterKey === "collisionType") continue;
 		const value = filters[filterKey as keyof typeof filters];
 		if (Array.isArray(value) && value.length > 0) {
 			baseFilter[dbPath] = { $in: value };
@@ -401,8 +403,7 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 					{
 						$group: {
 							_id: "$city_zone.name",
-							totalCount: { $sum: 1 },
-							selectedCollisionTypeCount: {
+							selectedCount: {
 								$sum: {
 									$cond: [
 										{
@@ -419,17 +420,27 @@ export const spatialCollisionAnalyticsFn: ActFn = async (body) => {
 						},
 					},
 					{
+						$group: {
+							_id: null,
+							zones: {
+								$push: { name: "$_id", count: "$selectedCount" },
+							},
+							totalSelected: { $sum: "$selectedCount" },
+						},
+					},
+					{ $unwind: "$zones" },
+					{
 						$project: {
 							_id: 0,
-							name: "$_id",
+							name: "$zones.name",
 							ratio: {
 								$cond: {
-									if: { $gt: ["$totalCount", 0] },
+									if: { $gt: ["$totalSelected", 0] },
 									then: {
 										$multiply: [{
 											$divide: [
-												"$selectedCollisionTypeCount",
-												"$totalCount",
+												"$zones.count",
+												"$totalSelected",
 											],
 										}, 100],
 									},
