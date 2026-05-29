@@ -4,13 +4,12 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 
-// Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-// Data interfaces
 interface CollisionData {
   name: string;
   share: number;
+  count?: number;
 }
 
 interface EventCollisionData {
@@ -30,7 +29,6 @@ interface ChartProps {
   selectedEventType: string;
 }
 
-// Helper function to get event type label
 const getEventTypeLabel = (eventType: string): string => {
   switch (eventType) {
     case "nowruz":
@@ -50,7 +48,6 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
   eventRange,
   selectedEventType,
 }) => {
-  // Early return for loading state
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -67,7 +64,6 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     );
   }
 
-  // Early return for no data state
   if (!data || (!data.eventData?.length && !data.nonEventData?.length)) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -101,18 +97,24 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     );
   }
 
-  // Extract data for charts
   const eventData = data.eventData || [];
   const nonEventData = data.nonEventData || [];
 
-  // Chart configuration for event data
+  // Compute totals — count if available, otherwise sum of shares
+  const hasEventCounts = eventData.some((d) => d.count !== undefined);
+  const hasNonEventCounts = nonEventData.some((d) => d.count !== undefined);
+  const eventTotalCount = hasEventCounts
+    ? eventData.reduce((sum, d) => sum + (d.count || 0), 0)
+    : 0;
+  const nonEventTotalCount = hasNonEventCounts
+    ? nonEventData.reduce((sum, d) => sum + (d.count || 0), 0)
+    : 0;
+
   const eventChartOptions: ApexOptions = {
     chart: {
       type: "bar",
       height: 350,
-      toolbar: {
-        show: false,
-      },
+      toolbar: { show: false },
       fontFamily: "inherit",
     },
     plotOptions: {
@@ -120,9 +122,7 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
         horizontal: false,
         columnWidth: "55%",
         borderRadius: 4,
-        dataLabels: {
-          position: "top",
-        },
+        dataLabels: { position: "top" },
       },
     },
     dataLabels: {
@@ -131,25 +131,18 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
         return val.toFixed(1) + "%";
       },
       offsetY: -20,
-      style: {
-        fontSize: "12px",
-        colors: ["#304758"],
-      },
+      style: { fontSize: "12px", colors: ["#304758"] },
     },
     xaxis: {
       categories: eventData.map((item) => item.name),
       labels: {
-        style: {
-          fontSize: "12px",
-        },
+        style: { fontSize: "12px" },
         rotate: -45,
         rotateAlways: true,
       },
     },
     yaxis: {
-      title: {
-        text: "درصد",
-      },
+      title: { text: "درصد" },
       labels: {
         formatter: function (val: number) {
           return val.toFixed(0) + "%";
@@ -160,37 +153,31 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     colors: ["#3B82F6"],
     tooltip: {
       y: {
-        formatter: function (val: number) {
-          return `${val.toFixed(1)}%`;
+        formatter: function (val: number, opts: { dataPointIndex: number }) {
+          const idx = opts.dataPointIndex;
+          const item = eventData[idx];
+          const countStr =
+            item?.count !== undefined ? ` (${item.count} تصادف)` : "";
+          return `${val.toFixed(1)}%${countStr}`;
         },
       },
     },
     title: {
       text: "در رویداد",
       align: "center",
-      style: {
-        fontSize: "16px",
-        fontWeight: "600",
-      },
+      style: { fontSize: "16px", fontWeight: "600" },
     },
     grid: {
       borderColor: "#e5e7eb",
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
+      yaxis: { lines: { show: true } },
     },
   };
 
-  // Chart configuration for non-event data
   const nonEventChartOptions: ApexOptions = {
     chart: {
       type: "bar",
       height: 350,
-      toolbar: {
-        show: false,
-      },
+      toolbar: { show: false },
       fontFamily: "inherit",
     },
     plotOptions: {
@@ -198,9 +185,7 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
         horizontal: false,
         columnWidth: "55%",
         borderRadius: 4,
-        dataLabels: {
-          position: "top",
-        },
+        dataLabels: { position: "top" },
       },
     },
     dataLabels: {
@@ -209,25 +194,18 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
         return val.toFixed(1) + "%";
       },
       offsetY: -20,
-      style: {
-        fontSize: "12px",
-        colors: ["#304758"],
-      },
+      style: { fontSize: "12px", colors: ["#304758"] },
     },
     xaxis: {
       categories: nonEventData.map((item) => item.name),
       labels: {
-        style: {
-          fontSize: "12px",
-        },
+        style: { fontSize: "12px" },
         rotate: -45,
         rotateAlways: true,
       },
     },
     yaxis: {
-      title: {
-        text: "درصد",
-      },
+      title: { text: "درصد" },
       labels: {
         formatter: function (val: number) {
           return val.toFixed(0) + "%";
@@ -238,26 +216,23 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     colors: ["#DC2626"],
     tooltip: {
       y: {
-        formatter: function (val: number) {
-          return `${val.toFixed(1)}%`;
+        formatter: function (val: number, opts: { dataPointIndex: number }) {
+          const idx = opts.dataPointIndex;
+          const item = nonEventData[idx];
+          const countStr =
+            item?.count !== undefined ? ` (${item.count} تصادف)` : "";
+          return `${val.toFixed(1)}%${countStr}`;
         },
       },
     },
     title: {
       text: "سایر ایام سال",
       align: "center",
-      style: {
-        fontSize: "16px",
-        fontWeight: "600",
-      },
+      style: { fontSize: "16px", fontWeight: "600" },
     },
     grid: {
       borderColor: "#e5e7eb",
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
+      yaxis: { lines: { show: true } },
     },
   };
 
@@ -298,24 +273,32 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="bg-blue-50 rounded-lg p-4">
             <div className="text-sm text-blue-600 font-medium">
-              انواع برخورد در رویداد
+              {hasEventCounts ? "تصادفات در رویداد" : "سهم انواع برخورد در رویداد"}
             </div>
             <div className="text-2xl font-bold text-blue-900">
-              {eventData.length}
+              {hasEventCounts
+                ? eventTotalCount.toLocaleString("fa-IR")
+                : `${eventData.length}`}
             </div>
             <div className="text-xs text-blue-600 mt-1">
-              نوع برخورد شناسایی شده
+              {hasEventCounts
+                ? "تعداد تصادفات"
+                : "نوع برخورد شناسایی شده"}
             </div>
           </div>
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="text-sm text-gray-600 font-medium">
-              انواع برخورد سایر ایام
+              {hasNonEventCounts ? "تصادفات سایر ایام" : "سهم انواع برخورد سایر ایام"}
             </div>
             <div className="text-2xl font-bold text-gray-900">
-              {nonEventData.length}
+              {hasNonEventCounts
+                ? nonEventTotalCount.toLocaleString("fa-IR")
+                : `${nonEventData.length}`}
             </div>
             <div className="text-xs text-gray-600 mt-1">
-              نوع برخورد شناسایی شده
+              {hasNonEventCounts
+                ? "تعداد تصادفات"
+                : "نوع برخورد شناسایی شده"}
             </div>
           </div>
         </div>
@@ -415,9 +398,13 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
                   <div className="space-y-1">
                     <div className="text-xs text-gray-600">
                       در رویداد: {eventItem.share.toFixed(1)}%
+                      {eventItem.count !== undefined &&
+                        ` (${eventItem.count} تصادف)`}
                     </div>
                     <div className="text-xs text-gray-600">
                       سایر ایام: {nonEventItem.share.toFixed(1)}%
+                      {nonEventItem.count !== undefined &&
+                        ` (${nonEventItem.count} تصادف)`}
                     </div>
                     <div
                       className={`text-xs font-medium ${

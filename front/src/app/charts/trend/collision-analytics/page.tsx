@@ -49,10 +49,12 @@ interface EventCollisionResponse {
     eventData: Array<{
       name: string;
       share: number;
+      count?: number;
     }>;
     nonEventData: Array<{
       name: string;
       share: number;
+      count?: number;
     }>;
   };
 }
