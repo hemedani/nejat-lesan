@@ -19,9 +19,11 @@ import { useMapComparison, generateComparisonTitle } from "@/context/MapComparis
 
 // Actions
 import { mapAccidents } from "@/app/actions/accident/mapAccidents";
+import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 
 // Types
 import { accidentSchema } from "@/types/declarations/selectInp";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 
 // Dynamic import for map components (disable SSR)
 
@@ -52,6 +54,9 @@ const AccidentsMapPage: React.FC = () => {
   const [accidents, setAccidents] = useState<accidentSchema[]>([]);
   const [total, setTotal] = useState(0);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
+
+  // City zone GeoJSON for polygon overlay on the map
+  const [geoJsonData, setGeoJsonData] = useState<GeoJsonData | null>(null);
 
   // Modal state for polygon search results
   const [modalData, setModalData] = useState<accidentSchema[] | null>(null);
@@ -97,6 +102,18 @@ const AccidentsMapPage: React.FC = () => {
           filtersToDisplay.dateOfAccidentTo = finalFilters.dateOfAccidentTo;
         }
         setAppliedFilters(filtersToDisplay);
+
+        // Fetch city zone polygons when a city is selected
+        if (filters.city && filters.city.length > 0) {
+          const geoJsonResponse = await getCityZonesGeoJSON(filters.city);
+          if (geoJsonResponse.success && geoJsonResponse.body) {
+            setGeoJsonData(geoJsonResponse.body);
+          } else {
+            setGeoJsonData(null);
+          }
+        } else {
+          setGeoJsonData(null);
+        }
       }
     } catch (error) {
       console.error("Error fetching accidents:", error);
@@ -354,6 +371,7 @@ const AccidentsMapPage: React.FC = () => {
                 accidents={accidents}
                 isLoading={isLoading}
                 onShapeDrawn={handleShapeDrawn}
+                geoJsonData={geoJsonData}
               />
             </div>
           </div>

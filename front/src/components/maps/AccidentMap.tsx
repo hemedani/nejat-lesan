@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapContainer, useMapEvents, FeatureGroup } from "react-leaflet";
+import { MapContainer, useMapEvents, FeatureGroup, GeoJSON, useMap } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
@@ -14,6 +14,7 @@ import BasemapLayer from "./BasemapLayer";
 import BasemapSelector from "./BasemapSelector";
 
 import { accidentSchema } from "@/types/declarations/selectInp";
+import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { DrawCreatedEvent } from "@/types/leaflet-draw";
 
 // Map event handler component
@@ -27,12 +28,68 @@ const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({ o
   return null;
 };
 
+// Create custom pane for city zone polygons (below heatmap overlay at 400, above tiles at 200)
+const CityZonePaneManager = () => {
+  const map = useMap();
+
+  React.useEffect(() => {
+    const pane = map.createPane("cityZonePane");
+    pane.style.zIndex = "300";
+  }, [map]);
+
+  return null;
+};
+
+// Fit bounds to GeoJSON when data changes
+const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
+  const map = useMap();
+
+  React.useEffect(() => {
+    if (!geoJsonData || !geoJsonData.features) return;
+
+    let minLat = Infinity,
+      maxLat = -Infinity;
+    let minLng = Infinity,
+      maxLng = -Infinity;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    geoJsonData.features.forEach((feature: any) => {
+      if (!feature.geometry?.coordinates) return;
+      const coords = feature.geometry.coordinates as number[][][];
+      const flatCoords = coords.flat(3);
+      for (let i = 0; i < flatCoords.length; i += 2) {
+        const lng = flatCoords[i];
+        const lat = flatCoords[i + 1];
+        if (typeof lng === "number" && typeof lat === "number") {
+          minLat = Math.min(minLat, lat);
+          maxLat = Math.max(maxLat, lat);
+          minLng = Math.min(minLng, lng);
+          maxLng = Math.max(maxLng, lng);
+        }
+      }
+    });
+
+    if (minLat !== Infinity && maxLat !== -Infinity && minLng !== Infinity && maxLng !== -Infinity) {
+      map.fitBounds(
+        [
+          [minLat, minLng],
+          [maxLat, maxLng],
+        ],
+        { padding: [20, 20] },
+      );
+    }
+  }, [geoJsonData, map]);
+
+  return null;
+};
+
 // Accident Map Component
 const AccidentMap: React.FC<{
   accidents: accidentSchema[];
   isLoading: boolean;
   onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
-}> = ({ accidents, isLoading, onShapeDrawn }) => {
+  geoJsonData?: GeoJsonData | null;
+}> = ({ accidents, isLoading, onShapeDrawn, geoJsonData }) => {
   const [currentZoom, setCurrentZoom] = useState(6);
   const [viewMode, setViewMode] = useState<"heatmap" | "dots">("heatmap"); // 'heatmap' or 'dots'
 
@@ -88,6 +145,9 @@ const AccidentMap: React.FC<{
 
         <MapEventHandler onZoomChange={setCurrentZoom} />
 
+        {/* Ensure proper pane z-indices for layer ordering */}
+        <CityZonePaneManager />
+
         {/* Drawing Controls */}
         <FeatureGroup>
           <EditControl
@@ -124,6 +184,24 @@ const AccidentMap: React.FC<{
             }}
           />
         </FeatureGroup>
+
+        {/* City Zone Polygons - rendered in custom pane below heatmap/markers */}
+        {geoJsonData && (
+          <>
+            <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
+            <GeoJSON
+              data={geoJsonData}
+              pane="cityZonePane"
+              style={() => ({
+                fillColor: "#3b82f6",
+                weight: 2,
+                opacity: 1,
+                color: "#1d4ed8",
+                fillOpacity: 0.1,
+              })}
+            />
+          </>
+        )}
 
         {/* Conditional rendering based on view mode */}
         {viewMode === "heatmap" && heatmapPoints.length > 0 && (
