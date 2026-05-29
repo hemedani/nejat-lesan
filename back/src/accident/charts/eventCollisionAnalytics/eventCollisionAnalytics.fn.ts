@@ -102,16 +102,16 @@
  * {
  *   analytics: {
  *     eventData: [
- *       { name: "برخورد وسیله نقلیه با شی ثابت", share: 22.5 },
- *       { name: "واژگونی و سقوط", share: 18.3 },
- *       { name: "خروج از جاده", share: 15.7 },
- *       { name: "برخورد وسیله نقلیه با یک وسیله نقلیه", share: 43.5 }
+ *       { name: "برخورد وسیله نقلیه با شی ثابت", share: 22.5, count: 45 },
+ *       { name: "واژگونی و سقوط", share: 18.3, count: 37 },
+ *       { name: "خروج از جاده", share: 15.7, count: 32 },
+ *       { name: "برخورد وسیله نقلیه با یک وسیله نقلیه", share: 43.5, count: 88 }
  *     ],
  *     nonEventData: [
- *       { name: "برخورد وسیله نقلیه با شی ثابت", share: 19.1 },
- *       { name: "واژگونی و سقوط", share: 14.6 },
- *       { name: "خروج از جاده", share: 12.0 },
- *       { name: "برخورد وسیله نقلیه با یک وسیله نقلیه", share: 54.3 }
+ *       { name: "برخورد وسیله نقلیه با شی ثابت", share: 19.1, count: 145 },
+ *       { name: "واژگونی و سقوط", share: 14.6, count: 111 },
+ *       { name: "خروج از جاده", share: 12.0, count: 91 },
+ *       { name: "برخورد وسیله نقلیه با یک وسیله نقلیه", share: 54.3, count: 413 }
  *     ]
  *   }
  * }
@@ -382,9 +382,6 @@ export const eventCollisionAnalyticsFn: ActFn = async (body) => {
 	// --- 6. Helper function to calculate percentage share ---
 	const calculateShare = (data: { name: string; count: number }[]) => {
 		const total = data.reduce((sum, item) => sum + item.count, 0);
-		if (total === 0) {
-			return collisionTypesToAnalyze.map((name) => ({ name, share: 0 }));
-		}
 
 		return collisionTypesToAnalyze.map((typeName) => {
 			const found = data.find((item) => item.name === typeName);
@@ -392,6 +389,7 @@ export const eventCollisionAnalyticsFn: ActFn = async (body) => {
 			return {
 				name: typeName,
 				share: total > 0 ? (count / total) * 100 : 0,
+				count,
 			};
 		});
 	};
