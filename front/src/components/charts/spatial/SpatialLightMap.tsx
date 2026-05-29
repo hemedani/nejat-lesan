@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useMap } from "react-leaflet";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 
 const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
@@ -287,72 +288,96 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
     return "روشنایی بسیار ناکافی";
   };
 
-  // Default center (Ahvaz coordinates)
-  const defaultCenter: [number, number] = [31.3183, 48.6706];
-  const defaultZoom = 11;
+  // Syncs map bounds with geoJsonData changes
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const FitBoundsOnGeoJsonChange = ({ geoJsonData: geoJsonDataProp }: { geoJsonData: any }) => {
+    const map = useMap();
 
-  // Calculate bounds from GeoJSON features
-  const mapBounds = useMemo(() => {
-    if (!geoJsonData || !geoJsonData.features) {
-      return null;
-    }
+    React.useEffect(() => {
+      if (!geoJsonDataProp || !geoJsonDataProp.features) return;
 
-    const validFeatures = geoJsonData.features.filter(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (feature: any) =>
-        feature &&
-        feature.geometry &&
-        feature.geometry.coordinates &&
-        Array.isArray(feature.geometry.coordinates) &&
-        feature.geometry.coordinates.length > 0,
-    );
-
-    if (validFeatures.length === 0) {
-      return null;
-    }
-
-    let minLat = Infinity;
-    let maxLat = -Infinity;
-    let minLng = Infinity;
-    let maxLng = -Infinity;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validFeatures.forEach((feature: any) => {
-      const coordinates = feature.geometry.coordinates;
+      let minLat = Infinity,
+        maxLat = -Infinity;
+      let minLng = Infinity,
+        maxLng = -Infinity;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const processCoordinates = (coords: any): void => {
-        if (Array.isArray(coords)) {
-          if (typeof coords[0] === "number" && typeof coords[1] === "number") {
-            // This is a [lng, lat] pair
-            const [lng, lat] = coords;
+      geoJsonDataProp.features.forEach((feature: any) => {
+        if (!feature.geometry?.coordinates) return;
+        const coords = feature.geometry.coordinates as number[][][];
+        const flatCoords = coords.flat(3);
+        for (let i = 0; i < flatCoords.length; i += 2) {
+          const lng = flatCoords[i];
+          const lat = flatCoords[i + 1];
+          if (typeof lng === "number" && typeof lat === "number") {
             minLat = Math.min(minLat, lat);
             maxLat = Math.max(maxLat, lat);
             minLng = Math.min(minLng, lng);
             maxLng = Math.max(maxLng, lng);
-          } else {
-            // This is an array of coordinates, process recursively
-            coords.forEach(processCoordinates);
           }
         }
-      };
+      });
 
-      processCoordinates(coordinates);
+      if (minLat !== Infinity && maxLat !== -Infinity && minLng !== Infinity && maxLng !== -Infinity) {
+        map.fitBounds(
+          [
+            [minLat, minLng],
+            [maxLat, maxLng],
+          ],
+          { padding: [20, 20] },
+        );
+      }
+    }, [geoJsonDataProp, map]);
+
+    return null;
+  };
+
+  // Default center (Iran center as fallback)
+  const defaultCenter: [number, number] = [32.4279, 53.688];
+  const defaultZoom = 6;
+
+  // Calculate bounds from GeoJSON features
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getBounds = (data: any): [[number, number], [number, number]] | null => {
+    if (!data || !data.features) return null;
+
+    let minLat = Infinity,
+      maxLat = -Infinity;
+    let minLng = Infinity,
+      maxLng = -Infinity;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data.features.forEach((feature: any) => {
+      if (!feature.geometry?.coordinates) return;
+      const coords = feature.geometry.coordinates as number[][][];
+      const flatCoords = coords.flat(3);
+      for (let i = 0; i < flatCoords.length; i += 2) {
+        const lng = flatCoords[i];
+        const lat = flatCoords[i + 1];
+        if (typeof lng === "number" && typeof lat === "number") {
+          minLat = Math.min(minLat, lat);
+          maxLat = Math.max(maxLat, lat);
+          minLng = Math.min(minLng, lng);
+          maxLng = Math.max(maxLng, lng);
+        }
+      }
     });
 
     if (minLat === Infinity || maxLat === -Infinity || minLng === Infinity || maxLng === -Infinity) {
       return null;
     }
 
-    // Add some padding to the bounds
-    const latPadding = (maxLat - minLat) * 0.1;
-    const lngPadding = (maxLng - minLng) * 0.1;
-
     return [
-      [minLat - latPadding, minLng - lngPadding],
-      [maxLat + latPadding, maxLng + lngPadding],
-    ] as [[number, number], [number, number]];
-  }, [geoJsonData]);
+      [minLat, minLng],
+      [maxLat, maxLng],
+    ];
+  };
+
+  const mapBounds = useMemo(() => getBounds(geoJsonData), [geoJsonData]);
+
+  const mapCenter: [number, number] = mapBounds
+    ? [(mapBounds[0][0] + mapBounds[1][0]) / 2, (mapBounds[0][1] + mapBounds[1][1]) / 2]
+    : defaultCenter;
 
   if (isLoading) {
     return (
@@ -444,7 +469,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       <div className="map-container">
         <div className="map-wrapper">
           <MapContainer
-            center={defaultCenter}
+            center={mapCenter}
             zoom={defaultZoom}
             bounds={mapBounds || undefined}
             style={{ height: "100%", width: "100%" }}
@@ -455,7 +480,6 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
             doubleClickZoom={true}
             zoomControl={false}
             attributionControl={false}
-            key={`map-${validFeatures.length}-${JSON.stringify(mapBounds)}`}
           >
             <BasemapLayer />
             <div className="absolute top-4 left-4 z-[1000]">
@@ -467,6 +491,9 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
 
             {/* Custom positioned attribution */}
             <AttributionControl position="bottomleft" prefix={false} />
+
+            {/* Sync map bounds when geoJsonData changes */}
+            <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
 
             <GeoJSON
               data={
