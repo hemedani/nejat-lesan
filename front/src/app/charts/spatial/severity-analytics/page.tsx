@@ -34,11 +34,22 @@ const SpatialSeverityAnalyticsPage = () => {
         }>;
       };
       mapChart: Array<{
-        zoneId: string;
         zoneName: string;
         ratio: number;
+        fatalCount: number;
+        injuryCount: number;
+        severeCount: number;
       }>;
     };
+  }
+
+  // Summary totals derived from bar chart data
+  interface SummaryTotals {
+    totalAccidents: number;
+    severeCount: number;
+    zonesCount: number;
+    topZone: { zoneName: string; ratio: number } | null;
+    severityTypesCount: number;
   }
 
   const [showFilterSidebar, setShowFilterSidebar] = useState(true);
@@ -49,6 +60,7 @@ const SpatialSeverityAnalyticsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoadCompleted, setInitialLoadCompleted] = useState(false);
+  const [summaryTotals, setSummaryTotals] = useState<SummaryTotals | null>(null);
 
   // Default filters - city will be set from user settings
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({
@@ -455,20 +467,42 @@ const SpatialSeverityAnalyticsPage = () => {
         // Compute severity ratio from bar chart data: dead / (dead + injured)
         const fatalSeries = barSeries.find((s: { name: string }) => s.name.includes("فوت"));
         const injurySeries = barSeries.find((s: { name: string }) => s.name.includes("جرح"));
-        let mapChart: Array<{ zoneId: string; zoneName: string; ratio: number }> = [];
+        const damageSeries = barSeries.find((s: { name: string }) => s.name.includes("خسارتی"));
+        let mapChart: Array<{
+          zoneName: string;
+          ratio: number;
+          fatalCount: number;
+          injuryCount: number;
+          severeCount: number;
+        }> = [];
 
         if (fatalSeries && injurySeries && categories) {
           mapChart = categories.map((zoneName: string, idx: number) => {
             const fatal = fatalSeries.data[idx] || 0;
             const injury = injurySeries.data[idx] || 0;
-            const total = fatal + injury;
+            const severe = fatal + injury;
             return {
-              zoneId: String(idx),
               zoneName,
-              ratio: total > 0 ? fatal / total : 0,
+              ratio: severe > 0 ? fatal / severe : 0,
+              fatalCount: fatal,
+              injuryCount: injury,
+              severeCount: severe,
             };
           });
         }
+
+        // Compute total accident counts across all zones for the summary
+        const totalFatal = fatalSeries
+          ? fatalSeries.data.reduce((sum: number, v: number) => sum + (v || 0), 0)
+          : 0;
+        const totalInjury = injurySeries
+          ? injurySeries.data.reduce((sum: number, v: number) => sum + (v || 0), 0)
+          : 0;
+        const totalDamage = damageSeries
+          ? damageSeries.data.reduce((sum: number, v: number) => sum + (v || 0), 0)
+          : 0;
+        const totalAccidents = totalFatal + totalInjury + totalDamage;
+        const fatalSevereCount = totalFatal + totalInjury;
 
         setAnalyticsData({
           barChart: {
@@ -476,6 +510,18 @@ const SpatialSeverityAnalyticsPage = () => {
             series: barSeries,
           },
           mapChart,
+        });
+
+        // Set summary totals
+        setSummaryTotals({
+          totalAccidents,
+          severeCount: fatalSevereCount,
+          zonesCount: categories?.length || 0,
+          topZone:
+            mapChart.length > 0
+              ? mapChart.reduce((max, z) => (z.ratio > max.ratio ? z : max), mapChart[0])
+              : null,
+          severityTypesCount: barSeries.length,
         });
       } else {
         throw new Error("Failed to fetch analytics data");
@@ -581,7 +627,7 @@ const SpatialSeverityAnalyticsPage = () => {
           )}
 
           {/* Charts */}
-          <div className="space-y-6">
+          <div className="space-y-6 pb-8">
             {/* Bar Chart */}
             <SpatialSeverityBarChart data={analyticsData?.barChart || null} isLoading={isLoading} />
 
@@ -592,6 +638,81 @@ const SpatialSeverityAnalyticsPage = () => {
               isLoading={isLoading}
             />
           </div>
+
+          {/* Summary Section */}
+          {summaryTotals && !isLoading && (
+            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                خلاصه تحلیل
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">کل تصادفات</h4>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {summaryTotals.totalAccidents.toLocaleString("fa-IR")}
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">مناطق بررسی شده</h4>
+                  <p className="text-2xl font-bold text-green-600">
+                    {summaryTotals.zonesCount.toLocaleString("fa-IR")}
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-red-50 rounded-lg">
+                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">بیشترین نسبت شدت</h4>
+                  <p className="text-2xl font-bold text-red-600">
+                    {summaryTotals.topZone ? summaryTotals.topZone.zoneName : "—"}
+                  </p>
+                  {summaryTotals.topZone && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {(summaryTotals.topZone.ratio * 100).toFixed(1)}%
+                    </p>
+                  )}
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">انواع شدت</h4>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {summaryTotals.severityTypesCount.toLocaleString("fa-IR")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Additional analysis description */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="bg-green-50 rounded-lg p-4">
+                  <h4 className="font-medium text-green-900 mb-2">تحلیل سهم شدت تصادفات</h4>
+                  <p className="text-sm text-green-800">
+                    این تحلیل نسبت تصادفات فوتی به کل تصادفات شدید (فوتی+جرحی) را در مناطق مختلف
+                    نشان می‌دهد. از مجموع {summaryTotals.totalAccidents.toLocaleString("fa-IR")} تصادف،
+                    {" "}{summaryTotals.severeCount.toLocaleString("fa-IR")} مورد شدید (فوتی و جرحی) بوده است.
+                    منطقه "{summaryTotals.topZone?.zoneName || "—"}" با
+                    {" "}{(summaryTotals.topZone?.ratio || 0) * 100}%
+                    بالاترین نسبت شدت را دارد.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
