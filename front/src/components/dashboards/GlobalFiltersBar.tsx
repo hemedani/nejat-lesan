@@ -5,13 +5,14 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import MyDateInput from "../atoms/MyDateInput";
 import MyInput from "../atoms/MyInput";
 import { useGlobalChartFilters } from "@/context/GlobalChartFiltersContext";
 import { ChartFilterState } from "./ChartsFilterSidebar";
+import { ReqType } from "@/types/declarations/selectInp";
 
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
@@ -72,8 +73,6 @@ export default function GlobalFiltersBar() {
     };
 
   const loadProvincesOptions = createLoadOptions(getProvincesAction);
-  const loadCitiesOptions = createLoadOptions(getCitiesAction);
-  const loadRoadsOptions = createLoadOptions(getRoadsAction);
   const loadAccidentTypesOptions = createLoadOptions(getAccidentTypesAction);
   const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
   const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
@@ -87,6 +86,115 @@ export default function GlobalFiltersBar() {
   const loadFaultStatusesOptions = createLoadOptions(getFaultStatusesAction);
   const loadPlaqueTypesOptions = createLoadOptions(getPlaqueTypesAction);
   const loadColorsOptions = createLoadOptions(getColorsAction);
+
+  // Watch province and city for cascading
+  const watchedProvince = useWatch({ control, name: "province" });
+  const watchedCity = useWatch({ control, name: "city" });
+
+  // Cascade version – dependent selects reload when province/city changes
+  const [cascadeVersion, setCascadeVersion] = useState(0);
+  const prevProvinceRef = useRef(watchedProvince);
+  const prevCityRef = useRef(watchedCity);
+
+  useEffect(() => {
+    const provinceChanged =
+      JSON.stringify(prevProvinceRef.current) !== JSON.stringify(watchedProvince);
+    const cityChanged = JSON.stringify(prevCityRef.current) !== JSON.stringify(watchedCity);
+    if (provinceChanged || cityChanged) {
+      setCascadeVersion((v) => v + 1);
+      if (provinceChanged) prevProvinceRef.current = watchedProvince;
+      if (cityChanged) prevCityRef.current = watchedCity;
+    }
+  }, [watchedProvince, watchedCity]);
+
+  // Key suffix with cascade version
+  const gK = (key: string) => `${key}-g-${globalFiltersVersion}`;
+  const cK = (key: string) => `${key}-g-${globalFiltersVersion}-cv-${cascadeVersion}`;
+
+  // Province name → ID cache (fetched once, ~31 provinces)
+  const provinceNameToIdMap = useRef<Record<string, string>>({});
+
+  const buildProvinceIds = useCallback(async (): Promise<string[]> => {
+    if (!watchedProvince || watchedProvince.length === 0) return [];
+    if (Object.keys(provinceNameToIdMap.current).length === 0) {
+      try {
+        const response = await getProvincesAction({
+          set: { limit: 50, page: 1 },
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          const map: Record<string, string> = {};
+          response.body.forEach((p: { _id: string; name: string }) => {
+            map[p.name] = p._id;
+          });
+          provinceNameToIdMap.current = map;
+        }
+      } catch {
+        return [];
+      }
+    }
+    return watchedProvince
+      .map((name: string) => provinceNameToIdMap.current[name])
+      .filter(Boolean);
+  }, [watchedProvince]);
+
+  // Load cities filtered by selected province(s)
+  const loadCitiesFiltered = useCallback(
+    async (inputValue?: string): Promise<SelectOption[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const setParams: any = { limit: 20, page: 1 };
+      if (inputValue) setParams.name = inputValue;
+
+      const provinceIds = await buildProvinceIds();
+      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
+
+      try {
+        const response = await getCitiesAction({
+          set: setParams as ReqType["main"]["city"]["gets"]["set"],
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch {
+        // ignore
+      }
+      return [];
+    },
+    [buildProvinceIds],
+  );
+
+  // Load roads filtered by province(s) – NEW: provinceIds on road/gets
+  const loadRoadsFiltered = useCallback(
+    async (inputValue?: string): Promise<SelectOption[]> => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const setParams: any = { limit: 20, page: 1 };
+      if (inputValue) setParams.name = inputValue;
+
+      const provinceIds = await buildProvinceIds();
+      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
+
+      try {
+        const response = await getRoadsAction({
+          set: setParams as ReqType["main"]["road"]["gets"]["set"],
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch {
+        // ignore
+      }
+      return [];
+    },
+    [buildProvinceIds],
+  );
 
   // Lock body scroll when sidebar is open
   useEffect(() => {
@@ -137,8 +245,6 @@ export default function GlobalFiltersBar() {
   const globalDefaultValue = (key: keyof ChartFilterState) => {
     return hasGlobalFilters ? toSelectOptions(globalFilters[key] as string[] | undefined) : undefined;
   };
-
-  const gK = (key: string) => `${key}-g-${globalFiltersVersion}`;
 
   return (
     <>
@@ -225,8 +331,8 @@ export default function GlobalFiltersBar() {
 
             <div className="grid grid-cols-1 gap-4 mb-4">
               <MyAsyncMultiSelect key={gK("province")} name="province" label="استان" setValue={setValue} loadOptions={loadProvincesOptions} errMsg={errors.province?.message} placeholder="انتخاب استان..." defaultOptions defaultValue={globalDefaultValue("province") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("city")} name="city" label="شهر" setValue={setValue} loadOptions={loadCitiesOptions} errMsg={errors.city?.message} placeholder="انتخاب شهر..." defaultOptions defaultValue={globalDefaultValue("city") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("road")} name="road" label="راه" setValue={setValue} loadOptions={loadRoadsOptions} errMsg={errors.road?.message} placeholder="انتخاب راه..." defaultOptions defaultValue={globalDefaultValue("road") as SelectOption[]} />
+              <MyAsyncMultiSelect key={cK("city")} name="city" label="شهر" setValue={setValue} loadOptions={loadCitiesFiltered} errMsg={errors.city?.message} placeholder="انتخاب شهر..." defaultOptions defaultValue={globalDefaultValue("city") as SelectOption[]} />
+              <MyAsyncMultiSelect key={cK("road")} name="road" label="راه" setValue={setValue} loadOptions={loadRoadsFiltered} errMsg={errors.road?.message} placeholder="انتخاب راه..." defaultOptions defaultValue={globalDefaultValue("road") as SelectOption[]} />
               <MyAsyncMultiSelect key={gK("collisionType")} name="collisionType" label="نوع برخورد" setValue={setValue} loadOptions={loadCollisionTypesOptions} errMsg={errors.collisionType?.message} placeholder="انتخاب نوع برخورد..." defaultOptions defaultValue={globalDefaultValue("collisionType") as SelectOption[]} />
               <MyAsyncMultiSelect key={gK("accidentType")} name="accidentType" label="نوع تصادف" setValue={setValue} loadOptions={loadAccidentTypesOptions} errMsg={errors.accidentType?.message} placeholder="انتخاب نوع تصادف..." defaultOptions defaultValue={globalDefaultValue("accidentType") as SelectOption[]} />
             </div>

@@ -5,11 +5,12 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import MyDateInput from "../atoms/MyDateInput";
 import MyInput from "../atoms/MyInput";
 import { useGlobalChartFilters } from "@/context/GlobalChartFiltersContext";
+import { ReqType } from "@/types/declarations/selectInp";
 
 // Import action functions for loading options
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
@@ -212,6 +213,26 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     defaultValues: initialFilters || {},
   });
 
+  // Watch province and city for cascading filter updates
+  const watchedProvince = useWatch({ control, name: "province" });
+  const watchedCity = useWatch({ control, name: "city" });
+
+  // Cascade version - increments when province or city changes to force dependent selects to reload
+  const [cascadeVersion, setCascadeVersion] = useState(0);
+  const prevProvinceRef = useRef(watchedProvince);
+  const prevCityRef = useRef(watchedCity);
+
+  useEffect(() => {
+    const provinceChanged =
+      JSON.stringify(prevProvinceRef.current) !== JSON.stringify(watchedProvince);
+    const cityChanged = JSON.stringify(prevCityRef.current) !== JSON.stringify(watchedCity);
+    if (provinceChanged || cityChanged) {
+      setCascadeVersion((v) => v + 1);
+      if (provinceChanged) prevProvinceRef.current = watchedProvince;
+      if (cityChanged) prevCityRef.current = watchedCity;
+    }
+  }, [watchedProvince, watchedCity]);
+
   // Helper function to check if any main filters are enabled
   const hasMainFilters = () => {
     const mainFiltersList: Array<keyof ChartFilterState> = [
@@ -382,13 +403,151 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
 
   // Key suffix for forcing re-mount on global filter change
   const gK = (key: string) => `${key}-gf-${localGlobalVersion}`;
+  // Key suffix for cascade-dependent fields (adds cascadeVersion)
+  const cK = (key: string) => `${key}-gf-${localGlobalVersion}-cv-${cascadeVersion}`;
 
-  // Load options functions
+  // Province name → ID cache (fetched once, ~31 provinces)
+  const provinceNameToIdMap = useRef<Record<string, string>>({});
+
+  const buildProvinceIds = useCallback(async (): Promise<string[]> => {
+    if (!watchedProvince || watchedProvince.length === 0) return [];
+    if (Object.keys(provinceNameToIdMap.current).length === 0) {
+      try {
+        const response = await getProvincesAction({
+          set: { limit: 50, page: 1 },
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          const map: Record<string, string> = {};
+          response.body.forEach((p: { _id: string; name: string }) => {
+            map[p.name] = p._id;
+          });
+          provinceNameToIdMap.current = map;
+        }
+      } catch {
+        return [];
+      }
+    }
+    return watchedProvince
+      .map((name: string) => provinceNameToIdMap.current[name])
+      .filter(Boolean);
+  }, [watchedProvince]);
+
+  // Load cities filtered by selected province(s)
+  const loadCitiesFiltered = useCallback(
+    async (inputValue?: string) => {
+      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
+      if (inputValue) setParams.name = inputValue;
+
+      const provinceIds = await buildProvinceIds();
+      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
+
+      try {
+        const response = await getCitiesAction({
+          set: setParams as ReqType["main"]["city"]["gets"]["set"],
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch {
+        // ignore
+      }
+      return [];
+    },
+    [buildProvinceIds],
+  );
+
+  // Load roads filtered by province(s) – NEW: provinceIds on road/gets
+  const loadRoadsFiltered = useCallback(
+    async (inputValue?: string) => {
+      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
+      if (inputValue) setParams.name = inputValue;
+
+      const provinceIds = await buildProvinceIds();
+      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
+
+      try {
+        const response = await getRoadsAction({
+          set: setParams as ReqType["main"]["road"]["gets"]["set"],
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch {
+        // ignore
+      }
+      return [];
+    },
+    [buildProvinceIds],
+  );
+
+  // Load city zones filtered by province(s) and/or city(ies)
+  const loadCityZonesFiltered = useCallback(
+    async (inputValue?: string) => {
+      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
+      if (inputValue) setParams.name = inputValue;
+
+      const provinceIds = await buildProvinceIds();
+      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
+
+      if (watchedCity && watchedCity.length > 0) {
+        setParams.cityNames = watchedCity;
+      }
+
+      try {
+        const response = await getCityZonesAction({
+          set: setParams as ReqType["main"]["city_zone"]["gets"]["set"],
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch {
+        // ignore
+      }
+      return [];
+    },
+    [buildProvinceIds, watchedCity],
+  );
+
+  // Load traffic zones – triggered when province or city changes (no server-side filter)
+  const loadTrafficZonesFiltered = useCallback(
+    async (inputValue?: string) => {
+      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
+      if (inputValue) setParams.name = inputValue;
+
+      try {
+        const response = await getTrafficZonesAction({
+          set: setParams as ReqType["main"]["traffic_zone"]["gets"]["set"],
+          get: { _id: 1, name: 1 },
+        });
+        if (response.success) {
+          return response.body.map((item: { _id: string; name: string }) => ({
+            value: item.name,
+            label: item.name,
+          }));
+        }
+      } catch {
+        // ignore
+      }
+      return [];
+    },
+    [],
+  );
+
+  // Load options functions (used by filters that do NOT need cascading)
   const loadProvincesOptions = createLoadOptions(getProvincesAction);
-  const loadCitiesOptions = createLoadOptions(getCitiesAction);
-  const loadRoadsOptions = createLoadOptions(getRoadsAction);
-  const loadTrafficZonesOptions = createLoadOptions(getTrafficZonesAction);
-  const loadCityZonesOptions = createLoadOptions(getCityZonesAction);
   const loadAccidentTypesOptions = createLoadOptions(getAccidentTypesAction);
   const loadPositionsOptions = createLoadOptions(getPositionsAction);
   const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
@@ -634,11 +793,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   )}
                   {enabledFilters.includes("city") && (
                     <MyAsyncMultiSelect
-                      key={gK("city")}
+                      key={cK("city")}
                       name="city"
                       label="شهر"
                       setValue={setValue}
-                      loadOptions={loadCitiesOptions}
+                      loadOptions={loadCitiesFiltered}
                       errMsg={errors.city?.message}
                       placeholder="انتخاب شهر..."
                       defaultOptions
@@ -647,11 +806,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   )}
                   {enabledFilters.includes("road") && (
                     <MyAsyncMultiSelect
-                      key={gK("road")}
+                      key={cK("road")}
                       name="road"
                       label="راه"
                       setValue={setValue}
-                      loadOptions={loadRoadsOptions}
+                      loadOptions={loadRoadsFiltered}
                       errMsg={errors.road?.message}
                       placeholder="انتخاب راه..."
                       defaultOptions
@@ -660,11 +819,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   )}
                   {enabledFilters.includes("trafficZone") && (
                     <MyAsyncMultiSelect
-                      key={gK("trafficZone")}
+                      key={cK("trafficZone")}
                       name="trafficZone"
                       label="منطقه ترافیکی"
                       setValue={setValue}
-                      loadOptions={loadTrafficZonesOptions}
+                      loadOptions={loadTrafficZonesFiltered}
                       errMsg={errors.trafficZone?.message}
                       placeholder="انتخاب منطقه ترافیکی..."
                       defaultOptions
@@ -673,11 +832,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   )}
                   {enabledFilters.includes("cityZone") && (
                     <MyAsyncMultiSelect
-                      key={gK("cityZone")}
+                      key={cK("cityZone")}
                       name="cityZone"
                       label="منطقه شهری"
                       setValue={setValue}
-                      loadOptions={loadCityZonesOptions}
+                      loadOptions={loadCityZonesFiltered}
                       errMsg={errors.cityZone?.message}
                       placeholder="انتخاب منطقه شهری..."
                       defaultOptions
