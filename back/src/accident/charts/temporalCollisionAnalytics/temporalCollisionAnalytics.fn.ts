@@ -400,7 +400,12 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 	};
 
 	const facetStages: Record<string, Document[]> = {
-		total: [groupStage],
+		total: [
+			...(Object.keys(additionalFilters).length > 0
+				? [{ $match: additionalFilters }]
+				: []),
+			groupStage,
+		],
 	};
 
 	for (let i = 0; i < collisionTypesToAnalyze.length; i++) {
