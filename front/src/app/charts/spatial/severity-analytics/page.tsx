@@ -705,7 +705,7 @@ const SpatialSeverityAnalyticsPage = () => {
                     این تحلیل نسبت تصادفات فوتی به کل تصادفات شدید (فوتی+جرحی) را در مناطق مختلف
                     نشان می‌دهد. از مجموع {summaryTotals.totalAccidents.toLocaleString("fa-IR")} تصادف،
                     {" "}{summaryTotals.severeCount.toLocaleString("fa-IR")} مورد شدید (فوتی و جرحی) بوده است.
-                    منطقه "{summaryTotals.topZone?.zoneName || "—"}" با
+                    منطقه &ldquo;{summaryTotals.topZone?.zoneName || "—"}&rdquo; با
                     {" "}{(summaryTotals.topZone?.ratio || 0) * 100}%
                     بالاترین نسبت شدت را دارد.
                   </p>
