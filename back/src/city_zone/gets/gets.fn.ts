@@ -3,7 +3,7 @@ import { city_zone } from "../../../mod.ts";
 
 export const getsFn: ActFn = async (body) => {
 	const {
-		set: { page, limit, name, cities, cityNames },
+		set: { page, limit, name, cities, cityNames, provinceIds },
 		get,
 	} = body.details;
 
@@ -23,6 +23,12 @@ export const getsFn: ActFn = async (body) => {
 
 	if (cityNames && cityNames.length > 0) {
 		matchConditions["city.name"] = { $in: cityNames };
+	}
+
+	if (provinceIds && provinceIds.length > 0) {
+		matchConditions["city.province._id"] = {
+			$in: provinceIds.map((id: string) => new ObjectId(id)),
+		};
 	}
 
 	if (Object.keys(matchConditions).length > 0) {

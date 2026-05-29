@@ -1,4 +1,4 @@
-import { number, object, optional, string } from "@deps";
+import { array, number, object, objectIdValidation, optional, string } from "@deps";
 import { selectStruct } from "../../../mod.ts";
 
 export const getsValidator = () => {
@@ -7,6 +7,7 @@ export const getsValidator = () => {
 			page: number(),
 			limit: number(),
 			name: optional(string()),
+			provinceIds: optional(array(objectIdValidation)),
 		}),
 		get: selectStruct("road", 2),
 	});

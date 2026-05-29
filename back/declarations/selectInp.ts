@@ -8106,6 +8106,7 @@ limit: number;
 name?: string;
 cities?: string[];
 cityNames?: string[];
+provinceIds?: string[];
 };
 get: {
 _id?: (0 | 1 );
@@ -11811,6 +11812,7 @@ set: {
 page: number;
 limit: number;
 name?: string;
+provinceIds?: string[];
 };
 get: {
 _id?: (0 | 1 );

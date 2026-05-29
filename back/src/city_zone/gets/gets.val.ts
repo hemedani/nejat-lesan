@@ -16,6 +16,7 @@ export const getsValidator = () => {
 			name: optional(string()),
 			cities: optional(array(objectIdValidation)),
 			cityNames: optional(array(string())),
+			provinceIds: optional(array(objectIdValidation)),
 		}),
 		get: selectStruct("city_zone", 2),
 	});
