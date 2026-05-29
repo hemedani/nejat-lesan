@@ -60,33 +60,51 @@ export const temporalSeverityAnalyticsFn: ActFn = async (body) => {
 		baseFilter.news_number = filters.newsNumber;
 	}
 
+	const deadFilter: Document = {};
+	let hasDeadFilter = false;
+
 	if (filters.deadCount !== undefined) {
-		baseFilter.dead_count = filters.deadCount;
+		deadFilter.dead_count = filters.deadCount;
+		hasDeadFilter = true;
 	} else if (
 		filters.deadCountMin !== undefined || filters.deadCountMax !== undefined
 	) {
-		baseFilter.dead_count = {};
+		deadFilter.dead_count = {};
 		if (filters.deadCountMin !== undefined) {
-			baseFilter.dead_count.$gte = filters.deadCountMin;
+			deadFilter.dead_count.$gte = filters.deadCountMin;
 		}
 		if (filters.deadCountMax !== undefined) {
-			baseFilter.dead_count.$lte = filters.deadCountMax;
+			deadFilter.dead_count.$lte = filters.deadCountMax;
 		}
+		hasDeadFilter = true;
 	}
 
+	const injuredFilter: Document = {};
+	let hasInjuredFilter = false;
+
 	if (filters.injuredCount !== undefined) {
-		baseFilter.injured_count = filters.injuredCount;
+		injuredFilter.injured_count = filters.injuredCount;
+		hasInjuredFilter = true;
 	} else if (
 		filters.injuredCountMin !== undefined ||
 		filters.injuredCountMax !== undefined
 	) {
-		baseFilter.injured_count = {};
+		injuredFilter.injured_count = {};
 		if (filters.injuredCountMin !== undefined) {
-			baseFilter.injured_count.$gte = filters.injuredCountMin;
+			injuredFilter.injured_count.$gte = filters.injuredCountMin;
 		}
 		if (filters.injuredCountMax !== undefined) {
-			baseFilter.injured_count.$lte = filters.injuredCountMax;
+			injuredFilter.injured_count.$lte = filters.injuredCountMax;
 		}
+		hasInjuredFilter = true;
+	}
+
+	if (hasDeadFilter && hasInjuredFilter) {
+		baseFilter.$or = [deadFilter, injuredFilter];
+	} else if (hasDeadFilter) {
+		Object.assign(baseFilter, deadFilter);
+	} else if (hasInjuredFilter) {
+		Object.assign(baseFilter, injuredFilter);
 	}
 
 	if (filters.hasWitness !== undefined) {
