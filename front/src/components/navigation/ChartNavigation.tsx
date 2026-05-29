@@ -30,7 +30,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
     "area-usage-analytics": "areaUsageAnalytics",
     "human-reason-analytics": "humanReasonAnalytics",
     "vehicle-reason-analytics": "vehicleReasonAnalytics",
-    "company-performance-analytics": "companyPerformanceAnalytics",
+    // "company-performance-analytics": "companyPerformanceAnalytics", // Temporarily hidden
     "total-reason-analytics": "totalReasonAnalytics",
     "monthly-holiday": "monthlyHolidayAnalytics",
     "hourly-day-of-week": "hourlyDayOfWeekAnalytics",
@@ -47,8 +47,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
     "severity-analytics-spatial": "spatialSeverityAnalytics", // This might not exist in permissions
     "light-analytics": "spatialLightAnalytics", // This might not exist in permissions
     "collision-analytics-spatial": "spatialCollisionAnalytics", // Different ID to distinguish from others
-    "single-vehicle-analytics": "spatialSingleVehicleAnalytics", // This might not exist in permissions
-    "safety-index": "spatialSafetyIndexAnalytics", // This might not exist in permissions
+    // "single-vehicle-analytics": "spatialSingleVehicleAnalytics", // Temporarily hidden
+    // "safety-index": "spatialSafetyIndexAnalytics", // Temporarily hidden
 
     // Trend section
     "severity-analytics-trend": "eventSeverityAnalytics",
@@ -152,11 +152,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
             label: "توزیع عامل وسیله نقلیه",
             href: "/charts/overall/vehicle-reason-analytics",
           },
-          {
-            id: "company-performance-analytics",
-            label: "مقایسه عملکرد کمپانیهای سازنده خودرو",
-            href: "/charts/overall/company-performance-analytics",
-          },
+          // {
+          //   id: "company-performance-analytics",
+          //   label: "مقایسه عملکرد کمپانیهای سازنده خودرو",
+          //   href: "/charts/overall/company-performance-analytics",
+          // }, // Temporarily hidden
         ];
         break;
       case "temporal":
@@ -225,16 +225,16 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
             label: "نحوه و نوع برخورد",
             href: "/charts/spatial/collision-analytics",
           },
-          {
-            id: "single-vehicle-analytics",
-            label: "تصادفات تک وسیله ای",
-            href: "/charts/spatial/single-vehicle-analytics",
-          },
-          {
-            id: "safety-index",
-            label: "شاخص ناحیه‌ای ایمنی",
-            href: "/charts/spatial/safety-index",
-          },
+          // {
+          //   id: "single-vehicle-analytics",
+          //   label: "تصادفات تک وسیله ای",
+          //   href: "/charts/spatial/single-vehicle-analytics",
+          // }, // Temporarily hidden
+          // {
+          //   id: "safety-index",
+          //   label: "شاخص ناحیه‌ای ایمنی",
+          //   href: "/charts/spatial/safety-index",
+          // }, // Temporarily hidden
         ];
         break;
       case "trend":
