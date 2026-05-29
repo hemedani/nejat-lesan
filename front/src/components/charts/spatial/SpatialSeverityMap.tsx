@@ -13,9 +13,11 @@ const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { s
 const GeoJSON = dynamic(() => import("react-leaflet").then((mod) => mod.GeoJSON), { ssr: false });
 
 interface MapData {
-  zoneId: string;
   zoneName: string;
   ratio: number;
+  fatalCount: number;
+  injuryCount: number;
+  severeCount: number;
 }
 
 interface SpatialSeverityMapProps {
@@ -31,11 +33,9 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 }) => {
   const [mapError, setMapError] = React.useState<string | null>(null);
 
-  // Effect to catch any rendering errors with the map data
   React.useEffect(() => {
     setMapError(null);
     try {
-      // Validate mapData structure
       if (mapData && Array.isArray(mapData)) {
         const invalidItems = mapData.filter(
           (item) => !item || typeof item.zoneName !== "string" || item.zoneName.trim() === "",
@@ -49,31 +49,27 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       setMapError("خطا در اعتبارسنجی داده‌های نقشه");
     }
   }, [mapData, geoJsonData]);
-  // Color scale function: green (low) to yellow to red (high)
+
   const getColor = (ratio: number): string => {
-    if (ratio <= 0.2) return "#10B981"; // Green (0% severity included here)
-    if (ratio <= 0.4) return "#84CC16"; // Light green
-    if (ratio <= 0.6) return "#F59E0B"; // Yellow
-    if (ratio <= 0.8) return "#F97316"; // Orange
-    return "#EF4444"; // Red
+    if (ratio <= 0.2) return "#10B981";
+    if (ratio <= 0.4) return "#84CC16";
+    if (ratio <= 0.6) return "#F59E0B";
+    if (ratio <= 0.8) return "#F97316";
+    return "#EF4444";
   };
 
-  // Helper function to match zone names flexibly
   const findZoneData = (zoneName: string) => {
     if (!zoneName || !mapData || mapData.length === 0) return null;
 
-    // Try exact match first
     let zoneData = mapData.find((item) => item.zoneName && item.zoneName === zoneName);
     if (zoneData) return zoneData;
 
-    // Try to extract number from zone name and match
     const zoneNumber = zoneName.match(/\d+/)?.[0];
     if (zoneNumber) {
       zoneData = mapData.find((item) => item.zoneName && item.zoneName === zoneNumber);
       if (zoneData) return zoneData;
     }
 
-    // Try fuzzy matching - remove common prefixes/suffixes
     const cleanZoneName = zoneName.replace(/^(منطقه|zone|district)\s*/i, "").trim();
     zoneData = mapData.find((item) => {
       if (!item.zoneName) return false;
@@ -82,7 +78,6 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     });
     if (zoneData) return zoneData;
 
-    // Try partial matching
     zoneData = mapData.find(
       (item) =>
         item.zoneName && (zoneName.includes(item.zoneName) || item.zoneName.includes(zoneName)),
@@ -91,7 +86,6 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     return zoneData;
   };
 
-  // Style function for GeoJSON features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const style = (feature?: any) => {
     if (!feature || !feature.properties)
@@ -137,7 +131,6 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     };
   };
 
-  // Event handlers for interactive features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onEachFeature = (feature: any, layer: any) => {
     if (!feature || !feature.properties || !layer) return;
@@ -147,27 +140,54 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 
     const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;
+    const fatalCount = zoneData?.fatalCount || 0;
+    const injuryCount = zoneData?.injuryCount || 0;
+    const severeCount = zoneData?.severeCount || 0;
+    const geoZoneId = feature.properties?.id || "";
 
-    // Popup content
+    const ratioDisplay = (ratio * 100).toFixed(1);
+
+    // Tooltip (hover)
+    layer.bindTooltip(
+      `<div style="direction:rtl;text-align:right;font-family:vazir-matn;font-size:13px;padding:4px;">
+        <strong>${zoneName}</strong><br/>
+        فوتی: ${fatalCount} | جرحی: ${injuryCount}<br/>
+        نسبت شدت: ${ratioDisplay}%
+      </div>`,
+      {
+        direction: "top",
+        sticky: false,
+        opacity: 0.9,
+        className: "custom-tooltip",
+      },
+    );
+
+    // Popup (click)
     const popupContent = `
-      <div class="p-3 min-w-48">
-        <h4 class="font-semibold text-gray-900 mb-2">${zoneName}</h4>
-        <div class="space-y-1 text-sm">
-          <div class="flex justify-between">
-            <span class="text-gray-600">نسبت شدت:</span>
-            <span class="font-medium">${(ratio * 100).toFixed(1)}%</span>
+      <div style="direction:rtl;text-align:right;font-family:vazir-matn;padding:12px;min-width:230px;">
+        <h4 style="font-weight:600;color:#111827;margin-bottom:10px;font-size:14px;">${zoneName}</h4>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;">
+            <span style="color:#6B7280;">تعداد تصادفات فوتی:</span>
+            <span style="font-weight:600;color:#DC2626;">${fatalCount}</span>
           </div>
-          <div class="flex justify-between">
-            <span class="text-gray-600">سطح خطر:</span>
-            <span class="font-medium" style="color: ${getColor(ratio)}">
-              ${getRiskLevel(ratio)}
-            </span>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="color:#6B7280;">تعداد تصادفات جرحی:</span>
+            <span style="font-weight:600;color:#D97706;">${injuryCount}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="color:#6B7280;">مجموع شدید (فوتی+جرحی):</span>
+            <span style="font-weight:600;color:#111827;">${severeCount}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding-top:6px;border-top:1px solid #E5E7EB;">
+            <span style="color:#6B7280;">نسبت شدت (فوتی/شدید):</span>
+            <span style="font-weight:600;color:${getColor(ratio)};">${ratioDisplay}%</span>
           </div>
           ${
-            zoneData
-              ? `<div class="flex justify-between">
-            <span class="text-gray-600">شناسه منطقه:</span>
-            <span class="font-medium">${zoneData.zoneId}</span>
+            geoZoneId
+              ? `<div style="display:flex;justify-content:space-between;padding-top:4px;">
+            <span style="color:#9CA3AF;">شناسه منطقه:</span>
+            <span style="font-size:11px;color:#9CA3AF;direction:ltr;">${geoZoneId}</span>
           </div>`
               : ""
           }
@@ -182,39 +202,39 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       className: "custom-popup",
     });
 
-    // Hover effects
     layer.on({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mouseover: (e: any) => {
-        const eventLayer = e.target;
-        eventLayer.setStyle({
-          weight: 3,
-          color: "#374151",
+        const currentLayer = e.target;
+        currentLayer.setStyle({
+          weight: 4,
+          color: "#1F2937",
           dashArray: "",
-          fillOpacity: 0.9,
+          fillOpacity: 0.85,
         });
+        currentLayer.bringToFront();
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mouseout: (e: any) => {
-        const eventLayer = e.target;
-        eventLayer.setStyle(style(feature));
+        const currentLayer = e.target;
+        currentLayer.setStyle(style(feature));
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      click: (e: any) => {
+        const currentLayer = e.target;
+        currentLayer.openPopup();
+        try {
+          const map = currentLayer._map;
+          if (map && currentLayer.getBounds) {
+            map.fitBounds(currentLayer.getBounds(), { padding: [20, 20] });
+          }
+        } catch {
+          // Ignore zoom errors
+        }
       },
     });
   };
 
-  // Get risk level text based on ratio
-  const getRiskLevel = (ratio: number): string => {
-    if (ratio <= 0.2) return "کم";
-    if (ratio <= 0.4) return "متوسط";
-    if (ratio <= 0.6) return "بالا";
-    if (ratio <= 0.8) return "بسیار بالا";
-    return "بحرانی";
-  };
-
-  // Syncs map bounds with geoJsonData changes
-  // Calls fitBounds whenever geoJsonData updates (including on mount with data),
-  // fixing the bug where city changes didn't zoom the map to the new city boundaries.
-  // Previously relied on a prevGeoJsonDataRef that always matched on mount, skipping the call.
   const FitBoundsOnGeoJsonChange = ({ geoJsonData }: { geoJsonData: GeoJsonData | null }) => {
     const map = useMap();
 
@@ -229,7 +249,6 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     return null;
   };
 
-  // Default center (Tehran coordinates)
   const defaultCenter: [number, number] = [35.6892, 51.389];
   const defaultZoom = 11;
 
@@ -260,7 +279,6 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     );
   }
 
-  // Calculate bounds for the map if GeoJSON data is available
   const getBounds = (geoJsonData: GeoJsonData | null): [[number, number], [number, number]] | null => {
     if (!geoJsonData || !geoJsonData.features) return null;
 
@@ -363,23 +381,23 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
         <div className="flex flex-wrap gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#10B981" }}></div>
-            <span>خطر کم (۰-۲۰٪)</span>
+            <span>۰-۲۰٪</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#84CC16" }}></div>
-            <span>خطر متوسط (۲۰-۴۰٪)</span>
+            <span>۲۰-۴۰٪</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F59E0B" }}></div>
-            <span>خطر بالا (۴۰-۶۰٪)</span>
+            <span>۴۰-۶۰٪</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#F97316" }}></div>
-            <span>خطر بسیار بالا (۶۰-۸۰٪)</span>
+            <span>۶۰-۸۰٪</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#EF4444" }}></div>
-            <span>خطر بحرانی (۸۰-۱۰۰٪)</span>
+            <span>۸۰-۱۰۰٪</span>
           </div>
         </div>
       </div>
@@ -394,7 +412,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
           <ul className="list-disc list-inside mt-1 space-y-0.5">
             <li>رنگ سبز = نسبت پایین فوتی (مناطق نسبتاً ایمن‌تر)</li>
             <li>رنگ قرمز = نسبت بالای فوتی (مناطق بحرانی نیازمند مداخله فوری)</li>
-            <li>با کلیک روی هر منطقه، درصد دقیق و سطح خطر نمایش داده می‌شود</li>
+            <li>با کلیک روی هر منطقه، درصد دقیق و آمار کامل نمایش داده می‌شود</li>
             <li>اولویت بهبود زیرساخت با مناطقی است که رنگ نارنجی و قرمز دارند</li>
           </ul>
         </div>
