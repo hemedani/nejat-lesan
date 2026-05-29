@@ -381,27 +381,7 @@ export const temporalSeverityAnalyticsFn: ActFn = async (body) => {
 				},
 			},
 		},
-		{
-			$project: {
-				_id: 1,
-				ratio: {
-					$cond: {
-						if: {
-							$gt: [{ $add: ["$fatalCount", "$injuryCount"] }, 0],
-						},
-						then: {
-							$multiply: [{
-								$divide: ["$fatalCount", {
-									$add: ["$fatalCount", "$injuryCount"],
-								}],
-							}, 100],
-						},
-						else: 0,
-					},
-				},
-			},
-		},
-		{ $sort: { "_id.year": 1, "_id.month": 1 } },
+		{ $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
 	];
 
 	const dbResults = await accident.aggregation({ pipeline }).toArray();
@@ -411,7 +391,7 @@ export const temporalSeverityAnalyticsFn: ActFn = async (body) => {
 	//    - Use Gregorian for lookup key
 	//    - Display as Jalali in categories
 	// =========================================================================
-	const resultsMap = new Map<string, number>();
+	const monthTotals = new Map<string, { fatal: number; injury: number }>();
 	for (const r of dbResults) {
 		const dateStr = `${r._id.year}-${
 			String(r._id.month).padStart(2, "0")
@@ -421,7 +401,11 @@ export const temporalSeverityAnalyticsFn: ActFn = async (body) => {
 			String(m.jMonth() + 1).padStart(2, "0")
 		}`;
 
-		resultsMap.set(jalaliKey, (resultsMap.get(jalaliKey) || 0) + r.ratio);
+		const prev = monthTotals.get(jalaliKey) || { fatal: 0, injury: 0 };
+		monthTotals.set(jalaliKey, {
+			fatal: prev.fatal + r.fatalCount,
+			injury: prev.injury + r.injuryCount,
+		});
 	}
 
 	const categories: string[] = [];
@@ -435,8 +419,12 @@ export const temporalSeverityAnalyticsFn: ActFn = async (body) => {
 			String(current.jMonth() + 1).padStart(2, "0")
 		}`;
 
+		const totals = monthTotals.get(jalaliKey);
+		const total = (totals?.fatal || 0) + (totals?.injury || 0);
+		const ratio = total > 0 ? (totals!.fatal / total) * 100 : 0;
+
 		categories.push(jalaliKey);
-		seriesData.push(resultsMap.get(jalaliKey) || 0);
+		seriesData.push(ratio);
 
 		current.add(1, "jMonth");
 	}
