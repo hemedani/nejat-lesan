@@ -174,11 +174,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
         },
       },
       fontFamily: "vazir-matn, Arial, sans-serif",
-      events: {
-        legendClick: (_chartContext: unknown, seriesIndex: number) => {
-          handleToggle(seriesIndex);
-        },
-      },
+      events: {},
     },
     plotOptions: {
       bar: {
@@ -228,24 +224,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       },
     },
     legend: {
-      show: true,
-      position: "bottom" as const,
-      horizontalAlign: "center" as const,
-      onItemClick: {
-        toggleDataSeries: false,
-      },
-      labels: {
-        colors: "#374151",
-        useSeriesColors: false,
-      },
-      markers: {
-        size: 8,
-        strokeWidth: 0,
-      },
-      itemMargin: {
-        horizontal: 8,
-        vertical: 4,
-      },
+      show: false,
     },
     colors: seriesColors,
     tooltip: {
