@@ -19,10 +19,11 @@ const faLocale = {
 };
 
 if (typeof window !== "undefined") {
-  (window as Record<string, unknown>).Apex = {
-    ...((window as Record<string, unknown>).Apex as Record<string, unknown> || {}),
+  const w = window as unknown as Record<string, unknown>;
+  w.Apex = {
+    ...((w.Apex as Record<string, unknown>) || {}),
     chart: {
-      ...(((window as Record<string, unknown>).Apex as Record<string, unknown>)?.chart as Record<string, unknown> || {}),
+      ...(((w.Apex as Record<string, unknown>)?.chart as Record<string, unknown>) || {}),
       locales: [faLocale],
       defaultLocale: "fa",
     },
