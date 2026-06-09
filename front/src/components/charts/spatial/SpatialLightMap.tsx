@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
+import { useBasemap } from "@/context/BasemapContext";
 
 const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
 const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
@@ -20,6 +21,7 @@ const AttributionControl = dynamic(
   () => import("react-leaflet").then((mod) => mod.AttributionControl),
   { ssr: false },
 );
+const NeshanMapContainer = dynamic(() => import("@/components/maps/NeshanMapContainer"), { ssr: false });
 
 interface MapData {
   name: string;
@@ -335,6 +337,7 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   // Default center (Iran center as fallback)
   const defaultCenter: [number, number] = [32.4279, 53.688];
   const defaultZoom = 6;
+  const { basemap } = useBasemap();
 
   // Calculate bounds from GeoJSON features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -468,48 +471,69 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
 
       <div className="map-container">
         <div className="map-wrapper">
-          <MapContainer
-            center={mapCenter}
-            zoom={defaultZoom}
-            bounds={mapBounds || undefined}
-            style={{ height: "100%", width: "100%" }}
-            className="leaflet-container"
-            scrollWheelZoom={true}
-            dragging={true}
-            touchZoom={true}
-            doubleClickZoom={true}
-            zoomControl={false}
-            attributionControl={false}
-          >
-            <BasemapLayer />
-            <div className="absolute top-4 left-4 z-[1000]">
-              <BasemapSelector />
-            </div>
+          {basemap === "neshan" ? (
+            <>
+              <NeshanMapContainer
+                center={mapCenter}
+                zoom={defaultZoom}
+                className="w-full h-full leaflet-container"
+                geoJsonData={
+                  {
+                    type: "FeatureCollection",
+                    features: validFeatures,
+                  } as GeoJsonData
+                }
+                geoJsonStyle={style as (feature?: Record<string, unknown>) => Record<string, unknown>}
+                onEachFeature={onEachFeature as (feature: Record<string, unknown>, layer: unknown) => void}
+              />
+              <div className="absolute top-4 left-4 z-[1000]">
+                <BasemapSelector />
+              </div>
+            </>
+          ) : (
+            <MapContainer
+              center={mapCenter}
+              zoom={defaultZoom}
+              bounds={mapBounds || undefined}
+              style={{ height: "100%", width: "100%" }}
+              className="leaflet-container"
+              scrollWheelZoom={true}
+              dragging={true}
+              touchZoom={true}
+              doubleClickZoom={true}
+              zoomControl={false}
+              attributionControl={false}
+            >
+              <BasemapLayer />
+              <div className="absolute top-4 left-4 z-[1000]">
+                <BasemapSelector />
+              </div>
 
-            {/* Custom positioned zoom control */}
-            <ZoomControl position="topright" />
+              {/* Custom positioned zoom control */}
+              <ZoomControl position="topright" />
 
-            {/* Custom positioned attribution */}
-            <AttributionControl position="bottomleft" prefix={false} />
+              {/* Custom positioned attribution */}
+              <AttributionControl position="bottomleft" prefix={false} />
 
-            {/* Sync map bounds when geoJsonData changes */}
-            <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
+              {/* Sync map bounds when geoJsonData changes */}
+              <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
 
-            <GeoJSON
-              data={
-                {
-                  type: "FeatureCollection",
-                  features: validFeatures,
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                } as any
-              }
-              style={style}
-              onEachFeature={onEachFeature}
-              interactive={true}
-              bubblingMouseEvents={false}
-              key={`geojson-${JSON.stringify(mapData)}-${validFeatures.length}`}
-            />
-          </MapContainer>
+              <GeoJSON
+                data={
+                  {
+                    type: "FeatureCollection",
+                    features: validFeatures,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } as any
+                }
+                style={style}
+                onEachFeature={onEachFeature}
+                interactive={true}
+                bubblingMouseEvents={false}
+                key={`geojson-${JSON.stringify(mapData)}-${validFeatures.length}`}
+              />
+            </MapContainer>
+          )}
         </div>
       </div>
 

@@ -4,12 +4,10 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { useMap } from "react-leaflet";
+import { useBasemap } from "@/context/BasemapContext";
 
 const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
 const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
-          <div className="absolute top-4 left-4 z-[1000]">
-            <BasemapSelector />
-          </div>
 
 // Dynamically import react-leaflet components to avoid SSR issues
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
@@ -23,6 +21,7 @@ const AttributionControl = dynamic(
   () => import("react-leaflet").then((mod) => mod.AttributionControl),
   { ssr: false },
 );
+const NeshanMapContainer = dynamic(() => import("@/components/maps/NeshanMapContainer"), { ssr: false });
 
 interface MapData {
   name: string;
@@ -385,6 +384,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   // Default center (Ahvaz coordinates)
   const defaultCenter: [number, number] = [31.3183, 48.6706];
   const defaultZoom = 11;
+  const { basemap } = useBasemap();
 
   // Calculate bounds from GeoJSON features
   const mapBounds = useMemo(() => {
@@ -519,32 +519,48 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
 
       {/* Map */}
       <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
-        <MapContainer
-          center={defaultCenter}
-          zoom={defaultZoom}
-          bounds={mapBounds || undefined}
-          style={{ height: "100%", width: "100%" }}
-          zoomControl={false}
-          attributionControl={false}
-        >
-          <BasemapLayer />
-          <div className="absolute top-4 left-4 z-[1000]">
-            <BasemapSelector />
-          </div>
-          <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
-
-          {geoJsonData && (
-            <GeoJSON
-              data={geoJsonData as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}
-              style={style}
-              onEachFeature={onEachFeature}
-              key={JSON.stringify(mapData)} // Force re-render when data changes
+        {basemap === "neshan" ? (
+          <>
+            <NeshanMapContainer
+              center={defaultCenter}
+              zoom={defaultZoom}
+              className="w-full h-full"
+              geoJsonData={geoJsonData}
+              geoJsonStyle={style as (feature?: Record<string, unknown>) => Record<string, unknown>}
+              onEachFeature={onEachFeature as (feature: Record<string, unknown>, layer: unknown) => void}
             />
-          )}
+            <div className="absolute top-4 left-4 z-[1000]">
+              <BasemapSelector />
+            </div>
+          </>
+        ) : (
+          <MapContainer
+            center={defaultCenter}
+            zoom={defaultZoom}
+            bounds={mapBounds || undefined}
+            style={{ height: "100%", width: "100%" }}
+            zoomControl={false}
+            attributionControl={false}
+          >
+            <BasemapLayer />
+            <div className="absolute top-4 left-4 z-[1000]">
+              <BasemapSelector />
+            </div>
+            <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
 
-          <ZoomControl position="topright" />
-          <AttributionControl position="bottomright" />
-        </MapContainer>
+            {geoJsonData && (
+              <GeoJSON
+                data={geoJsonData as any /* eslint-disable-line @typescript-eslint/no-explicit-any */}
+                style={style}
+                onEachFeature={onEachFeature}
+                key={JSON.stringify(mapData)} // Force re-render when data changes
+              />
+            )}
+
+            <ZoomControl position="topright" />
+            <AttributionControl position="bottomright" />
+          </MapContainer>
+        )}
       </div>
 
       {/* Color Legend */}

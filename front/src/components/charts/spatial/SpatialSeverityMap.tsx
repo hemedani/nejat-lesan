@@ -4,6 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
+import { useBasemap } from "@/context/BasemapContext";
 
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
   ssr: false,
@@ -11,6 +12,7 @@ const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.Map
 const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
 const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
 const GeoJSON = dynamic(() => import("react-leaflet").then((mod) => mod.GeoJSON), { ssr: false });
+const NeshanMapContainer = dynamic(() => import("@/components/maps/NeshanMapContainer"), { ssr: false });
 
 interface MapData {
   zoneName: string;
@@ -249,6 +251,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     return null;
   };
 
+  const { basemap } = useBasemap();
   const defaultCenter: [number, number] = [35.6892, 51.389];
   const defaultZoom = 11;
 
@@ -346,33 +349,49 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       </div>
 
       <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
-        <MapContainer
-          center={mapCenter}
-          zoom={defaultZoom}
-          style={{ height: "100%", width: "100%" }}
-          bounds={bounds ? (bounds as [[number, number], [number, number]]) : undefined}
-        >
-          <BasemapLayer />
-          <div className="absolute top-4 left-4 z-[1000]">
-            <BasemapSelector />
-          </div>
-          <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
-          {mapError ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-              <div className="text-center p-4">
-                <p className="text-red-600 font-medium">خطا در بارگذاری نقشه</p>
-                <p className="text-sm text-gray-500 mt-1">{mapError}</p>
-              </div>
-            </div>
-          ) : (
-            <GeoJSON
-              data={geoJsonData}
-              style={style}
-              onEachFeature={onEachFeature}
-              key={JSON.stringify(geoJsonData)}
+        {basemap === "neshan" ? (
+          <>
+            <NeshanMapContainer
+              center={mapCenter}
+              zoom={defaultZoom}
+              className="w-full h-full"
+              geoJsonData={geoJsonData}
+              geoJsonStyle={style as (feature?: Record<string, unknown>) => Record<string, unknown>}
+              onEachFeature={onEachFeature as (feature: Record<string, unknown>, layer: unknown) => void}
             />
-          )}
-        </MapContainer>
+            <div className="absolute top-4 left-4 z-[1000]">
+              <BasemapSelector />
+            </div>
+          </>
+        ) : (
+          <MapContainer
+            center={mapCenter}
+            zoom={defaultZoom}
+            style={{ height: "100%", width: "100%" }}
+            bounds={bounds ? (bounds as [[number, number], [number, number]]) : undefined}
+          >
+            <BasemapLayer />
+            <div className="absolute top-4 left-4 z-[1000]">
+              <BasemapSelector />
+            </div>
+            <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
+            {mapError ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                <div className="text-center p-4">
+                  <p className="text-red-600 font-medium">خطا در بارگذاری نقشه</p>
+                  <p className="text-sm text-gray-500 mt-1">{mapError}</p>
+                </div>
+              </div>
+            ) : (
+              <GeoJSON
+                data={geoJsonData}
+                style={style}
+                onEachFeature={onEachFeature}
+                key={JSON.stringify(geoJsonData)}
+              />
+            )}
+          </MapContainer>
+        )}
       </div>
 
       {/* Color Legend */}
