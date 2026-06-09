@@ -270,7 +270,7 @@ function addGeoJSONLayer(map: any, data: GeoJsonData) {
   return layer;
 }
 
-function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void) {
+function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void, containerEl: HTMLElement | null) {
   const points: Array<{ lat: number; lng: number }> = [];
   const markers: Array<ReturnType<any>> = [];
   let polygon: ReturnType<any> | null = null;
@@ -369,9 +369,11 @@ function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?:
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-      cleanupDrawing();
-    }
+    if (e.key !== "Escape") return;
+    const target = e.target as HTMLElement | null;
+    // Only handle Escape if it targets the map container — otherwise a modal is open
+    if (containerEl && (!target || !containerEl.contains(target))) return;
+    cleanupDrawing();
   };
 
   map.on("click", handleClick);
@@ -457,7 +459,9 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
         err instanceof Error ? err.message : "Unknown initialization error",
       );
     }
-  }, [center, zoom, mapContainerId]);
+    // Only recreate map when container ID changes (e.g. component remount)
+    // center/zoom are updated via the separate setView effect
+  }, [mapContainerId]);
 
   // Initialize map
   useEffect(() => {
@@ -508,7 +512,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
       const layer = addMarkers(map, accidents);
       featureLayersRef.current.push(layer);
     }
-  }, [accidents, geoJsonData, localViewMode, mapReady, clearFeatureLayers, reclusterKey]);
+  }, [accidents, geoJsonData, localViewMode, mapReady, clearFeatureLayers, reclusterKey, isLoading]);
 
   // Re-cluster markers on zoom change
   useEffect(() => {
@@ -521,14 +525,20 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
     };
   }, [mapReady]);
 
+  // Stable ref for onShapeDrawn to avoid re-running effect on page re-renders
+  const onShapeDrawnRef = useRef(onShapeDrawn);
+  onShapeDrawnRef.current = onShapeDrawn;
+
   // Setup drawing controls (opt-in via drawingEnabled)
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !mapReady || !onShapeDrawn || !drawingEnabled) return;
+    if (!map || !mapReady || !onShapeDrawnRef.current || !drawingEnabled) return;
 
-    const cleanupDrawing = setupDrawing(map, onShapeDrawn);
+    const cleanupDrawing = setupDrawing(map, onShapeDrawnRef.current, containerRef.current);
     return cleanupDrawing;
-  }, [onShapeDrawn, mapReady, drawingEnabled]);
+    // Intentionally exclude onShapeDrawn from deps — use ref to avoid tearing down drawing on re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapReady, drawingEnabled]);
 
   // Zoom change handler
   useEffect(() => {
