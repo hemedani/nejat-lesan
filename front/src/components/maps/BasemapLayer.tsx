@@ -18,6 +18,8 @@ const BasemapLayer: React.FC<BasemapLayerProps> = ({ className }) => {
   const { basemap, basemapUrl } = useBasemap();
   const config = BASEMAPS[basemap];
 
+  if (basemap === "neshan") return null;
+
   return (
     <TileLayer
       key={basemap}

@@ -6,10 +6,8 @@ export interface BasemapConfig {
   nameEn: string;
   url: string;
   attribution: string;
+  useSdk?: boolean;
 }
-
-const token = process.env.NEXT_PUBLIC_MAP_IR_TOKEN;
-const apiKey = process.env.NEXT_PUBLIC_NESHAN_API_KEY;
 
 export const BASEMAPS: Record<BasemapType, BasemapConfig> = {
   osm: {
@@ -31,8 +29,9 @@ export const BASEMAPS: Record<BasemapType, BasemapConfig> = {
     id: "neshan",
     name: "نقشه نشان",
     nameEn: "Neshan Map",
-    url: "https://api.neshan.org/v1/tiles/{z}/{x}/{y}.png",
+    url: "",
     attribution: '&copy; <a href="https://neshan.org">نقشه نشان</a>',
+    useSdk: true,
   },
 };
 
@@ -42,20 +41,15 @@ export const getBasemapUrl = (type: BasemapType): string => {
   const basemap = BASEMAPS[type];
   if (!basemap) return BASEMAPS.osm.url;
 
+  if (type === "neshan") return "";
+
   if (type === "mapir") {
+    const token = process.env.NEXT_PUBLIC_MAP_IR_TOKEN;
     if (!token) {
       console.warn("NEXT_PUBLIC_MAP_IR_TOKEN is not set, falling back to OSM");
       return BASEMAPS.osm.url;
     }
     return `https://map.ir/shiveh/xyz/1.0.0/Shiveh:Shiveh@EPSG:3857@png/{z}/{x}/{y}.png?x-api-key=${token}`;
-  }
-
-  if (type === "neshan") {
-    if (!apiKey) {
-      console.warn("NEXT_PUBLIC_NESHAN_API_KEY is not set, falling back to OSM");
-      return BASEMAPS.osm.url;
-    }
-    return `https://api.neshan.org/v1/tiles/{z}/{x}/{y}.png?key=${apiKey}`;
   }
 
   return basemap.url;
