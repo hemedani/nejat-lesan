@@ -114,7 +114,7 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     chart: {
       type: "bar",
       height: 350,
-      toolbar: { show: false },
+      toolbar: { show: true, tools: { download: true } },
       fontFamily: "inherit",
     },
     plotOptions: {
@@ -177,7 +177,7 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     chart: {
       type: "bar",
       height: 350,
-      toolbar: { show: false },
+      toolbar: { show: true, tools: { download: true } },
       fontFamily: "inherit",
     },
     plotOptions: {

@@ -159,7 +159,7 @@ const EffectiveRoadDefectsDashboard: React.FC<DashboardProps> = ({ data, isLoadi
     chart: {
       type: "bar",
       height: 350,
-      toolbar: { show: false },
+      toolbar: { show: true, tools: { download: true } },
       fontFamily: "inherit",
     },
     plotOptions: {

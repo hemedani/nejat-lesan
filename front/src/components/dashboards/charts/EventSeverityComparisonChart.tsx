@@ -151,7 +151,8 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       type: "bar",
       height: 350,
       toolbar: {
-        show: false,
+        show: true,
+        tools: { download: true },
       },
       fontFamily: "inherit",
     },
@@ -229,7 +230,8 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       type: "bar",
       height: 350,
       toolbar: {
-        show: false,
+        show: true,
+        tools: { download: true },
       },
       fontFamily: "inherit",
     },

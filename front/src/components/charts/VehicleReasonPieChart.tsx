@@ -74,7 +74,16 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
       fontFamily: 'inherit',
       height: 350,
       toolbar: {
-        show: false
+        show: true,
+        tools: {
+          download: true,
+          selection: false,
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+          reset: false,
+        },
       }
     },
 

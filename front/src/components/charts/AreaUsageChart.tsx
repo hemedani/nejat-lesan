@@ -90,7 +90,16 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
       height: 400,
       fontFamily: "inherit",
       toolbar: {
-        show: false,
+        show: true,
+        tools: {
+          download: true,
+          selection: false,
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+          reset: false,
+        },
       },
     },
     title: {

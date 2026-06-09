@@ -63,8 +63,17 @@ const SingleVehicleChart: React.FC<ChartProps> = ({ data, isLoading }) => {
       type: 'donut',
       fontFamily: 'inherit',
       toolbar: {
-        show: false
-      }
+        show: true,
+        tools: {
+          download: true,
+          selection: false,
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+          reset: false,
+        },
+      },
     },
     series: chartSeries,
     labels: chartLabels,

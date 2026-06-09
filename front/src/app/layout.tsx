@@ -6,6 +6,7 @@ import { BasemapProvider } from "@/context/BasemapContext";
 import { GlobalChartFiltersProvider } from "@/context/GlobalChartFiltersContext";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/organisms/Navbar";
+import ApexChartsLocale from "@/components/atoms/ApexChartsLocale";
 import { Footer } from "@/components/organisms/NewFooter";
 import GlobalFiltersBarWrapper from "@/components/dashboards/GlobalFiltersBar";
 
@@ -22,6 +23,7 @@ export default async function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body>
+        <ApexChartsLocale />
         <BasemapProvider>
           <MapComparisonProvider>
             <AuthProvider>
