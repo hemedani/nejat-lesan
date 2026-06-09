@@ -21,18 +21,26 @@ const BasemapContext = createContext<BasemapContextType | undefined>(undefined);
 
 const STORAGE_KEY = "lesan-basemap";
 
+const getInitialBasemap = (): BasemapType => {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY) as BasemapType | null;
+      if (stored && (stored === "osm" || stored === "mapir" || stored === "neshan")) {
+        return stored;
+      }
+    } catch {
+      // localStorage not available
+    }
+  }
+  return DEFAULT_BASEMAP;
+};
+
 export const BasemapProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [basemap, setBasemapState] = useState<BasemapType>(DEFAULT_BASEMAP);
+  const [basemap, setBasemapState] = useState<BasemapType>(getInitialBasemap);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(STORAGE_KEY) as BasemapType | null;
-      if (stored && (stored === "osm" || stored === "mapir" || stored === "neshan")) {
-        setBasemapState(stored);
-      }
-    }
   }, []);
 
   const setBasemap = useCallback((newBasemap: BasemapType) => {
