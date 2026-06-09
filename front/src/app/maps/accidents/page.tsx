@@ -25,6 +25,8 @@ import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 
+import { useBasemap } from "@/context/BasemapContext";
+
 // Dynamic import for map components (disable SSR)
 
 const AccidentMap = dynamic(() => import("@/components/maps/AccidentMap"), {
@@ -39,9 +41,26 @@ const AccidentMap = dynamic(() => import("@/components/maps/AccidentMap"), {
   ),
 });
 
+const NeshanMapContainer = dynamic(() => import("@/components/maps/NeshanMapContainer"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-full bg-gray-100">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-2 text-gray-600">در حال بارگیری نقشه نشان...</p>
+      </div>
+    </div>
+  ),
+});
+
+const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), {
+  ssr: false,
+});
+
 // Main Page Component
 const AccidentsMapPage: React.FC = () => {
   const { enterpriseSettings, userLevel } = useAuth();
+  const { basemap } = useBasemap();
 
   // Get enabled filters for accidents map considering enterprise settings
   const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
@@ -211,8 +230,10 @@ const AccidentsMapPage: React.FC = () => {
   const handleCaptureSnapshot = async () => {
     setIsCapturingSnapshot(true);
     try {
-      // Find the map container element
-      const mapContainer = document.querySelector(".leaflet-container");
+      // Find the map container element (differs by basemap)
+      const mapContainer =
+        document.querySelector(".leaflet-container") || document.getElementById("map-container");
+
       if (!mapContainer) {
         toast.error("خطا در پیدا کردن نقشه");
         return;
@@ -366,13 +387,30 @@ const AccidentsMapPage: React.FC = () => {
 
           {/* Map Container */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="h-[700px]">
-              <AccidentMap
-                accidents={accidents}
-                isLoading={isLoading}
-                onShapeDrawn={handleShapeDrawn}
-                geoJsonData={geoJsonData}
-              />
+            <div id="map-container" className="h-[700px] relative">
+              {/* Basemap Selector overlay (shown on both map types) */}
+              <div className="absolute top-4 left-4 z-[1000]">
+                <BasemapSelector />
+              </div>
+
+              {basemap === "neshan" ? (
+                <NeshanMapContainer
+                  center={[32.4279, 53.688]}
+                  zoom={6}
+                  className="w-full h-full"
+                  accidents={accidents}
+                  isLoading={isLoading}
+                  onShapeDrawn={handleShapeDrawn}
+                  geoJsonData={geoJsonData}
+                />
+              ) : (
+                <AccidentMap
+                  accidents={accidents}
+                  isLoading={isLoading}
+                  onShapeDrawn={handleShapeDrawn}
+                  geoJsonData={geoJsonData}
+                />
+              )}
             </div>
           </div>
 

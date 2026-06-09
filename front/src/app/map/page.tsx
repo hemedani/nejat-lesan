@@ -11,6 +11,7 @@ import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
 import { ReqType } from "@/types/declarations/selectInp";
 import { arrayKeys } from "@/utils/keys";
 import { formatJalaliDateTime } from "@/utils/formatters";
+import { useBasemap } from "@/context/BasemapContext";
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
@@ -23,6 +24,7 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
 const Polygon = dynamic(() => import("react-leaflet").then((mod) => mod.Polygon), { ssr: false });
 const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
 const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
+const NeshanMapContainer = dynamic(() => import("@/components/maps/NeshanMapContainer"), { ssr: false });
 
 // Import SimpleDrawing component
 const SimpleDrawing = dynamic(() => import("@/components/SimpleDrawing"), {
@@ -42,6 +44,7 @@ interface AccidentData {
 // Leaflet setup will be done dynamically in useEffect
 
 function MapContent() {
+  const { basemap } = useBasemap();
   const [accidents, setAccidents] = useState<AccidentData[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -346,7 +349,15 @@ function MapContent() {
             </div>
           )}
 
-          {!loading && (
+          {!loading && basemap === "neshan" && (
+            <NeshanMapContainer
+              center={iranCenter}
+              zoom={6}
+              className="z-0"
+            />
+          )}
+
+          {!loading && basemap !== "neshan" && (
             <MapContainer
               center={iranCenter}
               zoom={6}
