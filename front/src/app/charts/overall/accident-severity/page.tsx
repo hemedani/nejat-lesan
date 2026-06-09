@@ -7,6 +7,7 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { accidentSeverityAnalytics } from "@/app/actions/accident/accidentSeverityAnalytics";
 import AccidentSeverityChart from "@/components/dashboards/charts/AccidentSeverityChart";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 import { useAuth } from "@/context/AuthContext";
 
 // Backend response interface for accident severity analytics
@@ -175,6 +176,14 @@ const AccidentSeverityPage = () => {
                   )}
                   {isLoading ? "در حال بارگذاری..." : "بارگذاری مجدد"}
                 </button>
+                {chartData && chartData.length > 0 && (
+                  <DownloadCSVButton
+                    data={chartData.map((item) => ({ name: item.name, count: item.count }))}
+                    filename="severity-analytics"
+                    headers={["name", "count"]}
+                    buttonText="دانلود CSV"
+                  />
+                )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"

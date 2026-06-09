@@ -7,6 +7,7 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { collisionAnalytics } from "@/app/actions/accident/collisionAnalytics";
 import CollisionAnalyticsDashboard from "@/components/dashboards/CollisionAnalyticsDashboard";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
 
@@ -254,6 +255,30 @@ const CollisionAnalyticsPage = () => {
                   )}
                   {isLoading ? "در حال بارگذاری..." : "بارگذاری مجدد"}
                 </button>
+                {collisionData && (
+                  <DownloadCSVButton
+                    data={[
+                      ...collisionData.mainChart.map((d) => ({
+                        chart: "main_collision",
+                        name: d.name,
+                        count: d.count,
+                      })),
+                      ...collisionData.singleVehicleChart.map((d) => ({
+                        chart: "single_vehicle",
+                        name: d.name,
+                        count: d.count,
+                      })),
+                      ...collisionData.otherTypesChart.map((d) => ({
+                        chart: "other_types",
+                        name: d.name,
+                        count: d.count,
+                      })),
+                    ]}
+                    filename="collision-analytics"
+                    headers={["chart", "name", "count"]}
+                    buttonText="دانلود CSV"
+                  />
+                )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"

@@ -9,6 +9,7 @@ import { eventCollisionAnalytics } from "@/app/actions/accident/eventCollisionAn
 import { gets as getEvents } from "@/app/actions/event/gets";
 import { get as getEvent } from "@/app/actions/event/get";
 import EventCollisionComparisonChart from "../../../../components/dashboards/charts/EventCollisionComparisonChart";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useAuth } from "@/context/AuthContext";
@@ -370,6 +371,27 @@ const EventCollisionAnalyticsPage = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                {chartData && chartData.eventData?.length > 0 && (
+                  <DownloadCSVButton
+                    data={[
+                      ...chartData.eventData.map((d) => ({
+                        period: "event",
+                        name: d.name,
+                        share: d.share,
+                        count: d.count ?? "",
+                      })),
+                      ...chartData.nonEventData.map((d) => ({
+                        period: "non_event",
+                        name: d.name,
+                        share: d.share,
+                        count: d.count ?? "",
+                      })),
+                    ]}
+                    filename="trend-collision-analytics"
+                    headers={["period", "name", "share", "count"]}
+                    buttonText="دانلود CSV"
+                  />
+                )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"

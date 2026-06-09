@@ -7,6 +7,7 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { vehicleReasonAnalytics } from "@/app/actions/accident/vehicleReasonAnalytics";
 import VehicleReasonDashboard from "@/components/dashboards/VehicleReasonDashboard";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 import { ReqType } from "@/types/declarations/selectInp";
 import { useAuth } from "@/context/AuthContext";
 
@@ -502,6 +503,25 @@ const VehicleReasonAnalyticsPage = () => {
                     </svg>
                     تلاش مجدد API
                   </button>
+                )}
+                {chartData && (
+                  <DownloadCSVButton
+                    data={[
+                      ...chartData.pieChart.map((d) => ({
+                        chart: "pie",
+                        name: d.name,
+                        count: d.count,
+                      })),
+                      ...chartData.barChart.categories.map((cat, i) => ({
+                        chart: "bar",
+                        name: cat,
+                        count: chartData.barChart.series[0]?.data[i] ?? 0,
+                      })),
+                    ]}
+                    filename="vehicle-reason-analytics"
+                    headers={["chart", "name", "count"]}
+                    buttonText="دانلود CSV"
+                  />
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}

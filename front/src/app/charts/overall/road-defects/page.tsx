@@ -7,6 +7,7 @@ import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { roadDefectsAnalytics } from "@/app/actions/accident/roadDefectsAnalytics";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
 
@@ -284,6 +285,30 @@ const RoadDefectsPage = () => {
                   )}
                   {isLoading ? "در حال بارگذاری..." : "بارگذاری مجدد"}
                 </button>
+                {chartData && (
+                  <DownloadCSVButton
+                    data={[
+                      ...chartData.defectCounts.map((d) => ({
+                        type: "defect_count",
+                        name: d.name,
+                        count: d.count,
+                      })),
+                      {
+                        type: "distribution",
+                        name: "دارای نقص مؤثر راه",
+                        count: chartData.defectDistribution.withDefect,
+                      },
+                      {
+                        type: "distribution",
+                        name: "فاقد نقص مؤثر راه",
+                        count: chartData.defectDistribution.withoutDefect,
+                      },
+                    ]}
+                    filename="road-defects-analytics"
+                    headers={["type", "name", "count"]}
+                    buttonText="دانلود CSV"
+                  />
+                )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"

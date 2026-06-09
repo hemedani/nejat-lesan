@@ -6,6 +6,7 @@ import MonthlyHolidayAnalyticsDashboard from "@/components/dashboards/MonthlyHol
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { roadDefectsAnalytics } from "@/app/actions/accident/roadDefectsAnalytics";
 import { monthlyHolidayAnalytics } from "@/app/actions/accident/monthlyHolidayAnalytics";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 
 // Backend response interface for road defects analytics
 interface RoadDefectsAnalyticsData {
@@ -121,6 +122,30 @@ const OverallChartsPage = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                {chartData && (
+                  <DownloadCSVButton
+                    data={[
+                      ...chartData.defectCounts.map((d) => ({
+                        type: "defect_count",
+                        name: d.name,
+                        count: d.count,
+                      })),
+                      {
+                        type: "distribution",
+                        name: "دارای نقص مؤثر راه",
+                        count: chartData.defectDistribution.withDefect,
+                      },
+                      {
+                        type: "distribution",
+                        name: "فاقد نقص مؤثر راه",
+                        count: chartData.defectDistribution.withoutDefect,
+                      },
+                    ]}
+                    filename="overall-analytics"
+                    headers={["type", "name", "count"]}
+                    buttonText="دانلود CSV"
+                  />
+                )}
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}

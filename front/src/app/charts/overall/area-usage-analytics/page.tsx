@@ -7,6 +7,7 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { areaUsageAnalytics } from "@/app/actions/accident/areaUsageAnalytics";
 import AreaUsageChart from "@/components/charts/AreaUsageChart";
+import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
@@ -377,6 +378,14 @@ const AreaUsageAnalyticsPage = () => {
                     </svg>
                     تلاش مجدد API
                   </button>
+                )}
+                {chartData && chartData.length > 0 && (
+                  <DownloadCSVButton
+                    data={chartData.map((item) => ({ name: item.name, count: item.count }))}
+                    filename="area-usage-analytics"
+                    headers={["name", "count"]}
+                    buttonText="دانلود CSV"
+                  />
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
