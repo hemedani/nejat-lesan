@@ -14,6 +14,8 @@ interface NeshanMapContainerProps {
   className?: string;
   accidents?: accidentSchema[];
   geoJsonData?: GeoJsonData | null;
+  geoJsonStyle?: (feature?: Record<string, unknown>) => Record<string, unknown>;
+  onEachFeature?: (feature: Record<string, unknown>, layer: unknown) => void;
   onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
   onZoomChange?: (zoom: number) => void;
   isLoading?: boolean;
@@ -245,21 +247,27 @@ function addHeatmap(map: any, accidents: accidentSchema[]) {
   return group;
 }
 
-function addGeoJSONLayer(map: any, data: GeoJsonData) {
+function addGeoJSONLayer(
+  map: any,
+  data: GeoJsonData,
+  style?: (feature?: Record<string, unknown>) => Record<string, unknown>,
+  onEachFeature?: (feature: Record<string, unknown>, layer: unknown) => void,
+  fitBounds = false,
+) {
   const layer = (neshanL as any).geoJSON(data, {
-    style: () => ({
+    style: style || (() => ({
       fillColor: "#3b82f6",
       weight: 2,
       opacity: 1,
       color: "#1d4ed8",
       fillOpacity: 0.1,
-    }),
+    })),
+    onEachFeature,
   });
 
   map.addLayer(layer);
 
-  // Fit bounds
-  if (data.features?.length) {
+  if (fitBounds && data.features?.length) {
     try {
       map.fitBounds(layer.getBounds(), { padding: [20, 20] });
     } catch {
@@ -398,6 +406,8 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
   className,
   accidents,
   geoJsonData,
+  geoJsonStyle,
+  onEachFeature,
   onShapeDrawn,
   onZoomChange,
   isLoading,
@@ -445,6 +455,9 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
         center: center,
         zoom: zoom,
         zoomControl: false,
+        scrollWheelZoom: true,
+        doubleClickZoom: true,
+        dragging: true,
         attributionControl: true,
       });
 
@@ -461,6 +474,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
     }
     // Only recreate map when container ID changes (e.g. component remount)
     // center/zoom are updated via the separate setView effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapContainerId]);
 
   // Initialize map
@@ -491,16 +505,22 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
     }
   }, [center, zoom]);
 
+  // Track the previous geoJsonData reference to only fitBounds on data change, not on zoom re-cluster
+  const prevGeoJsonRef = useRef<GeoJsonData | null>(null);
+
   // Add/update features when props change or map becomes ready
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
 
+    const isNewGeoJson = geoJsonData !== prevGeoJsonRef.current;
+    prevGeoJsonRef.current = geoJsonData;
+
     clearFeatureLayers();
 
     // Add GeoJSON first so it sits below markers
     if (geoJsonData) {
-      const layer = addGeoJSONLayer(map, geoJsonData);
+      const layer = addGeoJSONLayer(map, geoJsonData, geoJsonStyle, onEachFeature, isNewGeoJson);
       featureLayersRef.current.push(layer);
     }
 
@@ -512,7 +532,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
       const layer = addMarkers(map, accidents);
       featureLayersRef.current.push(layer);
     }
-  }, [accidents, geoJsonData, localViewMode, mapReady, clearFeatureLayers, reclusterKey, isLoading]);
+  }, [accidents, geoJsonData, localViewMode, mapReady, clearFeatureLayers, reclusterKey, isLoading, geoJsonStyle, onEachFeature]);
 
   // Re-cluster markers on zoom change
   useEffect(() => {
@@ -536,9 +556,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
 
     const cleanupDrawing = setupDrawing(map, onShapeDrawnRef.current, containerRef.current);
     return cleanupDrawing;
-    // Intentionally exclude onShapeDrawn from deps — use ref to avoid tearing down drawing on re-renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapReady, drawingEnabled]);
+  }, [mapReady, drawingEnabled, onShapeDrawnRef, containerRef]);
 
   // Zoom change handler
   useEffect(() => {
