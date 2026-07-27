@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import MonthlyHolidayAnalyticsDashboard from "@/components/dashboards/MonthlyHolidayAnalyticsDashboard";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { monthlyHolidayAnalytics } from "@/app/actions/accident/monthlyHolidayAnalytics";
@@ -29,6 +30,7 @@ const MonthlyHolidayPage = () => {
   const [chartData, setChartData] = useState<MonthlyHolidayAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   const loadInitialData = async () => {
     setIsLoading(true);
@@ -62,6 +64,7 @@ const MonthlyHolidayPage = () => {
 
   // Handle filter submission
   const handleFilterSubmit = async (filters: ChartFilterState) => {
+    setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
 
@@ -264,6 +267,11 @@ const MonthlyHolidayPage = () => {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Applied Filters Display */}
+          <div className="mb-6">
+            <AppliedFiltersDisplay filters={appliedFilters} />
           </div>
 
           {/* Chart Content */}
