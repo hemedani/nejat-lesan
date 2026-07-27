@@ -187,6 +187,11 @@ The system includes robust geographic features:
 
 3. **Type Safety**: Strong TypeScript typing throughout the codebase
 
+4. **Denormalized Hierarchy Pattern**: Models that span multiple hierarchy levels can denormalize relation references for query efficiency. For example, a `Ware` model may store references to `wareType`, `wareClass`, `wareGroup`, and `wareModel` even though those can be traversed via relations. This enables:
+   - Filtering by any level of the hierarchy without joins
+   - Querying all items in a category efficiently
+   - Consistent hierarchy traversal without deep relation penetration
+
 ## 📊 Analytics and Charts System
 
 The most important section of this project is the analytics and charts system, located in `src/accident/charts/`. This comprehensive analytics system provides:
@@ -437,6 +442,61 @@ Lesan is a web server and ODM (Object Document Model) framework designed to impl
 - **relations**: Object specifying which relationships to remove
 - **projection**: Specifies which fields to return after relation is removed
 
+### One-Directional Relations — Never Duplicate
+
+Relations are strictly one-directional. When Model A defines a relation to Model B with `relatedRelations`, Lesan automatically creates and manages the reverse on Model B. **Never define the same relation on both models.**
+
+**✅ Correct pattern — define relation on the "child" only:**
+```typescript
+// models/child.ts — THIS IS CORRECT
+export const child_relations = {
+  parent: {
+    schemaName: "parent",
+    type: "single",
+    optional: false,
+    relatedRelations: {
+      // Lesan auto-creates parent.children from this
+      children: {
+        type: "multiple",
+        limit: 50,
+        sort: { field: "_id", order: "desc" },
+      },
+    },
+  },
+};
+```
+
+```typescript
+// models/parent.ts — Just define its own relations
+export const parent_relations = {
+  // No "children" relation here — Lesan handles it automatically
+};
+```
+
+**❌ Wrong pattern — never define reverse on the parent:**
+```typescript
+// models/parent.ts — DON'T DO THIS
+export const parent_relations = {
+  children: {  // ❌ This creates duplicates and errors
+    schemaName: "child",
+    type: "multiple",
+    relatedRelations: { parent: ... },
+  },
+};
+```
+
+**Key rule:** The model that "belongs to" another model (has the foreign key) defines the relation. The parent model stays clean — Lesan embeds the reverse automatically.
+
+### Lesan Relation Storage Model — Single Relations Are Embedded
+
+Lesan **embeds** single-type relations directly in the parent document as an inline subdocument containing the full related object (all pure fields + `_id`). This means:
+
+- **No performance penalty**: A `type: "single"` relation is just a nested object in the same document. Reading it requires zero additional queries or joins.
+- **Fully indexable**: You can create MongoDB indexes on relation sub-fields like `relatedModel._id` or `relatedModel.name` just as you would on any top-level field.
+- **No denormalization needed for performance**: Storing `relatedModelId` and `relatedModelName` as separate pure fields provides no query or speed advantage over a single Lesan relation — the data lives in the same document either way.
+
+Use Lesan relations by default for single-model references. Only resort to pure-field IDs/names when the referenced model may be deleted and you need the reference to survive (orphan resilience), or when the data must be an immutable snapshot that should not track source-of-truth updates.
+
 ### Function Implementation Patterns
 
 #### Add Function Pattern:
@@ -530,6 +590,71 @@ const getEntities: ActFn = async (body) => {
 };
 ```
 
+#### Model Definition Pattern:
+
+```typescript
+export const model_pure = {
+  name: string(),
+  description: optional(string()),
+  ...createUpdateAt,
+};
+
+export const model_relations = {
+  relationName: {
+    schemaName: "targetModel",
+    type: "single" as RelationDataType,
+    optional: true,
+    relatedRelations: {
+      reverseRelation: {
+        type: "multiple" as RelationDataType,
+        limit: 50,
+        sort: { field: "_id", order: "desc" as RelationSortOrderType },
+      },
+    },
+  },
+};
+
+export const modelFactory = () =>
+  coreApp.odm.newModel("modelName", model_pure, model_relations);
+```
+
+#### Action Pattern (3-file structure):
+
+Each action follows a consistent 3-file layout in a subdirectory:
+- `mod.ts` — Registers the action with Lesan using `setAct`
+- `[action].fn.ts` — Function implementation
+- `[action].val.ts` — Validator definition
+
+```typescript
+// add/mod.ts
+export const addSetup = () =>
+  coreApp.acts.setAct({
+    schema: "modelName",
+    fn: addFn,
+    actName: "add",
+    preAct: [setTokens, setUser, grantAccess([{ roles: ["Manager"] }])],
+    validator: addValidator(),
+    validationRunType: "create",
+  });
+
+// add/add.val.ts
+export const addValidator = () => object({
+  set: object({ ...model_pure, relationId: objectIdValidation }),
+  get: selectStruct("modelName", 1),
+});
+
+// add/add.fn.ts
+export const addFn: ActFn = async (body) => {
+  const { set, get } = body.details;
+  const { relationId, ...rest } = set;
+  return await model.insertOne({
+    doc: rest,
+    projection: get,
+    relations: { relationName: { _ids: [new ObjectId(relationId)] } },
+  });
+};
+```
+
 #### find and findOne Functions
 
 **Parameters:**
@@ -591,6 +716,33 @@ const getEntities: ActFn = async (body) => {
 - Automatically checks for related documents before deletion
 - Prevents deletion with error message if related documents would become meaningless
 - Supports hard cascade deletion for recursive deletion of dependent documents
+
+**hardCascade Behavior:**
+
+**Without `hardCascade` (default — safe):**
+- Deleting a **child** removes it from the parent's embedded reverse array **automatically**. No manual cleanup needed.
+- Deleting a **parent** is **blocked** if children still reference it via a reverse relation. Lesan returns an error telling you to handle children first.
+- This ensures data integrity — you can always delete children safely, but you cannot accidentally orphan them.
+
+**With `hardCascade: true` (dangerous):**
+- Deleting a **parent** cascade-deletes all children that reference it via the reverse relation.
+- Use only when you are certain you want to delete entire trees of data.
+- Inadvisable for routine use — a wrong `hardCascade` can silently wipe large amounts of related data.
+
+**Practical example — Province → City:**
+| Action | `hardCascade` | Result |
+|--------|---------------|--------|
+| `city.deleteOne({ filter })` | not passed / false | ✅ City deleted. Province's embedded `cities` auto-cleaned. |
+| `province.deleteOne({ filter })` | not passed / false | ❌ Blocked: error to clear cities first |
+| `province.deleteOne({ filter, hardCascade: true })` | true | ✅ Province deleted. **All its cities cascade-deleted**. |
+
+**Recommended remove pattern:**
+```typescript
+return await model.deleteOne({
+  filter: { _id: new ObjectId(_id as string) },
+  hardCascade: hardCascade || false,
+});
+```
 
 #### countDocument Function
 
