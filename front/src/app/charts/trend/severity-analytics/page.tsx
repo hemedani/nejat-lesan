@@ -167,7 +167,7 @@ const EventSeverityAnalyticsPage = () => {
 
   // Get enabled filters for trend severity analytics considering enterprise settings
   const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TREND_SEVERITY_ANALYTICS",
+    "EVENT_SEVERITY_ANALYTICS",
     userLevel === "Enterprise" ? enterpriseSettings : undefined,
   );
 

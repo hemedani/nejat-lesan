@@ -2094,9 +2094,9 @@ export const CHART_SPECIFIC_FILTERS = {
     "injuredCountMax",
   ] as EnabledFilters,
 
-  // Trend Collision Analytics - For trend analysis of collision types
+  // Event Collision Analytics - For event-based analysis of collision types
   // Note: date range comes from the selected event, not sidebar filters
-  TREND_COLLISION_ANALYTICS: [
+  EVENT_COLLISION_ANALYTICS: [
     "province",
     "city",
     "road",
@@ -2108,9 +2108,9 @@ export const CHART_SPECIFIC_FILTERS = {
     "officer",
   ] as EnabledFilters,
 
-  // Trend Severity Analytics - For trend analysis of accident severity
+  // Event Severity Analytics - For event-based analysis of accident severity
   // Note: date range comes from the selected event, not sidebar filters
-  TREND_SEVERITY_ANALYTICS: [
+  EVENT_SEVERITY_ANALYTICS: [
     "province",
     "city",
     "road",

@@ -141,7 +141,7 @@ const EventCollisionAnalyticsPage = () => {
 
   // Get enabled filters for trend collision analytics considering enterprise settings
   const ENABLED_FILTERS = getEnabledFiltersForChartWithPermissions(
-    "TREND_COLLISION_ANALYTICS",
+    "EVENT_COLLISION_ANALYTICS",
     userLevel === "Enterprise" ? enterpriseSettings : undefined,
   );
 
