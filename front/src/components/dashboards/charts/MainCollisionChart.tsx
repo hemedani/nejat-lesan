@@ -52,9 +52,10 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
     )
   }
 
-  // Prepare chart data
-  const chartLabels = data.map(item => item.name)
-  const chartSeries = data.map(item => item.count)
+  // Sort data consistently for chart and legend color alignment
+  const sortedData = [...data].sort((a, b) => b.count - a.count)
+  const chartLabels = sortedData.map(item => item.name)
+  const chartSeries = sortedData.map(item => item.count)
   const totalCount = chartSeries.reduce((sum, count) => sum + count, 0)
 
   // Doughnut chart options
@@ -180,9 +181,7 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
       <div className="mt-6 border-t pt-4">
         <h4 className="text-sm font-medium text-gray-900 mb-3">جزئیات انواع برخورد</h4>
         <div className="space-y-2 max-h-40 overflow-y-auto">
-          {data
-            .sort((a, b) => b.count - a.count)
-            .map((item, index) => {
+          {sortedData.map((item, index) => {
               const percentage = ((item.count / totalCount) * 100).toFixed(1)
               return (
                 <div key={index} className="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-50">
