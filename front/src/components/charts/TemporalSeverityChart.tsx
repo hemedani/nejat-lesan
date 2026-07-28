@@ -59,13 +59,13 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
         show: true,
         tools: {
           download: true,
-          selection: false,
+          selection: true,
           zoom: true,
           zoomin: true,
           zoomout: true,
           pan: true,
-          reset: true
-        }
+          reset: true,
+        },
       },
       animations: {
         enabled: true,

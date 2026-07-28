@@ -64,8 +64,8 @@ const TemporalCountChart: React.FC<TemporalCountChartProps> = ({ data, isLoading
           zoomin: true,
           zoomout: true,
           pan: true,
-          reset: true
-        }
+          reset: true,
+        },
       },
       animations: {
         enabled: true,
