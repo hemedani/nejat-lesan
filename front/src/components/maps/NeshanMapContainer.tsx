@@ -17,6 +17,8 @@ interface NeshanMapContainerProps {
   geoJsonStyle?: (feature?: Record<string, unknown>) => Record<string, unknown>;
   onEachFeature?: (feature: Record<string, unknown>, layer: unknown) => void;
   onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
+  onShapeClick?: () => void;
+  onShapeRemoved?: () => void;
   onZoomChange?: (zoom: number) => void;
   isLoading?: boolean;
 }
@@ -113,14 +115,11 @@ function buildPopupHtml(a: accidentSchema, clusterSize?: number): string {
     <div class="p-2 max-w-xs" dir="rtl">
       <h3 class="font-semibold text-lg mb-2 text-gray-800">جزئیات تصادف</h3>
       <div class="space-y-1 text-sm">
-        <div class="flex justify-between">
-          <span class="text-gray-600">سریال:</span>
-          <span class="font-medium">${a.serial || ""}</span>
-        </div>
+        ${!clusterSize || clusterSize <= 1 ? `
         <div class="flex justify-between">
           <span class="text-gray-600">تاریخ:</span>
           <span class="font-medium">${formatDate(a.date_of_accident)}</span>
-        </div>
+        </div>` : ""}
         <div class="flex justify-between">
           <span class="text-gray-600">نوع:</span>
           <span class="font-medium ${typeColor}">${a.type?.name || "نامشخص"}</span>
@@ -138,12 +137,12 @@ function buildPopupHtml(a: accidentSchema, clusterSize?: number): string {
           <span class="text-gray-600">تعداد تصادفات:</span>
           <span class="font-medium text-blue-600">${clusterSize}</span>
         </div>` : ""}
-        ${a.collision_type?.name ? `
+        ${(!clusterSize || clusterSize <= 1) && a.collision_type?.name ? `
         <div class="flex justify-between">
           <span class="text-gray-600">نوع برخورد:</span>
           <span class="font-medium">${a.collision_type.name}</span>
         </div>` : ""}
-        ${a.light_status?.name ? `
+        ${(!clusterSize || clusterSize <= 1) && a.light_status?.name ? `
         <div class="flex justify-between">
           <span class="text-gray-600">وضعیت نور:</span>
           <span class="font-medium">${a.light_status.name}</span>
@@ -278,7 +277,7 @@ function addGeoJSONLayer(
   return layer;
 }
 
-function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void, containerEl: HTMLElement | null) {
+function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void, containerEl: HTMLElement | null, onShapeClick?: () => void, onShapeRemoved?: () => void) {
   const points: Array<{ lat: number; lng: number }> = [];
   const markers: Array<ReturnType<any>> = [];
   let polygon: ReturnType<any> | null = null;
@@ -307,6 +306,7 @@ function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?:
     if (polygon) {
       map.removeLayer(polygon);
       polygon = null;
+      onShapeRemoved?.();
     }
     isDrawing = false;
     points.length = 0;
@@ -368,6 +368,7 @@ function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?:
         fillOpacity: 0.2,
         fillColor: "#3b82f6",
       }).addTo(map);
+      finalPolygon.on("click", () => onShapeClick?.());
       polygon = finalPolygon;
       onShapeDrawn(finalPolygon.toGeoJSON(), finalPolygon);
       isDrawing = false;
@@ -409,6 +410,8 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
   geoJsonStyle,
   onEachFeature,
   onShapeDrawn,
+  onShapeClick,
+  onShapeRemoved,
   onZoomChange,
   isLoading,
 }) => {
@@ -545,18 +548,29 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
     };
   }, [mapReady]);
 
-  // Stable ref for onShapeDrawn to avoid re-running effect on page re-renders
+  // Stable refs to avoid re-running effect on page re-renders
   const onShapeDrawnRef = useRef(onShapeDrawn);
   onShapeDrawnRef.current = onShapeDrawn;
+  const onShapeClickRef = useRef(onShapeClick);
+  onShapeClickRef.current = onShapeClick;
+  const onShapeRemovedRef = useRef(onShapeRemoved);
+  onShapeRemovedRef.current = onShapeRemoved;
 
   // Setup drawing controls (opt-in via drawingEnabled)
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady || !onShapeDrawnRef.current || !drawingEnabled) return;
 
-    const cleanupDrawing = setupDrawing(map, onShapeDrawnRef.current, containerRef.current);
+    const cleanupDrawing = setupDrawing(
+      map,
+      onShapeDrawnRef.current,
+      containerRef.current,
+      // Always call latest callback via refs to avoid stale closures
+      () => { onShapeClickRef.current?.(); },
+      () => { onShapeRemovedRef.current?.(); },
+    );
     return cleanupDrawing;
-  }, [mapReady, drawingEnabled, onShapeDrawnRef, containerRef]);
+  }, [mapReady, drawingEnabled, onShapeDrawnRef, onShapeClickRef, onShapeRemovedRef, containerRef]);
 
   // Zoom change handler
   useEffect(() => {

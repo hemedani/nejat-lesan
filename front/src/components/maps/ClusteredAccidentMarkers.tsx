@@ -261,15 +261,12 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
                 <h3 className="font-semibold text-lg mb-2 text-gray-800">جزئیات تصادف</h3>
 
                 <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">سریال:</span>
-                    <span className="font-medium">{accident.serial}</span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">تاریخ:</span>
-                    <span className="font-medium">{formatDate(accident.date_of_accident)}</span>
-                  </div>
+                  {(!accident.clusterSize || accident.clusterSize <= 1) && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">تاریخ:</span>
+                      <span className="font-medium">{formatDate(accident.date_of_accident)}</span>
+                    </div>
+                  )}
 
                   <div className="flex justify-between">
                     <span className="text-gray-600">نوع:</span>
@@ -306,7 +303,7 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
                     </div>
                   )}
 
-                  {accident.collision_type?.name && (
+                  {(!accident.clusterSize || accident.clusterSize <= 1) && accident.collision_type?.name && (
                     <div className="flex justify-between">
                       <span className="text-gray-600">نوع برخورد:</span>
                       <span className="font-medium">{accident.collision_type.name}</span>
@@ -334,7 +331,7 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
                     </div>
                   )}
 
-                  {accident.light_status?.name && (
+                  {(!accident.clusterSize || accident.clusterSize <= 1) && accident.light_status?.name && (
                     <div className="flex justify-between">
                       <span className="text-gray-600">وضعیت نور:</span>
                       <span className="font-medium">{accident.light_status.name}</span>
