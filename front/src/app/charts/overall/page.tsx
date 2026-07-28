@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
+import { getSectionCharts, isChartAccessible } from "@/utils/chartNavigation";
+import { useAuth } from "@/context/AuthContext";
 
 const overallCharts = [
   {
-    title: "شدت تصادفات",
+    title: "سهم شدت تصادفات",
     description: "توزیع تصادفات بر اساس سطوح شدت شامل فوتی، جرحی و خسارتی — نمای کلی از شدت حوادث رانندگی",
     icon: (
       <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +91,7 @@ const overallCharts = [
     iconBg: "bg-indigo-100",
   },
   {
-    title: "کاربری محل وقوع",
+    title: "سهم تصادفات به تفکیک کاربری محل",
     description: "تحلیل سهم تصادفات به تفکیک نوع کاربری محل (مسکونی، تجاری، صنعتی، آموزشی و ...)",
     icon: (
       <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +103,7 @@ const overallCharts = [
     iconBg: "bg-pink-100",
   },
   {
-    title: "عوامل وسیله نقلیه",
+    title: "توزیع عامل وسیله نقلیه",
     description: "تحلیل عوامل مرتبط با وسیله نقلیه شامل نقص فنی موتور، ترمز، لاستیک و سایر اجزاء",
     icon: (
       <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,18 +113,6 @@ const overallCharts = [
     bgColor: "bg-teal-50",
     borderColor: "border-teal-200",
     iconBg: "bg-teal-100",
-  },
-  {
-    title: "عملکرد کمپانی‌ها",
-    description: "مقایسه عملکرد کمپانی‌های سازنده خودرو بر اساس سهم تصادفات شدید و شدت آسیب — نمودار حبابی تعاملی",
-    icon: (
-      <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM13 17h4a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2v6a2 2 0 002 2h4m2 0a9 9 0 11-8 0" />
-      </svg>
-    ),
-    bgColor: "bg-cyan-50",
-    borderColor: "border-cyan-200",
-    iconBg: "bg-cyan-100",
   },
 ];
 
@@ -145,7 +135,23 @@ const overallInsights = [
   },
 ];
 
+// Map chart IDs (from nav config) to their metadata (icons, colors)
+const chartIdToMeta: Record<string, (typeof overallCharts)[0]> = {};
+overallCharts.forEach((chart, i) => {
+  const navCharts = getSectionCharts("overall");
+  if (navCharts[i]) chartIdToMeta[navCharts[i].id] = chart;
+});
+
 const OverallChartsPage = () => {
+  const { userLevel, enterpriseSettings } = useAuth();
+
+  const visibleCharts = useMemo(() => {
+    const navCharts = getSectionCharts("overall");
+    return navCharts.filter((navChart) =>
+      isChartAccessible(navChart.id, userLevel, enterpriseSettings),
+    );
+  }, [userLevel, enterpriseSettings]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <ChartNavigation currentSection="overall" />
@@ -167,20 +173,28 @@ const OverallChartsPage = () => {
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
               <h3 className="font-medium text-blue-800 mb-4">تحلیل‌های موجود</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {overallCharts.map((chart) => (
-                  <div
-                    key={chart.title}
-                    className={`flex items-start gap-3 p-4 rounded-lg border ${chart.borderColor} ${chart.bgColor}`}
-                  >
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${chart.iconBg}`}>
-                      {chart.icon}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{chart.title}</p>
-                      <p className="text-sm text-gray-600 mt-1">{chart.description}</p>
-                    </div>
-                  </div>
-                ))}
+                {visibleCharts.map((navChart) => {
+                  const meta = chartIdToMeta[navChart.id];
+                  return (
+                    <a
+                      key={navChart.id}
+                      href={navChart.href}
+                      className={`flex items-start gap-3 p-4 rounded-lg border ${meta?.borderColor || "border-gray-200"} ${meta?.bgColor || "bg-gray-50"} hover:shadow-md transition-shadow`}
+                    >
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${meta?.iconBg || "bg-gray-100"}`}>
+                        {meta?.icon || (
+                          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{navChart.label}</p>
+                        <p className="text-sm text-gray-600 mt-1">{meta?.description || ""}</p>
+                      </div>
+                    </a>
+                  );
+                })}
               </div>
             </div>
 
