@@ -600,7 +600,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="roadSituation"
-                label="وضعیت راه"
+                label="نوع راه"
                 setValue={setValue}
                 defaultValue={defaultSearchArrayValues.roadSituation}
                 loadOptions={loadRoadSituationsOptions}

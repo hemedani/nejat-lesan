@@ -124,7 +124,7 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
             <h4 className="text-lg font-medium text-gray-900 mb-2">داده‌ای موجود نیست</h4>
             <p className="text-gray-600">
               {isDamageActive
-                ? "اطلاعات شدت تصادفات (شامل خسارتی) در فیلترهای انتخابی یافت نشد."
+                ? "اطلاعات شدت تصادفات در فیلترهای انتخابی یافت نشد."
                 : "اطلاعات تصادفات فوتی و جرحی در فیلترهای انتخابی یافت نشد."}
             </p>
           </div>
@@ -254,9 +254,7 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
             </svg>
             <span>{formatNumber(totalCount)} مورد</span>
           </div>
-          <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-            {isDamageActive ? "شامل خسارتی" : "فقط فوتی و جرحی"}
-          </div>
+
         </div>
       </div>
 

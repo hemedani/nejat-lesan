@@ -220,8 +220,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ data, token }) => {
           bgColor="bg-orange-400"
         />
         <StatCard
-          description="تعداد انواع وضعیت راه"
-          title="وضعیت راه"
+          description="تعداد انواع نوع راه"
+          title="نوع راه"
           value={data?.roadSituations || 0}
           bgColor="bg-amber-400"
         />

@@ -189,7 +189,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm animate-in fade-in-50 duration-300">
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm mb-6 animate-in fade-in-50 duration-300">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-blue-200 hover:scale-110">
           <FilterIcon className="w-4 h-4 text-blue-600" />

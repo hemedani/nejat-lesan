@@ -64,8 +64,7 @@ const TotalReasonTreemapChart: React.FC<TotalReasonTreemapChartProps> = ({ data,
     },
     plotOptions: {
       treemap: {
-        enableShades: true,
-        shadeIntensity: 0.5,
+          enableShades: false,
         reverseNegativeShade: true,
         colorScale: {
           ranges: [
@@ -270,27 +269,35 @@ const TotalReasonTreemapChart: React.FC<TotalReasonTreemapChartProps> = ({ data,
 
       {/* Legend and Statistics */}
       <div className="mt-6 space-y-4">
-        {/* Top 3 Causes */}
+        {/* All Causes Ranked */}
         <div className="p-4 bg-blue-50 rounded-lg">
-          <h4 className="text-sm font-medium text-blue-800 mb-3">سه علت برتر:</h4>
-          <div className="space-y-2">
-            {data.slice(0, 3).map((item, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                      index === 0 ? "bg-yellow-500" : index === 1 ? "bg-gray-400" : "bg-amber-600"
-                    }`}
-                  >
-                    {formatNumber(index + 1)}
+          <h4 className="text-sm font-medium text-blue-800 mb-3">همه علل (به ترتیب فراوانی)</h4>
+          <div className="space-y-1.5 max-h-80 overflow-y-auto">
+            {[...data]
+              .sort((a, b) => b.count - a.count)
+              .map((item, index) => (
+                <div
+                  key={item.name}
+                  className="flex items-center justify-between gap-2 py-1.5 px-2 rounded-md hover:bg-blue-100/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span
+                      className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                        index === 0 ? 'bg-red-500' :
+                        index === 1 ? 'bg-orange-400' :
+                        index === 2 ? 'bg-amber-400' :
+                        'bg-gray-300 text-gray-600'
+                      }`}
+                    >
+                      {index + 1}
+                    </span>
+                    <span className="text-sm text-blue-900 truncate">{item.name}</span>
                   </div>
-                  <span className="text-sm text-blue-900">{item.name}</span>
+                  <span className="text-sm font-semibold text-blue-700 flex-shrink-0" dir="ltr">
+                    {formatNumber(item.count)}
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-blue-700">
-                  {formatNumber(item.count)} مورد
-                </span>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
 

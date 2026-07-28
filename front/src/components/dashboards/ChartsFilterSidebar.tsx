@@ -216,9 +216,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   // Watch province and city for cascading filter updates
   const watchedProvince = useWatch({ control, name: "province" });
   const watchedCity = useWatch({ control, name: "city" });
+  const watchedRoad = useWatch({ control, name: "road" });
+  const watchedTrafficZone = useWatch({ control, name: "trafficZone" });
+  const watchedCityZone = useWatch({ control, name: "cityZone" });
 
-  // Cascade version - increments when province or city changes to force dependent selects to reload
-  const [cascadeVersion, setCascadeVersion] = useState(0);
+  // Clear cascade-dependent values when their parent changes
   const prevProvinceRef = useRef(watchedProvince);
   const prevCityRef = useRef(watchedCity);
 
@@ -226,12 +228,34 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     const provinceChanged =
       JSON.stringify(prevProvinceRef.current) !== JSON.stringify(watchedProvince);
     const cityChanged = JSON.stringify(prevCityRef.current) !== JSON.stringify(watchedCity);
-    if (provinceChanged || cityChanged) {
-      setCascadeVersion((v) => v + 1);
-      if (provinceChanged) prevProvinceRef.current = watchedProvince;
-      if (cityChanged) prevCityRef.current = watchedCity;
+    if (provinceChanged) {
+      setValue("city", []);
+      setValue("road", []);
+      setValue("cityZone", []);
+      prevProvinceRef.current = watchedProvince;
     }
-  }, [watchedProvince, watchedCity]);
+    if (cityChanged) {
+      setValue("cityZone", []);
+      prevCityRef.current = watchedCity;
+    }
+  }, [watchedProvince, watchedCity, setValue]);
+
+  // Pre-fetch province name→ID map on mount so cascade selects don't race
+  useEffect(() => {
+    if (Object.keys(provinceNameToIdMap.current).length > 0) return;
+    getProvincesAction({
+      set: { limit: 50, page: 1 },
+      get: { _id: 1, name: 1 },
+    }).then((response) => {
+      if (response.success) {
+        const map: Record<string, string> = {};
+        response.body.forEach((p: { _id: string; name: string }) => {
+          map[p.name] = p._id;
+        });
+        provinceNameToIdMap.current = map;
+      }
+    }).catch(() => {});
+  }, []);
 
   // Helper function to check if any main filters are enabled
   const hasMainFilters = () => {
@@ -403,8 +427,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
 
   // Key suffix for forcing re-mount on global filter change
   const gK = (key: string) => `${key}-gf-${localGlobalVersion}`;
-  // Key suffix for cascade-dependent fields (adds cascadeVersion)
-  const cK = (key: string) => `${key}-gf-${localGlobalVersion}-cv-${cascadeVersion}`;
 
   // Province name → ID cache (fetched once, ~31 provinces)
   const provinceNameToIdMap = useRef<Record<string, string>>({});
@@ -793,7 +815,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   )}
                   {enabledFilters.includes("city") && (
                     <MyAsyncMultiSelect
-                      key={cK("city")}
+                      key={`city-${watchedProvince?.join(',') || 'none'}-${localGlobalVersion}`}
                       name="city"
                       label="شهر"
                       setValue={setValue}
@@ -801,12 +823,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.city?.message}
                       placeholder="انتخاب شهر..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.city)}
+                      value={toSelectOptions(watchedCity)}
                     />
                   )}
                   {enabledFilters.includes("road") && (
                     <MyAsyncMultiSelect
-                      key={cK("road")}
+                      key={`road-${watchedProvince?.join(',') || 'none'}-${localGlobalVersion}`}
                       name="road"
                       label="راه"
                       setValue={setValue}
@@ -814,12 +836,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.road?.message}
                       placeholder="انتخاب راه..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.road)}
+                      value={toSelectOptions(watchedRoad)}
                     />
                   )}
                   {enabledFilters.includes("trafficZone") && (
                     <MyAsyncMultiSelect
-                      key={cK("trafficZone")}
+                      key={`trafficZone-${watchedProvince?.join(',') || 'none'}-${localGlobalVersion}`}
                       name="trafficZone"
                       label="منطقه ترافیکی"
                       setValue={setValue}
@@ -827,12 +849,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.trafficZone?.message}
                       placeholder="انتخاب منطقه ترافیکی..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.trafficZone)}
+                      value={toSelectOptions(watchedTrafficZone)}
                     />
                   )}
                   {enabledFilters.includes("cityZone") && (
                     <MyAsyncMultiSelect
-                      key={cK("cityZone")}
+                      key={`cityZone-${watchedCity?.join(',') || 'none'}-${localGlobalVersion}`}
                       name="cityZone"
                       label="منطقه شهری"
                       setValue={setValue}
@@ -840,7 +862,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.cityZone?.message}
                       placeholder="انتخاب منطقه شهری..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.cityZone)}
+                      value={toSelectOptions(watchedCityZone)}
                     />
                   )}
                 </div>
@@ -1257,11 +1279,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                         <MyAsyncMultiSelect
                           key={gK("roadSituation")}
                           name="roadSituation"
-                          label="وضعیت راه"
+                          label="نوع راه"
                           setValue={setValue}
                           loadOptions={loadRoadSituationsOptions}
                           errMsg={errors.roadSituation?.message}
-                          placeholder="انتخاب وضعیت راه..."
+                          placeholder="انتخاب نوع راه..."
                           defaultOptions
                           defaultValue={toSelectOptions(globalFilters.roadSituation)}
                         />
