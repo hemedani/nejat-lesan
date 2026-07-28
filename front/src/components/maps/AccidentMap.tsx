@@ -8,6 +8,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 
 import "leaflet-draw";
+import L from "leaflet";
 
 import ClusteredAccidentMarkers from "./ClusteredAccidentMarkers";
 import BasemapLayer from "./BasemapLayer";
@@ -106,7 +107,7 @@ const AccidentMap: React.FC<{
       onShapeDrawn(shapeGeoJSON, e.layer);
     }
     // Make the drawn shape clickable to reopen modal (uses ref to get latest callback)
-    e.layer.on("click", () => onShapeClickRef.current?.());
+    (e.layer as unknown as L.Layer).on("click", () => onShapeClickRef.current?.());
   };
 
   // Handle shape deletion from toolbar
