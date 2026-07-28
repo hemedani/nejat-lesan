@@ -654,3 +654,54 @@
 .apexcharts-menu-item:last-child {
     display: none !important;
 }
+
+/* Custom tooltip with data-tooltip attribute */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    right: 0;
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-family: vazir-matn;
+    line-height: 1.7;
+    white-space: nowrap;
+    max-width: none;
+    width: max-content;
+    overflow: visible;
+    text-overflow: clip;
+    z-index: 99999;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 1px);
+    right: 14px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1e293b transparent transparent transparent;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateY(0);
+}

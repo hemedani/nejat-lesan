@@ -115,6 +115,8 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
           {values.map((value, index) => (
             <span
               key={index}
+              title={value}
+              data-tooltip={value}
               className={`inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default ${colorClass}`}
             >
               {value}
