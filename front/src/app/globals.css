@@ -649,3 +649,8 @@
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 #f1f5f9;
 }
+
+/* Hide CSV option from ApexCharts download menu — keep SVG/PNG only */
+.apexcharts-menu-item:last-child {
+    display: none !important;
+}
