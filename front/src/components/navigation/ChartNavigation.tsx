@@ -4,13 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-
-interface NavigationItem {
-  id: string;
-  label: string;
-  href: string;
-  icon?: React.ReactNode;
-}
+import { NavigationItem, isChartAccessible, getSectionCharts } from "@/utils/chartNavigation";
 
 interface ChartNavigationProps {
   currentSection?: string;
@@ -20,57 +14,6 @@ interface ChartNavigationProps {
 const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, currentChart }) => {
   const pathname = usePathname();
   const { userLevel, enterpriseSettings } = useAuth();
-
-  // Mapping from navigation IDs to permission keys
-  const navigationIdToPermissionKey: Record<string, string> = {
-    // Overall section
-    "road-defects": "roadDefectsAnalytics",
-    "accident-severity": "accidentSeverityAnalytics",
-    "collision-analytics": "collisionAnalytics",
-    "area-usage-analytics": "areaUsageAnalytics",
-    "human-reason-analytics": "humanReasonAnalytics",
-    "vehicle-reason-analytics": "vehicleReasonAnalytics",
-    // "company-performance-analytics": "companyPerformanceAnalytics", // Temporarily hidden
-    "total-reason-analytics": "totalReasonAnalytics",
-    "monthly-holiday": "monthlyHolidayAnalytics",
-    "hourly-day-of-week": "hourlyDayOfWeekAnalytics",
-
-    // Temporal section
-    "count-analytics": "temporalCountAnalytics", // This might not exist in permissions
-    "severity-analytics-temporal": "temporalSeverityAnalytics", // This might not exist in permissions
-    "night-analytics": "temporalNightAnalytics", // This might not exist in permissions
-    "collision-analytics-temporal": "temporalCollisionAnalytics", // This might not exist in permissions
-    "total-reason-analytics-temporal": "temporalTotalReasonAnalytics", // This might not exist in permissions
-    "unlicensed-drivers-analytics": "temporalUnlicensedDriversAnalytics", // This might not exist in permissions
-
-    // Spatial section
-    "severity-analytics-spatial": "spatialSeverityAnalytics", // This might not exist in permissions
-    "light-analytics": "spatialLightAnalytics", // This might not exist in permissions
-    "collision-analytics-spatial": "spatialCollisionAnalytics", // Different ID to distinguish from others
-    // "single-vehicle-analytics": "spatialSingleVehicleAnalytics", // Temporarily hidden
-    // "safety-index": "spatialSafetyIndexAnalytics", // Temporarily hidden
-
-    // Trend section
-    "severity-analytics-trend": "eventSeverityAnalytics",
-    "collision-analytics-trend": "eventCollisionAnalytics",
-
-    // Overall section (continued)
-    "total-reason-analytics-overall": "totalReasonAnalytics", // Different ID to distinguish from temporal
-  };
-
-  // Helper function to check if a chart is accessible for enterprise users
-  const isChartAccessible = (chartId: string): boolean => {
-    if (userLevel !== "Enterprise" || !enterpriseSettings?.availableCharts) {
-      // If not an enterprise user or no available charts defined, allow access
-      return true;
-    }
-
-    // Get the permission key for this chart ID, or use the chartId directly if no mapping exists
-    const permissionKey = navigationIdToPermissionKey[chartId] || chartId;
-
-    // Check if the specific chart is allowed in availableCharts
-    return !!enterpriseSettings.availableCharts?.[permissionKey];
-  };
 
   // Main navigation items
   const mainNavigation: NavigationItem[] = [
@@ -100,176 +43,12 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
     },
   ];
 
-  // Chart-specific navigation for each section
+  // Chart-specific navigation for each section, filtered by enterprise permissions
   const getChartNavigation = (section: string): NavigationItem[] => {
-    let charts: NavigationItem[] = [];
-
-    switch (section) {
-      case "overall":
-        charts = [
-          {
-            id: "road-defects",
-            label: "نقص راه",
-            href: "/charts/overall/road-defects",
-          },
-          {
-            id: "monthly-holiday",
-            label: "تحلیل ماهانه تعطیلات",
-            href: "/charts/overall/monthly-holiday",
-          },
-          {
-            id: "hourly-day-of-week",
-            label: "تحلیل ساعتی روز هفته",
-            href: "/charts/overall/hourly-day-of-week",
-          },
-          {
-            id: "collision-analytics",
-            label: "تحلیل انواع برخورد",
-            href: "/charts/overall/collision-analytics",
-          },
-          {
-            id: "accident-severity",
-            label: "سهم شدت تصادفات",
-            href: "/charts/overall/accident-severity",
-          },
-          {
-            id: "area-usage-analytics",
-            label: "سهم تصادفات به تفکیک کاربری محل",
-            href: "/charts/overall/area-usage-analytics",
-          },
-          {
-            id: "total-reason-analytics-overall",
-            label: "علل تامه تصادفات",
-            href: "/charts/overall/total-reason-analytics",
-          },
-          {
-            id: "human-reason-analytics",
-            label: "عوامل انسانی مؤثر",
-            href: "/charts/overall/human-reason-analytics",
-          },
-          {
-            id: "vehicle-reason-analytics",
-            label: "توزیع عامل وسیله نقلیه",
-            href: "/charts/overall/vehicle-reason-analytics",
-          },
-          // {
-          //   id: "company-performance-analytics",
-          //   label: "مقایسه عملکرد کمپانیهای سازنده خودرو",
-          //   href: "/charts/overall/company-performance-analytics",
-          // }, // Temporarily hidden
-        ];
-        break;
-      case "temporal":
-        charts = [
-          {
-            id: "count-analytics",
-            label: "شمار تصادفات",
-            href: "/charts/temporal/count-analytics",
-          },
-          {
-            id: "severity-analytics-temporal",
-            label: "سهم تصادفات فوتی از شدید",
-            href: "/charts/temporal/severity-analytics",
-          },
-          {
-            id: "night-analytics",
-            label: "تصادفات در شب",
-            href: "/charts/temporal/night-analytics",
-          },
-          // {
-          //   id: "damage-analytics",
-          //   label: "مقایسه زمانی صدمات",
-          //   href: "/charts/temporal/damage-analytics",
-          // },
-          {
-            id: "collision-analytics-temporal",
-            label: "نحوه و نوع برخورد",
-            href: "/charts/temporal/collision-analytics",
-          },
-          {
-            id: "total-reason-analytics-temporal",
-            label: "علت تامه",
-            href: "/charts/temporal/total-reason-analytics",
-          },
-          {
-            id: "unlicensed-drivers-analytics",
-            label: "کاربران فاقد گواهینامه",
-            href: "/charts/temporal/unlicensed-drivers-analytics",
-          },
-        ];
-        break;
-      case "spatial":
-        charts = [
-          // {
-          //   id: "regional",
-          //   label: "تحلیل منطقه‌ای",
-          //   href: "/charts/spatial/regional",
-          // },
-          // {
-          //   id: "hotspots",
-          //   label: "نقاط داغ",
-          //   href: "/charts/spatial/hotspots",
-          // },
-          {
-            id: "severity-analytics-spatial",
-            label: "سهم شدت تصادفات",
-            href: "/charts/spatial/severity-analytics",
-          },
-          {
-            id: "light-analytics",
-            label: "وضعیت روشنایی",
-            href: "/charts/spatial/light-analytics",
-          },
-          {
-            id: "collision-analytics-spatial",
-            label: "نحوه و نوع برخورد",
-            href: "/charts/spatial/collision-analytics",
-          },
-          // {
-          //   id: "single-vehicle-analytics",
-          //   label: "تصادفات تک وسیله ای",
-          //   href: "/charts/spatial/single-vehicle-analytics",
-          // }, // Temporarily hidden
-          // {
-          //   id: "safety-index",
-          //   label: "شاخص ناحیه‌ای ایمنی",
-          //   href: "/charts/spatial/safety-index",
-          // }, // Temporarily hidden
-        ];
-        break;
-      case "trend":
-        charts = [
-          // {
-          //   id: "monthly-trend",
-          //   label: "روند ماهانه",
-          //   href: "/charts/trend/monthly-trend",
-          // },
-          // {
-          //   id: "yearly-trend",
-          //   label: "روند سالانه",
-          //   href: "/charts/trend/yearly-trend",
-          // },
-          {
-            id: "severity-analytics-trend",
-            label: "سهم شدت تصادفات",
-            href: "/charts/trend/severity-analytics",
-          },
-          {
-            id: "collision-analytics-trend",
-            label: "نحوه و نوع برخورد",
-            href: "/charts/trend/collision-analytics",
-          },
-        ];
-        break;
-      default:
-        charts = [];
-    }
-
-    // Filter charts based on enterprise permissions
+    const charts = getSectionCharts(section);
     if (userLevel === "Enterprise" && enterpriseSettings?.availableCharts) {
-      return charts.filter((chart) => isChartAccessible(chart.id));
+      return charts.filter((chart) => isChartAccessible(chart.id, userLevel, enterpriseSettings));
     }
-
     return charts;
   };
 
@@ -283,7 +62,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
     // For enterprise users, only show sections if they have access to at least one chart within that section
     if (userLevel === "Enterprise" && enterpriseSettings?.availableCharts) {
       const sectionCharts = getChartNavigation(section.id);
-      return sectionCharts.some((chart) => isChartAccessible(chart.id));
+      return sectionCharts.some((chart) => isChartAccessible(chart.id, userLevel, enterpriseSettings));
     }
     return true;
   });
@@ -314,7 +93,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
 
         if (currentChart) {
           // Check if the current chart is accessible
-          const isCurrentChartAccessible = isChartAccessible(currentChart);
+          const isCurrentChartAccessible = isChartAccessible(currentChart, userLevel, enterpriseSettings);
 
           if (isCurrentChartAccessible) {
             const chartLabel =
