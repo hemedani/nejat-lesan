@@ -56,7 +56,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl w-[95vw] max-w-[1600px] max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div>
@@ -88,63 +88,62 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         </div>
 
         {/* Table Container */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto px-6 pb-6">
           {data.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">تصادفی در این منطقه یافت نشد.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 min-w-[1000px]">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
+                  <tr className="bg-gray-50 sticky top-0 z-10">
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
                       زمان تصادف
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
                       تاریخ تصادف
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      تعداد متوفیان
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      متوفیان
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      تعداد مجروحان
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      مجروحان
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      نحوه و نوع برخورد
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      نوع برخورد
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      تعداد سواری و وانت
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      سواری/وانت
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      ناوگان سنگین مسافری
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      سنگین مسافری
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      ناوگان سنگین باری
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      سنگین باری
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      تعداد موتورسیکلت
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      موتورسیکلت
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      تعداد دوچرخه
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      دوچرخه
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      تعداد عابرین پیاده
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      عابر پیاده
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
                       موانع دید
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      نقایص مؤثر راه
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      نقایص راه
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      وضعیت روشنایی
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      روشنایی
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      موقعیت تصادف
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      موقعیت
                     </th>
-                    <th className="border border-gray-300 px-4 py-2 text-right text-sm font-medium text-gray-900">
-                      علت تامه تصادف
+                    <th className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap">
+                      علت تصادف
                     </th>
                   </tr>
                 </thead>
@@ -154,67 +153,66 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
                       key={`${accident._id}-${index}`}
                       className="hover:bg-gray-50"
                     >
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {formatTime(accident.date_of_accident)}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {formatDate(accident.date_of_accident)}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center whitespace-nowrap">
                         <span className="text-red-600 font-medium">
-                          {accident.dead_count}
+                          {accident.dead_count.toLocaleString("fa-IR")}
                         </span>
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center whitespace-nowrap">
                         <span className="text-orange-600 font-medium">
-                          {accident.injured_count}
+                          {accident.injured_count.toLocaleString("fa-IR")}
                         </span>
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {accident.collision_type?.name || "نامشخص"}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center text-gray-900 whitespace-nowrap">
                         {getVehicleCount(accident, ["سواری", "وانت", "پیکاپ"])}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center text-gray-900 whitespace-nowrap">
                         {getVehicleCount(accident, ["اتوبوس", "مینی بوس"])}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center text-gray-900 whitespace-nowrap">
                         {getVehicleCount(accident, [
                           "کامیون",
                           "تریلی",
                           "کامیونت",
                         ])}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center text-gray-900 whitespace-nowrap">
                         {getVehicleCount(accident, ["موتورسیکلت", "موتور"])}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center text-gray-900 whitespace-nowrap">
                         {getVehicleCount(accident, ["دوچرخه", "بایسیکل"])}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-center text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-center text-gray-900 whitespace-nowrap">
                         {getPedestrianCount(accident)}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {"ندارد"}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {accident.road_defects?.[0]?.name || "ندارد"}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {accident.light_status?.name || "نامشخص"}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {accident.position?.name || "نامشخص"}
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-gray-900">
+                      <td className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap">
                         {accident.human_reasons?.[0]?.name || "نامشخص"}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
           )}
         </div>
 
