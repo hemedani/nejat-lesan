@@ -1,9 +1,10 @@
 "use client";
 import { ReactSelectOption } from "@/types/option";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import { FieldPath, FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
-import { GroupBase, OptionsOrGroups, PropsValue, StylesConfig } from "react-select";
+import { components as defaultComponents, GroupBase, OptionsOrGroups, PropsValue, StylesConfig } from "react-select";
 
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
@@ -22,6 +23,63 @@ interface InputProps<Option, Group extends GroupBase<Option>, T extends FieldVal
   value?: PropsValue<Option>;
   className?: string;
 }
+
+// Portal-based tooltip for multi-value chips — uses innerProps to attach handlers
+// directly to the chip element, avoiding any overflow clipping from parent containers.
+const MultiValueWithTooltip = (props: Record<string, unknown> & { components?: Record<string, unknown> }) => {
+  const label = ((props.data as SelectOption)?.label) || "";
+  const [show, setShow] = useState(false);
+  const [pos, setPos] = useState({ top: 0, right: 0 });
+
+  const handleMouseEnter = useCallback((e: React.MouseEvent) => {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setPos({ top: r.top, right: window.innerWidth - r.right });
+    setShow(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setShow(false);
+  }, []);
+
+  return (
+    <>
+      <defaultComponents.MultiValue
+        {...props}
+        innerProps={{
+          ...(props.innerProps as Record<string, unknown>),
+          onMouseEnter: handleMouseEnter,
+          onMouseLeave: handleMouseLeave,
+        }}
+      />
+      {show &&
+        createPortal(
+          <div
+              style={{
+                position: "fixed",
+                top: pos.top - 8,
+                right: pos.right,
+                transform: "translateY(-100%)",
+                background: "#1e293b",
+              color: "#f1f5f9",
+              padding: "5px 10px",
+              borderRadius: "7px",
+              fontSize: "12px",
+              fontFamily: "vazir-matn",
+              lineHeight: 1.7,
+              whiteSpace: "nowrap",
+              zIndex: 99999,
+              pointerEvents: "none",
+              boxShadow:
+                "0 4px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.08)",
+            }}
+          >
+            {label}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+};
 
 const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends FieldValues = FieldValues>({
   errMsg,
@@ -232,6 +290,14 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
           isRtl={true}
           className="react-select-container"
           classNamePrefix="react-select"
+          components={{
+            MultiValue: (props) => (
+              <MultiValueWithTooltip
+                {...props}
+                data={props.data as SelectOption}
+              />
+            ),
+          }}
         />
       </div>
 
