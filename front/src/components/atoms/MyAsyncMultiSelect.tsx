@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import React, { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { FieldPath, FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
-import { components as defaultComponents, GroupBase, OptionsOrGroups, PropsValue, StylesConfig } from "react-select";
+import { components as defaultComponents, GroupBase, MultiValueProps, OptionsOrGroups, PropsValue, StylesConfig } from "react-select";
 
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
@@ -26,7 +26,7 @@ interface InputProps<Option, Group extends GroupBase<Option>, T extends FieldVal
 
 // Portal-based tooltip for multi-value chips — uses innerProps to attach handlers
 // directly to the chip element, avoiding any overflow clipping from parent containers.
-const MultiValueWithTooltip = (props: Record<string, unknown> & { components?: Record<string, unknown> }) => {
+const MultiValueWithTooltip = (props: MultiValueProps<unknown, boolean, GroupBase<unknown>>) => {
   const label = ((props.data as SelectOption)?.label) || "";
   const [show, setShow] = useState(false);
   const [pos, setPos] = useState({ top: 0, right: 0 });
@@ -46,7 +46,7 @@ const MultiValueWithTooltip = (props: Record<string, unknown> & { components?: R
       <defaultComponents.MultiValue
         {...props}
         innerProps={{
-          ...(props.innerProps as Record<string, unknown>),
+          ...props.innerProps,
           onMouseEnter: handleMouseEnter,
           onMouseLeave: handleMouseLeave,
         }}
