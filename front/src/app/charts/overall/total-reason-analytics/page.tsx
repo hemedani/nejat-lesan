@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
@@ -9,6 +9,7 @@ import TotalReasonTreemapChart from "@/components/charts/TotalReasonTreemapChart
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
+import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 
 // Backend response interface for total reason analytics
 interface TotalReasonAnalyticsResponse {
@@ -48,160 +49,11 @@ const TotalReasonAnalyticsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
-
-  // Load initial data on component mount
-  const loadInitialData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Build the initial payload dynamically with empty values for all enabled filters
-      const initialFilterPayload: Partial<ReqType["main"]["accident"]["totalReasonAnalytics"]["set"]> =
-        {};
-
-      // Helper function to check if a filter should be included
-      const includeFilter = (filterName: keyof ChartFilterState) => {
-        return ENABLED_FILTERS.includes(filterName);
-      };
-
-      // --- Core Accident Details ---
-      if (includeFilter("seri")) initialFilterPayload.seri = undefined;
-      if (includeFilter("serial")) initialFilterPayload.serial = undefined;
-      if (includeFilter("dateOfAccidentFrom")) initialFilterPayload.dateOfAccidentFrom = "";
-      if (includeFilter("dateOfAccidentTo")) initialFilterPayload.dateOfAccidentTo = "";
-      if (includeFilter("deadCount")) initialFilterPayload.deadCount = undefined;
-      if (includeFilter("deadCountMin")) initialFilterPayload.deadCountMin = undefined;
-      if (includeFilter("deadCountMax")) initialFilterPayload.deadCountMax = undefined;
-      if (includeFilter("injuredCount")) initialFilterPayload.injuredCount = undefined;
-      if (includeFilter("injuredCountMin")) initialFilterPayload.injuredCountMin = undefined;
-      if (includeFilter("injuredCountMax")) initialFilterPayload.injuredCountMax = undefined;
-      if (includeFilter("hasWitness")) initialFilterPayload.hasWitness = undefined;
-      if (includeFilter("newsNumber")) initialFilterPayload.newsNumber = undefined;
-      if (includeFilter("officer")) initialFilterPayload.officer = undefined;
-      if (includeFilter("completionDateFrom")) initialFilterPayload.completionDateFrom = undefined;
-      if (includeFilter("completionDateTo")) initialFilterPayload.completionDateTo = undefined;
-
-      // --- Location & Context (multi-select) ---
-      if (includeFilter("province")) initialFilterPayload.province = [];
-      if (includeFilter("city")) initialFilterPayload.city = [];
-      if (includeFilter("road")) initialFilterPayload.road = [];
-      if (includeFilter("trafficZone")) initialFilterPayload.trafficZone = [];
-      if (includeFilter("cityZone")) initialFilterPayload.cityZone = [];
-      if (includeFilter("accidentType")) initialFilterPayload.accidentType = [];
-      if (includeFilter("position")) initialFilterPayload.position = [];
-      if (includeFilter("rulingType")) initialFilterPayload.rulingType = [];
-
-      // --- Environmental & Reason-based (multi-select) ---
-      if (includeFilter("lightStatus")) initialFilterPayload.lightStatus = [];
-      if (includeFilter("collisionType")) initialFilterPayload.collisionType = [];
-      if (includeFilter("roadSituation")) initialFilterPayload.roadSituation = [];
-      if (includeFilter("roadRepairType")) initialFilterPayload.roadRepairType = [];
-      if (includeFilter("shoulderStatus")) initialFilterPayload.shoulderStatus = [];
-      if (includeFilter("areaUsages")) initialFilterPayload.areaUsages = [];
-      if (includeFilter("airStatuses")) initialFilterPayload.airStatuses = [];
-      if (includeFilter("roadDefects")) initialFilterPayload.roadDefects = [];
-      if (includeFilter("humanReasons")) initialFilterPayload.humanReasons = [];
-      if (includeFilter("vehicleReasons")) initialFilterPayload.vehicleReasons = [];
-      if (includeFilter("equipmentDamages")) initialFilterPayload.equipmentDamages = [];
-      if (includeFilter("roadSurfaceConditions")) initialFilterPayload.roadSurfaceConditions = [];
-
-      // --- Attachments ---
-      if (includeFilter("attachmentName")) initialFilterPayload.attachmentName = undefined;
-      if (includeFilter("attachmentType")) initialFilterPayload.attachmentType = undefined;
-
-      // --- Vehicle DTOs Filters ---
-      if (includeFilter("vehicleColor")) initialFilterPayload.vehicleColor = [];
-      if (includeFilter("vehicleSystem")) initialFilterPayload.vehicleSystem = [];
-      if (includeFilter("vehiclePlaqueType")) initialFilterPayload.vehiclePlaqueType = [];
-      if (includeFilter("vehicleSystemType")) initialFilterPayload.vehicleSystemType = [];
-      if (includeFilter("vehicleFaultStatus")) initialFilterPayload.vehicleFaultStatus = [];
-      if (includeFilter("vehicleInsuranceCo")) initialFilterPayload.vehicleInsuranceCo = [];
-      if (includeFilter("vehicleInsuranceNo")) initialFilterPayload.vehicleInsuranceNo = undefined;
-      if (includeFilter("vehiclePlaqueUsage")) initialFilterPayload.vehiclePlaqueUsage = [];
-      if (includeFilter("vehiclePrintNumber")) initialFilterPayload.vehiclePrintNumber = undefined;
-      if (includeFilter("vehiclePlaqueSerialElement"))
-        initialFilterPayload.vehiclePlaqueSerialElement = undefined;
-      if (includeFilter("vehicleInsuranceDateFrom"))
-        initialFilterPayload.vehicleInsuranceDateFrom = undefined;
-      if (includeFilter("vehicleInsuranceDateTo"))
-        initialFilterPayload.vehicleInsuranceDateTo = undefined;
-      if (includeFilter("vehicleBodyInsuranceCo")) initialFilterPayload.vehicleBodyInsuranceCo = [];
-      if (includeFilter("vehicleBodyInsuranceNo"))
-        initialFilterPayload.vehicleBodyInsuranceNo = undefined;
-      if (includeFilter("vehicleMotionDirection")) initialFilterPayload.vehicleMotionDirection = [];
-      if (includeFilter("vehicleMaxDamageSections"))
-        initialFilterPayload.vehicleMaxDamageSections = [];
-      if (includeFilter("vehicleDamageSectionOther"))
-        initialFilterPayload.vehicleDamageSectionOther = undefined;
-      if (includeFilter("vehicleInsuranceWarrantyLimit"))
-        initialFilterPayload.vehicleInsuranceWarrantyLimit = undefined;
-      if (includeFilter("vehicleInsuranceWarrantyLimitMin"))
-        initialFilterPayload.vehicleInsuranceWarrantyLimitMin = undefined;
-      if (includeFilter("vehicleInsuranceWarrantyLimitMax"))
-        initialFilterPayload.vehicleInsuranceWarrantyLimitMax = undefined;
-
-      // --- Driver in Vehicle DTOs Filters ---
-      if (includeFilter("driverSex")) initialFilterPayload.driverSex = [];
-      if (includeFilter("driverFirstName")) initialFilterPayload.driverFirstName = undefined;
-      if (includeFilter("driverLastName")) initialFilterPayload.driverLastName = undefined;
-      if (includeFilter("driverNationalCode")) initialFilterPayload.driverNationalCode = undefined;
-      if (includeFilter("driverLicenceNumber")) initialFilterPayload.driverLicenceNumber = undefined;
-      if (includeFilter("driverLicenceType")) initialFilterPayload.driverLicenceType = [];
-      if (includeFilter("driverInjuryType")) initialFilterPayload.driverInjuryType = [];
-      if (includeFilter("driverTotalReason")) initialFilterPayload.driverTotalReason = [];
-
-      // --- Passenger in Vehicle DTOs Filters ---
-      if (includeFilter("passengerSex")) initialFilterPayload.passengerSex = [];
-      if (includeFilter("passengerFirstName")) initialFilterPayload.passengerFirstName = undefined;
-      if (includeFilter("passengerLastName")) initialFilterPayload.passengerLastName = undefined;
-      if (includeFilter("passengerNationalCode"))
-        initialFilterPayload.passengerNationalCode = undefined;
-      if (includeFilter("passengerInjuryType")) initialFilterPayload.passengerInjuryType = [];
-      if (includeFilter("passengerFaultStatus")) initialFilterPayload.passengerFaultStatus = [];
-      if (includeFilter("passengerTotalReason")) initialFilterPayload.passengerTotalReason = [];
-
-      // --- Pedestrian DTOs Filters ---
-      if (includeFilter("pedestrianSex")) initialFilterPayload.pedestrianSex = [];
-      if (includeFilter("pedestrianFirstName")) initialFilterPayload.pedestrianFirstName = undefined;
-      if (includeFilter("pedestrianLastName")) initialFilterPayload.pedestrianLastName = undefined;
-      if (includeFilter("pedestrianNationalCode"))
-        initialFilterPayload.pedestrianNationalCode = undefined;
-      if (includeFilter("pedestrianInjuryType")) initialFilterPayload.pedestrianInjuryType = [];
-      if (includeFilter("pedestrianFaultStatus")) initialFilterPayload.pedestrianFaultStatus = [];
-      if (includeFilter("pedestrianTotalReason")) initialFilterPayload.pedestrianTotalReason = [];
-
-      // Now cast to the full type for the API call
-      const completeInitialPayload =
-        initialFilterPayload as ReqType["main"]["accident"]["totalReasonAnalytics"]["set"];
-
-      const result = await totalReasonAnalytics({
-        set: completeInitialPayload,
-        get: {
-          analytics: 1,
-        },
-      });
-
-      if (result.success && result.body) {
-        setChartData(result.body.analytics);
-        setIsDemoMode(false);
-      } else {
-        console.warn("API failed, using demo data:", result.error);
-        setChartData(DEMO_DATA);
-        setIsDemoMode(true);
-        setError(null); // Clear error when using demo data
-      }
-    } catch (err) {
-      console.warn("Network error, using demo data:", err);
-      setChartData(DEMO_DATA);
-      setIsDemoMode(true);
-      setError(null); // Clear error when using demo data
-    } finally {
-      setIsLoading(false);
-    }
-  }, [ENABLED_FILTERS]);
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
+    setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
     setChartData(null);
@@ -382,7 +234,7 @@ const TotalReasonAnalyticsPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleApplyFilters(appliedFilters);
   };
 
   // Filter configuration
@@ -501,6 +353,9 @@ const TotalReasonAnalyticsPage = () => {
             </div>
           </div>
 
+          {/* Applied Filters Display */}
+          <AppliedFiltersDisplay filters={appliedFilters} />
+
           {/* Charts Content */}
           <div className="space-y-6">
             {/* Error Display */}
@@ -554,7 +409,7 @@ const TotalReasonAnalyticsPage = () => {
                   <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
                 </div>
                 <p className="text-sm text-green-700">
-                  تحلیل علت تامه تصادفات شدید با {formatNumber(chartData.length)} علت برتر شناسایی شده
+                  تحلیل علت تامه تصادفات شدید با {formatNumber(chartData.length)} علت شناسایی شده
                   - مجموع: {formatNumber(chartData.reduce((sum, item) => sum + item.count, 0))} مورد
                 </p>
               </div>
@@ -567,7 +422,7 @@ const TotalReasonAnalyticsPage = () => {
             {chartData && chartData.length > 0 && !isLoading && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">خلاصه آماری</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
                       {formatNumber(chartData.length)}
@@ -579,14 +434,6 @@ const TotalReasonAnalyticsPage = () => {
                       {formatNumber(chartData.reduce((sum, item) => sum + item.count, 0))}
                     </div>
                     <div className="text-sm text-green-800">مجموع تصادفات</div>
-                  </div>
-                  <div className="bg-amber-50 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-amber-600">
-                      {chartData[0]?.name || "نامشخص"}
-                    </div>
-                    <div className="text-sm text-amber-800">
-                      علت اصلی ({formatNumber(chartData[0]?.count)} مورد)
-                    </div>
                   </div>
                 </div>
               </div>

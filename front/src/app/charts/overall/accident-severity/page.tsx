@@ -32,33 +32,6 @@ const AccidentSeverityPage = () => {
   const [isDamageFilterActive, setIsDamageFilterActive] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
-  const loadInitialData = async () => {
-    setIsLoading(true);
-    setError(null);
-    // By default, include damage-only accidents (show all three types)
-    setIsDamageFilterActive(true);
-
-    try {
-      // Initial load with empty filters
-      const result = await accidentSeverityAnalytics({
-        set: {}, // Pass empty set for initial load
-        get: {
-          analytics: 1,
-        },
-      });
-
-      if (result.success && result.body) {
-        setChartData(result.body.analytics);
-      } else {
-        setError(result.error || "خطا در بارگذاری داده‌های شدت تصادفات");
-      }
-    } catch {
-      setError("خطا در برقراری ارتباط با سرور");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
@@ -97,7 +70,7 @@ const AccidentSeverityPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleApplyFilters(appliedFilters);
   };
 
   // Filter configuration
@@ -247,30 +220,6 @@ const AccidentSeverityPage = () => {
             )}
 
             {/* Chart Info Banner */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <div className="text-sm text-blue-800">
-                  <h4 className="font-medium mb-1">نحوه نمایش نمودار:</h4>
-                  <ul className="list-disc list-inside space-y-1 text-blue-700">
-                    <li>
-                      اگر حداقل تعداد فوتی یا جرحی تنظیم شده باشد: فقط نسبت تصادفات فوتی و جرحی نمایش
-                      داده می‌شود
-                    </li>
-                    <li>
-                      اگر هیچ حداقل تعداد تنظیم نشده باشد: نسبت هر سه نوع (فوتی، جرحی، خسارتی) نمایش
-                      داده می‌شود
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
 
             {/* Accident Severity Chart */}
             <AccidentSeverityChart

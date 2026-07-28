@@ -8,6 +8,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { hourlyDayOfWeekAnalytics } from "@/app/actions/accident/hourlyDayOfWeekAnalytics";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
+import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import { differenceInDays } from "date-fns-jalali";
 
 // Get enabled filters for hourly day of week analytics considering enterprise settings
@@ -46,6 +47,7 @@ const HourlyDayOfWeekPage = () => {
   const [chartData, setChartData] = useState<HourlyDayOfWeekAnalyticsData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
   // Transform raw data to chart format and calculate statistics
   const transformData = useCallback(
@@ -98,39 +100,9 @@ const HourlyDayOfWeekPage = () => {
     [],
   );
 
-  // Load initial data on component mount
-  const loadInitialData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await hourlyDayOfWeekAnalytics({
-        set: {
-          province: [],
-          city: [],
-          dateOfAccidentFrom: "",
-          dateOfAccidentTo: "",
-        },
-        get: {
-          series: 1,
-        },
-      });
-
-      if (result.success) {
-        const transformedData = transformData(result.body, 365);
-        setChartData(transformedData);
-      } else {
-        setError(result.error || "خطا در بارگذاری داده‌های تحلیل ساعتی روز هفته");
-      }
-    } catch {
-      setError("خطا در برقراری ارتباط با سرور");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [transformData]);
-
   // Handle filter submission
   const handleFilterSubmit = async (filters: ChartFilterState) => {
+    setAppliedFilters(filters);
     setIsLoading(true);
     setError(null);
 
@@ -222,7 +194,7 @@ const HourlyDayOfWeekPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleFilterSubmit(appliedFilters);
   };
 
   // Filter configuration
@@ -318,6 +290,9 @@ const HourlyDayOfWeekPage = () => {
               </div>
             </div>
           </div>
+
+          {/* Applied Filters Display */}
+          <AppliedFiltersDisplay filters={appliedFilters} />
 
           {/* Chart Content */}
           <div className="space-y-6">

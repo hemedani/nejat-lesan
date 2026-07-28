@@ -375,6 +375,11 @@ const SpatialLightAnalyticsPage = () => {
     };
   };
 
+  // Handle manual reload with current filters
+  const handleLoadData = async () => {
+    await handleApplyFilters(appliedFilters);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
@@ -409,6 +414,23 @@ const SpatialLightAnalyticsPage = () => {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={handleLoadData}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isLoading ? (
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  )}
+                  {isLoading ? "در حال بارگذاری..." : "بارگذاری مجدد"}
+                </button>
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
@@ -461,98 +483,6 @@ const SpatialLightAnalyticsPage = () => {
             />
           </div>
 
-          {/* Insights Section */}
-          {analyticsData && !isLoading && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های کلیدی</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">کل مناطق بررسی شده</h4>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {analyticsData.barChart?.categories?.length || 0}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                  <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-yellow-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با روشنایی نامطلوب</h4>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio > 0.8).length || 0}
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-6 h-6 text-purple-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                      />
-                    </svg>
-                  </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با روشنایی مطلوب</h4>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {analyticsData.mapChart?.filter((zone) => zone.ratio <= 0.2).length || 0}
-                  </p>
-                </div>
-              </div>
-
-              {/* Additional insights */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">📊 راهنمای تحلیل داده‌های روشنایی</h4>
-                  <div className="text-sm text-blue-800 space-y-2">
-                    <p>
-                      <strong>نمودار ستونی:</strong> تعداد تصادفات را در هر وضعیت روشنایی نمایش می‌دهد.
-                      ستون‌های بلند‌تر نشان‌دهنده مشکلات بیشتر در آن شرایط نوری هستند.
-                    </p>
-                    <p>
-                    <strong>نقشه:</strong> رنگ مناطق بر اساس نسبت تصادفات شب با روشنایی ناکافی
-                    به کل تصادفات شبانه تعیین می‌شود. مناطق قرمز نیاز به بهبود فوری روشنایی دارند.
-                    </p>
-                    <p>
-                    <strong>تجزیه و تحلیل:</strong> مناطقی که نسبت تصادفات شب با روشنایی ناکافی
-                    در آن‌ها بالا است، اولویت اصلی برای نصب یا تعمیر چراغ‌های خیابانی هستند.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

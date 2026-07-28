@@ -40,71 +40,6 @@ const CollisionAnalyticsPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
-  const loadInitialData = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await collisionAnalytics({
-        set: {
-          dateOfAccidentFrom: "",
-          dateOfAccidentTo: "",
-          province: [],
-          city: [],
-          road: [],
-          accidentType: [],
-          collisionType: [],
-          lightStatus: [],
-          roadSituation: [],
-          areaUsages: [],
-          airStatuses: [],
-          roadDefects: [],
-          humanReasons: [],
-          vehicleReasons: [],
-          roadSurfaceConditions: [],
-          equipmentDamages: [],
-          vehicleColor: [],
-          vehicleSystem: [],
-          vehiclePlaqueType: [],
-          vehicleSystemType: [],
-          vehicleFaultStatus: [],
-          vehicleInsuranceCo: [],
-          vehiclePlaqueUsage: [],
-          vehicleBodyInsuranceCo: [],
-          vehicleMotionDirection: [],
-          vehicleMaxDamageSections: [],
-          driverSex: [],
-          driverLicenceType: [],
-          driverInjuryType: [],
-          driverTotalReason: [],
-          passengerSex: [],
-          passengerInjuryType: [],
-          passengerFaultStatus: [],
-          passengerTotalReason: [],
-          pedestrianSex: [],
-          pedestrianInjuryType: [],
-          pedestrianFaultStatus: [],
-          pedestrianTotalReason: [],
-        },
-        get: {
-          mainChart: 1,
-          singleVehicleChart: 1,
-          otherTypesChart: 1,
-        },
-      });
-
-      if (result.success) {
-        setCollisionData(result.body);
-      } else {
-        setError(result.error || "خطا در بارگذاری داده‌های تحلیل برخورد");
-      }
-    } catch {
-      setError("خطا در برقراری ارتباط با سرور");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
@@ -176,7 +111,7 @@ const CollisionAnalyticsPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleApplyFilters(appliedFilters);
   };
 
   // Filter configuration

@@ -32,36 +32,6 @@ const MonthlyHolidayPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
-  const loadInitialData = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await monthlyHolidayAnalytics({
-        set: {
-          lightStatus: [],
-          collisionType: [],
-          dateOfAccidentFrom: "",
-          dateOfAccidentTo: "",
-        },
-        get: {
-          categories: 1,
-          series: 1,
-        },
-      });
-
-      if (result.success) {
-        setChartData(result.body);
-      } else {
-        setError(result.error || "خطا در بارگذاری داده‌های تحلیل ماهانه تعطیلات");
-      }
-    } catch {
-      setError("خطا در برقراری ارتباط با سرور");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Handle filter submission
   const handleFilterSubmit = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
@@ -143,7 +113,7 @@ const MonthlyHolidayPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleFilterSubmit(appliedFilters);
   };
 
   // Filter configuration

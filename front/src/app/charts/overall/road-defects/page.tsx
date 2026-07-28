@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import EffectiveRoadDefectsDashboard from "@/components/dashboards/EffectiveRoadDefectsDashboard";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
@@ -43,88 +43,6 @@ const RoadDefectsPage = () => {
     dateOfAccidentFrom: "2024-03-20T00:00:00.000Z",
     dateOfAccidentTo: "2025-03-19T23:59:59.999Z",
   });
-
-  // Load initial data on component mount
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const loadInitialData = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await roadDefectsAnalytics({
-        set: {
-          // Core Accident Details
-          dateOfAccidentFrom: "2024-03-20T00:00:00.000Z",
-          dateOfAccidentTo: "2025-03-19T23:59:59.999Z",
-          deadCountMin: undefined,
-          deadCountMax: undefined,
-          injuredCountMin: undefined,
-          injuredCountMax: undefined,
-
-          // Location & Context
-          province: [],
-          city: [],
-          road: [],
-          trafficZone: [],
-          cityZone: [],
-          accidentType: [],
-          position: [],
-          rulingType: [],
-
-          // Accident Characteristics
-          lightStatus: [],
-          collisionType: [],
-          roadSituation: [],
-          roadRepairType: [],
-          shoulderStatus: [],
-
-          // Environmental & Reason-based
-          areaUsages: [],
-          airStatuses: [],
-          roadDefects: [],
-          humanReasons: [],
-          vehicleReasons: [],
-          roadSurfaceConditions: [],
-          equipmentDamages: [],
-
-          // Vehicle DTOs Filters
-          vehicleColor: [],
-          vehicleSystem: [],
-          vehiclePlaqueType: [],
-          vehicleSystemType: [],
-          vehicleFaultStatus: [],
-          vehicleInsuranceCo: [],
-          vehiclePlaqueUsage: [],
-          vehicleBodyInsuranceCo: [],
-          vehicleMotionDirection: [],
-          vehicleMaxDamageSections: [],
-
-          // Driver in Vehicle DTOs Filters
-          driverSex: [],
-          driverLicenceType: [],
-          driverInjuryType: [],
-          driverTotalReason: [],
-        },
-        get: {
-          defectDistribution: 1,
-          defectCounts: 1,
-        },
-      });
-
-      if (result.success) {
-        setChartData(result.body);
-      } else {
-        setError(result.error || "خطا در بارگذاری داده‌های نقص راه");
-      }
-    } catch {
-      setError("خطا در برقراری ارتباط با سرور");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Handle filter submission
   const handleFilterSubmit = async (filters: ChartFilterState) => {
@@ -208,7 +126,7 @@ const RoadDefectsPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleFilterSubmit(appliedFilters);
   };
 
   // Filter configuration

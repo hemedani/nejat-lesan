@@ -50,53 +50,6 @@ const AreaUsageAnalyticsPage = () => {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<ChartFilterState>({});
 
-  const loadInitialData = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await areaUsageAnalytics({
-        set: {
-          dateOfAccidentFrom: "",
-          dateOfAccidentTo: "",
-          province: [],
-          city: [],
-          road: [],
-          accidentType: [],
-          lightStatus: [],
-          collisionType: [],
-          roadSituation: [],
-          roadSurfaceConditions: [],
-          humanReasons: [],
-          roadDefects: [],
-          vehicleSystem: [],
-          driverSex: [],
-          driverLicenceType: [],
-        },
-        get: {
-          analytics: 1,
-        },
-      });
-
-      if (result.success && result.body) {
-        setChartData(result.body.analytics);
-        setIsDemoMode(false);
-      } else {
-        console.warn("API failed, using demo data:", result.error);
-        setChartData(DEMO_DATA);
-        setIsDemoMode(true);
-        setError(null); // Clear error when using demo data
-      }
-    } catch (err) {
-      console.warn("Network error, using demo data:", err);
-      setChartData(DEMO_DATA);
-      setIsDemoMode(true);
-      setError(null); // Clear error when using demo data
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Handle filter submission
   const handleApplyFilters = async (filters: ChartFilterState) => {
     setAppliedFilters(filters);
@@ -280,7 +233,7 @@ const AreaUsageAnalyticsPage = () => {
 
   // Handle manual data loading
   const handleLoadData = async () => {
-    await loadInitialData();
+    await handleApplyFilters(appliedFilters);
   };
 
   // Filter configuration
