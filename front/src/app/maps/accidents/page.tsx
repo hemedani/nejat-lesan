@@ -77,8 +77,8 @@ const AccidentsMapPage: React.FC = () => {
   // City zone GeoJSON for polygon overlay on the map
   const [geoJsonData, setGeoJsonData] = useState<GeoJsonData | null>(null);
 
-  // Modal state for polygon search results
-  const [modalData, setModalData] = useState<accidentSchema[] | null>(null);
+  // Persistent drawn shape results (survives modal close, cleared on shape removal)
+  const [drawnShapeResult, setDrawnShapeResult] = useState<accidentSchema[] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isPolygonLoading, setIsPolygonLoading] = useState<boolean>(false);
 
@@ -210,7 +210,7 @@ const AccidentsMapPage: React.FC = () => {
       });
 
       if (response.success && response.body) {
-        setModalData(response.body.accidents || []);
+        setDrawnShapeResult(response.body.accidents || []);
         setIsModalOpen(true);
       }
     } catch (error) {
@@ -220,10 +220,22 @@ const AccidentsMapPage: React.FC = () => {
     }
   };
 
-  // Close modal
+  // Reopen modal with last drawn shape data (shape stays on map)
+  const handleShapeClick = () => {
+    if (drawnShapeResult && drawnShapeResult.length > 0) {
+      setIsModalOpen(true);
+    }
+  };
+
+  // Clear drawn shape results when user removes the shape from the map
+  const handleShapeRemoved = () => {
+    setDrawnShapeResult(null);
+    setIsModalOpen(false);
+  };
+
+  // Close modal without clearing drawn shape data
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setModalData(null);
   };
 
   // Handle snapshot capture for comparison
@@ -401,6 +413,8 @@ const AccidentsMapPage: React.FC = () => {
                   accidents={accidents}
                   isLoading={isLoading}
                   onShapeDrawn={handleShapeDrawn}
+                  onShapeClick={handleShapeClick}
+                  onShapeRemoved={handleShapeRemoved}
                   geoJsonData={geoJsonData}
                 />
               ) : (
@@ -408,6 +422,8 @@ const AccidentsMapPage: React.FC = () => {
                   accidents={accidents}
                   isLoading={isLoading}
                   onShapeDrawn={handleShapeDrawn}
+                  onShapeClick={handleShapeClick}
+                  onShapeRemoved={handleShapeRemoved}
                   geoJsonData={geoJsonData}
                 />
               )}
@@ -442,7 +458,7 @@ const AccidentsMapPage: React.FC = () => {
           <AccidentDetailsModal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            data={modalData || []}
+            data={drawnShapeResult || []}
           />
 
           {/* Summary Stats */}

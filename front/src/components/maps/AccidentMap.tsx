@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { MapContainer, useMapEvents, FeatureGroup, GeoJSON, useMap } from "react-leaflet";
 import { HeatmapLayer } from "react-leaflet-heatmap-layer-v3";
 import { EditControl } from "react-leaflet-draw";
@@ -88,10 +88,16 @@ const AccidentMap: React.FC<{
   accidents: accidentSchema[];
   isLoading: boolean;
   onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
+  onShapeClick?: () => void;
+  onShapeRemoved?: () => void;
   geoJsonData?: GeoJsonData | null;
-}> = ({ accidents, isLoading, onShapeDrawn, geoJsonData }) => {
+}> = ({ accidents, isLoading, onShapeDrawn, onShapeClick, onShapeRemoved, geoJsonData }) => {
   const [currentZoom, setCurrentZoom] = useState(6);
   const [viewMode, setViewMode] = useState<"heatmap" | "dots">("heatmap"); // 'heatmap' or 'dots'
+
+  // Refs to avoid stale closures in layer click handlers
+  const onShapeClickRef = useRef(onShapeClick);
+  onShapeClickRef.current = onShapeClick;
 
   // Handle drawing events
   const handleShapeCreated = (e: DrawCreatedEvent) => {
@@ -99,6 +105,13 @@ const AccidentMap: React.FC<{
     if (onShapeDrawn) {
       onShapeDrawn(shapeGeoJSON, e.layer);
     }
+    // Make the drawn shape clickable to reopen modal (uses ref to get latest callback)
+    e.layer.on("click", () => onShapeClickRef.current?.());
+  };
+
+  // Handle shape deletion from toolbar
+  const handleShapeDeleted = () => {
+    onShapeRemoved?.();
   };
 
   // Prepare heatmap data
@@ -153,6 +166,7 @@ const AccidentMap: React.FC<{
           <EditControl
             position="topright"
             onCreated={handleShapeCreated}
+            onDeleted={handleShapeDeleted}
             draw={{
               rectangle: {
                 shapeOptions: {
