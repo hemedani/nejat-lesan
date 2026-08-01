@@ -53,9 +53,9 @@ export const mapAccidentsFn: ActFn = async (body) => {
 	let startDate, endDate;
 	if (!filters.dateOfAccidentFrom || !filters.dateOfAccidentTo) {
 		const now = moment();
-		const lastYear = now.jYear() - 1;
-		startDate = moment(`${lastYear}/01/01`, "jYYYY/jMM/jDD").startOf("day")
-			.toDate();
+		const startJalaliYear = now.jYear() - 3;
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD")
+			.startOf("day").toDate();
 		endDate = moment().endOf("day").toDate();
 	} else {
 		startDate = moment(filters.dateOfAccidentFrom).startOf("day").toDate();
