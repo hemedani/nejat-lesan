@@ -8,14 +8,12 @@
  * This validator includes the **complete set of filters** used across all
  * analytics endpoints (mirroring `roadDefectsAnalytics.val.ts`) to ensure:
  * - UI consistency (reuse of filter components)
- * - Deep, contextual analysis of vehicle factors (`vehicle_reasons`) in **severe accidents only**
+ * - Deep, contextual analysis of vehicle factors (`vehicle_reasons`)
  *
  * 🔹 All categorical filters are `array(string())` → support **multi-select**.
  * 🔹 Numeric range filters use `Min`/`Max` suffixes (e.g., deadCountMin).
  * 🔹 Text fields (e.g., officer, names) support **partial matching**.
  * 🔹 Boolean-like fields (e.g., hasWitness) use string "true"/"false".
- *
- * ⚠️ **Critical**: This act **only analyzes severe accidents** (`type.name` = "فوتی" or "جرحی").
  *
  * The `get` section is minimal (`analytics: 1`) because this endpoint always
  * returns both pie and bar chart data.

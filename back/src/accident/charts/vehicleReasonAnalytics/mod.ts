@@ -4,7 +4,7 @@
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
  * Registers the "vehicleReasonAnalytics" act. This endpoint provides data for
- * the two-part "Distribution of Effective Vehicle Factor in Severe Accidents" chart.
+ * the two-part "Distribution of Effective Vehicle Factor in Accidents" chart.
  */
 import { createChartAuthMiddleware, setTokens, setUser } from "@lib";
 import { vehicleReasonAnalyticsFn } from "./vehicleReasonAnalytics.fn.ts";

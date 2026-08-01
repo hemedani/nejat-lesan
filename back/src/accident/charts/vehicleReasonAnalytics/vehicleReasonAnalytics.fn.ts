@@ -3,15 +3,14 @@
  * FILE: vehicleReasonAnalytics.fn.ts
  * -----------------------------------------------------------------------------
  * DESCRIPTION:
- * Returns **two-part analytics** for vehicle factors in **severe accidents**:
+ * Returns **two-part analytics** for vehicle factors in **all accidents**:
  * 1. **Pie chart**: "دارای عامل" vs. "فاقد عامل" (based on presence of non-"ندارد" vehicle_reasons)
- * 2. **Stacked bar chart**: Top 10 vehicle reasons, split by severity ("فوتی", "جرحی")
+ * 2. **Stacked bar chart**: Top 10 vehicle reasons, split by severity ("فوتی", "جرحی", "خسارتی")
  *
  * This function fully respects Lesan’s principle: **the client defines all filters,
  * and the server executes them efficiently using MongoDB’s native operators**.
  *
  * Key features:
- * - Hardcoded filter for severe accidents only (`type.name` IN ["فوتی", "جرحی"])
  * - Default date range = last full Jalali year
  * - Applies **all filters** before aggregation
  * - Uses `$facet` to run both aggregations in one roundtrip
@@ -46,10 +45,9 @@ export const vehicleReasonAnalyticsFn: ActFn = async (body) => {
 		endDate = moment(`${lastJalaliYear}/12/01`, "jYYYY/jMM/jDD").endOf("jMonth").endOf("day").toDate();
 	}
 
-	// Start with date range + severe accident filter
+	// Start with date range
 	const baseFilter: Document = {
 		date_of_accident: { $gte: startDate, $lte: endDate },
-		"type.name": { $in: ["فوتی", "جرحی"] }, // ← critical: only severe accidents
 	};
 
 	// =========================================================================
@@ -426,6 +424,11 @@ export const vehicleReasonAnalyticsFn: ActFn = async (body) => {
 			s: any,
 		) => s.severity === "جرحی")?.count || 0
 	);
+	const damageData = categories.map((cat: string) =>
+		data.barChartData.find((d: any) => d.name === cat)?.counts.find((
+			s: any,
+		) => s.severity === "خسارتی")?.count || 0
+	);
 
 	// =========================================================================
 	// 9. RETURN IN STANDARD FORMAT
@@ -438,6 +441,7 @@ export const vehicleReasonAnalyticsFn: ActFn = async (body) => {
 				series: [
 					{ name: "فوتی", data: fatalData },
 					{ name: "جرحی", data: injuryData },
+					{ name: "خسارتی", data: damageData },
 				],
 			},
 		},
