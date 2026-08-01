@@ -51,6 +51,7 @@ declare module 'apexcharts' {
     height?: string | number
     width?: string | number
     fontFamily?: string
+    stacked?: boolean
     toolbar?: {
       show?: boolean
       offsetX?: number
@@ -95,11 +96,38 @@ declare module 'apexcharts' {
         opacityTo?: number
       }
     }
+    grid?: {
+      show?: boolean
+      borderColor?: string
+      strokeDashArray?: number
+      xaxis?: {
+        lines?: {
+          show?: boolean
+        }
+      }
+      yaxis?: {
+        lines?: {
+          show?: boolean
+        }
+      }
+    }
     labels?: string[]
     legend?: {
       show?: boolean
       position?: 'top' | 'right' | 'bottom' | 'left'
       horizontalAlign?: 'left' | 'center' | 'right'
+      fontSize?: string
+      fontWeight?: number | string
+      labels?: {
+        colors?: string | string[]
+      }
+      markers?: {
+        size?: number
+      }
+      itemMargin?: {
+        horizontal?: number
+        vertical?: number
+      }
     }
     plotOptions?: {
       bar?: {
@@ -108,6 +136,15 @@ declare module 'apexcharts' {
         columnWidth?: string
         dataLabels?: {
           position?: string
+          total?: {
+            enabled?: boolean
+            offsetY?: number
+            style?: {
+              fontSize?: string
+              fontWeight?: number | string
+              colors?: string[]
+            }
+          }
         }
       }
       pie?: {
@@ -143,6 +180,16 @@ declare module 'apexcharts' {
         fontSize?: string
         fontWeight?: string | number
         color?: string
+      }
+    }
+    tooltip?: {
+      enabled?: boolean
+      theme?: 'dark' | 'light'
+      style?: {
+        fontSize?: string
+      }
+      y?: {
+        formatter?: (val: number) => string
       }
     }
     xaxis?: {

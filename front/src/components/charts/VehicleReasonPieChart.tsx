@@ -214,7 +214,7 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
       <div className="mt-6 grid grid-cols-2 gap-4">
         {data.map((item, index) => {
           const percentage = ((item.count / totalCount) * 100).toFixed(1)
-          const isWithFault = item.name === 'با عامل'
+          const isWithFault = item.name === 'دارای عامل'
 
           return (
             <div

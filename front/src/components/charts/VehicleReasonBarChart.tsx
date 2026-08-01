@@ -18,6 +18,20 @@ interface VehicleReasonBarChartProps {
   isLoading: boolean
 }
 
+const SEVERITY_CHART_COLORS: Record<string, string> = {
+  'فوتی': '#ef4444',
+  'جرحی': '#f97316',
+  'خسارتی': '#eab308',
+}
+
+const SEVERITY_DOT_COLORS: Record<string, string> = {
+  'فوتی': 'bg-red-500',
+  'جرحی': 'bg-orange-500',
+  'خسارتی': 'bg-yellow-500',
+}
+
+const DEFAULT_COLOR = '#3b82f6'
+
 const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
   data,
   isLoading
@@ -65,11 +79,16 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
     )
   }
 
-  // Calculate total and statistics
-  const totalFaults = data.series[0]?.data.reduce((sum, count) => sum + count, 0) || 0
-  const maxFault = Math.max(...(data.series[0]?.data || []))
-  const maxFaultIndex = data.series[0]?.data.findIndex(count => count === maxFault) ?? -1
+  // Calculate per-category totals across all severity series
+  const categoryTotals = data.categories.map((_, index) =>
+    data.series.reduce((sum, series) => sum + (series.data[index] || 0), 0)
+  )
+  const totalFaults = categoryTotals.reduce((sum, count) => sum + count, 0)
+  const maxFault = Math.max(...categoryTotals)
+  const maxFaultIndex = categoryTotals.findIndex((count) => count === maxFault)
   const topFaultType = maxFaultIndex >= 0 ? data.categories[maxFaultIndex] : 'نامشخص'
+
+  const chartColors = data.series.map((series) => SEVERITY_CHART_COLORS[series.name] || DEFAULT_COLOR)
 
   // Chart configuration
   const chartOptions: ApexOptions = {
@@ -77,6 +96,7 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
       type: 'bar',
       fontFamily: 'inherit',
       height: 350,
+      stacked: true,
       toolbar: {
         show: true,
         tools: {
@@ -134,25 +154,22 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
     plotOptions: {
       bar: {
         columnWidth: '60%',
-        distributed: false,
         borderRadius: 4,
         dataLabels: {
-          position: 'top'
+          total: {
+            enabled: true,
+            offsetY: -20,
+            style: {
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }
+          }
         }
       }
     },
-    colors: ['#3b82f6'], // Blue color for bars
+    colors: chartColors,
     dataLabels: {
-      enabled: true,
-      offsetY: -20,
-      style: {
-        fontSize: '11px',
-        fontWeight: 'bold',
-        colors: ['#374151']
-      },
-      formatter: function(val: number) {
-        return val.toLocaleString('fa-IR')
-      }
+      enabled: false
     },
     grid: {
       show: true,
@@ -167,6 +184,23 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
         lines: {
           show: true
         }
+      }
+    },
+    legend: {
+      show: true,
+      position: 'top',
+      horizontalAlign: 'center',
+      fontSize: '14px',
+      fontWeight: 500,
+      labels: {
+        colors: '#374151'
+      },
+      markers: {
+        size: 6
+      },
+      itemMargin: {
+        horizontal: 12,
+        vertical: 4
       }
     },
     tooltip: {
@@ -208,8 +242,8 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
           chart: {
             height: 280
           },
-          dataLabels: {
-            enabled: false
+          legend: {
+            position: 'bottom'
           }
         }
       }
@@ -222,8 +256,18 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">عامل وسیله نقلیه مؤثر در تصادف</h3>
         <p className="text-sm text-gray-600">
-          توزیع انواع عوامل فنی وسیله نقلیه در تصادفات
+          توزیع انواع عوامل فنی وسیله نقلیه در تصادفات به تفکیک شدت
         </p>
+      </div>
+
+      {/* Severity Legend */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        {data.series.map((series) => (
+          <div key={series.name} className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full ${SEVERITY_DOT_COLORS[series.name] || 'bg-blue-500'}`}></div>
+            <span className="text-sm text-gray-700">{series.name}</span>
+          </div>
+        ))}
       </div>
 
       {/* Chart */}
@@ -287,21 +331,38 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
         <h4 className="text-md font-semibold text-gray-900 mb-3">جزئیات عوامل</h4>
         <div className="space-y-2">
           {data.categories.map((category, index) => {
-            const count = data.series[0]?.data[index] || 0
-            const percentage = totalFaults > 0 ? ((count / totalFaults) * 100).toFixed(1) : '0'
+            const categoryTotal = categoryTotals[index]
+            const categoryPercentage = totalFaults > 0 ? ((categoryTotal / totalFaults) * 100).toFixed(1) : '0'
 
             return (
-              <div key={index} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700 flex-1" title={category}>
-                  {category}
-                </span>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-600">
-                    {percentage}%
+              <div key={index} className="py-2 px-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700 flex-1 truncate" title={category}>
+                    {category}
                   </span>
-                  <span className="text-sm font-semibold text-gray-900 min-w-[60px] text-left">
-                    {count.toLocaleString('fa-IR')}
+                  <span className="text-sm font-semibold text-gray-900">
+                    {categoryTotal.toLocaleString('fa-IR')}
                   </span>
+                  <span className="text-sm text-gray-500 w-16 text-left">
+                    {categoryPercentage}%
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-2">
+                  {data.series.map((series) => {
+                    const count = series.data[index] || 0
+                    const percentage = categoryTotal > 0 ? ((count / categoryTotal) * 100).toFixed(1) : '0'
+
+                    return (
+                      <div key={series.name} className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${SEVERITY_DOT_COLORS[series.name] || 'bg-blue-500'}`}></div>
+                        <span className="text-xs text-gray-600">{series.name}:</span>
+                        <span className="text-sm font-semibold text-gray-900">
+                          {count.toLocaleString('fa-IR')}
+                        </span>
+                        <span className="text-xs text-gray-500">({percentage}%)</span>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )

@@ -31,8 +31,8 @@ interface VehicleReasonAnalyticsResponse {
 // Demo data for development and fallback
 const DEMO_DATA: VehicleReasonAnalyticsResponse["analytics"] = {
   pieChart: [
-    { name: "با عامل", count: 1247 },
-    { name: "بدون عامل", count: 2856 },
+    { name: "دارای عامل", count: 1247 },
+    { name: "فاقد عامل", count: 2856 },
   ],
   barChart: {
     categories: [
@@ -44,10 +44,9 @@ const DEMO_DATA: VehicleReasonAnalyticsResponse["analytics"] = {
       "سایر عوامل",
     ],
     series: [
-      {
-        name: "تعداد تصادفات",
-        data: [342, 298, 256, 189, 162, 89],
-      },
+      { name: "فوتی", data: [142, 118, 96, 89, 62, 39] },
+      { name: "جرحی", data: [152, 138, 116, 78, 72, 38] },
+      { name: "خسارتی", data: [48, 42, 44, 22, 28, 12] },
     ],
   },
 };
@@ -363,11 +362,16 @@ const VehicleReasonAnalyticsPage = () => {
                       ...chartData.barChart.categories.map((cat, i) => ({
                         chart: "bar",
                         name: cat,
-                        count: chartData.barChart.series[0]?.data[i] ?? 0,
+                        فوتی:
+                          chartData.barChart.series.find((s) => s.name === "فوتی")?.data[i] ?? 0,
+                        جرحی:
+                          chartData.barChart.series.find((s) => s.name === "جرحی")?.data[i] ?? 0,
+                        خسارتی:
+                          chartData.barChart.series.find((s) => s.name === "خسارتی")?.data[i] ?? 0,
                       })),
                     ]}
                     filename="vehicle-reason-analytics"
-                    headers={["chart", "name", "count"]}
+                    headers={["chart", "name", "count", "فوتی", "جرحی", "خسارتی"]}
                     buttonText="دانلود CSV"
                   />
                 )}
@@ -440,7 +444,7 @@ const VehicleReasonAnalyticsPage = () => {
               (() => {
                 const totalVehicles = chartData.pieChart.reduce((sum, item) => sum + item.count, 0);
                 const vehiclesWithFault =
-                  chartData.pieChart.find((item) => item.name === "با عامل")?.count || 0;
+                  chartData.pieChart.find((item) => item.name === "دارای عامل")?.count || 0;
                 const faultPercentage =
                   totalVehicles > 0 ? ((vehiclesWithFault / totalVehicles) * 100).toFixed(1) : "0";
                 const mostCommonFault =
@@ -477,9 +481,9 @@ const VehicleReasonAnalyticsPage = () => {
               (() => {
                 const totalVehicles = chartData.pieChart.reduce((sum, item) => sum + item.count, 0);
                 const vehiclesWithFault =
-                  chartData.pieChart.find((item) => item.name === "با عامل")?.count || 0;
+                  chartData.pieChart.find((item) => item.name === "دارای عامل")?.count || 0;
                 const vehiclesWithoutFault =
-                  chartData.pieChart.find((item) => item.name === "بدون عامل")?.count || 0;
+                  chartData.pieChart.find((item) => item.name === "فاقد عامل")?.count || 0;
 
                 return (
                   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -495,13 +499,13 @@ const VehicleReasonAnalyticsPage = () => {
                         <div className="text-2xl font-bold text-red-600">
                           {vehiclesWithFault.toLocaleString("fa-IR")}
                         </div>
-                        <div className="text-sm text-red-800">با عامل وسیله نقلیه</div>
+                        <div className="text-sm text-red-800">دارای عامل وسیله نقلیه</div>
                       </div>
                       <div className="bg-green-50 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-green-600">
                           {vehiclesWithoutFault.toLocaleString("fa-IR")}
                         </div>
-                        <div className="text-sm text-green-800">بدون عامل وسیله نقلیه</div>
+                        <div className="text-sm text-green-800">فاقد عامل وسیله نقلیه</div>
                       </div>
                       <div className="bg-amber-50 p-4 rounded-lg">
                         <div className="text-2xl font-bold text-amber-600">
