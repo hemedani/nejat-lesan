@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const overallCharts = [
   {
+    id: "accident-severity",
     title: "سهم شدت تصادفات",
     description: "توزیع تصادفات بر اساس سطوح شدت شامل فوتی، جرحی و خسارتی — نمای کلی از شدت حوادث رانندگی",
     icon: (
@@ -19,6 +20,7 @@ const overallCharts = [
     iconBg: "bg-red-100",
   },
   {
+    id: "collision-analytics",
     title: "تحلیل انواع برخورد",
     description: "بررسی جامع انواع برخورد وسایل نقلیه شامل برخورد اصلی، تصادفات تک‌وسیله‌ای و سایر انواع",
     icon: (
@@ -31,6 +33,7 @@ const overallCharts = [
     iconBg: "bg-orange-100",
   },
   {
+    id: "road-defects",
     title: "نقش مؤثر نقص راه",
     description: "تحلیل تأثیر نقص‌های راه بر تصادفات — توزیع تصادفات دارای و فاقد نقص مؤثر راه به تفکیک نوع نقص",
     icon: (
@@ -43,6 +46,7 @@ const overallCharts = [
     iconBg: "bg-blue-100",
   },
   {
+    id: "monthly-holiday",
     title: "تحلیل ماهانه تعطیلات",
     description: "مقایسه تعداد تصادفات در روزهای تعطیل و غیرتعطیل به تفکیک ماه — شناسایی الگوهای فصلی تأثیر تعطیلات",
     icon: (
@@ -55,6 +59,7 @@ const overallCharts = [
     iconBg: "bg-green-100",
   },
   {
+    id: "hourly-day-of-week",
     title: "تحلیل ساعتی روز هفته",
     description: "نقشه حرارتی توزیع تصادفات بر اساس ساعت شبانه‌روز و روز هفته — شناسایی ساعات و روزهای پرخطر",
     icon: (
@@ -67,6 +72,7 @@ const overallCharts = [
     iconBg: "bg-purple-100",
   },
   {
+    id: "total-reason-analytics-overall",
     title: "علل تامه تصادفات",
     description: "نمودار درختی از مهم‌ترین علل تامه تصادفات شدید — ترکیب عوامل انسانی، وسیله نقلیه، راه و محیط",
     icon: (
@@ -79,6 +85,7 @@ const overallCharts = [
     iconBg: "bg-amber-100",
   },
   {
+    id: "human-reason-analytics",
     title: "عوامل انسانی مؤثر",
     description: "توزیع عوامل انسانی مؤثر در تصادفات مانند عدم توجه به جلو، سرعت غیرمجاز و فاصله نامناسب",
     icon: (
@@ -91,6 +98,7 @@ const overallCharts = [
     iconBg: "bg-indigo-100",
   },
   {
+    id: "area-usage-analytics",
     title: "سهم تصادفات به تفکیک کاربری محل",
     description: "تحلیل سهم تصادفات به تفکیک نوع کاربری محل (مسکونی، تجاری، صنعتی، آموزشی و ...)",
     icon: (
@@ -103,6 +111,7 @@ const overallCharts = [
     iconBg: "bg-pink-100",
   },
   {
+    id: "vehicle-reason-analytics",
     title: "توزیع عامل وسیله نقلیه",
     description: "تحلیل عوامل مرتبط با وسیله نقلیه شامل نقص فنی موتور، ترمز، لاستیک و سایر اجزاء",
     icon: (
@@ -137,9 +146,8 @@ const overallInsights = [
 
 // Map chart IDs (from nav config) to their metadata (icons, colors)
 const chartIdToMeta: Record<string, (typeof overallCharts)[0]> = {};
-overallCharts.forEach((chart, i) => {
-  const navCharts = getSectionCharts("overall");
-  if (navCharts[i]) chartIdToMeta[navCharts[i].id] = chart;
+overallCharts.forEach((chart) => {
+  chartIdToMeta[chart.id] = chart;
 });
 
 const OverallChartsPage = () => {
