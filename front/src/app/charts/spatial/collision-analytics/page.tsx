@@ -18,6 +18,7 @@ import SpatialCollisionBarChart from "@/components/charts/spatial/SpatialCollisi
 import SpatialCollisionMap from "@/components/charts/spatial/SpatialCollisionMap";
 import { ReqType } from "@/types/declarations/selectInp";
 import { useAuth } from "@/context/AuthContext";
+import { downloadFullChartData } from "@/utils/exportChartData";
 
 const SpatialCollisionAnalyticsPage = () => {
   const { enterpriseSettings, userLevel } = useAuth();
@@ -491,7 +492,24 @@ interface SpatialCollisionAnalyticsResponse {
 
       // Handle analytics response — store barChart data; mapChart is derived via useMemo
       if (analyticsResponse.success && analyticsResponse.body) {
-        setAnalyticsData(analyticsResponse.body.analytics);
+        let analytics = analyticsResponse.body.analytics;
+        // Filter barChart series to only the selected collision types so the legend matches the applied filter
+        if (filters.collisionType && filters.collisionType.length > 0) {
+          const selectedTypes = new Set(filters.collisionType);
+          analytics = {
+            ...analytics,
+            barChart: {
+              ...analytics.barChart,
+              series: analytics.barChart.series.filter(
+                (s: { name: string; data: number[] }) =>
+                  selectedTypes.has(s.name),
+              ),
+            },
+          };
+        }
+        setAnalyticsData(analytics);
+        // Series indices change with the filtered response, so clear any stale toggles
+        setHiddenCollisionTypes(new Set());
       } else {
         throw new Error("Failed to fetch analytics data");
       }
@@ -614,6 +632,23 @@ interface SpatialCollisionAnalyticsResponse {
                   )}
                   {isLoading ? "در حال بارگذاری..." : "بارگذاری مجدد"}
                 </button>
+                {analyticsData?.barChart && (
+                  <button
+                    onClick={() =>
+                      downloadFullChartData(
+                        analyticsData.barChart.categories,
+                        analyticsData.barChart.series,
+                        "spatial-collision",
+                      )
+                    }
+                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    دانلود CSV
+                  </button>
+                )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
                   className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"

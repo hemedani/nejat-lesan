@@ -10,6 +10,7 @@ import HumanReasonTreemapChart from "@/components/charts/HumanReasonTreemapChart
 import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
+import { downloadFullChartData } from "@/utils/exportChartData";
 
 // Backend response interface for human reason analytics
 interface HumanReasonAnalyticsResponse {
@@ -311,6 +312,23 @@ const HumanReasonAnalyticsPage = () => {
                   )}
                   {isLoading ? "در حال بارگذاری..." : "بارگذاری مجدد"}
                 </button>
+                {chartData && chartData.length > 0 && (
+                  <button
+                    onClick={() =>
+                      downloadFullChartData(
+                        chartData.map((d) => d.name),
+                        [{ name: "تعداد تصادفات", data: chartData.map((d) => d.count) }],
+                        "human-reason-analytics",
+                      )
+                    }
+                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    دانلود CSV
+                  </button>
+                )}
                 {isDemoMode && (
                   <button
                     onClick={() => {
