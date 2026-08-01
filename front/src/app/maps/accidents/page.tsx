@@ -22,8 +22,15 @@ import { mapAccidents } from "@/app/actions/accident/mapAccidents";
 import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
 
 // Types
-import { accidentSchema } from "@/types/declarations/selectInp";
+import { accidentSchema, ReqType } from "@/types/declarations/selectInp";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
+import {
+  ACCIDENT_FIELD_OPTIONS,
+  DEFAULT_FIELD_KEYS,
+  DEFAULT_PROJECTION,
+  MAP_PROJECTION,
+  buildAccidentProjection,
+} from "@/utils/accidentProjection";
 
 import { useBasemap } from "@/context/BasemapContext";
 
@@ -82,6 +89,20 @@ const AccidentsMapPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isPolygonLoading, setIsPolygonLoading] = useState<boolean>(false);
 
+  // Active drawn shape (used to re-fetch its data when the shape is clicked again)
+  const [activeShape, setActiveShape] = useState<GeoJSON.Feature | null>(null);
+  // Live drawn layer, kept so re-fetches use the shape's CURRENT geometry
+  // (users can drag/resize a shape after drawing; toGeoJSON() stays in sync)
+  const [activeLayer, setActiveLayer] = useState<{
+    getRadius?(): number;
+    toGeoJSON?(): GeoJSON.Feature;
+  } | null>(null);
+  // Selected projection fields for the modal table
+  const [selectedFieldKeys, setSelectedFieldKeys] = useState<Set<string>>(
+    () => new Set(DEFAULT_FIELD_KEYS),
+  );
+  const [projection, setProjection] = useState<Record<string, unknown>>(DEFAULT_PROJECTION);
+
   // Map comparison context
   const { addComparison } = useMapComparison();
   const [isCapturingSnapshot, setIsCapturingSnapshot] = useState<boolean>(false);
@@ -107,7 +128,7 @@ const AccidentsMapPage: React.FC = () => {
 
       const response = await mapAccidents({
         set: requestPayload,
-        get: { accidents: 1 as const, total: 1 as const },
+        get: { accidents: MAP_PROJECTION, total: 1 },
       });
 
       if (response.success && response.body) {
@@ -144,54 +165,44 @@ const AccidentsMapPage: React.FC = () => {
   // Prevent background scrolling when polygon loading overlay is open or when capturing snapshot
   useScrollLock(isPolygonLoading || isCapturingSnapshot);
 
-  // Handle shape drawing
-  const handleShapeDrawn = async (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => {
+  // Extract polygon coordinates from a drawn shape's GeoJSON (circles become 32-gons)
+  const extractPolygonCoordinates = (
+    geoJSON: GeoJSON.Feature,
+    layer?: { getRadius?(): number },
+  ): number[][][] => {
+    if (geoJSON.geometry.type === "Polygon") {
+      return (geoJSON.geometry as GeoJSON.Polygon).coordinates;
+    }
+
+    if (geoJSON.geometry.type === "Point") {
+      const [lng, lat] = (geoJSON.geometry as GeoJSON.Point).coordinates;
+      const radiusInMeters = layer?.getRadius ? layer.getRadius() : 1000;
+      const radiusInDegrees = radiusInMeters / 111320; // Approximate meters to degrees conversion
+      const segments = 32; // Number of segments for circle approximation
+      const circleCoordinates: number[][] = [];
+      for (let i = 0; i <= segments; i++) {
+        const angle = (i / segments) * 2 * Math.PI;
+        circleCoordinates.push([
+          lng + radiusInDegrees * Math.cos(angle),
+          lat + radiusInDegrees * Math.sin(angle),
+        ]);
+      }
+      return [circleCoordinates];
+    }
+
+    const geom = geoJSON.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon;
+    return geom.coordinates as number[][][];
+  };
+
+  // Fetch accidents inside a drawn shape and open the data table modal
+  const fetchShapeData = async (
+    geoJSON: GeoJSON.Feature,
+    layer: { getRadius?(): number } | undefined,
+    proj: Record<string, unknown>,
+  ) => {
     setIsPolygonLoading(true);
     try {
-      // Extract coordinates from the GeoJSON based on geometry type
-      let coordinates: number[][][];
-
-      if (geoJSON.geometry.type === "Polygon") {
-        const polygonGeometry = geoJSON.geometry as GeoJSON.Polygon;
-        coordinates = polygonGeometry.coordinates;
-      } else if (geoJSON.geometry.type === "Point") {
-        // Handle circle - get radius from the layer
-        const pointGeometry = geoJSON.geometry as GeoJSON.Point;
-        const [lng, lat] = pointGeometry.coordinates;
-        // Get radius from the layer (in meters) and convert to degrees
-        const radiusInMeters = layer?.getRadius ? layer.getRadius() : 1000;
-        const radiusInDegrees = radiusInMeters / 111320; // Approximate meters to degrees conversion
-
-        // Development debugging
-        if (process.env.NODE_ENV !== "production") {
-          console.log("Circle center coordinates:", lng, lat);
-          console.log("Circle radius in meters:", radiusInMeters);
-          console.log("Layer has getRadius method:", !!layer?.getRadius);
-          console.log("Circle radius in degrees:", radiusInDegrees);
-        }
-
-        // Create a more accurate polygon approximation of the circle
-        const segments = 32; // Number of segments for circle approximation
-        const circleCoordinates: number[][] = [];
-
-        for (let i = 0; i <= segments; i++) {
-          const angle = (i / segments) * 2 * Math.PI;
-          const x = lng + radiusInDegrees * Math.cos(angle);
-          const y = lat + radiusInDegrees * Math.sin(angle);
-          circleCoordinates.push([x, y]);
-        }
-
-        coordinates = [circleCoordinates];
-
-        // Development debugging
-        if (process.env.NODE_ENV !== "production") {
-          console.log("Generated circle polygon coordinates:", coordinates);
-        }
-      } else {
-        // Default fallback for other geometry types - convert to polygon format
-        const geom = geoJSON.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon;
-        coordinates = geom.coordinates as number[][][];
-      }
+      const coordinates = extractPolygonCoordinates(geoJSON, layer);
 
       // Create polygon filter with current applied filters
       const requestPayload = {
@@ -206,7 +217,11 @@ const AccidentsMapPage: React.FC = () => {
 
       const response = await mapAccidents({
         set: requestPayload,
-        get: { accidents: 1 as const, total: 1 as const },
+        get: {
+          accidents:
+            proj as ReqType["main"]["accident"]["mapAccidents"]["get"]["accidents"],
+          total: 1,
+        },
       });
 
       if (response.success && response.body) {
@@ -220,15 +235,36 @@ const AccidentsMapPage: React.FC = () => {
     }
   };
 
-  // Reopen modal with last drawn shape data (shape stays on map)
-  const handleShapeClick = () => {
-    if (drawnShapeResult && drawnShapeResult.length > 0) {
-      setIsModalOpen(true);
+  // Handle shape drawing
+  const handleShapeDrawn = async (
+    geoJSON: GeoJSON.Feature,
+    layer?: { getRadius?(): number },
+  ) => {
+    setActiveShape(geoJSON);
+    setActiveLayer(layer || null);
+    await fetchShapeData(geoJSON, layer, projection);
+  };
+
+  // Re-fetch the clicked shape's data from the backend (shape stays on map)
+  const handleShapeClick = async (
+    geoJSON?: GeoJSON.Feature,
+    layer?: { getRadius?(): number },
+  ) => {
+    if (!geoJSON) {
+      if (drawnShapeResult && drawnShapeResult.length > 0) {
+        setIsModalOpen(true);
+      }
+      return;
     }
+    setActiveShape(geoJSON);
+    setActiveLayer(layer || null);
+    await fetchShapeData(geoJSON, layer, projection);
   };
 
   // Clear drawn shape results when user removes the shape from the map
   const handleShapeRemoved = () => {
+    setActiveShape(null);
+    setActiveLayer(null);
     setDrawnShapeResult(null);
     setIsModalOpen(false);
   };
@@ -236,6 +272,44 @@ const AccidentsMapPage: React.FC = () => {
   // Close modal without clearing drawn shape data
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  // Toggle a selectable projection field
+  const handleToggleField = (key: string) => {
+    setSelectedFieldKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  // Re-fetch the active shape with the selected projection fields
+  const handleApplyFields = async () => {
+    const newProjection = buildAccidentProjection(selectedFieldKeys);
+    setProjection(newProjection);
+    if (activeShape) {
+      // Use the live layer geometry so dragged/resized shapes query their real area
+      const liveGeoJSON = activeLayer?.toGeoJSON
+        ? activeLayer.toGeoJSON()
+        : activeShape;
+      await fetchShapeData(liveGeoJSON, activeLayer ?? undefined, newProjection);
+    }
+  };
+
+  // Reset projection to the default fields and re-fetch
+  const handleResetFields = async () => {
+    const defaultKeys = new Set(DEFAULT_FIELD_KEYS);
+    setSelectedFieldKeys(defaultKeys);
+    const defaultProjection = buildAccidentProjection(DEFAULT_FIELD_KEYS);
+    setProjection(defaultProjection);
+    if (activeShape) {
+      // Use the live layer geometry so dragged/resized shapes query their real area
+      const liveGeoJSON = activeLayer?.toGeoJSON
+        ? activeLayer.toGeoJSON()
+        : activeShape;
+      await fetchShapeData(liveGeoJSON, activeLayer ?? undefined, defaultProjection);
+    }
   };
 
   // Handle snapshot capture for comparison
@@ -459,6 +533,12 @@ const AccidentsMapPage: React.FC = () => {
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             data={drawnShapeResult || []}
+            isLoading={isPolygonLoading}
+            fieldOptions={ACCIDENT_FIELD_OPTIONS}
+            selectedFields={selectedFieldKeys}
+            onToggleField={handleToggleField}
+            onApplyFields={handleApplyFields}
+            onResetFields={handleResetFields}
           />
 
           {/* Summary Stats */}

@@ -89,7 +89,7 @@ const AccidentMap: React.FC<{
   accidents: accidentSchema[];
   isLoading: boolean;
   onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
-  onShapeClick?: () => void;
+  onShapeClick?: (geoJSON?: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
   onShapeRemoved?: () => void;
   geoJsonData?: GeoJsonData | null;
 }> = ({ accidents, isLoading, onShapeDrawn, onShapeClick, onShapeRemoved, geoJsonData }) => {
@@ -106,8 +106,10 @@ const AccidentMap: React.FC<{
     if (onShapeDrawn) {
       onShapeDrawn(shapeGeoJSON, e.layer);
     }
-    // Make the drawn shape clickable to reopen modal (uses ref to get latest callback)
-    (e.layer as unknown as L.Layer).on("click", () => onShapeClickRef.current?.());
+    // Make the drawn shape clickable to reopen the modal and re-fetch its data (uses ref to get latest callback)
+    (e.layer as unknown as L.Layer).on("click", () =>
+      onShapeClickRef.current?.(e.layer.toGeoJSON(), e.layer as { getRadius?(): number }),
+    );
   };
 
   // Handle shape deletion from toolbar

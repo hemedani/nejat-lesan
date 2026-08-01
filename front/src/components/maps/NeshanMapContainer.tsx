@@ -17,7 +17,7 @@ interface NeshanMapContainerProps {
   geoJsonStyle?: (feature?: Record<string, unknown>) => Record<string, unknown>;
   onEachFeature?: (feature: Record<string, unknown>, layer: unknown) => void;
   onShapeDrawn?: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
-  onShapeClick?: () => void;
+  onShapeClick?: (geoJSON?: GeoJSON.Feature, layer?: { getRadius?(): number }) => void;
   onShapeRemoved?: () => void;
   onZoomChange?: (zoom: number) => void;
   isLoading?: boolean;
@@ -277,7 +277,7 @@ function addGeoJSONLayer(
   return layer;
 }
 
-function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void, containerEl: HTMLElement | null, onShapeClick?: () => void, onShapeRemoved?: () => void) {
+function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?: { getRadius?(): number }) => void, containerEl: HTMLElement | null, onShapeClick?: (geoJSON?: GeoJSON.Feature, layer?: { getRadius?(): number }) => void, onShapeRemoved?: () => void) {
   const points: Array<{ lat: number; lng: number }> = [];
   const markers: Array<ReturnType<any>> = [];
   let polygon: ReturnType<any> | null = null;
@@ -368,7 +368,7 @@ function setupDrawing(map: any, onShapeDrawn: (geoJSON: GeoJSON.Feature, layer?:
         fillOpacity: 0.2,
         fillColor: "#3b82f6",
       }).addTo(map);
-      finalPolygon.on("click", () => onShapeClick?.());
+      finalPolygon.on("click", () => onShapeClick?.(finalPolygon.toGeoJSON(), finalPolygon));
       polygon = finalPolygon;
       onShapeDrawn(finalPolygon.toGeoJSON(), finalPolygon);
       isDrawing = false;
@@ -566,7 +566,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
       onShapeDrawnRef.current,
       containerRef.current,
       // Always call latest callback via refs to avoid stale closures
-      () => { onShapeClickRef.current?.(); },
+      (geoJSON?: GeoJSON.Feature, layer?: { getRadius?(): number }) => { onShapeClickRef.current?.(geoJSON, layer); },
       () => { onShapeRemovedRef.current?.(); },
     );
     return cleanupDrawing;
