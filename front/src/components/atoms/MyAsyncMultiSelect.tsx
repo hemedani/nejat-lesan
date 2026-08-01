@@ -15,6 +15,7 @@ interface InputProps<Option, Group extends GroupBase<Option>, T extends FieldVal
   label: string;
   setValue: UseFormSetValue<T>;
   labelAsValue?: boolean;
+  onChange?: (values: string[]) => void;
   errMsg?: string;
   placeholder?: string;
   loadOptions?: (inputValue: string, callback: (options: OptionsOrGroups<Option, Group>) => void) => Promise<OptionsOrGroups<Option, Group>> | void;
@@ -88,6 +89,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
   loadOptions,
   setValue,
   labelAsValue,
+  onChange,
   defaultOptions,
   defaultValue,
   value,
@@ -274,14 +276,16 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
           value={value}
           loadOptions={loadOptions}
           defaultOptions={defaultOptions}
-          onChange={(newVal) =>
-            setValue(
-              name,
-              ((newVal as ReactSelectOption[]).map((val) =>
-                labelAsValue ? val.label : val.value
-              ) as unknown as PathValue<T, Path<T>>)
-            )
-          }
+          onChange={(newVal) => {
+            const values = (newVal as ReactSelectOption[]).map((val) =>
+              labelAsValue ? val.label : val.value
+            );
+            if (onChange) {
+              onChange(values as string[]);
+            } else {
+              setValue(name, values as unknown as PathValue<T, Path<T>>);
+            }
+          }}
           name={name}
           placeholder={placeholder || `${label} را انتخاب کنید`}
           styles={customStyles}

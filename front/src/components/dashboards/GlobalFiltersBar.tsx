@@ -5,18 +5,16 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import MyDateInput from "../atoms/MyDateInput";
 import MyInput from "../atoms/MyInput";
+import GeographicFiltersGroup from "./GeographicFiltersGroup";
+import { normalizeGeoFilters } from "@/utils/geoRelations";
 import { useGlobalChartFilters } from "@/context/GlobalChartFiltersContext";
 import { ChartFilterState } from "./ChartsFilterSidebar";
-import { ReqType } from "@/types/declarations/selectInp";
 
-import { gets as getProvincesAction } from "@/app/actions/province/gets";
-import { gets as getCitiesAction } from "@/app/actions/city/gets";
-import { gets as getRoadsAction } from "@/app/actions/road/gets";
 import { gets as getAccidentTypesAction } from "@/app/actions/type/gets";
 import { gets as getCollisionTypesAction } from "@/app/actions/collision_type/gets";
 import { gets as getLightStatusesAction } from "@/app/actions/light_status/gets";
@@ -33,7 +31,7 @@ import { gets as getColorsAction } from "@/app/actions/color/gets";
 
 export default function GlobalFiltersBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { globalFilters, setGlobalFilters, clearGlobalFilters, hasGlobalFilters, globalFilterCount, globalFiltersVersion } = useGlobalChartFilters();
+  const { globalFilters, setGlobalFilters, clearGlobalFilters, hasGlobalFilters, globalFilterCount, isInitialized } = useGlobalChartFilters();
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false);
 
   const {
@@ -72,7 +70,8 @@ export default function GlobalFiltersBar() {
       return [];
     };
 
-  const loadProvincesOptions = createLoadOptions(getProvincesAction);
+  const formValues = (useWatch({ control }) || {}) as ChartFilterState;
+
   const loadAccidentTypesOptions = createLoadOptions(getAccidentTypesAction);
   const loadCollisionTypesOptions = createLoadOptions(getCollisionTypesAction);
   const loadLightStatusesOptions = createLoadOptions(getLightStatusesAction);
@@ -87,114 +86,12 @@ export default function GlobalFiltersBar() {
   const loadPlaqueTypesOptions = createLoadOptions(getPlaqueTypesAction);
   const loadColorsOptions = createLoadOptions(getColorsAction);
 
-  // Watch province and city for cascading
-  const watchedProvince = useWatch({ control, name: "province" });
-  const watchedCity = useWatch({ control, name: "city" });
-
-  // Cascade version – dependent selects reload when province/city changes
-  const [cascadeVersion, setCascadeVersion] = useState(0);
-  const prevProvinceRef = useRef(watchedProvince);
-  const prevCityRef = useRef(watchedCity);
-
+  // Seed the global bar form once localStorage has been hydrated. The global
+  // bar is the only writer of global filters, so a single seed on init is
+  // enough — no reactive re-seed needed afterwards.
   useEffect(() => {
-    const provinceChanged =
-      JSON.stringify(prevProvinceRef.current) !== JSON.stringify(watchedProvince);
-    const cityChanged = JSON.stringify(prevCityRef.current) !== JSON.stringify(watchedCity);
-    if (provinceChanged || cityChanged) {
-      setCascadeVersion((v) => v + 1);
-      if (provinceChanged) prevProvinceRef.current = watchedProvince;
-      if (cityChanged) prevCityRef.current = watchedCity;
-    }
-  }, [watchedProvince, watchedCity]);
-
-  // Key suffix with cascade version
-  const gK = (key: string) => `${key}-g-${globalFiltersVersion}`;
-  const cK = (key: string) => `${key}-g-${globalFiltersVersion}-cv-${cascadeVersion}`;
-
-  // Province name → ID cache (fetched once, ~31 provinces)
-  const provinceNameToIdMap = useRef<Record<string, string>>({});
-
-  const buildProvinceIds = useCallback(async (): Promise<string[]> => {
-    if (!watchedProvince || watchedProvince.length === 0) return [];
-    if (Object.keys(provinceNameToIdMap.current).length === 0) {
-      try {
-        const response = await getProvincesAction({
-          set: { limit: 50, page: 1 },
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          const map: Record<string, string> = {};
-          response.body.forEach((p: { _id: string; name: string }) => {
-            map[p.name] = p._id;
-          });
-          provinceNameToIdMap.current = map;
-        }
-      } catch {
-        return [];
-      }
-    }
-    return watchedProvince
-      .map((name: string) => provinceNameToIdMap.current[name])
-      .filter(Boolean);
-  }, [watchedProvince]);
-
-  // Load cities filtered by selected province(s)
-  const loadCitiesFiltered = useCallback(
-    async (inputValue?: string): Promise<SelectOption[]> => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const setParams: any = { limit: 20, page: 1 };
-      if (inputValue) setParams.name = inputValue;
-
-      const provinceIds = await buildProvinceIds();
-      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
-
-      try {
-        const response = await getCitiesAction({
-          set: setParams as ReqType["main"]["city"]["gets"]["set"],
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
-        }
-      } catch {
-        // ignore
-      }
-      return [];
-    },
-    [buildProvinceIds],
-  );
-
-  // Load roads filtered by province(s) – NEW: provinceIds on road/gets
-  const loadRoadsFiltered = useCallback(
-    async (inputValue?: string): Promise<SelectOption[]> => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const setParams: any = { limit: 20, page: 1 };
-      if (inputValue) setParams.name = inputValue;
-
-      const provinceIds = await buildProvinceIds();
-      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
-
-      try {
-        const response = await getRoadsAction({
-          set: setParams as ReqType["main"]["road"]["gets"]["set"],
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
-        }
-      } catch {
-        // ignore
-      }
-      return [];
-    },
-    [buildProvinceIds],
-  );
+    if (isInitialized) reset(globalFilters);
+  }, [isInitialized]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Lock body scroll when sidebar is open
   useEffect(() => {
@@ -208,21 +105,12 @@ export default function GlobalFiltersBar() {
     };
   }, [isOpen]);
 
-  // Sync form when global filters change from outside
-  useEffect(() => {
-    if (hasGlobalFilters) {
-      Object.entries(globalFilters).forEach(([key, value]) => {
-        setValue(key as keyof ChartFilterState, value as never);
-      });
-    }
-  }, [globalFiltersVersion]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const toSelectOptions = (values?: string[]): SelectOption[] | undefined => {
     if (!values || values.length === 0) return undefined;
     return values.map((v) => ({ value: v, label: v }));
   };
 
-  const handleSaveGlobal = (data: ChartFilterState) => {
+  const handleSaveGlobal = async (data: ChartFilterState) => {
     const cleanedData = Object.entries(data).reduce((acc, [key, value]) => {
       if (Array.isArray(value)) {
         if (value.length > 0) {
@@ -233,17 +121,14 @@ export default function GlobalFiltersBar() {
       }
       return acc;
     }, {} as ChartFilterState);
-    setGlobalFilters(cleanedData);
+    // Keep only geo relations consistent with the selected parents
+    setGlobalFilters(await normalizeGeoFilters(cleanedData));
     setIsOpen(false);
   };
 
   const handleClearGlobal = () => {
     clearGlobalFilters();
     reset({});
-  };
-
-  const globalDefaultValue = (key: keyof ChartFilterState) => {
-    return hasGlobalFilters ? toSelectOptions(globalFilters[key] as string[] | undefined) : undefined;
   };
 
   return (
@@ -325,26 +210,29 @@ export default function GlobalFiltersBar() {
             <h3 className="text-sm font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">فیلترهای اصلی</h3>
 
             <div className="grid grid-cols-1 gap-4 mb-4">
-              <MyDateInput key={gK("dateOfAccidentFrom")} name="dateOfAccidentFrom" label="تاریخ شروع تصادف" control={control} errMsg={errors.dateOfAccidentFrom?.message} placeholder="از تاریخ" portalZIndex={20000} />
-              <MyDateInput key={gK("dateOfAccidentTo")} name="dateOfAccidentTo" label="تاریخ پایان تصادف" control={control} errMsg={errors.dateOfAccidentTo?.message} placeholder="تا تاریخ" portalZIndex={20000} />
+              <MyDateInput  name="dateOfAccidentFrom" label="تاریخ شروع تصادف" control={control} errMsg={errors.dateOfAccidentFrom?.message} placeholder="از تاریخ" portalZIndex={20000} />
+              <MyDateInput  name="dateOfAccidentTo" label="تاریخ پایان تصادف" control={control} errMsg={errors.dateOfAccidentTo?.message} placeholder="تا تاریخ" portalZIndex={20000} />
             </div>
 
+            <GeographicFiltersGroup
+              enabledFilters={["province", "city", "road"]}
+              control={control}
+              setValue={setValue}
+              errors={errors}
+            />
             <div className="grid grid-cols-1 gap-4 mb-4">
-              <MyAsyncMultiSelect key={gK("province")} name="province" label="استان" setValue={setValue} loadOptions={loadProvincesOptions} errMsg={errors.province?.message} placeholder="انتخاب استان..." defaultOptions defaultValue={globalDefaultValue("province") as SelectOption[]} />
-              <MyAsyncMultiSelect key={cK("city")} name="city" label="شهر" setValue={setValue} loadOptions={loadCitiesFiltered} errMsg={errors.city?.message} placeholder="انتخاب شهر..." defaultOptions defaultValue={globalDefaultValue("city") as SelectOption[]} />
-              <MyAsyncMultiSelect key={cK("road")} name="road" label="راه" setValue={setValue} loadOptions={loadRoadsFiltered} errMsg={errors.road?.message} placeholder="انتخاب راه..." defaultOptions defaultValue={globalDefaultValue("road") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("collisionType")} name="collisionType" label="نوع برخورد" setValue={setValue} loadOptions={loadCollisionTypesOptions} errMsg={errors.collisionType?.message} placeholder="انتخاب نوع برخورد..." defaultOptions defaultValue={globalDefaultValue("collisionType") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("accidentType")} name="accidentType" label="نوع تصادف" setValue={setValue} loadOptions={loadAccidentTypesOptions} errMsg={errors.accidentType?.message} placeholder="انتخاب نوع تصادف..." defaultOptions defaultValue={globalDefaultValue("accidentType") as SelectOption[]} />
+              <MyAsyncMultiSelect  name="collisionType" label="نوع برخورد" setValue={setValue} loadOptions={loadCollisionTypesOptions} errMsg={errors.collisionType?.message} placeholder="انتخاب نوع برخورد..." defaultOptions value={toSelectOptions(formValues.collisionType)} />
+              <MyAsyncMultiSelect  name="accidentType" label="نوع تصادف" setValue={setValue} loadOptions={loadAccidentTypesOptions} errMsg={errors.accidentType?.message} placeholder="انتخاب نوع تصادف..." defaultOptions value={toSelectOptions(formValues.accidentType)} />
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <MyInput key={gK("deadCountMin")} name="deadCountMin" label="حداقل فوتی" register={control.register} errMsg={errors.deadCountMin?.message} type="number" placeholder="0" />
-              <MyInput key={gK("deadCountMax")} name="deadCountMax" label="حداکثر فوتی" register={control.register} errMsg={errors.deadCountMax?.message} type="number" placeholder="حداکثر..." />
-              <MyInput key={gK("injuredCountMin")} name="injuredCountMin" label="حداقل مجروح" register={control.register} errMsg={errors.injuredCountMin?.message} type="number" placeholder="0" />
-              <MyInput key={gK("injuredCountMax")} name="injuredCountMax" label="حداکثر مجروح" register={control.register} errMsg={errors.injuredCountMax?.message} type="number" placeholder="حداکثر..." />
+              <MyInput  name="deadCountMin" label="حداقل فوتی" register={control.register} errMsg={errors.deadCountMin?.message} type="number" placeholder="0" />
+              <MyInput  name="deadCountMax" label="حداکثر فوتی" register={control.register} errMsg={errors.deadCountMax?.message} type="number" placeholder="حداکثر..." />
+              <MyInput  name="injuredCountMin" label="حداقل مجروح" register={control.register} errMsg={errors.injuredCountMin?.message} type="number" placeholder="0" />
+              <MyInput  name="injuredCountMax" label="حداکثر مجروح" register={control.register} errMsg={errors.injuredCountMax?.message} type="number" placeholder="حداکثر..." />
             </div>
 
-            <MyInput key={gK("officer")} name="officer" label="افسر مسئول" register={control.register} errMsg={errors.officer?.message} type="text" placeholder="نام افسر..." />
+            <MyInput  name="officer" label="افسر مسئول" register={control.register} errMsg={errors.officer?.message} type="text" placeholder="نام افسر..." />
           </div>
 
           {/* Advanced Toggle */}
@@ -362,19 +250,19 @@ export default function GlobalFiltersBar() {
           {advancedFiltersOpen && (
             <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 space-y-4">
               <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">شرایط راه و محیط</h4>
-              <MyAsyncMultiSelect key={gK("lightStatus")} name="lightStatus" label="وضعیت روشنایی" setValue={setValue} loadOptions={loadLightStatusesOptions} errMsg={errors.lightStatus?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("lightStatus") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("roadSituation")} name="roadSituation" label="نوع راه" setValue={setValue} loadOptions={loadRoadSituationsOptions} errMsg={errors.roadSituation?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("roadSituation") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("roadDefects")} name="roadDefects" label="نقایص راه" setValue={setValue} loadOptions={loadRoadDefectsOptions} errMsg={errors.roadDefects?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("roadDefects") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("airStatuses")} name="airStatuses" label="وضعیت جوی" setValue={setValue} loadOptions={loadAirStatusesOptions} errMsg={errors.airStatuses?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("airStatuses") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("areaUsages")} name="areaUsages" label="کاربری منطقه" setValue={setValue} loadOptions={loadAreaUsagesOptions} errMsg={errors.areaUsages?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("areaUsages") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("humanReasons")} name="humanReasons" label="علل انسانی" setValue={setValue} loadOptions={loadHumanReasonsOptions} errMsg={errors.humanReasons?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("humanReasons") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("vehicleReasons")} name="vehicleReasons" label="علل وسیله نقلیه" setValue={setValue} loadOptions={loadVehicleReasonsOptions} errMsg={errors.vehicleReasons?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("vehicleReasons") as SelectOption[]} />
+              <MyAsyncMultiSelect  name="lightStatus" label="وضعیت روشنایی" setValue={setValue} loadOptions={loadLightStatusesOptions} errMsg={errors.lightStatus?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.lightStatus)} />
+              <MyAsyncMultiSelect  name="roadSituation" label="نوع راه" setValue={setValue} loadOptions={loadRoadSituationsOptions} errMsg={errors.roadSituation?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.roadSituation)} />
+              <MyAsyncMultiSelect  name="roadDefects" label="نقایص راه" setValue={setValue} loadOptions={loadRoadDefectsOptions} errMsg={errors.roadDefects?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.roadDefects)} />
+              <MyAsyncMultiSelect  name="airStatuses" label="وضعیت جوی" setValue={setValue} loadOptions={loadAirStatusesOptions} errMsg={errors.airStatuses?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.airStatuses)} />
+              <MyAsyncMultiSelect  name="areaUsages" label="کاربری منطقه" setValue={setValue} loadOptions={loadAreaUsagesOptions} errMsg={errors.areaUsages?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.areaUsages)} />
+              <MyAsyncMultiSelect  name="humanReasons" label="علل انسانی" setValue={setValue} loadOptions={loadHumanReasonsOptions} errMsg={errors.humanReasons?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.humanReasons)} />
+              <MyAsyncMultiSelect  name="vehicleReasons" label="علل وسیله نقلیه" setValue={setValue} loadOptions={loadVehicleReasonsOptions} errMsg={errors.vehicleReasons?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleReasons)} />
 
               <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">وسیله نقلیه</h4>
-              <MyAsyncMultiSelect key={gK("vehicleSystem")} name="vehicleSystem" label="سیستم وسیله" setValue={setValue} loadOptions={loadVehicleSystemsOptions} errMsg={errors.vehicleSystem?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("vehicleSystem") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("vehicleColor")} name="vehicleColor" label="رنگ" setValue={setValue} loadOptions={loadColorsOptions} errMsg={errors.vehicleColor?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("vehicleColor") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("vehiclePlaqueType")} name="vehiclePlaqueType" label="نوع پلاک" setValue={setValue} loadOptions={loadPlaqueTypesOptions} errMsg={errors.vehiclePlaqueType?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("vehiclePlaqueType") as SelectOption[]} />
-              <MyAsyncMultiSelect key={gK("vehicleFaultStatus")} name="vehicleFaultStatus" label="وضعیت خطا" setValue={setValue} loadOptions={loadFaultStatusesOptions} errMsg={errors.vehicleFaultStatus?.message} placeholder="انتخاب..." defaultOptions defaultValue={globalDefaultValue("vehicleFaultStatus") as SelectOption[]} />
+              <MyAsyncMultiSelect  name="vehicleSystem" label="سیستم وسیله" setValue={setValue} loadOptions={loadVehicleSystemsOptions} errMsg={errors.vehicleSystem?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleSystem)} />
+              <MyAsyncMultiSelect  name="vehicleColor" label="رنگ" setValue={setValue} loadOptions={loadColorsOptions} errMsg={errors.vehicleColor?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleColor)} />
+              <MyAsyncMultiSelect  name="vehiclePlaqueType" label="نوع پلاک" setValue={setValue} loadOptions={loadPlaqueTypesOptions} errMsg={errors.vehiclePlaqueType?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehiclePlaqueType)} />
+              <MyAsyncMultiSelect  name="vehicleFaultStatus" label="وضعیت خطا" setValue={setValue} loadOptions={loadFaultStatusesOptions} errMsg={errors.vehicleFaultStatus?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleFaultStatus)} />
             </div>
           )}
 

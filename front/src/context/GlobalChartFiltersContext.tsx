@@ -7,6 +7,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import { normalizeGeoFilters } from "@/utils/geoRelations";
 
 const STORAGE_KEY = "lesan-global-chart-filters";
 
@@ -49,14 +50,19 @@ export function GlobalChartFiltersProvider({ children }: { children: ReactNode }
   const [globalFiltersVersion, setGlobalFiltersVersion] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount, reconciling stale geo combos first
   useEffect(() => {
     const stored = loadFromStorage();
     if (Object.keys(stored).length > 0) {
-      setGlobalFiltersState(stored);
-      setGlobalFiltersVersion(1);
+      normalizeGeoFilters(stored).then((adjusted) => {
+        setGlobalFiltersState(adjusted);
+        saveToStorage(adjusted);
+        setGlobalFiltersVersion((v) => v + 1);
+        setIsInitialized(true);
+      });
+    } else {
+      setIsInitialized(true);
     }
-    setIsInitialized(true);
   }, []);
 
   const setGlobalFilters = useCallback((filters: ChartFilterState) => {

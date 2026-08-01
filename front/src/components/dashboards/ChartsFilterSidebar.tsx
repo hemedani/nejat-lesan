@@ -4,20 +4,16 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import MyDateInput from "../atoms/MyDateInput";
 import MyInput from "../atoms/MyInput";
+import GeographicFiltersGroup from "./GeographicFiltersGroup";
+import { normalizeGeoFilters } from "@/utils/geoRelations";
 import { useGlobalChartFilters } from "@/context/GlobalChartFiltersContext";
-import { ReqType } from "@/types/declarations/selectInp";
 
 // Import action functions for loading options
-import { gets as getProvincesAction } from "@/app/actions/province/gets";
-import { gets as getCitiesAction } from "@/app/actions/city/gets";
-import { gets as getRoadsAction } from "@/app/actions/road/gets";
-import { gets as getTrafficZonesAction } from "@/app/actions/traffic_zone/gets";
-import { gets as getCityZonesAction } from "@/app/actions/city_zone/gets";
 import { gets as getAccidentTypesAction } from "@/app/actions/type/gets";
 import { gets as getPositionsAction } from "@/app/actions/position/gets";
 import { gets as getRulingTypesAction } from "@/app/actions/ruling_type/gets";
@@ -201,61 +197,43 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     globalFiltersVersion,
     isInitialized,
   } = useGlobalChartFilters();
-  const [localGlobalVersion, setLocalGlobalVersion] = useState(0);
 
   const {
     control,
     handleSubmit,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<ChartFilterState>({
-    defaultValues: initialFilters || {},
+    defaultValues: { ...initialFilters, ...globalFilters } as ChartFilterState,
   });
 
-  // Watch province and city for cascading filter updates
-  const watchedProvince = useWatch({ control, name: "province" });
-  const watchedCity = useWatch({ control, name: "city" });
-  const watchedRoad = useWatch({ control, name: "road" });
-  const watchedTrafficZone = useWatch({ control, name: "trafficZone" });
-  const watchedCityZone = useWatch({ control, name: "cityZone" });
+  // Whole-form watch used to drive the controlled multi-selects.
+  const formValues = (useWatch({ control }) || {}) as ChartFilterState;
 
-  // Clear cascade-dependent values when their parent changes
-  const prevProvinceRef = useRef(watchedProvince);
-  const prevCityRef = useRef(watchedCity);
+  // Seed the sidebar from global filters (global wins over the page's
+  // initialFilters). Re-seed only while the form is still pristine so the
+  // sidebar never clobbers the user's in-progress edits.
+  useEffect(() => {
+    if (!isInitialized) return;
+    if (isDirty) return;
+    reset({ ...initialFilters, ...globalFilters } as ChartFilterState);
+  }, [globalFiltersVersion, isInitialized, isDirty]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch data once on first load using the active global filters (or an empty
+  // filter set) so the page shows filtered results without a manual submit. A
+  // ref guard keeps this mount-only — later global-filter changes are applied
+  // via the "اعمال فیلترهای عمومی" button or a manual submit.
+  const initialLoadDoneRef = useRef(false);
 
   useEffect(() => {
-    const provinceChanged =
-      JSON.stringify(prevProvinceRef.current) !== JSON.stringify(watchedProvince);
-    const cityChanged = JSON.stringify(prevCityRef.current) !== JSON.stringify(watchedCity);
-    if (provinceChanged) {
-      setValue("city", []);
-      setValue("road", []);
-      setValue("cityZone", []);
-      prevProvinceRef.current = watchedProvince;
-    }
-    if (cityChanged) {
-      setValue("cityZone", []);
-      prevCityRef.current = watchedCity;
-    }
-  }, [watchedProvince, watchedCity, setValue]);
+    if (!isInitialized) return;
+    if (initialLoadDoneRef.current) return;
+    initialLoadDoneRef.current = true;
 
-  // Pre-fetch province name→ID map on mount so cascade selects don't race
-  useEffect(() => {
-    if (Object.keys(provinceNameToIdMap.current).length > 0) return;
-    getProvincesAction({
-      set: { limit: 50, page: 1 },
-      get: { _id: 1, name: 1 },
-    }).then((response) => {
-      if (response.success) {
-        const map: Record<string, string> = {};
-        response.body.forEach((p: { _id: string; name: string }) => {
-          map[p.name] = p._id;
-        });
-        provinceNameToIdMap.current = map;
-      }
-    }).catch(() => {});
-  }, []);
+    const filters = hasGlobalFilters ? globalFilters : {};
+    normalizeGeoFilters(filters).then(onApplyFilters);
+  }, [isInitialized]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Helper function to check if any main filters are enabled
   const hasMainFilters = () => {
@@ -353,15 +331,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     return advancedFiltersList.some((filter) => enabledFilters.includes(filter));
   };
 
-  // Set initial values
-  useEffect(() => {
-    if (initialFilters) {
-      Object.entries(initialFilters).forEach(([key, value]) => {
-        setValue(key as keyof ChartFilterState, value);
-      });
-    }
-  }, [initialFilters, setValue]);
-
   // Helper function to create loadOptions for async multi-select
   const createLoadOptions =
     (
@@ -397,179 +366,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
     return values.map((v) => ({ value: v, label: v }));
   };
 
-  // GLOBAL FILTERS: Apply global filters to local form
-  const applyGlobalFiltersToLocal = useCallback(() => {
-    if (!hasGlobalFilters) return;
-    Object.entries(globalFilters).forEach(([key, value]) => {
-      setValue(key as keyof ChartFilterState, value as never);
-    });
-    setLocalGlobalVersion((v) => v + 1);
-  }, [globalFilters, hasGlobalFilters, setValue]);
+  // Re-seed the sidebar form from the current global filters (used by the
+  // "اعمال فیلترهای عمومی" button).
+  const applyGlobalFiltersToLocal = () => {
+    reset({ ...initialFilters, ...globalFilters } as ChartFilterState);
+  };
 
-  // Track which global version we've already processed to avoid double-fetch
-  const lastProcessedVersion = useRef(-1);
-
-  // GLOBAL FILTERS: Auto-apply + auto-fetch when global filters version changes
-  // This handles: initial mount with filters, save, clear, and external changes
-  useEffect(() => {
-    if (!isInitialized) return;
-    if (globalFiltersVersion === lastProcessedVersion.current) return;
-    lastProcessedVersion.current = globalFiltersVersion;
-
-    if (!hasGlobalFilters) {
-      onApplyFilters({});
-      return;
-    }
-    applyGlobalFiltersToLocal();
-    // Submit with latest global filters to fetch data immediately
-    onApplyFilters(globalFilters);
-  }, [globalFiltersVersion, hasGlobalFilters, isInitialized]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Key suffix for forcing re-mount on global filter change
-  const gK = (key: string) => `${key}-gf-${localGlobalVersion}`;
-
-  // Province name → ID cache (fetched once, ~31 provinces)
-  const provinceNameToIdMap = useRef<Record<string, string>>({});
-
-  const buildProvinceIds = useCallback(async (): Promise<string[]> => {
-    if (!watchedProvince || watchedProvince.length === 0) return [];
-    if (Object.keys(provinceNameToIdMap.current).length === 0) {
-      try {
-        const response = await getProvincesAction({
-          set: { limit: 50, page: 1 },
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          const map: Record<string, string> = {};
-          response.body.forEach((p: { _id: string; name: string }) => {
-            map[p.name] = p._id;
-          });
-          provinceNameToIdMap.current = map;
-        }
-      } catch {
-        return [];
-      }
-    }
-    return watchedProvince
-      .map((name: string) => provinceNameToIdMap.current[name])
-      .filter(Boolean);
-  }, [watchedProvince]);
-
-  // Load cities filtered by selected province(s)
-  const loadCitiesFiltered = useCallback(
-    async (inputValue?: string) => {
-      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
-      if (inputValue) setParams.name = inputValue;
-
-      const provinceIds = await buildProvinceIds();
-      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
-
-      try {
-        const response = await getCitiesAction({
-          set: setParams as ReqType["main"]["city"]["gets"]["set"],
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
-        }
-      } catch {
-        // ignore
-      }
-      return [];
-    },
-    [buildProvinceIds],
-  );
-
-  // Load roads filtered by province(s) – NEW: provinceIds on road/gets
-  const loadRoadsFiltered = useCallback(
-    async (inputValue?: string) => {
-      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
-      if (inputValue) setParams.name = inputValue;
-
-      const provinceIds = await buildProvinceIds();
-      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
-
-      try {
-        const response = await getRoadsAction({
-          set: setParams as ReqType["main"]["road"]["gets"]["set"],
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
-        }
-      } catch {
-        // ignore
-      }
-      return [];
-    },
-    [buildProvinceIds],
-  );
-
-  // Load city zones filtered by province(s) and/or city(ies)
-  const loadCityZonesFiltered = useCallback(
-    async (inputValue?: string) => {
-      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
-      if (inputValue) setParams.name = inputValue;
-
-      const provinceIds = await buildProvinceIds();
-      if (provinceIds.length > 0) setParams.provinceIds = provinceIds;
-
-      if (watchedCity && watchedCity.length > 0) {
-        setParams.cityNames = watchedCity;
-      }
-
-      try {
-        const response = await getCityZonesAction({
-          set: setParams as ReqType["main"]["city_zone"]["gets"]["set"],
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
-        }
-      } catch {
-        // ignore
-      }
-      return [];
-    },
-    [buildProvinceIds, watchedCity],
-  );
-
-  // Load traffic zones – triggered when province or city changes (no server-side filter)
-  const loadTrafficZonesFiltered = useCallback(
-    async (inputValue?: string) => {
-      const setParams: Record<string, unknown> = { limit: 20, page: 1 };
-      if (inputValue) setParams.name = inputValue;
-
-      try {
-        const response = await getTrafficZonesAction({
-          set: setParams as ReqType["main"]["traffic_zone"]["gets"]["set"],
-          get: { _id: 1, name: 1 },
-        });
-        if (response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
-        }
-      } catch {
-        // ignore
-      }
-      return [];
-    },
-    [],
-  );
-
-  // Load options functions (used by filters that do NOT need cascading)
-  const loadProvincesOptions = createLoadOptions(getProvincesAction);
   const loadAccidentTypesOptions = createLoadOptions(getAccidentTypesAction);
   const loadPositionsOptions = createLoadOptions(getPositionsAction);
   const loadRulingTypesOptions = createLoadOptions(getRulingTypesAction);
@@ -665,7 +467,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   const loadColorsOptions = createLoadOptions(getColorsAction);
 
   // Handle form submission
-  const onSubmit: SubmitHandler<ChartFilterState> = (data) => {
+  const onSubmit: SubmitHandler<ChartFilterState> = async (data) => {
     // Normalize checkbox group fields to always be arrays
     const checkboxFields: (keyof ChartFilterState)[] = [
       "driverSex",
@@ -726,10 +528,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
       cleanedData.injuredCountMin = Math.max(cleanedData.injuredCountMin || 0, 1);
     }
 
-    onApplyFilters(cleanedData);
+    // Keep only geo relations consistent with the selected parents
+    onApplyFilters(await normalizeGeoFilters(cleanedData));
   };
 
-  // Reset form to defaults
+  // Reset form to defaults (keeps the active global filters)
   const handleReset = () => {
     const defaultValues: Partial<ChartFilterState> = {};
 
@@ -739,7 +542,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
       defaultValues.injuredCountMin = 1;
     }
 
-    reset(defaultValues);
+    reset({ ...globalFilters, ...defaultValues } as ChartFilterState);
   };
 
   return (
@@ -799,78 +602,16 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                 enabledFilters.includes("road") ||
                 enabledFilters.includes("trafficZone") ||
                 enabledFilters.includes("cityZone")) && (
-                <div className="grid grid-cols-1 gap-4 mb-4">
-                  {enabledFilters.includes("province") && (
-                    <MyAsyncMultiSelect
-                      key={gK("province")}
-                      name="province"
-                      label="استان"
-                      setValue={setValue}
-                      loadOptions={loadProvincesOptions}
-                      errMsg={errors.province?.message}
-                      placeholder="انتخاب استان..."
-                      defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.province)}
-                    />
-                  )}
-                  {enabledFilters.includes("city") && (
-                    <MyAsyncMultiSelect
-                      key={`city-${watchedProvince?.join(',') || 'none'}-${localGlobalVersion}`}
-                      name="city"
-                      label="شهر"
-                      setValue={setValue}
-                      loadOptions={loadCitiesFiltered}
-                      errMsg={errors.city?.message}
-                      placeholder="انتخاب شهر..."
-                      defaultOptions
-                      value={toSelectOptions(watchedCity)}
-                    />
-                  )}
-                  {enabledFilters.includes("road") && (
-                    <MyAsyncMultiSelect
-                      key={`road-${watchedProvince?.join(',') || 'none'}-${localGlobalVersion}`}
-                      name="road"
-                      label="راه"
-                      setValue={setValue}
-                      loadOptions={loadRoadsFiltered}
-                      errMsg={errors.road?.message}
-                      placeholder="انتخاب راه..."
-                      defaultOptions
-                      value={toSelectOptions(watchedRoad)}
-                    />
-                  )}
-                  {enabledFilters.includes("trafficZone") && (
-                    <MyAsyncMultiSelect
-                      key={`trafficZone-${watchedProvince?.join(',') || 'none'}-${localGlobalVersion}`}
-                      name="trafficZone"
-                      label="منطقه ترافیکی"
-                      setValue={setValue}
-                      loadOptions={loadTrafficZonesFiltered}
-                      errMsg={errors.trafficZone?.message}
-                      placeholder="انتخاب منطقه ترافیکی..."
-                      defaultOptions
-                      value={toSelectOptions(watchedTrafficZone)}
-                    />
-                  )}
-                  {enabledFilters.includes("cityZone") && (
-                    <MyAsyncMultiSelect
-                      key={`cityZone-${watchedCity?.join(',') || 'none'}-${localGlobalVersion}`}
-                      name="cityZone"
-                      label="منطقه شهری"
-                      setValue={setValue}
-                      loadOptions={loadCityZonesFiltered}
-                      errMsg={errors.cityZone?.message}
-                      placeholder="انتخاب منطقه شهری..."
-                      defaultOptions
-                      value={toSelectOptions(watchedCityZone)}
-                    />
-                  )}
-                </div>
+                <GeographicFiltersGroup
+                  enabledFilters={enabledFilters}
+                  control={control}
+                  setValue={setValue}
+                  errors={errors}
+                />
               )}
 
               {!config.disableCollisionTypeFilter && enabledFilters.includes("collisionType") && (
                 <MyAsyncMultiSelect
-                  key={gK("collisionType")}
                   name="collisionType"
                   label="نوع برخورد"
                   setValue={setValue}
@@ -878,7 +619,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   errMsg={errors.collisionType?.message}
                   placeholder="انتخاب نوع برخورد..."
                   defaultOptions
-                  defaultValue={toSelectOptions(globalFilters.collisionType)}
+                  value={toSelectOptions(formValues.collisionType)}
                 />
               )}
 
@@ -889,7 +630,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                 <div className="grid grid-cols-1 gap-4 mb-4">
                   {enabledFilters.includes("accidentType") && (
                     <MyAsyncMultiSelect
-                      key={gK("accidentType")}
                       name="accidentType"
                       label="نوع تصادف"
                       setValue={setValue}
@@ -897,12 +637,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.accidentType?.message}
                       placeholder="انتخاب نوع تصادف..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.accidentType)}
+                      value={toSelectOptions(formValues.accidentType)}
                     />
                   )}
                   {enabledFilters.includes("position") && (
                     <MyAsyncMultiSelect
-                      key={gK("position")}
                       name="position"
                       label="موقعیت"
                       setValue={setValue}
@@ -910,12 +649,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.position?.message}
                       placeholder="انتخاب موقعیت..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.position)}
+                      value={toSelectOptions(formValues.position)}
                     />
                   )}
                   {enabledFilters.includes("rulingType") && (
                     <MyAsyncMultiSelect
-                      key={gK("rulingType")}
                       name="rulingType"
                       label="نوع حکم"
                       setValue={setValue}
@@ -923,7 +661,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       errMsg={errors.rulingType?.message}
                       placeholder="انتخاب نوع حکم..."
                       defaultOptions
-                      defaultValue={toSelectOptions(globalFilters.rulingType)}
+                      value={toSelectOptions(formValues.rulingType)}
                     />
                   )}
                 </div>
@@ -1277,7 +1015,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       </h4>
                       {enabledFilters.includes("roadSituation") && (
                         <MyAsyncMultiSelect
-                          key={gK("roadSituation")}
                           name="roadSituation"
                           label="نوع راه"
                           setValue={setValue}
@@ -1285,13 +1022,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.roadSituation?.message}
                           placeholder="انتخاب نوع راه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.roadSituation)}
+                          value={toSelectOptions(formValues.roadSituation)}
                         />
                       )}
 
                       {enabledFilters.includes("roadRepairType") && (
                         <MyAsyncMultiSelect
-                          key={gK("roadRepairType")}
                           name="roadRepairType"
                           label="نوع تعمیر راه"
                           setValue={setValue}
@@ -1299,13 +1035,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.roadRepairType?.message}
                           placeholder="انتخاب نوع تعمیر راه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.roadRepairType)}
+                          value={toSelectOptions(formValues.roadRepairType)}
                         />
                       )}
 
                       {enabledFilters.includes("shoulderStatus") && (
                         <MyAsyncMultiSelect
-                          key={gK("shoulderStatus")}
                           name="shoulderStatus"
                           label="وضعیت شانه راه"
                           setValue={setValue}
@@ -1313,13 +1048,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.shoulderStatus?.message}
                           placeholder="انتخاب وضعیت شانه راه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.shoulderStatus)}
+                          value={toSelectOptions(formValues.shoulderStatus)}
                         />
                       )}
 
                       {enabledFilters.includes("roadDefects") && (
                         <MyAsyncMultiSelect
-                          key={gK("roadDefects")}
                           name="roadDefects"
                           label="نوع نقایص راه"
                           setValue={setValue}
@@ -1327,13 +1061,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.roadDefects?.message}
                           placeholder="انتخاب نقایص راه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.roadDefects)}
+                          value={toSelectOptions(formValues.roadDefects)}
                         />
                       )}
 
                       {!config.disableLightingFilter && enabledFilters.includes("lightStatus") && (
                         <MyAsyncMultiSelect
-                          key={gK("lightStatus")}
                           name="lightStatus"
                           label="وضعیت روشنایی"
                           setValue={setValue}
@@ -1341,13 +1074,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.lightStatus?.message}
                           placeholder="انتخاب وضعیت روشنایی..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.lightStatus)}
+                          value={toSelectOptions(formValues.lightStatus)}
                         />
                       )}
 
                       {enabledFilters.includes("airStatuses") && (
                         <MyAsyncMultiSelect
-                          key={gK("airStatuses")}
                           name="airStatuses"
                           label="وضعیت جوی"
                           setValue={setValue}
@@ -1355,13 +1087,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.airStatuses?.message}
                           placeholder="انتخاب وضعیت جوی..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.airStatuses)}
+                          value={toSelectOptions(formValues.airStatuses)}
                         />
                       )}
 
                       {enabledFilters.includes("areaUsages") && (
                         <MyAsyncMultiSelect
-                          key={gK("areaUsages")}
                           name="areaUsages"
                           label="کاربری منطقه"
                           setValue={setValue}
@@ -1369,13 +1100,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.areaUsages?.message}
                           placeholder="انتخاب کاربری منطقه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.areaUsages)}
+                          value={toSelectOptions(formValues.areaUsages)}
                         />
                       )}
 
                       {enabledFilters.includes("roadSurfaceConditions") && (
                         <MyAsyncMultiSelect
-                          key={gK("roadSurfaceConditions")}
                           name="roadSurfaceConditions"
                           label="وضعیت سطح راه"
                           setValue={setValue}
@@ -1383,7 +1113,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.roadSurfaceConditions?.message}
                           placeholder="انتخاب وضعیت سطح راه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.roadSurfaceConditions)}
+                          value={toSelectOptions(formValues.roadSurfaceConditions)}
                         />
                       )}
                     </>
@@ -1398,7 +1128,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       </h4>
                       {enabledFilters.includes("humanReasons") && (
                         <MyAsyncMultiSelect
-                          key={gK("humanReasons")}
                           name="humanReasons"
                           label="علل انسانی"
                           setValue={setValue}
@@ -1406,13 +1135,12 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.humanReasons?.message}
                           placeholder="انتخاب علل انسانی..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.humanReasons)}
+                          value={toSelectOptions(formValues.humanReasons)}
                         />
                       )}
 
                       {enabledFilters.includes("vehicleReasons") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleReasons")}
                           name="vehicleReasons"
                           label="علل وسیله نقلیه"
                           setValue={setValue}
@@ -1420,7 +1148,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleReasons?.message}
                           placeholder="انتخاب علل وسیله نقلیه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleReasons)}
+                          value={toSelectOptions(formValues.vehicleReasons)}
                         />
                       )}
                     </>
@@ -1559,7 +1287,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
 
                       {enabledFilters.includes("vehicleSystem") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleSystem")}
                           name="vehicleSystem"
                           label="سیستم وسیله نقلیه"
                           setValue={setValue}
@@ -1567,12 +1294,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleSystem?.message}
                           placeholder="انتخاب سیستم..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleSystem)}
+                          value={toSelectOptions(formValues.vehicleSystem)}
                         />
                       )}
                       {enabledFilters.includes("vehicleSystemType") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleSystemType")}
                           name="vehicleSystemType"
                           label="نوع سیستم وسیله نقلیه"
                           setValue={setValue}
@@ -1580,12 +1306,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleSystemType?.message}
                           placeholder="انتخاب نوع سیستم..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleSystemType)}
+                          value={toSelectOptions(formValues.vehicleSystemType)}
                         />
                       )}
                       {enabledFilters.includes("vehicleColor") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleColor")}
                           name="vehicleColor"
                           label="رنگ وسیله نقلیه"
                           setValue={setValue}
@@ -1593,12 +1318,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleColor?.message}
                           placeholder="انتخاب رنگ..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleColor)}
+                          value={toSelectOptions(formValues.vehicleColor)}
                         />
                       )}
                       {enabledFilters.includes("vehiclePlaqueType") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehiclePlaqueType")}
                           name="vehiclePlaqueType"
                           label="نوع پلاک"
                           setValue={setValue}
@@ -1606,12 +1330,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehiclePlaqueType?.message}
                           placeholder="انتخاب نوع پلاک..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehiclePlaqueType)}
+                          value={toSelectOptions(formValues.vehiclePlaqueType)}
                         />
                       )}
                       {enabledFilters.includes("vehiclePlaqueUsage") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehiclePlaqueUsage")}
                           name="vehiclePlaqueUsage"
                           label="کاربری پلاک"
                           setValue={setValue}
@@ -1619,12 +1342,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehiclePlaqueUsage?.message}
                           placeholder="انتخاب کاربری پلاک..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehiclePlaqueUsage)}
+                          value={toSelectOptions(formValues.vehiclePlaqueUsage)}
                         />
                       )}
                       {enabledFilters.includes("vehicleMotionDirection") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleMotionDirection")}
                           name="vehicleMotionDirection"
                           label="جهت حرکت وسیله نقلیه"
                           setValue={setValue}
@@ -1632,12 +1354,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleMotionDirection?.message}
                           placeholder="انتخاب جهت حرکت..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleMotionDirection)}
+                          value={toSelectOptions(formValues.vehicleMotionDirection)}
                         />
                       )}
                       {enabledFilters.includes("vehicleFaultStatus") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleFaultStatus")}
                           name="vehicleFaultStatus"
                           label="وضعیت خطای وسیله نقلیه"
                           setValue={setValue}
@@ -1645,12 +1366,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleFaultStatus?.message}
                           placeholder="انتخاب وضعیت خطا..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleFaultStatus)}
+                          value={toSelectOptions(formValues.vehicleFaultStatus)}
                         />
                       )}
                       {enabledFilters.includes("vehicleInsuranceCo") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleInsuranceCo")}
                           name="vehicleInsuranceCo"
                           label="شرکت بیمه شخص ثالث"
                           setValue={setValue}
@@ -1658,12 +1378,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleInsuranceCo?.message}
                           placeholder="انتخاب شرکت بیمه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleInsuranceCo)}
+                          value={toSelectOptions(formValues.vehicleInsuranceCo)}
                         />
                       )}
                       {enabledFilters.includes("vehicleBodyInsuranceCo") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleBodyInsuranceCo")}
                           name="vehicleBodyInsuranceCo"
                           label="شرکت بیمه بدنه"
                           setValue={setValue}
@@ -1671,12 +1390,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleBodyInsuranceCo?.message}
                           placeholder="انتخاب شرکت بیمه..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleBodyInsuranceCo)}
+                          value={toSelectOptions(formValues.vehicleBodyInsuranceCo)}
                         />
                       )}
                       {enabledFilters.includes("vehicleMaxDamageSections") && (
                         <MyAsyncMultiSelect
-                          key={gK("vehicleMaxDamageSections")}
                           name="vehicleMaxDamageSections"
                           label="بخش‌های آسیب‌دیده"
                           setValue={setValue}
@@ -1684,12 +1402,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.vehicleMaxDamageSections?.message}
                           placeholder="انتخاب بخش‌های آسیب‌دیده..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.vehicleMaxDamageSections)}
+                          value={toSelectOptions(formValues.vehicleMaxDamageSections)}
                         />
                       )}
                       {enabledFilters.includes("equipmentDamages") && (
                         <MyAsyncMultiSelect
-                          key={gK("equipmentDamages")}
                           name="equipmentDamages"
                           label="خسارت تجهیزات"
                           setValue={setValue}
@@ -1697,7 +1414,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           errMsg={errors.equipmentDamages?.message}
                           placeholder="انتخاب خسارت تجهیزات..."
                           defaultOptions
-                          defaultValue={toSelectOptions(globalFilters.equipmentDamages)}
+                          value={toSelectOptions(formValues.equipmentDamages)}
                         />
                       )}
                     </>
@@ -1808,7 +1525,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("driverLicenceType") && (
                             <MyAsyncMultiSelect
-                              key={gK("driverLicenceType")}
                               name="driverLicenceType"
                               label="نوع گواهینامه راننده"
                               setValue={setValue}
@@ -1816,7 +1532,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                               errMsg={errors.driverLicenceType?.message}
                               placeholder="انتخاب نوع گواهینامه..."
                               defaultOptions
-                              defaultValue={toSelectOptions(globalFilters.driverLicenceType)}
+                              value={toSelectOptions(formValues.driverLicenceType)}
                             />
                           )}
                           {enabledFilters.includes("driverInjuryType") && (
@@ -1857,7 +1573,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("driverTotalReason") && (
                             <MyAsyncMultiSelect
-                              key={gK("driverTotalReason")}
                               name="driverTotalReason"
                               label="علت اصلی راننده"
                               setValue={setValue}
@@ -1865,7 +1580,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                               errMsg={errors.driverTotalReason?.message}
                               placeholder="انتخاب علت اصلی..."
                               defaultOptions
-                              defaultValue={toSelectOptions(globalFilters.driverTotalReason)}
+                              value={toSelectOptions(formValues.driverTotalReason)}
                             />
                           )}
                         </>
@@ -1975,7 +1690,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("passengerFaultStatus") && (
                             <MyAsyncMultiSelect
-                              key={gK("passengerFaultStatus")}
                               name="passengerFaultStatus"
                               label="وضعیت خطای سرنشین"
                               setValue={setValue}
@@ -1983,12 +1697,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                               errMsg={errors.passengerFaultStatus?.message}
                               placeholder="انتخاب وضعیت خطا..."
                               defaultOptions
-                              defaultValue={toSelectOptions(globalFilters.passengerFaultStatus)}
+                              value={toSelectOptions(formValues.passengerFaultStatus)}
                             />
                           )}
                           {enabledFilters.includes("passengerTotalReason") && (
                             <MyAsyncMultiSelect
-                              key={gK("passengerTotalReason")}
                               name="passengerTotalReason"
                               label="علت اصلی سرنشین"
                               setValue={setValue}
@@ -1996,7 +1709,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                               errMsg={errors.passengerTotalReason?.message}
                               placeholder="انتخاب علت اصلی..."
                               defaultOptions
-                              defaultValue={toSelectOptions(globalFilters.passengerTotalReason)}
+                              value={toSelectOptions(formValues.passengerTotalReason)}
                             />
                           )}
                         </>
@@ -2106,7 +1819,6 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("pedestrianFaultStatus") && (
                             <MyAsyncMultiSelect
-                              key={gK("pedestrianFaultStatus")}
                               name="pedestrianFaultStatus"
                               label="وضعیت خطای عابر پیاده"
                               setValue={setValue}
@@ -2114,12 +1826,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                               errMsg={errors.pedestrianFaultStatus?.message}
                               placeholder="انتخاب وضعیت خطا..."
                               defaultOptions
-                              defaultValue={toSelectOptions(globalFilters.pedestrianFaultStatus)}
+                              value={toSelectOptions(formValues.pedestrianFaultStatus)}
                             />
                           )}
                           {enabledFilters.includes("pedestrianTotalReason") && (
                             <MyAsyncMultiSelect
-                              key={gK("pedestrianTotalReason")}
                               name="pedestrianTotalReason"
                               label="علت اصلی عابر پیاده"
                               setValue={setValue}
@@ -2127,7 +1838,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                               errMsg={errors.pedestrianTotalReason?.message}
                               placeholder="انتخاب علت اصلی..."
                               defaultOptions
-                              defaultValue={toSelectOptions(globalFilters.pedestrianTotalReason)}
+                              value={toSelectOptions(formValues.pedestrianTotalReason)}
                             />
                           )}
                         </>
