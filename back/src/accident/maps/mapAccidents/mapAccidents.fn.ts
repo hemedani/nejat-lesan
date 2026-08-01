@@ -11,8 +11,43 @@ import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
 
+const flattenProjection = (
+	obj: Record<string, any>,
+	prefix = "",
+): Record<string, 1 | 0> => {
+	const flat: Record<string, 1 | 0> = {};
+
+	for (const [key, value] of Object.entries(obj)) {
+		const path = prefix ? `${prefix}.${key}` : key;
+
+		if (typeof value === "number") {
+			flat[path] = value as 1 | 0;
+		} else if (value && typeof value === "object") {
+			Object.assign(flat, flattenProjection(value, path));
+		}
+	}
+
+	return flat;
+};
+
+// Default field selection used when the client sends an empty projection
+// ({}), so the map UI still receives the data it needs.
+const defaultProjection = {
+	_id: 1,
+	location: 1,
+	type: { name: 1 },
+	date_of_accident: 1,
+	dead_count: 1,
+	injured_count: 1,
+	collision_type: { name: 1 },
+	light_status: { name: 1 },
+	position: { name: 1 },
+	road_defects: { name: 1 },
+	vehicle_dtos: { driver: { total_reason: { name: 1 } } },
+};
+
 export const mapAccidentsFn: ActFn = async (body) => {
-	const { set: filters } = body.details;
+	const { set: filters, get } = body.details;
 
 	// --- 1. Set Default Date Range ---
 	let startDate, endDate;
@@ -125,47 +160,59 @@ export const mapAccidentsFn: ActFn = async (body) => {
 		matchFilter.vehicle_dtos = { $elemMatch: vehicleElemMatch };
 	}
 
-	// --- 3. Define Projection for Map Data ---
-	// Select only the fields needed by the frontend to keep the payload small.
-	const projection = {
-		location: 1,
-		"type.name": 1,
-		date_of_accident: 1,
-		dead_count: 1,
-		injured_count: 1,
-		"collision_type.name": 1,
-		"light_status.name": 1,
-		"position.name": 1,
-		"road_defects.name": 1,
-		"vehicle_dtos.driver.total_reason.name": 1,
-		vehicle_dtos_count: { $size: "$vehicle_dtos" },
-		motorcycle_count: {
-			$size: {
-				$filter: {
-					input: "$vehicle_dtos",
-					as: "vehicle",
-					cond: {
-						$regexMatch: {
-							input: "$$vehicle.plaque_type.name",
-							regex: /موتور/,
+	// --- 3. Build Projection from the Client Get ---
+	// Flatten the standard Lesan get projection (selectStruct) into the
+	// dot-notation form expected by the aggregation $project stage.
+	const flatProjection = flattenProjection(
+		Object.keys(get.accidents).length > 0
+			? get.accidents
+			: defaultProjection,
+	);
+
+	// --- 4. Aggregate and Paginate Documents ---
+	// Computed counts are always attached so the map UI can render without
+	// requesting the whole vehicle_dtos array.
+	const pipeline: Document[] = [
+		{ $match: matchFilter },
+		{
+			$addFields: {
+				vehicle_dtos_count: {
+					$size: { $ifNull: ["$vehicle_dtos", []] },
+				},
+				motorcycle_count: {
+					$size: {
+						$filter: {
+							input: { $ifNull: ["$vehicle_dtos", []] },
+							as: "vehicle",
+							cond: {
+								$regexMatch: {
+									input: {
+										$ifNull: [
+											"$$vehicle.plaque_type.name",
+											"",
+										],
+									},
+									regex: "موتور",
+								},
+							},
 						},
 					},
 				},
 			},
 		},
-		// Add more counts as needed...
-	};
-
-	// --- 4. Find and Paginate Documents ---
-	const accidentsCursor = accident.find({
-		filters: matchFilter,
-		projection,
-	})
-		.skip(filters.skip || 0)
-		.limit(filters.limit || 1000);
+		{ $skip: filters.skip || 0 },
+		{ $limit: filters.limit || 1000 },
+		{
+			$project: {
+				...flatProjection,
+				vehicle_dtos_count: 1,
+				motorcycle_count: 1,
+			},
+		},
+	];
 
 	const [accidentsList, totalCount] = await Promise.all([
-		accidentsCursor.toArray(),
+		accident.aggregation({ pipeline }).toArray(),
 		accident.countDocument({ filter: matchFilter }),
 	]);
 

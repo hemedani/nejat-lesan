@@ -8,6 +8,7 @@
  */
 import { array, enums, number, object, optional, string } from "@deps";
 import { geoJSONStruct } from "@model";
+import { selectStruct } from "../../../../mod.ts";
 
 export const mapAccidentsValidator = () => {
 	return object({
@@ -61,7 +62,7 @@ export const mapAccidentsValidator = () => {
 			driverInjuryType: optional(array(string())),
 		}),
 		get: object({
-			accidents: enums([1]),
+			accidents: selectStruct("accident", 2),
 			total: enums([1]),
 		}),
 	});

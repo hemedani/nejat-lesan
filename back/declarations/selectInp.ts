@@ -22512,7 +22512,524 @@ driverLicenceType?: string[];
 driverInjuryType?: string[];
 };
 get: {
-accidents: (1 );
+accidents: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+cities?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+center?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+area?: (0 | 1 );
+center_location?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+axeses?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+township?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+birth_date?: (0 | 1 );
+summary?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+settings?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+};
+traffic_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+area_usages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+position?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+ruling_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+air_statuses?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+light_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+road_defects?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+human_reasons?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+collision_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+road_situation?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+road_repair_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+shoulder_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+vehicle_reasons?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+equipment_damages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+road_surface_conditions?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+uploader?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+};
+};
 total: (1 );
 };
 };
