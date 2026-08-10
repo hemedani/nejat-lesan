@@ -1,4 +1,4 @@
-import type { ActFn, ObjectId } from "@deps";
+import { type ActFn, ObjectId } from "@deps";
 import { road } from "../../../mod.ts";
 
 export const getsFn: ActFn = async (body) => {
@@ -15,7 +15,9 @@ export const getsFn: ActFn = async (body) => {
 	}
 
 	if (provinceIds && provinceIds.length > 0) {
-		matchConditions["province._id"] = { $in: provinceIds };
+		matchConditions["province._id"] = {
+			$in: provinceIds.map((id: string) => new ObjectId(id)),
+		};
 	}
 
 	if (Object.keys(matchConditions).length > 0) {

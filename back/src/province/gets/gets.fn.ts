@@ -1,4 +1,4 @@
-import type { ActFn } from "@deps";
+import { type ActFn, ObjectId } from "@deps";
 import { province } from "../../../mod.ts";
 
 export const getsFn: ActFn = async (body) => {
@@ -18,7 +18,7 @@ export const getsFn: ActFn = async (body) => {
 
 	// Handle _ids filter
 	if (_ids && _ids.length > 0) {
-		matchConditions._id = { $in: _ids };
+		matchConditions._id = { $in: _ids.map((id: string) => new ObjectId(id)) };
 	}
 
 	if (Object.keys(matchConditions).length > 0) {
