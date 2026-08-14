@@ -7,6 +7,7 @@ interface SimpleCardProps {
   onSeedZones?: () => void; // تابع برای اضافه کردن مناطق شهر (اختیاری)
   onSeedTownships?: () => void; // تابع برای اضافه کردن شهرستان‌های استان (اختیاری)
   onProvinceRelation?: () => void; // تابع برای مدیریت ارتباط با استان (اختیاری)
+  onSeedTrafficZones?: () => void; // تابع برای اضافه کردن مناطق ترافیک و آلودگی هوا (اختیاری)
 }
 
 const EntityCard: React.FC<SimpleCardProps> = ({
@@ -16,6 +17,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
   onSeedZones,
   onSeedTownships,
   onProvinceRelation,
+  onSeedTrafficZones,
 }) => {
   return (
     <div className="border w-full max-w-sm bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
@@ -44,6 +46,15 @@ const EntityCard: React.FC<SimpleCardProps> = ({
             onClick={onSeedTownships}
             className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow"
             title="اضافه کردن شهرستان‌های استان"
+          >
+            <MapIcon />
+          </button>
+        )}
+        {onSeedTrafficZones && (
+          <button
+            onClick={onSeedTrafficZones}
+            className="p-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-all duration-200 shadow"
+            title="اضافه کردن مناطق ترافیک و آلودگی هوا"
           >
             <MapIcon />
           </button>

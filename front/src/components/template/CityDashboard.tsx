@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { ModelName, ToastNotify, translateModelNameToPersian } from "@/utils/helper";
 import CityUpdateModal from "./CityUpdateModal";
 import SeedCityZonesModal from "./SeedCityZonesModal";
+import SeedTrafficZonesModal from "./SeedTrafficZonesModal";
 import CityProvinceRelationModal from "./CityProvinceRelationModal";
 
 interface TData {
@@ -27,14 +28,14 @@ const CityDashboard: React.FC<CityDashboardProps> = ({ data, model, remove, toke
   const router = useRouter();
 
   const [activeModal, setActiveModal] = useState<
-    "edit" | "delete" | "seedZones" | "provinceRelation" | null
+    "edit" | "delete" | "seedZones" | "seedTrafficZones" | "provinceRelation" | null
   >(null);
   const [selectedItem, setSelectedItem] = useState<TData | null>(null);
 
   const [hardCascade, setHardCascade] = useState<boolean>(false);
 
   const openModal = (
-    type: "edit" | "delete" | "seedZones" | "provinceRelation",
+    type: "edit" | "delete" | "seedZones" | "seedTrafficZones" | "provinceRelation",
     item: TData | null = null,
   ) => {
     setSelectedItem(item);
@@ -80,6 +81,7 @@ const CityDashboard: React.FC<CityDashboardProps> = ({ data, model, remove, toke
             onDelete={() => openModal("delete", item)}
             onEdit={() => openModal("edit", item)}
             onSeedZones={() => openModal("seedZones", item)}
+            onSeedTrafficZones={() => openModal("seedTrafficZones", item)}
             onProvinceRelation={() => openModal("provinceRelation", item)}
           />
         ))}
@@ -109,6 +111,16 @@ const CityDashboard: React.FC<CityDashboardProps> = ({ data, model, remove, toke
 
       {activeModal === "seedZones" && selectedItem && (
         <SeedCityZonesModal
+          isOpen
+          onClose={closeModal}
+          cityId={selectedItem._id}
+          cityName={selectedItem.name}
+          token={token}
+        />
+      )}
+
+      {activeModal === "seedTrafficZones" && selectedItem && (
+        <SeedTrafficZonesModal
           isOpen
           onClose={closeModal}
           cityId={selectedItem._id}

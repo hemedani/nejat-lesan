@@ -1,6 +1,11 @@
 import { coreApp } from "../mod.ts";
-import { number, type RelationDataType, string } from "@deps";
-import { geoJSONStruct, user_excludes } from "@model";
+import {
+	number,
+	type RelationDataType,
+	RelationSortOrderType,
+	string,
+} from "@deps";
+import { area_excludes, geoJSONStruct, user_excludes } from "@model";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const traffic_zone_pure = {
@@ -20,6 +25,23 @@ export const traffic_zone_relations = {
 		optional: true,
 		excludes: user_excludes,
 		relatedRelations: {},
+	},
+	city: {
+		schemaName: "city",
+		type: "single" as RelationDataType,
+		optional: true,
+		excludes: area_excludes,
+		relatedRelations: {
+			traffic_zones: {
+				type: "multiple" as RelationDataType,
+				limit: 50,
+				excludes: traffic_zone_excludes,
+				sort: {
+					field: "_id",
+					order: "desc" as RelationSortOrderType,
+				},
+			},
+		},
 	},
 };
 

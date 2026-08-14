@@ -8,6 +8,8 @@ import { remove } from "@/app/actions/traffic_zone/remove";
 import { add } from "@/app/actions/traffic_zone/add";
 import { update } from "@/app/actions/traffic_zone/update";
 import { translateModelNameToPersian } from "@/utils/helper";
+import { cookies } from "next/headers";
+import SeedTrafficZonesButton from "@/components/template/SeedTrafficZonesButton";
 
 export default async function AirStatusDashboard({
   searchParams,
@@ -32,6 +34,8 @@ export default async function AirStatusDashboard({
     get: { qty: 1 },
   });
 
+  const token = (await cookies()).get("token");
+
   return (
     <div className="relative min-h-full">
       <div className="flex items-start">
@@ -46,6 +50,9 @@ export default async function AirStatusDashboard({
         </div>
       </div>
       <SearchBox title="name" defaultValue={name} />
+      <div className="flex justify-end mt-6 mb-4">
+        <SeedTrafficZonesButton token={token?.value} />
+      </div>
       <ClientCommonModelDashboard data={data.success ? data.body : []} model="traffic_zone" remove={remove} add={add} update={update} />
       <Pagination countPage={counted?.body.qty} initialPage={+page} />
     </div>

@@ -4,6 +4,7 @@ import { getsSetup } from "./gets/mod.ts";
 import { updateSetup } from "./update/mod.ts";
 import { removeSetup } from "./remove/mod.ts";
 import { countSetup } from "./count/mod.ts";
+import { seedTrafficZonesSetup } from "./seedTrafficZones/mod.ts";
 
 export const trafficZoneSetup = () => {
 	addSetup();
@@ -12,4 +13,5 @@ export const trafficZoneSetup = () => {
 	getsSetup();
 	removeSetup();
 	countSetup();
+	seedTrafficZonesSetup();
 };
