@@ -650,6 +650,31 @@
     scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
+/* Narrow custom scrollbar for the admin sidebar (appears on the left in RTL) */
+.sidebar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(167, 139, 250, 0.55) transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 2px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(167, 139, 250, 0.55);
+    border-radius: 9999px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(192, 132, 252, 0.85);
+}
+
 /* Hide CSV option from ApexCharts download menu — keep SVG/PNG only */
 .apexcharts-menu-item:last-child {
     display: none !important;

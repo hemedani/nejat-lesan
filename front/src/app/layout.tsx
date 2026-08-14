@@ -7,7 +7,7 @@ import { GlobalChartFiltersProvider } from "@/context/GlobalChartFiltersContext"
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/organisms/Navbar";
 import ApexChartsLocale from "@/components/atoms/ApexChartsLocale";
-import { Footer } from "@/components/organisms/NewFooter";
+import { AdminAwareFooter } from "@/components/organisms/AdminAwareFooter";
 import GlobalFiltersBarWrapper from "@/components/dashboards/GlobalFiltersBar";
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default async function RootLayout({
                 <div className="min-h-screen flex flex-col bg-slate-950">
                   <Navbar />
                   <div className="flex-1 mt-16">{children}</div>
-                  <Footer />
+                  <AdminAwareFooter />
                 </div>
                 <GlobalFiltersBarWrapper />
                 <Toaster position="top-center" reverseOrder={false} />

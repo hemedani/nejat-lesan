@@ -1,249 +1,205 @@
 "use client";
 
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import {
-  HomeIcon,
-  UserIcon,
-  UsersIcon,
-  CogIcon,
-  HeartIcon,
-  LogoutIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CloseIcon,
+  HomeIcon,
+  LogoutIcon,
+  SearchIcon,
 } from "@/components/atoms/Icons";
-import { snakeToKebabCase, translateModelNameToPersian } from "@/utils/helper";
+import {
+  adminNavGroups,
+  iconRegistry,
+  type AdminNavGroup,
+  type AdminNavItem,
+} from "@/components/organisms/adminSidebarConfig";
 
-type MenuItem = {
-  label: string;
-  href: string;
-  icon: React.ReactNode;
+const SIDEBAR_GROUP_STORAGE_KEY = "admin-sidebar-open-groups";
+
+type SideBarItemProps = {
+  item: AdminNavItem;
+  isActive: boolean;
+  collapsed: boolean;
+  isTransitioning: boolean;
 };
 
-const defaultMenuItems: MenuItem[] = [
-  { label: "داشبورد", href: "/admin", icon: <HomeIcon className="w-5 h-5" /> },
-  {
-    label: "کاربران",
-    href: "/admin/users",
-    icon: <UsersIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("accident"),
-    href: `/admin/${snakeToKebabCase("accident")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("air_status"),
-    href: `/admin/${snakeToKebabCase("air_status")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("air_pollution_zone"),
-    href: `/admin/${snakeToKebabCase("air_pollution_zone")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("area_usage"),
-    href: `/admin/${snakeToKebabCase("area_usage")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("body_insurance_co"),
-    href: `/admin/${snakeToKebabCase("body_insurance_co")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("city"),
-    href: `/admin/${snakeToKebabCase("city")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("township"),
-    href: `/admin/${snakeToKebabCase("township")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("city_zone"),
-    href: `/admin/${snakeToKebabCase("city_zone")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("collision_type"),
-    href: `/admin/${snakeToKebabCase("collision_type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("color"),
-    href: `/admin/${snakeToKebabCase("color")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("equipment_damage"),
-    href: `/admin/${snakeToKebabCase("equipment_damage")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("event"),
-    href: `/admin/${snakeToKebabCase("event")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("fault_status"),
-    href: `/admin/${snakeToKebabCase("fault_status")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("human_reason"),
-    href: `/admin/${snakeToKebabCase("human_reason")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("insurance_co"),
-    href: `/admin/${snakeToKebabCase("insurance_co")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("licence_type"),
-    href: `/admin/${snakeToKebabCase("licence_type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("light_status"),
-    href: `/admin/${snakeToKebabCase("light_status")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("max_damage_section"),
-    href: `/admin/${snakeToKebabCase("max_damage_section")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("motion_direction"),
-    href: `/admin/${snakeToKebabCase("motion_direction")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("plaque_type"),
-    href: `/admin/${snakeToKebabCase("plaque_type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("plaque_usage"),
-    href: `/admin/${snakeToKebabCase("plaque_usage")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("position"),
-    href: `/admin/${snakeToKebabCase("position")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("province"),
-    href: `/admin/${snakeToKebabCase("province")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("road"),
-    href: `/admin/${snakeToKebabCase("road")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("road_defect"),
-    href: `/admin/${snakeToKebabCase("road_defect")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("road_repair_type"),
-    href: `/admin/${snakeToKebabCase("road_repair_type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("road_situation"),
-    href: `/admin/${snakeToKebabCase("road_situation")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("road_surface_condition"),
-    href: `/admin/${snakeToKebabCase("road_surface_condition")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("ruling_type"),
-    href: `/admin/${snakeToKebabCase("ruling_type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("shoulder_status"),
-    href: `/admin/${snakeToKebabCase("shoulder_status")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("system"),
-    href: `/admin/${snakeToKebabCase("system")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("system_type"),
-    href: `/admin/${snakeToKebabCase("system_type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("traffic_zone"),
-    href: `/admin/${snakeToKebabCase("traffic_zone")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("type"),
-    href: `/admin/${snakeToKebabCase("type")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-  {
-    label: translateModelNameToPersian("vehicle_reason"),
-    href: `/admin/${snakeToKebabCase("vehicle_reason")}`,
-    icon: <UserIcon className="w-5 h-5" />,
-  },
-];
-
-type TProps = {
-  menuItemsProps?: { label: string; href: string }[];
-  title?: string;
+const SideBarItem: FC<SideBarItemProps> = ({ item, isActive, collapsed, isTransitioning }) => {
+  const Icon = iconRegistry[item.icon];
+  return (
+    <li>
+      <Link
+        href={item.href}
+        title={collapsed ? item.label : undefined}
+        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+          isActive
+            ? "bg-white/10 text-white shadow-lg"
+            : "hover:bg-white/5 text-gray-200"
+        }`}
+      >
+        <span className="text-indigo-300">
+          <Icon className="w-5 h-5" />
+        </span>
+        {!collapsed && (
+          <span
+            className={`font-medium whitespace-nowrap transition-opacity duration-300 ${
+              isTransitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            {item.label}
+          </span>
+        )}
+      </Link>
+    </li>
+  );
 };
 
-export const AdminSidebar: FC<TProps> = ({
-  menuItemsProps,
-  title = "پنل ادمین",
+type SideBarGroupProps = {
+  group: AdminNavGroup;
+  items: AdminNavItem[];
+  isOpen: boolean;
+  onToggle: (button: HTMLButtonElement) => void;
+  activeHref: string;
+  collapsed: boolean;
+  isTransitioning: boolean;
+};
+
+const SideBarGroup: FC<SideBarGroupProps> = ({
+  group,
+  items,
+  isOpen,
+  onToggle,
+  activeHref,
+  collapsed,
+  isTransitioning,
 }) => {
+  const GroupIcon = iconRegistry[group.icon];
+  if (items.length === 0) return null;
+
+  return (
+    <li>
+      <button
+        onClick={(e) => onToggle(e.currentTarget)}
+        title={collapsed ? group.title : undefined}
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+          isOpen
+            ? "bg-white/10 text-white"
+            : "hover:bg-white/5 text-gray-200"
+        }`}
+      >
+        <span className="text-indigo-300">
+          <GroupIcon className="w-5 h-5" />
+        </span>
+        {!collapsed && (
+          <>
+            <span
+              className={`flex-1 text-right font-medium transition-opacity duration-300 ${
+                isTransitioning ? "opacity-0" : "opacity-100"
+              }`}
+            >
+              {group.title}
+            </span>
+            <ChevronLeftIcon
+              className={`w-4 h-4 text-indigo-300 transition-transform duration-300 ${
+                isOpen ? "-rotate-90" : "rotate-90"
+              }`}
+            />
+          </>
+        )}
+      </button>
+      {isOpen && !collapsed && (
+        <ul className="mt-1 mr-4 space-y-1 border-r border-indigo-700/40 pr-1">
+          {items.map((item) => (
+            <SideBarItem
+              key={item.href}
+              item={item}
+              isActive={activeHref === item.href}
+              collapsed={collapsed}
+              isTransitioning={isTransitioning}
+            />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+};
+
+export const AdminSidebar: FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { logout } = useAuth();
+  const asideRef = useRef<HTMLElement>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [search, setSearch] = useState("");
+  const [flyoutGroup, setFlyoutGroup] = useState<string | null>(null);
+  const [flyoutTop, setFlyoutTop] = useState(0);
 
-  const logOutHandler = async () => {
-    logout();
+  const [openGroups, setOpenGroups] = useState<Set<string>>(() => {
+    const allIds = adminNavGroups.map((group) => group.id);
+    if (typeof window === "undefined") return new Set(allIds);
+    const stored = localStorage.getItem(SIDEBAR_GROUP_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as string[];
+        return new Set(allIds.filter((id) => parsed.includes(id)));
+      } catch {
+        return new Set(allIds);
+      }
+    }
+    return new Set(allIds);
+  });
+
+  useEffect(() => {
+    const activeGroup = adminNavGroups.find((group) =>
+      group.items.some((item) => item.href === pathname)
+    );
+    if (activeGroup) {
+      setOpenGroups((prev) =>
+        prev.has(activeGroup.id) ? prev : new Set(prev).add(activeGroup.id)
+      );
+    }
+    setFlyoutGroup(null);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!collapsed) setFlyoutGroup(null);
+  }, [collapsed]);
+
+  useEffect(() => {
+    if (!flyoutGroup) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (asideRef.current && !asideRef.current.contains(event.target as Node)) {
+        setFlyoutGroup(null);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [flyoutGroup]);
+
+  useEffect(() => {
+    localStorage.setItem(SIDEBAR_GROUP_STORAGE_KEY, JSON.stringify([...openGroups]));
+  }, [openGroups]);
+
+  const toggleGroup = (id: string) => {
+    setOpenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
-
-  // Map custom menu items to include icons
-  const mappedMenuItems = menuItemsProps
-    ? menuItemsProps.map((item) => {
-        if (item.href.includes("/user/favorite/blog")) {
-          return { ...item, icon: <HeartIcon className="w-5 h-5" /> };
-        } else if (item.href.includes("/user/favorite/article")) {
-          return { ...item, icon: <HeartIcon className="w-5 h-5" /> };
-        } else if (item.href === "/user") {
-          return { ...item, icon: <UserIcon className="w-5 h-5" /> };
-        } else if (item.href === "/admin") {
-          return { ...item, icon: <CogIcon className="w-5 h-5" /> };
-        }
-        return { ...item, icon: <CogIcon className="w-5 h-5" /> };
-      })
-    : defaultMenuItems;
 
   const handleToggleCollapse = () => {
     setIsTransitioning(true);
-    setCollapsed(!collapsed);
+    setCollapsed((prev) => !prev);
   };
 
   useEffect(() => {
@@ -253,16 +209,25 @@ export const AdminSidebar: FC<TProps> = ({
     return () => clearTimeout(timer);
   }, [collapsed]);
 
+  const logOutHandler = async () => {
+    logout();
+  };
+
+  const normalizedSearch = search.trim().toLowerCase();
+  const isSearching = normalizedSearch.length > 0;
+  const matchesSearch = (label: string) => label.toLowerCase().includes(normalizedSearch);
+
   return (
     <aside
-      className={`sticky top-16 h-[calc(100vh-5rem)] bg-gradient-to-b from-indigo-900 to-purple-900 text-white flex flex-col shadow-xl z-10 transition-all duration-300 ease-in-out ${
+      ref={asideRef}
+      className={`relative sticky top-16 h-full bg-gradient-to-b from-indigo-900 to-purple-900 text-white flex flex-col shadow-xl z-10 transition-all duration-300 ease-in-out ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
       <div className="p-4 flex items-center justify-between border-b border-indigo-700/50">
         {!collapsed && (
           <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-300 to-blue-300 opacity-100 transition-opacity duration-300">
-            {title}
+            پنل ادمین
           </div>
         )}
         <button
@@ -277,29 +242,66 @@ export const AdminSidebar: FC<TProps> = ({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-700 scrollbar-track-transparent">
-        <ul className="space-y-1 p-3">
-          {mappedMenuItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
-                  pathname === item.href
-                    ? "bg-white/10 text-white shadow-lg"
-                    : "hover:bg-white/5 text-gray-200"
-                }`}
+      {!collapsed && (
+        <div className="px-4 py-3">
+          <div className="relative">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-indigo-300">
+              <SearchIcon className="w-4 h-4" />
+            </span>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="جستجوی منو..."
+              className="w-full bg-white/10 border border-indigo-700/50 rounded-lg pl-9 pr-9 py-2 text-sm text-white placeholder-indigo-300/70 focus:outline-none focus:ring-2 focus:ring-pink-400/50 transition-all"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                aria-label="پاک کردن جستجو"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-indigo-300 hover:text-white hover:bg-white/10 transition-all duration-300"
               >
-                <span className="text-indigo-300">{item.icon}</span>
-                {!collapsed && (
-                  <span
-                    className={`font-medium transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
-                  >
-                    {item.label}
-                  </span>
-                )}
-              </Link>
-            </li>
-          ))}
+                <CloseIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      <nav className="flex-1 overflow-y-auto sidebar-scrollbar">
+        <ul className="space-y-1 p-3">
+          {adminNavGroups.map((group) => {
+            const items = isSearching
+              ? group.items.filter((item) => matchesSearch(item.label))
+              : group.items;
+            const isOpen = isSearching ? items.length > 0 : openGroups.has(group.id);
+            const isFlyoutOpen = flyoutGroup === group.id;
+
+            return (
+              <SideBarGroup
+                key={group.id}
+                group={group}
+                items={items}
+                isOpen={isOpen}
+                onToggle={(button) => {
+                  if (collapsed) {
+                    if (isFlyoutOpen) {
+                      setFlyoutGroup(null);
+                    } else {
+                      const asideTop = asideRef.current?.getBoundingClientRect().top ?? 0;
+                      setFlyoutTop(button.getBoundingClientRect().top - asideTop);
+                      setFlyoutGroup(group.id);
+                    }
+                  } else {
+                    toggleGroup(group.id);
+                  }
+                }}
+                activeHref={pathname}
+                collapsed={collapsed}
+                isTransitioning={isTransitioning}
+              />
+            );
+          })}
         </ul>
       </nav>
 
@@ -313,7 +315,9 @@ export const AdminSidebar: FC<TProps> = ({
           </span>
           {!collapsed && (
             <span
-              className={`font-medium transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+              className={`font-medium transition-opacity duration-300 ${
+                isTransitioning ? "opacity-0" : "opacity-100"
+              }`}
             >
               خانه
             </span>
@@ -329,7 +333,9 @@ export const AdminSidebar: FC<TProps> = ({
           </span>
           {!collapsed && (
             <span
-              className={`font-medium transition-opacity duration-300 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+              className={`font-medium transition-opacity duration-300 ${
+                isTransitioning ? "opacity-0" : "opacity-100"
+              }`}
             >
               خروج از حساب
             </span>
@@ -342,6 +348,36 @@ export const AdminSidebar: FC<TProps> = ({
           <span>© ۱۴۰۳ پنل مدیریت</span>
         </div>
       )}
+
+      {collapsed && flyoutGroup && (() => {
+        const group = adminNavGroups.find((g) => g.id === flyoutGroup);
+        if (!group) return null;
+        const GroupIcon = iconRegistry[group.icon];
+        return (
+          <div
+            style={{ top: flyoutTop }}
+            className="absolute right-full mr-2 w-56 bg-gradient-to-b from-indigo-900 to-purple-900 border border-indigo-700/50 rounded-xl shadow-2xl z-20 overflow-hidden"
+          >
+            <div className="px-3 py-2.5 flex items-center gap-2 border-b border-indigo-700/50">
+              <span className="text-indigo-300">
+                <GroupIcon className="w-5 h-5" />
+              </span>
+              <span className="font-bold text-sm">{group.title}</span>
+            </div>
+            <ul className="p-2 space-y-0.5 max-h-[60vh] overflow-y-auto sidebar-scrollbar">
+              {group.items.map((item) => (
+                <SideBarItem
+                  key={item.href}
+                  item={item}
+                  isActive={pathname === item.href}
+                  collapsed={false}
+                  isTransitioning={false}
+                />
+              ))}
+            </ul>
+          </div>
+        );
+      })()}
     </aside>
   );
 };
