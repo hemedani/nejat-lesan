@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { useBasemap } from "@/context/BasemapContext";
+import { zoneOutlineStyle } from "@/utils/zoneGeoJson";
 
 const BasemapLayer = dynamic(() => import("@/components/maps/BasemapLayer"), { ssr: false });
 const BasemapSelector = dynamic(() => import("@/components/maps/BasemapSelector"), { ssr: false });
@@ -137,6 +138,11 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const style = (feature?: any) => {
     if (!feature || !feature.properties) return {};
+
+    // Zone overlays (traffic/air-pollution zones) render as neutral outlines
+    const outlineStyle = zoneOutlineStyle(feature);
+    if (outlineStyle) return outlineStyle;
+
     const zoneName = feature.properties.name;
     const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;

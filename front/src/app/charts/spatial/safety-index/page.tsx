@@ -7,6 +7,7 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSafetyIndexAnalytics } from "@/app/actions/accident/spatialSafetyIndexAnalytics";
 import { getGeoJSON } from "@/app/actions/getGeoJSON";
+import { loadZoneGeoJson } from "@/utils/zoneGeoJson";
 
 import dynamic from "next/dynamic";
 import SpatialSafetyBarChart from "@/components/charts/spatial/SpatialSafetyBarChart";
@@ -309,7 +310,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
       }
 
       // Run both API calls concurrently with properly typed groupBy
-      const [analyticsResponse, geoJsonResponse] = await Promise.all([
+      const [analyticsResponse, geoJsonResponse, zoneGeoJson] = await Promise.all([
         spatialSafetyIndexAnalytics({
           set: {
             ...cleanedParamsWithoutGroupBy,
@@ -318,6 +319,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
           get: { analytics: 1 },
         }),
         getGeoJSON(groupBy),
+        loadZoneGeoJson(filters),
       ]);
 
       // Handle analytics response
@@ -336,7 +338,24 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
         // Validate GeoJSON structure
         if (geoData.type === "FeatureCollection" && Array.isArray(geoData.features)) {
-          setGeoJsonData(geoData);
+          // Merge zone overlay features (traffic/air-pollution/city zones) on top
+          if (zoneGeoJson && Array.isArray(zoneGeoJson.features) && zoneGeoJson.features.length > 0) {
+            const baseIds = new Set(
+              geoData.features.map((f: { properties?: { id?: string } }) => f.properties?.id),
+            );
+            const overlayFeatures = zoneGeoJson.features.filter(
+              (f: { properties?: { id?: string } }) => {
+                const id = f.properties?.id;
+                return !id || !baseIds.has(id);
+              },
+            );
+            setGeoJsonData({
+              ...geoData,
+              features: [...geoData.features, ...overlayFeatures],
+            });
+          } else {
+            setGeoJsonData(geoData);
+          }
         } else {
           console.warn("Invalid GeoJSON structure:", geoData);
           setGeoJsonData(null);

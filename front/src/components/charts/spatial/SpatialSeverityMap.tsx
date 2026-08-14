@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { useBasemap } from "@/context/BasemapContext";
+import { zoneOutlineStyle } from "@/utils/zoneGeoJson";
 
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
   ssr: false,
@@ -99,6 +100,10 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
         dashArray: "",
         fillOpacity: 0.7,
       };
+
+    // Zone overlays (traffic/air-pollution zones) render as neutral outlines
+    const outlineStyle = zoneOutlineStyle(feature);
+    if (outlineStyle) return outlineStyle;
 
     const zoneName = feature.properties.name;
     if (!zoneName || typeof zoneName !== "string")

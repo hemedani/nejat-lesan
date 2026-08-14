@@ -6,7 +6,7 @@ import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/C
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialLightAnalytics } from "@/app/actions/accident/spatialLightAnalytics";
-import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { loadZoneGeoJson } from "@/utils/zoneGeoJson";
 import { getMe } from "@/app/actions/user/getMe";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { userSchema } from "@/types/declarations/selectInp";
@@ -332,15 +332,13 @@ const SpatialLightAnalyticsPage = () => {
         ),
       );
 
-      // Run API calls (conditionally fetch GeoJSON if city IDs available)
-      const [analyticsResponse, geoJsonResponse] = await Promise.all([
+      // Run API calls (conditionally fetch GeoJSON if zone filters available)
+      const [analyticsResponse, zoneGeoJson] = await Promise.all([
         spatialLightAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
         }),
-        filters.city && filters.city.length > 0
-          ? getCityZonesGeoJSON(filters.city)
-          : Promise.resolve({ success: false, body: null }),
+        loadZoneGeoJson(filters),
       ]);
 
       // Handle analytics response
@@ -351,15 +349,7 @@ const SpatialLightAnalyticsPage = () => {
       }
 
       // Handle GeoJSON response
-      if (geoJsonResponse.success && geoJsonResponse.body) {
-        // Type assertion to match our stricter GeoJsonData type
-        setGeoJsonData({
-          type: "FeatureCollection",
-          features: geoJsonResponse.body.features || [],
-        });
-      } else {
-        setGeoJsonData(null);
-      }
+      setGeoJsonData(zoneGeoJson);
     } catch (err) {
       console.error("Error fetching data:", err);
       setError(err instanceof Error ? err.message : "خطا در دریافت داده‌ها");

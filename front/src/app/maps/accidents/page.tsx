@@ -19,7 +19,7 @@ import { useMapComparison, generateComparisonTitle } from "@/context/MapComparis
 
 // Actions
 import { mapAccidents } from "@/app/actions/accident/mapAccidents";
-import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { loadZoneGeoJson, zoneGeoJsonStyle } from "@/utils/zoneGeoJson";
 
 // Types
 import { accidentSchema, ReqType } from "@/types/declarations/selectInp";
@@ -143,17 +143,9 @@ const AccidentsMapPage: React.FC = () => {
         }
         setAppliedFilters(filtersToDisplay);
 
-        // Fetch city zone polygons when a city is selected
-        if (filters.city && filters.city.length > 0) {
-          const geoJsonResponse = await getCityZonesGeoJSON(filters.city);
-          if (geoJsonResponse.success && geoJsonResponse.body) {
-            setGeoJsonData(geoJsonResponse.body);
-          } else {
-            setGeoJsonData(null);
-          }
-        } else {
-          setGeoJsonData(null);
-        }
+        // Fetch zone polygon overlays (city zones, traffic zones, air pollution zones)
+        const zoneGeoJson = await loadZoneGeoJson(finalFilters);
+        setGeoJsonData(zoneGeoJson);
       }
     } catch (error) {
       console.error("Error fetching accidents:", error);
@@ -490,6 +482,11 @@ const AccidentsMapPage: React.FC = () => {
                   onShapeClick={handleShapeClick}
                   onShapeRemoved={handleShapeRemoved}
                   geoJsonData={geoJsonData}
+                  geoJsonStyle={
+                    zoneGeoJsonStyle as (
+                      feature?: Record<string, unknown>,
+                    ) => Record<string, unknown>
+                  }
                 />
               ) : (
                 <AccidentMap

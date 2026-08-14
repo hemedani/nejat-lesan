@@ -5,7 +5,7 @@ import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/C
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSingleVehicleAnalytics } from "@/app/actions/accident/spatialSingleVehicleAnalytics";
-import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { loadZoneGeoJson } from "@/utils/zoneGeoJson";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { getMe } from "@/app/actions/user/getMe";
 
@@ -317,15 +317,13 @@ const SpatialSingleVehicleAnalyticsPage = () => {
         ),
       );
 
-      // Run API calls (conditionally fetch GeoJSON if city IDs available)
-      const [analyticsResponse, geoJsonResponse] = await Promise.all([
+      // Run API calls (conditionally fetch GeoJSON if zone filters available)
+      const [analyticsResponse, zoneGeoJson] = await Promise.all([
         spatialSingleVehicleAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
         }),
-        filters.city && filters.city.length > 0
-          ? getCityZonesGeoJSON(filters.city)
-          : Promise.resolve({ success: false, body: null }),
+        loadZoneGeoJson(filters),
       ]);
 
       // Handle analytics response
@@ -336,11 +334,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
       }
 
       // Handle GeoJSON response
-      if (geoJsonResponse.success && geoJsonResponse.body) {
-        setGeoJsonData(geoJsonResponse.body);
-      } else {
-        setGeoJsonData(null);
-      }
+      setGeoJsonData(zoneGeoJson);
     } catch (err) {
       console.error("Error fetching data:", err);
       setError(err instanceof Error ? err.message : "خطا در دریافت داده‌ها");

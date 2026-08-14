@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet";
+import { zoneOutlineStyle } from "@/utils/zoneGeoJson";
 
 const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
@@ -96,6 +97,10 @@ const SpatialSingleVehicleMap: React.FC<SpatialSingleVehicleMapProps> = ({
   // Style function for GeoJSON features
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const style = (feature: any) => {
+    // Zone overlays (traffic/air-pollution zones) render as neutral outlines
+    const outlineStyle = zoneOutlineStyle(feature);
+    if (outlineStyle) return outlineStyle;
+
     const zoneName = feature?.properties?.name || "";
     const zoneData = findZoneData(zoneName);
     const ratio = zoneData?.ratio || 0;

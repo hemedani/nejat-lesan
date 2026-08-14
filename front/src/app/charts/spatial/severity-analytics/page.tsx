@@ -5,7 +5,7 @@ import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/C
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialSeverityAnalytics } from "@/app/actions/accident/spatialSeverityAnalytics";
-import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { loadZoneGeoJson } from "@/utils/zoneGeoJson";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import SpatialSeverityBarChart from "@/components/charts/spatial/SpatialSeverityBarChart";
 import SpatialSeverityMap from "@/components/charts/spatial/SpatialSeverityMap";
@@ -434,15 +434,13 @@ const SpatialSeverityAnalyticsPage = () => {
         ),
       );
 
-      // Run API calls (conditionally fetch GeoJSON if city IDs available)
-      const [analyticsResponse, geoJsonResponse] = await Promise.all([
+      // Run API calls (conditionally fetch GeoJSON if zone filters available)
+      const [analyticsResponse, zoneGeoJson] = await Promise.all([
         spatialSeverityAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
         }),
-        filters.city && filters.city.length > 0
-          ? getCityZonesGeoJSON(filters.city)
-          : Promise.resolve({ success: false, body: null }),
+        loadZoneGeoJson(filters),
       ]);
 
       // Handle analytics response
@@ -531,14 +529,7 @@ const SpatialSeverityAnalyticsPage = () => {
       }
 
       // Handle GeoJSON response
-      if (geoJsonResponse.success && geoJsonResponse.body) {
-        setGeoJsonData({
-          type: "FeatureCollection",
-          features: geoJsonResponse.body.features || [],
-        });
-      } else {
-        setGeoJsonData(null);
-      }
+      setGeoJsonData(zoneGeoJson);
     } catch (err) {
       console.error("Error fetching data:", err);
       setError(err instanceof Error ? err.message : "خطا در دریافت داده‌ها");

@@ -6,6 +6,7 @@ import { useEffect, useRef, useCallback, useState, useId } from "react";
 
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
+import { zoneGeoJsonStyle } from "@/utils/zoneGeoJson";
 
 interface NeshanMapContainerProps {
   center: [number, number];
@@ -254,13 +255,7 @@ function addGeoJSONLayer(
   fitBounds = false,
 ) {
   const layer = (neshanL as any).geoJSON(data, {
-    style: style || (() => ({
-      fillColor: "#3b82f6",
-      weight: 2,
-      opacity: 1,
-      color: "#1d4ed8",
-      fillOpacity: 0.1,
-    })),
+    style: style || (zoneGeoJsonStyle as (feature?: Record<string, unknown>) => Record<string, unknown>),
     onEachFeature,
   });
 

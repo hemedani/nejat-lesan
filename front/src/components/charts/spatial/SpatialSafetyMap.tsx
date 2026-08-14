@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { MapContainer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import dynamic from "next/dynamic";
+import { zoneOutlineStyle } from "@/utils/zoneGeoJson";
 
 const BasemapLayer = dynamic(
   () => import("@/components/maps/BasemapLayer"),
@@ -303,6 +304,10 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const geoJsonStyle = (feature: any) => {
     try {
+      // Zone overlays (traffic/air-pollution zones) render as neutral outlines
+      const outlineStyle = zoneOutlineStyle(feature);
+      if (outlineStyle) return outlineStyle;
+
       const featureName = feature?.properties?.name || "";
       const data = dataLookup.get(featureName);
       const fillColor =

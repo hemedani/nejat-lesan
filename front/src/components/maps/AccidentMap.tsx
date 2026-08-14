@@ -17,6 +17,7 @@ import BasemapSelector from "./BasemapSelector";
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { GeoJsonData } from "@/types/GeoJsonTypes";
 import { DrawCreatedEvent } from "@/types/leaflet-draw";
+import { zoneGeoJsonStyle } from "@/utils/zoneGeoJson";
 
 // Map event handler component
 const MapEventHandler: React.FC<{ onZoomChange: (zoom: number) => void }> = ({ onZoomChange }) => {
@@ -202,20 +203,15 @@ const AccidentMap: React.FC<{
           />
         </FeatureGroup>
 
-        {/* City Zone Polygons - rendered in custom pane below heatmap/markers */}
+        {/* Zone Polygons - rendered in custom pane below heatmap/markers */}
         {geoJsonData && (
           <>
             <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
             <GeoJSON
               data={geoJsonData}
               pane="cityZonePane"
-              style={() => ({
-                fillColor: "#3b82f6",
-                weight: 2,
-                opacity: 1,
-                color: "#1d4ed8",
-                fillOpacity: 0.1,
-              })}
+              style={zoneGeoJsonStyle as (feature?: GeoJSON.Feature) => Record<string, unknown>}
+              key={`zone-geojson-${JSON.stringify(geoJsonData)}`}
             />
           </>
         )}

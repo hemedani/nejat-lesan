@@ -9,7 +9,7 @@ import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { spatialCollisionAnalytics } from "@/app/actions/accident/spatialCollisionAnalytics";
-import { getCityZonesGeoJSON } from "@/app/actions/city/getCityZones";
+import { loadZoneGeoJson } from "@/utils/zoneGeoJson";
 import { getMe } from "@/app/actions/user/getMe";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { userSchema } from "@/types/declarations/selectInp";
@@ -482,14 +482,12 @@ interface SpatialCollisionAnalyticsResponse {
       );
 
       // Run API calls (fetch analytics and GeoJSON)
-      const [analyticsResponse, geoJsonResponse] = await Promise.all([
+      const [analyticsResponse, zoneGeoJson] = await Promise.all([
         spatialCollisionAnalytics({
           set: cleanedParams,
           get: { analytics: 1 },
         }),
-        filters.city && filters.city.length > 0
-          ? getCityZonesGeoJSON(filters.city)
-          : Promise.resolve({ success: false, body: null }),
+        loadZoneGeoJson(filters),
       ]);
 
       // Handle analytics response — store barChart data; mapChart is derived via useMemo
@@ -517,15 +515,7 @@ interface SpatialCollisionAnalyticsResponse {
       }
 
       // Handle GeoJSON response
-      if (geoJsonResponse.success && geoJsonResponse.body) {
-        // Type assertion to match our stricter GeoJsonData type
-        setGeoJsonData({
-          type: "FeatureCollection",
-          features: geoJsonResponse.body.features || [],
-        });
-      } else {
-        setGeoJsonData(null);
-      }
+      setGeoJsonData(zoneGeoJson);
     } catch (err) {
       console.error("Error fetching data:", err);
       setError(err instanceof Error ? err.message : "خطا در دریافت داده‌ها");
