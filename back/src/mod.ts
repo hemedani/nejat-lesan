@@ -8,6 +8,7 @@ import { roadSetup } from "./road/mod.ts";
 import { colorSetup } from "./color/mod.ts";
 import { airStatusSetup } from "./air_status/mod.ts";
 import { areaUsageSetup } from "./area_usage/mod.ts";
+import { airPollutionZoneSetup } from "./air_pollution_zone/mod.ts";
 import { bodyInsuranceCoSetup } from "./body_insurance_co/mod.ts";
 import { cityZoneSetup } from "./city_zone/mod.ts";
 import { collisionTypeSetup } from "./collision_type/mod.ts";
@@ -36,6 +37,7 @@ import { vehicleReasonSetup } from "./vehicle_reason/mod.ts";
 import { accidentSetup } from "./accident/mod.ts";
 
 export const functionsSetup = () => {
+	airPollutionZoneSetup();
 	airStatusSetup();
 	areaUsageSetup();
 	bodyInsuranceCoSetup();

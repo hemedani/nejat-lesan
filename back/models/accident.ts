@@ -14,6 +14,7 @@ import {
 	tuple,
 } from "@deps";
 import {
+	air_pollution_zone_excludes,
 	area_excludes,
 	city_zone_excludes,
 	file_excludes,
@@ -196,6 +197,22 @@ export const accident_relations = {
 		type: "single" as RelationDataType,
 		optional: true,
 		excludes: city_zone_excludes,
+		relatedRelations: {
+			accidents: {
+				type: "multiple" as RelationDataType,
+				limit: 20,
+				sort: {
+					field: "_id",
+					order: "desc" as RelationSortOrderType,
+				},
+			},
+		},
+	},
+	air_pollution_zone: {
+		schemaName: "air_pollution_zone",
+		type: "single" as RelationDataType,
+		optional: true,
+		excludes: air_pollution_zone_excludes,
 		relatedRelations: {
 			accidents: {
 				type: "multiple" as RelationDataType,

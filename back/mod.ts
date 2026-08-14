@@ -2,6 +2,7 @@ import { lesan, MongoClient, redis } from "@deps";
 import { ensureDir } from "https://deno.land/std@0.208.0/fs/mod.ts";
 import {
 	accidents,
+	air_pollution_zones,
 	air_statuses,
 	area_usages,
 	body_insurance_coes,
@@ -59,6 +60,7 @@ export const province = provinces();
 export const city = cities();
 export const township = townships();
 export const traffic_zone = traffic_zones();
+export const air_pollution_zone = air_pollution_zones();
 export const city_zone = city_zones();
 export const accident = accidents();
 export const air_status = air_statuses();

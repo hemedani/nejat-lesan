@@ -8,6 +8,7 @@ export * from "./township.ts";
 export * from "./province.ts";
 export * from "./road.ts";
 export * from "./traffic_zone.ts";
+export * from "./air_pollution_zone.ts";
 export * from "./city_zone.ts";
 export * from "./accident.ts";
 export * from "./air_status.ts";
