@@ -78,6 +78,7 @@ export type ModelName =
   | "city_zone"
   | "accident"
   | "air_status"
+  | "air_pollution_zone"
   | "area_usage"
   | "body_insurance_co"
   | "collision_type"
@@ -125,6 +126,8 @@ function translateModelNameToPersian(modelName: ModelName): string {
       return "تصادف";
     case "air_status":
       return "وضعیت هوا";
+    case "air_pollution_zone":
+      return "منطقه آلودگی هوا";
     case "area_usage":
       return "نوع کاربری منطقه";
     case "body_insurance_co":

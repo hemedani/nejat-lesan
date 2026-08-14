@@ -40,6 +40,11 @@ const defaultMenuItems: MenuItem[] = [
     icon: <UserIcon className="w-5 h-5" />,
   },
   {
+    label: translateModelNameToPersian("air_pollution_zone"),
+    href: `/admin/${snakeToKebabCase("air_pollution_zone")}`,
+    icon: <UserIcon className="w-5 h-5" />,
+  },
+  {
     label: translateModelNameToPersian("area_usage"),
     href: `/admin/${snakeToKebabCase("area_usage")}`,
     icon: <UserIcon className="w-5 h-5" />,
