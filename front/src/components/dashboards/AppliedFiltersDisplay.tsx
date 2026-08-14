@@ -474,6 +474,13 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
           "bg-indigo-100 text-indigo-800",
         )}
 
+        {renderFilterSection(
+          "🌫️ منطقه آلودگی هوا",
+          <HomeIcon className="w-4 h-4 text-sky-500" />,
+          filters.airPollutionZone,
+          "bg-sky-100 text-sky-800",
+        )}
+
         {/* Casualty Count Ranges */}
         {renderCountRange(
           "☠️ تعداد فوتی",

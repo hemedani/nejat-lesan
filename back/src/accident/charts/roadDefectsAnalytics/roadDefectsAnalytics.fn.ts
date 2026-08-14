@@ -90,6 +90,7 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 		{ key: "road", path: "road.name" },
 		{ key: "trafficZone", path: "traffic_zone.name" },
 		{ key: "cityZone", path: "city_zone.name" },
+		{ key: "airPollutionZone", path: "air_pollution_zone.name" },
 		{ key: "accidentType", path: "type.name" },
 		{ key: "position", path: "position.name" },
 		{ key: "rulingType", path: "ruling_type.name" },

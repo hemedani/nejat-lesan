@@ -78,6 +78,7 @@ export interface ChartFilterState {
   road?: string[];
   trafficZone?: string[];
   cityZone?: string[];
+  airPollutionZone?: string[];
   accidentType?: string[];
   position?: string[];
   rulingType?: string[];
@@ -245,6 +246,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
       "road",
       "trafficZone",
       "cityZone",
+      "airPollutionZone",
       "collisionType",
       "accidentType",
       "position",
@@ -601,7 +603,8 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                 enabledFilters.includes("city") ||
                 enabledFilters.includes("road") ||
                 enabledFilters.includes("trafficZone") ||
-                enabledFilters.includes("cityZone")) && (
+                enabledFilters.includes("cityZone") ||
+                enabledFilters.includes("airPollutionZone")) && (
                 <GeographicFiltersGroup
                   enabledFilters={enabledFilters}
                   control={control}

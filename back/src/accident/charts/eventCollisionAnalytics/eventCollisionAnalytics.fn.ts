@@ -217,6 +217,7 @@ export const eventCollisionAnalyticsFn: ActFn = async (body) => {
 		road: "road.name",
 		trafficZone: "traffic_zone.name",
 		cityZone: "city_zone.name",
+		airPollutionZone: "air_pollution_zone.name",
 		accidentType: "type.name",
 		position: "position.name",
 		rulingType: "ruling_type.name",

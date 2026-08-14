@@ -50,6 +50,7 @@ export const spatialCollisionAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())), // ← spatial unit
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())),
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

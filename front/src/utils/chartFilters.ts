@@ -24,6 +24,7 @@ export const COMMON_FILTER_SETS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "position",
 
     "officer",
@@ -55,6 +56,7 @@ export const COMMON_FILTER_SETS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -105,6 +107,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -195,6 +198,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -251,6 +255,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -306,6 +311,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -405,6 +411,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -504,6 +511,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -603,6 +611,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -695,6 +704,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -743,6 +753,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -804,6 +815,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -903,6 +915,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1002,6 +1015,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1091,7 +1105,8 @@ export const CHART_SPECIFIC_FILTERS = {
     "city",
     "road",
     "trafficZone",
-    "cityZone", // Key filters for geographic hotspot analysis
+    "cityZone",
+    "airPollutionZone", // Key filters for geographic hotspot analysis
     "accidentType",
     "limit",
     "skip",
@@ -1111,7 +1126,8 @@ export const CHART_SPECIFIC_FILTERS = {
     "city",
     "road",
     "trafficZone",
-    "cityZone", // Key filters for regional comparison
+    "cityZone",
+    "airPollutionZone", // Key filters for regional comparison
     "accidentType",
     "collisionType",
     "areaUsages",
@@ -1137,6 +1153,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1236,6 +1253,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1335,6 +1353,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1434,6 +1453,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -1533,6 +1553,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -1629,6 +1650,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "lightStatus",
@@ -1716,6 +1738,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1815,6 +1838,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -1913,7 +1937,8 @@ export const CHART_SPECIFIC_FILTERS = {
     "city",
     "road",
     "trafficZone",
-    "cityZone", // ← spatial unit for this chart
+    "cityZone",
+    "airPollutionZone", // ← spatial unit for this chart
     "accidentType",
     "position",
 
@@ -2013,6 +2038,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
 
@@ -2100,6 +2126,9 @@ export const CHART_SPECIFIC_FILTERS = {
     "province",
     "city",
     "road",
+    "trafficZone",
+    "cityZone",
+    "airPollutionZone",
     "collisionType",
     "lightStatus",
     "areaUsages",
@@ -2114,6 +2143,9 @@ export const CHART_SPECIFIC_FILTERS = {
     "province",
     "city",
     "road",
+    "trafficZone",
+    "cityZone",
+    "airPollutionZone",
     "accidentType",
     "collisionType",
 
@@ -2180,6 +2212,7 @@ export const CHART_SPECIFIC_FILTERS = {
     "road",
     "trafficZone",
     "cityZone",
+    "airPollutionZone",
     "accidentType",
     "position",
     "rulingType",

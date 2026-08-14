@@ -47,6 +47,7 @@ export const vehicleReasonAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())),
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())),
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

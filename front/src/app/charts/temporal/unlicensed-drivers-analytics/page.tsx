@@ -386,6 +386,8 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
         filterPayload.trafficZone = filterState.trafficZone;
       if (includeFilter("cityZone") && filterState.cityZone !== undefined)
         filterPayload.cityZone = filterState.cityZone;
+      if (includeFilter("airPollutionZone") && filterState.airPollutionZone !== undefined)
+        filterPayload.airPollutionZone = filterState.airPollutionZone;
       if (includeFilter("accidentType") && filterState.accidentType !== undefined)
         filterPayload.accidentType = filterState.accidentType;
       if (includeFilter("position") && filterState.position !== undefined)

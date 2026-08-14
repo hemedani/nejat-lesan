@@ -37,6 +37,7 @@ export const roadDefectsAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())),
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())), // Refers to the 'Type' model in your list
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

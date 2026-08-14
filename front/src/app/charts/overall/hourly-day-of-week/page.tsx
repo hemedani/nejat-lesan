@@ -136,6 +136,7 @@ const HourlyDayOfWeekPage = () => {
           road: filters.road || [],
           trafficZone: filters.trafficZone || [],
           cityZone: filters.cityZone || [],
+          airPollutionZone: filters.airPollutionZone || [],
           accidentType: filters.accidentType || [],
           position: filters.position || [],
           rulingType: filters.rulingType || [],

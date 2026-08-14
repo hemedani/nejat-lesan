@@ -19,6 +19,7 @@ import {
   loadProvinces,
   loadRoads,
   loadTrafficZones,
+  loadAirPollutionZones,
 } from "@/utils/geoRelations";
 import type { ChartFilterState } from "./ChartsFilterSidebar";
 
@@ -29,7 +30,7 @@ interface GeographicFiltersGroupProps {
   errors?: FieldErrors<ChartFilterState>;
 }
 
-type GeoKey = "province" | "city" | "road" | "trafficZone" | "cityZone";
+type GeoKey = "province" | "city" | "road" | "trafficZone" | "cityZone" | "airPollutionZone";
 
 export default function GeographicFiltersGroup({
   enabledFilters,
@@ -42,6 +43,7 @@ export default function GeographicFiltersGroup({
   const watchedRoad = useWatch({ control, name: "road" });
   const watchedTrafficZone = useWatch({ control, name: "trafficZone" });
   const watchedCityZone = useWatch({ control, name: "cityZone" });
+  const watchedAirPollutionZone = useWatch({ control, name: "airPollutionZone" });
 
   const enabled = (key: GeoKey) => enabledFilters.includes(key);
 
@@ -74,6 +76,7 @@ export default function GeographicFiltersGroup({
   const handleRoadChange = (values: string[]) => setForm("road", values);
   const handleTrafficZoneChange = (values: string[]) => setForm("trafficZone", values);
   const handleCityZoneChange = (values: string[]) => setForm("cityZone", values);
+  const handleAirPollutionZoneChange = (values: string[]) => setForm("airPollutionZone", values);
 
   const provinceKey = (watchedProvince || []).join(",");
   const cityKey = (watchedCity || []).join(",");
@@ -146,6 +149,19 @@ export default function GeographicFiltersGroup({
           placeholder="انتخاب منطقه شهری..."
           defaultOptions
           value={toOptions(watchedCityZone)}
+        />
+      )}
+      {enabled("airPollutionZone") && (
+        <MyAsyncMultiSelect
+          name="airPollutionZone"
+          label="منطقه آلودگی هوا"
+          setValue={setValue}
+          onChange={handleAirPollutionZoneChange}
+          loadOptions={loadAirPollutionZones}
+          errMsg={errors?.airPollutionZone?.message}
+          placeholder="انتخاب منطقه آلودگی هوا..."
+          defaultOptions
+          value={toOptions(watchedAirPollutionZone)}
         />
       )}
     </div>

@@ -45,6 +45,7 @@ export const monthlyHolidayAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())),
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())), // Linked to 'Type' model
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

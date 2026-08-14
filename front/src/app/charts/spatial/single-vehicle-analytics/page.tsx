@@ -158,6 +158,8 @@ const SpatialSingleVehicleAnalyticsPage = () => {
         filterPayload.trafficZone = filters.trafficZone;
       if (includeFilter("cityZone") && filters.cityZone !== undefined)
         filterPayload.cityZone = filters.cityZone;
+      if (includeFilter("airPollutionZone") && filters.airPollutionZone !== undefined)
+        filterPayload.airPollutionZone = filters.airPollutionZone;
       if (includeFilter("accidentType") && filters.accidentType !== undefined)
         filterPayload.accidentType = filters.accidentType;
       if (includeFilter("position") && filters.position !== undefined)

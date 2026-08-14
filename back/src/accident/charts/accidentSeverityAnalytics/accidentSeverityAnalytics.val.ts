@@ -47,6 +47,7 @@ export const accidentSeverityAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())),
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())), // Redundant with severity, but kept for consistency
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

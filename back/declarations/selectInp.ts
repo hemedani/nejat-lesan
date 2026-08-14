@@ -61,6 +61,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -145,6 +146,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -229,6 +231,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -313,6 +316,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -386,6 +390,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -407,6 +414,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -439,6 +449,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -523,6 +534,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -607,6 +619,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -691,6 +704,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -775,6 +789,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -859,6 +874,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -943,6 +959,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1028,6 +1045,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1112,6 +1130,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1196,6 +1215,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1280,6 +1300,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1364,6 +1385,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1448,6 +1470,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1532,6 +1555,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1616,6 +1640,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1700,6 +1725,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1784,6 +1810,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1868,6 +1895,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -1949,6 +1977,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -2221,7 +2250,9 @@ name: string;
     export type cityInp = {
       registrer?: number | userInp
 province?: number | provinceInp
-      city_zones?: number | city_zoneInp
+      traffic_zones?: number | traffic_zoneInp
+air_pollution_zones?: number | air_pollution_zoneInp
+city_zones?: number | city_zoneInp
 accidents?: number | accidentInp
     }
 
@@ -2259,6 +2290,16 @@ name: string;
 english_name: string;
 population: number;
 };
+traffic_zones: {
+_id?: string;
+name: string;
+population: number;
+}[];
+air_pollution_zones: {
+_id?: string;
+name: string;
+population: number;
+}[];
 city_zones: {
 _id?: string;
 name: string;
@@ -2466,6 +2507,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -2550,6 +2592,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -2634,6 +2677,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -2718,6 +2762,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -2791,6 +2836,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -2812,6 +2860,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -2844,6 +2895,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -2928,6 +2980,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3012,6 +3065,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3096,6 +3150,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3180,6 +3235,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3264,6 +3320,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3348,6 +3405,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3433,6 +3491,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3517,6 +3576,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3601,6 +3661,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3685,6 +3746,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3769,6 +3831,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3853,6 +3916,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -3937,6 +4001,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -4021,6 +4086,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -4105,6 +4171,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -4189,6 +4256,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -4273,6 +4341,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -4354,6 +4423,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -4515,6 +4585,7 @@ updatedAt: Date;
 
     export type traffic_zoneInp = {
       registrer?: number | userInp
+city?: number | cityInp
       accidents?: number | accidentInp
     }
 
@@ -4540,6 +4611,175 @@ national_number: string;
 address: string;
 level: ("Ghost" | "Manager" | "Editor" | "Enterprise" );
 is_verified: boolean;
+};
+city?: {
+_id?: string;
+name: string;
+english_name: string;
+population: number;
+};
+accidents: {
+_id?: string;
+seri: number;
+serial: number;
+location: {
+type: "Point";
+coordinates: any[];
+};
+date_of_accident: Date;
+dead_count: number;
+has_witness: boolean;
+news_number: number;
+officer: string;
+injured_count: number;
+completion_date: Date;
+vehicle_dtos: {
+color: {
+_id: string;
+name: string;
+};
+driver: {
+sex: ("Male" | "Female" | "Other" );
+last_name: string;
+first_name: string;
+injury_type: {
+_id: string;
+name: string;
+};
+licence_type: {
+_id: string;
+name: string;
+};
+national_code: string;
+licence_number?: string;
+total_reason?: {
+_id: string;
+name: string;
+};
+};
+system: {
+_id: string;
+name: string;
+};
+plaque_type: {
+_id: string;
+name: string;
+};
+plaque_no: any[];
+system_type: {
+_id: string;
+name: string;
+};
+fault_status: {
+_id: string;
+name: string;
+};
+insurance_co: {
+_id: string;
+name: string;
+};
+insurance_no: string;
+plaque_usage: {
+_id: string;
+name: string;
+};
+print_number: string;
+plaque_serial?: string[];
+insurance_date: Date;
+body_insurance_co: {
+_id: string;
+name: string;
+};
+body_insurance_no?: string;
+motion_direction: {
+_id: string;
+name: string;
+};
+body_insurance_date: Date;
+max_damage_sections: {
+_id: string;
+name: string;
+}[];
+damage_section_other: string;
+insurance_warranty_limit: number;
+passenger_dtos?: {
+sex: ("Male" | "Female" | "Other" );
+last_name: string;
+first_name: string;
+injury_type: {
+_id: string;
+name: string;
+};
+fault_status: {
+_id: string;
+name: string;
+};
+total_reason?: {
+_id: string;
+name: string;
+};
+national_code: string;
+}[];
+}[];
+pedestrian_dtos?: {
+sex: ("Male" | "Female" | "Other" );
+last_name: string;
+first_name: string;
+injury_type: {
+_id: string;
+name: string;
+};
+fault_status: {
+_id: string;
+name: string;
+};
+total_reason?: {
+_id: string;
+name: string;
+};
+national_code: string;
+}[];
+createdAt: Date;
+updatedAt: Date;
+}[];
+};
+;
+
+
+    export type air_pollution_zoneInp = {
+      registrer?: number | userInp
+city?: number | cityInp
+      accidents?: number | accidentInp
+    }
+
+
+    export type air_pollution_zoneSchema = {
+_id?: string;
+name: string;
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+population: number;
+createdAt: Date;
+updatedAt: Date;
+registrer?: {
+_id?: string;
+first_name: string;
+last_name: string;
+father_name: string;
+mobile: string;
+gender: ("Male" | "Female" );
+national_number: string;
+address: string;
+level: ("Ghost" | "Manager" | "Editor" | "Enterprise" );
+is_verified: boolean;
+};
+city?: {
+_id?: string;
+name: string;
+english_name: string;
+population: number;
 };
 accidents: {
 _id?: string;
@@ -5282,6 +5522,7 @@ township?: number | townshipInp
 road?: number | roadInp
 traffic_zone?: number | traffic_zoneInp
 city_zone?: number | city_zoneInp
+air_pollution_zone?: number | air_pollution_zoneInp
 type?: number | typeInp
 area_usages?: number | area_usageInp
 position?: number | positionInp
@@ -5453,6 +5694,11 @@ name: string;
 population: number;
 };
 city_zone?: {
+_id?: string;
+name: string;
+population: number;
+};
+air_pollution_zone?: {
 _id?: string;
 name: string;
 population: number;
@@ -5862,6 +6108,602 @@ is_verified: boolean;
         main: {
 
       
+        air_pollution_zone: {
+
+      
+            add: {
+set: {
+name: string;
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+population: number;
+createdAt: Date;
+updatedAt: Date;
+cityId: string;
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+population?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+};
+
+          
+            update: {
+set: {
+_id: string;
+name?: string;
+population?: number;
+area?: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+population?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+};
+
+          
+            get: {
+set: {
+_id: string;
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+population?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+avatar?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+national_card?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+uploadedAssets?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+};
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+township?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+traffic_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+area_usages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+position?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+ruling_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+air_statuses?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+light_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_defects?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+human_reasons?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+collision_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_situation?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_repair_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+shoulder_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+vehicle_reasons?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+equipment_damages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_surface_conditions?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+};
+};
+};
+};
+
+          
+            gets: {
+set: {
+page: number;
+limit: number;
+name?: string;
+cities?: string[];
+cityNames?: string[];
+provinceIds?: string[];
+};
+get: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+population?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+avatar?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+national_card?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+uploadedAssets?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+};
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+township?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+traffic_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+area_usages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+position?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+ruling_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+air_statuses?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+light_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_defects?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+human_reasons?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+collision_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_situation?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_repair_type?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+shoulder_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+vehicle_reasons?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+equipment_damages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+road_surface_conditions?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+};
+};
+};
+};
+
+          
+            remove: {
+set: {
+_id: string;
+hardCascade?: boolean;
+};
+get: {
+success?: (0 | 1 );
+};
+};
+
+          
+            count: {
+set: {
+name?: string;
+};
+get: {
+qty?: (0 | 1 );
+};
+};
+
+          
+          }
+
+        
         air_status: {
 
       
@@ -6440,6 +7282,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -6508,6 +7360,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -6564,6 +7426,16 @@ province?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zones?: {
@@ -6694,6 +7566,86 @@ _id?: (0 | 1 );
 name?: (0 | 1 );
 };
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -6778,6 +7730,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -6959,6 +7916,86 @@ _id?: (0 | 1 );
 name?: (0 | 1 );
 };
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -7043,6 +8080,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -7438,6 +8480,11 @@ _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
 };
+air_pollution_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -7662,6 +8709,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -7957,6 +9009,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -8024,6 +9086,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -8172,6 +9239,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -8239,6 +9316,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -11150,6 +12232,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -11217,6 +12309,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -11437,6 +12534,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -11504,6 +12611,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -13380,6 +14492,12 @@ address?: (0 | 1 );
 level?: (0 | 1 );
 is_verified?: (0 | 1 );
 };
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
 accidents?: {
 _id?: (0 | 1 );
 seri?: (0 | 1 );
@@ -13428,6 +14546,12 @@ national_number?: (0 | 1 );
 address?: (0 | 1 );
 level?: (0 | 1 );
 is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
 };
 accidents?: {
 _id?: (0 | 1 );
@@ -13495,6 +14619,62 @@ type?: (0 | 1 );
 size?: (0 | 1 );
 };
 };
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
 accidents?: {
 _id?: (0 | 1 );
 seri?: (0 | 1 );
@@ -13539,6 +14719,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -13661,6 +14846,62 @@ type?: (0 | 1 );
 size?: (0 | 1 );
 };
 };
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+city_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
 accidents?: {
 _id?: (0 | 1 );
 seri?: (0 | 1 );
@@ -13705,6 +14946,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -13797,6 +15043,17 @@ name?: string;
 };
 get: {
 qty?: (0 | 1 );
+};
+};
+
+          
+            seedTrafficZones: {
+set: {
+cityId: string;
+geoId: string;
+};
+get: {
+summary: (1 );
 };
 };
 
@@ -14022,6 +15279,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14106,6 +15364,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14190,6 +15449,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14274,6 +15534,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14347,6 +15608,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -14368,6 +15632,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -14400,6 +15667,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14484,6 +15752,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14568,6 +15837,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14652,6 +15922,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14736,6 +16007,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14820,6 +16092,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14904,6 +16177,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -14989,6 +16263,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15073,6 +16348,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15157,6 +16433,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15241,6 +16518,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15325,6 +16603,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15409,6 +16688,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15493,6 +16773,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15577,6 +16858,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15661,6 +16943,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15745,6 +17028,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15829,6 +17113,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -15910,6 +17195,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16284,6 +17570,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16368,6 +17655,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16452,6 +17740,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16536,6 +17825,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16609,6 +17899,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -16630,6 +17923,9 @@ officer?: boolean;
 province?: boolean;
 city?: boolean;
 road?: boolean;
+trafficZone?: boolean;
+cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 lightStatus?: boolean;
@@ -16662,6 +17958,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16746,6 +18043,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16830,6 +18128,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16914,6 +18213,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -16998,6 +18298,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17082,6 +18383,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17166,6 +18468,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17251,6 +18554,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17335,6 +18639,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17419,6 +18724,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17503,6 +18809,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17587,6 +18894,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17671,6 +18979,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17755,6 +19064,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17839,6 +19149,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -17923,6 +19234,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -18007,6 +19319,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -18091,6 +19404,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -18172,6 +19486,7 @@ city?: boolean;
 road?: boolean;
 trafficZone?: boolean;
 cityZone?: boolean;
+airPollutionZone?: boolean;
 accidentType?: boolean;
 position?: boolean;
 rulingType?: boolean;
@@ -18871,6 +20186,11 @@ _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
 };
+air_pollution_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -18990,6 +20310,11 @@ name?: (0 | 1 );
 population?: (0 | 1 );
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -19162,6 +20487,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -19269,6 +20604,12 @@ address?: (0 | 1 );
 level?: (0 | 1 );
 is_verified?: (0 | 1 );
 };
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
 accidents?: {
 _id?: (0 | 1 );
 seri?: (0 | 1 );
@@ -19288,6 +20629,46 @@ updatedAt?: (0 | 1 );
 };
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -19774,6 +21155,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -19881,6 +21272,12 @@ address?: (0 | 1 );
 level?: (0 | 1 );
 is_verified?: (0 | 1 );
 };
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
 accidents?: {
 _id?: (0 | 1 );
 seri?: (0 | 1 );
@@ -19900,6 +21297,46 @@ updatedAt?: (0 | 1 );
 };
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );
@@ -20352,6 +21789,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -20465,6 +21903,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -20560,6 +21999,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -20654,6 +22094,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -20750,6 +22191,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -20844,6 +22286,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -20936,6 +22379,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21028,6 +22472,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21120,6 +22565,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21212,6 +22658,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21304,6 +22751,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21396,6 +22844,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21488,6 +22937,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21580,6 +23030,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21672,6 +23123,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21764,6 +23216,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21856,6 +23309,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -21948,6 +23402,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22040,6 +23495,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22132,6 +23588,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22224,6 +23681,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22311,6 +23769,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22352,6 +23811,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22399,6 +23859,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22491,6 +23952,7 @@ city?: string[];
 road?: string[];
 trafficZone?: string[];
 cityZone?: string[];
+airPollutionZone?: string[];
 accidentType?: string[];
 position?: string[];
 rulingType?: string[];
@@ -22606,6 +24068,16 @@ name?: (0 | 1 );
 english_name?: (0 | 1 );
 population?: (0 | 1 );
 };
+traffic_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
+air_pollution_zones?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+};
 city_zones?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
@@ -22713,6 +24185,12 @@ address?: (0 | 1 );
 level?: (0 | 1 );
 is_verified?: (0 | 1 );
 };
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
 accidents?: {
 _id?: (0 | 1 );
 seri?: (0 | 1 );
@@ -22732,6 +24210,46 @@ updatedAt?: (0 | 1 );
 };
 };
 city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+population?: (0 | 1 );
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+};
+accidents?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+air_pollution_zone?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
 population?: (0 | 1 );

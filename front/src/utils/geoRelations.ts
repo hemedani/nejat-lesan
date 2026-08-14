@@ -19,6 +19,7 @@ import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { gets as getRoadsAction } from "@/app/actions/road/gets";
 import { gets as getCityZonesAction } from "@/app/actions/city_zone/gets";
 import { gets as getTrafficZonesAction } from "@/app/actions/traffic_zone/gets";
+import { gets as getAirPollutionZonesAction } from "@/app/actions/air_pollution_zone/gets";
 import type { ReqType } from "@/types/declarations/selectInp";
 import type { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import type { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
@@ -218,6 +219,19 @@ export async function loadTrafficZones(inputValue?: string): Promise<SelectOptio
   if (inputValue) set.name = inputValue;
   try {
     const res = await getTrafficZonesAction({ set, get: { _id: 1, name: 1 } });
+    return res.success && Array.isArray(res.body)
+      ? toOptions(res.body as { name: string }[])
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function loadAirPollutionZones(inputValue?: string): Promise<SelectOption[]> {
+  const set: ReqType["main"]["air_pollution_zone"]["gets"]["set"] = { page: 1, limit: 20 };
+  if (inputValue) set.name = inputValue;
+  try {
+    const res = await getAirPollutionZonesAction({ set, get: { _id: 1, name: 1 } });
     return res.success && Array.isArray(res.body)
       ? toOptions(res.body as { name: string }[])
       : [];

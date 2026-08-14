@@ -126,6 +126,7 @@ export const accidentSeverityAnalyticsFn: ActFn = async (body) => {
 		road: "road.name",
 		trafficZone: "traffic_zone.name",
 		cityZone: "city_zone.name",
+		airPollutionZone: "air_pollution_zone.name",
 		position: "position.name",
 		rulingType: "ruling_type.name",
 		lightStatus: "light_status.name",

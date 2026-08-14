@@ -47,6 +47,7 @@ export const collisionAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())),
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())), // e.g., Fatal, Injury
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

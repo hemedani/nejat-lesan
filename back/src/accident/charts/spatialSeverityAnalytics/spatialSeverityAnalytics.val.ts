@@ -50,6 +50,7 @@ export const spatialSeverityAnalyticsValidator = () => {
 			road: optional(array(string())),
 			trafficZone: optional(array(string())),
 			cityZone: optional(array(string())), // ← spatial unit for this chart
+			airPollutionZone: optional(array(string())),
 			accidentType: optional(array(string())),
 			position: optional(array(string())),
 			rulingType: optional(array(string())),

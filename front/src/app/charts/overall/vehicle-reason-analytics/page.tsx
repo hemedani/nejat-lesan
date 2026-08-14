@@ -111,6 +111,8 @@ const VehicleReasonAnalyticsPage = () => {
       if (includeFilter("road")) filterPayload.road = filters.road || [];
       if (includeFilter("trafficZone")) filterPayload.trafficZone = filters.trafficZone || [];
       if (includeFilter("cityZone")) filterPayload.cityZone = filters.cityZone || [];
+      if (includeFilter("airPollutionZone"))
+        filterPayload.airPollutionZone = filters.airPollutionZone || [];
       if (includeFilter("accidentType")) filterPayload.accidentType = filters.accidentType || [];
       if (includeFilter("position")) filterPayload.position = filters.position || [];
       if (includeFilter("rulingType")) filterPayload.rulingType = filters.rulingType || [];
