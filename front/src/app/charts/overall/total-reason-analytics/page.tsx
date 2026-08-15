@@ -10,6 +10,7 @@ import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import { downloadFullChartData } from "@/utils/exportChartData";
 
 // Backend response interface for total reason analytics
@@ -433,6 +434,17 @@ const TotalReasonAnalyticsPage = () => {
                   - مجموع: {formatNumber(chartData.reduce((sum, item) => sum + item.count, 0))} مورد
                 </p>
               </div>
+            )}
+
+            {/* Unknown Data Indicator */}
+            {chartData && !isLoading && (
+              <UnknownDataIndicator
+                items={chartData}
+                title="هشدار: علل نامشخص تصادفات"
+                description={`از مجموع ${formatNumber(
+                  chartData.reduce((sum, item) => sum + item.count, 0),
+                )} مورد، بخشی بدون علت مشخص ثبت شده‌اند. این موضوع می‌تواند بر دقت تحلیل علت تامه تأثیر بگذارد.`}
+              />
             )}
 
             {/* Treemap Chart */}

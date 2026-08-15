@@ -10,6 +10,7 @@ import { gets as getEvents } from "@/app/actions/event/gets";
 import { get as getEvent } from "@/app/actions/event/get";
 import EventCollisionComparisonChart from "../../../../components/dashboards/charts/EventCollisionComparisonChart";
 import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useAuth } from "@/context/AuthContext";
@@ -463,6 +464,26 @@ const EventCollisionAnalyticsPage = () => {
                 </svg>
                 <span className="text-red-700">{error}</span>
               </div>
+            </div>
+          )}
+
+          {/* Unknown Data Indicators */}
+          {chartData && !isLoading && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <UnknownDataIndicator
+                items={chartData.eventData.map((d) => ({
+                  name: d.name,
+                  count: d.count ?? d.share,
+                }))}
+                title="هشدار: نوع برخورد نامشخص (رویداد)"
+              />
+              <UnknownDataIndicator
+                items={chartData.nonEventData.map((d) => ({
+                  name: d.name,
+                  count: d.count ?? d.share,
+                }))}
+                title="هشدار: نوع برخورد نامشخص (غیر رویداد)"
+              />
             </div>
           )}
 

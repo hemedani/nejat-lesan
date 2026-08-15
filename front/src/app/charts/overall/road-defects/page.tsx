@@ -8,6 +8,8 @@ import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { roadDefectsAnalytics } from "@/app/actions/accident/roadDefectsAnalytics";
 import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
+import { excludeUnknown } from "@/utils/chartData";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
 
@@ -280,7 +282,7 @@ const RoadDefectsPage = () => {
                     ? ((chartData.defectDistribution.withDefect / totalAccidents) * 100).toFixed(1)
                     : "0.0";
                 const mostCommonDefect =
-                  chartData.defectCounts.length > 0 ? chartData.defectCounts[0].name : "نامشخص";
+                  excludeUnknown(chartData.defectCounts)[0]?.name ?? "نامشخص";
 
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -358,6 +360,17 @@ const RoadDefectsPage = () => {
                   </div>
                 );
               })()}
+
+            {/* Unknown Data Indicator */}
+            {chartData && (
+              <UnknownDataIndicator
+                items={chartData.defectCounts}
+                title="هشدار: نقص راه نامشخص"
+                description={`از مجموع ${formatNumber(
+                  chartData.defectCounts.reduce((sum, item) => sum + item.count, 0),
+                )} نقص ثبت‌شده، بخشی بدون نوع نقص مشخص ثبت شده‌اند. این موضوع می‌تواند بر دقت تحلیل تأثیر بگذارد.`}
+              />
+            )}
 
             {/* Chart Description */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">

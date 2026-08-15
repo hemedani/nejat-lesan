@@ -6,6 +6,7 @@ import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import TemporalTotalReasonChart from "@/components/charts/TemporalTotalReasonChart";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import { temporalTotalReasonAnalytics } from "@/app/actions/accident/temporalTotalReasonAnalytics";
 import { ReqType } from "@/types/declarations/selectInp";
 import { useAuth } from "@/context/AuthContext";
@@ -697,6 +698,17 @@ const TemporalTotalReasonAnalyticsPage = () => {
                   زمانی: {chartData.categories.length} دوره
                 </p>
               </div>
+            )}
+
+            {/* Unknown Data Indicator */}
+            {chartData && !isLoading && !isDemoMode && (
+              <UnknownDataIndicator
+                items={chartData.series.map((s) => ({
+                  name: s.name,
+                  count: s.data.reduce((sum, value) => sum + value, 0),
+                }))}
+                title="هشدار: علت تامه نامشخص"
+              />
             )}
 
             {/* Temporal Chart */}

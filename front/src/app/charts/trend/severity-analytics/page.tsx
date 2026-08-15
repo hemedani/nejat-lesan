@@ -10,6 +10,7 @@ import { gets as getEvents } from "@/app/actions/event/gets";
 import { get as getEvent } from "@/app/actions/event/get";
 import EventSeverityComparisonChart from "@/components/dashboards/charts/EventSeverityComparisonChart";
 import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useAuth } from "@/context/AuthContext";
@@ -517,6 +518,20 @@ const EventSeverityAnalyticsPage = () => {
                 </svg>
                 <span className="text-red-700">{error}</span>
               </div>
+            </div>
+          )}
+
+          {/* Unknown Data Indicators */}
+          {chartData && !isLoading && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <UnknownDataIndicator
+                items={chartData.eventData}
+                title="هشدار: شدت نامشخص (رویداد)"
+              />
+              <UnknownDataIndicator
+                items={chartData.nonEventData}
+                title="هشدار: شدت نامشخص (غیر رویداد)"
+              />
             </div>
           )}
 

@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import TemporalCollisionChart from "@/components/charts/TemporalCollisionChart";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import { temporalCollisionAnalytics } from "@/app/actions/accident/temporalCollisionAnalytics";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
 import { ReqType } from "@/types/declarations/selectInp";
@@ -444,6 +445,16 @@ const TemporalCollisionAnalyticsPage = () => {
 
           {/* Chart */}
           <div className="space-y-6">
+            {chartData && !isLoading && !isDemoMode && (
+              <UnknownDataIndicator
+                items={chartData.series.map((s) => ({
+                  name: s.name,
+                  count: s.data.reduce((sum, value) => sum + value, 0),
+                }))}
+                title="هشدار: نوع برخورد نامشخص"
+              />
+            )}
+
             <TemporalCollisionChart
               data={chartData}
               isLoading={isLoading}

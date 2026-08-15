@@ -4,6 +4,8 @@ import React, { useState, useMemo } from "react";
 import ChartsFilterSidebar, { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
 import { getEnabledFiltersForChartWithPermissions } from "@/utils/chartFilters";
 import AppliedFiltersDisplay from "@/components/dashboards/AppliedFiltersDisplay";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
+import { excludeUnknown } from "@/utils/chartData";
 import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { humanReasonAnalytics } from "@/app/actions/accident/humanReasonAnalytics";
 import HumanReasonTreemapChart from "@/components/charts/HumanReasonTreemapChart";
@@ -434,6 +436,17 @@ const HumanReasonAnalyticsPage = () => {
               </div>
             )}
 
+            {/* Unknown Data Indicator */}
+            {chartData && !isLoading && (
+              <UnknownDataIndicator
+                items={chartData}
+                title="هشدار: عوامل انسانی نامشخص"
+                description={`از مجموع ${formatNumber(
+                  chartData.reduce((sum, item) => sum + item.count, 0),
+                )} مورد، بخشی بدون عامل انسانی مشخص ثبت شده‌اند. این موضوع می‌تواند بر دقت تحلیل تأثیر بگذارد.`}
+              />
+            )}
+
             {/* Treemap Chart */}
             <HumanReasonTreemapChart data={chartData} isLoading={isLoading} />
 
@@ -456,10 +469,16 @@ const HumanReasonAnalyticsPage = () => {
                   </div>
                   <div className="bg-amber-50 p-4 rounded-lg">
                     <div className="text-2xl font-bold text-amber-600">
-                      {chartData[0]?.name || "نامشخص"}
+                      {[...excludeUnknown(chartData)].sort((a, b) => b.count - a.count)[0]?.name ||
+                        "نامشخص"}
                     </div>
                     <div className="text-sm text-amber-800">
-                      عامل اصلی ({formatNumber(chartData[0]?.count)} مورد)
+                      عامل اصلی (
+                      {formatNumber(
+                        [...excludeUnknown(chartData)].sort((a, b) => b.count - a.count)[0]?.count ||
+                          0,
+                      )}{" "}
+                      مورد)
                     </div>
                   </div>
                 </div>

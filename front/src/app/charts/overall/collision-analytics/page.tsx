@@ -8,6 +8,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { collisionAnalytics } from "@/app/actions/accident/collisionAnalytics";
 import CollisionAnalyticsDashboard from "@/components/dashboards/CollisionAnalyticsDashboard";
 import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import { formatNumber } from "@/utils/formatters";
 import { useAuth } from "@/context/AuthContext";
 
@@ -275,6 +276,14 @@ const CollisionAnalyticsPage = () => {
                   {formatNumber(collisionData.otherTypesChart.length)} نوع دیگر
                 </p>
               </div>
+            )}
+
+            {/* Unknown Data Indicator */}
+            {collisionData && !isLoading && (
+              <UnknownDataIndicator
+                items={collisionData.mainChart}
+                title="هشدار: نوع برخورد نامشخص"
+              />
             )}
 
             {/* Collision Analytics Dashboard */}

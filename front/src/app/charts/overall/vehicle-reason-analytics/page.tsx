@@ -8,6 +8,8 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 import { vehicleReasonAnalytics } from "@/app/actions/accident/vehicleReasonAnalytics";
 import VehicleReasonDashboard from "@/components/dashboards/VehicleReasonDashboard";
 import DownloadCSVButton from "@/components/atoms/DownloadCSVButton";
+import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
+import { excludeUnknownCategories } from "@/utils/chartData";
 import { ReqType } from "@/types/declarations/selectInp";
 import { useAuth } from "@/context/AuthContext";
 
@@ -449,10 +451,12 @@ const VehicleReasonAnalyticsPage = () => {
                   chartData.pieChart.find((item) => item.name === "دارای عامل")?.count || 0;
                 const faultPercentage =
                   totalVehicles > 0 ? ((vehiclesWithFault / totalVehicles) * 100).toFixed(1) : "0";
+                const filteredBar = excludeUnknownCategories(
+                  chartData.barChart.categories,
+                  chartData.barChart.series,
+                );
                 const mostCommonFault =
-                  chartData.barChart.categories.length > 0
-                    ? chartData.barChart.categories[0]
-                    : "نامشخص";
+                  filteredBar.categories.length > 0 ? filteredBar.categories[0] : "نامشخص";
 
                 return (
                   <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
@@ -473,6 +477,20 @@ const VehicleReasonAnalyticsPage = () => {
                   </div>
                 );
               })()}
+
+            {/* Unknown Data Indicator */}
+            {chartData && !isLoading && !isDemoMode && (
+              <UnknownDataIndicator
+                items={chartData.barChart.categories.map((cat, i) => ({
+                  name: cat,
+                  count: chartData.barChart.series.reduce(
+                    (sum, s) => sum + (s.data[i] ?? 0),
+                    0,
+                  ),
+                }))}
+                title="هشدار: عامل فنی وسیله نقلیه نامشخص"
+              />
+            )}
 
             {/* Vehicle Reason Dashboard */}
             <VehicleReasonDashboard data={chartData} isLoading={isLoading} />
