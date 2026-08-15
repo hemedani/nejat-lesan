@@ -4,6 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { format } from "date-fns-jalali";
+import { excludeUnknown } from "@/utils/chartData";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -142,8 +143,8 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
   }
 
   // Calculate percentages for both datasets
-  const eventAnalysis = calculatePercentages(data.eventData || []);
-  const nonEventAnalysis = calculatePercentages(data.nonEventData || []);
+  const eventAnalysis = calculatePercentages(excludeUnknown(data.eventData || []));
+  const nonEventAnalysis = calculatePercentages(excludeUnknown(data.nonEventData || []));
 
   // Chart configuration for event data
   const eventChartOptions: ApexOptions = {

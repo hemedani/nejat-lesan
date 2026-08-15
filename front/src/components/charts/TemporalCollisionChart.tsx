@@ -2,6 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { UNKNOWN_LABEL } from "@/utils/chartData";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -100,6 +101,8 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
       </div>
     );
   }
+
+  const filteredSeries = data.series.filter((series) => series.name !== UNKNOWN_LABEL);
 
   // Chart configuration
   const chartOptions = {
@@ -266,7 +269,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
       <div className="w-full">
         <Chart
           options={chartOptions}
-          series={data.series}
+          series={filteredSeries}
           type="line"
           height={400}
         />

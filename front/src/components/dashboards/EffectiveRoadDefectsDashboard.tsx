@@ -4,6 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { formatNumber } from "@/utils/formatters";
+import { excludeUnknown } from "@/utils/chartData";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -69,8 +70,10 @@ const EffectiveRoadDefectsDashboard: React.FC<DashboardProps> = ({ data, isLoadi
     labels: ["دارای نقص مؤثر راه", "فاقد نقص مؤثر راه"],
   };
 
+  const filteredDefectCounts = excludeUnknown(data.defectCounts);
+
   // Sort defect counts data: descending order but 'سایر موارد' always last
-  const sortedDefectCounts = data.defectCounts
+  const sortedDefectCounts = filteredDefectCounts
     .filter((item) => item.count > 0) // Remove zero values
     .filter((item) => item.name !== "سایر موارد")
     .sort((a, b) => b.count - a.count);
@@ -329,7 +332,7 @@ const EffectiveRoadDefectsDashboard: React.FC<DashboardProps> = ({ data, isLoadi
             <div>
               <p className="text-sm font-medium text-gray-600">شایع‌ترین نقص</p>
               <p className="text-lg font-bold text-blue-600">
-                {data.defectCounts.length > 0 ? data.defectCounts[0].name : "نامشخص"}
+                {filteredDefectCounts.length > 0 ? filteredDefectCounts[0].name : "نامشخص"}
               </p>
             </div>
             <div className="bg-blue-100 p-3 rounded-full">

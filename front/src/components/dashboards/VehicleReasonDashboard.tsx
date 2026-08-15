@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { excludeUnknown, excludeUnknownCategories } from '@/utils/chartData'
 import VehicleReasonPieChart from '@/components/charts/VehicleReasonPieChart'
 import VehicleReasonBarChart from '@/components/charts/VehicleReasonBarChart'
 
@@ -100,6 +101,9 @@ const VehicleReasonDashboard: React.FC<VehicleReasonDashboardProps> = ({
     )
   }
 
+  const filteredPieChart = excludeUnknown(data.pieChart)
+  const filteredBarChart = excludeUnknownCategories(data.barChart.categories, data.barChart.series)
+
   return (
     <div className="space-y-6">
       {/* Main Charts Grid */}
@@ -107,7 +111,7 @@ const VehicleReasonDashboard: React.FC<VehicleReasonDashboardProps> = ({
         {/* Pie Chart - Vehicle Distribution */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <VehicleReasonPieChart
-            data={data.pieChart}
+            data={filteredPieChart}
             isLoading={false}
           />
         </div>
@@ -115,7 +119,7 @@ const VehicleReasonDashboard: React.FC<VehicleReasonDashboardProps> = ({
         {/* Bar Chart - Vehicle Reasons */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <VehicleReasonBarChart
-            data={data.barChart}
+            data={filteredBarChart}
             isLoading={false}
           />
         </div>

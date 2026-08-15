@@ -4,6 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { formatNumber } from "@/utils/formatters";
+import { excludeUnknown } from "@/utils/chartData";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -186,7 +187,8 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
     ],
   };
 
-  const series = data ? transformDataForTreemap(data) : [];
+  const filteredData = excludeUnknown(data);
+  const series = filteredData.length > 0 ? transformDataForTreemap(filteredData) : [];
 
   // Loading state
   if (isLoading) {
@@ -219,7 +221,7 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
   }
 
   // Empty data state
-  if (!data || data.length === 0) {
+  if (!data || data.length === 0 || filteredData.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="text-center py-12">
@@ -252,11 +254,11 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <span className="text-sm font-medium text-gray-600">
-              {formatNumber(data.length)} عامل انسانی برتر شناسایی شده
+              {formatNumber(filteredData.length)} عامل انسانی برتر شناسایی شده
             </span>
           </div>
           <div className="text-sm text-gray-500">
-            مجموع: {formatNumber(data.reduce((sum, item) => sum + item.count, 0))} مورد
+            مجموع: {formatNumber(filteredData.reduce((sum, item) => sum + item.count, 0))} مورد
           </div>
         </div>
         <div className="text-xs text-gray-500">
@@ -274,7 +276,7 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
         <div className="p-4 bg-blue-50 rounded-lg">
           <h4 className="text-sm font-medium text-blue-800 mb-3">همه علل (به ترتیب فراوانی)</h4>
           <div className="space-y-1.5 max-h-80 overflow-y-auto">
-            {[...data]
+            {[...filteredData]
               .sort((a, b) => b.count - a.count)
               .map((item, index) => (
                 <div

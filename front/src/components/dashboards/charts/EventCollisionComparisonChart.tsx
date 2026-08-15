@@ -3,6 +3,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import { excludeUnknown } from "@/utils/chartData";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -97,8 +98,8 @@ const EventCollisionComparisonChart: React.FC<ChartProps> = ({
     );
   }
 
-  const eventData = data.eventData || [];
-  const nonEventData = data.nonEventData || [];
+  const eventData = excludeUnknown(data.eventData || []);
+  const nonEventData = excludeUnknown(data.nonEventData || []);
 
   // Compute totals — count if available, otherwise sum of shares
   const hasEventCounts = eventData.some((d) => d.count !== undefined);

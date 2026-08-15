@@ -2,6 +2,7 @@
 
 import React from "react";
 import { formatNumber } from "@/utils/formatters";
+import { excludeUnknown } from "@/utils/chartData";
 import MainCollisionChart from "./charts/MainCollisionChart";
 import SingleVehicleChart from "./charts/SingleVehicleChart";
 import OtherCollisionTypesChart from "./charts/OtherCollisionTypesChart";
@@ -74,9 +75,13 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
   }
 
   // Calculate summary statistics for the three categories
-  const totalMainCollisions = data.mainChart.reduce((sum, item) => sum + item.count, 0);
-  const totalSingleVehicle = data.singleVehicleChart.reduce((sum, item) => sum + item.count, 0);
-  const totalOtherTypes = data.otherTypesChart.reduce((sum, item) => sum + item.count, 0);
+  const filteredMainChart = excludeUnknown(data.mainChart);
+  const filteredSingleVehicleChart = excludeUnknown(data.singleVehicleChart);
+  const filteredOtherTypesChart = excludeUnknown(data.otherTypesChart);
+
+  const totalMainCollisions = filteredMainChart.reduce((sum, item) => sum + item.count, 0);
+  const totalSingleVehicle = filteredSingleVehicleChart.reduce((sum, item) => sum + item.count, 0);
+  const totalOtherTypes = filteredOtherTypesChart.reduce((sum, item) => sum + item.count, 0);
 
   return (
     <div className="space-y-6">
@@ -141,17 +146,17 @@ const CollisionAnalyticsDashboard: React.FC<DashboardProps> = ({ data, isLoading
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Main Collision Types Chart */}
         <div className="lg:col-span-1">
-          <MainCollisionChart data={data.mainChart} isLoading={false} />
+          <MainCollisionChart data={filteredMainChart} isLoading={false} />
         </div>
 
         {/* Single Vehicle Chart */}
         <div className="lg:col-span-1">
-          <SingleVehicleChart data={data.singleVehicleChart} isLoading={false} />
+          <SingleVehicleChart data={filteredSingleVehicleChart} isLoading={false} />
         </div>
 
         {/* Other Collision Types Chart - Full width */}
         <div className="lg:col-span-2">
-          <OtherCollisionTypesChart data={data.otherTypesChart} isLoading={false} />
+          <OtherCollisionTypesChart data={filteredOtherTypesChart} isLoading={false} />
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import { UNKNOWN_LABEL } from "@/utils/chartData";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -31,7 +32,9 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
   // Filter series based on activeReasons
   const visibleSeries = useMemo(() => {
     if (!data || !data.series) return [];
-    return data.series.filter((series) => activeReasons.includes(series.name));
+    return data.series.filter(
+      (series) => series.name !== UNKNOWN_LABEL && activeReasons.includes(series.name),
+    );
   }, [data, activeReasons]);
 
   // Chart configuration
