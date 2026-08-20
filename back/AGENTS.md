@@ -62,7 +62,7 @@ back/
 - Deno 1.28+
 - Docker (for containerized deployment)
 - MongoDB
-- Redis
+- Redis (optional — only used by the `seed` act for caching; the app starts without it)
 
 ### Development Setup
 
@@ -147,11 +147,15 @@ The system is built on the LESEN framework with:
 
 ## 🛡️ Security Features
 
-- JWT-based authentication
+- JWT-based authentication (90-day expiry), issued by the `login` act
+- Email + bcrypt-hashed password authentication; the old OTP/SMS flow (`loginReq`, `changeMobile`) was removed
+- Passwords are never returned in any projection — `password` is excluded from the model and all responses (requesting it in `get` is rejected as type `never`)
+- `setGhostPassword`: public, one-time Ghost bootstrap act — sets the Ghost's password to `password123` and (if unset) its email to `ghost@nejat.ai`
+- `changeUserPassword`: Ghost-only act that resets any user's password by `userId` + `newPassword`
 - Role-based access control with user levels (Ghost, Manager, Editor, Enterprise)
 - Enterprise level includes additional settings field for limiting user access to provinces, cities, charts, and available filters
 - Input validation using schema definitions
-- National ID validation for Iranian users
+- `national_number` is optional but validated when provided (Iranian national ID)
 - Proper file upload handling and storage
 
 ## 📊 Geographic Capabilities
