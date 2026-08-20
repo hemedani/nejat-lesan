@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 
 interface UserCardProps {
   id: string;
-  first_name: string;
-  last_name: string;
-  father_name: string;
-  mobile: string;
-  gender: "Male" | "Female";
-  national_number: string;
+  first_name?: string;
+  last_name?: string;
+  father_name?: string;
+  mobile?: string;
+  email?: string;
+  gender?: "Male" | "Female";
+  national_number?: string;
   level: "Ghost" | "Manager" | "Editor" | "Enterprise";
   is_verified: boolean;
   summary?: string;
@@ -22,6 +23,7 @@ const UserCard: React.FC<UserCardProps> = ({
   last_name,
   father_name,
   mobile,
+  email,
   gender,
   national_number,
   level,
@@ -44,11 +46,11 @@ const UserCard: React.FC<UserCardProps> = ({
     }
   };
 
-  const getGenderLabel = (gender: string) => {
+  const getGenderLabel = (gender?: string) => {
     return gender === "Male" ? "مرد" : "زن";
   };
 
-  const getGenderColor = (gender: string) => {
+  const getGenderColor = (gender?: string) => {
     return gender === "Male" ? "text-blue-600" : "text-pink-600";
   };
 
@@ -58,13 +60,15 @@ const UserCard: React.FC<UserCardProps> = ({
       <div className="flex items-start gap-4">
         <div className="w-20 h-20 flex-shrink-0">
           <div className="w-full h-full bg-gradient-to-r from-blue-400 to-green-400 flex items-center justify-center rounded-full text-white text-2xl font-semibold shadow-md">
-            {first_name[0]} {last_name[0]}
+            {(first_name?.[0] ?? "")} {(last_name?.[0] ?? "")}
           </div>
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <h2 className="text-xl font-bold text-gray-800">
-              {first_name} {last_name}
+              {first_name && last_name
+                ? `${first_name} ${last_name}`
+                : first_name || last_name || "کاربر"}
             </h2>
             {is_verified && (
               <span className="text-green-500" title="تایید شده">
@@ -78,23 +82,29 @@ const UserCard: React.FC<UserCardProps> = ({
               </span>
             )}
           </div>
-          <p className="text-gray-600 text-sm">فرزند: {father_name}</p>
+          <p className="text-gray-600 text-sm">فرزند: {father_name || "—"}</p>
         </div>
       </div>
 
       {/* Info Grid */}
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div className="bg-gray-50 rounded-lg p-2">
+          <span className="text-gray-500 block text-xs mb-1">ایمیل</span>
+          <span className="text-gray-800 font-medium dir-ltr text-right block break-all">
+            {email || "—"}
+          </span>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-2">
           <span className="text-gray-500 block text-xs mb-1">کد ملی</span>
-          <span className="text-gray-800 font-medium dir-ltr text-right block">{national_number}</span>
+          <span className="text-gray-800 font-medium dir-ltr text-right block">{national_number || "—"}</span>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
           <span className="text-gray-500 block text-xs mb-1">شماره همراه</span>
-          <span className="text-gray-800 font-medium dir-ltr text-right block">{mobile}</span>
+          <span className="text-gray-800 font-medium dir-ltr text-right block">{mobile || "—"}</span>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
           <span className="text-gray-500 block text-xs mb-1">جنسیت</span>
-          <span className={`font-medium ${getGenderColor(gender)}`}>{getGenderLabel(gender)}</span>
+          <span className={`font-medium ${getGenderColor(gender)}`}>{gender ? getGenderLabel(gender) : "—"}</span>
         </div>
         <div className="bg-gray-50 rounded-lg p-2">
           <span className="text-gray-500 block text-xs mb-1">سطح دسترسی</span>

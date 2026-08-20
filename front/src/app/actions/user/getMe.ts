@@ -12,6 +12,7 @@ export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
     last_name: 1,
     gender: 1,
     mobile: 1,
+    email: 1,
     national_number: 1,
     level: 1,
     settings: 1,

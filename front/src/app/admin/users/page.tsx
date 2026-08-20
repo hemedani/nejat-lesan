@@ -23,6 +23,7 @@ const UserDashboard = async ({
     last_name: 1,
     father_name: 1,
     mobile: 1,
+    email: 1,
     gender: 1,
     national_number: 1,
     level: 1,

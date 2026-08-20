@@ -19,6 +19,7 @@ export const getUser = async (_id: string) => {
           last_name: 1,
           father_name: 1,
           mobile: 1,
+          email: 1,
           gender: 1,
           birth_date: 1,
           summary: 1,

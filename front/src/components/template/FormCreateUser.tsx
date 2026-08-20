@@ -33,10 +33,15 @@ export const UserCreateSchema = z
     last_name: z.string().min(1, "نام خانوادگی الزامی است"),
     father_name: z.string().min(1, "نام پدر الزامی است"),
     mobile: z.string().regex(/^[0-9]{10}$/, "شماره تماس باید 10 رقم باشد"),
+    email: z.string().email("فرمت ایمیل معتبر نیست"),
+    password: z.string().min(8, "رمز عبور باید حداقل 8 کاراکتر باشد").max(100, "رمز عبور باید حداکثر 100 کاراکتر باشد"),
     gender: z.enum(["Male", "Female"], { message: "جنسیت الزامی است" }),
     birth_date: z.string().optional(),
     summary: z.string().optional(),
-    national_number: z.string().regex(/^[0-9]{10}$/, "کد ملی باید 10 رقم باشد"),
+    national_number: z
+      .string()
+      .optional()
+      .refine((value) => !value || /^[0-9]{10}$/.test(value), "کد ملی باید 10 رقم باشد"),
     address: z.string().min(1, "آدرس الزامی است"),
     level: z.enum(["Ghost", "Manager", "Editor", "Enterprise"], {
       message: "سطح الزامی است",
@@ -295,6 +300,11 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
         delete backendData.birth_date;
       }
 
+      // national_number is optional on the backend; omit it when empty
+      if (!data.national_number || data.national_number.trim() === "") {
+        delete backendData.national_number;
+      }
+
       // Handle citySettingIds - only include if there are selected cities
       if (!data.citySettingIds || data.citySettingIds.length === 0) {
         delete backendData.citySettingIds;
@@ -530,6 +540,24 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             errMsg={errors.mobile?.message}
             className="w-1/2 p-2"
             placeholder="مثال: 9123456789"
+          />
+          <MyInput
+            label="ایمیل"
+            register={register}
+            name="email"
+            type="email"
+            errMsg={errors.email?.message}
+            className="w-1/2 p-2"
+            placeholder="مثال: user@example.com"
+          />
+          <MyInput
+            label="رمز عبور"
+            register={register}
+            name="password"
+            type="password"
+            errMsg={errors.password?.message}
+            className="w-1/2 p-2"
+            placeholder="حداقل 8 کاراکتر"
           />
           <MyInput
             label="کد ملی"

@@ -35,6 +35,20 @@ export const UpdateUserPureSchema = z
     gender: z.enum(["Male", "Female"]).optional(),
     birth_date: z.string().optional(),
     summary: z.string().optional(),
+    national_number: z.string().optional(),
+    email: z
+      .string()
+      .optional()
+      .refine(
+        (value) => !value || /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value),
+        "فرمت ایمیل معتبر نیست",
+      ),
+    password: z
+      .string()
+      .optional()
+      .refine((value) => !value || (value.length >= 8 && value.length <= 100), {
+        message: "رمز عبور باید بین 8 تا 100 کاراکتر باشد",
+      }),
     address: z.string().optional(),
     level: z.enum(["Ghost", "Manager", "Editor", "Enterprise"]).optional(),
     is_verified: z.boolean().optional(),
@@ -139,6 +153,7 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
       gender: rest.gender,
       birth_date: rest.birth_date ? new Date(rest.birth_date).toISOString().split("T")[0] : "",
       summary: rest.summary,
+      email: rest.email,
       address: rest.address,
       level: rest.level,
       is_verified: rest.is_verified,
@@ -315,6 +330,14 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
       // Convert birth_date from string (form) to Date (backend) if present
       if (birth_date) {
         backendData.birth_date = new Date(birth_date);
+      }
+
+      // Only send email/password when actually provided (optional on the backend)
+      if (!data.email || data.email.trim() === "") {
+        delete backendData.email;
+      }
+      if (!data.password || data.password.trim() === "") {
+        delete backendData.password;
       }
 
       // Handle citySettingIds - only include if there are selected cities
@@ -544,6 +567,24 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
             name="father_name"
             errMsg={errors.father_name?.message}
             className="w-1/2 p-2"
+          />
+          <MyInput
+            label="ایمیل"
+            register={register}
+            name="email"
+            type="email"
+            errMsg={errors.email?.message}
+            className="w-1/2 p-2"
+            placeholder="مثال: user@example.com"
+          />
+          <MyInput
+            label="رمز عبور (تغییر رمز)"
+            register={register}
+            name="password"
+            type="password"
+            errMsg={errors.password?.message}
+            className="w-1/2 p-2"
+            placeholder="خالی بگذارید تا تغییر نکند"
           />
           <MyInput
             label="آدرس"

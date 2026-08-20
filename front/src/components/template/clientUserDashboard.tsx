@@ -14,6 +14,7 @@ interface User {
   last_name: string;
   father_name: string;
   mobile: string;
+  email?: string;
   gender: "Male" | "Female";
   personnel_number: string;
   national_number: string;
@@ -80,6 +81,7 @@ const ClientUserDashboard: React.FC<ClientDashboardProps> = ({ users }) => {
             last_name={user.last_name}
             father_name={user.father_name}
             mobile={user.mobile}
+            email={user.email}
             gender={user.gender}
             national_number={user.national_number}
             level={user.level}
