@@ -2,21 +2,15 @@
 
 import { AppApi } from "@/services/api";
 
-export const loginAction = async ({
-  national_number,
-  code,
-}: {
-  national_number: string;
-  code: string;
-}) => {
+export const loginAction = async ({ email, password }: { email: string; password: string }) => {
   return await AppApi().send({
     service: "main",
     model: "user",
     act: "login",
     details: {
       set: {
-        national_number,
-        code,
+        email,
+        password,
       },
       get: {
         token: 1,
@@ -25,6 +19,7 @@ export const loginAction = async ({
           first_name: 1,
           last_name: 1,
           mobile: 1,
+          email: 1,
           national_number: 1,
           level: 1,
           settings: 1,

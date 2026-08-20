@@ -35,6 +35,7 @@ export interface UserData {
   first_name?: string;
   last_name?: string;
   mobile?: string;
+  email?: string;
   national_number?: string;
   gender?: string;
   level: UserLevel;
