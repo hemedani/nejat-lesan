@@ -4,7 +4,14 @@ import { throwError } from "@lib";
 
 export const tempUserFn: ActFn = async (body) => {
 	const {
-		set: { first_name, last_name, father_name, mobile, national_number },
+		set: {
+			first_name,
+			last_name,
+			father_name,
+			mobile,
+			email,
+			national_number,
+		},
 		get,
 	} = body.details;
 
@@ -21,11 +28,17 @@ export const tempUserFn: ActFn = async (body) => {
 			father_name,
 			national_number,
 			mobile,
+			email,
 			address: "همدان - اعتمادیه",
 			gender: "Male",
 			birth_date: new Date(),
 			level: "Ghost",
 			is_verified: true,
+			settings: {
+				cities: [],
+				provinces: [],
+				availableCharts: {},
+			},
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		},

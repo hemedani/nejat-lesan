@@ -6,10 +6,17 @@ import {
 	object,
 	objectIdValidation,
 	optional,
+	size,
 	string,
 } from "@deps";
 import { selectStruct } from "../../../mod.ts";
-import { availableCharts, user_genders, user_level_emums } from "@model";
+import {
+	availableCharts,
+	emailPattern,
+	is_valid_national_number_struct,
+	user_genders,
+	user_level_emums,
+} from "@model";
 
 export const updateUserValidator = () => {
 	return object({
@@ -23,6 +30,9 @@ export const updateUserValidator = () => {
 				coerce(date(), string(), (value) => new Date(value)),
 			),
 			summary: optional(string()),
+			email: optional(emailPattern),
+			password: optional(size(string(), 8, 100)),
+			national_number: optional(is_valid_national_number_struct),
 			address: optional(string()),
 
 			level: optional(user_level_emums),

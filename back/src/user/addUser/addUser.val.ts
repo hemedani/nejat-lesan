@@ -7,11 +7,13 @@ import {
 	object,
 	objectIdValidation,
 	optional,
+	size,
 	string,
 } from "@deps";
 import { selectStruct } from "../../../mod.ts";
 import {
 	availableCharts,
+	emailPattern,
 	is_valid_national_number_struct,
 	mobile_pattern,
 	user_genders,
@@ -30,9 +32,11 @@ export const addUserValidator = () => {
 				coerce(date(), string(), (value) => new Date(value)),
 			),
 			summary: optional(string()),
+			email: emailPattern,
+			password: size(string(), 8, 100),
 
 			// شماره ملی
-			national_number: is_valid_national_number_struct,
+			national_number: optional(is_valid_national_number_struct),
 			address: string(),
 
 			level: user_level_emums,

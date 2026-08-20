@@ -1,10 +1,10 @@
-import { type ActFn, jwt } from "@deps";
+import { type ActFn, compare, jwt } from "@deps";
 import { jwtTokenKey, throwError } from "@lib";
-import { myRedis, user } from "../../../mod.ts";
+import { user } from "../../../mod.ts";
 
 export const loginUserFn: ActFn = async (body) => {
 	const {
-		set: { national_number, code },
+		set: { email, password },
 		get,
 	} = body.details;
 
@@ -13,8 +13,9 @@ export const loginUserFn: ActFn = async (body) => {
 			{ alg: "HS512", typ: "JWT" },
 			{
 				_id: user._id,
-				national_number: user.national_number,
+				email: user.email,
 				mobile: user.mobile,
+				level: user.level,
 				exp: jwt.getNumericDate(60 * 60 * 24 * 30 * 3),
 			},
 			jwtTokenKey,
@@ -25,19 +26,30 @@ export const loginUserFn: ActFn = async (body) => {
 		};
 	};
 
-	const checkCode = async (user: any) => {
-		const redisCode = await myRedis.get(user.national_number);
-
-		return code.toString() === redisCode
-			? await createToken(user)
-			: throwError("کد وارد شده صحیح نیست");
-	};
+	get.user.email = 1;
+	get.user.password = 1;
+	get.user.mobile = 1;
+	get.user.level = 1;
 
 	const foundedUser = await user.findOne({
-		filters: { national_number },
+		filters: { email },
 		projection: get.user,
 	});
-	return foundedUser
-		? await checkCode(foundedUser)
-		: throwError(" چنین کاربری پیدا نشد");
+
+	if (!foundedUser) {
+		return throwError("چنین کاربری پیدا نشد");
+	}
+
+	if (!foundedUser.password) {
+		return throwError("رمز عبور برای این کاربر تنظیم نشده است");
+	}
+
+	const passIsCorrect = await compare(password, foundedUser.password);
+
+	if (passIsCorrect) {
+		delete foundedUser.password;
+		return await createToken(foundedUser);
+	} else {
+		return throwError("رمز عبور وارد شده صحیح نیست");
+	}
 };

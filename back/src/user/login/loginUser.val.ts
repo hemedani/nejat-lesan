@@ -1,12 +1,12 @@
 import { enums, object, optional, size, string } from "@deps";
 import { selectStruct } from "../../../mod.ts";
-import { is_valid_national_number_struct } from "@model";
+import { emailPattern } from "@model";
 
 export const loginUserValidator = () => {
 	return object({
 		set: object({
-			national_number: is_valid_national_number_struct,
-			code: size(string(), 5),
+			email: emailPattern,
+			password: size(string(), 8, 100),
 		}),
 		get: optional(
 			object({

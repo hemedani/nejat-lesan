@@ -1,11 +1,11 @@
 import { addUserSetup } from "./addUser/mod.ts";
-import { changeMobileSetup } from "./changeMobile/mod.ts";
+import { changeUserPasswordSetup } from "./changeUserPassword/mod.ts";
 import { getMeSetup } from "./getMe/mod.ts";
 import { getUserSetup } from "./getUser/mod.ts";
 import { loginUserSetup } from "./login/mod.ts";
-import { loginReqUserSetup } from "./loginReq/mod.ts";
 import { registerUserSetup } from "./register/mod.ts";
 import { tempUserSetup } from "./tempUser/mod.ts";
+import { setGhostPasswordSetup } from "./setGhostPassword/mod.ts";
 import { updateUserSetup } from "./updateUser/mod.ts";
 import { getUsersSetup } from "./getUsers/mod.ts";
 import { removeUserSetup } from "./removeUser/mod.ts";
@@ -19,11 +19,11 @@ export const userSetup = () => {
 	getMeSetup();
 	getUserSetup();
 	loginUserSetup();
-	loginReqUserSetup();
 	tempUserSetup();
+	setGhostPasswordSetup();
 	updateUserSetup();
 	registerUserSetup();
-	changeMobileSetup();
+	changeUserPasswordSetup();
 	getUsersSetup();
 	removeUserSetup();
 	countUsersSetup();

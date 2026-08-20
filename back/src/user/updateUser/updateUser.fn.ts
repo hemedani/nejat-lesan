@@ -1,4 +1,4 @@
-import { type ActFn, Infer, object, ObjectId } from "@deps";
+import { type ActFn, hash, Infer, object, ObjectId } from "@deps";
 import { city, coreApp, province, user } from "../../../mod.ts";
 import { user_pure } from "../../../models/user.ts";
 
@@ -12,6 +12,9 @@ export const updateUserFn: ActFn = async (body) => {
 			gender,
 			birth_date,
 			summary,
+			email,
+			password,
+			national_number,
 			address,
 			level,
 			is_verified,
@@ -31,6 +34,9 @@ export const updateUserFn: ActFn = async (body) => {
 		...(gender && { gender }),
 		...(birth_date && { birth_date }),
 		...(summary && { summary }),
+		...(email !== undefined && { email }),
+		...(password !== undefined && { password: await hash(password) }),
+		...(national_number !== undefined && { national_number }),
 		...(address && { address }),
 		...(level && { level }),
 		...(is_verified !== undefined && { is_verified }),

@@ -5,3 +5,4 @@ export * from "https://raw.githubusercontent.com/MiaadTeam/lesan/refs/tags/v0.1.
 export * as jwt from "https://deno.land/x/djwt@v2.8/mod.ts";
 export * as redis from "https://deno.land/x/redis/mod.ts";
 export { JsonParseStream } from "https://deno.land/std@0.224.0/json/mod.ts";
+export { compare, hash } from "jsr:@da/bcrypt@^1.0.1";

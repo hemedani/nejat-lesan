@@ -1,52 +1,74 @@
-import type { ActFn, Document, WithId } from "@deps";
-import { myRedis, user } from "../../../mod.ts";
+import { type ActFn, hash } from "@deps";
+import { user } from "../../../mod.ts";
 import { throwError } from "@lib";
-import { generatingLoginRequestCode } from "../loginReq/loginReqUser.fn.ts";
 
 export const registerUserFn: ActFn = async (body) => {
 	const {
-		set: { mobile, national_number },
+		set: {
+			first_name,
+			last_name,
+			father_name,
+			mobile,
+			gender,
+			birth_date,
+			email,
+			password,
+			national_number,
+		},
 		get,
 	} = body.details;
 
-	const foundedUserWithNationalNumber = await user.findOne({
-		filters: { national_number },
+	const foundedUserWithEmail = await user.findOne({
+		filters: { email },
+		projection: { _id: 1 },
 	});
 
-	if (foundedUserWithNationalNumber) {
-		return throwError("این شماره ملی قبلا ثبت نام شده است");
+	if (foundedUserWithEmail) {
+		return throwError("این ایمیل قبلا ثبت نام شده است");
+	}
+
+	if (national_number) {
+		const foundedUserWithNationalNumber = await user.findOne({
+			filters: { national_number },
+			projection: { _id: 1 },
+		});
+
+		if (foundedUserWithNationalNumber) {
+			return throwError("این شماره ملی قبلا ثبت نام شده است");
+		}
 	}
 
 	const foundedUserWithMobileNumber = await user.findOne({
 		filters: { mobile },
+		projection: { _id: 1 },
 	});
 
 	if (foundedUserWithMobileNumber) {
 		return throwError("این شماره موبایل قبلا ثبت نام شده است");
 	}
 
-	const generatedCode = Deno.env.get("ENV") === "development"
-		? "11111"
-		: await generatingLoginRequestCode();
-
-	const returnUser = async (user: WithId<Document>) => {
-		await myRedis.set(user.national_number, generatedCode, { ex: 100 });
-		const mobile = user.mobile as string;
-		user.mobile = `${mobile.slice(0, 3)}****${mobile.slice(-3)}`;
-		return user;
-	};
-
 	const registeredUser = await user.insertOne({
 		doc: {
+			first_name,
+			last_name,
+			father_name,
 			mobile,
+			gender,
+			birth_date: birth_date ? new Date(birth_date as string) : undefined,
+			email,
+			password: await hash(password),
 			national_number,
+			address: "",
+			level: "Editor",
 			is_verified: false,
-			level: "Driver",
+			settings: {
+				cities: [],
+				provinces: [],
+				availableCharts: {},
+			},
 		},
 		projection: get,
 	});
 
-	return registeredUser
-		? await returnUser(registeredUser)
-		: throwError("کاربر ایجاد نشد");
+	return registeredUser ? registeredUser : throwError("کاربر ایجاد نشد");
 };

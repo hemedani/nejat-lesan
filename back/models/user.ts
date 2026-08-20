@@ -97,6 +97,11 @@ export const mobile_pattern = pattern(
 	/(\+98|0|98|0098)?([ ]|-|[()]){0,2}9[0-9]([ ]|-|[()]){0,2}(?:[0-9]([ ]|-|[()]){0,2}){8}/,
 );
 
+export const emailPattern = pattern(
+	string(),
+	/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+);
+
 export const is_valid_national_number_struct = refine(
 	union([string(), number()]),
 	"national_number",
@@ -127,9 +132,11 @@ export const user_pure = {
 	gender: user_genders,
 	birth_date: optional(coerce(date(), string(), (value) => new Date(value))),
 	summary: optional(string()),
+	email: emailPattern,
+	password: optional(string()),
 
 	// شماره ملی
-	national_number: is_valid_national_number_struct,
+	national_number: optional(is_valid_national_number_struct),
 	address: string(),
 
 	level: user_level_emums,
@@ -156,6 +163,7 @@ export const user_excludes = [
 	"updatedAt",
 	"settings",
 	"birth_date",
+	"password",
 ];
 
 export const user_relations = {
@@ -176,7 +184,8 @@ export const user_relations = {
 export const users = () =>
 	coreApp.odm.newModel("user", user_pure, user_relations, {
 		createIndex: {
-			indexSpec: { "national_number": 1 },
-			options: { unique: true },
+			indexSpec: { "email": 1 },
+			options: { unique: true, sparse: true },
 		},
+		excludes: ["password"],
 	});

@@ -1,4 +1,4 @@
-import { type ActFn, ObjectId, type TInsertRelations } from "@deps";
+import { type ActFn, hash, ObjectId, type TInsertRelations } from "@deps";
 import { city, coreApp, province, user } from "../../../mod.ts";
 import type { user_relations } from "@model";
 
@@ -11,6 +11,7 @@ export const addUserFn: ActFn = async (body) => {
 		citySettingIds,
 		provinceSettingIds,
 		availableCharts,
+		password,
 		...rest
 	} = set;
 
@@ -93,6 +94,7 @@ export const addUserFn: ActFn = async (body) => {
 	const addedUser = await user.insertOne({
 		doc: {
 			...rest,
+			password: password ? await hash(password as string) : undefined,
 		},
 		relations,
 		projection: get,
