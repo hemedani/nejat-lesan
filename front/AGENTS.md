@@ -505,3 +505,34 @@ You may still:
 
 **Installation Required**:
 Run `pnpm install` to install the new dependencies before testing.
+
+### Email/Password Auth Migration
+
+**Date**: Current
+**Component**: Login flow, user management
+**Scope**: Replace OTP (national_number + SMS code) login with email + password authentication
+
+**Changes Made**:
+
+- `loginAction` (`src/app/actions/login.ts`) now takes `{ email, password }` (was `{ national_number, code }`)
+- Deleted `src/app/actions/loginReq.ts` (backend `loginReq` act removed) and the `registration_step` cookie logic
+- Deleted the two-step OTP UI: `LoginStepOne.tsx`, `LoginStepTwo.tsx`, and the now-unused `useAutoReturnTimer.ts` hook
+- Added server actions (wired only, no UI yet): `setGhostPassword.ts` (public, `set: {}`, no token) and `changeUserPassword.ts` (Ghost-only reset)
+- Added `email` to `UserData` in `src/types/auth.ts` and to the `getMe` / `getUser` default projections
+- Created `LoginForm.tsx` single-step email + password form (landing-page design system)
+- Redesigned `/login` page to match the landing page style (dark gradient, glass card, glow effects)
+- `FormCreateUser.tsx`: added required `email` + `password` (8–100) fields; `national_number` is now optional (omitted when empty)
+- `EditUserPures.tsx`: added optional `email` / `password` inputs; empty values are omitted on submit
+- Admin user list (`/admin/users`) now fetches and displays `email`; `UserCard` is resilient to missing fields (fallback to `—` / `کاربر`)
+- Deleted dead code `FormCreateUserUpdated.tsx` (not imported anywhere; broke compilation with the new `addUser` type requiring email/password)
+
+**Security Notes**:
+
+- `password` is never included in any `get` projection (TypeScript type is `never`)
+- Login errors are mapped from Persian backend messages to friendly UI text in `LoginForm.tsx`
+
+**Testing**:
+
+- Login with valid email + password → `{ success: true, body: { token, user } }`
+- `setGhostPassword` sets the Ghost password to `password123` (one-time, public)
+- `changeUserPassword` works only for Ghost-level users
