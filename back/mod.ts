@@ -44,10 +44,19 @@ import { functionsSetup } from "./src/mod.ts";
 const MONGO_URI = Deno.env.get("MONGO_URI") || "mongodb://127.0.0.1:27017/";
 const REDIS_URI = Deno.env.get("REDIS_URI");
 
-export const myRedis = await redis.connect({
-	hostname: REDIS_URI ? "redis" : "127.0.0.1",
-	port: 6379,
-});
+type RedisClient = Awaited<ReturnType<typeof redis.connect>>;
+
+let redisClient: RedisClient | undefined;
+
+export const getRedis = async (): Promise<RedisClient> => {
+	if (!redisClient) {
+		redisClient = await redis.connect({
+			hostname: REDIS_URI ? "redis" : "127.0.0.1",
+			port: 6379,
+		});
+	}
+	return redisClient;
+};
 
 export const coreApp = lesan();
 const client = await new MongoClient(MONGO_URI).connect();

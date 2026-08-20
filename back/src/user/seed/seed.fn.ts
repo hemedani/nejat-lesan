@@ -8,7 +8,7 @@ import {
 	type WithId,
 } from "@deps";
 import { MyContext } from "../../../utils/context.ts";
-import { myRedis } from "../../../mod.ts";
+import { getRedis } from "../../../mod.ts";
 import {
 	accident,
 	air_status,
@@ -150,7 +150,7 @@ export const seedFn: ActFn = async (body) => {
 	// Check Redis connection health
 	const checkRedisConnection = async (): Promise<boolean> => {
 		try {
-			await myRedis.ping();
+			await (await getRedis()).ping();
 			return true;
 		} catch (error) {
 			console.warn("Redis connection issue detected:", error);
@@ -239,7 +239,7 @@ export const seedFn: ActFn = async (body) => {
 
 		// Check Redis cache
 		const redisResult = await safeRedisOperation(
-			async () => await myRedis.get(redisCacheKey),
+			async () => await (await getRedis()).get(redisCacheKey),
 			null,
 			`cache read for ${cacheKey}`,
 		);
@@ -295,7 +295,7 @@ export const seedFn: ActFn = async (body) => {
 
 			await safeRedisOperation(
 				async () =>
-					await myRedis.set(
+					await (await getRedis()).set(
 						redisCacheKey,
 						JSON.stringify({
 							_id: found._id.toString(),
@@ -314,7 +314,7 @@ export const seedFn: ActFn = async (body) => {
 					// Try to acquire lock with 5 second expiration (reduced for faster recovery)
 					const lockAcquired = await safeRedisOperation(
 						async () =>
-							await myRedis.set(redisLockKey, "1", {
+							await (await getRedis()).set(redisLockKey, "1", {
 								nx: true,
 								ex: 5,
 							}),
@@ -346,7 +346,7 @@ export const seedFn: ActFn = async (body) => {
 								// Someone else created it, use their result
 								relationCache.set(cacheKey, doubleCheckFound);
 								try {
-									await myRedis.set(
+									await (await getRedis()).set(
 										redisCacheKey,
 										JSON.stringify({
 											_id: doubleCheckFound._id
@@ -390,7 +390,7 @@ export const seedFn: ActFn = async (body) => {
 
 								await safeRedisOperation(
 									async () =>
-										await myRedis.set(
+										await (await getRedis()).set(
 											redisCacheKey,
 											JSON.stringify({
 												_id: created._id.toString(),
@@ -410,7 +410,8 @@ export const seedFn: ActFn = async (body) => {
 						} finally {
 							// Always release the lock
 							await safeRedisOperation(
-								async () => await myRedis.del(redisLockKey),
+								async () =>
+									await (await getRedis()).del(redisLockKey),
 								null,
 								"lock release",
 							);
@@ -535,7 +536,7 @@ export const seedFn: ActFn = async (body) => {
 
 					const success = await safeRedisOperation(
 						async () => {
-							await myRedis.set(
+							await (await getRedis()).set(
 								redisCacheKey,
 								JSON.stringify({
 									_id: record._id.toString(),
@@ -1522,14 +1523,14 @@ export const seedFn: ActFn = async (body) => {
 	const cleanupCache = async () => {
 		console.log("Cleaning up Redis cache entries...");
 		const keys = await safeRedisOperation(
-			async () => await myRedis.keys("seed_cache:*"),
+			async () => await (await getRedis()).keys("seed_cache:*"),
 			[],
 			"cache cleanup key lookup",
 		);
 
 		if (keys.length > 0) {
 			await safeRedisOperation(
-				async () => await myRedis.del(...keys),
+				async () => await (await getRedis()).del(...keys),
 				null,
 				"cache cleanup deletion",
 			);
@@ -1538,14 +1539,14 @@ export const seedFn: ActFn = async (body) => {
 
 		// Also cleanup any remaining lock keys
 		const lockKeys = await safeRedisOperation(
-			async () => await myRedis.keys("seed_lock:*"),
+			async () => await (await getRedis()).keys("seed_lock:*"),
 			[],
 			"lock cleanup key lookup",
 		);
 
 		if (lockKeys.length > 0) {
 			await safeRedisOperation(
-				async () => await myRedis.del(...lockKeys),
+				async () => await (await getRedis()).del(...lockKeys),
 				null,
 				"lock cleanup deletion",
 			);
