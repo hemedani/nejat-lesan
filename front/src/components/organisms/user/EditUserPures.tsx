@@ -50,7 +50,7 @@ export const UpdateUserPureSchema = z
         message: "رمز عبور باید بین 8 تا 100 کاراکتر باشد",
       }),
     address: z.string().optional(),
-    level: z.enum(["Ghost", "Manager", "Editor", "Enterprise"]).optional(),
+    level: z.enum(["Ghost", "Manager", "Editor", "Enterprise", "Patrol"]).optional(),
     is_verified: z.boolean().optional(),
     nationalCard: z.string().optional(),
     avatar: z.string().optional(),
@@ -635,6 +635,7 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
               { value: "Manager", label: "مدیر" },
               { value: "Editor", label: "ویرایشگر" },
               { value: "Enterprise", label: "سازمانی" },
+              { value: "Patrol", label: "مأمور گشت" },
             ]}
             defaultValue={{
               value: rest.level,

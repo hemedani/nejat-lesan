@@ -59,15 +59,15 @@ const Pagination: FC<PaginationProps> = ({ initialPage, countPage, limit = 20 })
 
   return (
     <nav aria-label="صفحه‌بندی" className="w-full flex justify-center my-8">
-      <div className="flex items-center justify-center gap-2 px-4 py-2 bg-white rounded-xl shadow-md">
+      <div className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 border border-white/10 rounded-xl shadow-xl">
         {/* Previous button */}
         <button
           onClick={() => handlePageChange(initialPage - 1)}
           disabled={initialPage === 1}
           aria-label="صفحه قبلی"
           className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-200 ${initialPage === 1
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+            : "bg-slate-800 text-slate-300 hover:bg-slate-700"
             }`}
         >
           <svg
@@ -94,7 +94,7 @@ const Pagination: FC<PaginationProps> = ({ initialPage, countPage, limit = 20 })
               return (
                 <span
                   key={`${pageNumber}-${index}`}
-                  className="w-9 text-center text-gray-500"
+                   className="w-9 text-center text-slate-500"
                   aria-hidden="true"
                 >
                   ...
@@ -110,7 +110,7 @@ const Pagination: FC<PaginationProps> = ({ initialPage, countPage, limit = 20 })
                 aria-current={pageNumber === initialPage ? "page" : undefined}
                 className={`w-9 h-9 flex items-center justify-center rounded-lg transition-colors duration-200 ${pageNumber === initialPage
                   ? "bg-blue-600 text-white font-bold"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                   : "bg-slate-800 text-slate-300 hover:bg-slate-700"
                   }`}
               >
                 {pageNumber}
@@ -125,8 +125,8 @@ const Pagination: FC<PaginationProps> = ({ initialPage, countPage, limit = 20 })
           disabled={initialPage === totalPages}
           aria-label="صفحه بعدی"
           className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-200 ${initialPage === totalPages
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+            : "bg-slate-800 text-slate-300 hover:bg-slate-700"
             }`}
         >
           <span>بعدی</span>

@@ -1,8 +1,8 @@
 import { CountUsers } from "@/app/actions/user/countUsers";
 import { getUsers } from "@/app/actions/user/getUsers";
 import Pagination from "@/components/molecules/Pagination";
-import SearchBox from "@/components/molecules/SearchBox";
 import ClientUserDashboard from "@/components/template/clientUserDashboard";
+import { UserFilters } from "@/components/organisms/user/UserFilters";
 import { ReqType } from "@/types/declarations/selectInp";
 
 const UserDashboard = async ({
@@ -29,6 +29,8 @@ const UserDashboard = async ({
     level: 1,
     is_verified: 1,
     summary: 1,
+    personnel_code: 1,
+    is_active: 1,
   };
   const users = await getUsers({ set, get });
   const countDataUsers = await CountUsers({
@@ -36,15 +38,12 @@ const UserDashboard = async ({
     get: { qty: 1 },
   });
   return (
-    <div className="relative min-h-full">
-      <div className="flex items-start">
-        <div className="bg-blue-500 w-1 h-8 ml-3 rounded-full"></div>
-        <div>
-          <h1 className="text-2xl md:text-3xl text-gray-800 font-bold">کاربران</h1>
-          <p className="text-gray-500 mt-2 text-sm">مدیریت تمامی کاربران وب‌سایت</p>
-        </div>
+    <div className="relative min-h-full pb-8">
+      <div className="flex flex-col justify-between gap-5 rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl sm:flex-row sm:items-end">
+        <div><p className="text-sm font-medium text-blue-300">مرکز مدیریت دسترسی</p><h1 className="mt-1 text-2xl font-bold text-white md:text-3xl">کاربران سامانه</h1><p className="mt-2 text-sm text-slate-400">ایجاد، بررسی و مدیریت حساب‌های کاربری و مأموران گشت</p></div>
+        <div className="flex items-center gap-2 rounded-xl border border-blue-400/20 bg-blue-400/10 px-4 py-3"><span className="text-xs text-blue-200">تعداد نمایش</span><strong className="text-xl text-white">{Number(countDataUsers.qty || 0).toLocaleString("fa-IR")}</strong></div>
       </div>
-      <SearchBox title="levels" defaultValue="" />
+      <div className="mt-4 rounded-2xl border border-white/10 bg-slate-900/75 p-4 shadow-xl"><UserFilters /></div>
       <ClientUserDashboard searchQuery="" users={users} />
       <Pagination countPage={countDataUsers.qty} initialPage={+page} />
     </div>

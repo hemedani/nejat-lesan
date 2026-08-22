@@ -25,7 +25,7 @@ const MyInput = <T extends FieldValues = FieldValues>({
 }: InputProps<T>) => {
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
-      <label htmlFor={name} className="text-sm font-medium text-slate-700 text-right">
+        <label htmlFor={name} className="text-sm font-medium text-slate-700 text-right">
         {label}
       </label>
 

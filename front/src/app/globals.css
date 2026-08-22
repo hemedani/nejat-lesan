@@ -680,6 +680,138 @@
     display: none !important;
 }
 
+/* Admin workspace dark theme. Scoped to admin routes to preserve public pages. */
+.admin-shell {
+    color: #e2e8f0;
+    color-scheme: dark;
+}
+
+.admin-shell .bg-white,
+.admin-shell .bg-gray-50,
+.admin-shell .bg-gray-100,
+.admin-shell .bg-slate-50 {
+    background-color: rgba(15, 23, 42, 0.82) !important;
+}
+
+.admin-shell .bg-gray-200,
+.admin-shell .bg-slate-100 {
+    background-color: #1e293b !important;
+}
+
+.admin-shell .text-gray-900,
+.admin-shell .text-gray-800,
+.admin-shell .text-gray-700,
+.admin-shell .text-slate-900,
+.admin-shell .text-slate-800,
+.admin-shell .text-slate-700 {
+    color: #f1f5f9 !important;
+}
+
+.admin-shell .text-gray-600,
+.admin-shell .text-gray-500,
+.admin-shell .text-slate-600,
+.admin-shell .text-slate-500 {
+    color: #94a3b8 !important;
+}
+
+.admin-shell .text-gray-400,
+.admin-shell .text-slate-400 {
+    color: #64748b !important;
+}
+
+.admin-shell .border,
+.admin-shell .border-gray-100,
+.admin-shell .border-gray-200,
+.admin-shell .border-gray-300,
+.admin-shell .border-slate-100,
+.admin-shell .border-slate-200,
+.admin-shell .border-slate-300 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.admin-shell input:not([type="checkbox"]):not([type="radio"]),
+.admin-shell textarea,
+.admin-shell select {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(2, 6, 23, 0.72) !important;
+    color: #f1f5f9 !important;
+}
+
+.admin-shell label {
+    color: #cbd5e1;
+}
+
+.admin-shell input::placeholder,
+.admin-shell textarea::placeholder {
+    color: #64748b !important;
+}
+
+.admin-shell input:focus,
+.admin-shell textarea:focus,
+.admin-shell select:focus {
+    border-color: rgba(96, 165, 250, 0.65) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14) !important;
+}
+
+.admin-shell .react-select__control {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(2, 6, 23, 0.72) !important;
+    box-shadow: none !important;
+}
+
+.admin-shell .react-select__single-value,
+.admin-shell .react-select__input-container,
+.admin-shell .react-select__placeholder {
+    color: #cbd5e1 !important;
+}
+
+.admin-shell .react-select__menu {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: #0f172a !important;
+}
+
+.admin-shell .react-select__option {
+    background-color: transparent !important;
+    color: #cbd5e1 !important;
+}
+
+.admin-shell .react-select__option--is-focused {
+    background-color: rgba(59, 130, 246, 0.14) !important;
+    color: #dbeafe !important;
+}
+
+.admin-shell .react-select__option--is-selected {
+    background-color: #2563eb !important;
+    color: white !important;
+}
+
+.admin-shell .shadow,
+.admin-shell .shadow-md,
+.admin-shell .shadow-lg {
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2) !important;
+}
+
+.admin-shell table {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(15, 23, 42, 0.75);
+    color: #cbd5e1;
+}
+
+.admin-shell th {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    color: #f1f5f9 !important;
+}
+
+.admin-shell td {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #cbd5e1 !important;
+}
+
+.admin-shell tr:hover td {
+    background-color: rgba(59, 130, 246, 0.06);
+}
+
 /* Custom tooltip with data-tooltip attribute */
 [data-tooltip] {
     position: relative;

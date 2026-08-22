@@ -93,13 +93,13 @@ const CreateUpdateModal = ({
       }`}
     >
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg w-1/3 transform transition-all duration-500 ${
+        className={`bg-slate-900 border border-white/10 p-6 rounded-2xl shadow-2xl w-[calc(100%-2rem)] max-w-md transform transition-all duration-500 ${
           isOpen
             ? "scale-100 opacity-100 translate-y-0"
             : "scale-90 opacity-0 translate-y-10"
         }`}
       >
-        <h2 className="text-lg font-bold mb-4">
+        <h2 className="text-lg font-bold text-white mb-4">
           {itemToEdit
             ? `ویرایش ${translateModelNameToPersian(model)}`
             : `ایجاد ${translateModelNameToPersian(model)} جدید`}
@@ -117,13 +117,13 @@ const CreateUpdateModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              className="px-4 py-2 bg-slate-800 text-slate-200 border border-white/10 rounded-xl hover:bg-slate-700"
             >
               بستن
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-500"
             >
               {itemToEdit ? "ویرایش" : "ایجاد"}
             </button>

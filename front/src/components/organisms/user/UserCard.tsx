@@ -11,7 +11,8 @@ interface UserCardProps {
   email?: string;
   gender?: "Male" | "Female";
   national_number?: string;
-  level: "Ghost" | "Manager" | "Editor" | "Enterprise";
+  personnel_code?: string;
+  level: "Ghost" | "Manager" | "Editor" | "Enterprise" | "Patrol";
   is_verified: boolean;
   summary?: string;
   onDelete: () => void;
@@ -26,6 +27,7 @@ const UserCard: React.FC<UserCardProps> = ({
   email,
   gender,
   national_number,
+  personnel_code,
   level,
   is_verified,
   summary,
@@ -41,6 +43,8 @@ const UserCard: React.FC<UserCardProps> = ({
         return "bg-blue-100 text-blue-800 border-blue-300";
       case "Enterprise":
         return "bg-purple-100 text-purple-800 border-purple-300";
+      case "Patrol":
+        return "bg-cyan-100 text-cyan-800 border-cyan-300";
       default:
         return "bg-gray-100 text-gray-800 border-gray-300";
     }
@@ -55,17 +59,17 @@ const UserCard: React.FC<UserCardProps> = ({
   };
 
   return (
-    <div className="border w-full max-w-lg bg-white rounded-xl shadow-lg p-6 flex flex-col gap-4">
+    <div className="group flex w-full max-w-lg flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl transition hover:-translate-y-0.5 hover:border-blue-400/30 hover:shadow-2xl">
       {/* Header Section */}
       <div className="flex items-start gap-4">
         <div className="w-20 h-20 flex-shrink-0">
-          <div className="w-full h-full bg-gradient-to-r from-blue-400 to-green-400 flex items-center justify-center rounded-full text-white text-2xl font-semibold shadow-md">
+          <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-2xl font-semibold text-white shadow-md shadow-blue-200">
             {(first_name?.[0] ?? "")} {(last_name?.[0] ?? "")}
           </div>
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-xl font-bold text-gray-800">
+            <h2 className="text-xl font-bold text-white">
               {first_name && last_name
                 ? `${first_name} ${last_name}`
                 : first_name || last_name || "کاربر"}
@@ -82,31 +86,31 @@ const UserCard: React.FC<UserCardProps> = ({
               </span>
             )}
           </div>
-          <p className="text-gray-600 text-sm">فرزند: {father_name || "—"}</p>
+            <p className="text-sm text-slate-400">فرزند: {father_name || "—"}</p>
         </div>
       </div>
 
       {/* Info Grid */}
       <div className="grid grid-cols-2 gap-3 text-sm">
-        <div className="bg-gray-50 rounded-lg p-2">
+        <div className="rounded-xl border border-white/5 bg-white/[.03] p-3">
           <span className="text-gray-500 block text-xs mb-1">ایمیل</span>
           <span className="text-gray-800 font-medium dir-ltr text-right block break-all">
             {email || "—"}
           </span>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2">
+        <div className="rounded-xl border border-white/5 bg-white/[.03] p-3">
           <span className="text-gray-500 block text-xs mb-1">کد ملی</span>
           <span className="text-gray-800 font-medium dir-ltr text-right block">{national_number || "—"}</span>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2">
+        <div className="rounded-xl border border-white/5 bg-white/[.03] p-3">
           <span className="text-gray-500 block text-xs mb-1">شماره همراه</span>
           <span className="text-gray-800 font-medium dir-ltr text-right block">{mobile || "—"}</span>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2">
+        <div className="rounded-xl border border-white/5 bg-white/[.03] p-3">
           <span className="text-gray-500 block text-xs mb-1">جنسیت</span>
           <span className={`font-medium ${getGenderColor(gender)}`}>{gender ? getGenderLabel(gender) : "—"}</span>
         </div>
-        <div className="bg-gray-50 rounded-lg p-2">
+        <div className="rounded-xl border border-white/5 bg-white/[.03] p-3">
           <span className="text-gray-500 block text-xs mb-1">سطح دسترسی</span>
           <span
             className={`inline-block px-2 py-1 rounded-md text-xs font-medium border ${getLevelColor(level)}`}
@@ -117,21 +121,27 @@ const UserCard: React.FC<UserCardProps> = ({
                 ? "مدیر"
                 : level === "Editor"
                   ? "ویرایشگر"
-                  : "سازمانی"}
+              : level === "Patrol"
+                ? "مأمور گشت"
+                : "سازمانی"}
           </span>
         </div>
       </div>
 
       {/* Summary Section */}
+      <div className="rounded-xl border border-blue-400/20 bg-blue-400/10 p-3">
+        <span className="mb-1 block text-xs font-medium text-blue-200">کد پرسنلی</span>
+        <p className="text-sm font-medium text-slate-200" dir="ltr">{personnel_code || "ثبت نشده"}</p>
+      </div>
       {summary && (
-        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
-          <span className="text-blue-700 block text-xs font-medium mb-1">خلاصه</span>
-          <p className="text-gray-700 text-sm leading-relaxed line-clamp-2">{summary}</p>
+        <div className="bg-blue-400/5 rounded-xl p-3 border border-blue-400/20">
+          <span className="text-blue-200 block text-xs font-medium mb-1">خلاصه</span>
+          <p className="text-slate-300 text-sm leading-relaxed line-clamp-2">{summary}</p>
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-2 pt-2 border-t border-gray-200">
+      <div className="flex flex-wrap justify-end gap-2 border-t border-white/10 pt-3">
         <button
           onClick={() => router.push(`/admin/users/user/${id}`)}
           className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow flex items-center gap-1 text-sm"

@@ -58,14 +58,17 @@ const ClientCommonModelDashboard: React.FC<ClientDashboardProps> = ({ data, mode
   };
 
   return (
-    <div>
-      <button
-        className="absolute top-1 left-5 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+    <div className="mt-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <p className="text-sm text-slate-400">{data.length.toLocaleString("fa-IR")} مورد ثبت‌شده</p>
+        <button
+        className="px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,.18)] transition-colors"
         onClick={() => openModal("edit")}
       >
-        ایجاد {translateModelNameToPersian(model)} جدید
-      </button>
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        + ایجاد {translateModelNameToPersian(model)} جدید
+        </button>
+      </div>
+      {data.length > 0 ? <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {data?.map((tag) => (
           <EntityCard
             key={tag._id}
@@ -74,7 +77,7 @@ const ClientCommonModelDashboard: React.FC<ClientDashboardProps> = ({ data, mode
             onEdit={() => openModal("edit", tag)}
           />
         ))}
-      </div>
+      </div> : <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-10 text-center text-sm text-slate-500">هنوز موردی ثبت نشده است.</div>}
 
       {activeModal === "edit" && (
         <CreateUpdateModal isOpen onClose={closeModal} itemToEdit={selectedItem} model={model} add={add} update={update} />

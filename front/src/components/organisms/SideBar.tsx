@@ -220,13 +220,13 @@ export const AdminSidebar: FC = () => {
   return (
     <aside
       ref={asideRef}
-      className={`relative sticky top-16 h-full bg-gradient-to-b from-indigo-900 to-purple-900 text-white flex flex-col shadow-xl z-10 transition-all duration-300 ease-in-out ${
+      className={`relative sticky top-16 h-full bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 text-white flex flex-col shadow-xl z-10 transition-all duration-300 ease-in-out ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      <div className="p-4 flex items-center justify-between border-b border-indigo-700/50">
+      <div className="p-4 flex items-center justify-between border-b border-white/10">
         {!collapsed && (
-          <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-300 to-blue-300 opacity-100 transition-opacity duration-300">
+          <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-blue-300 opacity-100 transition-opacity duration-300">
             پنل ادمین
           </div>
         )}
@@ -305,7 +305,7 @@ export const AdminSidebar: FC = () => {
         </ul>
       </nav>
 
-      <div className="border-t border-indigo-700/50 p-3 space-y-1">
+      <div className="border-t border-white/10 p-3 space-y-1">
         <button
           onClick={() => router.replace("/")}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-300"
@@ -344,7 +344,7 @@ export const AdminSidebar: FC = () => {
       </div>
 
       {!collapsed && (
-        <div className="p-4 text-center text-xs text-indigo-300/70">
+          <div className="p-4 text-center text-xs text-slate-500">
           <span>© ۱۴۰۳ پنل مدیریت</span>
         </div>
       )}

@@ -20,8 +20,8 @@ const EntityCard: React.FC<SimpleCardProps> = ({
   onSeedTrafficZones,
 }) => {
   return (
-    <div className="border w-full max-w-sm bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
-      <h3 className="text-lg font-semibold text-gray-800 truncate">{title}</h3>
+    <div className="border border-white/10 w-full bg-slate-900/75 rounded-xl shadow-xl p-4 flex justify-between items-center hover:border-blue-400/30 transition-colors">
+      <h3 className="text-lg font-semibold text-slate-100 truncate">{title}</h3>
       <div className="flex gap-2">
         {onProvinceRelation && (
           <button

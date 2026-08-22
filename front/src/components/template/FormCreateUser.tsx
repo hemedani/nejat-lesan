@@ -43,7 +43,7 @@ export const UserCreateSchema = z
       .optional()
       .refine((value) => !value || /^[0-9]{10}$/.test(value), "کد ملی باید 10 رقم باشد"),
     address: z.string().min(1, "آدرس الزامی است"),
-    level: z.enum(["Ghost", "Manager", "Editor", "Enterprise"], {
+    level: z.enum(["Ghost", "Manager", "Editor", "Enterprise", "Patrol"], {
       message: "سطح الزامی است",
     }),
     is_verified: z.boolean(),
@@ -613,6 +613,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
               { value: "Manager", label: "مدیر" },
               { value: "Editor", label: "ویرایشگر" },
               { value: "Enterprise", label: "سازمانی" },
+              { value: "Patrol", label: "مأمور گشت" },
             ]}
             className="w-1/2 p-2"
           />

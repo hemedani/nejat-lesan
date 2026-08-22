@@ -29,23 +29,23 @@ export const DeleteModal: FC<IProps> = ({
           : "opacity-0 pointer-events-none"
       }`}
     >
-      <div
-        className={`bg-white rounded-lg shadow-lg max-w-sm w-full p-6 text-center transform transition-transform duration-300 ${
+        <div
+        className={`bg-slate-900 border border-white/10 rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-transform duration-300 ${
           isVisible ? "scale-100" : "scale-90"
         }`}
       >
-        <p className="text-gray-600 mb-6">{message}</p>
+        <p className="text-slate-300 mb-6">{message}</p>
 
         <div className="flex items-center justify-start gap-2 mb-6">
-          <p className="text-sm text-gray-800">
+            <p className="text-sm text-slate-200">
             آیا اسناد وابسته نیز حذف شوند؟
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => onHardCascadeChange(true)}
-              className={`px-2 py-1 text-xs border border-gray-900 rounded-lg text-black transition-all duration-300 ${
+              className={`px-2 py-1 text-xs border border-white/15 rounded-lg text-slate-200 transition-all duration-300 ${
                 !isHardCascade
-                  ? "bg-white"
+                  ? "bg-slate-800"
                   : "bg-red-500 border-none text-white hover:bg-red-600"
               }`}
             >
@@ -53,9 +53,9 @@ export const DeleteModal: FC<IProps> = ({
             </button>
             <button
               onClick={() => onHardCascadeChange(false)}
-              className={`px-2 py-1 text-xs border border-gray-900 rounded-lg text-black transition-all duration-300 ${
+              className={`px-2 py-1 text-xs border border-white/15 rounded-lg text-slate-200 transition-all duration-300 ${
                 isHardCascade
-                  ? "bg-white"
+                  ? "bg-slate-800"
                   : "bg-red-500 border-none text-white hover:bg-red-600"
               }`}
             >

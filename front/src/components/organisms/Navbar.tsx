@@ -1,551 +1,107 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
+type NavItem = { href: string; label: string; description?: string };
+
+const publicItems: NavItem[] = [
+  { href: "/", label: "خانه" },
+  { href: "/charts/overall", label: "تحلیل‌ها", description: "نمودارها و گزارش‌های تحلیلی" },
+  { href: "/maps/accidents", label: "نقشه تصادفات", description: "مشاهده رخدادها روی نقشه" },
+];
+
+const roleLabels: Record<string, string> = {
+  Ghost: "دسترسی کامل مدیریتی",
+  Manager: "مدیریت و بررسی گزارش‌ها",
+  Editor: "ویرایش داده‌های سامانه",
+  Enterprise: "دسترسی سازمانی",
+  Patrol: "ثبت و پیگیری گزارش‌های گشت",
+};
+
 export const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const profileRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, userLevel, userData, logout } = useAuth();
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [panelsOpen, setPanelsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const panelsRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const displayName = [userData?.first_name, userData?.last_name].filter(Boolean).join(" ") || "کاربر";
 
-  // Get user display name from context
-  const getUserDisplayName = () => {
-    if (!userData) return "کاربر";
+  const panelItems: NavItem[] = [];
+  if (userLevel === "Patrol") {
+    panelItems.push({ href: "/patrol/dashboard", label: "داشبورد مأمور گشت", description: "شیفت و گزارش‌های من" });
+  }
+  if (userLevel === "Ghost" || userLevel === "Manager") {
+    panelItems.push({ href: "/patrol-manager/dashboard", label: "مرکز بررسی گشت", description: "صف بررسی گزارش‌های مأموران" });
+  }
+  if (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") {
+    panelItems.push({ href: "/admin", label: "پنل مدیریت سامانه", description: "مدیریت کاربران و داده‌های پایه" });
+  }
+  if (isAuthenticated) panelItems.push({ href: "/user", label: "پنل کاربری", description: "اطلاعات حساب و تنظیمات" });
 
-    if (userData.first_name || userData.last_name) {
-      return `${userData.first_name || ""} ${userData.last_name || ""}`.trim();
-    }
-
-    if (userData.national_number) {
-      return userData.national_number;
-    }
-
-    return "کاربر";
-  };
-
-  const userName = getUserDisplayName();
-  const userNationalNumber = userData?.national_number || "";
-
-  // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setIsProfileDropdownOpen(false);
-      }
+    const close = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (!panelsRef.current?.contains(target)) setPanelsOpen(false);
+      if (!profileRef.current?.contains(target)) setProfileOpen(false);
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
   }, []);
 
-  // Custom navigation links with icons
-  const navLinks = [
-    {
-      href: "/",
-      label: "خانه",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      href: "/charts/overall",
-      label: "نمودار",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M9 20l-5.447-17.916m0 0A1 1 0 013.465 1H4.5a1 1 0 011 .97V2m13.5 8A8.5 8.5 0 015.5 10M16 19l5-5m0 0l-5-5m5 5H9"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      href: "/maps/accidents",
-      label: "نقشه تصادفات",
-      icon: (
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M17.657 16.657L13.414 20.9a1.996 1.996 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M9 9l3 3 3-3"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    // {
-    //   href: "/chatbot",
-    //   label: "چت‌بات",
-    //   icon: (
-    //     <svg
-    //       className="w-4 h-4"
-    //       viewBox="0 0 24 24"
-    //       fill="none"
-    //       xmlns="http://www.w3.org/2000/svg"
-    //     >
-    //       <path
-    //         d="M8 10.5h8m-8 3.5h5.5m-9-10h14a2 2 0 012 2v10a2 2 0 01-2 2h-4l-4 4v-4H4a2 2 0 01-2-2V6a2 2 0 012-2z"
-    //         stroke="currentColor"
-    //         strokeWidth="1.5"
-    //         strokeLinecap="round"
-    //         strokeLinejoin="round"
-    //       />
-    //     </svg>
-    //   ),
-    // },
-  ];
-
-  // Additional dropdown links
-  const dropdownLinks = [
-    { href: "/faq", label: "سوالات متداول" },
-    { href: "/about", label: "درباره ما" },
-    { href: "/contact", label: "تماس با ما" },
-    { href: "/terms", label: "شرایط" },
-    { href: "/privacy", label: "حریم خصوصی" },
-  ];
+  useEffect(() => {
+    setMenuOpen(false);
+    setPanelsOpen(false);
+    setProfileOpen(false);
+  }, [pathname]);
 
   return (
-    <header
-      className={`fixed top-0 left-0 w-full z-[9999] transition-all duration-300 bg-slate-950/80 backdrop-blur-md py-3 shadow-lg border-b border-white/10`}
-    >
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-6 relative">
-        {/* Logo with subtle animation */}
-        <div className="text-xl font-bold transform transition-all duration-500 hover:scale-105">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
+    <header className="fixed inset-x-0 top-0 z-[9999] border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8" dir="rtl">
+        <div className="flex min-w-0 items-center gap-7">
+          <Link href="/" className="group flex shrink-0 items-center gap-2" aria-label="مرصاد، صفحه اصلی">
+            <Image src="/logo.png" alt="مرصاد" width={38} height={38} className="object-contain transition-transform group-hover:scale-105" />
+            <span className="hidden text-sm font-bold text-white sm:block">مرصاد</span>
           </Link>
+          <nav className="hidden items-center gap-1 lg:flex">
+            {publicItems.map((item) => <Link key={item.href} href={item.href} className={`rounded-xl px-3 py-2 text-sm transition ${pathname === item.href ? "bg-blue-500/15 text-blue-200" : "text-slate-400 hover:bg-white/5 hover:text-white"}`}>{item.label}</Link>)}
+          </nav>
         </div>
 
-        {/* Desktop Navigation - elegant hover effects and RTL support */}
-        <nav className="hidden md:flex items-center" dir="rtl">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="group flex items-center gap-2 text-slate-300 hover:text-white transition-all duration-300 ml-8"
-            >
-              <span className="transform transition-all duration-300 group-hover:scale-110 text-blue-400">
-                {link.icon}
-              </span>
-              <span className="relative py-2">
-                {link.label}
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 to-cyan-300 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-              </span>
-            </Link>
-          ))}
-
-          {/* Elegant dropdown for additional links */}
-          {/*
-          <div className="relative group ml-8">
-            <button className="flex items-center gap-2 text-white hover:text-yellow-400 transition-all duration-300">
-              <span className="transform transition-all duration-300 group-hover:scale-110 text-yellow-400">
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 6v12m-8-6h16"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-              <span className="relative py-2">
-                بیشتر
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-yellow-300 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-              </span>
+        <div className="hidden items-center gap-2 md:flex">
+          {panelItems.length > 0 && <div className="relative" ref={panelsRef}>
+            <button onClick={() => setPanelsOpen((open) => !open)} className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition ${panelsOpen ? "border-blue-400/40 bg-blue-400/10 text-blue-100" : "border-white/10 text-slate-300 hover:bg-white/5"}`} aria-expanded={panelsOpen}>
+              <span className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,.8)]" />
+              پنل‌ها
+              <Chevron open={panelsOpen} />
             </button>
-            <div className="absolute right-0 mt-2 w-52 bg-gray-500 rounded-xl overflow-hidden shadow-xl opacity-0 invisible group-hover:visible group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-10 border border-gray-400">
-              {dropdownLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block px-5 py-3 text-white hover:bg-gray-400 hover:text-yellow-400 transition-colors duration-200"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          */}
-        </nav>
-
-        {/* User Links with elegant styling */}
-        <div className="flex items-center gap-6">
-          <div className="hidden md:flex items-center gap-4">
-            {isAuthenticated ? (
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-slate-300 hover:text-white rounded-lg transition-all duration-300 hover:bg-white/5"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>{userName}</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${isProfileDropdownOpen ? "rotate-180" : ""}`}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6 9l6 6 6-6"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-slate-800 rounded-xl overflow-hidden shadow-xl z-20 border border-white/10">
-                    <div className="p-4 bg-slate-900/50">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center">
-                          <svg
-                            className="w-6 h-6 text-slate-400"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="font-medium text-white">{userName}</p>
-                          <p className="text-sm text-slate-400">سطح دسترسی: {userLevel}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="py-2">
-                      <div className="px-4 py-2 border-b border-white/10">
-                        <p className="text-xs text-slate-400">کد ملی</p>
-                        <p className="text-white">{userNationalNumber}</p>
-                      </div>
-
-                      {/* User Panel Link */}
-                      <Link
-                        href="/user"
-                        className="w-full flex items-center gap-2 px-4 py-3 text-slate-300 hover:bg-white/5 hover:text-white transition-colors duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <span>پنل کاربری</span>
-                      </Link>
-
-                      {/* Admin Panel Link */}
-                      {userLevel !== "Enterprise" &&
-                        (userLevel === "Ghost" ||
-                          userLevel === "Manager" ||
-                          userLevel === "Editor") && (
-                          <Link
-                            href="/admin"
-                            className="w-full flex items-center gap-2 px-4 py-3 text-slate-300 hover:bg-white/5 hover:text-white transition-colors duration-200 border-b border-white/10"
-                            onClick={() => setIsProfileDropdownOpen(false)}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                              <path
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            <span>پنل ادمین</span>
-                          </Link>
-                        )}
-
-                      <button
-                        onClick={() => {
-                          setIsProfileDropdownOpen(false);
-                          logout();
-                        }}
-                        className="w-full flex items-center gap-2 px-4 py-3 text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors duration-200"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <span>خروج</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-1.5 px-4 py-2 text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-all duration-300"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>ورود</span>
-              </Link>
-            )}
-          </div>
-
-          {/* Mobile menu button with animation */}
-          <button
-            className="md:hidden text-slate-300 hover:text-white focus:outline-none transition-transform duration-300 hover:scale-110"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label={isMobileMenuOpen ? "بستن منو" : "باز کردن منو"}
-          >
-            <div className="relative w-6 h-6">
-              <span
-                className={`absolute left-0 top-0.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
-                  isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
-                }`}
-              ></span>
-              <span
-                className={`absolute left-0 top-2.5 block w-6 h-0.5 bg-current transition-opacity duration-300 ${
-                  isMobileMenuOpen ? "opacity-0" : "opacity-100"
-                }`}
-              ></span>
-              <span
-                className={`absolute left-0 top-4.5 block w-6 h-0.5 bg-current transform transition-all duration-300 ${
-                  isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
-                }`}
-              ></span>
-            </div>
-          </button>
+            {panelsOpen && <PanelMenu items={panelItems} pathname={pathname} onNavigate={() => setPanelsOpen(false)} />}
+          </div>}
+          {isAuthenticated ? <div className="relative" ref={profileRef}>
+            <button onClick={() => setProfileOpen((open) => !open)} className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-300 transition hover:bg-white/5 hover:text-white" aria-expanded={profileOpen}>
+              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-blue-400/30 bg-blue-400/10 text-xs font-bold text-blue-100">{displayName.slice(0, 1)}</span>
+              <span className="max-w-28 truncate">{displayName}</span><Chevron open={profileOpen} />
+            </button>
+            {profileOpen && <div className="absolute left-0 mt-2 w-64 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl"><div className="border-b border-white/10 bg-white/[.03] p-4"><p className="font-semibold text-white">{displayName}</p><p className="mt-1 text-xs text-slate-500">{roleLabels[userLevel || ""] || "حساب کاربری"}</p>{userData?.email && <p className="mt-2 truncate text-xs text-slate-400" dir="ltr">{userData.email}</p>}</div><button onClick={logout} className="w-full px-4 py-3 text-right text-sm text-rose-200 transition hover:bg-rose-400/10">خروج از حساب</button></div>}
+          </div> : <Link href="/login" className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_0_22px_rgba(37,99,235,.25)] transition hover:bg-blue-500">ورود به سامانه</Link>}
         </div>
+
+        <button onClick={() => setMenuOpen((open) => !open)} className="rounded-xl border border-white/10 p-2 text-slate-300 md:hidden" aria-label={menuOpen ? "بستن منو" : "باز کردن منو"}>
+          <span className="block h-0.5 w-5 bg-current" /><span className="mt-1.5 block h-0.5 w-5 bg-current" /><span className="mt-1.5 block h-0.5 w-5 bg-current" />
+        </button>
       </div>
-
-      {/* Mobile Menu with smooth animation */}
-      <div
-        className={`md:hidden absolute left-0 w-full bg-slate-900 shadow-xl transition-all duration-500 ease-in-out transform border-b border-white/10 ${
-          isMobileMenuOpen
-            ? "opacity-100 translate-y-0 max-h-[80vh] overflow-y-auto"
-            : "opacity-0 -translate-y-10 max-h-0 overflow-hidden"
-        }`}
-      >
-        <nav className="flex flex-col items-center py-6 space-y-1" dir="rtl">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4 flex items-center justify-center gap-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span className="text-indigo-500">{link.icon}</span>
-              <span>{link.label}</span>
-            </Link>
-          ))}
-
-          {/* Separator */}
-          <div className="w-24 h-px bg-white/10 my-2"></div>
-
-          {/* Additional Links */}
-          {dropdownLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <span>{link.label}</span>
-            </Link>
-          ))}
-
-          {/* Admin/User Panel Links */}
-          {isAuthenticated &&
-            userLevel !== "Enterprise" && // Hide admin panel for Enterprise users
-            (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") && (
-              <Link
-                href="/admin"
-                className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <svg
-                  className="w-4 h-4 text-indigo-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>پنل ادمین</span>
-              </Link>
-            )}
-
-          {isAuthenticated && (
-            <Link
-              href="/user"
-              className="w-full px-6 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-300 text-center rounded-lg mx-4"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <svg
-                className="w-4 h-4 text-indigo-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>پنل کاربری</span>
-            </Link>
-          )}
-
-          {/* Auth Button */}
-          {isAuthenticated ? (
-            <div className="w-full px-6 py-3">
-              <button
-                className="flex items-center gap-2 w-full py-3 text-slate-300 hover:bg-white/5 hover:text-red-400 transition-colors duration-200"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  logout();
-                }}
-              >
-                <svg
-                  className="w-4 h-4 text-rose-500"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span>خروج</span>
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="w-full px-6 py-3 text-white bg-blue-600 hover:bg-blue-500 transition-all duration-300 text-center rounded-lg mx-4"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <svg
-                className="w-4 h-4 text-indigo-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>ورود</span>
-            </Link>
-          )}
-        </nav>
-      </div>
+      {menuOpen && <div className="border-t border-white/10 bg-slate-900 px-4 py-4 md:hidden" dir="rtl"><div className="space-y-1">{publicItems.map((item) => <Link key={item.href} href={item.href} className="block rounded-xl px-3 py-3 text-sm text-slate-300 hover:bg-white/5">{item.label}</Link>)}</div>{panelItems.length > 0 && <div className="mt-3 border-t border-white/10 pt-3"><p className="px-3 pb-2 text-xs text-slate-500">پنل‌های در دسترس</p><PanelMenu items={panelItems} pathname={pathname} onNavigate={() => setMenuOpen(false)} mobile /> </div>}{isAuthenticated && <button onClick={logout} className="mt-3 w-full rounded-xl border border-rose-400/20 px-3 py-3 text-right text-sm text-rose-200">خروج از حساب</button>}</div>}
     </header>
   );
 };
+
+function PanelMenu({ items, pathname, onNavigate, mobile = false }: { items: NavItem[]; pathname: string; onNavigate: () => void; mobile?: boolean }) {
+  return <div className={mobile ? "space-y-1" : "absolute left-0 mt-2 w-72 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 p-2 shadow-2xl"}>{items.map((item) => <Link key={item.href} href={item.href} onClick={onNavigate} className={`block rounded-xl px-3 py-3 transition ${pathname.startsWith(item.href.split("/").slice(0, 2).join("/")) ? "bg-blue-500/10 text-blue-100" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}><span className="block text-sm font-medium">{item.label}</span>{item.description && <span className="mt-1 block text-xs text-slate-500">{item.description}</span>}</Link>)}</div>;
+}
+
+function Chevron({ open }: { open: boolean }) { return <svg className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="m6 9 6 6 6-6" /></svg>; }
