@@ -11,14 +11,32 @@ import { type ActFn, ObjectId, TInsertRelations } from "@deps";
 import { accident, coreApp } from "../../../mod.ts";
 import type { MyContext } from "@lib";
 import { accident_relations } from "@model";
+import { throwError } from "@lib";
 
 export const addFn: ActFn = async (body) => {
 	const { set, get } = body.details;
 	const { user }: MyContext = coreApp.contextFns
 		.getContextModel() as MyContext;
 
+	// --- Sync Status Validation ---
+	// Patrol users can only create draft/queued reports
+	// Manager/Ghost can set any status
+	const allowedPatrolStatuses = ["draft", "queued"];
+	if (user.level === "Patrol") {
+		const requestedStatus = set.sync_status || "queued";
+		if (!allowedPatrolStatuses.includes(requestedStatus)) {
+			throwError("مأمور گشت تنها می‌تواند گزارش با وضعیت draft یا queued ثبت کند");
+		}
+	}
+
 	// --- 1. Separate Relational IDs from the Pure Document Data ---
 	const {
+		officerId,
+		patrolUnitId,
+		vehicleId,
+		laneId,
+		policeStationId,
+		croquisTypeId,
 		provinceId,
 		cityId,
 		roadId,
@@ -40,11 +58,105 @@ export const addFn: ActFn = async (body) => {
 		equipmentDamagesIds,
 		roadSurfaceConditionsIds,
 		attachmentsIds,
+		client_report_uuid,
 		...restOfDoc
 	} = set;
 
+	// --- Extract image ObjectIds for attachment linking from restOfDoc ---
+	const attachmentIds: string[] = [];
+	if (restOfDoc.plate_image) attachmentIds.push(restOfDoc.plate_image as string);
+	if (restOfDoc.insurance_image) attachmentIds.push(restOfDoc.insurance_image as string);
+	if (restOfDoc.vehicle_dtos && Array.isArray(restOfDoc.vehicle_dtos)) {
+		for (const vehicle of restOfDoc.vehicle_dtos) {
+			if (vehicle.plate_image) attachmentIds.push(vehicle.plate_image as string);
+			if (vehicle.insurance_image) attachmentIds.push(vehicle.insurance_image as string);
+		}
+	}
+	if (restOfDoc.facility_damage_dtos && Array.isArray(restOfDoc.facility_damage_dtos)) {
+		for (const facility of restOfDoc.facility_damage_dtos) {
+			if (facility.images && Array.isArray(facility.images)) {
+				for (const img of facility.images) attachmentIds.push(img as string);
+			}
+		}
+	}
+	// Deduplicate
+	const uniqueAttachmentIds = [...new Set(attachmentIds)];
+
+	// --- 1b. Idempotency by client_report_uuid ---
+	// If the app already synced this report, return the existing record
+	// instead of inserting a duplicate. Also avoids the dangling reverse
+	// relation Lesan leaves behind on a failed duplicate-key insert.
+	if (client_report_uuid) {
+		const existing = await accident.findOne({
+			filters: { client_report_uuid },
+			projection: get,
+		});
+		if (existing) return existing;
+	}
+
+	// --- 1c. Auto-generate serial + report_id when not provided ---
+	const doc = { ...restOfDoc };
+	if (client_report_uuid) doc.client_report_uuid = client_report_uuid;
+	if (doc.serial === undefined) {
+		const [maxDoc] = await accident
+			.aggregation({
+				pipeline: [{ $sort: { serial: -1 } }, { $limit: 1 }],
+				projection: { serial: 1 },
+			})
+			.toArray();
+		doc.serial = ((maxDoc?.serial as number) ?? 0) + 1;
+	}
+	if (!doc.report_id) {
+		const year = new Date().getFullYear();
+		doc.report_id = `REP-${year}-${String(doc.serial).padStart(6, "0")}`;
+	}
+	// Mobile reports default to "queued" until validated by the control center
+	if (client_report_uuid && doc.sync_status === undefined) {
+		doc.sync_status = "queued";
+	}
+	if (client_report_uuid && doc.review_status === undefined) {
+		doc.review_status = "submitted";
+	}
+
 	// --- 2. Build the `relations` object for Lesan ---
 	const relations: TInsertRelations<typeof accident_relations> = {};
+
+	// Handle Mobile Patrol Single Relations
+	if (officerId) {
+		relations.officer = {
+			_ids: new ObjectId(officerId as string),
+			relatedRelations: { accidents: true },
+		};
+	}
+	if (patrolUnitId) {
+		relations.patrol_unit = {
+			_ids: new ObjectId(patrolUnitId as string),
+			relatedRelations: { accidents: true },
+		};
+	}
+	if (vehicleId) {
+		relations.vehicle = {
+			_ids: new ObjectId(vehicleId as string),
+			relatedRelations: { accidents: true },
+		};
+	}
+	if (laneId) {
+		relations.lane = {
+			_ids: new ObjectId(laneId as string),
+		};
+	}
+	if (policeStationId) {
+		relations.police_station = {
+			_ids: new ObjectId(policeStationId as string),
+			relatedRelations: { accidents: true },
+		};
+	}
+	if (croquisTypeId) {
+		relations.croquis_type = {
+			_ids: new ObjectId(croquisTypeId as string),
+			relatedRelations: { accidents: true },
+		};
+	}
 
 	// Handle Single Relations
 	if (provinceId) {
@@ -177,9 +289,18 @@ export const addFn: ActFn = async (body) => {
 		}; // No reverse relation
 	}
 
+	// Add extracted attachment IDs from image fields
+	if (uniqueAttachmentIds.length > 0) {
+		const existingIds = (relations.attachments?._ids as ObjectId[] | undefined)?.map((id: ObjectId) => id.toString()) || [];
+		const allIds = [...new Set([...existingIds, ...uniqueAttachmentIds])];
+		relations.attachments = {
+			_ids: allIds.map((id: string) => new ObjectId(id)),
+		};
+	}
+
 	// --- 3. Insert the Document with its Relations ---
 	return await accident.insertOne({
-		doc: restOfDoc,
+		doc,
 		relations,
 		projection: get,
 	});

@@ -35,8 +35,15 @@ import { trafficZoneSetup } from "./traffic_zone/mod.ts";
 import { typeSetup } from "./type/mod.ts";
 import { vehicleReasonSetup } from "./vehicle_reason/mod.ts";
 import { accidentSetup } from "./accident/mod.ts";
+import { sharedSetup } from "./shared/mod.ts";
+import { patrolUnitSetup } from "./patrol_unit/mod.ts";
+import { shiftSetup } from "./shift/mod.ts";
+import { announcementSetup } from "./announcement/mod.ts";
 
 export const functionsSetup = () => {
+	sharedSetup();
+	patrolUnitSetup();
+	shiftSetup();
 	airPollutionZoneSetup();
 	airStatusSetup();
 	areaUsageSetup();
@@ -74,4 +81,5 @@ export const functionsSetup = () => {
 	userSetup();
 	vehicleReasonSetup();
 	accidentSetup();
+	announcementSetup();
 };

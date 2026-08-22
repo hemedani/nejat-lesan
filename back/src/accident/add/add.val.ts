@@ -6,94 +6,20 @@
  * Defines the validation schema for creating a new accident. It separates the
  * pure accident data from the ObjectIDs of its relations.
  */
-import {
-	array,
-	boolean,
-	coerce,
-	date,
-	enums,
-	number,
-	object,
-	objectIdValidation,
-	optional,
-	string,
-	tuple,
-} from "@deps";
+import { array, coerce, date, object, objectIdValidation, optional, string } from "@deps";
 import { selectStruct } from "../../../mod.ts";
-import { common_relation_struct, geoJSONStruct } from "@model";
+import { geoJSONStruct } from "@model";
+import { accidentSetSchema } from "../accidentSetSchema.ts";
 
 export const addValidator = () => {
-	// Manually define a deeply optional version of the accident_pure schema.
-	// This is necessary to avoid TypeScript inference errors and to ensure
-	// that nested objects and their properties are also optional during validation.
+	// Reuse the shared all-optional pure schema, but keep `location` and
+	// `date_of_accident` required for creation.
 	const optionalPureAccident = {
-		seri: optional(number()),
-		serial: optional(number()),
+		...accidentSetSchema.schema,
 		location: geoJSONStruct("Point"),
-		date_of_accident: coerce(date(), string(), (value) => new Date(value)),
-		dead_count: optional(number()),
-		has_witness: optional(boolean()),
-		news_number: optional(number()),
-		officer: optional(string()),
-		injured_count: optional(number()),
-		completion_date: optional(
-			coerce(date(), string(), (value) => new Date(value)),
+		date_of_accident: coerce(date(), string(), (value: string) =>
+			new Date(value)
 		),
-		vehicle_dtos: optional(array(
-			object({
-				color: optional(common_relation_struct),
-				driver: optional(object({
-					sex: optional(enums(["Male", "Female", "Other"])),
-					last_name: optional(string()),
-					first_name: optional(string()),
-					injury_type: optional(common_relation_struct),
-					licence_type: optional(common_relation_struct),
-					national_code: optional(string()),
-					licence_number: optional(string()),
-					total_reason: optional(common_relation_struct),
-				})),
-				system: optional(common_relation_struct),
-				plaque_type: optional(common_relation_struct),
-				plaque_no: optional(tuple([string(), string(), string()])),
-				system_type: optional(common_relation_struct),
-				fault_status: optional(common_relation_struct),
-				insurance_co: optional(common_relation_struct),
-				insurance_no: optional(string()),
-				plaque_usage: optional(common_relation_struct),
-				print_number: optional(string()),
-				plaque_serial: optional(array(string())),
-				insurance_date: optional(
-					coerce(date(), string(), (value) => new Date(value)),
-				),
-				body_insurance_co: optional(common_relation_struct),
-				body_insurance_no: optional(string()),
-				motion_direction: optional(common_relation_struct),
-				body_insurance_date: optional(
-					coerce(date(), string(), (value) => new Date(value)),
-				),
-				max_damage_sections: optional(array(common_relation_struct)),
-				damage_section_other: optional(string()),
-				insurance_warranty_limit: optional(number()),
-				passenger_dtos: optional(array(object({
-					sex: optional(enums(["Male", "Female", "Other"])),
-					last_name: optional(string()),
-					first_name: optional(string()),
-					injury_type: optional(common_relation_struct),
-					fault_status: optional(common_relation_struct),
-					total_reason: optional(common_relation_struct),
-					national_code: optional(string()),
-				}))),
-			}),
-		)),
-		pedestrian_dtos: optional(array(object({
-			sex: optional(enums(["Male", "Female", "Other"])),
-			last_name: optional(string()),
-			first_name: optional(string()),
-			injury_type: optional(common_relation_struct),
-			fault_status: optional(common_relation_struct),
-			total_reason: optional(common_relation_struct),
-			national_code: optional(string()),
-		}))),
 	};
 
 	return object({
@@ -103,6 +29,12 @@ export const addValidator = () => {
 
 			// --- IDs for Relational Fields ---
 			// Single Relations
+			officerId: optional(objectIdValidation),
+			patrolUnitId: optional(objectIdValidation),
+			vehicleId: optional(objectIdValidation),
+			laneId: optional(objectIdValidation),
+			policeStationId: optional(objectIdValidation),
+			croquisTypeId: optional(objectIdValidation),
 			provinceId: optional(objectIdValidation),
 			cityId: optional(objectIdValidation),
 			roadId: optional(objectIdValidation),

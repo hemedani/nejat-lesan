@@ -4,6 +4,9 @@ import { getsSetup } from "./gets/mod.ts";
 import { updateSetup } from "./update/mod.ts";
 import { removeSetup } from "./remove/mod.ts";
 import { countSetup } from "./count/mod.ts";
+import { snapPointToRoadSetup } from "./snapPointToRoad/mod.ts";
+import { validatePointInZoneSetup } from "./validatePointInZone/mod.ts";
+import { getRoadsGeometrySetup } from "./getRoadsGeometry/mod.ts";
 
 export const roadSetup = () => {
 	addSetup();
@@ -12,4 +15,7 @@ export const roadSetup = () => {
 	getsSetup();
 	removeSetup();
 	countSetup();
+	snapPointToRoadSetup();
+	validatePointInZoneSetup();
+	getRoadsGeometrySetup();
 };
