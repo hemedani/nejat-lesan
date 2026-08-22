@@ -10,6 +10,7 @@ interface AuthContextType {
   userLevel: UserLevel;
   userData: UserData | null;
   enterpriseSettings?: EnterpriseSettings;
+  patrolPermissions?: UserData["patrol_permissions"];
   login: (token: string, userData: UserData) => void;
   logout: () => void;
 }
@@ -43,8 +44,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUserLevel(user.level);
         setUserData(user);
         setEnterpriseSettings(user.settings);
-      } catch (e) {
-        console.error("Failed to parse stored user:", e);
+      } catch {
+        Cookies.remove("token", { path: "/" });
+        sessionStorage.removeItem("lesan_user");
       }
     }
   }, []);
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         userLevel,
         userData,
         enterpriseSettings,
+        patrolPermissions: userData?.patrol_permissions,
         login,
         logout,
       }}
