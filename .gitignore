@@ -9,3 +9,5 @@ front/desinged_screenshot
 back/sample_json_files
 front/ignore_assets
 nejat.bundle
+mobile/.env
+mobile/pnpm-debug.log
