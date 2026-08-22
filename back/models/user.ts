@@ -89,8 +89,19 @@ export const user_level_array = [
 	"Manager",
 	"Editor",
 	"Enterprise",
+	"Patrol",
 ];
 export const user_level_emums = enums(user_level_array);
+
+export const patrol_permissions_struct = object({
+	can_submit_accident: optional(boolean()),
+	can_view_map: optional(boolean()),
+	can_receive_announcements: optional(boolean()),
+	can_register_emergency: optional(boolean()),
+	can_view_reports: optional(boolean()),
+});
+
+export const personnel_code_pattern = pattern(string(), /^[0-9]+$/);
 
 export const mobile_pattern = pattern(
 	string(),
@@ -141,6 +152,14 @@ export const user_pure = {
 
 	level: user_level_emums,
 	is_verified: defaulted(boolean(), false),
+	// کد پرسنلی (فقط عددی) — مخصوص ورود مأمور گشت
+	personnel_code: optional(personnel_code_pattern),
+	is_active: defaulted(boolean(), true),
+	// دسترسی‌های پویای مأمور گشت که پس از ورود به اپ موبایل بازگردانده می‌شود
+	patrol_permissions: optional(patrol_permissions_struct),
+	// سیاست قفل شدن پس از تلاش‌های ناموفق ورود
+	failed_login_attempts: defaulted(number(), 0),
+	locked_until: optional(date()),
 	settings: object({
 		cities: array(object({
 			_id: objectIdValidation,
@@ -181,11 +200,19 @@ export const user_relations = {
 	},
 };
 
-export const users = () =>
-	coreApp.odm.newModel("user", user_pure, user_relations, {
+export const users = () => {
+	const model = coreApp.odm.newModel("user", user_pure, user_relations, {
 		createIndex: {
 			indexSpec: { "email": 1 },
 			options: { unique: true, sparse: true },
 		},
 		excludes: ["password"],
 	});
+
+	coreApp.odm.getCollection("user").createIndex(
+		{ personnel_code: 1 },
+		{ unique: true, sparse: true },
+	);
+
+	return model;
+};

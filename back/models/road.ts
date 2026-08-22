@@ -1,15 +1,32 @@
 import { coreApp } from "../mod.ts";
 import {
+	array,
 	type RelationDataType,
 	type RelationSortOrderType,
+	number,
+	optional,
 	string,
 } from "@deps";
-import { area_excludes, geoJSONStruct, user_excludes } from "@model";
+import {
+	area_excludes,
+	geoJSONStruct,
+	user_excludes,
+} from "@model";
+import { common_relation_struct } from "./utils/commonRelation.ts";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const road_pure = {
 	name: string(),
-	area: geoJSONStruct("MultiLineString"), // -- محدوده بومی (اگر متفاوت است)
+	area: geoJSONStruct("MultiLineString"), // -- محدوده بومی (اگر متفاوت است) / ordered geometry for linear referencing
+
+	// --- Linear referencing & patrol (Step 9) ---
+	// Origin / destination endpoint names (direction metadata)
+	origin: optional(string()),
+	destination: optional(string()),
+	// Cached total geometry length in meters (validates km/m reports)
+	total_length_meters: optional(number()),
+	// Lane/band definitions referencing `position` docs ({ _id, name })
+	lanes: optional(array(common_relation_struct)),
 
 	...createUpdateAt,
 };

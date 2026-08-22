@@ -5,23 +5,31 @@ import {
 	air_pollution_zones,
 	air_statuses,
 	area_usages,
+	announcements,
 	body_insurance_coes,
 	cities,
 	city_zones,
 	collision_types,
 	colors,
+	croquis_types,
+	damage_severities,
+	devices,
+	driver_statuses,
 	equipment_damages,
 	events,
 	fault_statuses,
 	files,
 	human_reasons,
+	injury_statuses,
 	insurance_coes,
 	licence_types,
 	light_statuses,
 	max_damage_sections,
 	motion_directions,
+	person_roles,
 	plaque_types,
 	plaque_usages,
+	police_stations,
 	positions,
 	provinces,
 	road_defects,
@@ -37,7 +45,13 @@ import {
 	traffic_zones,
 	types,
 	users,
+	vehicle_final_statuses,
 	vehicle_reasons,
+	vehicle_types,
+	vehicles,
+	patrol_units,
+	shifts,
+	accident_reviews,
 } from "@model";
 import { functionsSetup } from "./src/mod.ts";
 
@@ -64,7 +78,17 @@ const db = client.db("nejat");
 coreApp.odm.setDb(db);
 
 export const user = users();
+export const device = devices();
 export const file = files();
+export const police_station = police_stations();
+export const vehicle_type = vehicle_types();
+export const croquis_type = croquis_types();
+export const vehicle_final_status = vehicle_final_statuses();
+export const driver_status = driver_statuses();
+export const injury_status = injury_statuses();
+export const person_role = person_roles();
+export const damage_severity = damage_severities();
+export const announcement = announcements();
 export const province = provinces();
 export const city = cities();
 export const township = townships();
@@ -99,6 +123,10 @@ export const system = systems();
 export const system_type = system_types();
 export const type = types();
 export const vehicle_reason = vehicle_reasons();
+export const vehicle = vehicles();
+export const patrol_unit = patrol_units();
+export const shift = shifts();
+export const accident_review = accident_reviews();
 
 export const { setAct, setService, getAtcsWithServices } = coreApp.acts;
 
