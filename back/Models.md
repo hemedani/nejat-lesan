@@ -8,13 +8,35 @@ This document describes all the data models used in the traffic accident managem
 
 Manages file uploads and attachments related to accident reports, including photos, documents, and other evidence.
 
+**Fields:** `name`, `type`, `size`, `category` (plate/insurance/croquis/facility_damage/other), `accident_id`, `sequence`, `createdAt`, `updatedAt`
+
+**Relations:** `uploader` → User (reverse: `user.uploadedAssets`), `accident` → Accident (reverse: `accident.attachments`)
+
 ### User
 
 Handles user authentication and authorization, including police officers, administrators, and other system users.
 
+**Fields:** `first_name`, `last_name`, `father_name`, `mobile`, `gender`, `birth_date`, `summary`, `email`, `password` (excluded), `national_number`, `address`, `level` (Ghost/Manager/Editor/Enterprise/Patrol), `is_verified`, `personnel_code` (numeric, unique sparse), `is_active`, `patrol_permissions` (can_submit_accident, can_view_map, can_receive_announcements, can_register_emergency, can_view_reports), `failed_login_attempts`, `locked_until`, `settings` (cities, provinces, availableCharts), `createdAt`, `updatedAt`
+
+**Relations:** `avatar` → File, `national_card` → File, `devices` → Device (auto-created via Device.owner), `shifts` → Shift (auto-created via Shift.officer), `accidents` → Accident (auto-created via Accident.officer), `patrol_unit` → PatrolUnit (auto-created via PatrolUnit.officers)
+
 ### Accident
 
 The main model representing traffic accident incidents, containing comprehensive accident details and linking to related data.
+
+**Fields:** `seri`, `serial`, `location` (GeoJSON Point), `date_of_accident`, `dead_count`, `has_witness`, `news_number`, `officer` (string), `injured_count`, `completion_date`, `createdAt`, `updatedAt`
+
+**Mobile Patrol Meta:** `client_report_uuid` (unique sparse), `report_id`, `sync_status` (draft/queued/syncing/synced/rejected), `rejection_reason`, `reported_at`, `gps_coords` (Point), `gps_accuracy`, `travel_direction`, `kilometer`, `meter`
+
+**Police/Croquis:** `police_present`, `police_expert_name`, `police_arrival_time`, `officer_cause_description`
+
+**Vehicle Cards (vehicle_dtos):** Expanded with `vehicle_type`, `year`, `final_status`, `plate_image` (File ObjectId), `insurance_image` (File ObjectId), driver `phone`, `driver_status`
+
+**People Cards (people_dtos):** `role` (PersonRole), `sex`, `age`, `age_range`, `injury_status` (InjuryStatus), `first_name`, `last_name`, `national_code`, `phone`
+
+**Facility Damage (facility_damage_dtos):** `asset_group` (EquipmentDamage), `asset_code`, `damage_type`, `damage_severity` (DamageSeverity), `quantity`, `unit`, `creates_hazard`, `needs_repair`, `temporary_action`, `images` (File ObjectIds)
+
+**Relations:** `officer` → User (reverse: `user.accidents`), `patrol_unit` → PatrolUnit (reverse: `patrol_unit.accidents`), `vehicle` → Vehicle (reverse: `vehicle.accidents`), `lane` → Position, `police_station` → PoliceStation (reverse), `croquis_type` → CroquisType (reverse), plus geographic: `province`, `city`, `township`, `road`, `traffic_zone`, `city_zone`, `air_pollution_zone`, `type`, `area_usages`, `position`, `ruling_type`, `air_statuses`, `light_status`, `road_defects`, `human_reasons`, `collision_type`, `road_situation`, `road_repair_type`, `shoulder_status`, `vehicle_reasons`, `equipment_damages`, `road_surface_conditions`, `attachments` → File
 
 ## Geographic Models
 
@@ -40,6 +62,8 @@ Manages traffic control zones and areas with specific traffic regulations.
 
 Contains information about roads, streets, and highways where accidents occur.
 
+**Fields:** `origin`, `destination`, `total_length_meters`, `lanes` (array of common_relation_struct), `area` (MultiLineString), `createdAt`, `updatedAt`
+
 ### Road Defect
 
 Tracks road defects and infrastructure issues that may contribute to accidents.
@@ -58,7 +82,7 @@ Details the surface conditions of roads (wet, dry, icy, etc.) at the time of acc
 
 ### Position
 
-Manages precise positioning data for accident locations.
+Manages precise positioning data for accident locations (e.g., Line 1, Line 2, Right Shoulder, Left Shoulder).
 
 ## Vehicle-Related Models
 
@@ -81,6 +105,18 @@ Manages different types of driving licenses and certifications.
 ### Type
 
 General vehicle type classifications (car, truck, motorcycle, etc.).
+
+### Vehicle Type
+
+Vehicle categories: سواری، وانت، کامیون، کشنده، اتوبوس، مینی‌بوس، موتورسیکلت، ماشین‌آلات راه‌سازی، امدادی، سایر.
+
+### Vehicle Final Status
+
+Final vehicle state after accident: متوقف در مسیر، متوقف در شانه، واژگون، خارج شده از راه، سقوط کرده، دچار حریق، منتقل شده با جرثقیل.
+
+### Driver Status
+
+Driver condition: حاضر، مصدوم، منتقل شده، فوت شده، متواری، نامشخص.
 
 ## Environmental and Condition Models
 
@@ -108,7 +144,7 @@ Classifies different types of vehicle collisions (head-on, rear-end, side-impact
 
 ### Equipment Damage
 
-Tracks damage to vehicle equipment and components.
+Asset groups for facility damage: گاردریل، نیوجرسی، تابلو، پایه تابلو، پایه روشنایی، چراغ روشنایی، فنس، دوربین، تجهیزات عوارضی، روکشی، پل/آبرو، سایر.
 
 ### Max Damage Section
 
@@ -156,6 +192,66 @@ Core system configuration and settings.
 
 Categorizes different system types and configurations.
 
+## Mobile Patrol Models
+
+### Device
+
+Tracks registered mobile devices for patrol officers.
+
+**Fields:** `device_id` (unique), `fingerprint`, `platform`, `app_version`, `model`, `is_active`, `last_seen_at`, `registered_at`, `revoked_at`, `createdAt`, `updatedAt`
+
+**Relations:** `owner` → User (reverse: `user.devices`)
+
+### Patrol Unit
+
+Represents a patrol unit with its associated police station, vehicles, and officers.
+
+**Fields:** `code`, `name`, `is_active`, `createdAt`, `updatedAt`
+
+**Relations:** `registrer` → User, `police_station` → PoliceStation (reverse: `police_station.patrol_units`), `vehicles` → Vehicle (reverse: `vehicle.patrol_unit`), `officers` → User (reverse: `user.patrol_unit`), `accidents` → Accident (reverse), `shifts` → Shift (reverse)
+
+### Shift
+
+Represents an officer's work shift with patrol unit and vehicle assignment.
+
+**Fields:** `shift_type`, `status` (active/ended/cancelled), `start_at`, `end_at`, `note`, `createdAt`, `updatedAt`
+
+**Relations:** `registrer` → User, `officer` → User (reverse: `user.shifts`), `patrol_unit` → PatrolUnit (reverse: `patrol_unit.shifts`), `vehicle` → Vehicle (reverse: `vehicle.shifts`)
+
+### Police Station
+
+Police station with geographic area for zone validation.
+
+**Fields:** `name`, `code`, `area` (MultiPolygon), `military_rank`, `createdAt`, `updatedAt`
+
+**Relations:** `registrer` → User, `patrol_units` → PatrolUnit (reverse)
+
+### Croquis Type
+
+Croquis types: کروکی سازشی سری ۱۲، کروکی غیرسازشی سری ۲۲.
+
+### Injury Status
+
+Injury severity levels: بدون آسیب، آسیب جزئی، آسیب جدی، وضعیت بحرانی، فوت در محل، فوت پس از انتقال، نامشخص.
+
+### Person Role
+
+Person roles in accident: راننده، سرنشین، عابر پیاده، موتورسوار، دوچرخه‌سوار، مأمور/نیروی امدادی.
+
+### Damage Severity
+
+Damage severity levels: جزئی، متوسط، شدید، تخریب کامل.
+
+## Announcement Model
+
+### Announcement
+
+Control center announcements/notifications for patrol officers.
+
+**Fields:** `title`, `body`, `priority` (info/warning/critical), `target_roles`, `target_user_ids`, `target_patrol_units`, `expires_at`, `is_active`, `createdAt`, `updatedAt`
+
+**Relations:** `registrer` → User, `attachments` → File
+
 ---
 
 ## Model Names List (for copy/paste)
@@ -195,4 +291,16 @@ HumanReason
 VehicleReason
 System
 SystemType
+Device
+PatrolUnit
+Shift
+PoliceStation
+VehicleType
+CroquisType
+VehicleFinalStatus
+DriverStatus
+InjuryStatus
+PersonRole
+DamageSeverity
+Announcement
 ```
