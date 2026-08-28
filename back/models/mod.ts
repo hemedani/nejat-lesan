@@ -53,4 +53,7 @@ export * from "./vehicle_reason.ts";
 export * from "./vehicle.ts";
 export * from "./patrol_unit.ts";
 export * from "./shift.ts";
-export * from "./accident_review.ts";
+export * from "./patrol_operations.ts";
+export * from "./operation_log.ts";
+export * from "./announcement_read.ts";
+export * from "./emergency.ts";
