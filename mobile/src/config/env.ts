@@ -6,7 +6,24 @@ export type AppConfig = {
   apiBaseUrl: string;
   environment: AppEnvironment;
   appVersion: string;
+  /**
+   * Categorized accident-image upload (`file.uploadAccidentImages`, base64 JSON
+   * wire format). Dormant until enabled explicitly so the sync flow cannot be
+   * broken by an untested payload path; flip with EXPO_PUBLIC_ACCIDENT_UPLOADS=on.
+   */
+  uploadsEnabled: boolean;
+  /** Base URL of the XYZ slippy-map tile server (production should self-host). */
+  mapTileUrl: string;
 };
+
+function readUploadsEnabled(value: string | undefined): boolean {
+  return value?.trim().toLowerCase() === 'on';
+}
+
+function readMapTileUrl(value: string | undefined): string {
+  const trimmed = value?.trim().replace(/\/+$/, '');
+  return trimmed && trimmed.length > 0 ? trimmed : 'https://tile.openstreetmap.org';
+}
 
 function readEnvironment(value: string | undefined): AppEnvironment {
   if (value === 'staging' || value === 'production') {
@@ -30,5 +47,7 @@ export function getAppConfig(): AppConfig {
     ),
     environment: readEnvironment(process.env.EXPO_PUBLIC_APP_ENV),
     appVersion: Constants.expoConfig?.version ?? '0.0.0',
+    uploadsEnabled: readUploadsEnabled(process.env.EXPO_PUBLIC_ACCIDENT_UPLOADS),
+    mapTileUrl: readMapTileUrl(process.env.EXPO_PUBLIC_MAP_TILE_URL),
   };
 }

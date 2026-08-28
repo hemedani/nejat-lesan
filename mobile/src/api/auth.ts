@@ -1,23 +1,23 @@
-import type { MobileLoginRequest } from './backend-types';
+import type { LoginRequest } from './backend-types';
 import type { ApiRequestOptions } from './client';
 import { callTypedAct } from './client';
+import type { PatrolPermissions } from '@/domain/types';
 
-export type MobileLoginResponse = {
+export type LoginResponse = {
   token: string;
-  permissions?: string[];
+  permissions?: PatrolPermissions;
   user: unknown;
-  devices?: unknown[];
 };
 
-export function mobileLogin(
-  details: MobileLoginRequest['details'],
+export function login(
+  details: LoginRequest['details'],
   options: ApiRequestOptions = {},
-): Promise<MobileLoginResponse> {
+): Promise<LoginResponse> {
   return callTypedAct(
     {
       service: 'main',
       model: 'user',
-      act: 'mobileLogin',
+      act: 'login',
       details,
     },
     options,

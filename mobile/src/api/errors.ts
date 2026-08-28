@@ -1,12 +1,21 @@
 export type ApiErrorCode =
   | 'offline'
   | 'timeout'
+  | 'cancelled'
   | 'unauthorized'
   | 'forbidden'
   | 'validation'
   | 'server'
   | 'invalid_response'
   | 'unknown';
+
+const BACKEND_MESSAGES = {
+  invalidCredentials: 'ایمیل یا رمز عبور صحیح نیست',
+  inactiveAccount: 'حساب کاربری غیرفعال است',
+  patrolAccess: 'این حساب اجازه استفاده از اپ مأمور گشت را ندارد',
+  revokedDevice: 'نشست این دستگاه باطل شده است',
+  noActiveShift: 'شیفت فعالی یافت نشد',
+} as const;
 
 export class ApiError extends Error {
   constructor(
@@ -31,12 +40,28 @@ function getBackendMessage(details: unknown): string | null {
 export function translateApiError(error: unknown): string {
   if (error instanceof ApiError) {
     const backendMessage = getBackendMessage(error.details);
+    if (backendMessage === BACKEND_MESSAGES.invalidCredentials) {
+      return 'ایمیل یا رمز عبور صحیح نیست.';
+    }
+    if (backendMessage === BACKEND_MESSAGES.inactiveAccount) {
+      return 'حساب کاربری غیرفعال است.';
+    }
+    if (backendMessage === BACKEND_MESSAGES.patrolAccess) {
+      return 'این حساب اجازه استفاده از اپ مأمور گشت را ندارد.';
+    }
+    if (backendMessage === BACKEND_MESSAGES.revokedDevice) {
+      return 'نشست این دستگاه باطل شده است.';
+    }
+    if (backendMessage === BACKEND_MESSAGES.noActiveShift) {
+      return 'در حال حاضر شیفت فعالی ندارید.';
+    }
     if (backendMessage && (error.code === 'validation' || error.code === 'invalid_response')) {
       return backendMessage;
     }
     const messages: Record<ApiErrorCode, string> = {
       offline: 'اتصال اینترنت برقرار نیست. اطلاعات شما پس از اتصال همگام می‌شود.',
       timeout: 'پاسخ سرور بیش از حد طول کشید. دوباره تلاش کنید.',
+      cancelled: 'ارتباط با سرور قطع شد. دوباره تلاش کنید.',
       unauthorized: 'نشست شما منقضی شده است. دوباره وارد شوید.',
       forbidden: 'شما مجوز انجام این عملیات را ندارید.',
       validation: 'اطلاعات واردشده را بررسی کنید.',

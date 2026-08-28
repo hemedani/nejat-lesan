@@ -1,4 +1,4 @@
-import { mobileLogin, type MobileLoginResponse } from '@/api/auth';
+import { login, type LoginResponse } from '@/api/auth';
 import { ApiError } from '@/api/errors';
 import { getConnectivitySnapshot } from '@/services/connectivity';
 import type { Session, User } from '@/domain/types';
@@ -7,7 +7,7 @@ import { createSecureSessionRepository, type SessionRepository } from '@/storage
 import { getDeviceMetadata } from './device-metadata';
 
 export type SessionService = {
-  login(personnelCode: string, password: string): Promise<Session>;
+  login(email: string, password: string): Promise<Session>;
   restore(): Promise<Session | null>;
   updateLastSync(): Promise<void>;
   logout(): Promise<void>;
@@ -19,7 +19,7 @@ function normalizeUser(value: unknown): User {
     throw new ApiError('Invalid user response.', 'invalid_response');
   }
   const user = value as Partial<User>;
-  if (!user._id || !user.first_name || !user.last_name || !user.personnel_code) {
+  if (!user._id || !user.first_name || !user.last_name) {
     throw new ApiError('Incomplete user response.', 'invalid_response');
   }
   return {
@@ -27,11 +27,13 @@ function normalizeUser(value: unknown): User {
     first_name: user.first_name,
     last_name: user.last_name,
     personnel_code: user.personnel_code,
-    permissions: user.permissions,
+    permissions: (value as Record<string, unknown>).patrol_permissions as
+      | User['permissions']
+      | undefined,
   };
 }
 
-function toSession(response: MobileLoginResponse, deviceId: string): Session {
+function toSession(response: LoginResponse, deviceId: string): Session {
   if (!response.token) {
     throw new ApiError('Missing session token.', 'invalid_response');
   }
@@ -45,7 +47,7 @@ function toSession(response: MobileLoginResponse, deviceId: string): Session {
 function toCache(session: Session) {
   return {
     user_id: session.user._id,
-    personnel_code: session.user.personnel_code,
+    ...(session.user.personnel_code ? { personnel_code: session.user.personnel_code } : {}),
     display_name: `${session.user.first_name} ${session.user.last_name}`,
     permissions: session.user.permissions,
   };
@@ -55,17 +57,17 @@ export function createSessionService(
   repository: SessionRepository = createSecureSessionRepository(),
 ): SessionService {
   return {
-    async login(personnelCode, password) {
+    async login(email, password) {
       const connectivity = await getConnectivitySnapshot();
       if (connectivity.status === 'offline') {
         throw new ApiError('First login requires an internet connection.', 'offline');
       }
 
       const device = await getDeviceMetadata();
-      const response = await mobileLogin(
+      const response = await login(
         {
           set: {
-            personnel_code: personnelCode,
+            email,
             password,
             device,
           },
@@ -78,11 +80,11 @@ export function createSessionService(
               last_name: 1,
               personnel_code: 1,
               patrol_permissions: 1,
-            },
-            devices: {
-              _id: 1,
-              device_id: 1,
-              is_active: 1,
+              devices: {
+                _id: 1,
+                device_id: 1,
+                is_active: 1,
+              },
             },
           },
         },

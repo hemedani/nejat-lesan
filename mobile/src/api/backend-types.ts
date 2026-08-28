@@ -23,6 +23,6 @@ export type BackendActRequest<
   details: BackendRequest[TService][TModel][TAct];
 };
 
-export type MobileLoginRequest = BackendActRequest<'main', 'user', 'mobileLogin'>;
+export type LoginRequest = BackendActRequest<'main', 'user', 'login'>;
 
 export type ActiveShiftRequest = BackendActRequest<'main', 'shift', 'getActiveShift'>;

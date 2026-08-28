@@ -20,8 +20,31 @@ export type TypedActRequest<
   TAct extends keyof BackendRequest[TService][TModel],
 > = BackendActRequest<TService, TModel, TAct>;
 
-function isOfflineError(error: unknown): boolean {
-  return error instanceof TypeError;
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return `${error.name}: ${error.message}`;
+  }
+  return String(error);
+}
+
+function classifyTransportFailure(error: unknown, timedOut: boolean): ApiError {
+  if (error instanceof ApiError) {
+    return error;
+  }
+  if (timedOut) {
+    return new ApiError('API request timed out.', 'timeout');
+  }
+  const message = getErrorMessage(error);
+  if (/cancel|abort/i.test(message)) {
+    return new ApiError('API request was cancelled.', 'cancelled', undefined, message);
+  }
+  if (error instanceof SyntaxError || /json parse|unexpected end of input/i.test(message)) {
+    return new ApiError('API response was incomplete.', 'invalid_response', undefined, message);
+  }
+  if (error instanceof TypeError) {
+    return new ApiError('Network request failed.', 'offline');
+  }
+  return new ApiError('Unexpected API request failure.', 'unknown', undefined, error);
 }
 
 function parseResponse<T>(value: unknown): ApiEnvelope<T> {
@@ -31,10 +54,17 @@ function parseResponse<T>(value: unknown): ApiEnvelope<T> {
   return value as ApiEnvelope<T>;
 }
 
+let lastDevWarning: string | null = null;
+
 function logDevelopmentFailure(error: unknown): void {
   if (!__DEV__) {
     return;
   }
+  const fingerprint = error instanceof Error ? `${error.name}:${error.message}` : String(error);
+  if (fingerprint === lastDevWarning) {
+    return;
+  }
+  lastDevWarning = fingerprint;
   if (error instanceof ApiError) {
     console.warn('[LESAN API]', {
       code: error.code,
@@ -57,7 +87,11 @@ export async function callAct<
 ): Promise<TResponse> {
   const { apiBaseUrl } = getAppConfig();
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, options.timeoutMs ?? DEFAULT_TIMEOUT_MS);
 
   if (options.signal) {
     options.signal.addEventListener('abort', () => controller.abort(), { once: true });
@@ -69,14 +103,19 @@ export async function callAct<
       throw new ApiError('Network is offline.', 'offline');
     }
 
-    const payload = await lesanApi({
-      URL: apiBaseUrl,
-      settings: { signal: controller.signal },
-      baseHeaders: {
-        Accept: 'application/json',
-        ...(options.token ? { token: options.token } : {}),
-      },
-    }).send(request);
+    let payload: unknown;
+    try {
+      payload = await lesanApi({
+        URL: apiBaseUrl,
+        settings: { signal: controller.signal },
+        baseHeaders: {
+          Accept: 'application/json',
+          ...(options.token ? { token: options.token } : {}),
+        },
+      }).send(request);
+    } catch (error) {
+      throw classifyTransportFailure(error, timedOut);
+    }
 
     let envelope: ApiEnvelope<TResponse>;
     try {
@@ -97,13 +136,7 @@ export async function callAct<
     if (error instanceof ApiError) {
       throw error;
     }
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      throw new ApiError('API request timed out.', 'timeout');
-    }
-    if (isOfflineError(error)) {
-      throw new ApiError('Network request failed.', 'offline');
-    }
-    throw new ApiError('Unexpected API request failure.', 'unknown', undefined, error);
+    throw classifyTransportFailure(error, timedOut);
   } finally {
     clearTimeout(timeout);
   }
