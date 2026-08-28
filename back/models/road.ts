@@ -1,17 +1,13 @@
 import { coreApp } from "../mod.ts";
 import {
 	array,
-	type RelationDataType,
-	type RelationSortOrderType,
 	number,
 	optional,
+	type RelationDataType,
+	type RelationSortOrderType,
 	string,
 } from "@deps";
-import {
-	area_excludes,
-	geoJSONStruct,
-	user_excludes,
-} from "@model";
+import { area_excludes, geoJSONStruct, user_excludes } from "@model";
 import { common_relation_struct } from "./utils/commonRelation.ts";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
@@ -47,7 +43,7 @@ export const road_relations = {
 		optional: true,
 		excludes: area_excludes,
 		relatedRelations: {
-			axeses: {
+			roads: {
 				type: "multiple" as RelationDataType,
 				limit: 50,
 				excludes: road_excludes,

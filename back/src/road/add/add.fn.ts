@@ -18,7 +18,7 @@ export const addFn: ActFn = async (body) => {
 			province: {
 				_ids: new ObjectId(provinceId as string),
 				relatedRelations: {
-					axeses: true,
+					roads: true,
 				},
 			},
 		},
