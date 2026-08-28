@@ -1,7 +1,7 @@
 import { type ActFn, ObjectId } from "@deps";
-import { coreApp, announcement, shift, patrol_unit } from "../../../mod.ts";
+import { announcement, announcement_read, coreApp } from "../../../mod.ts";
+import { buildVisibleAnnouncementsFilter } from "../visibleFilter.ts";
 import type { MyContext } from "@lib";
-import { throwError } from "@lib";
 
 export const getAnnouncementsFn: ActFn = async (body) => {
 	const {
@@ -12,58 +12,23 @@ export const getAnnouncementsFn: ActFn = async (body) => {
 		.getContextModel() as MyContext;
 	const actor = context.user;
 
-	// Build filter based on user's role and patrol unit
-	const filter: Record<string, any> = {
-		is_active: is_active !== "false",
-	};
+	let filter: Record<string, any>;
+
+	if (actor.level === "Patrol") {
+		// Patrol: only announcements targeted at their role / active unit / self
+		filter = await buildVisibleAnnouncementsFilter(actor);
+	} else {
+		// Manager & Ghost: full list
+		filter = { is_active: is_active !== "false" };
+	}
 
 	if (priority) {
 		filter.priority = priority;
 	}
 
-	// For Patrol users, filter by their target_roles and target_patrol_units
-	if (actor.level === "Patrol") {
-		const orConditions: Record<string, any>[] = [
-			{ target_roles: { $size: 0 } }, // No role restriction
-			{ target_roles: { $in: [actor.level] } }, // Targets Patrol role
-		];
+	const finalSkip = skip || (limit || 50) * ((page || 1) - 1);
 
-		// Get officer's active patrol unit
-		const activeShift = await shift.findOne({
-			filters: {
-				"officer._id": new ObjectId(actor._id),
-				status: "active",
-			},
-			projection: { patrol_unit: 1 },
-		});
-
-		if (activeShift?.patrol_unit?._id) {
-			const patrolUnitId = activeShift.patrol_unit._id.toString();
-			orConditions.push(
-				{ target_patrol_units: { $size: 0 } }, // No patrol unit restriction
-				{ target_patrol_units: { $in: [patrolUnitId] } }, // Targets their patrol unit
-			);
-		}
-
-		orConditions.push(
-			{ target_user_ids: { $size: 0 } }, // No user restriction
-			{ target_user_ids: { $in: [actor._id.toString()] } }, // Targets this user
-		);
-
-		filter.$or = orConditions;
-	}
-
-	// Handle expires_at - only show non-expired
-	filter.$or = [
-		...(filter.$or || []),
-		{ expires_at: { $exists: false } },
-		{ expires_at: null },
-		{ expires_at: { $gte: new Date() } },
-	];
-
-	let finalSkip = skip || (limit || 50) * ((page || 1) - 1);
-
-	return await announcement
+	const items: any[] = await announcement
 		.find({
 			filters: filter,
 			projection: get,
@@ -71,4 +36,41 @@ export const getAnnouncementsFn: ActFn = async (body) => {
 		.skip(finalSkip)
 		.limit(limit || 50)
 		.toArray();
+
+	// --- per-user read state ---
+	const ids = items.map((item) => new ObjectId(item._id));
+	const readDocs: any[] = ids.length
+		? await announcement_read
+			.find({
+				filters: {
+					"reader._id": new ObjectId(actor._id),
+					"announcement._id": { $in: ids },
+				},
+				projection: { announcement: 1, read_at: 1 },
+			})
+			.toArray()
+		: [];
+
+	const readMap = new Map<string, Date>();
+	for (const read of readDocs) {
+		readMap.set(
+			read.announcement?._id?.toString(),
+			read.read_at,
+		);
+	}
+
+	const withReadState = items.map((item) => ({
+		...item,
+		is_read: readMap.has(item._id.toString()),
+		read_at: readMap.get(item._id.toString()) ?? null,
+	}));
+
+	// unread first, then newest first
+	withReadState.sort((a, b) => {
+		if (a.is_read !== b.is_read) return a.is_read ? 1 : -1;
+		return new Date(b.createdAt).getTime() -
+			new Date(a.createdAt).getTime();
+	});
+
+	return withReadState;
 };

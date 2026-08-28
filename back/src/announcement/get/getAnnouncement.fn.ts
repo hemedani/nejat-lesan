@@ -1,5 +1,5 @@
 import { type ActFn, ObjectId } from "@deps";
-import { coreApp, announcement } from "../../../mod.ts";
+import { announcement, coreApp } from "../../../mod.ts";
 import { throwError } from "@lib";
 
 export const getAnnouncementFn: ActFn = async (body) => {

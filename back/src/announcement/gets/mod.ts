@@ -1,4 +1,4 @@
-import { setTokens, setUser, grantAccess } from "@lib";
+import { grantAccess, setTokens, setUser } from "@lib";
 import { coreApp } from "../../../mod.ts";
 import { getAnnouncementsFn } from "./getAnnouncements.fn.ts";
 import { getAnnouncementsValidator } from "./getAnnouncements.val.ts";

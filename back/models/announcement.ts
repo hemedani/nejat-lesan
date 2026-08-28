@@ -14,7 +14,11 @@ import { createUpdateAt } from "../utils/createUpdateAt.ts";
 import { file_excludes } from "./file.ts";
 import { user_excludes } from "./user.ts";
 
-export const announcement_priority_array = ["info", "warning", "critical"] as const;
+export const announcement_priority_array = [
+	"info",
+	"warning",
+	"critical",
+] as const;
 export const announcement_priority_enums = enums(announcement_priority_array);
 
 export const announcement_pure = {
@@ -48,4 +52,8 @@ export const announcement_relations = {
 };
 
 export const announcements = () =>
-	coreApp.odm.newModel("announcement", announcement_pure, announcement_relations);
+	coreApp.odm.newModel(
+		"announcement",
+		announcement_pure,
+		announcement_relations,
+	);

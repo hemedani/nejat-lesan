@@ -1,5 +1,5 @@
 import { type ActFn, ObjectId } from "@deps";
-import { coreApp, announcement, user } from "../../../mod.ts";
+import { announcement, coreApp, user } from "../../../mod.ts";
 import type { MyContext } from "@lib";
 import { throwError } from "@lib";
 

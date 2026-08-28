@@ -1,5 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
-import { coreApp, announcement, shift } from "../../../mod.ts";
+import { announcement, announcement_read, coreApp } from "../../../mod.ts";
+import { buildVisibleAnnouncementsFilter } from "../visibleFilter.ts";
 import type { MyContext } from "@lib";
 import { throwError } from "@lib";
 
@@ -8,59 +9,30 @@ export const getUnreadCountFn: ActFn = async (body) => {
 		.getContextModel() as MyContext;
 	const actor = context.user;
 
-	// Only Patrol users can check unread count
 	if (actor.level !== "Patrol") {
 		return throwError("شما اجازه این کار را ندارید");
 	}
 
-	// Build filter for announcements targeting this patrol officer
-	const filter: Record<string, any> = {
-		is_active: true,
-	};
+	// All announcements visible to this officer (active + non-expired + targeted)
+	const filter = await buildVisibleAnnouncementsFilter(actor);
 
-	const orConditions: Record<string, any>[] = [
-		{ target_roles: { $size: 0 } },
-		{ target_roles: { $in: [actor.level] } },
-	];
+	const totalCount = await announcement.countDocument({ filter });
 
-	// Get officer's active patrol unit
-	const activeShift = await shift.findOne({
-		filters: {
-			"officer._id": new ObjectId(actor._id),
-			status: "active",
+	if (totalCount === 0) return { count: 0 };
+
+	// Subtract the ones this officer has already read
+	const visibleIds = await announcement
+		.find({ filters: filter, projection: { _id: 1 } })
+		.toArray();
+
+	const readCount = await announcement_read.countDocument({
+		filter: {
+			"reader._id": new ObjectId(actor._id),
+			"announcement._id": {
+				$in: visibleIds.map((doc) => new ObjectId(doc._id)),
+			},
 		},
-		projection: { patrol_unit: 1 },
 	});
 
-	if (activeShift?.patrol_unit?._id) {
-		const patrolUnitId = activeShift.patrol_unit._id.toString();
-		orConditions.push(
-			{ target_patrol_units: { $size: 0 } },
-			{ target_patrol_units: { $in: [patrolUnitId] } },
-		);
-	}
-
-	orConditions.push(
-		{ target_user_ids: { $size: 0 } },
-		{ target_user_ids: { $in: [actor._id.toString()] } },
-	);
-
-	filter.$or = orConditions;
-
-	// Handle expires_at - only show non-expired
-	filter.$or = [
-		...(filter.$or || []),
-		{ expires_at: { $exists: false } },
-		{ expires_at: null },
-		{ expires_at: { $gte: new Date() } },
-	];
-
-	// Count total matching announcements
-	const totalCount = await announcement.countDocument({
-		filter: filter,
-	});
-
-	// In a full implementation with read tracking, we'd subtract read count
-	// For now, return total as unread
-	return { count: totalCount };
+	return { count: totalCount - readCount };
 };

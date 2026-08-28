@@ -1,4 +1,4 @@
-import { object, number } from "@deps";
+import { number, object } from "@deps";
 
 export const getUnreadCountValidator = () => {
 	return object({
