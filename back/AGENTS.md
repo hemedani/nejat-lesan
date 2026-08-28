@@ -24,7 +24,7 @@ LESEN is a comprehensive traffic management and accident reporting system built 
 
 ### Backend (Deno)
 
-- **Framework**: Custom Deno framework based on LESEN v0.1.22
+- **Framework**: Custom Deno framework based on LESEN v0.1.26 (pinned in `deps.ts`)
 - **Language**: TypeScript
 - **Database**: MongoDB with ODM integration
 - **Cache**: Redis integration
@@ -147,8 +147,9 @@ The system is built on the LESEN framework with:
 
 ## 🛡️ Security Features
 
-- JWT-based authentication (90-day expiry), issued by the `login` act
-- Email + bcrypt-hashed password authentication; the old OTP/SMS flow (`loginReq`, `changeMobile`) was removed
+- JWT-based authentication (90-day expiry), issued by the single `login` act (email + password) used by both web and mobile
+- Email + bcrypt-hashed password authentication; the old OTP/SMS flow (`loginReq`, `changeMobile`) and the personnel-code-keyed `mobileLogin` act were removed
+- Sending an optional `device` payload with `login` creates a device-scoped patrol session: JWT carries `device_id`, requires `level === "Patrol"`, and revoked devices fail on their next request; per-user lockout (5 failed attempts → 5 min) applies to every login
 - Passwords are never returned in any projection — `password` is excluded from the model and all responses (requesting it in `get` is rejected as type `never`)
 - `setGhostPassword`: public, one-time Ghost bootstrap act — sets the Ghost's password to `password123` and (if unset) its email to `ghost@nejat.ai`
 - `changeUserPassword`: Ghost-only act that resets any user's password by `userId` + `newPassword`
@@ -195,6 +196,8 @@ The system includes robust geographic features:
    - Filtering by any level of the hierarchy without joins
    - Querying all items in a category efficiently
    - Consistent hierarchy traversal without deep relation penetration
+
+5. **Delete redundant/dead models rather than maintaining them**: A model file that is never instantiated in `mod.ts` and never used by any act is dead code. Delete it. Examples removed from this repo: legacy `driver.ts`, `person.ts`, `country.ts`, `location_area.ts` (carried a broken `schemaName: "axes"` ref), `event_process.ts` — all superseded by embedded DTO arrays on `accident`.
 
 ## 📊 Analytics and Charts System
 
@@ -491,6 +494,17 @@ export const parent_relations = {
 
 **Key rule:** The model that "belongs to" another model (has the foreign key) defines the relation. The parent model stays clean — Lesan embeds the reverse automatically.
 
+**Concrete examples in this codebase:**
+- `shift.ts` defines `officer`, `patrol_unit`, `vehicle` (single) with `relatedRelations: { shifts: ... }` → Lesan auto-creates `user.shifts`, `patrol_unit.shifts`, `vehicle.shifts`. `user`/`patrol_unit`/`vehicle` define **no** `shifts` relation.
+- `patrol_unit.ts` defines `police_station` → Lesan auto-creates `police_station.patrol_units`.
+- `patrol_unit.ts` defines `vehicles`/`officers` (multiple) → Lesan auto-creates the single reverse `vehicle.patrol_unit` / `user.patrol_unit`.
+- `accident.ts` defines ~25 relations (`officer`, `patrol_unit`, `vehicle`, `road`, `city`, `province`, `police_station`, `collision_type`, …) → Lesan auto-creates the reverse `accidents` array on every target model.
+- `file.ts` defines `accident` → Lesan auto-creates `accident.attachments`.
+- `road.ts` defines `province` → Lesan auto-creates `province.roads`.
+
+**What NOT to define on parent models (❌ Wrong — would duplicate/error):**
+- `user` must not define `shifts`, `police_station` must not define `patrol_units`, `province` must not define `roads`/`cities`, `accident` targets must not define `accidents` — all of these are child relations and Lesan creates them automatically via `relatedRelations`.
+
 ### Lesan Relation Storage Model — Single Relations Are Embedded
 
 Lesan **embeds** single-type relations directly in the parent document as an inline subdocument containing the full related object (all pure fields + `_id`). This means:
@@ -499,7 +513,109 @@ Lesan **embeds** single-type relations directly in the parent document as an inl
 - **Fully indexable**: You can create MongoDB indexes on relation sub-fields like `relatedModel._id` or `relatedModel.name` just as you would on any top-level field.
 - **No denormalization needed for performance**: Storing `relatedModelId` and `relatedModelName` as separate pure fields provides no query or speed advantage over a single Lesan relation — the data lives in the same document either way.
 
-Use Lesan relations by default for single-model references. Only resort to pure-field IDs/names when the referenced model may be deleted and you need the reference to survive (orphan resilience), or when the data must be an immutable snapshot that should not track source-of-truth updates.
+### Prefer Lesan Relations Over Raw `_id` Fields
+
+Whenever you would store an ObjectId (or a name) in a **pure field** and later use it for a lookup, join, filter, or count, define a proper Lesan **single/multiple relation** instead:
+
+- A relation is embedded in the same document (zero-join) and queryable via `"relationName._id"`, `"relationName.name"`, etc.
+- Example fix applied in this repo: `file` previously stored a raw `accident_id` pure field **and** an `accident` relation; the duplicate pure field was removed and all count/filter queries moved to `"accident._id"`.
+- Example fix applied in this repo: `announcement_read` stored a raw `announcement_id`; it was replaced by a proper `announcement` single relation (query on `"announcement._id"`).
+
+Keep a raw pure-field id/name **only** for these three justified cases:
+
+1. **Orphan resilience** — the referenced document may be deleted and the reference must survive.
+2. **Immutable snapshots** — the value must not track source-of-truth updates (e.g. `announcement.target_user_ids`/`target_patrol_units` broadcast spec, `user.settings.cities`/`provinces` filtering denormalization, `accident.officer` legacy free-text name, `operation_log.entity_id`/`entity_type` polymorphic audit references).
+3. **File ids inside embedded DTO arrays** — a Lesan relation cannot live inside an embedded sub-document array (e.g. `accident.vehicle_dtos[].plate_image`/`insurance_image`, `facility_damage_dtos[].images`). These are still joined via a top-level relation (`accident.attachments`).
+
+### Prefer Embedding Over New Models
+
+When a set of records is always read **through its parent**, is small, and is never queried independently, embed it as a **pure sub-schema array** in the parent (like `accident.vehicle_dtos`, `accident.review_history`, `road.lanes`) instead of creating a separate model + collection:
+
+- Fewer collections, shorter code, no joins, and parent/child stay consistent in one document.
+- This mirrors the pattern used in the LESEN sibling project (`ProcessStepAssigneeGroup` model → embedded `ProcessStep.assigneeGroups`).
+- Example applied in this repo: the `accident_review` model was eliminated and embedded as `accident.review_history` (reviewer stored as an immutable `{_id, first_name, last_name}` snapshot).
+
+**Scale caveat — keep a model when the child count per parent can be large.** As a rule of thumb, if a single parent can accrue more than ~10 child records (e.g. read receipts on an announcement broadcast to dozens–hundreds of officers), do **not** embed — keep a separate model and give it a proper relation (see `announcement_read`).
+
+**Never define a Lesan relation *inside* an embedded array** — relations live at the document level only. Embedded arrays hold pure fields / sub-schemas.
+
+### Complete Relation Maps (per-model)
+
+What each model **defines** (own relations) and what Lesan **auto-creates** (reverse via `relatedRelations`). Reverses are never defined manually.
+
+```
+User
+  ├── avatar (File) [single, opt]
+  ├── national_card (File) [single, opt]
+  └── (reverses: user.accidents, user.shifts, user.patrol_unit, user.devices,
+         user.uploadedAssets, user.emergencies, user.announcement_reads)
+
+Device
+  └── owner (User) [single] → reverse: user.devices
+
+File
+  ├── uploader (User) [single] → reverse: user.uploadedAssets
+  └── accident (Accident) [single, opt] → reverse: accident.attachments
+
+Announcement
+  ├── registrer (User) [single, opt]
+  ├── attachments (File) [multiple, opt]
+  └── (reverse: announcement.reads via announcement_read.announcement)
+
+AnnouncementRead          ← kept as a model (audience per announcement can be large)
+  ├── announcement (Announcement) [single] → reverse: announcement.reads
+  └── reader (User) [single] → reverse: user.announcement_reads
+        unique index on {"announcement._id", "reader._id"}
+
+Emergency
+  ├── officer (User) [single] → reverse: user.emergencies
+  ├── patrol_unit (PatrolUnit) [single, opt] → reverse: patrol_unit.emergencies
+  └── vehicle (Vehicle) [single, opt] → reverse: vehicle.emergencies
+
+PatrolUnit
+  ├── registrer (User) [single, opt]
+  ├── police_station (PoliceStation) [single, opt] → reverse: police_station.patrol_units
+  ├── vehicles (Vehicle) [multiple] → reverse: vehicle.patrol_unit (single)
+  └── officers (User) [multiple] → reverse: user.patrol_unit (single)
+
+Shift
+  ├── registrer (User) [single, opt]
+  ├── officer (User) [single] → reverse: user.shifts
+  ├── patrol_unit (PatrolUnit) [single, opt] → reverse: patrol_unit.shifts
+  └── vehicle (Vehicle) [single, opt] → reverse: vehicle.shifts
+
+PoliceStation
+  ├── registrer (User) [single, opt]
+  ├── commander (User) [single, opt] → reverse: user.police_station
+  └── (reverses: patrol_unit.patrol_units, accident.accidents)
+
+Accident  (defines ~25 relations, each with reverse "accidents")
+  ├── reviewer (User) [single, opt]
+  ├── officer (User) [single, opt] → user.accidents
+  ├── patrol_unit (PatrolUnit) / vehicle (Vehicle) → reverses: "accidents"
+  ├── lane, position, police_station, croquis_type → reverses: "accidents"
+  ├── province / city / township / road / traffic_zone / city_zone /
+  │   air_pollution_zone / type / ruling_type / light_status /
+  │   collision_type / road_situation / road_repair_type / shoulder_status →
+  │   reverse: "accidents"
+  ├── area_usages / air_statuses / road_defects / human_reasons /
+  │   vehicle_reasons / equipment_damages / road_surface_conditions →
+  │   reverse: "accidents"
+  └── attachments (File) [multiple, opt]
+  Embedded pure arrays: vehicle_dtos, pedestrian_dtos, people_dtos,
+      facility_damage_dtos, review_history
+
+Road
+  ├── registrer (User) [single, opt]
+  └── province (Province) [single, opt] → reverse: province.roads
+
+City → registrer + province → reverse: province.cities
+Township → registrer + province → reverse: province.townships
+TrafficZone / CityZone / AirPollutionZone → registrer + city → reverse: city.*_zones
+
+Shared reference models (type, position, color, plaque_type, …) → registrer (User) [single, opt]
+OperationLog → actor (User) [single, opt]; entity_type/entity_id are intentional polymorphic raw refs
+```
 
 ### Function Implementation Patterns
 
@@ -636,7 +752,7 @@ export const addSetup = () =>
     schema: "modelName",
     fn: addFn,
     actName: "add",
-    preAct: [setTokens, setUser, grantAccess([{ roles: ["Manager"] }])],
+    preAct: [setTokens, setUser, grantAccess({ levels: ["Manager"] })],
     validator: addValidator(),
     validationRunType: "create",
   });
@@ -739,6 +855,8 @@ export const addFn: ActFn = async (body) => {
 | `city.deleteOne({ filter })` | not passed / false | ✅ City deleted. Province's embedded `cities` auto-cleaned. |
 | `province.deleteOne({ filter })` | not passed / false | ❌ Blocked: error to clear cities first |
 | `province.deleteOne({ filter, hardCascade: true })` | true | ✅ Province deleted. **All its cities cascade-deleted**. |
+
+**Bottom line:** always delete **children first**, never rely on `hardCascade` for routine cleanup. `hardCascade: false` and omitting it are semantically identical (both = default safe mode); keep the `hardCascade: hardCascade || false` pattern rather than making it conditional.
 
 **Recommended remove pattern:**
 ```typescript

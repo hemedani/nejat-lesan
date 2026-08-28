@@ -8,7 +8,7 @@ This document describes all the data models used in the traffic accident managem
 
 Manages file uploads and attachments related to accident reports, including photos, documents, and other evidence.
 
-**Fields:** `name`, `type`, `size`, `category` (plate/insurance/croquis/facility_damage/other), `accident_id`, `sequence`, `createdAt`, `updatedAt`
+**Fields:** `name`, `type`, `size`, `category` (plate/insurance/croquis/facility_damage/other), `sequence`, `createdAt`, `updatedAt`
 
 **Relations:** `uploader` → User (reverse: `user.uploadedAssets`), `accident` → Accident (reverse: `accident.attachments`)
 
@@ -35,6 +35,8 @@ The main model representing traffic accident incidents, containing comprehensive
 **People Cards (people_dtos):** `role` (PersonRole), `sex`, `age`, `age_range`, `injury_status` (InjuryStatus), `first_name`, `last_name`, `national_code`, `phone`
 
 **Facility Damage (facility_damage_dtos):** `asset_group` (EquipmentDamage), `asset_code`, `damage_type`, `damage_severity` (DamageSeverity), `quantity`, `unit`, `creates_hazard`, `needs_repair`, `temporary_action`, `images` (File ObjectIds)
+
+**Review History (review_history, embedded — replaces the former `accident_review` model):** array of `{ action (submitted/started_review/returned/resubmitted/approved/completed/reopened), reason?, action_at, reviewer: {_id, first_name, last_name} snapshot }`. Appended atomically by `reviewReport` / `resubmitReport`; read via `getReportReviewHistory`.
 
 **Relations:** `officer` → User (reverse: `user.accidents`), `patrol_unit` → PatrolUnit (reverse: `patrol_unit.accidents`), `vehicle` → Vehicle (reverse: `vehicle.accidents`), `lane` → Position, `police_station` → PoliceStation (reverse), `croquis_type` → CroquisType (reverse), plus geographic: `province`, `city`, `township`, `road`, `traffic_zone`, `city_zone`, `air_pollution_zone`, `type`, `area_usages`, `position`, `ruling_type`, `air_statuses`, `light_status`, `road_defects`, `human_reasons`, `collision_type`, `road_situation`, `road_repair_type`, `shoulder_status`, `vehicle_reasons`, `equipment_damages`, `road_surface_conditions`, `attachments` → File
 
@@ -198,7 +200,7 @@ Categorizes different system types and configurations.
 
 Tracks registered mobile devices for patrol officers.
 
-**Fields:** `device_id` (unique), `fingerprint`, `platform`, `app_version`, `model`, `is_active`, `last_seen_at`, `registered_at`, `revoked_at`, `createdAt`, `updatedAt`
+**Fields:** `device_id` (unique), `fingerprint`, `platform`, `app_version`, `model`, `is_active`, `last_seen_at`, `registered_at`, `revoked_at`, `push_token` (FCM/APNs, set at device-scoped login), `createdAt`, `updatedAt`
 
 **Relations:** `owner` → User (reverse: `user.devices`)
 
@@ -220,11 +222,13 @@ Represents an officer's work shift with patrol unit and vehicle assignment.
 
 ### Police Station
 
-Police station with geographic area for zone validation.
+Police station with geographic area for zone validation and the mobile station picker.
 
-**Fields:** `name`, `code`, `area` (MultiPolygon), `military_rank`, `createdAt`, `updatedAt`
+**Fields:** `name`, `code`, `location` (Polygon), `area` (MultiPolygon), `military_rank`, `is_active`, `createdAt`, `updatedAt`
 
-**Relations:** `registrer` → User, `patrol_units` → PatrolUnit (reverse)
+**Relations:** `registrer` → User, `commander` → User (reverse: `user.police_station`), `patrol_units` → PatrolUnit (reverse), `accidents` → Accident (reverse)
+
+**Acts:** public `gets`/`get` (station picker), Manager-gated `add`/`update`/`remove`/`count` (`src/police_station/`)
 
 ### Croquis Type
 
@@ -251,6 +255,26 @@ Control center announcements/notifications for patrol officers.
 **Fields:** `title`, `body`, `priority` (info/warning/critical), `target_roles`, `target_user_ids`, `target_patrol_units`, `expires_at`, `is_active`, `createdAt`, `updatedAt`
 
 **Relations:** `registrer` → User, `attachments` → File
+
+**Acts:** `add`/`update?` (Manager), `gets`/`get` (Manager + Patrol), `markRead`, `getUnreadCount` (Patrol). Patrol visibility = active + non-expired + targeted at the officer's role / active-shift unit / user id. `gets` annotates each item with `is_read` + `read_at` and sorts unread-first.
+
+### Announcement Read
+
+Per-user read receipts for announcements (unique index: `announcement._id` + `reader._id`). Kept as a model (not embedded) because a single announcement can be broadcast to many officers; embedding would bloat the announcement document.
+
+**Fields:** `read_at`, `createdAt`, `updatedAt`
+
+**Relations:** `announcement` → Announcement (reverse: `announcement.reads`), `reader` → User (reverse: `user.announcement_reads`)
+
+### Emergency
+
+Emergency/SOS requests raised by patrol officers from the mobile app.
+
+**Fields:** `status` (active/acknowledged/resolved), `connection_status` (online/degraded/offline — officer connectivity at report time), `note`, `location` (Point), `gps_accuracy`, `recorded_at`, `resolved_at`, `createdAt`, `updatedAt`
+
+**Relations:** `officer` → User (reverse: `user.emergencies`), `patrol_unit` → PatrolUnit (reverse, auto-resolved from the active shift), `vehicle` → Vehicle (reverse, auto-resolved from the active shift)
+
+**Acts:** `register` (Patrol; officer id comes from the token, never the client), `gets`/`get`/`updateStatus` (Manager). Every register/status change is audited into `operation_log`. The offline fallback path (SMS/call) is an ops policy, not backend code.
 
 ---
 
