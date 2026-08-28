@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { z } from "zod";
 import { loginAction } from "@/app/actions/login";
@@ -22,16 +22,44 @@ const LoginSchema = z.object({
 
 type LoginValues = z.infer<typeof LoginSchema>;
 
+const GENERIC_ERROR = "خطایی در ورود رخ داد. لطفاً دوباره تلاش کنید.";
+const INACTIVE_ACCOUNT_MESSAGE = "حساب کاربری غیرفعال است";
+const INACTIVE_ACCOUNT_FRIENDLY =
+  "حساب شما غیرفعال شده است. لطفاً با مدیر سیستم تماس بگیرید.";
+const LOCKOUT_MARK = "قفل";
+
 const ERROR_MESSAGES: Record<string, string> = {
-  "چنین کاربری پیدا نشد": "کاربری با این ایمیل یافت نشد.",
-  "رمز عبور برای این کاربر تنظیم نشده است":
-    "برای این کاربر رمز عبوری تنظیم نشده است. لطفاً با مدیر سیستم تماس بگیرید.",
-  "رمز عبور وارد شده صحیح نیست": "رمز عبور وارد شده صحیح نیست.",
+  "ایمیل یا رمز عبور صحیح نیست": "ایمیل یا رمز عبور صحیح نیست.",
 };
 
-const getFriendlyError = (body: string) => {
-  if (typeof body !== "string") return "خطایی در ورود رخ داد. لطفاً دوباره تلاش کنید.";
-  return ERROR_MESSAGES[body] || body;
+const parseLockoutMinutes = (message: string): number | undefined => {
+  const normalized = message.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)));
+  const match = normalized.match(/(\d+)\s*دقیقه/);
+  const minutes = match ? Number(match[1]) : NaN;
+  return Number.isInteger(minutes) && minutes > 0 ? minutes : undefined;
+};
+
+interface FriendlyError {
+  message: string;
+  lockoutMinutes?: number;
+}
+
+const getFriendlyError = (body: unknown): FriendlyError => {
+  const raw =
+    typeof body === "string"
+      ? body
+      : body !== null &&
+          typeof body === "object" &&
+          typeof (body as { message?: unknown }).message === "string"
+        ? (body as { message: string }).message
+        : null;
+
+  if (raw && raw in ERROR_MESSAGES) return { message: ERROR_MESSAGES[raw] };
+  if (raw && raw.includes(LOCKOUT_MARK))
+    return { message: raw, lockoutMinutes: parseLockoutMinutes(raw) };
+  if (raw && raw.includes(INACTIVE_ACCOUNT_MESSAGE))
+    return { message: INACTIVE_ACCOUNT_FRIENDLY };
+  return { message: GENERIC_ERROR };
 };
 
 const LoginForm = () => {
@@ -42,6 +70,13 @@ const LoginForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [lockoutMinutes, setLockoutMinutes] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (lockoutMinutes === null) return;
+    const id = setTimeout(() => setLockoutMinutes(null), lockoutMinutes * 60_000);
+    return () => clearTimeout(id);
+  }, [lockoutMinutes]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +110,9 @@ const LoginForm = () => {
 
         window.location.href = "/";
       } else {
-        setFormError(getFriendlyError(res.body as string));
+        const { message, lockoutMinutes: minutes } = getFriendlyError(res.body);
+        setFormError(message);
+        if (minutes) setLockoutMinutes(minutes);
         setIsLoading(false);
       }
     } catch {
@@ -228,7 +265,7 @@ const LoginForm = () => {
 
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={isLoading || lockoutMinutes !== null}
         className="group relative w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800/60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] overflow-hidden"
       >
         <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />

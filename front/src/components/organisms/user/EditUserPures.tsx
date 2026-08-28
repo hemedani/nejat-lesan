@@ -52,6 +52,23 @@ export const UpdateUserPureSchema = z
     address: z.string().optional(),
     level: z.enum(["Ghost", "Manager", "Editor", "Enterprise", "Patrol"]).optional(),
     is_verified: z.boolean().optional(),
+    personnel_code: z
+      .string()
+      .optional()
+      .refine(
+        (value) => !value || /^[0-9]+$/.test(value),
+        "کد پرسنلی باید فقط شامل ارقام باشد",
+      ),
+    is_active: z.boolean().optional(),
+    patrol_permissions: z
+      .object({
+        can_submit_accident: z.boolean().optional(),
+        can_view_map: z.boolean().optional(),
+        can_receive_announcements: z.boolean().optional(),
+        can_register_emergency: z.boolean().optional(),
+        can_view_reports: z.boolean().optional(),
+      })
+      .optional(),
     nationalCard: z.string().optional(),
     avatar: z.string().optional(),
     citySettingIds: z.array(z.string()).optional(),
@@ -116,6 +133,14 @@ export const UpdateUserPureSchema = z
 export type UpdateUserPureSchemaType = z.infer<typeof UpdateUserPureSchema>;
 export type UpdateUserPureSet = ReqType["main"]["user"]["updateUser"]["set"];
 
+const patrolPermissionFields = [
+  { key: "can_submit_accident", label: "ثبت گزارش تصادف" },
+  { key: "can_view_map", label: "مشاهده نقشه" },
+  { key: "can_receive_announcements", label: "دریافت اطلاعیه‌ها" },
+  { key: "can_register_emergency", label: "ثبت وضعیت اضطراری" },
+  { key: "can_view_reports", label: "مشاهده گزارش‌ها" },
+] as const;
+
 export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean }) => {
   const router = useRouter();
 
@@ -157,6 +182,9 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
       address: rest.address,
       level: rest.level,
       is_verified: rest.is_verified,
+      personnel_code: rest.personnel_code || "",
+      is_active: rest.is_active ?? true,
+      patrol_permissions: rest.patrol_permissions || {},
       nationalCard: "",
       avatar: "",
       citySettingIds: rest.settings?.cities?.map((city) => city._id) || [],
@@ -360,6 +388,29 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
         }
       } else {
         delete backendData.availableCharts;
+      }
+
+      // Patrol-only fields: personnel code, active flag and patrol permissions
+      if (data.level === "Patrol") {
+        if (!data.personnel_code || data.personnel_code.trim() === "") {
+          delete backendData.personnel_code;
+        }
+        if (typeof data.is_active !== "boolean") {
+          delete backendData.is_active;
+        }
+        const cleanedPermissions = Object.fromEntries(
+          Object.entries(data.patrol_permissions || {}).filter(([, value]) => value === true),
+        );
+        if (Object.keys(cleanedPermissions).length > 0) {
+          backendData.patrol_permissions =
+            cleanedPermissions as ReqType["main"]["user"]["updateUser"]["set"]["patrol_permissions"];
+        } else {
+          delete backendData.patrol_permissions;
+        }
+      } else {
+        delete backendData.personnel_code;
+        delete backendData.is_active;
+        delete backendData.patrol_permissions;
       }
 
       const updatedUserPures = await updateUserPure(backendData);
@@ -724,9 +775,65 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
     ),
   };
 
+  const patrolSettingsStep = {
+    id: "patrol-settings",
+    title: "تنظیمات مأمور گشت",
+    component: (
+      <div className="space-y-4">
+        <div className="w-full flex flex-wrap">
+          <MyInput
+            label="کد پرسنلی"
+            register={register}
+            name="personnel_code"
+            errMsg={errors.personnel_code?.message}
+            placeholder="فقط عدد - مثال: 12345"
+            className="w-1/2 p-2"
+          />
+          <SelectBox
+            label="وضعیت فعالیت"
+            name="is_active"
+            setValue={(fieldName, value) => {
+              setValue("is_active", value === "true");
+            }}
+            errMsg={errors.is_active?.message}
+            options={[
+              { value: "true", label: "فعال" },
+              { value: "false", label: "غیرفعال" },
+            ]}
+            defaultValue={{
+              value: rest.is_active ? "true" : "false",
+              label: rest.is_active ? "فعال" : "غیرفعال",
+            }}
+            className="w-1/2 p-2"
+          />
+        </div>
+        <div>
+          <span className="text-sm font-medium text-slate-700">دسترسی‌های مأمور گشت</span>
+          <div className="mt-2 grid grid-cols-1 gap-2 rounded-xl border border-gray-200 p-3 sm:grid-cols-2 lg:grid-cols-3">
+            {patrolPermissionFields.map((field) => (
+              <CustomCheckbox
+                key={`patrol-permission-${field.key}`}
+                checked={!!watch(`patrol_permissions.${field.key}` as keyof UpdateUserPureSet)}
+                onChange={(checked) =>
+                  setValue(`patrol_permissions.${field.key}` as keyof UpdateUserPureSet, checked)
+                }
+                label={field.label}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
+  };
+
   // Conditionally build steps based on user level
   const getSteps = () => {
     const baseSteps = [basicInfoStep];
+
+    // Add patrol settings step only for Patrol users
+    if (watchedLevel === "Patrol") {
+      baseSteps.push(patrolSettingsStep);
+    }
 
     // Add city settings step only for Enterprise users
     if (watchedLevel === "Enterprise") {

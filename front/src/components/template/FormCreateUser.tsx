@@ -42,11 +42,25 @@ export const UserCreateSchema = z
       .string()
       .optional()
       .refine((value) => !value || /^[0-9]{10}$/.test(value), "کد ملی باید 10 رقم باشد"),
+    personnel_code: z
+      .string()
+      .optional()
+      .refine((value) => !value || /^[0-9]+$/.test(value), "کد پرسنلی باید فقط شامل ارقام باشد"),
     address: z.string().min(1, "آدرس الزامی است"),
     level: z.enum(["Ghost", "Manager", "Editor", "Enterprise", "Patrol"], {
       message: "سطح الزامی است",
     }),
     is_verified: z.boolean(),
+    is_active: z.boolean(),
+    patrol_permissions: z
+      .object({
+        can_submit_accident: z.boolean().optional(),
+        can_view_map: z.boolean().optional(),
+        can_receive_announcements: z.boolean().optional(),
+        can_register_emergency: z.boolean().optional(),
+        can_view_reports: z.boolean().optional(),
+      })
+      .optional(),
     nationalCard: z.string().optional(),
     avatar: z.string().optional(),
     citySettingIds: z.array(z.string()).optional(),
@@ -111,6 +125,14 @@ export const UserCreateSchema = z
 export type UserFormData = z.infer<typeof UserCreateSchema>;
 export type UserSetObj = ReqType["main"]["user"]["addUser"]["set"];
 
+const patrolPermissionFields = [
+  { key: "can_submit_accident", label: "ثبت گزارش تصادف" },
+  { key: "can_view_map", label: "مشاهده نقشه" },
+  { key: "can_receive_announcements", label: "دریافت اطلاعیه‌ها" },
+  { key: "can_register_emergency", label: "ثبت وضعیت اضطراری" },
+  { key: "can_view_reports", label: "مشاهده گزارش‌ها" },
+] as const;
+
 export const FormCreateUser = ({ token }: { token?: string }) => {
   const router = useRouter();
   const [selectedCities, setSelectedCities] = useState<SelectOption[]>([]);
@@ -128,6 +150,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     resolver: zodResolver(UserCreateSchema),
     defaultValues: {
       is_verified: false,
+      is_active: true,
       summary: "",
       birth_date: "",
       nationalCard: "",
@@ -303,6 +326,25 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
       // national_number is optional on the backend; omit it when empty
       if (!data.national_number || data.national_number.trim() === "") {
         delete backendData.national_number;
+      }
+
+      // personnel_code is optional on the backend; omit it when empty
+      if (!data.personnel_code || data.personnel_code.trim() === "") {
+        delete backendData.personnel_code;
+      }
+
+      // patrol_permissions only applies to Patrol users
+      if (data.level === "Patrol" && data.patrol_permissions) {
+        const cleanedPermissions = cleanObject(
+          data.patrol_permissions,
+        ) as ReqType["main"]["user"]["addUser"]["set"]["patrol_permissions"];
+        if (cleanedPermissions && Object.keys(cleanedPermissions).length > 0) {
+          backendData.patrol_permissions = cleanedPermissions;
+        } else {
+          delete backendData.patrol_permissions;
+        }
+      } else {
+        delete backendData.patrol_permissions;
       }
 
       // Handle citySettingIds - only include if there are selected cities
@@ -569,6 +611,15 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             placeholder="مثال: 1234567890"
           />
           <MyInput
+            label="کد پرسنلی"
+            register={register}
+            name="personnel_code"
+            type="text"
+            errMsg={errors.personnel_code?.message}
+            className="w-1/2 p-2"
+            placeholder="فقط عدد - مثال: 12345"
+          />
+          <MyInput
             label="آدرس"
             register={register}
             name="address"
@@ -631,6 +682,42 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             defaultValue={{ value: "false", label: "تایید نشده" }}
             className="w-1/2 p-2"
           />
+          <SelectBox
+            label="وضعیت فعالیت"
+            name="is_active"
+            setValue={(fieldName, value) => {
+              setValue("is_active", value === "true");
+            }}
+            errMsg={errors.is_active?.message}
+            options={[
+              { value: "true", label: "فعال" },
+              { value: "false", label: "غیرفعال" },
+            ]}
+            defaultValue={{ value: "true", label: "فعال" }}
+            className="w-1/2 p-2"
+          />
+          {watchedLevel === "Patrol" && (
+            <div className="w-full p-2">
+              <span className="text-sm font-medium text-gray-700">دسترسی‌های مأمور گشت</span>
+              <div className="mt-2 grid grid-cols-1 gap-2 rounded-xl border border-gray-200 p-3 sm:grid-cols-2 lg:grid-cols-3">
+                {patrolPermissionFields.map((field) => (
+                  <CustomCheckbox
+                    key={field.key}
+                    checked={
+                      !!watch(`patrol_permissions.${field.key}` as keyof UserFormData)
+                    }
+                    onChange={(checked) =>
+                      setValue(
+                        `patrol_permissions.${field.key}` as keyof UserFormData,
+                        checked,
+                      )
+                    }
+                    label={field.label}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     ),

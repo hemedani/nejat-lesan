@@ -39,6 +39,9 @@ export const Navbar = () => {
   if (userLevel === "Ghost" || userLevel === "Manager") {
     panelItems.push({ href: "/patrol-manager/dashboard", label: "مرکز بررسی گشت", description: "صف بررسی گزارش‌های مأموران" });
   }
+  if (userLevel === "Ghost" || userLevel === "Manager") {
+    panelItems.push({ href: "/patrol-manager/operations", label: "مدیریت عملیات گشت", description: "مأموران، واحدها و شیفت‌های گشت" });
+  }
   if (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") {
     panelItems.push({ href: "/admin", label: "پنل مدیریت سامانه", description: "مدیریت کاربران و داده‌های پایه" });
   }
