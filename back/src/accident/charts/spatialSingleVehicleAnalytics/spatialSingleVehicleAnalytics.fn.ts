@@ -41,12 +41,16 @@ export const spatialSingleVehicleAnalyticsFn: ActFn = async (body) => {
 	} else if (filters.dateOfAccidentTo) {
 		const now = moment();
 		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
 	} else {
 		const now = moment();
 		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
 		endDate = moment().endOf("day").toDate();
 	}
 
@@ -162,7 +166,7 @@ export const spatialSingleVehicleAnalyticsFn: ActFn = async (body) => {
 	// 5. DEFAULT TO USER'S CITY OR "اهواز" IF NO CITY SELECTED
 	// =========================================================================
 	if (!baseFilter["city.name"]) {
-		baseFilter["city.name"] = user.settings?.city?.name || "اهواز";
+		baseFilter["city.name"] = user.settings?.cities?.[0]?.name || "اهواز";
 	}
 
 	// =========================================================================
@@ -451,7 +455,7 @@ export const spatialSingleVehicleAnalyticsFn: ActFn = async (body) => {
 	const categories = data.barChartData.map((item: any) => item.name);
 	const series = singleVehicleTypes.map((type) => ({
 		name: type,
-		data: categories.map((cat) =>
+		data: categories.map((cat: string) =>
 			data.barChartData.find((d: any) => d.name === cat)?.counts[type] ||
 			0
 		),

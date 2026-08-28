@@ -40,12 +40,14 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 	} else if (filters.dateOfAccidentTo) {
 		const now = moment();
 		const lastJalaliThreeYears = now.jYear() - 3;
-		startDate = moment(`${lastJalaliThreeYears}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliThreeYears}/01/01`, "jYYYY/jMM/jDD")
+			.startOf("day").toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
 	} else {
 		const now = moment();
 		const lastJalaliThreeYears = now.jYear() - 3;
-		startDate = moment(`${lastJalaliThreeYears}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliThreeYears}/01/01`, "jYYYY/jMM/jDD")
+			.startOf("day").toDate();
 		endDate = moment().endOf("day").toDate();
 	}
 
@@ -151,7 +153,7 @@ export const spatialSeverityAnalyticsFn: ActFn = async (body) => {
 	// 4. DEFAULT TO USER'S CITY OR "اهواز" IF NO CITY SELECTED
 	// =========================================================================
 	if (!baseFilter["city.name"]) {
-		baseFilter["city.name"] = user.settings?.city?.name || "اهواز";
+		baseFilter["city.name"] = user.settings?.cities?.[0]?.name || "اهواز";
 	}
 
 	// =========================================================================

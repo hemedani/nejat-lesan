@@ -20,7 +20,7 @@ export const roadDefectsAnalyticsWithCountSetup = () =>
 		preValidation: [
 			setTokens,
 			setUser,
-			createChartAuthMiddleware("roadDefectsAnalyticsWithCount"),
+			createChartAuthMiddleware("roadDefectsAnalytics"),
 		],
 		validator: roadDefectsAnalyticsWithCountValidator(),
 	});

@@ -36,13 +36,19 @@ export const vehicleReasonAnalyticsFn: ActFn = async (body) => {
 	} else if (filters.dateOfAccidentTo) {
 		const now = moment();
 		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
 	} else {
 		const now = moment();
 		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
-		endDate = moment(`${lastJalaliYear}/12/01`, "jYYYY/jMM/jDD").endOf("jMonth").endOf("day").toDate();
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
+		endDate = moment(`${lastJalaliYear}/12/01`, "jYYYY/jMM/jDD").endOf(
+			"jMonth",
+		).endOf("day").toDate();
 	}
 
 	// Start with date range

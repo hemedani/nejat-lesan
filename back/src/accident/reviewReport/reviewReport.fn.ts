@@ -1,6 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
-import { accident, accident_review, coreApp } from "../../../mod.ts";
-import { throwError, type MyContext } from "@lib";
+import { accident, coreApp } from "../../../mod.ts";
+import { type MyContext, throwError } from "@lib";
 import { getReportScope } from "../reportScope.ts";
 
 const transitions: Record<string, string[]> = {
@@ -40,7 +40,11 @@ export const reviewReportFn: ActFn = async (body) => {
 
 	const storedStatus = report.review_status as string | undefined;
 	const current = (storedStatus || "submitted") as
-		"submitted" | "under_review" | "returned" | "approved" | "completed";
+		| "submitted"
+		| "under_review"
+		| "returned"
+		| "approved"
+		| "completed";
 	if (!transitions[current]?.includes(action as string)) {
 		return throwError(`تغییر وضعیت گزارش از ${current} امکان‌پذیر نیست`);
 	}
@@ -59,6 +63,23 @@ export const reviewReportFn: ActFn = async (body) => {
 	if (action === "complete") update.completed_at = now;
 	const unset = action !== "return" ? { review_reason: "" } : {};
 
+	const historyEntry = {
+		action: action === "start_review"
+			? "started_review"
+			: action === "return"
+			? "returned"
+			: action === "approve"
+			? "approved"
+			: "completed",
+		reason: reason?.trim(),
+		action_at: now,
+		reviewer: {
+			_id: new ObjectId(actor._id),
+			first_name: actor.first_name ?? "",
+			last_name: actor.last_name ?? "",
+		},
+	};
+
 	const result = await accident.findOneAndUpdate({
 		filter: {
 			_id: new ObjectId(reportId as string),
@@ -68,30 +89,10 @@ export const reviewReportFn: ActFn = async (body) => {
 		},
 		update: {
 			$set: update,
+			$push: { review_history: historyEntry },
 			...(Object.keys(unset).length ? { $unset: unset } : {}),
 		} as any,
 		projection: get,
-	});
-
-	await accident_review.insertOne({
-		doc: {
-			action: action === "start_review"
-				? "started_review"
-				: action === "return"
-				? "returned"
-				: action === "approve"
-				? "approved"
-				: "completed",
-			reason: reason?.trim(),
-			action_at: now,
-			createdAt: now,
-			updatedAt: now,
-		},
-		relations: {
-			accident: { _ids: [new ObjectId(reportId as string)] },
-			reviewer: { _ids: [new ObjectId(actor._id)] },
-		},
-		projection: { _id: 1 },
 	});
 
 	return result;

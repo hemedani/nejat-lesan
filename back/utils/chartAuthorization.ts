@@ -32,6 +32,7 @@ export const createChartAuthMiddleware = (
 		| "temporalDamageAnalytics"
 		| "temporalNightAnalytics"
 		| "temporalSeverityAnalytics"
+		| "temporalTotalReasonAnalytics"
 		| "temporalUnlicensedDriversAnalytics"
 		| "totalReasonAnalytics"
 		| "humanReasonAnalytics"

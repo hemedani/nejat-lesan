@@ -37,12 +37,16 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 	} else if (filters.dateOfAccidentTo) {
 		const now = moment();
 		const startJalaliYear = now.jYear() - 3;
-		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day");
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		);
 		endDate = moment(filters.dateOfAccidentTo).endOf("day");
 	} else {
 		const now = moment();
 		const startJalaliYear = now.jYear() - 3;
-		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day");
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		);
 		endDate = moment().endOf("day");
 	}
 
@@ -410,7 +414,9 @@ export const temporalCollisionAnalyticsFn: ActFn = async (body) => {
 	};
 
 	for (let i = 0; i < collisionTypesToAnalyze.length; i++) {
-		const typeFilter: Document = { "collision_type.name": collisionTypesToAnalyze[i] };
+		const typeFilter: Document = {
+			"collision_type.name": collisionTypesToAnalyze[i],
+		};
 		const mergedFilters: Document = { ...additionalFilters, ...typeFilter };
 		facetStages[`type_${i}`] = [
 			...(Object.keys(mergedFilters).length > 0

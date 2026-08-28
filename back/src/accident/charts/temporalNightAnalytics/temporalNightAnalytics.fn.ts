@@ -38,12 +38,16 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	} else if (filters.dateOfAccidentTo) {
 		const now = moment();
 		const startJalaliYear = now.jYear() - 3;
-		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day");
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		);
 		endDate = moment(filters.dateOfAccidentTo).endOf("day");
 	} else {
 		const now = moment();
 		const startJalaliYear = now.jYear() - 3;
-		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day");
+		startDate = moment(`${startJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		);
 		endDate = moment().endOf("day");
 	}
 

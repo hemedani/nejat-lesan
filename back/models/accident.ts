@@ -17,7 +17,6 @@ import {
 	air_pollution_zone_excludes,
 	area_excludes,
 	city_zone_excludes,
-	file_excludes,
 	geoJSONStruct,
 	road_excludes,
 	share_relation_excludes,
@@ -35,6 +34,32 @@ export const day_of_week = enums([
 	"Saturday",
 	"Sunday",
 ]);
+
+export const accident_review_action_array = [
+	"submitted",
+	"started_review",
+	"returned",
+	"resubmitted",
+	"approved",
+	"completed",
+	"reopened",
+] as const;
+
+/**
+ * ساختار یک ورودی از تاریخچه بررسی گزارش.
+ * reviewer به‌صورت snapshot نگهداری می‌شود (نه رابطه‌ی زنده) تا تاریخچه
+ * ممیزی تغییرات بعدیِ اطلاعات کاربر را دنبال نکند.
+ */
+export const accident_review_struct = object({
+	action: enums(accident_review_action_array),
+	reason: optional(string()),
+	action_at: date(),
+	reviewer: object({
+		_id: objectIdValidation,
+		first_name: string(),
+		last_name: string(),
+	}),
+});
 
 export const accident_pure = {
 	seri: number(), // seri number for the accident record
@@ -64,7 +89,13 @@ export const accident_pure = {
 	rejection_reason: optional(string()),
 	// Managerial review lifecycle. This is independent from sync_status.
 	review_status: optional(
-		enums(["submitted", "under_review", "returned", "approved", "completed"]),
+		enums([
+			"submitted",
+			"under_review",
+			"returned",
+			"approved",
+			"completed",
+		]),
 	),
 	review_reason: optional(string()),
 	reviewed_at: optional(date()),
@@ -184,6 +215,9 @@ export const accident_pure = {
 		temporary_action: optional(string()),
 		images: optional(array(objectIdValidation)),
 	}))),
+
+	// --- Managerial review audit trail (embedded, replaces accident_review) ---
+	review_history: optional(array(accident_review_struct)),
 
 	...createUpdateAt,
 };
@@ -642,13 +676,18 @@ export const accident_relations = {
 export const accident_excludes = ["createdAt", "updatedAt"];
 
 export const accidents = () => {
-	const model = coreApp.odm.newModel("accident", accident_pure, accident_relations, {
-		createIndex: {
-			indexSpec: {
-				location: "2dsphere",
+	const model = coreApp.odm.newModel(
+		"accident",
+		accident_pure,
+		accident_relations,
+		{
+			createIndex: {
+				indexSpec: {
+					location: "2dsphere",
+				},
 			},
 		},
-	});
+	);
 
 	coreApp.odm.getCollection("accident").createIndex(
 		{ client_report_uuid: 1 },

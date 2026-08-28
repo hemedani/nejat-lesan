@@ -1,11 +1,13 @@
 import { type ActFn, ObjectId } from "@deps";
-import { accident, accident_review, coreApp } from "../../../mod.ts";
-import { throwError, type MyContext } from "@lib";
+import { accident, coreApp } from "../../../mod.ts";
+import { type MyContext, throwError } from "@lib";
 
 export const resubmitReportFn: ActFn = async (body) => {
 	const context = coreApp.contextFns.getContextModel() as MyContext;
 	if (context.user.level !== "Patrol") {
-		return throwError("فقط مأمور گزارش‌دهنده می‌تواند گزارش را ارسال مجدد کند");
+		return throwError(
+			"فقط مأمور گزارش‌دهنده می‌تواند گزارش را ارسال مجدد کند",
+		);
 	}
 	const { reportId } = body.details.set;
 	const filter = {
@@ -17,13 +19,15 @@ export const resubmitReportFn: ActFn = async (body) => {
 		filters: filter,
 		projection: { _id: 1, sync_status: 1 },
 	});
-	if (!report) return throwError("گزارش برگشت‌خورده‌ای برای ارسال مجدد یافت نشد");
+	if (!report) {
+		return throwError("گزارش برگشت‌خورده‌ای برای ارسال مجدد یافت نشد");
+	}
 	if (report.sync_status !== "synced") {
 		return throwError("گزارش باید ابتدا با موفقیت همگام‌سازی شود");
 	}
 
 	const now = new Date();
-	const result = await accident.findOneAndUpdate({
+	return await accident.findOneAndUpdate({
 		filter,
 		update: {
 			$set: {
@@ -32,23 +36,18 @@ export const resubmitReportFn: ActFn = async (body) => {
 				updatedAt: now,
 			},
 			$unset: { review_reason: "" },
+			$push: {
+				review_history: {
+					action: "resubmitted",
+					action_at: now,
+					reviewer: {
+						_id: new ObjectId(context.user._id),
+						first_name: context.user.first_name ?? "",
+						last_name: context.user.last_name ?? "",
+					},
+				},
+			},
 		},
 		projection: body.details.get,
 	});
-
-	await accident_review.insertOne({
-		doc: {
-			action: "resubmitted",
-			action_at: now,
-			createdAt: now,
-			updatedAt: now,
-		},
-		relations: {
-			accident: { _ids: [new ObjectId(reportId as string)] },
-			reviewer: { _ids: [new ObjectId(context.user._id)] },
-		},
-		projection: { _id: 1 },
-	});
-
-	return result;
 };

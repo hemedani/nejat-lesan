@@ -36,12 +36,16 @@ export const spatialSafetyIndexAnalyticsFn: ActFn = async (body) => {
 	} else if (filters.dateOfAccidentTo) {
 		const now = moment();
 		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
 		endDate = moment(filters.dateOfAccidentTo).endOf("day").toDate();
 	} else {
 		const now = moment();
 		const lastJalaliYear = now.jYear() - 1;
-		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf("day").toDate();
+		startDate = moment(`${lastJalaliYear}/01/01`, "jYYYY/jMM/jDD").startOf(
+			"day",
+		).toDate();
 		endDate = moment().endOf("day").toDate();
 	}
 

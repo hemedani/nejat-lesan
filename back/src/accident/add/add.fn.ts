@@ -25,8 +25,16 @@ export const addFn: ActFn = async (body) => {
 	if (user.level === "Patrol") {
 		const requestedStatus = set.sync_status || "queued";
 		if (!allowedPatrolStatuses.includes(requestedStatus)) {
-			throwError("مأمور گشت تنها می‌تواند گزارش با وضعیت draft یا queued ثبت کند");
+			throwError(
+				"مأمور گشت تنها می‌تواند گزارش با وضعیت draft یا queued ثبت کند",
+			);
 		}
+		// Officer attribution is server-enforced for Patrol: they may only
+		// create reports under their own id (never another officer's).
+		if (set.officerId && set.officerId !== user._id.toString()) {
+			throwError("مأمور گشت نمی‌تواند گزارش را به مأمور دیگری نسبت دهد");
+		}
+		set.officerId = user._id.toString();
 	}
 
 	// --- 1. Separate Relational IDs from the Pure Document Data ---
@@ -64,18 +72,31 @@ export const addFn: ActFn = async (body) => {
 
 	// --- Extract image ObjectIds for attachment linking from restOfDoc ---
 	const attachmentIds: string[] = [];
-	if (restOfDoc.plate_image) attachmentIds.push(restOfDoc.plate_image as string);
-	if (restOfDoc.insurance_image) attachmentIds.push(restOfDoc.insurance_image as string);
+	if (restOfDoc.plate_image) {
+		attachmentIds.push(restOfDoc.plate_image as string);
+	}
+	if (restOfDoc.insurance_image) {
+		attachmentIds.push(restOfDoc.insurance_image as string);
+	}
 	if (restOfDoc.vehicle_dtos && Array.isArray(restOfDoc.vehicle_dtos)) {
 		for (const vehicle of restOfDoc.vehicle_dtos) {
-			if (vehicle.plate_image) attachmentIds.push(vehicle.plate_image as string);
-			if (vehicle.insurance_image) attachmentIds.push(vehicle.insurance_image as string);
+			if (vehicle.plate_image) {
+				attachmentIds.push(vehicle.plate_image as string);
+			}
+			if (vehicle.insurance_image) {
+				attachmentIds.push(vehicle.insurance_image as string);
+			}
 		}
 	}
-	if (restOfDoc.facility_damage_dtos && Array.isArray(restOfDoc.facility_damage_dtos)) {
+	if (
+		restOfDoc.facility_damage_dtos &&
+		Array.isArray(restOfDoc.facility_damage_dtos)
+	) {
 		for (const facility of restOfDoc.facility_damage_dtos) {
 			if (facility.images && Array.isArray(facility.images)) {
-				for (const img of facility.images) attachmentIds.push(img as string);
+				for (const img of facility.images) {
+					attachmentIds.push(img as string);
+				}
 			}
 		}
 	}
@@ -291,7 +312,10 @@ export const addFn: ActFn = async (body) => {
 
 	// Add extracted attachment IDs from image fields
 	if (uniqueAttachmentIds.length > 0) {
-		const existingIds = (relations.attachments?._ids as ObjectId[] | undefined)?.map((id: ObjectId) => id.toString()) || [];
+		const existingIds =
+			(relations.attachments?._ids as ObjectId[] | undefined)?.map((
+				id: ObjectId,
+			) => id.toString()) || [];
 		const allIds = [...new Set([...existingIds, ...uniqueAttachmentIds])];
 		relations.attachments = {
 			_ids: allIds.map((id: string) => new ObjectId(id)),

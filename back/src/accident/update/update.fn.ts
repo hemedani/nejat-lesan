@@ -1,6 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
 import { accident, coreApp, file } from "../../../mod.ts";
-import { throwError, type MyContext } from "@lib";
+import { type MyContext, throwError } from "@lib";
 
 export const updateFn: ActFn = async (body) => {
 	const { set, get } = body.details;
@@ -32,8 +32,11 @@ export const updateFn: ActFn = async (body) => {
 			projection: { "officer._id": 1, sync_status: 1 },
 		});
 		if (!existing) throwError("گزارش یافت نشد");
-		if (String((existing as { officer?: { _id?: unknown } }).officer?._id) !==
-			String(user._id)
+		if (
+			String(
+				(existing as { officer?: { _id?: unknown } }).officer?._id,
+			) !==
+				String(user._id)
 		) {
 			throwError("شما اجازه ویرایش این گزارش را ندارید");
 		}
@@ -44,7 +47,13 @@ export const updateFn: ActFn = async (body) => {
 	// Manager/Ghost: can set any valid transition
 	if (fields.sync_status !== undefined) {
 		const newStatus = fields.sync_status as string;
-		const validStatuses = ["draft", "queued", "syncing", "synced", "rejected"];
+		const validStatuses = [
+			"draft",
+			"queued",
+			"syncing",
+			"synced",
+			"rejected",
+		];
 		if (!validStatuses.includes(newStatus)) {
 			throwError("وضعیت همگام‌سازی نامعتبر است");
 		}
@@ -52,17 +61,25 @@ export const updateFn: ActFn = async (body) => {
 			// Patrol can only set draft or queued
 			const allowedPatrolStatuses = ["draft", "queued"];
 			if (!allowedPatrolStatuses.includes(newStatus)) {
-				throwError("مأمور گشت تنها می‌تواند وضعیت draft یا queued را تنظیم کند");
+				throwError(
+					"مأمور گشت تنها می‌تواند وضعیت draft یا queued را تنظیم کند",
+				);
 			}
 			// Cannot move backwards from queued to draft if already synced
 			const existing = await accident.findOne({
 				filters: filter,
 				projection: { sync_status: 1 },
 			});
-			if (existing && existing.sync_status === "synced" && newStatus !== "synced") {
+			if (
+				existing && existing.sync_status === "synced" &&
+				newStatus !== "synced"
+			) {
 				throwError("نمی‌توان وضعیت گزارش تأیید شده را تغییر داد");
 			}
-			if (existing && existing.sync_status === "rejected" && newStatus === "synced") {
+			if (
+				existing && existing.sync_status === "rejected" &&
+				newStatus === "synced"
+			) {
 				throwError("گزارش رد شده نمی‌تواند به تأیید شده تغییر کند");
 			}
 		}
@@ -76,9 +93,14 @@ export const updateFn: ActFn = async (body) => {
 			if (existing) {
 				const currentStatus = existing.sync_status;
 				// Prevent downgrading from synced/rejected
-				if ((currentStatus === "synced" || currentStatus === "rejected") &&
-					newStatus !== currentStatus) {
-					throwError(`نمی‌توان وضعیت از ${currentStatus} به ${newStatus} تغییر داد`);
+				if (
+					(currentStatus === "synced" ||
+						currentStatus === "rejected") &&
+					newStatus !== currentStatus
+				) {
+					throwError(
+						`نمی‌توان وضعیت از ${currentStatus} به ${newStatus} تغییر داد`,
+					);
 				}
 			}
 		}
@@ -94,17 +116,28 @@ export const updateFn: ActFn = async (body) => {
 	// Check for new image ObjectIds in plate_image, insurance_image, vehicle_dtos, facility_damage_dtos
 	const attachmentIds: string[] = [];
 	if (fields.plate_image) attachmentIds.push(fields.plate_image as string);
-	if (fields.insurance_image) attachmentIds.push(fields.insurance_image as string);
+	if (fields.insurance_image) {
+		attachmentIds.push(fields.insurance_image as string);
+	}
 	if (fields.vehicle_dtos && Array.isArray(fields.vehicle_dtos)) {
 		for (const vehicle of fields.vehicle_dtos) {
-			if (vehicle.plate_image) attachmentIds.push(vehicle.plate_image as string);
-			if (vehicle.insurance_image) attachmentIds.push(vehicle.insurance_image as string);
+			if (vehicle.plate_image) {
+				attachmentIds.push(vehicle.plate_image as string);
+			}
+			if (vehicle.insurance_image) {
+				attachmentIds.push(vehicle.insurance_image as string);
+			}
 		}
 	}
-	if (fields.facility_damage_dtos && Array.isArray(fields.facility_damage_dtos)) {
+	if (
+		fields.facility_damage_dtos &&
+		Array.isArray(fields.facility_damage_dtos)
+	) {
 		for (const facility of fields.facility_damage_dtos) {
 			if (facility.images && Array.isArray(facility.images)) {
-				for (const img of facility.images) attachmentIds.push(img as string);
+				for (const img of facility.images) {
+					attachmentIds.push(img as string);
+				}
 			}
 		}
 	}

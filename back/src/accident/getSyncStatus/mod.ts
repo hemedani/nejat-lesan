@@ -1,4 +1,4 @@
-import { setTokens, setUser, grantAccess } from "@lib";
+import { grantAccess, setTokens, setUser } from "@lib";
 import { coreApp } from "../../../mod.ts";
 import { getSyncStatusFn } from "./getSyncStatus.fn.ts";
 import { getSyncStatusValidator } from "./getSyncStatus.val.ts";
