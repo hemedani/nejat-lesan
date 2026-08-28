@@ -1,7 +1,5 @@
 import {
-	array,
 	number,
-	objectIdValidation,
 	optional,
 	type RelationDataType,
 	type RelationSortOrderType,
@@ -9,7 +7,7 @@ import {
 } from "@deps";
 import { coreApp } from "../mod.ts";
 import { createUpdateAt } from "@lib";
-import { user_excludes, accident_excludes } from "@model";
+import { accident_excludes, user_excludes } from "@model";
 
 export const file_category_array = [
 	"plate",
@@ -24,7 +22,6 @@ export const file_pure = {
 	type: string(),
 	size: number(),
 	category: optional(string()),
-	accident_id: optional(objectIdValidation),
 	sequence: optional(number()),
 	...createUpdateAt,
 };

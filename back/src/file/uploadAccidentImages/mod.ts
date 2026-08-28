@@ -1,4 +1,4 @@
-import { setTokens, setUser, grantAccess } from "@lib";
+import { grantAccess, setTokens, setUser } from "@lib";
 import { coreApp } from "../../../mod.ts";
 import { uploadAccidentImagesFn } from "./uploadAccidentImages.fn.ts";
 import { uploadAccidentImagesValidator } from "./uploadAccidentImages.val.ts";
