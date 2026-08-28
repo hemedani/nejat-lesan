@@ -34,7 +34,20 @@
         }
       ],
       "expo-secure-store",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "برای ثبت محل حادثه و نمایش موقعیت فعلی شما، دسترسی به موقعیت مکانی لازم است."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "برای عکاسی از پلاک، بیمه‌نامه، کروکی و خسارات، دسترسی دوربین لازم است.",
+          "photosPermission": "برای انتخاب تصاویر از گالری، دسترسی به تصاویر لازم است."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
