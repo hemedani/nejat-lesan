@@ -13,8 +13,8 @@ Confirm that every package supports the versions in `package.json` before instal
 - Framework: Expo SDK 57, Expo Router, React 19, React Native 0.86.
 - Entry point: `expo-router/entry`.
 - Source: `src/app`, `src/components`, `src/constants`, and `src/hooks`.
-- Product docs: `mobile/docs/TODO.md` and `mobile/docs/CONTINUE.md`.
-- Backend contracts: `back/docs/mobile-patrol-backend-agent-guide.md` and the related patrol documents in `back/docs`.
+- Product docs: `mobile/docs/TODO.md` (authoritative backlog), `mobile/docs/CONTINUE.md` (next-task prompt), and `mobile/docs/TODO_HISTORY/` (checkpoint log, decisions, working rules, checkpoint progress).
+- Backend contracts: `back/docs/04-mobile-patrol-backend-agent-guide.md` and the related patrol documents in `back/docs`.
 - Generated API declarations: `back/declarations/selectInp.ts`; mobile TypeScript aliases this file as `@backend/selectInp`. Keep backend declarations synchronized whenever acts or validators change.
 - Declaration synchronization: after backend declaration changes, run `cp -rv back/declarations/selectInp.ts front/src/types/declarations/` from the Lesan repository root. Mobile types read the backend copy directly; the frontend copy keeps the web client synchronized.
 - Design references: the PDFs in `mobile/ignoreAssets` and the Persian requirements documents in `back/docs`.
@@ -62,17 +62,18 @@ Confirm that every package supports the versions in `package.json` before instal
 
 ## Authentication and security
 
-- Call the role-specific `user.mobileLogin` contract with personnel code, password, and device metadata: `device_id`, `fingerprint`, `platform`, `app_version`, and `model`.
+- Call the unified `user.login` contract with email, password, and device metadata: `device_id`, `fingerprint`, `platform`, `app_version`, and `model`. The device payload yields a device-scoped JWT plus `permissions` in the response; registered devices are read through the `user.devices` reverse relation.
 - Store tokens only in Keychain/Keystore-backed secure storage. Do not use AsyncStorage or plain files for tokens, passwords, PINs, or biometric secrets.
 - Store only the minimum non-sensitive cache needed for offline unlock and dashboard rendering.
 - Support optional PIN/biometric unlock and app-lock timeout without forcing full credentials after every short background transition.
 - Treat missing, expired, or revoked device-scoped tokens as a session reset. Preserve local drafts while clearing protected session data.
+- `Ghost` and `Patrol` users may use device-scoped mobile login; Ghost is not restricted by the patrol-only login gate.
 - Redact tokens, passwords, national IDs, precise personal data, and media contents from logs, crash reports, screenshots, and analytics.
 - Request sensitive permissions at the point of need with a clear explanation and handle denial without crashing or blocking draft creation.
 
 ## API and backend integration
 
-- Treat `back/declarations/selectInp.ts` as the mobile API type source, including patrol acts such as `mobileLogin` and `getActiveShift`. Do not manually recreate an act contract when the generated declaration covers it.
+- Treat `back/declarations/selectInp.ts` as the mobile API type source, including patrol acts such as `login` and `getActiveShift`. Do not manually recreate an act contract when the generated declaration covers it.
 - Keep the declaration path in `mobile/tsconfig.json` pointed at the backend checkout. If the backend declaration generator changes its output shape, update the alias and typed adapters together, then run the mobile TypeScript check.
 - Use `TypedActRequest` / backend declaration-derived aliases for new API calls. Keep request construction in API/domain modules, not route screens.
 - Use the mobile-local `lesanApi` adapter in `src/api/lesan-api.ts` for the compatible typed `send` pattern. It mirrors the frontend generated helper while remaining inside the Metro project boundary; derive request types from the backend declaration while keeping timeout, envelope parsing, and error translation in the mobile client.
