@@ -1,9 +1,9 @@
 import * as SQLite from 'expo-sqlite';
 
-import type { AccidentDraft, SyncStatus } from '@/domain/types';
+import type { AccidentDraft, QueueRecord, SyncStatus } from '@/domain/types';
 
 const DATABASE_NAME = 'lesen-mobile.db';
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 
 export type DraftRecord = AccidentDraft;
 
@@ -18,15 +18,22 @@ export type MediaRecord = {
   created_at: string;
 };
 
-export type QueueRecord = {
-  id: string;
-  client_report_uuid: string;
-  status: SyncStatus;
-  attempts: number;
-  next_retry_at?: string;
-  last_error?: string;
+export type MapPackStatus = 'queued' | 'downloading' | 'paused' | 'done' | 'failed';
+
+export type MapPackRecord = {
+  id: string; // tier id ('base' | 'deep')
+  status: MapPackStatus;
+  zoom_min: number;
+  zoom_max: number;
+  tiles_total: number;
+  tiles_done: number;
+  bytes_done: number;
+  error?: string;
+  created_at: string;
   updated_at: string;
 };
+
+export type { QueueRecord };
 
 type DraftRow = {
   client_report_uuid: string;
@@ -83,6 +90,34 @@ async function migrateDatabase(database: SQLite.SQLiteDatabase): Promise<void> {
       payload_json TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS map_packs (
+      id TEXT PRIMARY KEY NOT NULL,
+      status TEXT NOT NULL,
+      zoom_min INTEGER NOT NULL,
+      zoom_max INTEGER NOT NULL,
+      tiles_total INTEGER NOT NULL DEFAULT 0,
+      tiles_done INTEGER NOT NULL DEFAULT 0,
+      bytes_done INTEGER NOT NULL DEFAULT 0,
+      error TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS map_tiles (
+      pack_id TEXT NOT NULL,
+      z INTEGER NOT NULL,
+      x INTEGER NOT NULL,
+      y INTEGER NOT NULL,
+      status TEXT NOT NULL,
+      size_bytes INTEGER,
+      PRIMARY KEY (pack_id, z, x, y),
+      FOREIGN KEY (pack_id) REFERENCES map_packs(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS map_tiles_status ON map_tiles(pack_id, status);
+    CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `);
   await database.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
@@ -100,7 +135,8 @@ function parseJson<T>(value: string): T {
 }
 
 function toDraft(row: DraftRow): DraftRecord {
-  return parseJson<DraftRecord>(row.payload_json);
+  const draft = parseJson<DraftRecord>(row.payload_json);
+  return { ...draft, schema_version: draft.schema_version ?? 1 };
 }
 
 function toMedia(row: MediaRow): MediaRecord {
@@ -173,6 +209,42 @@ export async function listMedia(clientReportUuid: string): Promise<MediaRecord[]
   return rows.map(toMedia);
 }
 
+export async function deleteMedia(id: string): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync('DELETE FROM media WHERE id = ?', id);
+}
+
+export async function updateMediaUri(
+  id: string,
+  localUri: string,
+  sizeBytes?: number,
+): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync(
+    'UPDATE media SET local_uri = ?, size_bytes = COALESCE(?, size_bytes) WHERE id = ?',
+    localUri,
+    sizeBytes ?? null,
+    id,
+  );
+}
+
+/** Merges a patch into a media record's metadata JSON (e.g. server_file_id after upload). */
+export async function updateMediaMetadata(
+  id: string,
+  patch: Record<string, unknown>,
+): Promise<void> {
+  const database = await getLocalDatabase();
+  const row = await database.getFirstAsync<Pick<MediaRow, 'metadata_json'>>(
+    'SELECT metadata_json FROM media WHERE id = ?',
+    id,
+  );
+  if (!row) {
+    return;
+  }
+  const metadata = { ...parseJson<Record<string, unknown>>(row.metadata_json), ...patch };
+  await database.runAsync('UPDATE media SET metadata_json = ? WHERE id = ?', JSON.stringify(metadata), id);
+}
+
 export async function saveQueueRecord(record: QueueRecord): Promise<void> {
   const database = await getLocalDatabase();
   await database.runAsync(
@@ -232,4 +304,118 @@ export async function getReferenceCache<T>(cacheKey: string): Promise<{ payload:
     cacheKey,
   );
   return row ? { payload: parseJson<T>(row.payload_json), updated_at: row.updated_at } : null;
+}
+
+// ---------------------------------------------------------------------------
+// Offline map packs
+// ---------------------------------------------------------------------------
+
+type MapPackRow = MapPackRecord;
+
+function toMapPack(row: MapPackRow): MapPackRecord {
+  return { ...row, error: row.error ?? undefined };
+}
+
+export async function listMapPacks(): Promise<MapPackRecord[]> {
+  const database = await getLocalDatabase();
+  const rows = await database.getAllAsync<MapPackRow>('SELECT * FROM map_packs ORDER BY zoom_max');
+  return rows.map(toMapPack);
+}
+
+export async function getMapPack(id: string): Promise<MapPackRecord | null> {
+  const database = await getLocalDatabase();
+  const row = await database.getFirstAsync<MapPackRow>('SELECT * FROM map_packs WHERE id = ?', id);
+  return row ? toMapPack(row) : null;
+}
+
+export async function saveMapPack(pack: MapPackRecord): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync(
+    `INSERT INTO map_packs (id, status, zoom_min, zoom_max, tiles_total, tiles_done, bytes_done, error, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       status = excluded.status,
+       zoom_min = excluded.zoom_min,
+       zoom_max = excluded.zoom_max,
+       tiles_total = excluded.tiles_total,
+       tiles_done = excluded.tiles_done,
+       bytes_done = excluded.bytes_done,
+       error = excluded.error,
+       updated_at = excluded.updated_at`,
+    pack.id,
+    pack.status,
+    pack.zoom_min,
+    pack.zoom_max,
+    pack.tiles_total,
+    pack.tiles_done,
+    pack.bytes_done,
+    pack.error ?? null,
+    pack.created_at,
+    pack.updated_at,
+  );
+}
+
+export async function deleteMapPack(id: string): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync('DELETE FROM map_tiles WHERE pack_id = ?', id);
+  await database.runAsync('DELETE FROM map_packs WHERE id = ?', id);
+}
+
+/** Negative cache for tiles that legitimately have no raster (sea, Caspian…). */
+export async function isEmptyTileCached(
+  packId: string,
+  z: number,
+  x: number,
+  y: number,
+): Promise<boolean> {
+  const database = await getLocalDatabase();
+  const row = await database.getFirstAsync<{ status: string }>(
+    'SELECT status FROM map_tiles WHERE pack_id = ? AND z = ? AND x = ? AND y = ?',
+    packId,
+    z,
+    x,
+    y,
+  );
+  return row?.status === 'empty';
+}
+
+export async function cacheEmptyTile(packId: string, z: number, x: number, y: number): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync(
+    `INSERT INTO map_tiles (pack_id, z, x, y, status) VALUES (?, ?, ?, ?, 'empty')
+     ON CONFLICT(pack_id, z, x, y) DO UPDATE SET status = 'empty'`,
+    packId,
+    z,
+    x,
+    y,
+  );
+}
+
+export async function clearEmptyTileCache(packId: string): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync("DELETE FROM map_tiles WHERE pack_id = ? AND status = 'empty'", packId);
+}
+
+// ---------------------------------------------------------------------------
+// App settings (tiny key-value store)
+// ---------------------------------------------------------------------------
+
+export async function getSetting(key: string): Promise<string | null> {
+  const database = await getLocalDatabase();
+  const row = await database.getFirstAsync<{ value: string }>(
+    'SELECT value FROM app_settings WHERE key = ?',
+    key,
+  );
+  return row?.value ?? null;
+}
+
+export async function saveSetting(key: string, value: string): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync(
+    `INSERT INTO app_settings (key, value, updated_at) VALUES (?, ?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
+    key,
+    value,
+    new Date().toISOString(),
+  );
 }

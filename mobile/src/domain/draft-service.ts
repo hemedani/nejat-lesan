@@ -1,6 +1,8 @@
 import type { AccidentDraft } from './types';
 import { saveDraft, saveQueueRecord } from '@/storage/local-database';
 
+export const DRAFT_SCHEMA_VERSION = 1;
+
 function createUuid(): string {
   const randomUuid = globalThis.crypto?.randomUUID?.();
   if (randomUuid) {
@@ -13,6 +15,7 @@ export async function createAccidentDraft(): Promise<AccidentDraft> {
   const now = new Date().toISOString();
   const draft: AccidentDraft = {
     client_report_uuid: createUuid(),
+    schema_version: DRAFT_SCHEMA_VERSION,
     sync_status: 'draft',
     updated_at: now,
     data: {},

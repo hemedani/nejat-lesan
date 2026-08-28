@@ -8,6 +8,6 @@ export type NonSensitiveCache = {
   user_id?: string;
   personnel_code?: string;
   display_name?: string;
-  permissions?: string[];
+  permissions?: import('@/domain/types').PatrolPermissions;
   last_sync_at?: string;
 };
