@@ -13,14 +13,23 @@ export const assignShiftFn: ActFn = async (body) => {
 
 	const foundedOfficer = await user.findOne({
 		filters: { _id: new ObjectId(officerId as string) },
-		projection: { _id: 1, level: 1, first_name: 1, last_name: 1 },
+		projection: { _id: 1, level: 1, is_active: 1 },
 	});
 	if (!foundedOfficer) {
 		return throwError("مأمور یافت نشد");
 	}
+	if (foundedOfficer.level !== "Patrol") {
+		return throwError("شیفت فقط به مأمور با سطح «Patrol» قابل تخصیص است");
+	}
+	if (foundedOfficer.is_active === false) {
+		return throwError("مأمور غیرفعال است و نمی‌توان شیفت به او تخصیص داد");
+	}
 
 	const activeShift = await shift.findOne({
-		filters: { "officer._id": new ObjectId(officerId as string), status: "active" },
+		filters: {
+			"officer._id": new ObjectId(officerId as string),
+			status: "active",
+		},
 		projection: { _id: 1 },
 	});
 	if (activeShift) {
@@ -34,15 +43,34 @@ export const assignShiftFn: ActFn = async (body) => {
 	if (!foundedUnit) {
 		return throwError("گشت یافت نشد");
 	}
+	if (foundedUnit.is_active === false) {
+		return throwError("گشت غیرفعال است و نمی‌توان شیفت برای آن تعریف کرد");
+	}
 
 	let foundedVehicle: { _id: unknown } | null = null;
 	if (vehicleId) {
 		foundedVehicle = await vehicle.findOne({
 			filters: { _id: new ObjectId(vehicleId as string) },
-			projection: { _id: 1 },
+			projection: { _id: 1, is_active: 1 },
 		});
 		if (!foundedVehicle) {
 			return throwError("خودرو یافت نشد");
+		}
+		if ((foundedVehicle as any).is_active === false) {
+			return throwError("خودرو غیرفعال است و قابل تخصیص نیست");
+		}
+
+		const vehicleActiveShift = await shift.findOne({
+			filters: {
+				"vehicle._id": new ObjectId(vehicleId as string),
+				status: "active",
+			},
+			projection: { _id: 1 },
+		});
+		if (vehicleActiveShift) {
+			return throwError(
+				"این خودرو در حال حاضر در یک شیفت فعال استفاده می‌شود",
+			);
 		}
 	}
 

@@ -65,7 +65,6 @@ export const seedTownshipsFn: ActFn = async (body) => {
 				registrer: { _ids: user._id },
 				province: {
 					_ids: foundedProvince._id,
-					relatedRelations: { townships: true },
 				},
 			},
 		});

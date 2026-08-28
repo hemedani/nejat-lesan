@@ -21,6 +21,9 @@ export const device_pure = {
 	last_seen_at: defaulted(date(), () => new Date()),
 	registered_at: defaulted(date(), () => new Date()),
 	revoked_at: optional(date()), // set when the session is remotely revoked
+	// FCM/APNs push token for announcement & sync-result notifications.
+	// Refreshed on every device-scoped login.
+	push_token: optional(string()),
 
 	...createUpdateAt,
 };

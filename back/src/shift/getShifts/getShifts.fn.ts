@@ -1,38 +1,43 @@
 import type { ActFn, Document } from "@deps";
 import { ObjectId } from "@deps";
-import { coreApp, shift } from "../../../mod.ts";
+import { shift } from "../../../mod.ts";
 import type { MyContext } from "@lib";
+import { coreApp, patrol_unit } from "../../../mod.ts";
 import { throwError } from "@lib";
 
 export const getShiftsFn: ActFn = async (body) => {
 	const {
-		set: { userId, page, limit, status },
+		set: { userId, patrolUnitId, page, limit, status },
 		get,
 	} = body.details;
 	const context: MyContext = coreApp.contextFns
 		.getContextModel() as MyContext;
 	const actor = context.user;
 
-	let targetId: string;
+	const isManager = actor.level === "Manager" || actor.level === "Ghost";
 
-	if (userId) {
-		if (actor.level !== "Manager" && actor.level !== "Ghost") {
+	const match: Document = {};
+
+	if (!isManager) {
+		if (actor.level !== "Patrol") {
 			return throwError("شما اجازه این کار را ندارید");
 		}
-		targetId = userId as string;
-	} else {
-		if (
-			actor.level !== "Manager" && actor.level !== "Ghost" &&
-			actor.level !== "Patrol"
-		) {
-			return throwError("شما اجازه این کار را ندارید");
-		}
-		targetId = actor._id.toString();
+		match["officer._id"] = new ObjectId(actor._id.toString());
+	} else if (userId) {
+		match["officer._id"] = new ObjectId(userId as string);
 	}
 
-	const match: Document = {
-		"officer._id": new ObjectId(targetId),
-	};
+	if (patrolUnitId) {
+		if (!isManager) {
+			return throwError("شما اجازه این کار را ندارید");
+		}
+		const foundedUnit = await patrol_unit.findOne({
+			filters: { _id: new ObjectId(patrolUnitId as string) },
+			projection: { _id: 1 },
+		});
+		if (!foundedUnit) return throwError("گشت یافت نشد");
+		match["patrol_unit._id"] = new ObjectId(patrolUnitId as string);
+	}
 
 	status && (match["status"] = status);
 
