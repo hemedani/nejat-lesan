@@ -1,6 +1,7 @@
 import { coreApp } from "../mod.ts";
 import {
 	boolean,
+	defaulted,
 	enums,
 	number,
 	type RelationDataType,
@@ -12,6 +13,9 @@ import { createUpdateAt } from "../utils/createUpdateAt.ts";
 
 export const vehicle_pure = {
 	plaque_no: tuple([string(), string(), string()]),
+	// نام نمایشی خودرو (مثلاً «پاترول ۲۳») — مورد نیاز پنل عملیات گشت
+	title: string(),
+	is_active: defaulted(boolean(), true),
 	// plaque_type: enums([
 	// 	"private", // شخصی
 	// 	"taxi", // تاکسی
