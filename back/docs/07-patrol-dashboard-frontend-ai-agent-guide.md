@@ -1005,3 +1005,320 @@ The first frontend dashboard slice is complete when:
 - Unsupported filters and unsupported metrics are not presented.
 - API failures, unauthorized access, empty data, and legacy reports are handled safely.
 - No password or sensitive authentication data is rendered.
+
+---
+
+# Patrol Operations Panel (Management APIs)
+
+This section documents the backend contracts for the **patrol operations management panel** used by Ghost/Manager users on the web. These acts manage the operational data consumed by the mobile Patrol app: patrol units, officers, vehicles, police stations, shifts, and the operations summary.
+
+## Authorization Matrix
+
+Enforced server-side via `grantAccess` in every act's `preAct` chain. Never rely on hiding UI controls.
+
+| Act group | Ghost | Manager | Patrol | Editor / Enterprise |
+|---|---|---|---|---|
+| `patrol_unit.updateRelations` | ✅ | ✅ | ❌ | ❌ |
+| `vehicle.add / get / gets / update / remove` | ✅ | ✅ | ❌ | ❌ |
+| `patrol_operations.getOperationsSummary` | ✅ | ✅ | ❌ | ❌ |
+| `user.getPatrolOfficers` | ✅ | ✅ | ❌ | ❌ |
+| `patrol_unit.gets` (extended) | ✅ | ✅ | ❌ | ❌ |
+| `shift.getShifts` | all shifts | all shifts | own shifts only | ❌ |
+| `shift.getActiveShift` | any officer | any officer | own shift only | ❌ |
+
+Denial message from the framework for out-of-level calls: `"You cant do this"`. Domain failures return clear Persian messages (see error tables below).
+
+## 1. Act: `patrol_unit.updateRelations`
+
+Single entry point for assigning/removing officers, vehicles, and the police station of a patrol unit.
+
+Request:
+
+```json
+{
+  "service": "main",
+  "model": "patrol_unit",
+  "act": "updateRelations",
+  "details": {
+    "set": {
+      "_id": "PATROL_UNIT_ID",
+      "officerIds": ["USER_ID"],
+      "removeOfficerIds": ["USER_ID"],
+      "vehicleIds": ["VEHICLE_ID"],
+      "removeVehicleIds": ["VEHICLE_ID"],
+      "policeStationId": "POLICE_STATION_ID",
+      "removePoliceStation": false
+    },
+    "get": {
+      "_id": 1,
+      "code": 1,
+      "name": 1,
+      "is_active": 1,
+      "police_station": { "_id": 1, "name": 1, "code": 1 },
+      "officers": {
+        "_id": 1,
+        "first_name": 1,
+        "last_name": 1,
+        "personnel_code": 1,
+        "level": 1,
+        "is_active": 1
+      },
+      "vehicles": { "_id": 1, "plaque_no": 1, "is_active": 1 }
+    }
+  }
+}
+```
+
+Semantics:
+
+- All list fields are optional; send only what changes.
+- `officerIds` / `vehicleIds`: **add** to the unit (duplicates are ignored).
+- `removeOfficerIds` / `removeVehicleIds`: remove members that must currently belong to the unit.
+- `policeStationId`: sets or replaces the single station relation.
+- `removePoliceStation: true`: clears the station.
+- The same id cannot appear in both add and remove lists.
+- Relation mutations keep both directions in sync automatically (officer/vehicle embeds `patrol_unit`, station embeds `patrol_units`).
+
+Server-side rules:
+
+| Rule | Persian error (substring) |
+|---|---|
+| Unit must exist | `گشت یافت نشد` |
+| Officers must exist | `مأمور(های) زیر یافت نشدند` |
+| Officer level must be `Patrol` | `مأمور گشت نیست` |
+| Officer must be active | `غیرفعال است و قابل تخصیص به گشت نیست` |
+| Vehicles must exist | `خودرو(های) زیر یافت نشدند` |
+| Vehicles must be active | same inactive message as above |
+| Exclusive assignment among ACTIVE units (officer) | `قبلاً به گشت فعال دیگری ... تخصیص یافته است` |
+| Exclusive assignment among ACTIVE units (vehicle) | same message pattern |
+| Station must exist | `کلانتری یافت نشد` |
+| Station must be active | `کلانتری غیرفعال است` |
+| Remove non-member officer | `عضو این گشت نیستند` |
+| Remove unassigned vehicle | `به این گشت تخصیص نیافته‌اند` |
+| Remove when no station set | `این گشت در حال حاضر کلانتری ندارد` |
+| Add+remove overlap | `هم‌زمان اضافه و حذف` |
+
+Every successful mutation writes an audit row into the `operation_log` collection (`action: "patrol_unit.updateRelations"`, actor, changed ids). This log is internal and has no public act yet.
+
+Response body: the updated unit filtered by the sent `get`.
+
+Officers of an **inactive** unit can be re-assigned to an active unit directly; only active units participate in exclusivity checks.
+
+## 2. Vehicle CRUD
+
+New pure fields on `vehicle`: `title: string` (display name, required) and `is_active: boolean` (default `true`). `plaque_no` remains the existing three-part tuple.
+
+### `vehicle.add`
+
+```json
+{
+  "model": "vehicle",
+  "act": "add",
+  "details": {
+    "set": {
+      "plaque_no": ["11", "ب345", "ایران63"],
+      "title": "پاترول ۲۳",
+      "is_active": true,
+      "colorId": "COLOR_ID",
+      "plaqueTypeId": "PLAQUE_TYPE_ID",
+      "systemTypeId": "SYSTEM_TYPE_ID"
+    },
+    "get": { "_id": 1, "plaque_no": 1, "title": 1, "is_active": 1 }
+  }
+}
+```
+
+The three optional `*Id` fields map to the existing `color`, `plaque_type`, and `system_type` relations.
+
+### `vehicle.get`
+
+`set: { _id }` → single vehicle or Persian error `خودرو یافت نشد`.
+
+### `vehicle.gets`
+
+```json
+{
+  "set": {
+    "page": 1,
+    "limit": 20,
+    "plaque": "ب345",
+    "title": "پاترول",
+    "is_active": true,
+    "patrolUnitId": "UNIT_ID"
+  },
+  "get": {
+    "_id": 1,
+    "plaque_no": 1,
+    "title": 1,
+    "is_active": 1,
+    "patrol_unit": { "_id": 1, "name": 1, "code": 1 }
+  }
+}
+```
+
+- Server-side pagination; `patrol_unit` reverse relation is embedded when assigned.
+- Each row carries an extra computed field `active_shift_count` (number of active shifts using this vehicle).
+- `plaque` performs a partial case-insensitive match across all three plaque parts.
+
+### `vehicle.update`
+
+`set: { _id, plaque_no?, title?, is_active? }`. `plaque_no` must contain exactly three parts or the request fails with `پلاک باید از سه بخش تشکیل شود`.
+
+### `vehicle.remove`
+
+Deletion policy (server-enforced):
+
+1. Unknown id → `خودرو یافت نشد`.
+2. Vehicle used by an **active** shift → `این خودرو در حال حاضر در یک شیفت فعال استفاده می‌شود و قابل حذف نیست`.
+3. If assigned to a patrol unit, it is detached from the unit (both directions) automatically before deletion.
+4. Vehicles referenced by past (ended) shifts are preserved for audit history → `این خودرو در سوابق عملیاتی (شیفت‌های پیشین) ثبت شده است و قابل حذف نیست`.
+
+## 3. Act: `patrol_operations.getOperationsSummary`
+
+Model `patrol_operations` holds no documents; it exists purely as the namespace for this combined summary. The response shape is stable regardless of `get` (the validator mirrors it):
+
+```json
+{
+  "service": "main",
+  "model": "patrol_operations",
+  "act": "getOperationsSummary",
+  "details": {
+    "set": {},
+    "get": {
+      "patrolUsers": { "total": 1, "active": 1 },
+      "patrolUnits": { "total": 1, "active": 1 },
+      "vehicles": { "total": 1, "active": 1, "assigned": 1 },
+      "shifts": { "active": 1, "endedToday": 1 }
+    }
+  }
+}
+```
+
+Field semantics:
+
+- `patrolUsers.total/active`: users with `level: "Patrol"` (active = `is_active: true`).
+- `patrolUnits.total/active`: all units vs `is_active: true`.
+- `vehicles.total/active/assigned`: all vehicles, active vehicles, and vehicles whose embedded `patrol_unit._id` exists.
+- `shifts.active`: shifts with `status: "active"`.
+- `shifts.endedToday`: shifts ended between local midnight and now.
+
+## 4. Act: `user.getPatrolOfficers`
+
+Paginated list of Patrol officers with their assigned unit and current active shift.
+
+```json
+{
+  "model": "user",
+  "act": "getPatrolOfficers",
+  "details": {
+    "set": {
+      "page": 1,
+      "limit": 20,
+      "is_active": true,
+      "search": "۱۲۳۴"
+    },
+    "get": {
+      "_id": 1,
+      "first_name": 1,
+      "last_name": 1,
+      "personnel_code": 1,
+      "level": 1,
+      "is_active": 1,
+      "patrol_unit": { "_id": 1, "name": 1, "code": 1 }
+    }
+  }
+}
+```
+
+- Only relations up to `patrol_unit` can be selected; heavy reverse relations (`accidents`, `shifts`, `devices`, …) are rejected by the validator.
+- `search` matches first name, last name, or personnel code (partial, case-insensitive).
+- Every row additionally contains a computed `active_shift` field:
+
+```ts
+interface ActiveShiftSummary {
+  _id: string;
+  shift_type: string;
+  status: "active";
+  start_at: Date;
+  end_at?: Date;
+  patrol_unit: { _id: string; code: string; name: string } | null;
+  vehicle: { _id: string; plaque_no: [string, string, string] } | null;
+}
+```
+
+`active_shift` is `null` when the officer has no active shift. Password/settings never appear in responses (excluded at model level).
+
+## 5. Extended: `patrol_unit.gets`
+
+Existing act, extended with:
+
+- New optional filter `is_active: boolean`.
+- Computed `active_shift_count` per row (number of active shifts assigned to that unit).
+- Existing behavior preserved: pagination plus embedded `officers`, `vehicles`, `police_station`.
+
+## 6. Shift improvements
+
+### `shift.assignShift` (hardened)
+
+Additional server-side validations on top of previous behavior:
+
+| Check | Persian error (substring) |
+|---|---|
+| Officer level must be `Patrol` | `شیفت فقط به مأمور با سطح «Patrol» قابل تخصیص است` |
+| Officer must be active | `مأمور غیرفعال است` |
+| Unit must exist | `گشت یافت نشد` |
+| Unit must be active | `گشت غیرفعال است` |
+| No duplicate active shift per officer | `این مأمور در حال حاضر یک شیفت فعال دارد` |
+| Vehicle must exist | `خودرو یافت نشد` |
+| Vehicle must be active | `خودرو غیرفعال است` |
+| Vehicle not already in an active shift | `این خودرو در حال حاضر در یک شیفت فعال استفاده می‌شود` |
+
+The success response embeds the assigned `officer`, `patrol_unit`, and `vehicle` objects when requested through `get`. `getActiveShift`, `endShift`, and their ownership rules are unchanged.
+
+### `shift.getShifts` (extended filters)
+
+```json
+{
+  "set": {
+    "page": 1,
+    "limit": 20,
+    "userId": "OPTIONAL_OFFICER_ID",
+    "patrolUnitId": "OPTIONAL_UNIT_ID",
+    "status": "active"
+  },
+  "get": { "_id": 1, "shift_type": 1, "status": 1, "start_at": 1, "end_at": 1, "officer": 1, "patrol_unit": 1, "vehicle": 1 }
+}
+```
+
+- Ghost/Manager: lists all shifts; optional `userId`, `patrolUnitId`, and `status` filters (`status` accepts only `active | ended | cancelled`; unknown unit id returns `گشت یافت نشد`).
+- Patrol: always scoped to own shifts; `patrolUnitId` is rejected for Patrol.
+- This doubles as the "active shifts" operational list (`status: "active"`).
+
+## 7. Report compatibility (verified)
+
+The manager dashboard/report APIs already expose everything the operations panel needs. Requesting these fields in `getManagerReports` / `getManagerDashboard` projections works today:
+
+`report_id`, `serial`, `reported_at`, `date_of_accident`, `sync_status`, `review_status`, `review_reason`, `reviewed_at`, `location`, plus embedded `officer`, `patrol_unit`, `vehicle`.
+
+Sensitive authentication fields (`password`, login-lockout counters, settings) are excluded from every user projection at the model level and cannot leak through report relations.
+
+## 8. Generated declarations
+
+After schema changes regenerate types by starting the backend once (`TYPE_GENERATION` defaults to `true`):
+
+```bash
+cd back && deno run -A ./mod.ts   # writes back/declarations/selectInp.ts, then Ctrl-C
+cp declarations/selectInp.ts ../front/src/types/declarations/selectInp.ts
+```
+
+The frontend copy lives at `front/src/types/declarations/selectInp.ts` and exports `lesanApi` used by `front/src/services/api.ts`.
+
+## 9. Backend tests
+
+Integration tests live in `back/test/patrol-operations-test.ts` and run against an **isolated database** (`nejat_patrol_ops_test`) so dev data is untouched:
+
+```bash
+cd back && deno test -A test/patrol-operations-test.ts
+```
+
+Requires a local MongoDB. Coverage includes: Ghost authorization, Manager policy, Patrol denial (real token + preAct pipeline), Patrol-only officer validation, inactive officer/vehicle/unit rejection, duplicate active-shift conflict, busy-vehicle conflict, exclusive assignment conflicts between active units, relation add/remove integrity in both directions, audit-log writing, pagination without overlap, missing-resource Persian errors, and vehicle deletion guards.

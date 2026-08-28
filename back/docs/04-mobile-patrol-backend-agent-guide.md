@@ -16,10 +16,11 @@ The implementation is not just an authentication addition. It is a full backend 
 
 Related documents in this folder:
 
-- `mobile-patrol-backend-todo.md` — backlog and completed work tracking
-- `mobile-patrol-backend-execution-plan.md` — ordered implementation steps and verification notes
-- `mobile-patrol-app-requirements.md` — product requirements for the patrol app UI/UX
-- `mobile-patrol-app-requirements-fa.md` — same requirements in Persian
+- `06-mobile-patrol-backend-todo.md` — backlog and completed work tracking
+- `05-mobile-patrol-backend-execution-plan.md` — ordered implementation steps and verification notes
+- `02-mobile-patrol-app-requirements.md` — product requirements for the patrol app UI/UX
+- `01-mobile-patrol-app-requirements-fa.md` — same requirements in Persian
+- `08-mobile-patrol-backend-handoff.md` — current backend handoff (open items for the backend team)
 
 ## 2. High-level backend architecture
 
@@ -69,7 +70,7 @@ The user model includes:
 - `locked_until` — timestamp that enforces lockout
 - `user_level_array` includes `"Patrol"`
 
-This means the patrol app is not using a generic user login path; it uses a role-specific mobile login flow.
+The patrol app uses the same unified `login` act as the web dashboard; sending the device payload switches the login into a device-scoped patrol session.
 
 ### 3.2 Device model
 
@@ -88,30 +89,38 @@ A new `device` model represents a device that has logged in successfully. It sto
 
 The device is a child relation on the user, and the user also gets a reverse `devices` collection automatically via Lesan relation handling.
 
-### 3.3 Mobile login contract
+### 3.3 Login contract (unified)
 
-The backend exposes `mobileLogin`, which accepts:
+The backend exposes a single `login` act (email + password) for both the web dashboard and the patrol mobile app. It accepts:
 
-- `personnel_code`
+- `email`
 - `password`
-- device metadata (`device_id`, `fingerprint`, `platform`, `app_version`, `model`)
+- optional device metadata (`device_id`, `fingerprint`, `platform`, `app_version`, `model`)
 
 It validates:
 
 - user exists
 - password is valid
 - account is active
-- account level is `Patrol`
+- when device metadata is sent: account level is `Patrol`
 - user is not locked out
 
 On success, it returns:
 
 - `token`
 - `user`
-- `permissions`
-- `devices`
 
-The JWT includes identity data such as user id, personnel code, level, and device id.
+When device metadata is provided, it additionally returns:
+
+- `permissions` (from `patrol_permissions`)
+
+The officer's registered devices are not returned separately — the client requests them through the `user.devices` reverse relation in the projection (e.g. `user: { devices: { _id: 1, device_id: 1, is_active: 1 } }`).
+
+The JWT includes `_id`, `email`, and `level`; it also carries `device_id` for device-scoped (mobile) sessions.
+
+Wrong credentials always return one generic message («ایمیل یا رمز عبور صحیح نیست») so user enumeration is not possible.
+
+> Historical note: before unification there was a separate `mobileLogin` act keyed on `personnel_code`. It was removed; `personnel_code` remains a data field on the user model but is no longer a login credential.
 
 ### 3.4 Revocation and session enforcement
 
@@ -138,7 +147,7 @@ The backend enforces a per-user lockout after repeated failed attempts. The patt
 
 The app should surface user-friendly messages such as:
 
-- `کد پرسنلی یا رمز عبور صحیح نیست`
+- `ایمیل یا رمز عبور صحیح نیست`
 - `حساب کاربری غیرفعال است`
 - `این حساب اجازه استفاده از اپ مأمور گشت را ندارد`
 - `بیش از حد مجاز تلاش ناموفق داشتید; لطفاً چند دقیقه صبر کنید`
@@ -365,9 +374,9 @@ Every report created from the app should carry a unique client-side idempotency 
 ### Login flow
 
 1. Device is not yet known to the backend.
-2. User enters personnel code + password.
-3. Backend validates active account, patrol permission, and lockout status.
-4. Backend creates or reactivates the device entry.
+2. User enters email + password.
+3. Backend validates active account, patrol permission (device logins), and lockout status.
+4. Backend creates or reactivates the device entry and issues a device-scoped JWT.
 5. Backend returns JWT plus profile and permission data.
 6. App stores token securely and optionally uses PIN/biometric for quick subsequent unlock.
 
@@ -397,7 +406,7 @@ The most relevant files and areas are:
 - `models/accident.ts` — accident model and report data
 - `models/patrol_unit.ts` — patrol unit definition
 - `models/shift.ts` — operational shift context
-- `src/user/mobileLogin/` — mobile login flow
+- `src/user/login/` — the unified login act (email + password, optional device payload for mobile sessions)
 - `src/user/getUserDevices/` — device listing
 - `src/user/revokeDevice/` — admin device revocation
 - `src/user/removeDevice/` — device deletion

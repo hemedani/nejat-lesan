@@ -243,12 +243,43 @@ Short, logical, reviewable steps. **STOP after each step for review.** Each step
 
 ---
 
-## Step 10 — Sync status + announcements/notifications
+## Step 10 — Sync status + announcements/notifications ✅ DONE
 
-- `getSyncStatus` endpoint; announcement model (or reuse event) for control-center → officer; push/notification hook points
+**Status:** ✅ Implemented + E2E-verified (2026-08-24)
+
+- `accident.getSyncStatus` returns per-status arrays (`draft/queued/syncing/synced/rejected`), Patrol-scoped via `officer._id`; Manager/Ghost may pass `userId`
+- Announcement channel: `announcement.{add,gets,get,markRead,getUnreadCount}` with real per-user read tracking via the new `announcement_read` model (unique index on `announcement_id` + `reader._id`); `gets` annotates `is_read`/`read_at`, sorts unread-first; visibility = active + non-expired + targeted at role/unit/self
+- Push hook point: `device.push_token` persisted at device-scoped login; FCM/APNs delivery integration pending provider credentials
 
 ---
 
-## Step 11 — Multi-image uploads
+## Step 11 — Unified email+password login ✅ DONE
 
-- Categorized upload act (plate, insurance, croquis, damage) → `file` model + `attachments` relation with category metadata; size/type limits
+**Status:** ✅ Complete (awaiting review)
+
+**Decision:** one login system for web + mobile, keyed on `email` + `password`. The separate `mobileLogin` act (personnel_code-keyed) was removed. `personnel_code` stays on the user model as identification data (unique sparse index kept) but is no longer a credential.
+
+**Files changed:**
+- `src/user/login/loginUser.val.ts`: set = `email` + `password` (8–100) + optional `device` object (`device_id`, `fingerprint` 8–100 required; `platform`/`app_version`/`model` optional); get = token/user enums + optional `permissions` enum + `devices` projection.
+- `src/user/login/loginUser.fn.ts`: rewritten as two-phase lookup — (1) internal fixed-projection credential check (never leaks password hash / lockout counters into responses), (2) client-projected user fetch on success. Merged all security from the old `mobileLogin`: generic error «ایمیل یا رمز عبور صحیح نیست» on unknown user / missing hash / wrong password (no enumeration), lockout check before compare, failure counter with 5-attempt → 5-min lock, counter reset + `$unset locked_until` on success, `is_active === false` rejection. With device payload: requires `level === "Patrol"`, upserts device (reactivate or insert with explicit defaults), JWT carries `_id/email/level/device_id`, returns `{ token, user, permissions }` — devices are reachable through the `user.devices` reverse relation in the projection. Without: JWT `{ _id, email, level }`, returns `{ token, user }` — backward-compatible with the existing web contract.
+- `src/user/mobileLogin/` (deleted): act removed entirely.
+- `src/user/mod.ts`: unwired `mobileLoginSetup()`.
+- Consumers updated: mobile app (`src/api/auth.ts`, `src/api/backend-types.ts`, `src/auth/session-service.ts`, `src/app/index.tsx`) now calls `user.login` with email + device metadata; web frontend unchanged.
+
+**Notes:**
+- Device revocation enforcement in `utils/setToken.ts` unchanged — it only checks devices when the token carries a `device_id`.
+- Patrol officers must be informed of their account emails (operational task).
+- **Lesan embedding gotcha:** the reverse `user.devices` array is only written when the insert's relation payload explicitly sets `relatedRelations: { devices: true }`. Without that flag the device row exists but stays invisible through `user.devices` (plain `findOne` returns embedded arrays as-is — no aggregation needed). The reactivation branch refreshes the link via `device.addRelation` with `replace: true`, repairing devices registered before this fix.
+
+
+---
+
+## Step 12 — Multi-image uploads ✅ DONE
+
+**Status:** ✅ Implemented + E2E-verified (2026-08-24)
+
+- Categorized upload act (`file.uploadAccidentImages`: plate, insurance, croquis, facility_damage (+`damage` alias), other) → `file` model + `attachments` relation with category metadata; size/type limits
+- **Wire format decision:** base64 JSON in `set.file.data` (`{name,type,data}`) — the mobile transport (`lesanApi`) is JSON-only and cannot stream multipart; server decodes, validates real byte size, and writes to `./uploads/accidents`
+- Limits: plate/insurance = 1 each, croquis = 10 (aligned with mobile multi-croquis UX), facility_damage = 10, other = 20; JPEG/PNG/WebP/HEIC; 5 MB (10 MB croquis/other)
+- Security: Patrol can only link uploads to their **own** accidents (existence + `officer._id === actor._id` enforced)
+- Round trip verified: upload → `_id`s fed into `attachmentsIds` / `vehicle_dtos[].plate_image` etc. on `accident.add` → embedded into the `attachments` relation
