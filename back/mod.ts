@@ -4,8 +4,9 @@ import {
 	accidents,
 	air_pollution_zones,
 	air_statuses,
-	area_usages,
+	announcement_reads,
 	announcements,
+	area_usages,
 	body_insurance_coes,
 	cities,
 	city_zones,
@@ -15,6 +16,7 @@ import {
 	damage_severities,
 	devices,
 	driver_statuses,
+	emergencies,
 	equipment_damages,
 	events,
 	fault_statuses,
@@ -26,6 +28,9 @@ import {
 	light_statuses,
 	max_damage_sections,
 	motion_directions,
+	operation_logs,
+	patrol_operationss,
+	patrol_units,
 	person_roles,
 	plaque_types,
 	plaque_usages,
@@ -38,6 +43,7 @@ import {
 	road_surface_conditions,
 	roads,
 	ruling_types,
+	shifts,
 	shoulder_statuses,
 	system_types,
 	systems,
@@ -49,9 +55,6 @@ import {
 	vehicle_reasons,
 	vehicle_types,
 	vehicles,
-	patrol_units,
-	shifts,
-	accident_reviews,
 } from "@model";
 import { functionsSetup } from "./src/mod.ts";
 
@@ -74,7 +77,9 @@ export const getRedis = async (): Promise<RedisClient> => {
 
 export const coreApp = lesan();
 const client = await new MongoClient(MONGO_URI).connect();
-const db = client.db("nejat");
+// نام دیتابیس قابل تنظیم است؛ برای تست‌های ایزوله DB_NAME را تغییر دهید.
+const DB_NAME = Deno.env.get("DB_NAME") || "nejat";
+const db = client.db(DB_NAME);
 coreApp.odm.setDb(db);
 
 export const user = users();
@@ -126,7 +131,10 @@ export const vehicle_reason = vehicle_reasons();
 export const vehicle = vehicles();
 export const patrol_unit = patrol_units();
 export const shift = shifts();
-export const accident_review = accident_reviews();
+export const patrol_operations = patrol_operationss();
+export const operation_log = operation_logs();
+export const announcement_read = announcement_reads();
+export const emergency = emergencies();
 
 export const { setAct, setService, getAtcsWithServices } = coreApp.acts;
 

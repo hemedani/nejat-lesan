@@ -38,12 +38,20 @@ import { accidentSetup } from "./accident/mod.ts";
 import { sharedSetup } from "./shared/mod.ts";
 import { patrolUnitSetup } from "./patrol_unit/mod.ts";
 import { shiftSetup } from "./shift/mod.ts";
+import { vehicleSetup } from "./vehicle/mod.ts";
+import { patrolOperationsSetup } from "./patrol_operations/mod.ts";
 import { announcementSetup } from "./announcement/mod.ts";
+import { policeStationSetup } from "./police_station/mod.ts";
+import { emergencySetup } from "./emergency/mod.ts";
 
 export const functionsSetup = () => {
 	sharedSetup();
 	patrolUnitSetup();
 	shiftSetup();
+	vehicleSetup();
+	patrolOperationsSetup();
+	policeStationSetup();
+	emergencySetup();
 	airPollutionZoneSetup();
 	airStatusSetup();
 	areaUsageSetup();
