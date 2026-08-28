@@ -16,6 +16,8 @@ import {
 	emailPattern,
 	is_valid_national_number_struct,
 	mobile_pattern,
+	patrol_permissions_struct,
+	personnel_code_pattern,
 	user_genders,
 	user_level_emums,
 } from "@model";
@@ -41,6 +43,9 @@ export const addUserValidator = () => {
 
 			level: user_level_emums,
 			is_verified: defaulted(boolean(), false),
+			personnel_code: optional(personnel_code_pattern),
+			is_active: defaulted(boolean(), true),
+			patrol_permissions: optional(patrol_permissions_struct),
 			nationalCard: optional(objectIdValidation),
 			avatar: optional(objectIdValidation),
 			citySettingIds: optional(array(objectIdValidation)),

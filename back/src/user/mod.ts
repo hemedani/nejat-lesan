@@ -3,7 +3,6 @@ import { changeUserPasswordSetup } from "./changeUserPassword/mod.ts";
 import { getMeSetup } from "./getMe/mod.ts";
 import { getUserSetup } from "./getUser/mod.ts";
 import { loginUserSetup } from "./login/mod.ts";
-import { mobileLoginSetup } from "./mobileLogin/mod.ts";
 import { getUserDevicesSetup } from "./getUserDevices/mod.ts";
 import { revokeDeviceSetup } from "./revokeDevice/mod.ts";
 import { removeDeviceSetup } from "./removeDevice/mod.ts";
@@ -17,13 +16,13 @@ import { countUsersSetup } from "./countUsers/mod.ts";
 import { updateUserRelationsSetup } from "./updateUserRelations/mod.ts";
 import { dashboardStatisticSetup } from "./dashboardStatistic/mod.ts";
 import { seedSetup } from "./seed/mod.ts";
+import { getPatrolOfficersSetup } from "./getPatrolOfficers/mod.ts";
 
 export const userSetup = () => {
 	addUserSetup();
 	getMeSetup();
 	getUserSetup();
 	loginUserSetup();
-	mobileLoginSetup();
 	getUserDevicesSetup();
 	revokeDeviceSetup();
 	removeDeviceSetup();
@@ -37,5 +36,6 @@ export const userSetup = () => {
 	countUsersSetup();
 	updateUserRelationsSetup();
 	dashboardStatisticSetup();
+	getPatrolOfficersSetup();
 	seedSetup();
 };

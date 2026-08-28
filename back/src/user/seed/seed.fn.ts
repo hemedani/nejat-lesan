@@ -694,7 +694,7 @@ export const seedFn: ActFn = async (body) => {
 					? {
 						province: {
 							_ids: provinceId,
-							relatedRelations: { axeses: true },
+							relatedRelations: { roads: true },
 						},
 					}
 					: undefined;

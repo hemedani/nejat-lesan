@@ -1,5 +1,5 @@
 import { type ActFn, ObjectId, type TInsertRelations } from "@deps";
-import type { userRelations } from "@lib";
+import type { user_relations as userRelations } from "@model";
 import { user } from "../../../mod.ts";
 
 export const updateUserRelationsFn: ActFn = async (body) => {
@@ -17,7 +17,7 @@ export const updateUserRelationsFn: ActFn = async (body) => {
 		});
 
 	nationalCard &&
-		(relations.nationalCard = {
+		(relations.national_card = {
 			_ids: new ObjectId(nationalCard),
 			relatedRelations: {},
 		});

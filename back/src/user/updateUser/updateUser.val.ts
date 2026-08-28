@@ -14,6 +14,8 @@ import {
 	availableCharts,
 	emailPattern,
 	is_valid_national_number_struct,
+	patrol_permissions_struct,
+	personnel_code_pattern,
 	user_genders,
 	user_level_emums,
 } from "@model";
@@ -37,6 +39,9 @@ export const updateUserValidator = () => {
 
 			level: optional(user_level_emums),
 			is_verified: optional(boolean()),
+			personnel_code: optional(personnel_code_pattern),
+			is_active: optional(boolean()),
+			patrol_permissions: optional(patrol_permissions_struct),
 			citySettingIds: optional(array(objectIdValidation)),
 			provinceSettingIds: optional(array(objectIdValidation)),
 			availableCharts: optional(availableCharts),

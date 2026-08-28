@@ -18,6 +18,9 @@ export const updateUserFn: ActFn = async (body) => {
 			address,
 			level,
 			is_verified,
+			personnel_code,
+			is_active,
+			patrol_permissions,
 			citySettingIds,
 			provinceSettingIds,
 			availableCharts,
@@ -40,6 +43,9 @@ export const updateUserFn: ActFn = async (body) => {
 		...(address && { address }),
 		...(level && { level }),
 		...(is_verified !== undefined && { is_verified }),
+		...(personnel_code !== undefined && { personnel_code }),
+		...(is_active !== undefined && { is_active }),
+		...(patrol_permissions !== undefined && { patrol_permissions }),
 	};
 
 	// Handle settings updates
