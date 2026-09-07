@@ -17,6 +17,7 @@ import { updateUserRelationsSetup } from "./updateUserRelations/mod.ts";
 import { dashboardStatisticSetup } from "./dashboardStatistic/mod.ts";
 import { seedSetup } from "./seed/mod.ts";
 import { getPatrolOfficersSetup } from "./getPatrolOfficers/mod.ts";
+import { addOrRemoveRolesSetup } from "./addOrRemoveRoles/mod.ts";
 
 export const userSetup = () => {
 	addUserSetup();
@@ -38,4 +39,5 @@ export const userSetup = () => {
 	dashboardStatisticSetup();
 	getPatrolOfficersSetup();
 	seedSetup();
+	addOrRemoveRolesSetup();
 };

@@ -1,5 +1,7 @@
 import type { Infer } from "@deps";
 import {
+	assertTargetUserInActorScope,
+	checkOrgLeaderUserScopeUpdates,
 	grantAccess,
 	type MyContext,
 	setTokens,
@@ -43,8 +45,10 @@ export const updateUserSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager"],
+				levels: ["Manager", "OrgHead", "UnitHead"],
 			}),
+			checkOrgLeaderUserScopeUpdates(),
+			assertTargetUserInActorScope(),
 			checkGhostUserUpdate,
 		],
 		validator: updateUserValidator(),

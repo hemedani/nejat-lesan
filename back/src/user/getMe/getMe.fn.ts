@@ -1,6 +1,10 @@
 import { type ActFn, ObjectId } from "@deps";
 import { coreApp, device, shift, user } from "../../../mod.ts";
 import { type MyContext, throwError } from "@lib";
+import {
+	getEnabledModuleKeys,
+	getPrimaryOrgModules,
+} from "../../app_modules/moduleConfig.ts";
 
 export const getMeFn: ActFn = async (body) => {
 	const context: MyContext = coreApp.contextFns
@@ -54,5 +58,7 @@ export const getMeFn: ActFn = async (body) => {
 		...userData,
 		activeShift,
 		activeDevicesCount,
+		modules: getEnabledModuleKeys(),
+		orgModules: await getPrimaryOrgModules(context.user),
 	};
 };

@@ -1,9 +1,19 @@
 import { type ActFn, hash, ObjectId, type TInsertRelations } from "@deps";
 import { city, coreApp, province, user } from "../../../mod.ts";
 import type { user_relations } from "@model";
+import {
+	assertRolesAssignable,
+	isGlobalManager,
+	normalizeOrgRoles,
+	type OrgRoleInput,
+	throwError,
+} from "@lib";
 
 export const addUserFn: ActFn = async (body) => {
 	const { set, get } = body.details;
+
+	const { user: actor }: { user: { _id: unknown; level?: string } } = coreApp
+		.contextFns.getContextModel() as never;
 
 	const {
 		nationalCard,
@@ -12,8 +22,25 @@ export const addUserFn: ActFn = async (body) => {
 		provinceSettingIds,
 		availableCharts,
 		password,
+		roles,
 		...rest
 	} = set;
+
+	if (rest.level === "Ghost" && actor.level !== "Ghost") {
+		return throwError("ساخت حساب سطح گوست مجاز نیست");
+	}
+
+	if (
+		!isGlobalManager(actor) &&
+		!["OrgHead", "UnitHead", "Patrol"].includes(rest.level as string)
+	) {
+		return throwError("سرپرست سازمان فقط می‌تواند حساب سرپرست/مامور بسازد");
+	}
+
+	if (roles && roles.length > 0) {
+		await assertRolesAssignable(actor, roles as OrgRoleInput[]);
+		rest.roles = normalizeOrgRoles(roles as OrgRoleInput[]);
+	}
 
 	const relations: TInsertRelations<typeof user_relations> = {};
 

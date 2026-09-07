@@ -13,6 +13,7 @@ import {
 	pattern,
 	refine,
 	type RelationDataType,
+	type RelationSortOrderType,
 	string,
 	union,
 } from "@deps";
@@ -87,11 +88,41 @@ export const availableCharts = optional(object({
 export const user_level_array = [
 	"Ghost",
 	"Manager",
+	"OrgHead",
+	"UnitHead",
 	"Editor",
 	"Enterprise",
 	"Patrol",
 ];
 export const user_level_emums = enums(user_level_array);
+
+// Levels reserved for organization-leader workspaces (routing + gate opening).
+export const user_org_leader_levels = ["OrgHead", "UnitHead"];
+export const user_org_role_array = ["OrgHead", "UnitHead", "Officer"];
+
+// --- Org/unit roles (D7) ---
+// Backward-compatible: existing users simply carry an empty `roles` array and
+// `level` stays the coarse auth gate (Patrol device login, Ghost bootstrap).
+// Org/unit scoping (OrgHead, UnitHead, Officer, ...) lives in `roles`.
+export const user_role_array = [
+	"Ghost",
+	"Manager",
+	"OrgHead",
+	"UnitHead",
+	"Officer",
+	"Editor",
+	"Enterprise",
+	"Patrol",
+];
+export const user_role_emums = enums(user_role_array);
+export const role_scope_type_emums = enums(["organization", "unit"]);
+
+export const user_role_struct = object({
+	roleId: string(), // uuid
+	name: user_role_emums,
+	scopeType: optional(role_scope_type_emums),
+	scopeId: optional(string()),
+});
 
 export const patrol_permissions_struct = object({
 	can_submit_accident: optional(boolean()),
@@ -157,6 +188,8 @@ export const user_pure = {
 	is_active: defaulted(boolean(), true),
 	// دسترسی‌های پویای مأمور گشت که پس از ورود به اپ موبایل بازگردانده می‌شود
 	patrol_permissions: optional(patrol_permissions_struct),
+	// نقش‌های سازمانی/واحدی (سطح سازمان = OrgHead، سطح واحد = UnitHead، ...)
+	roles: defaulted(array(user_role_struct), []),
 	// سیاست قفل شدن پس از تلاش‌های ناموفق ورود
 	failed_login_attempts: defaulted(number(), 0),
 	locked_until: optional(date()),
@@ -197,6 +230,40 @@ export const user_relations = {
 		type: "single" as RelationDataType,
 		optional: true,
 		relatedRelations: {},
+	},
+	// Membership in organizations/units (reverses `members` on both).
+	// Leadership is separate (organization.head / unit.head).
+	organizations: {
+		schemaName: "organization",
+		type: "multiple" as RelationDataType,
+		optional: true,
+		limit: 50,
+		relatedRelations: {
+			members: {
+				type: "multiple" as RelationDataType,
+				limit: 200,
+				sort: {
+					field: "_id",
+					order: "desc" as RelationSortOrderType,
+				},
+			},
+		},
+	},
+	units: {
+		schemaName: "unit",
+		type: "multiple" as RelationDataType,
+		optional: true,
+		limit: 50,
+		relatedRelations: {
+			members: {
+				type: "multiple" as RelationDataType,
+				limit: 200,
+				sort: {
+					field: "_id",
+					order: "desc" as RelationSortOrderType,
+				},
+			},
+		},
 	},
 };
 

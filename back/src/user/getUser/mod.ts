@@ -1,7 +1,12 @@
 import { coreApp } from "../../../mod.ts";
 import { getUserFn } from "./getUser.fn.ts";
 import { getUserValidator } from "./getUser.val.ts";
-import { grantAccess, setTokens, setUser } from "@lib";
+import {
+	assertTargetUserInActorScope,
+	grantAccess,
+	setTokens,
+	setUser,
+} from "@lib";
 
 export const getUserSetup = () =>
 	coreApp.acts.setAct({
@@ -11,8 +16,9 @@ export const getUserSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager", "Examiner"],
+				levels: ["Manager", "Examiner", "OrgHead", "UnitHead"],
 			}),
+			assertTargetUserInActorScope(),
 		],
 		validator: getUserValidator(),
 		fn: getUserFn,

@@ -12,7 +12,7 @@ export const countUsersSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager"],
+				levels: ["Manager", "OrgHead", "UnitHead"],
 			}),
 		],
 		validator: countUsersValidator(),

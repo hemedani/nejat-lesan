@@ -1,31 +1,24 @@
 import type { Infer } from "@deps";
-import {
-	grantAccess,
-	type MyContext,
-	setTokens,
-	setUser,
-	throwError,
-} from "@lib";
+import { grantAccess, setTokens, setUser, throwError } from "@lib";
 import { coreApp } from "../../../mod.ts";
 import { addUserFn } from "./addUser.fn.ts";
 import { addUserValidator } from "./addUser.val.ts";
 import { user_level_emums } from "@model";
 
+/** جلوگیری از ساخته‌شدن کاربر سطح Ghost توسط غیرگوست‌ها. */
 export const checkGhostUser = () => {
-	const { user, body }: MyContext = coreApp.contextFns
-		.getContextModel() as MyContext;
+	const { user }: { user: { level?: string } } = coreApp.contextFns
+		.getContextModel() as never;
 
 	if (user.level === "Ghost") {
 		return;
 	}
 
-	const insertedLevels = body?.details.set.levels as Infer<
-		typeof user_level_emums
-	>;
-
-	if (insertedLevels === undefined || insertedLevels === null) {
-		return;
-	}
+	const insertedLevels = (coreApp.contextFns.getContextModel() as {
+		body?: {
+			details?: { set?: { level?: Infer<typeof user_level_emums> } };
+		};
+	}).body?.details?.set?.level as Infer<typeof user_level_emums> | undefined;
 
 	if (insertedLevels !== "Ghost") {
 		return;
@@ -43,9 +36,8 @@ export const addUserSetup = () =>
 			setTokens,
 			setUser,
 			grantAccess({
-				levels: ["Manager"],
+				levels: ["Manager", "OrgHead", "UnitHead"],
 			}),
-			checkGhostUser,
 		],
 		validator: addUserValidator(),
 		fn: addUserFn,

@@ -1,6 +1,10 @@
 import { type ActFn, compare, jwt, ObjectId } from "@deps";
 import { jwtTokenKey, throwError } from "@lib";
 import { device, user } from "../../../mod.ts";
+import {
+	getEnabledModuleKeys,
+	getPrimaryOrgModules,
+} from "../../app_modules/moduleConfig.ts";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_MS = 5 * 60 * 1000;
@@ -42,6 +46,7 @@ export const loginUserFn: ActFn = async (body) => {
 			password: 1,
 			is_active: 1,
 			patrol_permissions: 1,
+			roles: 1,
 			failed_login_attempts: 1,
 			locked_until: 1,
 		},
@@ -204,6 +209,8 @@ export const loginUserFn: ActFn = async (body) => {
 			token,
 			user: await clientProjectedUser(email, get),
 			permissions: authUser.patrol_permissions || {},
+			modules: getEnabledModuleKeys(),
+			orgModules: await getPrimaryOrgModules(authUser),
 		};
 	}
 
@@ -213,6 +220,8 @@ export const loginUserFn: ActFn = async (body) => {
 	return {
 		token,
 		user: await clientProjectedUser(email, get),
+		modules: getEnabledModuleKeys(),
+		orgModules: await getPrimaryOrgModules(authUser),
 	};
 };
 

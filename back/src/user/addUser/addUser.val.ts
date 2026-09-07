@@ -18,8 +18,10 @@ import {
 	mobile_pattern,
 	patrol_permissions_struct,
 	personnel_code_pattern,
+	role_scope_type_emums,
 	user_genders,
 	user_level_emums,
+	user_role_emums,
 } from "@model";
 
 export const addUserValidator = () => {
@@ -46,6 +48,15 @@ export const addUserValidator = () => {
 			personnel_code: optional(personnel_code_pattern),
 			is_active: defaulted(boolean(), true),
 			patrol_permissions: optional(patrol_permissions_struct),
+			roles: optional(
+				array(
+					object({
+						name: user_role_emums,
+						scopeType: optional(role_scope_type_emums),
+						scopeId: optional(string()),
+					}),
+				),
+			),
 			nationalCard: optional(objectIdValidation),
 			avatar: optional(objectIdValidation),
 			citySettingIds: optional(array(objectIdValidation)),
