@@ -254,7 +254,12 @@ export const add = async (data: {
           dead_count: 1,
           injured_count: 1,
           news_number: 1,
-          officer: 1,
+          officer: {
+            _id: 1,
+            first_name: 1,
+            last_name: 1,
+            personnel_code: 1,
+          },
           has_witness: 1,
           province: {
             _id: 1,
