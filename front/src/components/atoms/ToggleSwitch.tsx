@@ -6,29 +6,35 @@ interface ToggleSwitchProps {
   disabled?: boolean;
 }
 
+/**
+ * سوییچ استاندارد پروژه.
+ * داخل track یک container با dir=ltr استفاده می‌شود تا جابه‌جایی گوی در RTL
+ * دچار مشکل نشود؛ حالت روشن = گوی سمت راست، خاموش = سمت چپ (مستقل از جهت سند).
+ */
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   checked,
   onChange,
   disabled = false,
 }) => {
   return (
-    <label className="relative inline-flex items-center cursor-pointer">
-      <input
-        type="checkbox"
-        className="sr-only peer"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      dir="ltr"
+      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-white/10 p-0.5 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 ${
+        checked ? "bg-blue-600" : "bg-gray-200"
+      } ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+    >
+      <span
+        aria-hidden
+        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+          checked ? "translate-x-5" : "translate-x-0"
+        }`}
       />
-      <div
-        className={`w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer 
-                  peer-checked:after:translate-x-full peer-checked:after:border-white 
-                  after:content-[''] after:absolute after:top-[2px] after:start-[2px] 
-                  after:bg-white after:border-gray-300 after:border after:rounded-full 
-                  after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600
-                  ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
-      ></div>
-    </label>
+    </button>
   );
 };
 

@@ -101,12 +101,12 @@ const LoginForm = () => {
     try {
       const res = await loginAction({ email: values.email, password: values.password });
 
-      if (res.success && res.body?.token && res.body?.user) {
-        const { token, user } = res.body;
+      if (res.success && res.body && "token" in res.body && res.body.token && res.body.user) {
+        const { token, user, modules, orgModules } = res.body;
 
         Cookies.set("token", token, { path: "/", expires: 7, sameSite: "lax" });
         sessionStorage.setItem("lesan_user", JSON.stringify(user));
-        login(token, user as UserData);
+        login(token, user as UserData, { modules, orgModules });
 
         window.location.href = "/";
       } else {

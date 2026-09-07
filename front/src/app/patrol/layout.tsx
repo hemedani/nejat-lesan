@@ -1,5 +1,10 @@
 import { PatrolWorkspace } from "@/components/patrol/PatrolWorkspace";
+import { ModuleGate } from "@/components/system/ModuleGate";
 
 export default function PatrolLayout({ children }: { children: React.ReactNode }) {
-  return <PatrolWorkspace>{children}</PatrolWorkspace>;
+  return (
+    <ModuleGate module="incident_patrol">
+      <PatrolWorkspace>{children}</PatrolWorkspace>
+    </ModuleGate>
+  );
 }

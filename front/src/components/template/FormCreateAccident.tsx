@@ -21,6 +21,7 @@ import MyInput from "../atoms/MyInput";
 import MyDateInput from "../atoms/MyDateInput";
 import MyAsyncMultiSelect from "../atoms/MyAsyncMultiSelect";
 import MySelectWithName from "../atoms/MySelectWithName";
+import SelectBox from "../atoms/Select";
 import { add } from "@/app/actions/accident/add";
 import { gets as getProvinces } from "@/app/actions/province/gets";
 import { gets as getCities } from "@/app/actions/city/gets";
@@ -1728,14 +1729,18 @@ const FormCreateAccident = () => {
                         ?.message
                     }
                   />
-                  <select
-                    {...register(`vehicle_dtos.${index}.driver.sex`)}
-                    className="w-full px-4 py-3 text-slate-800 bg-white border border-slate-300 rounded-xl text-right"
-                  >
-                    <option value="Male">مرد</option>
-                    <option value="Female">زن</option>
-                    <option value="Other">سایر</option>
-                  </select>
+                  <SelectBox
+                    name={`vehicle_dtos.${index}.driver.sex` as never}
+                    label="جنسیت"
+                    setValue={setValueWrapper as never}
+                    options={[
+                      { value: "Male", label: "مرد" },
+                      { value: "Female", label: "زن" },
+                      { value: "Other", label: "سایر" },
+                    ]}
+                    clearable={false}
+                    defaultValue={{ value: "Male", label: "مرد" }}
+                  />
                   <MySelectWithName
                     name={`vehicle_dtos.${index}.driver.licence_type`}
                     label="نوع گواهینامه"
@@ -1820,14 +1825,18 @@ const FormCreateAccident = () => {
                     errors.pedestrian_dtos?.[index]?.national_code?.message
                   }
                 />
-                <select
-                  {...register(`pedestrian_dtos.${index}.sex`)}
-                  className="w-full px-4 py-3 text-slate-800 bg-white border border-slate-300 rounded-xl text-right"
-                >
-                  <option value="Male">مرد</option>
-                  <option value="Female">زن</option>
-                  <option value="Other">سایر</option>
-                </select>
+                <SelectBox
+                  name={`pedestrian_dtos.${index}.sex` as never}
+                  label="جنسیت"
+                  setValue={setValueWrapper as never}
+                  options={[
+                    { value: "Male", label: "مرد" },
+                    { value: "Female", label: "زن" },
+                    { value: "Other", label: "سایر" },
+                  ]}
+                  clearable={false}
+                  defaultValue={{ value: "Male", label: "مرد" }}
+                />
                 <MySelectWithName
                   name={`pedestrian_dtos.${index}.fault_status`}
                   label="وضعیت تقصیر"

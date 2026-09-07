@@ -15,7 +15,22 @@ export const getMe = async (get?: ReqType["main"]["user"]["getMe"]["get"]) => {
     email: 1,
     national_number: 1,
     level: 1,
+    roles: 1,
     settings: 1,
+    organizations: {
+      _id: 1,
+      code: 1,
+      name: 1,
+      enName: 1,
+      is_active: 1,
+    },
+    units: {
+      _id: 1,
+      code: 1,
+      name: 1,
+      type: 1,
+      is_active: 1,
+    },
   };
 
   return await AppApi().send(

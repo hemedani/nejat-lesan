@@ -57,6 +57,15 @@ export interface PatrolReport {
   collision_type?: RelatedReference;
   road?: RelatedReference;
   police_station?: RelatedReference;
+  incident_type?: "accident" | "road_breakdown" | "road_obstacle" | "other";
+  incident_payload?: {
+    description?: string;
+    is_hazard?: boolean;
+    needs_repair?: boolean;
+    temporary_action?: string;
+    follow_up_required?: boolean;
+  };
+  incident_severity?: RelatedReference;
   attachments?: Array<Record<string, unknown>>;
   vehicle_dtos?: Array<Record<string, unknown>>;
   people_dtos?: Array<Record<string, unknown>>;

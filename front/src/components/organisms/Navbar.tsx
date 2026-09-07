@@ -8,22 +8,20 @@ import { useAuth } from "@/context/AuthContext";
 
 type NavItem = { href: string; label: string; description?: string };
 
-const publicItems: NavItem[] = [
-  { href: "/", label: "خانه" },
-  { href: "/charts/overall", label: "تحلیل‌ها", description: "نمودارها و گزارش‌های تحلیلی" },
-  { href: "/maps/accidents", label: "نقشه تصادفات", description: "مشاهده رخدادها روی نقشه" },
-];
+const corePublicItems: NavItem[] = [{ href: "/", label: "خانه" }];
 
 const roleLabels: Record<string, string> = {
   Ghost: "دسترسی کامل مدیریتی",
   Manager: "مدیریت و بررسی گزارش‌ها",
+  OrgHead: "سرپرست سازمان",
+  UnitHead: "سرپرست واحد",
   Editor: "ویرایش داده‌های سامانه",
   Enterprise: "دسترسی سازمانی",
   Patrol: "ثبت و پیگیری گزارش‌های گشت",
 };
 
 export const Navbar = () => {
-  const { isAuthenticated, userLevel, userData, logout } = useAuth();
+  const { isAuthenticated, userLevel, userData, hasModule, orgHasModule, isOrgLeader, isOrgHead, logout } = useAuth();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [panelsOpen, setPanelsOpen] = useState(false);
@@ -32,19 +30,53 @@ export const Navbar = () => {
   const profileRef = useRef<HTMLDivElement>(null);
   const displayName = [userData?.first_name, userData?.last_name].filter(Boolean).join(" ") || "کاربر";
 
+  const chartsEnabled = hasModule("charts");
+  const patrolEnabled = orgHasModule("incident_patrol");
+
+  const publicItems: NavItem[] = [
+    ...corePublicItems,
+    ...(chartsEnabled
+      ? [
+          { href: "/charts/overall", label: "تحلیل‌ها", description: "نمودارها و گزارش‌های تحلیلی" },
+          { href: "/maps/accidents", label: "نقشه تصادفات", description: "مشاهده رخدادها روی نقشه" },
+        ]
+      : []),
+  ];
+
+  // Panel selector ("پنل‌ها"): one clear destination per persona/role.
   const panelItems: NavItem[] = [];
-  if (userLevel === "Patrol") {
+
+  // Org-head / unit-head workspace — distinct labeled entries per role.
+  if (patrolEnabled && isOrgLeader) {
+    panelItems.push({
+      href: "/org",
+      label: isOrgHead ? "داشبورد سرپرست سازمان" : "داشبورد سرپرست واحد",
+      description: isOrgHead
+        ? "نمودار سازمان، واحدها، افراد، فرایندها و رخدادهای سازمان خودتان"
+        : "مدیریت واحد تحت سرپرستی، اعضا، فرایندها و رخدادهای آن",
+    });
+  }
+
+  // Patrol officer panel.
+  if (patrolEnabled && userLevel === "Patrol") {
     panelItems.push({ href: "/patrol/dashboard", label: "داشبورد مأمور گشت", description: "شیفت و گزارش‌های من" });
   }
-  if (userLevel === "Ghost" || userLevel === "Manager") {
+
+  // Manager review center (patrol incident review).
+  if (patrolEnabled && (userLevel === "Ghost" || userLevel === "Manager")) {
     panelItems.push({ href: "/patrol-manager/dashboard", label: "مرکز بررسی گشت", description: "صف بررسی گزارش‌های مأموران" });
   }
-  if (userLevel === "Ghost" || userLevel === "Manager") {
-    panelItems.push({ href: "/patrol-manager/operations", label: "مدیریت عملیات گشت", description: "مأموران، واحدها و شیفت‌های گشت" });
-  }
+
+  // Main admin panel (org management lives in its sidebar → no duplicate entry).
   if (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") {
-    panelItems.push({ href: "/admin", label: "پنل مدیریت سامانه", description: "مدیریت کاربران و داده‌های پایه" });
+    panelItems.push({ href: "/admin", label: "پنل مدیریت سامانه", description: "سازمان‌ها، کاربران و داده‌های پایه" });
   }
+
+  // Ghost-only module licensing.
+  if (userLevel === "Ghost") {
+    panelItems.push({ href: "/admin/modules", label: "تنظیمات ماژول‌ها", description: "فعال/غیرفعال کردن ماژول‌ها (نصب و سازمان)" });
+  }
+
   if (isAuthenticated) panelItems.push({ href: "/user", label: "پنل کاربری", description: "اطلاعات حساب و تنظیمات" });
 
   useEffect(() => {

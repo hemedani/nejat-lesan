@@ -6,6 +6,7 @@ export function unwrapApiResponse<T>(response: unknown): T {
 
 export function getPatrolErrorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : "";
+  if (message.includes("ماژول")) return "این بخش برای این نصب/سازمان فعال نیست.";
   if (message.includes("اجازه") || message.includes("داشبورد")) return "شما به این بخش دسترسی ندارید.";
   if (message.includes("یافت نشد")) return "گزارش یافت نشد یا دسترسی ندارید.";
   if (message.includes("همگام")) return "گزارش باید ابتدا با موفقیت همگام‌سازی شود.";

@@ -8,6 +8,8 @@ import { UploadImage } from "@/components/molecules/UploadFile";
 import { ToastNotify } from "@/utils/helper";
 import MyInput from "../atoms/MyInput";
 import { createUser } from "@/app/actions/user/createUser";
+import { getOrganizations } from "@/app/actions/organization/getOrganizations";
+import { getUnits } from "@/app/actions/unit/getUnits";
 import MyDateInput from "../atoms/MyDateInput";
 import { ReqType } from "@/types/declarations/selectInp";
 import dynamic from "next/dynamic";
@@ -47,11 +49,13 @@ export const UserCreateSchema = z
       .optional()
       .refine((value) => !value || /^[0-9]+$/.test(value), "کد پرسنلی باید فقط شامل ارقام باشد"),
     address: z.string().min(1, "آدرس الزامی است"),
-    level: z.enum(["Ghost", "Manager", "Editor", "Enterprise", "Patrol"], {
+    level: z.enum(["Ghost", "Manager", "OrgHead", "UnitHead", "Editor", "Enterprise", "Patrol"], {
       message: "سطح الزامی است",
     }),
     is_verified: z.boolean(),
     is_active: z.boolean(),
+    org_id: z.string().optional(),
+    unit_id: z.string().optional(),
     patrol_permissions: z
       .object({
         can_submit_accident: z.boolean().optional(),
@@ -120,6 +124,33 @@ export const UserCreateSchema = z
         });
       }
     }
+
+    // سرپرست سازمان باید به یک سازمان گره بخورد
+    if (data.level === "OrgHead" && !data.org_id) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["org_id"],
+        message: "برای سرپرست سازمان، انتخاب سازمان الزامی است",
+      });
+    }
+
+    // سرپرست واحد باید به یک سازمان و یک واحد گره بخورد
+    if (data.level === "UnitHead") {
+      if (!data.org_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["org_id"],
+          message: "برای سرپرست واحد، انتخاب سازمان الزامی است",
+        });
+      }
+      if (!data.unit_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["unit_id"],
+          message: "برای سرپرست واحد، انتخاب واحد الزامی است",
+        });
+      }
+    }
   });
 
 export type UserFormData = z.infer<typeof UserCreateSchema>;
@@ -137,6 +168,8 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
   const router = useRouter();
   const [selectedCities, setSelectedCities] = useState<SelectOption[]>([]);
   const [selectedProvinces, setSelectedProvinces] = useState<SelectOption[]>([]);
+  const [orgOptions, setOrgOptions] = useState<SelectOption[]>([]);
+  const [unitOptions, setUnitOptions] = useState<SelectOption[]>([]);
 
   const {
     register,
@@ -157,6 +190,8 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
       avatar: "",
       level: "Editor", // Default to Editor level
       availableCharts: {},
+      org_id: "",
+      unit_id: "",
     },
     mode: "onChange",
   });
@@ -173,6 +208,74 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
       setValue("provinceSettingIds", []);
     }
   }, [watchedLevel, setSelectedCities, setSelectedProvinces, setValue]);
+
+  const watchedOrgId = watch("org_id");
+  const leaderLevel = watchedLevel === "OrgHead" || watchedLevel === "UnitHead";
+
+  // Load organizations once (for OrgHead/UnitHead scope assignment).
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const response = (await getOrganizations({ set: { page: 1, limit: 200 } })) as {
+          success?: boolean;
+          body?: unknown;
+        };
+        if (!alive) return;
+        const body = response.body;
+        if (response.success && Array.isArray(body)) {
+          setOrgOptions(
+            (body as Array<{ _id: string; name: string }>).map((org) => ({ value: org._id, label: org.name })),
+          );
+        }
+      } catch {
+        // ignore — empty org list is safe
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Load unit options for the selected organization when a UnitHead is being created.
+  useEffect(() => {
+    if (watchedLevel !== "UnitHead" || !watchedOrgId) {
+      setUnitOptions([]);
+      return;
+    }
+    let alive = true;
+    (async () => {
+      try {
+        const response = (await getUnits({ set: { organizationId: watchedOrgId, limit: 500 } })) as {
+          success?: boolean;
+          body?: unknown;
+        };
+        if (!alive) return;
+        const body = response.body;
+        if (response.success && Array.isArray(body)) {
+          setUnitOptions(
+            (body as Array<{ _id: string; name: string }>).map((unit) => ({ value: unit._id, label: unit.name })),
+          );
+        } else {
+          setUnitOptions([]);
+        }
+      } catch {
+        if (alive) setUnitOptions([]);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [watchedLevel, watchedOrgId]);
+
+  // Clear org/unit scope when a non-leader level is picked.
+  useEffect(() => {
+    if (!leaderLevel) {
+      setValue("org_id", "");
+      setValue("unit_id", "");
+      setUnitOptions([]);
+    }
+  }, [leaderLevel, setValue]);
 
   // Load cities options
   const loadCitiesOptions = useCallback(async (inputValue?: string): Promise<SelectOption[]> => {
@@ -305,8 +408,10 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
 
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
     try {
+      // Strip scope-picker fields; org/unit scope becomes an organizational role.
+      const { org_id: scopeOrgId, unit_id: scopeUnitId, ...restData } = data;
       // Create a copy of the data to manipulate
-      const backendData = { ...data } as ReqType["main"]["user"]["addUser"]["set"];
+      const backendData = { ...restData } as ReqType["main"]["user"]["addUser"]["set"];
 
       // Remove empty strings for avatar and nationalCard
       if (!data.avatar || data.avatar.trim() === "") {
@@ -367,6 +472,15 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
         }
       } else {
         delete backendData.availableCharts;
+      }
+
+      // Attach the organizational role (scope) when creating a leader account.
+      if (data.level === "OrgHead" && scopeOrgId) {
+        backendData.roles = [{ name: "OrgHead", scopeType: "organization", scopeId: scopeOrgId }];
+      } else if (data.level === "UnitHead" && scopeUnitId) {
+        backendData.roles = [{ name: "UnitHead", scopeType: "unit", scopeId: scopeUnitId }];
+      } else {
+        delete backendData.roles;
       }
 
       const createdUser = await createUser(backendData);
@@ -662,12 +776,47 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             errMsg={errors.level?.message}
             options={[
               { value: "Manager", label: "مدیر" },
+              { value: "OrgHead", label: "سرپرست سازمان" },
+              { value: "UnitHead", label: "سرپرست واحد" },
               { value: "Editor", label: "ویرایشگر" },
               { value: "Enterprise", label: "سازمانی" },
               { value: "Patrol", label: "مأمور گشت" },
             ]}
             className="w-1/2 p-2"
           />
+          {watchedLevel === "OrgHead" && (
+            <SelectBox
+              label="سازمان (گره نقش سرپرست سازمان)"
+              name="org_id"
+              setValue={setValue}
+              errMsg={errors.org_id?.message}
+              options={orgOptions}
+              placeholder="انتخاب سازمان"
+              className="w-1/2 p-2"
+            />
+          )}
+          {watchedLevel === "UnitHead" && (
+            <>
+              <SelectBox
+                label="سازمان"
+                name="org_id"
+                setValue={setValue}
+                errMsg={errors.org_id?.message}
+                options={orgOptions}
+                placeholder="ابتدا سازمان را انتخاب کنید"
+                className="w-1/2 p-2"
+              />
+              <SelectBox
+                label="واحد"
+                name="unit_id"
+                setValue={setValue}
+                errMsg={errors.unit_id?.message}
+                options={unitOptions}
+                placeholder={watchedOrgId ? "انتخاب واحد" : "اول سازمان را انتخاب کنید"}
+                className="w-1/2 p-2"
+              />
+            </>
+          )}
           <SelectBox
             label="وضعیت تایید"
             name="is_verified"

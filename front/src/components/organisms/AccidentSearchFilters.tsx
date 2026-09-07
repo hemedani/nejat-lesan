@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import SelectBox from "@/components/atoms/Select";
 
 interface SearchFiltersProps {
   defaultValues: {
@@ -80,6 +81,39 @@ const AccidentSearchFilters: React.FC<SearchFiltersProps> = ({ defaultValues }) 
     router.push("?");
   };
 
+  const setStringFilter = (name: "province_id" | "city_id" | "collision_type_id" | "sort_by" | "sort_order", value: string) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const collisionOptions = [
+    { value: "", label: "همه" },
+    { value: "1", label: "تصادف از جلو" },
+    { value: "2", label: "تصادف از پشت" },
+    { value: "3", label: "تصادف از پهلو" },
+    { value: "4", label: "واژگونی" },
+  ];
+  const provinceOptions = [
+    { value: "", label: "همه" },
+    { value: "1", label: "تهران" },
+    { value: "2", label: "اصفهان" },
+    { value: "3", label: "مشهد" },
+  ];
+  const cityOptions = [
+    { value: "", label: "همه" },
+    { value: "1", label: "تهران" },
+    { value: "2", label: "کرج" },
+  ];
+  const sortOptions = [
+    { value: "date_of_accident", label: "تاریخ تصادف" },
+    { value: "dead_count", label: "تعداد فوتی" },
+    { value: "injured_count", label: "تعداد مجروح" },
+    { value: "serial", label: "شماره سریال" },
+  ];
+  const orderOptions = [
+    { value: "desc", label: "نزولی" },
+    { value: "asc", label: "صعودی" },
+  ];
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -105,22 +139,16 @@ const AccidentSearchFilters: React.FC<SearchFiltersProps> = ({ defaultValues }) 
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">نوع برخورد</label>
-          <select
-            name="collision_type_id"
-            value={filters.collision_type_id}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">همه</option>
-            {/* Placeholder for collision types - would be populated from API */}
-            <option value="1">تصادف از جلو</option>
-            <option value="2">تصادف از پشت</option>
-            <option value="3">تصادف از پهلو</option>
-            <option value="4">واژگونی</option>
-          </select>
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">نوع برخورد</label>
+            <SelectBox
+              value={filters.collision_type_id}
+              onValueChange={(value) => setStringFilter("collision_type_id", value)}
+              options={collisionOptions}
+              clearable={false}
+              className="w-full"
+            />
+          </div>
       </div>
       
       <div className="mb-4">
@@ -151,33 +179,24 @@ const AccidentSearchFilters: React.FC<SearchFiltersProps> = ({ defaultValues }) 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 border-t pt-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">استان</label>
-            <select
-              name="province_id"
+            <SelectBox
               value={filters.province_id}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">همه</option>
-              {/* Placeholder for provinces - would be populated from API */}
-              <option value="1">تهران</option>
-              <option value="2">اصفهان</option>
-              <option value="3">مشهد</option>
-            </select>
+              onValueChange={(value) => setStringFilter("province_id", value)}
+              options={provinceOptions}
+              clearable={false}
+              className="w-full"
+            />
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">شهر</label>
-            <select
-              name="city_id"
+            <SelectBox
               value={filters.city_id}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">همه</option>
-              {/* Placeholder for cities - would be populated from API based on selected province */}
-              <option value="1">تهران</option>
-              <option value="2">کرج</option>
-            </select>
+              onValueChange={(value) => setStringFilter("city_id", value)}
+              options={cityOptions}
+              clearable={false}
+              className="w-full"
+            />
           </div>
           
           <div>
@@ -219,30 +238,24 @@ const AccidentSearchFilters: React.FC<SearchFiltersProps> = ({ defaultValues }) 
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">مرتب‌سازی بر اساس</label>
-            <select
-              name="sort_by"
+            <SelectBox
               value={filters.sort_by}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="date_of_accident">تاریخ تصادف</option>
-              <option value="dead_count">تعداد فوتی</option>
-              <option value="injured_count">تعداد مجروح</option>
-              <option value="serial">شماره سریال</option>
-            </select>
+              onValueChange={(value) => setStringFilter("sort_by", value)}
+              options={sortOptions}
+              clearable={false}
+              className="w-full"
+            />
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">ترتیب</label>
-            <select
-              name="sort_order"
+            <SelectBox
               value={filters.sort_order}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="desc">نزولی</option>
-              <option value="asc">صعودی</option>
-            </select>
+              onValueChange={(value) => setStringFilter("sort_order", value)}
+              options={orderOptions}
+              clearable={false}
+              className="w-full"
+            />
           </div>
         </div>
       )}

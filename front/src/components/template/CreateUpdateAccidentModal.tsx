@@ -75,7 +75,10 @@ const CreateUpdateAccidentModal: React.FC<CreateUpdateAccidentModalProps> = ({
           injured_count: accidentToEdit.injured_count,
           has_witness: accidentToEdit.has_witness,
           news_number: accidentToEdit.news_number,
-          officer: accidentToEdit.officer,
+          officer:
+            typeof accidentToEdit.officer === "string"
+              ? accidentToEdit.officer
+              : (accidentToEdit.officer as { _id?: string } | undefined)?._id,
           province_id: accidentToEdit.province?._id,
           city_id: accidentToEdit.city?._id,
           type_id: accidentToEdit.type?._id,

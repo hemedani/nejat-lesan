@@ -5,6 +5,8 @@ export const reportListProjection = {
   travel_direction: 1, officer: { _id: 1, first_name: 1, last_name: 1, personnel_code: 1 },
   patrol_unit: { _id: 1, code: 1, name: 1 }, vehicle: { _id: 1, plaque_no: 1 },
   type: { _id: 1, name: 1 }, collision_type: { _id: 1, name: 1 },
+  incident_type: 1, incident_payload: 1,
+  incident_severity: { _id: 1, name: 1 },
 } as const;
 
 export const reportDetailProjection = {

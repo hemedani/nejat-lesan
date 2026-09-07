@@ -12,7 +12,7 @@ interface UserCardProps {
   gender?: "Male" | "Female";
   national_number?: string;
   personnel_code?: string;
-  level: "Ghost" | "Manager" | "Editor" | "Enterprise" | "Patrol";
+  level: "Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol";
   is_verified: boolean;
   summary?: string;
   onDelete: () => void;
@@ -39,6 +39,10 @@ const UserCard: React.FC<UserCardProps> = ({
     switch (level) {
       case "Manager":
         return "bg-red-100 text-red-800 border-red-300";
+      case "OrgHead":
+        return "bg-violet-100 text-violet-800 border-violet-300";
+      case "UnitHead":
+        return "bg-indigo-100 text-indigo-800 border-indigo-300";
       case "Editor":
         return "bg-blue-100 text-blue-800 border-blue-300";
       case "Enterprise":
@@ -47,6 +51,27 @@ const UserCard: React.FC<UserCardProps> = ({
         return "bg-cyan-100 text-cyan-800 border-cyan-300";
       default:
         return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  const getLevelLabel = (level?: string) => {
+    switch (level) {
+      case "Ghost":
+        return "مهمان";
+      case "Manager":
+        return "مدیر";
+      case "OrgHead":
+        return "سرپرست سازمان";
+      case "UnitHead":
+        return "سرپرست واحد";
+      case "Editor":
+        return "ویرایشگر";
+      case "Patrol":
+        return "مأمور گشت";
+      case "Enterprise":
+        return "سازمانی";
+      default:
+        return "—";
     }
   };
 
@@ -115,15 +140,7 @@ const UserCard: React.FC<UserCardProps> = ({
           <span
             className={`inline-block px-2 py-1 rounded-md text-xs font-medium border ${getLevelColor(level)}`}
           >
-            {level === "Ghost"
-              ? "مهمان"
-              : level === "Manager"
-                ? "مدیر"
-                : level === "Editor"
-                  ? "ویرایشگر"
-              : level === "Patrol"
-                ? "مأمور گشت"
-                : "سازمانی"}
+            {getLevelLabel(level)}
           </span>
         </div>
       </div>

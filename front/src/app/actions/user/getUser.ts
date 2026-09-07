@@ -27,6 +27,7 @@ export const getUser = async (_id: string) => {
           address: 1,
           level: 1,
           is_verified: 1,
+          roles: 1,
           settings: 1,
           createdAt: 1,
           updatedAt: 1,

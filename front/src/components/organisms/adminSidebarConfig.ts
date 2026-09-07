@@ -88,6 +88,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     icon: "home",
     items: [
       { key: "dashboard", label: "داشبورد", href: "/admin", icon: "home" },
+      { key: "org", label: "سازمان‌ها", href: "/admin/org", icon: "building" },
       { key: "users", label: "کاربران", href: "/admin/users", icon: "users" },
     ],
   },

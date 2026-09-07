@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Select, { PropsValue } from "react-select";
 import {
   FieldValues,
@@ -16,6 +16,8 @@ interface CommonSelectProps {
   placeholder?: string;
   className?: string;
   errMsg?: string;
+  disabled?: boolean;
+  clearable?: boolean;
 }
 
 /** react-hook-form mode */
@@ -41,13 +43,22 @@ export type SelectBoxProps<T extends FieldValues = FieldValues> =
 const SelectBox = <T extends FieldValues = FieldValues>(
   props: SelectBoxProps<T>,
 ) => {
-  const { options, placeholder = "انتخاب کنید", className = "", errMsg } = props;
+  const { options, placeholder = "انتخاب کنید", className = "", errMsg, disabled = false, clearable } = props;
   const id = props.name || props.label;
+
+  // react-select renders an aria-live region on the server; render it only after
+  // mount to avoid React hydration mismatches (SSR) on pages that use SelectBox.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const selectedOption =
     "value" in props
       ? options.find((option) => option.value === props.value) ?? null
       : null;
+
+  const isClearable = clearable ?? !("setValue" in props);
 
   return (
     <div
@@ -62,31 +73,36 @@ const SelectBox = <T extends FieldValues = FieldValues>(
           {props.label}
         </label>
       )}
-      <Select
-        id={id}
-        options={options}
-        value={"value" in props ? selectedOption : undefined}
-        defaultValue={"defaultValue" in props ? props.defaultValue : undefined}
-        onChange={(newVal) => {
-          if ("setValue" in props) {
-            if (!newVal) return;
-            props.setValue(
-              props.name,
-              (props.labelAsValue ? newVal.label : newVal.value) as unknown as PathValue<
-                T,
-                Path<T>
-              >,
-            );
-          } else {
-            props.onValueChange(newVal ? String(newVal.value) : "");
-          }
-        }}
-        isClearable={!("setValue" in props)}
-        placeholder={placeholder}
-        noOptionsMessage={() => "گزینه‌ای یافت نشد"}
-        classNamePrefix="react-select"
-        className={`text-sm ${errMsg ? "border-red-500" : "border-gray-300"}`}
-      />
+      {mounted ? (
+        <Select
+          id={id}
+          options={options}
+          value={"value" in props ? selectedOption : undefined}
+          defaultValue={"defaultValue" in props ? props.defaultValue : undefined}
+          isDisabled={disabled}
+          isClearable={isClearable}
+          onChange={(newVal) => {
+            if ("setValue" in props) {
+              if (!newVal) return;
+              props.setValue(
+                props.name,
+                (props.labelAsValue ? newVal.label : newVal.value) as unknown as PathValue<
+                  T,
+                  Path<T>
+                >,
+              );
+            } else {
+              props.onValueChange(newVal ? String(newVal.value) : "");
+            }
+          }}
+          placeholder={placeholder}
+          noOptionsMessage={() => "گزینه‌ای یافت نشد"}
+          classNamePrefix="react-select"
+          className={`text-sm ${errMsg ? "border-red-500" : "border-gray-300"}`}
+        />
+      ) : (
+        <div aria-hidden className="min-h-[38px]" />
+      )}
       {errMsg && (
         <span className="text-red-500 text-xs">{errMsg}</span>
       )}
