@@ -4,6 +4,7 @@ import {
 	croquis_type,
 	damage_severity,
 	driver_status,
+	incident_severity,
 	injury_status,
 	person_role,
 	vehicle_final_status,
@@ -18,5 +19,6 @@ export const sharedSetup = () => {
 	setSharedActs("injury_status", injury_status);
 	setSharedActs("person_role", person_role);
 	setSharedActs("damage_severity", damage_severity);
+	setSharedActs("incident_severity", incident_severity);
 	seedSharedSetup();
 };
