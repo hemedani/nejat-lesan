@@ -547,8 +547,31 @@ What each model **defines** (own relations) and what Lesan **auto-creates** (rev
 User
   ├── avatar (File) [single, opt]
   ├── national_card (File) [single, opt]
+  ├── organizations (Organization) [multiple, opt] → reverse: organization.members
+  ├── units (Unit) [multiple, opt] → reverse: unit.members
   └── (reverses: user.accidents, user.shifts, user.patrol_unit, user.devices,
-         user.uploadedAssets, user.emergencies, user.announcement_reads)
+         user.uploadedAssets, user.emergencies, user.announcement_reads,
+         user.unit (single, via unit.officers), user.headedUnits (via unit.head))
+  Pure: `roles: [{ roleId, name, scopeType?: organization|unit, scopeId? }]`
+  (org/unit scoping; `level` stays the coarse auth gate)
+
+Organization   ← each highway (`road`) is one org; municipalities (whole-city) are roadless
+  ├── road (Road) [single, opt] → reverse: road.organization (single)
+  ├── head (User) [single, opt] → reverse: (none)
+  ├── logo (File) [single, opt]
+  ├── registrer (User) [single, opt]
+  └── (reverse: organization.members via user.organizations; organization.units via unit.organization)
+
+Unit           ← hierarchical org node (replaces flat patrol_unit/police_station)
+  ├── organization (Organization) [single, req] → reverse: organization.units
+  ├── road (Road) [single, opt, denormalized] → reverse: road.units
+  │      only when parent org is road-bound; roadless org ⇒ units carry no road
+  ├── parentUnit (Unit) [single, opt, self] → reverse: unit.subUnits
+  ├── head (User) [single, opt] → reverse: user.headedUnits
+  ├── vehicles (Vehicle) [multiple, opt] → reverse: vehicle.unit (single)
+  ├── officers (User) [multiple, opt] → reverse: user.unit (single)
+  ├── registrer (User) [single, opt]
+  └── (reverse: unit.members via user.units)
 
 Device
   └── owner (User) [single] → reverse: user.devices
@@ -572,7 +595,8 @@ Emergency
   ├── patrol_unit (PatrolUnit) [single, opt] → reverse: patrol_unit.emergencies
   └── vehicle (Vehicle) [single, opt] → reverse: vehicle.emergencies
 
-PatrolUnit
+PatrolUnit      ← legacy flat model (kept instantiated for existing relations/acts;
+                   new data goes to `unit` type:"Patrol")
   ├── registrer (User) [single, opt]
   ├── police_station (PoliceStation) [single, opt] → reverse: police_station.patrol_units
   ├── vehicles (Vehicle) [multiple] → reverse: vehicle.patrol_unit (single)
@@ -584,30 +608,39 @@ Shift
   ├── patrol_unit (PatrolUnit) [single, opt] → reverse: patrol_unit.shifts
   └── vehicle (Vehicle) [single, opt] → reverse: vehicle.shifts
 
-PoliceStation
+PoliceStation   ← legacy flat model (kept instantiated; new data goes to `unit` type:"Station")
   ├── registrer (User) [single, opt]
   ├── commander (User) [single, opt] → reverse: user.police_station
   └── (reverses: patrol_unit.patrol_units, accident.accidents)
 
-Accident  (defines ~25 relations, each with reverse "accidents")
+Accident  (defines ~26 relations, each with reverse "accidents")
   ├── reviewer (User) [single, opt]
   ├── officer (User) [single, opt] → user.accidents
   ├── patrol_unit (PatrolUnit) / vehicle (Vehicle) → reverses: "accidents"
   ├── lane, position, police_station, croquis_type → reverses: "accidents"
   ├── province / city / township / road / traffic_zone / city_zone /
   │   air_pollution_zone / type / ruling_type / light_status /
-  │   collision_type / road_situation / road_repair_type / shoulder_status →
-  │   reverse: "accidents"
+  │   collision_type / incident_severity / road_situation /
+  │   road_repair_type / shoulder_status → reverse: "accidents"
   ├── area_usages / air_statuses / road_defects / human_reasons /
   │   vehicle_reasons / equipment_damages / road_surface_conditions →
   │   reverse: "accidents"
   └── attachments (File) [multiple, opt]
   Embedded pure arrays: vehicle_dtos, pedestrian_dtos, people_dtos,
-      facility_damage_dtos, review_history
+      facility_damage_dtos, review_history, dynamic_answers (raw refs + name
+      snapshots), process_version (number)
+
+AccidentProcess  ← org-scoped wizard (steps/questions embedded on the doc)
+  ├── organization (Organization) [single, req] → reverse: organization.accident_processes
+  └── registrer (User) [single, opt]
+  Embedded pure: steps[].questions[] (model_name → questionRegistry; raw
+      allowed_answer_ids refs); unique partial index on
+      {organization._id, incident_type} filtered status:"active"
 
 Road
   ├── registrer (User) [single, opt]
-  └── province (Province) [single, opt] → reverse: province.roads
+  ├── province (Province) [single, opt] → reverse: province.roads
+  └── (reverses: road.organization (single, via organization.road), road.units (via unit.road))
 
 City → registrer + province → reverse: province.cities
 Township → registrer + province → reverse: province.townships
@@ -615,6 +648,41 @@ TrafficZone / CityZone / AirPollutionZone → registrer + city → reverse: city
 
 Shared reference models (type, position, color, plaque_type, …) → registrer (User) [single, opt]
 OperationLog → actor (User) [single, opt]; entity_type/entity_id are intentional polymorphic raw refs
+
+Ware             ← flat catalog (D9 — no hierarchy models; taxonomy = plain name fields)
+  ├── registrer (User) [single, opt]
+  └── (reverses: ware.inventories, ware.stock_movements, ware.consumptions)
+
+Inventory        ← one doc per (unit, ware) — unique index {"unit._id", "ware._id"}
+  ├── unit (Unit) [single, req] → reverse: unit.inventories
+  ├── warehouse_unit (Unit) [single, opt] → reverse: unit.warehouseInventories
+  └── ware (Ware) [single, req] → reverse: ware.inventories
+  (written ONLY via utils/inventoryManager — no user act writes it)
+
+StockMovement    ← read-only audit trail (written only by inventoryManager; no add/update/remove acts)
+  ├── unit (Unit) [single, req] → reverse: unit.stock_movements
+  ├── created_by (User) [single, req] → reverse: user.created_stock_movements
+  └── ware (Ware) [single, opt] → reverse: ware.stock_movements
+  Pure: reference_type/reference_id are intentional polymorphic raw refs (orphan-resilient)
+
+Consumption      ← add triggers inventoryManager.removeStock
+  ├── unit (Unit) [single, req] → reverse: unit.consumptions
+  ├── consumed_by (User) [single, req] → reverse: user.consumptions
+  ├── inventory (Inventory) [single, opt] → reverse: inventory.consumptions
+  └── ware (Ware) [single, req] → reverse: ware.consumptions
+
+GoodsReceipt     ← add triggers addStock per accepted line + auto GR-{year}-{serial}
+  ├── received_by (User) [single, req] → reverse: user.received_goods
+  ├── receiving_unit (Unit) [single, req] → reverse: unit.goods_receipts
+  └── target_unit (Unit) [single, opt, JIT] → reverse: unit.cross_dock_receipts
+  Embedded pure: items[] (ware_id is a raw ref — relations can't live in embedded arrays)
+
+GoodsRequest     ← JIT requisition; lifecycle add→approve→issue→receive
+  ├── unit (Unit) [single, req] → reverse: unit.goods_requests
+  ├── warehouse_unit (Unit) [single, opt] → reverse: unit.warehouse_requests
+  ├── ware (Ware) [single, req] → reverse: ware.goods_requests
+  ├── requested_by (User) [single, req] → reverse: user.requested_goods
+  └── approved_by (User) [single, opt]
 ```
 
 ### Function Implementation Patterns
@@ -937,3 +1005,26 @@ The trade-off is a minimal performance impact on create, update, and delete oper
 ### Philosophy
 
 Lesan's core philosophy centers on simplifying the client-server communication process, maximizing NoSQL database capabilities, and enabling scalable microservice architectures. It focuses on performance by embedding relationships within documents, reducing the number of database queries needed for complex data retrieval operations. The framework addresses traditional challenges with GraphQL and SQL by providing database-optimized filtering and embedded relationships that maintain efficiency even with deep nested data access patterns.
+
+## Module licensing — per-deployment on/off (backend gate)
+
+The product is sold in three activatable modules; everything else is **core** and never gated.
+
+| key | Gated acts |
+| --- | --- |
+| `charts` | `accident.*Analytics`, `accident.mapAccidents`, `accident.getCreatedAtPeriods` |
+| `incident_patrol` | `accident.{getMyReports,getSyncStatus,reviewReport,reviewHistory,resubmitReport,getReporterDashboard,getManagerDashboard,getManagerReports,nearbyAccidents}` + whole schemas `emergency|shift|vehicle|police_station|patrol_unit|patrol_operations|accident_process|announcement` + `file.uploadAccidentImages` + `user.getPatrolOfficers` |
+| `warehouse` | whole schemas `ware|inventory|consumption|goods_receipt|stock_movement|goods_request` |
+
+- **Config:** `models/module_config.ts` (single doc `key:"app_modules"`); created at first boot from `ENABLED_MODULES` (default: all); mutated at runtime only by Ghost.
+- **Acts (`src/app_modules/`, schema `app_modules`):** `getModules` (any authed user) and `setModules` (Ghost-only). `user.login` / `user.getMe` also return `modules`.
+- **Gate (`src/app_modules/moduleConfig.ts` → `applyModuleGates()`):** at the end of `functionsSetup`, the `fn` of every mapped act is wrapped so the gate runs first. Disabled → Persian «این ماژول برای این نصب فعال نیست»; **Ghost is always exempt**. Do not add acts to a module map for core features (auth, geography, reference/seed, `organization`/`unit`, admin accident CRUD `accident.get/gets/add/update/remove/count`, general files, `operation_log`).
+
+### Per-organization module licensing (multi-tenant installs)
+
+The same module set can be narrowed **per organization** on multi-tenant servers (each customer org on one install). Effective for an org = installation-enabled AND org flag:
+
+- **Org flags** live on `organization.module_flags` (array `[{key, enabled}]`); **absent = inherit installation (all on)** → dedicated single-tenant installs and pre-existing orgs are unaffected. Only Ghost writes them (`organization.setModules`); reads via `organization.getModules` (any user with org access) → `{ deployment, modules, effective }`.
+- **Org-layer gate** (`assertOrgModuleOpen` in `src/app_modules/moduleConfig.ts`, inside the same fn wrapper): when an explicit org target is present (`organizationId`/`orgId`/`unitId`/`fromUnitId`/`receivingUnitId`/`warehouseUnitId` → its org), a module-off org blocks **everyone incl. Manager** (only Ghost exempt). Without an explicit target, role-scoped/Patrol actors are blocked when the module is off for every org they belong to (`getScopedOrgIds` in `src/app_modules/orgScope.ts`); a global Manager with no org scope only sees the installation gate. Persian error «این ماژول برای این سازمان فعال نیست».
+- `user.login`/`getMe` return `orgModules` (effective keys) when the caller resolves to a single org (via `resolvePrimaryOrgId`).
+- Do not org-gate core acts (auth/geo/org/unit/admin-accident-CRUD/files/operation_log) — they are never in a module map.
