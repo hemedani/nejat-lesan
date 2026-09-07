@@ -1,6 +1,14 @@
 import { eventSetup } from "./event/mod.ts";
 import { fileSetup } from "./file/mod.ts";
 import { userSetup } from "./user/mod.ts";
+import { organizationSetup } from "./organization/mod.ts";
+import { unitSetup } from "./unit/mod.ts";
+import { wareSetup } from "./ware/mod.ts";
+import { inventorySetup } from "./inventory/mod.ts";
+import { consumptionSetup } from "./consumption/mod.ts";
+import { goodsReceiptSetup } from "./goods_receipt/mod.ts";
+import { goodsRequestSetup } from "./goods_request/mod.ts";
+import { stockMovementSetup } from "./stock_movement/mod.ts";
 import { citySetup } from "./city/mod.ts";
 import { townshipSetup } from "./township/mod.ts";
 import { provinceSetup } from "./province/mod.ts";
@@ -35,6 +43,8 @@ import { trafficZoneSetup } from "./traffic_zone/mod.ts";
 import { typeSetup } from "./type/mod.ts";
 import { vehicleReasonSetup } from "./vehicle_reason/mod.ts";
 import { accidentSetup } from "./accident/mod.ts";
+import { accidentProcessSetup } from "./accident_process/mod.ts";
+import { appModulesSetup } from "./app_modules/mod.ts";
 import { sharedSetup } from "./shared/mod.ts";
 import { patrolUnitSetup } from "./patrol_unit/mod.ts";
 import { shiftSetup } from "./shift/mod.ts";
@@ -46,6 +56,15 @@ import { emergencySetup } from "./emergency/mod.ts";
 
 export const functionsSetup = () => {
 	sharedSetup();
+	appModulesSetup();
+	organizationSetup();
+	unitSetup();
+	wareSetup();
+	inventorySetup();
+	consumptionSetup();
+	goodsReceiptSetup();
+	goodsRequestSetup();
+	stockMovementSetup();
 	patrolUnitSetup();
 	shiftSetup();
 	vehicleSetup();
@@ -89,5 +108,6 @@ export const functionsSetup = () => {
 	userSetup();
 	vehicleReasonSetup();
 	accidentSetup();
+	accidentProcessSetup();
 	announcementSetup();
 };
