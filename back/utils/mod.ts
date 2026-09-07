@@ -10,3 +10,6 @@ export * from "./authorization.ts";
 export * from "./chartAuthorization.ts";
 export * from "./cityAuthorization.ts";
 export * from "./logOperation.ts";
+export * from "./inventoryManager.ts";
+export * from "./unitScope.ts";
+export * from "./roleAuth.ts";
