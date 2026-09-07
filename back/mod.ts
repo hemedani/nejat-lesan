@@ -2,6 +2,7 @@ import { lesan, MongoClient, redis } from "@deps";
 import { ensureDir } from "https://deno.land/std@0.208.0/fs/mod.ts";
 import {
 	accidents,
+	accident_processes,
 	air_pollution_zones,
 	air_statuses,
 	announcement_reads,
@@ -12,6 +13,7 @@ import {
 	city_zones,
 	collision_types,
 	colors,
+	consumptions,
 	croquis_types,
 	damage_severities,
 	devices,
@@ -21,14 +23,20 @@ import {
 	events,
 	fault_statuses,
 	files,
+	goods_receipts,
+	goods_requests,
 	human_reasons,
+	incident_severities,
 	injury_statuses,
 	insurance_coes,
+	inventories,
 	licence_types,
 	light_statuses,
 	max_damage_sections,
 	motion_directions,
+	module_configs,
 	operation_logs,
+	organizations,
 	patrol_operationss,
 	patrol_units,
 	person_roles,
@@ -45,18 +53,22 @@ import {
 	ruling_types,
 	shifts,
 	shoulder_statuses,
+	stock_movements,
 	system_types,
 	systems,
 	townships,
 	traffic_zones,
 	types,
+	units,
 	users,
 	vehicle_final_statuses,
 	vehicle_reasons,
 	vehicle_types,
 	vehicles,
+	wares,
 } from "@model";
 import { functionsSetup } from "./src/mod.ts";
+import { applyModuleGates, ensureModuleConfig } from "./src/app_modules/moduleConfig.ts";
 
 const MONGO_URI = Deno.env.get("MONGO_URI") || "mongodb://127.0.0.1:27017/";
 const REDIS_URI = Deno.env.get("REDIS_URI");
@@ -93,6 +105,7 @@ export const driver_status = driver_statuses();
 export const injury_status = injury_statuses();
 export const person_role = person_roles();
 export const damage_severity = damage_severities();
+export const incident_severity = incident_severities();
 export const announcement = announcements();
 export const province = provinces();
 export const city = cities();
@@ -101,6 +114,8 @@ export const traffic_zone = traffic_zones();
 export const air_pollution_zone = air_pollution_zones();
 export const city_zone = city_zones();
 export const accident = accidents();
+export const accident_process = accident_processes();
+export const module_config = module_configs();
 export const air_status = air_statuses();
 export const area_usage = area_usages();
 export const body_insurance_co = body_insurance_coes();
@@ -129,6 +144,14 @@ export const system_type = system_types();
 export const type = types();
 export const vehicle_reason = vehicle_reasons();
 export const vehicle = vehicles();
+export const organization = organizations();
+export const unit = units();
+export const ware = wares();
+export const inventory = inventories();
+export const stock_movement = stock_movements();
+export const consumption = consumptions();
+export const goods_receipt = goods_receipts();
+export const goods_request = goods_requests();
 export const patrol_unit = patrol_units();
 export const shift = shifts();
 export const patrol_operations = patrol_operationss();
@@ -143,6 +166,10 @@ export const { selectStruct, getSchemas } = coreApp.schemas;
 export const event = events();
 
 functionsSetup();
+
+// --- ماژول‌ها: خواندن پیکربندی (اولین بوت از ENABLED_MODULES) + تزریق گیت ---
+await ensureModuleConfig();
+applyModuleGates();
 
 // Ensure uploads directory exists
 try {
