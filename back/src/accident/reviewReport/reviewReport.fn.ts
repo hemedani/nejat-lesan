@@ -1,7 +1,11 @@
 import { type ActFn, ObjectId } from "@deps";
 import { accident, coreApp } from "../../../mod.ts";
 import { type MyContext, throwError } from "@lib";
-import { getReportScope } from "../reportScope.ts";
+import {
+	getOrgReportBase,
+	isManagerViewer,
+	isOrgLeaderLevel,
+} from "../reportScope.ts";
 
 const transitions: Record<string, string[]> = {
 	submitted: ["start_review"],
@@ -22,17 +26,19 @@ export const reviewReportFn: ActFn = async (body) => {
 	const context = coreApp.contextFns.getContextModel() as MyContext;
 	const actor = context.user;
 
-	if (actor.level !== "Manager" && actor.level !== "Ghost") {
+	if (!isManagerViewer(actor.level) && !isOrgLeaderLevel(actor.level)) {
 		return throwError("شما اجازه بررسی گزارش‌ها را ندارید");
 	}
 	if (action === "return" && !reason?.trim()) {
 		return throwError("برای برگشت گزارش، ثبت دلیل الزامی است");
 	}
 
+	const reportScope = await getOrgReportBase(actor);
+
 	const report = await accident.findOne({
 		filters: {
 			_id: new ObjectId(reportId as string),
-			...getReportScope(actor),
+			...reportScope,
 		},
 		projection: { _id: 1, review_status: 1, sync_status: 1 },
 	});

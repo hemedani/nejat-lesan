@@ -13,7 +13,7 @@ import { selectStruct } from "../../../mod.ts";
 export const uploadAccidentImagesValidator = () => {
 	return object({
 		set: object({
-			category: string(), // plate | insurance | croquis | facility_damage (alias: damage) | other
+			category: string(), // plate | insurance | croquis | facility_damage (alias: damage) | incident | other
 			accidentId: optional(objectIdValidation),
 			sequence: optional(number()),
 			file: object({

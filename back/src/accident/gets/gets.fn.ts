@@ -47,6 +47,7 @@ export const getsFn: ActFn = async (body) => {
 		// Core Accident Details
 		seri,
 		serial,
+		incidentType,
 		dateOfAccidentFrom,
 		dateOfAccidentTo,
 		deadCount,
@@ -151,6 +152,7 @@ export const getsFn: ActFn = async (body) => {
 	// --- Core Accident Details ---
 	if (seri !== undefined) matchConditions.seri = seri;
 	if (serial !== undefined) matchConditions.serial = serial;
+	if (incidentType) matchConditions.incident_type = incidentType;
 	if (dateOfAccidentFrom || dateOfAccidentTo) {
 		matchConditions.date_of_accident = {}; // Schema field: date_of_accident
 		if (dateOfAccidentFrom) {

@@ -10,6 +10,8 @@ export const roadDefectsAnalyticsFn: ActFn = async (body) => {
 	const { set } = body.details;
 
 	const matchFilter: Document = {};
+	// Accidents only — non-accident incident reports must not pollute this chart.
+	matchFilter.incident_type = "accident";
 
 	// --- Core Accident Details ---
 	if (set.seri !== undefined) matchFilter.seri = set.seri;

@@ -122,6 +122,22 @@ export const accident_pure = {
 	// Officer's free-text description of the accident cause
 	officer_cause_description: optional(string()),
 
+	// --- Non-accident incident (polymorphic report) ---
+	// Discriminator: "accident" (default when absent) | "road_breakdown" |
+	// "road_obstacle" | "other". Legacy docs without it are accidents.
+	incident_type: optional(
+		enums(["accident", "road_breakdown", "road_obstacle", "other"]),
+	),
+	// Pure scalar payload for non-accident reports (references stay top-level
+	// relations). Empty for accidents.
+	incident_payload: optional(object({
+		description: optional(string()), // شرح خرابی/مانع/رخداد
+		is_hazard: optional(boolean()), // آیا خطر جانی/تصادف دارد؟
+		needs_repair: optional(boolean()), // نیاز به تعمیر دارد؟
+		temporary_action: optional(string()), // اقدام موقت انجام‌شده
+		follow_up_required: optional(boolean()), // نیاز به پیگیری/نیروی اعزامی
+	})),
+
 	vehicle_dtos: array(
 		object({
 			color: common_relation_struct,
@@ -218,6 +234,23 @@ export const accident_pure = {
 
 	// --- Managerial review audit trail (embedded, replaces accident_review) ---
 	review_history: optional(array(accident_review_struct)),
+
+	// --- Org-scoped process answers (Part IV, Phase 6) ---
+	// dynamic (free-text / non-relation) wizard answers; polymorphic raw refs +
+	// name snapshots (relations can't live in embedded arrays, snapshots survive
+	// record deletion — justified per AGENTS.md).
+	dynamic_answers: optional(array(object({
+		step_key: optional(string()),
+		question_key: optional(string()),
+		model_name: string(),
+		answer_id: optional(objectIdValidation), // single-select
+		answer_ids: optional(array(objectIdValidation)), // multi-select
+		answer_name: optional(string()), // snapshot
+		answer_names: optional(array(string())),
+		value: optional(string()), // free-text / number / boolean
+	}))),
+	// which active process version produced this report (re-render guard)
+	process_version: optional(number()),
 
 	...createUpdateAt,
 };
@@ -554,6 +587,22 @@ export const accident_relations = {
 	},
 	collision_type: {
 		schemaName: "collision_type",
+		type: "single" as RelationDataType,
+		optional: true,
+		excludes: share_relation_excludes,
+		relatedRelations: {
+			accidents: {
+				type: "multiple" as RelationDataType,
+				limit: 20,
+				sort: {
+					field: "_id",
+					order: "desc" as RelationSortOrderType,
+				},
+			},
+		},
+	},
+	incident_severity: {
+		schemaName: "incident_severity",
 		type: "single" as RelationDataType,
 		optional: true,
 		excludes: share_relation_excludes,

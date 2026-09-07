@@ -54,6 +54,7 @@ export const temporalUnlicensedDriversAnalyticsFn: ActFn = async (body) => {
 	// 2. BUILD BASE FILTER WITH UNLICENSED DRIVER CONSTRAINT
 	// =========================================================================
 	const baseFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 		"vehicle_dtos": {
 			$elemMatch: { "driver.licence_type.name": "فاقد گواهینامه" },

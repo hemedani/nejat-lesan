@@ -106,6 +106,104 @@ export const updateFn: ActFn = async (body) => {
 		}
 	}
 
+	// --- 2b. Incident-type change guard + per-type validation (merged $set) ---
+	// Only re-validate when a type-relevant field is actually being changed.
+	const touchesIncident = [
+		"incident_type",
+		"incident_payload",
+		"vehicle_dtos",
+		"pedestrian_dtos",
+		"people_dtos",
+		"facility_damage_dtos",
+	].some((k) => fields[k] !== undefined);
+		if (touchesIncident) {
+		const existing = await accident.findOne({
+			filters: filter,
+			projection: {
+				incident_type: 1,
+				incident_payload: 1,
+				sync_status: 1,
+				review_status: 1,
+				vehicle_dtos: 1,
+				pedestrian_dtos: 1,
+				people_dtos: 1,
+				facility_damage_dtos: 1,
+				road_defects: 1,
+				equipment_damages: 1,
+			},
+		});
+		if (!existing) return throwError("گزارش یافت نشد");
+
+		// A submitted/synced report can no longer be re-labeled as another type.
+		if (
+			fields.incident_type !== undefined &&
+			fields.incident_type !== existing.incident_type
+		) {
+			const locked =
+				existing.sync_status === "synced" ||
+				existing.sync_status === "rejected" ||
+				(existing.review_status &&
+					existing.review_status !== "submitted");
+			if (locked) {
+				throwError(
+					"نوع رخداد این گزارش به دلیل ثبت/بررسی شدن قابل تغییر نیست",
+				);
+			}
+		}
+
+		// Merged state used for validation (existing doc + incoming $set).
+		const mergedType =
+			fields.incident_type || existing.incident_type || "accident";
+
+		if (mergedType !== "accident") {
+			const mergedPayload = fields.incident_payload !== undefined
+				? fields.incident_payload
+				: existing.incident_payload;
+			const existingDefects = (existing.road_defects || []) as Array<{
+				_id?: unknown;
+			}>;
+			const existingDamages = (existing.equipment_damages || []) as Array<{
+				_id?: unknown;
+			}>;
+			const hasSubject =
+				mergedPayload?.description ||
+				existingDefects.length > 0 ||
+				existingDamages.length > 0;
+			if (!hasSubject) {
+				throwError(
+					"برای رخداد غیرتصادف، شرح رخداد، نقص راه یا آسیب تجهیزات الزامی است",
+				);
+			}
+			const forbidden: string[] = [];
+			const mergedVehicleDtos = fields.vehicle_dtos !== undefined
+				? fields.vehicle_dtos
+				: existing.vehicle_dtos;
+			const mergedPedestrianDtos = fields.pedestrian_dtos !== undefined
+				? fields.pedestrian_dtos
+				: existing.pedestrian_dtos;
+			const mergedPeopleDtos = fields.people_dtos !== undefined
+				? fields.people_dtos
+				: existing.people_dtos;
+			const mergedFacilityDamageDtos =
+				fields.facility_damage_dtos !== undefined
+					? fields.facility_damage_dtos
+					: existing.facility_damage_dtos;
+			if (mergedVehicleDtos?.length) forbidden.push("مشخصات خودروها");
+			if (mergedPedestrianDtos?.length) forbidden.push("عابران پیاده");
+			if (mergedPeopleDtos?.length) forbidden.push("افراد");
+			if (mergedFacilityDamageDtos?.length) {
+				forbidden.push("خسارت تجهیزات");
+			}
+			if (forbidden.length > 0) {
+				throwError(
+					`فیلدهای اختصاصی تصادف برای این نوع رخداد مجاز نیستند: ${
+						forbidden.join("، ")
+					}`,
+				);
+			}
+		}
+	}
+
 	// --- 3. Build the $set of provided pure fields ---
 	const updateObj: Record<string, unknown> = { updatedAt: new Date() };
 	for (const key in fields) {

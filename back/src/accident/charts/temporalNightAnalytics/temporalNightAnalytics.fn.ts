@@ -55,6 +55,7 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	// 2. BUILD BASE FILTER WITH NIGHTTIME LIGHTING CONSTRAINT
 	// =========================================================================
 	const baseFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 		"light_status.name": {
 			$in: ["شب با نور کافی", "شب با نور ناکافی"],

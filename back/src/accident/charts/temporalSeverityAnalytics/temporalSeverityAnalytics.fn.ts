@@ -51,6 +51,7 @@ export const temporalSeverityAnalyticsFn: ActFn = async (body) => {
 	}
 
 	const baseFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 		"type.name": { $in: ["فوتی", "جرحی"] }, // ← critical: only severe accidents
 	};

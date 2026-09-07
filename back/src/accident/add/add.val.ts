@@ -55,6 +55,7 @@ export const addValidator = () => {
 			rulingTypeId: optional(objectIdValidation),
 			lightStatusId: optional(objectIdValidation),
 			collisionTypeId: optional(objectIdValidation),
+			incidentSeverityId: optional(objectIdValidation),
 			roadSituationId: optional(objectIdValidation),
 			roadRepairTypeId: optional(objectIdValidation),
 			shoulderStatusId: optional(objectIdValidation),

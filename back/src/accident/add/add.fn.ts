@@ -37,6 +37,39 @@ export const addFn: ActFn = async (body) => {
 		set.officerId = user._id.toString();
 	}
 
+	// --- 0b. Incident type default + per-type validation ---
+	// Legacy/docs without incident_type are accidents.
+	const incidentType = set.incident_type || "accident";
+
+	if (incidentType !== "accident") {
+		// Non-accident reports must carry a subject: free-text description,
+		// a road defect (خرابی/مانع) or an equipment damage (نقص تجهیزات).
+		const hasSubject =
+			set.incident_payload?.description ||
+			(set.roadDefectsIds && set.roadDefectsIds.length > 0) ||
+			(set.equipmentDamagesIds && set.equipmentDamagesIds.length > 0);
+		if (!hasSubject) {
+			throwError(
+				"برای رخداد غیرتصادف، شرح رخداد، نقص راه یا آسیب تجهیزات الزامی است",
+			);
+		}
+		// Accident-only fields are forbidden on non-accident reports.
+		const forbidden: string[] = [];
+		if (set.vehicle_dtos) forbidden.push("مشخصات خودروها");
+		if (set.pedestrian_dtos) forbidden.push("عابران پیاده");
+		if (set.people_dtos) forbidden.push("افراد");
+		if (set.facility_damage_dtos) forbidden.push("خسارت تجهیزات");
+		if (set.collisionTypeId) forbidden.push("نوع برخورد");
+		if (set.typeId) forbidden.push("نوع تصادف");
+		if (forbidden.length > 0) {
+			throwError(
+				`فیلدهای اختصاصی تصادف برای این نوع رخداد مجاز نیستند: ${
+					forbidden.join("، ")
+				}`,
+			);
+		}
+	}
+
 	// --- 1. Separate Relational IDs from the Pure Document Data ---
 	const {
 		officerId,
@@ -55,6 +88,7 @@ export const addFn: ActFn = async (body) => {
 		rulingTypeId,
 		lightStatusId,
 		collisionTypeId,
+		incidentSeverityId,
 		roadSituationId,
 		roadRepairTypeId,
 		shoulderStatusId,
@@ -117,6 +151,8 @@ export const addFn: ActFn = async (body) => {
 
 	// --- 1c. Auto-generate serial + report_id when not provided ---
 	const doc = { ...restOfDoc };
+	// insertOne does not apply `defaulted` defaults — set incident_type explicitly.
+	doc.incident_type = incidentType;
 	if (client_report_uuid) doc.client_report_uuid = client_report_uuid;
 	if (doc.serial === undefined) {
 		const [maxDoc] = await accident
@@ -129,7 +165,11 @@ export const addFn: ActFn = async (body) => {
 	}
 	if (!doc.report_id) {
 		const year = new Date().getFullYear();
-		doc.report_id = `REP-${year}-${String(doc.serial).padStart(6, "0")}`;
+		const prefix = incidentType === "road_breakdown" ? "BRK"
+			: incidentType === "road_obstacle" ? "OBS"
+			: incidentType === "other" ? "OTH"
+			: "REP";
+		doc.report_id = `${prefix}-${year}-${String(doc.serial).padStart(6, "0")}`;
 	}
 	// Mobile reports default to "queued" until validated by the control center
 	if (client_report_uuid && doc.sync_status === undefined) {
@@ -237,6 +277,12 @@ export const addFn: ActFn = async (body) => {
 	if (collisionTypeId) {
 		relations.collision_type = {
 			_ids: new ObjectId(collisionTypeId as string),
+			relatedRelations: { accidents: true },
+		};
+	}
+	if (incidentSeverityId) {
+		relations.incident_severity = {
+			_ids: new ObjectId(incidentSeverityId as string),
 			relatedRelations: { accidents: true },
 		};
 	}

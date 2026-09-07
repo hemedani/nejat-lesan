@@ -50,7 +50,9 @@ export const nearbyAccidentsFn: ActFn = async (body) => {
 				location: 1,
 				date_of_accident: 1,
 				review_status: 1,
+				incident_type: 1,
 				type: 1,
+				incident_severity: 1,
 			},
 		})
 		.limit(finalLimit)
@@ -64,7 +66,9 @@ export const nearbyAccidentsFn: ActFn = async (body) => {
 			location: doc.location ?? null,
 			date_of_accident: doc.date_of_accident ?? null,
 			review_status: doc.review_status ?? null,
+			incident_type: doc.incident_type ?? "accident",
 			type_name: doc.type?.name ?? null,
+			incident_severity_name: doc.incident_severity?.name ?? null,
 		})),
 	};
 };

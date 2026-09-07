@@ -43,6 +43,7 @@ export const collisionAnalyticsFn: ActFn = async (body) => {
 	}
 
 	const matchFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 

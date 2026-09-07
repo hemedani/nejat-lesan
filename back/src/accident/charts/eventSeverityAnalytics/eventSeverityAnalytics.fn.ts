@@ -178,6 +178,7 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 
 	// --- 2. Build Comprehensive Base Filter ---
 	const matchFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: overallStartDate, $lte: overallEndDate },
 	};
 

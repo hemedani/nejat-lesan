@@ -1,7 +1,12 @@
 import { type ActFn, ObjectId } from "@deps";
 import { accident, coreApp, shift } from "../../../mod.ts";
 import { type MyContext, throwError } from "@lib";
-import { getReportScope } from "../reportScope.ts";
+import {
+	getOrgReportBase,
+	getReportScope,
+	isManagerViewer,
+	isOrgLeaderLevel,
+} from "../reportScope.ts";
 
 const reviewStatuses = [
 	"submitted",
@@ -94,11 +99,14 @@ export const getReporterDashboardFn: ActFn = async (body) => {
 
 export const getManagerDashboardFn: ActFn = async (body) => {
 	const context = coreApp.contextFns.getContextModel() as MyContext;
-	if (context.user.level !== "Manager" && context.user.level !== "Ghost") {
+	if (
+		!isManagerViewer(context.user.level) &&
+		!isOrgLeaderLevel(context.user.level)
+	) {
 		return throwError("شما اجازه مشاهده داشبورد مدیر را ندارید");
 	}
 	const set = getSet(body);
-	const base = getReportScope(context.user, set.userId);
+	const base = await getOrgReportBase(context.user, set.userId);
 	return {
 		summary: await countReports(base),
 		recentReports: await recentReports(
@@ -112,11 +120,14 @@ export const getManagerDashboardFn: ActFn = async (body) => {
 
 export const getManagerReportsFn: ActFn = async (body) => {
 	const context = coreApp.contextFns.getContextModel() as MyContext;
-	if (context.user.level !== "Manager" && context.user.level !== "Ghost") {
+	if (
+		!isManagerViewer(context.user.level) &&
+		!isOrgLeaderLevel(context.user.level)
+	) {
 		return throwError("شما اجازه مشاهده گزارش‌ها را ندارید");
 	}
 	const set = getSet(body);
-	const filters = getReportScope(context.user, set.userId);
+	const filters = await getOrgReportBase(context.user, set.userId);
 	if (set.reviewStatus) filters.review_status = set.reviewStatus;
 	if (set.syncStatus) filters.sync_status = set.syncStatus;
 	return await recentReports(

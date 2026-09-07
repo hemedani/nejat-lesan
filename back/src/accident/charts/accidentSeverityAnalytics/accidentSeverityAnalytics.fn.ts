@@ -55,6 +55,7 @@ export const accidentSeverityAnalyticsFn: ActFn = async (body) => {
 
 	// Start with date range
 	const baseFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 

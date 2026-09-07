@@ -55,6 +55,7 @@ export const totalReasonAnalyticsFn: ActFn = async (body) => {
 
 	// Start with date range + severe accident filter
 	const baseFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate, $lte: endDate },
 		"type.name": { $in: ["فوتی", "جرحی"] }, // ← critical: only severe accidents
 	};

@@ -4,7 +4,7 @@ import { type MyContext, throwError } from "@lib";
 
 export const getMyReportsFn: ActFn = async (body) => {
 	const {
-		set: { page, limit, status, userId },
+		set: { page, limit, status, incidentType, userId },
 		get,
 	} = body.details;
 	const { user }: MyContext = coreApp.contextFns
@@ -30,6 +30,7 @@ export const getMyReportsFn: ActFn = async (body) => {
 	}
 
 	if (status) filters.sync_status = status;
+	if (incidentType) filters.incident_type = incidentType;
 
 	return await accident
 		.find({

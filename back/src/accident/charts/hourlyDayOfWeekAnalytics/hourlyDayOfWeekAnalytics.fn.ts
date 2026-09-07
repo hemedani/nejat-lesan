@@ -45,6 +45,7 @@ export const hourlyDayOfWeekAnalyticsFn: ActFn = async (body) => {
 
 	// Start with date range in root match filter
 	const matchFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 

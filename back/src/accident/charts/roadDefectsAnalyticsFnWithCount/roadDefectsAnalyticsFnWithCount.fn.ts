@@ -25,6 +25,8 @@ export const roadDefectsAnalyticsFnWithCount: ActFn = async (body) => {
 
 	// Build the dynamic filter query object, same as before.
 	const matchFilter: Document = {};
+	// Accidents only — non-accident incident reports must not pollute this chart.
+	matchFilter.incident_type = "accident";
 	if (filters.province) matchFilter["province.name"] = filters.province;
 	if (filters.dateOfAccidentFrom || filters.dateOfAccidentTo) {
 		matchFilter.date_of_accident = {};

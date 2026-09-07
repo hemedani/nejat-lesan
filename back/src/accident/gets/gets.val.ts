@@ -1,4 +1,4 @@
-import { array, number, object, optional, string } from "@deps";
+import { array, enums, number, object, optional, string } from "@deps";
 import { selectStruct } from "../../../mod.ts"; // Assuming this path is correct
 import { geoJSONStruct } from "@model";
 
@@ -12,6 +12,10 @@ export const getsValidator = () => {
 			// --- Core Accident Details ---
 			seri: optional(number()),
 			serial: optional(number()),
+			// Filter by incident type (accident | road_breakdown | road_obstacle | other)
+			incidentType: optional(
+				enums(["accident", "road_breakdown", "road_obstacle", "other"]),
+			),
 			dateOfAccidentFrom: optional(string()), // Was: date_of_accident_from
 			dateOfAccidentTo: optional(string()), // Was: date_of_accident_to
 			deadCount: optional(number()), // Was: dead_count

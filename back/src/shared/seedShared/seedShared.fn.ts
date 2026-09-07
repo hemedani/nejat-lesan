@@ -6,6 +6,7 @@ import {
 	damage_severity,
 	driver_status,
 	equipment_damage,
+	incident_severity,
 	injury_status,
 	person_role,
 	position,
@@ -14,6 +15,7 @@ import {
 	road_surface_condition,
 	vehicle_final_status,
 	vehicle_type,
+	ware,
 } from "../../../mod.ts";
 
 export const seedSharedFn: ActFn = async (body) => {
@@ -83,6 +85,10 @@ export const seedSharedFn: ActFn = async (body) => {
 		model: damage_severity,
 		values: ["جزئی", "متوسط", "شدید", "تخریب کامل"],
 	},
+	incident_severity: {
+		model: incident_severity,
+		values: ["کم", "متوسط", "زیاد", "بحرانی"],
+	},
 	position: {
 		model: position,
 		values: ["خط ۱", "خط ۲", "شانه راست", "شانه چپ"],
@@ -104,7 +110,18 @@ export const seedSharedFn: ActFn = async (body) => {
 	},
 	road_defect: {
 		model: road_defect,
-		values: ["نقص گاردریل", "آبگرفتگی", "محدودیت دید"],
+		values: [
+			"نقص گاردریل",
+			"آبگرفتگی",
+			"محدودیت دید",
+			"روسازی",
+			"خط‌کشی",
+			"تابلو",
+			"روشنایی",
+			"حفاظ/گاردریل",
+			"مانع حریم",
+			"سایر",
+		],
 	},
 	equipment_damage: {
 		model: equipment_damage,
@@ -164,6 +181,51 @@ export const seedSharedFn: ActFn = async (body) => {
 			added[modelName] = addedCount;
 			totalAdded += addedCount;
 		}
+	}
+
+	// --- Starter ware catalog (flat) ---
+	// D9: no hierarchy models; ware_type is a plain tag. Idempotent by exact name.
+	const wareSeeds: Array<{ name: string; ware_type: string }> = [
+		{ name: "نیوجرسی بتنی", ware_type: "تجهیزات ایمنی" },
+		{ name: "گاردریل فلزی", ware_type: "تجهیزات ایمنی" },
+		{ name: "تابلوی راهنمایی", ware_type: "علائم و تابلو" },
+		{ name: "چراغ روشنایی LED", ware_type: "روشنایی" },
+		{ name: "کت شبرنگ", ware_type: "پوشاک و تجهیزات فردی" },
+		{ name: "دستکش ایمنی", ware_type: "پوشاک و تجهیزات فردی" },
+		{ name: "مخروط ترافیکی", ware_type: "تجهیزات ایمنی" },
+		{ name: "نوار خطر", ware_type: "اقلام راهداری" },
+	];
+	let wareAdded = 0;
+	for (const w of wareSeeds) {
+		const existing = await ware.findOne({
+			filters: {
+				name: {
+					$regex: new RegExp(
+						`^${w.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+						"i",
+					),
+				},
+			},
+			projection: { _id: 1 },
+		});
+		if (existing) continue;
+		await ware.insertOne({
+			doc: {
+				name: w.name,
+				ware_type: w.ware_type,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			relations: {
+				registrer: { _ids: user._id },
+			},
+			projection: { _id: 1 },
+		});
+		wareAdded++;
+	}
+	if (wareAdded > 0) {
+		added["ware"] = wareAdded;
+		totalAdded += wareAdded;
 	}
 
 	return {

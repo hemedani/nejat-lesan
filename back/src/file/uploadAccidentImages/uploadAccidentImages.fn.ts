@@ -9,6 +9,8 @@ const CATEGORY_LIMITS: Record<string, { maxSize: number; maxCount: number }> = {
 	// موبایل به مأمور اجازه می‌دهد چند نقشه‌کشی ضمیمه کند؛ سقف با او هم‌تراز شد
 	croquis: { maxSize: 10 * 1024 * 1024, maxCount: 10 },
 	facility_damage: { maxSize: 5 * 1024 * 1024, maxCount: 10 },
+	// عکس‌های رخدادهای غیرتصادف (خرابی آزادراه / مانع / سایر)
+	incident: { maxSize: 5 * 1024 * 1024, maxCount: 10 },
 	other: { maxSize: 10 * 1024 * 1024, maxCount: 20 },
 };
 

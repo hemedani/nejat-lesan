@@ -17,6 +17,10 @@ export const getMyReportsValidator = () => {
 			status: optional(
 				enums(["draft", "queued", "syncing", "synced", "rejected"]),
 			),
+			// Filter by incident type (accident | road_breakdown | road_obstacle | other)
+			incidentType: optional(
+				enums(["accident", "road_breakdown", "road_obstacle", "other"]),
+			),
 			// Manager/Ghost only — filter a specific officer's reports
 			userId: optional(objectIdValidation),
 		}),

@@ -52,6 +52,7 @@ export const temporalTotalReasonAnalyticsFn: ActFn = async (body) => {
 	}
 
 	const baseFilter: Document = {
+		incident_type: "accident",
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 	};
 

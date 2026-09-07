@@ -21,8 +21,14 @@ export const createProvinceGetsAuthMiddleware = () => {
 
 		const details = body?.details!;
 
-		// Ensure only managers and above can access this endpoint
-		if (!["Manager", "Enterprise", "Ghost"].includes(user.level!)) {
+		// Ensure only managers (incl. org-scoped leaders) and above can access
+		// this endpoint. Org heads/unit heads read the full geography list —
+		// the Enterprise-settings scoping below only applies to Enterprise.
+		if (
+			!["Manager", "Enterprise", "OrgHead", "UnitHead", "Ghost"].includes(
+				user.level!,
+			)
+		) {
 			throwError(
 				"Access denied: Insufficient privileges to access this endpoint",
 			);
@@ -103,8 +109,14 @@ export const createCityGetsAuthMiddleware = () => {
 
 		const details = body?.details!;
 
-		// Ensure only managers and above can access this endpoint
-		if (!["Manager", "Enterprise", "Ghost"].includes(user.level!)) {
+		// Ensure only managers (incl. org-scoped leaders) and above can access
+		// this endpoint. Org heads/unit heads read the full geography list —
+		// the Enterprise-settings scoping below only applies to Enterprise.
+		if (
+			!["Manager", "Enterprise", "OrgHead", "UnitHead", "Ghost"].includes(
+				user.level!,
+			)
+		) {
 			throwError(
 				"Access denied: Insufficient privileges to access this endpoint",
 			);

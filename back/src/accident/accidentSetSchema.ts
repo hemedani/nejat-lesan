@@ -56,6 +56,19 @@ export const accidentSetSchema = object({
 	),
 	officer_cause_description: optional(string()),
 
+	// Non-accident incident (polymorphic report)
+	incident_type: optional(
+		enums(["accident", "road_breakdown", "road_obstacle", "other"]),
+	),
+	incident_payload: optional(object({
+		description: optional(string()),
+		is_hazard: optional(boolean()),
+		needs_repair: optional(boolean()),
+		temporary_action: optional(string()),
+		follow_up_required: optional(boolean()),
+	})),
+	incidentSeverityId: optional(objectIdValidation),
+
 	vehicle_dtos: optional(array(
 		object({
 			color: optional(common_relation_struct),
@@ -145,4 +158,17 @@ export const accidentSetSchema = object({
 		temporary_action: optional(string()),
 		images: optional(array(objectIdValidation)),
 	}))),
+
+	// Org-scoped process answers (Phase 6)
+	dynamic_answers: optional(array(object({
+		step_key: optional(string()),
+		question_key: optional(string()),
+		model_name: optional(string()),
+		answer_id: optional(objectIdValidation),
+		answer_ids: optional(array(objectIdValidation)),
+		answer_name: optional(string()),
+		answer_names: optional(array(string())),
+		value: optional(string()),
+	}))),
+	process_version: optional(number()),
 });
