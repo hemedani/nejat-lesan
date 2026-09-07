@@ -24,9 +24,6 @@ export function PatrolWorkspace({
     ? [
         { href: "/patrol-manager/dashboard", label: "نمای کلی" },
         { href: "/patrol-manager/reports", label: "صف گزارش‌ها" },
-        ...(["Ghost", "Manager"].includes(userData?.level || "")
-          ? [{ href: "/patrol-manager/operations", label: "مدیریت عملیات گشت" }]
-          : []),
       ]
     : [
         { href: "/patrol/dashboard", label: "داشبورد من" },
