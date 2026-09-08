@@ -3,8 +3,18 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { useRouter, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { getOrCreateActiveDraft } from '@/domain/draft-actions';
-import type { AccidentDraft } from '@/domain/types';
+import { getOrCreateActiveDraft, setDraftIncidentType } from '@/domain/draft-actions';
+import {
+  INCIDENT_TYPE_LABEL,
+  INCIDENT_TYPE_REPORT_PREFIX,
+  incidentTypeOf,
+} from '@/domain/incident-type';
+import { isProcessRenderable } from '@/domain/process-form';
+import { fetchPatrolProcess } from '@/api/accident-process';
+import { translateApiError } from '@/api/errors';
+import { getConnectivitySnapshot } from '@/services/connectivity';
+import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
+import type { AccidentDraft, IncidentType } from '@/domain/types';
 import { formatCoordinate, formatDistance } from '@/domain/location-utils';
 import { getDraft } from '@/storage/local-database';
 import { Button } from '@/components/ui/button';
@@ -14,7 +24,6 @@ import { Icon } from '@/components/ui/icon';
 import { ScreenHeader } from '@/components/ui/screen-header';
 import { SectionHeader } from '@/components/ui/section-header';
 import { SkeletonCard } from '@/components/ui/skeleton';
-import { StatusPill } from '@/components/ui/status-pill';
 import { AppIcons, type IconFamily, type IconName } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { useRequiredSession } from '@/auth/use-required-session';
@@ -25,11 +34,44 @@ type ZoneCheckData = {
   police_station?: string;
 };
 
+const TYPE_TILES: {
+  type: IncidentType;
+  label: string;
+  icon: { name: IconName; family?: IconFamily };
+  activeCaption: string;
+}[] = [
+  {
+    type: 'accident',
+    label: INCIDENT_TYPE_LABEL.accident,
+    icon: AppIcons.phases.vehicles,
+    activeCaption: `ثبت کامل اطلاعات تصادف · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.accident}-`,
+  },
+  {
+    type: 'road_breakdown',
+    label: INCIDENT_TYPE_LABEL.road_breakdown,
+    icon: AppIcons.facility.needsRepair,
+    activeCaption: `ثبت خرابی و نقص آزادراه · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.road_breakdown}-`,
+  },
+  {
+    type: 'road_obstacle',
+    label: INCIDENT_TYPE_LABEL.road_obstacle,
+    icon: AppIcons.status.warning,
+    activeCaption: `ثبت مانع یا خطر در مسیر · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.road_obstacle}-`,
+  },
+  {
+    type: 'other',
+    label: INCIDENT_TYPE_LABEL.other,
+    icon: AppIcons.collision.unknown,
+    activeCaption: `حریق/نقص تجهیزات/سایر رخدادها · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.other}-`,
+  },
+];
+
 export default function IncidentDraftScreen() {
   const router = useRouter();
   const session = useRequiredSession();
   const [draft, setDraft] = useState<AccidentDraft | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [processNotice, setProcessNotice] = useState<string | null>(null);
   const uuidRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -96,6 +138,58 @@ export default function IncidentDraftScreen() {
     });
   }
 
+  async function openFormFor(type: IncidentType) {
+    if (!draft || !hasLocation) {
+      return;
+    }
+    const uuid = draft.client_report_uuid;
+    let effective = type;
+    try {
+      const stored = await setDraftIncidentType(uuid, type);
+      if (stored) {
+        effective = incidentTypeOf(stored);
+      }
+    } catch {
+      // Persisting the type is best-effort; navigation still proceeds so the
+      // officer can capture the report (the mapper defaults missing types).
+    }
+    setProcessNotice(null);
+
+    // Org process first: when the officer's org publishes an active wizard for
+    // the type, it wins over the built-in flows (process-first decision). A
+    // positively-off `incident_patrol` module shows the notice instead of a
+    // dead `accident_process.*` call.
+    if (session && effective === type) {
+      if (!isIncidentPatrolEnabled(session)) {
+        setProcessNotice(moduleDisabledMessage(session));
+      } else {
+        try {
+          const connectivity = await getConnectivitySnapshot();
+          if (connectivity.status === 'online') {
+            const result = await fetchPatrolProcess(session, effective);
+            if (result.process && isProcessRenderable(result.process)) {
+              router.push({ pathname: '/incident/process', params: { uuid } });
+              return;
+            }
+          }
+        } catch (error) {
+          const message = translateApiError(error);
+          if (message.includes('ماژول') || message.includes('سازمان')) {
+            setProcessNotice(message);
+          }
+        }
+      }
+    }
+
+    if (effective === 'accident') {
+      router.push({ pathname: '/incident/details', params: { uuid } });
+    } else {
+      router.push({ pathname: '/incident/simple', params: { uuid } });
+    }
+  }
+
+  const currentType = draft ? incidentTypeOf(draft) : 'accident';
+
   const zoneCheck = draft?.data['zone_check'] as ZoneCheckData | undefined;
   const hasLocation = Boolean(draft?.incident_coords);
 
@@ -122,6 +216,17 @@ export default function IncidentDraftScreen() {
             message={errorMessage}
             tone="danger"
             title="خطا در آماده‌سازی پیش‌نویس"
+          />
+        ) : null}
+
+        {processNotice ? (
+          <Banner
+            actionLabel="متوجه شدم"
+            icon={AppIcons.status.info.name}
+            message={processNotice}
+            onAction={() => setProcessNotice(null)}
+            tone="warning"
+            title="فرآیند سازمان"
           />
         ) : null}
 
@@ -191,28 +296,25 @@ export default function IncidentDraftScreen() {
 
             <SectionHeader icon={AppIcons.phases.classification.name} iconFamily={AppIcons.phases.classification.family} title="نوع واقعه" />
             <View style={styles.typeGrid}>
-              <TypeTile
-                caption={hasLocation ? 'ثبت کامل اطلاعات تصادف' : 'ابتدا محل حادثه را تأیید کنید'}
-                disabled={!hasLocation}
-                icon={AppIcons.phases.vehicles}
-                label="تصادف"
-                onPress={() =>
-                  draft.client_report_uuid &&
-                  hasLocation &&
-                  router.push({ pathname: '/incident/details', params: { uuid: draft.client_report_uuid } })
-                }
-              />
-              <TypeTile caption="به‌زودی در نسخه‌های بعدی" disabled icon={AppIcons.facility.needsRepair} label="خرابی آزادراه" />
-              <TypeTile caption="به‌زودی در نسخه‌های بعدی" disabled icon={AppIcons.status.warning} label="مانع یا خطر در مسیر" />
-              <TypeTile caption="به‌زودی در نسخه‌های بعدی" disabled icon={AppIcons.collision.unknown} label="سایر رخدادها" />
+              {TYPE_TILES.map(tile => (
+                <TypeTile
+                  caption={hasLocation ? tile.activeCaption : 'ابتدا محل واقعه را تأیید کنید'}
+                  disabled={!hasLocation}
+                  icon={tile.icon}
+                  key={tile.type}
+                  label={tile.label}
+                  onPress={() => openFormFor(tile.type)}
+                  selected={hasLocation && currentType === tile.type}
+                />
+              ))}
             </View>
 
             {hasLocation ? (
               <Button
                 fullWidth
                 icon={AppIcons.phases.basicInfo.name}
-                label="تکمیل اطلاعات گزارش تصادف"
-                onPress={() => router.push({ pathname: '/incident/details', params: { uuid: draft.client_report_uuid } })}
+                label={`ادامه ثبت ${INCIDENT_TYPE_LABEL[currentType]}`}
+                onPress={() => openFormFor(currentType)}
                 size="lg"
                 style={styles.cta}
               />
@@ -248,19 +350,21 @@ function TypeTile({
   caption,
   icon,
   disabled = false,
+  selected = false,
   onPress,
 }: {
   label: string;
   caption: string;
   icon: { name: IconName; family?: IconFamily };
   disabled?: boolean;
+  selected?: boolean;
   onPress?: () => void;
 }) {
   return (
     <Pressable
       accessibilityLabel={label}
       accessibilityRole="button"
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled, selected }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
@@ -268,13 +372,18 @@ function TypeTile({
         Shadow.card,
         pressed && !disabled && styles.pressed,
         disabled && styles.typeTileDisabled,
+        selected && styles.typeTileSelected,
       ]}
     >
       <View style={styles.typeHead}>
-        <View style={[styles.typeIcon, disabled && styles.typeIconMuted]}>
+        <View style={[styles.typeIcon, disabled && styles.typeIconMuted, selected && styles.typeIconSelected]}>
           <Icon color={disabled ? AppTheme.colors.textFaint : AppTheme.colors.primaryStrong} family={icon.family} name={icon.name} size={22} />
         </View>
-        {disabled ? <StatusPill label="به‌زودی" tone="neutral" /> : <Icon color={AppTheme.colors.textFaint} name="chevron-back" size={16} />}
+        {selected && !disabled ? (
+          <Icon color={AppTheme.colors.primary} name="checkmark-circle" size={16} />
+        ) : (
+          <Icon color={AppTheme.colors.textFaint} name="chevron-back" size={16} />
+        )}
       </View>
       <Text style={[styles.typeLabel, disabled && styles.typeLabelDisabled]}>{label}</Text>
       <Text numberOfLines={2} style={[styles.typeCaption, disabled && styles.typeLabelDisabled]}>
@@ -348,6 +457,11 @@ const styles = StyleSheet.create({
   typeTileDisabled: {
     opacity: 0.72,
   },
+  typeTileSelected: {
+    backgroundColor: AppTheme.colors.primarySoft,
+    borderColor: AppTheme.colors.primaryBorder,
+    borderWidth: 1.5,
+  },
   typeHead: {
     alignItems: 'center',
     flexDirection: 'row-reverse',
@@ -363,6 +477,9 @@ const styles = StyleSheet.create({
   },
   typeIconMuted: {
     backgroundColor: AppTheme.colors.surfaceSunken,
+  },
+  typeIconSelected: {
+    backgroundColor: AppTheme.colors.primaryBorder,
   },
   typeLabel: {
     color: AppTheme.colors.textStrong,

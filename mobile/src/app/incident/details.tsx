@@ -21,6 +21,7 @@ import {
   type FormPhaseId,
 } from '@/domain/accident-form';
 import { requeueDraft, saveFormState } from '@/domain/draft-actions';
+import { incidentTypeOf } from '@/domain/incident-type';
 import type { AccidentDraft } from '@/domain/types';
 import { getDraft } from '@/storage/local-database';
 import { formatCoordinate } from '@/domain/location-utils';
@@ -281,6 +282,24 @@ export default function IncidentDetailsScreen() {
         ) : (
           <ActivityIndicator color={AppTheme.colors.primary} />
         )}
+      </SafeAreaView>
+    );
+  }
+
+  // The built-in seven-phase wizard is the accident fallback only. A non-accident
+  // draft (backend v2) must complete through the lightweight per-type flow.
+  if (incidentTypeOf(draft) !== 'accident') {
+    return (
+      <SafeAreaView style={styles.centered}>
+        <EmptyState
+          actionLabel="تکمیل در فرم مختصر"
+          description="این واقعه از نوع تصادف نیست و با فرم مختصر مربوط به آن تکمیل می‌شود."
+          icon="clipboard-outline"
+          onAction={() =>
+            router.replace({ pathname: '/incident/simple', params: { uuid: draft.client_report_uuid } })
+          }
+          title="فرم متفاوت لازم است"
+        />
       </SafeAreaView>
     );
   }
