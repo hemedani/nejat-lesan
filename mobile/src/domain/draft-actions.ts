@@ -1,9 +1,15 @@
 import { createAccidentDraft } from './draft-service';
 import { formToData, type AccidentFormState } from './accident-form';
+import { isIncidentType } from './incident-type';
+import {
+  simpleFormToData,
+  type SimpleIncidentFormState,
+} from './simple-incident-form';
 import { SYNC_STATUS_LABELS } from './sync-rules';
 import type {
   AccidentDraft,
   Coordinates,
+  IncidentType,
   QueueRecord,
   RoadSnap,
   SyncStatus,
@@ -124,6 +130,31 @@ export async function getOrCreateActiveDraft(): Promise<AccidentDraft> {
   return reusable ?? createAccidentDraft();
 }
 
+/**
+ * Records the officer's chosen report kind on a draft that has not reached the
+ * server yet. Once a draft owns a server record (`server_id`) its type is
+ * fixed (the backend rejects `incident_type` changes after first sync).
+ */
+export async function setDraftIncidentType(
+  clientReportUuid: string,
+  incidentType: IncidentType,
+): Promise<AccidentDraft | null> {
+  if (!isIncidentType(incidentType)) {
+    return null;
+  }
+  const draft = await getDraft(clientReportUuid);
+  if (!draft || draft.server_id || draft.incident_type === incidentType) {
+    return draft;
+  }
+  const updated: AccidentDraft = {
+    ...draft,
+    incident_type: incidentType,
+    updated_at: new Date().toISOString(),
+  };
+  await saveDraft(updated);
+  return updated;
+}
+
 export type IncidentLocationPatch = {
   gps_coords: Coordinates | null;
   incident_coords: Coordinates;
@@ -182,4 +213,12 @@ export function saveFormState(
   state: AccidentFormState,
 ): Promise<AccidentDraft | null> {
   return saveDraftFormData(clientReportUuid, formToData(state));
+}
+
+/** Persists the lightweight non-accident capture state (backend-shaped keys). */
+export function saveSimpleFormState(
+  clientReportUuid: string,
+  state: SimpleIncidentFormState,
+): Promise<AccidentDraft | null> {
+  return saveDraftFormData(clientReportUuid, simpleFormToData(state));
 }

@@ -27,6 +27,7 @@ function normalizeUser(value: unknown): User {
     first_name: user.first_name,
     last_name: user.last_name,
     personnel_code: user.personnel_code,
+    level: typeof user.level === 'string' ? user.level : undefined,
     permissions: (value as Record<string, unknown>).patrol_permissions as
       | User['permissions']
       | undefined,
@@ -41,6 +42,8 @@ function toSession(response: LoginResponse, deviceId: string): Session {
     token: response.token,
     user: normalizeUser(response.user),
     device_id: deviceId,
+    modules: response.modules,
+    orgModules: response.orgModules ?? null,
   };
 }
 

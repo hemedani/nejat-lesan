@@ -1,4 +1,5 @@
-import type { AccidentDraft, Coordinates } from './types';
+import { ACCIDENT_ONLY_DATA_KEYS, isIncidentType } from './incident-type';
+import type { AccidentDraft, Coordinates, IncidentType } from './types';
 
 export type AccidentLocation = {
   type: 'Point';
@@ -59,6 +60,7 @@ const RELATION_KEYS = [
   'roadSituationId',
   'roadRepairTypeId',
   'shoulderStatusId',
+  'incidentSeverityId',
 ] as const;
 
 const ARRAY_RELATION_KEYS = [
@@ -69,6 +71,17 @@ const ARRAY_RELATION_KEYS = [
   'vehicleReasonsIds',
   'equipmentDamagesIds',
 ] as const;
+
+/** Keys skipped entirely when the report is not an accident. */
+const FORBIDDEN_KEYS = new Set<string>(ACCIDENT_ONLY_DATA_KEYS);
+
+function isIncidentPayload(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function resolveIncidentType(draft: AccidentDraft): IncidentType | undefined {
+  return isIncidentType(draft.incident_type) ? draft.incident_type : undefined;
+}
 
 export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
   const selectedCoords = draft.incident_coords ?? draft.gps_coords;
@@ -81,6 +94,11 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
   const dateOfAccident =
     typeof rawDate === 'string' && rawDate.length > 0 ? rawDate : draft.updated_at;
 
+  const incidentType = resolveIncidentType(draft);
+  // Absent type = accident (backend default). A report is "non-accident" only
+  // when an explicit road_breakdown/road_obstacle/other is present.
+  const isAccident = incidentType === undefined || incidentType === 'accident';
+
   const set: AccidentAddSet = {
     location: toPoint(selectedCoords),
     date_of_accident: dateOfAccident,
@@ -88,12 +106,19 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
     sync_status: draft.sync_status === 'draft' ? 'draft' : 'queued',
   };
 
+  if (incidentType) {
+    set['incident_type'] = incidentType;
+  }
+
   if (draft.gps_coords) {
     set['gps_coords'] = toPoint(draft.gps_coords);
   }
 
   for (const key of PASSTHROUGH_TOP_LEVEL_KEYS) {
     if (key in set) {
+      continue;
+    }
+    if (!isAccident && FORBIDDEN_KEYS.has(key)) {
       continue;
     }
     const value = data[key];
@@ -105,6 +130,9 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
   for (const key of RELATION_KEYS) {
     const value = data[key];
     if (typeof value === 'string' && value.length > 0) {
+      if (!isAccident && FORBIDDEN_KEYS.has(key)) {
+        continue;
+      }
       (set as Record<string, unknown>)[key] = value;
     }
   }
@@ -117,6 +145,26 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
         (set as Record<string, unknown>)[key] = ids;
       }
     }
+  }
+
+  if (!isAccident) {
+    // Non-accident evidence/description payload (struct). Severity for
+    // non-accidents rides the shared `incidentSeverityId` relation (handled
+    // generically above); the accident `typeId` severity is never emitted.
+    const payload = data['incident_payload'];
+    if (isIncidentPayload(payload)) {
+      set['incident_payload'] = payload;
+    }
+  }
+
+  // Org-process submissions snapshot `process_version` and carry `dynamic_answers`.
+  const processVersion = data['process_version'];
+  if (typeof processVersion === 'number' || (typeof processVersion === 'string' && processVersion.length > 0)) {
+    set['process_version'] = processVersion;
+  }
+  const dynamicAnswers = data['dynamic_answers'];
+  if (Array.isArray(dynamicAnswers) && dynamicAnswers.length > 0) {
+    set['dynamic_answers'] = dynamicAnswers;
   }
 
   return { ok: true, set };
