@@ -1,53 +1,50 @@
 # CONTINUE — Mobile Patrol App
 
-One-page next-task prompt. Full history/logs live in `mobile/docs/TODO_HISTORY/`; the authoritative status backlog is `mobile/docs/TODO.md`; the UI/UX specification is `mobile/docs/Design.md`. Backend-side open items are in `back/docs/08-mobile-patrol-backend-handoff.md`.
+One-page next-task prompt. Full history/logs live in `mobile/docs/TODO_HISTORY/`; the authoritative status backlog is `mobile/docs/TODO.md`; the UI/UX specification is `mobile/docs/Design.md`; the backend-v2 adoption brief (incident types · org/unit · process wizard · module licensing) is `mobile/docs/01-MOBILE_BACKEND_V2_ADOPTION.md`. Backend-side open items are in `back/docs/09-mobile-patrol-backend-incident-types-todo.md` (§8/§36 = mobile handoff) and `back/docs/10-mobile-patrol-backend-incident-types-continue.md`.
 
 ---
 
 ## Brief history (current state)
 
-Checkpoints 1–10, the 2026-08-25 contract-integration round, GPS-recovery fixes, the offline-map round, **and the 2026-08-25 UI/UX redesign (Phases 0–7 of `Design.md`)** are implemented (`tsc --noEmit`, `pnpm lint`, `pnpm test` all pass; on-device verification remains partial):
+Checkpoints 1–10, the 2026-08-25 contract-integration round, GPS-recovery fixes, the offline-map round, the 2026-08-25 UI/UX redesign (Phases 0–7 of `Design.md`), and the police-station picker (2026-08-28) are implemented (`tsc --noEmit`, `pnpm lint`, `pnpm test` all pass; on-device verification and the hardening checkpoints 11/12 remain partial/open):
 
-- **Design system foundation:** semantic tokens in `constants/theme.ts` (`AppTheme`/`Radius`/`Shadow`/`Motion`/`Type`), multi-family icon registry (`constants/icon-map.ts` + `ui/icon.tsx`, every glyph name verified against installed glyph maps), 14 shared primitives under `components/ui/` (Button, IconButton, Card/CardHeader, ListRow, ChoiceChip, StatusPill, Badge, Banner, Toast provider, Skeleton set, EmptyState, Section/ScreenHeader, MapControls, StepperHeader, TextField), light-mode locked for v1 (fixes white-on-light dark-mode leaks).
-- **Screens redesigned on the system:** login (connectivity pill, icon inputs, error banner), Home dashboard (identity header + avatar initials, unit/vehicle strip, shift/internet/GPS status trio with accuracy tones, hero CTA always-on offline, quick-access grid with drafts count badge; fixes the bare-whitespace-text-node crash), incident entry (type-selection cards, no UUID leak), location picker (pulsing pin, legend chips, accuracy pill, snap-suggestion banner >20m, grabber sheet with iconed rows, disabled-reason CTA), 7-phase wizard shell (icon stepper + animated progress, autosave pill, lock-marked meta card), form fields/chips/cards (focus rings, unified ChipsRow ≥44dp, severity icons, confirm-protected card removal), Drafts (true status tones), Reports (working filters, tone pills, danger rejection banners), Announcements (priority icon pills fixing the colorless-text bug, unread badge), More (avatar profile card, iconed rows, toast-explained به‌زودی rows, logout confirmation), map-offline (status pill, native confirms, platform Switch), media sections (category icons, 38dp replace/delete buttons, delete confirm), GPS action button (+locate icon). Raw hex usage in app/components reduced ~250 → handful of intentional primitive-internal shades.
-- **Pre-redesign core (unchanged):** email/device `user.login`, SecureStore session, five-tab RTL nav, offline-first SQLite drafts/media/queue/reference/map-pack caches, single-flight sync worker with update-by-uuid correction loop + `resubmitReport` chaining, announcements live read-state, severity via `typeId`, national Iran offline pack (base z4–10 / opt-in z4–12), dormant base64 media-upload pipeline behind `EXPO_PUBLIC_ACCIDENT_UPLOADS`.
-- **Police station picker (2026-08-28):** `police_station` joined the cache-first reference set (`type`, `collision_type`, `croquis_type`, `police_station`); the PhasePolice manual station text was replaced with a ListRow picker from `police_station.gets` sending `policeStationId` (name kept as display/fallback), with the manual free-text input retained while seed data is missing. Round-trip + mapper tests added; `tsc --noEmit`, `pnpm lint`, `pnpm test` (59/59) clean.
+- **Backend v2 shipped 2026-09-07** (this changes what the app must talk to): the backend now licenses the patrol domain behind the **`incident_patrol`** module (install + per-org layers; `user.login`/`user.getMe` return `modules`/`orgModules`), models each highway as an **`organization`** with a **`unit`** org-chart (patrol units/officers are first-class nodes via `user.roles`; legacy `police_station`/`patrol_unit`/`shift` stay registered for one release), makes `accident` a **polymorphic report** (`incident_type` accident|road_breakdown|road_obstacle|other + `incident_payload` + new `incident_severity` relation + `BRK-/OBS-/OTH-` report prefixes + `incidentType` filters), and adds an org-scoped **`accident_process`** wizard (consumed by the app via `accident_process.getForPatrol`). `file.uploadAccidentImages` gained an `incident` photo category. **The mobile backend-v2 adoption (brief phases A–F) is implemented in code** (see `01-MOBILE_BACKEND_V2_ADOPTION.md`): `modules`/`orgModules` persisted, `incident` media category + limits, module/org error branches, the four incident-type entry tiles with draft serialization, the per-type capture surface (`/incident/simple`), type labels + `incidentType` filter on Reports/Drafts, the process wizard (`/incident/process`, relation/dynamic answers + `process_version`, offline version-change pause), a central module-gating helper (`domain/modules.ts`) wired into Home/Reports/incident, and `{process:null}`/no-membership/`dto`-unsupported fallbacks. **Still open:** device E2E of the four type submissions + process + module-off, media upload enablement (dormant flag) incl. non-accident binding, the map incident layer (road `area`), and hardening.
+- **Design system foundation:** semantic tokens in `constants/theme.ts` (`AppTheme`/`Radius`/`Shadow`/`Motion`/`Type`), multi-family icon registry (`constants/icon-map.ts` + `ui/icon.tsx`), 14 shared primitives under `components/ui/` (Button, IconButton, Card/CardHeader, ListRow, ChoiceChip, StatusPill, Badge, Banner, Toast provider, Skeleton set, EmptyState, Section/ScreenHeader, MapControls, StepperHeader, TextField), light-mode locked for v1.
+- **Screens redesigned on the system:** login (connectivity pill, icon inputs, error banner), Home dashboard (identity header + avatar initials, unit/vehicle strip, shift/internet/GPS status trio, hero CTA always-on offline, quick-access grid with drafts badge), incident entry (type-selection cards; خرابی/مانع/سایر tiles still «بهزودی» until backend-v2 adoption), location picker (pulsing pin, legend, accuracy pill, snap banner, grabber sheet), 7-phase wizard shell (icon stepper + progress, autosave pill, meta card), form fields/chips/cards, Drafts (true status tones), Reports (working filters, tone pills, rejection banners), Announcements (priority pills, unread badge), More (profile card, logout confirm), map-offline, media sections, GPS recovery button.
+- **Pre-redesign core (unchanged):** email/device `user.login`, SecureStore session, five-tab RTL nav, offline-first SQLite drafts/media/queue/reference/map-pack caches, single-flight sync worker with update-by-uuid correction loop + `resubmitReport` chaining, announcements live read-state, accident severity via the `type` model (`typeId`), national Iran offline pack, dormant base64 media-upload pipeline behind `EXPO_PUBLIC_ACCIDENT_UPLOADS`.
+- **Police station picker (2026-08-28):** `police_station` joined the cache-first reference set; PhasePolice uses a ListRow picker from `police_station.gets` sending `policeStationId` (manual free-text fallback retained while seed data is missing). Round-trip + mapper tests added; suite 59/59 clean.
 
 ---
 
-## Next task — on-device verification (offline maps + correction loop + redesign)
+## Backend-v2 adoption (phases A–F implemented in code — remaining: device/media E2E)
 
-### 1. Offline map device E2E
-- Base pack download completes on Wi-Fi (~4k tiles) → airplane mode → Map tab + location picker pan Iran at z5–z9 with no blank areas inside covered zooms.
-- Kill mid-download → relaunch resumes from filesystem recount. Manual pause stays paused; system pause auto-resumes on Wi-Fi. Upgrade to کامل shows the native confirm with size estimate and skips existing tiles. حذف clears bytes + mirror dir.
+Status 2026-09-07: **phases A–F below are implemented** (`tsc --noEmit`/`pnpm lint`/`pnpm test` green, 86 tests). Remaining: reachable-backend/device E2E for the four type submissions + process wizard + module-off notice + offline queueing, media upload enablement (`EXPO_PUBLIC_ACCIDENT_UPLOADS=on`, incl. `incident` binding), and the type-aware map layer (road `area`). Full phased brief:
 
-### 2. Correction-loop device E2E
-Returned report → «اصلاح گزارش» → edit → exit → sync → server record updated and moved back to `submitted` with note cleared (needs a Manager account).
+Full phased brief: **`mobile/docs/01-MOBILE_BACKEND_V2_ADOPTION.md`**. Condensed checklist (STOP after each phase):
 
-### 3. Redesign pass on real device (Android-only target)
-- Home: status trio tones, GPS recovery button, pull-to-refresh, offline banner + CTA flow into type-selection cards.
-- Location picker: pulsing pin perf, legend/accuracy pill legibility in sunlight, snap «انتقال» banner behavior.
-- Wizard: stepper progress animation, chip focus/selection ergonomics, vehicle/person/facility card remove confirmations, autosave pill timing.
-- Lists: drafts true-status colors across queue transitions, reports filters, announcements expand/mark-read, More toasts + logout confirm, map-offline Switch + confirms.
-- RTL/a11y: Persian labels on TalkBack, 44dp+ targets reachable one-handed, mixed Persian/Latin text integrity.
+1. **Phase A — contract sync:** store `modules`/`orgModules` from login/getMe; extend media categories with `incident`; translate the module-off («این ماژول برای این نصب فعال نیست» / «…برای این سازمان فعال نیست») and org-membership («سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید») messages.
+2. **Phase B — incident-type ungate:** incident entry tiles send the chosen type; draft + mapper + sync serialize `incident_type`/`incident_payload`; queue/correction loop unchanged.
+3. **Phase C — per-type forms:** lightweight capture for خرابی آزادراه/مانع یا خطر/سایر (description, road defects, equipment damage, new `incident_severity`, lane; no accident DTO phases); add `incident_severity` to the reference set.
+4. **Phase D — lists/map:** type labels + `incidentType` filter on Reports/Drafts; type-aware markers from `nearbyAccidents` when map features land.
+5. **Phase E — process wizard:** render `accident_process.getForPatrol` steps/questions; relation answers → typed ids, dynamic answers → `dynamic_answers`, snapshot `process_version`; offline version-change refetch; decide the `process:null` fallback and record it.
+6. **Phase F — module UX + media enablement + verification:** gate module-owned surfaces when `incident_patrol` is known-off (Ghost exempt); enable upload (`EXPO_PUBLIC_ACCIDENT_UPLOADS=on`) incl. `incident` category; update docs.
 
-### 4. ~~Police station picker from `police_station.gets`~~ — Done (2026-08-28)
-`police_station` loads cache-first with the reference set; PhasePolice uses a ListRow picker sending `policeStationId`, with the manual free-text fallback kept while seed data is missing. Seeding real station polygons remains an ops task.
-
-### 5. Enable + verify media upload
-Flip `EXPO_PUBLIC_ACCIDENT_UPLOADS=on` against a reachable backend; exercise plate/insurance/facility round trip incl. retry-after-failure; then remove the dormancy caveat in docs.
+### Outstanding device E2E (post- or mid-migration)
+- Offline-map device E2E: base pack airplane-mode render, kill/resume, pause semantics, upgrade, delete.
+- Correction-loop device E2E (needs a Manager account): «اصلاح گزارش» → edit → sync → server updated + moved back to `submitted`.
+- Redesign pass on real device (Android): Home, location picker, wizard, lists, RTL/a11y.
+- Media upload E2E once enabled.
 
 ### Out of scope (still blocked)
-- Emergency flow — awaiting ops-approved offline SOS policy (online endpoint exists); Home reserves header space only.
-- Road/incident overlays — blocked on road `area` geometry backfill; `accident.nearbyAccidents` available once maps land.
-- Push notifications — awaiting FCM/APNs provider credentials.
-- Haptics — needs `expo-haptics` adoption after an SDK-57 compatibility check.
-- Production tile source — self-hosted tile server (backend Docker task); switch is config-only via `EXPO_PUBLIC_MAP_TILE_URL`.
+- Emergency flow — awaiting ops-approved offline SOS policy (online endpoint exists).
+- Road/incident overlays — blocked on road `area` geometry backfill; type-aware `nearbyAccidents` data is available once maps land.
+- Push notifications (FCM/APNs), haptics, production tile source, PIN/biometric/app-lock.
+- Deleting legacy `patrol_unit`/`police_station`/`shift` (backend keeps them one release).
 
-## Exit criteria
-- Base Iran pack downloads, survives force-close/resume, renders fully in airplane mode at z≤10.
-- Correction loop verified end-to-end on device (update-by-uuid + resubmitReport).
-- Redesign verified on device per §3 checklist; no regressions in sync/draft flows.
-- lint/tsc/test stay clean; results recorded in `TODO_HISTORY/checkpoint-log.md`.
+## Exit criteria (backend-v2 adoption session)
+- All four incident types register offline-first and sync with correct `report_id` prefixes; non-accident reports never carry accident-only fields.
+- Process wizard renders from `accident_process.getForPatrol` (whitelisted answers, multi-select, required validation, `process_version`), with the `process:null`/no-membership states handled gracefully.
+- Module-off state shows the Persian notice instead of dead calls; Ghost unaffected.
+- `tsc`/`lint`/`test` clean; `pnpm test` extended per phase; results recorded in `TODO_HISTORY/checkpoint-log.md`.
 
 **Working rules, toolchain, declaration sync, and font notes:** `mobile/docs/TODO_HISTORY/working-rules.md`.

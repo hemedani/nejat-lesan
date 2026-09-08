@@ -14,6 +14,10 @@ Sources: the four PDF references in `mobile/ignoreAssets/` (login, Home dashboar
 | Icons | **@expo/vector-icons multi-family** | Already installed; ships Ionicons, MaterialCommunityIcons, Feather. Zero new native deps; SDK-57-safe. Semantic icon-map layer on top (`src/constants/icon-map.ts`). |
 | Dark mode | **Light-only for v1** | Sunlight-first field tool. `ThemedText`/`useTheme`/root layout are locked to light so hardcoded light surfaces never get white text. Token architecture stays dark-ready. |
 | Login identity | **Email input** | Backend contract `user.login` is email-based. The PDF's numeric «کد پرسنلی» idea is recorded as a pending product/backend decision (see §10.1). |
+| Report types | **Four incident types after backend v2** | The three non-accident tiles (خرابی آزادراه / مانع یا خطر در مسیر / سایر رخدادها) become live when the backend's `incident_type` support is adopted (backend shipped 2026-09-07; migration brief `docs/01-MOBILE_BACKEND_V2_ADOPTION.md`). |
+| Severity split | **Accident → `type`; non-accident → `incident_severity`** | Accident severity stays خسارتی/جرحی/فوتی via the `type` model (`typeId`). Non-accident reports use the new `incident_severity` relation (کم/متوسط/زیاد/بحرانی, `incidentSeverityId`) and never set accident-only severity/type. |
+| Wizard source | **Process-first, built-in fallback** | Rendering is driven by `accident_process.getForPatrol` (steps/questions/answers) when an org publishes an active process; the hard-coded seven-phase accident wizard remains the fallback for تصادف. The `{process:null}` / no-org-membership states need a recorded fallback (see §10.6). |
+| Module licensing | **`incident_patrol` gates the app surface** | The whole patrol module is licensed per-install and per-org. When positively off, module surfaces show a Persian notice instead of dead calls; Ghost is always exempt; an absent/stale `modules` array degrades to "treat as enabled". |
 
 ---
 
@@ -149,7 +153,7 @@ Rules:
 | tab.announcements | `notifications(-outline)` (ion) | اعلان‌ها |
 | tab.home | `home(-outline)` (ion) | خانه |
 | tab.map | `map(-outline)` (ion) | نقشه |
-| tab.more | `ellipsis-horizontal(-outline)` (ion) | بیشتر |
+| tab.help | `help-circle(-outline)` (ion) | راهنما |
 | nav.back | `arrow-forward` (ion) — RTL: back points right | بازگشت |
 | nav.chevron | `chevron-forward` rotated for RTL disclosure (points left) | — |
 | action.logout | `log-out-outline` (ion) | خروج از حساب |
@@ -220,7 +224,8 @@ Rules:
 | meta.autoFilled | `lock-closed-outline` (ion) — read-only marker |
 | meta.editLocation | `location-outline` (ion) |
 
-Severity: خسارتی `car-wrench`(md)·neutral، جرحی `medkit`(md)·warning، فوتی `coffin`(md)·danger.
+Severity (accident): خسارتی `car-wrench`(md)·neutral، جرحی `medkit`(md)·warning، فوتی `coffin`(md)·danger.
+Severity (non-accident — خرابی/مانع/سایر): proposed tone mapping کم success→warning gradient، متوسط warning، زیاد danger، بحرانی danger — from the backend `incident_severity` model, mapped via `incidentSeverityId`; never the accident `type`/severity chips. Verify the exact glyphs against the installed maps before wiring (§6.1).
 Collision types: وسیله‑وسیله `car-multiple`(md)؛ موتورسیکلت `motorbike`(md)؛ عابر `walk`(md)؛ دوچرخه `bike`(md)؛ شیء ثابت `traffic-cone`؟fallback `octagon`(ion)؛ واژگونی `rotate-left`(ion)؛ خروج از مسیر `arrow-decision-outline`(md)؛ سقوط از پل `bridge`(md)+down؛ چندبرخوردی `car-multiple`+badge؛ حیوان `paw`(md)؛ نامشخص `help-circle-outline`(ion).
 Police: حضور پلیس `police-badge`(md)؛ پاسگاه `office-building-outline`(ion)؛ کروکی سازشی `handshake-outline`(md)؛ غیرسازشی `gavel`(md).
 
@@ -313,29 +318,36 @@ Pull-to-refresh refreshes shift/context/reports/announcements. Startup renders c
 Full-bleed map; center fixed pin (incident, teal, subtle pulse animation) distinct officer marker legend chip; GPS accuracy pill top (tone by quality); zoom/locate cluster via `MapControls`; OSM attribution kept; bottom Sheet (grabber) updating live: route, direction (with manual-correction affordance), km+meter, distance to officer (warn if far), coords as micro text; snap suggestion appears as confirm dialog («۱۸ متر با آزادراه فاصله دارد؛ انتقال به نزدیک‌ترین موقعیت؟») — never silent; out-of-zone → `warning` banner, still confirmable; big ثابت CTA تأیید موقعیت واقعه (disabled explains why). Works fully offline; autosaves selection.
 
 ### 9.4 Incident entry `/incident/index`
-Type-selection cards with icons (تصادف first-class; خرابی/مانع/سایر marked به‌زودی until backend workflows land); read-only confirmed-location summary card + اصلاح موقعیت action; no raw UUID visible (replaced by friendly report ref when it exists).
+Type-selection cards with icons: تصادف first-class; خرابی آزادراه; مانع یا خطر در مسیر; سایر رخدادها (حریق/نقص تجهیزات map to `other` until the backend enum grows). The three non-accident tiles unlock once backend v2 (`incident_type` + per-type forms) is adopted and route to the per-type flow or the org's active process (§9.5); each carries a `REP-/BRK-/OBS-/OTH-` report-prefix hint. Read-only confirmed-location summary card + اصلاح موقعیت action; no raw UUID visible (replaced by friendly report ref when it exists). A disabled `incident_patrol` module or a missing org membership shows a Persian notice instead of dead tiles.
 
 ### 9.5 Wizard `/incident/details`
-`StepperHeader` (icon chips ۱..۷ + progress bar, animated). Sticky meta card (auto-filled items marked with `lock` icon; date/time editable; location summary + اصلاح موقعیت). Phase bodies built from §6 glyph chips + §7 inputs/cards:
-- Vehicles/people/facility: repeatable `Card`s with header icon, collapsible sections, ≥44 dp remove (trash icon-button + confirm), counts drive card creation, injured/deceased totals computed from person cards.
-- Conditional logic visible: injury/fatal ⇒ people section required; police switch gates police fields; facility switch gates damage cards.
-- Validation: field-level Persian errors; Next blocked with explanation banner, not silent.
-- Autosave indicator: ذخیره شد ✓ becomes `success` pill with `checkmark-circle`.
+Two render modes share the shell primitives (stepper/progress, sticky meta card, autosave pill, Persian validation, bottom-anchored Next/ثبت CTA):
+
+- **Accident — built-in seven-phase wizard** (fallback when no active accident process): `StepperHeader` icon chips ۱..۷ + animated progress; meta card auto-filled with `lock` icons (date/time editable; location summary + اصلاح موقعیت). Phase bodies from §6 glyph chips + §7 inputs/cards:
+  - Vehicles/people/facility: repeatable `Card`s with header icon, collapsible sections, ≥44 dp remove (trash icon-button + confirm), counts drive card creation, injured/deceased totals computed from person cards.
+  - Conditional logic visible: injury/fatal ⇒ people section required; police switch gates police fields; facility switch gates damage cards.
+  - Validation: field-level Persian errors; Next blocked with explanation banner, not silent.
+  - Autosave indicator: ذخیره شد ✓ becomes `success` pill with `checkmark-circle`.
+- **Process-driven (backend v2)** — renders `accident_process.getForPatrol` `steps[].questions[]` (icons/colors/titles) with resolved `answers` per question; single/multi-select chips, `required` validation, step progress, `process_version` snapshot. Submit maps relation-target answers → the existing typed relation ids and `dynamic` answers → `dynamic_answers`. Non-accident flows (خرابی/مانع/سایر) use a lightweight variant: description + `road_defect`/`equipment_damage` multi-pickers + `incident_severity` + lane + optional `incident` photos — **no** vehicle/people/facility/collision/type-severity phases. `{process:null}` (no active process) and no-org-membership states render the §1/§10.6 fallback with a Persian notice.
 
 ### 9.6 Drafts `/drafts`
-True status pills per §3.2 mapping; per-draft card: type/date/km/completion %, attempts + next retry (micro), last error (danger text), retry Button, swipe-to-delete (confirm) ; header action همگام‌سازی همه with spinner; skeletons while loading.
+True status pills per §3.2 mapping; per-draft card: incident-type label (تصادف/خرابی/مانع یا خطر/سایر) + report id (`REP-/BRK-/OBS-/OTH-`) + date/km/completion %, attempts + next retry (micro), last error (danger text), retry Button, swipe-to-delete (confirm); header action همگام‌سازی همه with spinner; skeletons while loading.
 
 ### 9.7 Reports `/(tabs)/reports`
-Filter chips actually filter (Sent/Under review/Approved/Returned); report cards with status pill, rejection note in `danger` banner + اصلاح گزارش button routing to draft; empty states per filter; pull-to-refresh; skeletons.
+Incident-type filter chips (همه/تصادف/خرابی/مانع/سایر) actually filter via `accident.getMyReports` `incidentType`; report cards with type label + status pill, rejection note in `danger` banner + اصلاح گزارش button routing to draft; empty states per filter; pull-to-refresh; skeletons.
 
 ### 9.8 Announcements `/(tabs)/announcements`
 Priority icon + tone per §6.10; unread = `primary` right-border + bold title; expand/collapse animated with chevron; unread badge in header and on tab; expiry micro-caption.
 
 ### 9.9 Map tab `/(tabs)/map`
-Full-bleed map; GPS status card top-right (RTL focal corner); `MapControls` cluster; attribution; tile-loading indicator; (future: incidents layer toggle behind `layers` icon when backend data lands).
+Full-bleed map; GPS status card top-right (RTL focal corner); `MapControls` cluster; attribution; tile-loading indicator. Incident layer (behind the `layers` icon): accident vs non-accident markers keyed off `nearbyAccidents` `incident_type` (+ `incident_severity_name` for tone), landing once backend data and road geometry allow.
 
-### 9.10 More `/(tabs)/more`
-Profile block (avatar, name, personnel code), grouped `ListRow` sections with icons + chevrons: پروفایل، شیفت و خودرو، نقشه آفلاین، تنظیمات (rows marked به‌زودی explain via toast), راهنما، پشتیبانی، درباره سامانه; device/session info; logout = `danger` ListRow → ConfirmDialog.
+### 9.10 Help Center `/(tabs)/more`
+The fifth tab (tab-bar label **راهنما**, glyph `help-circle`) is a **fully offline Persian help center** (the old «بیشتر» placeholder rows that only toasted «به‌زودی» are removed). Top→bottom:
+1. Compact identity header: avatar initials, name, personnel code (read-only from the session), logout `IconButton` (`danger`) → confirm dialog.
+2. Help intro: display title راهنمای سامانه + caption that the guide works without internet.
+3. Grouped expandable topics (accordions) rendered from `src/content/help-content.ts` via `HelpSectionCard` (`src/components/help/help-section.tsx`): **شروع کار** (ورود/خروج، آشنایی با پنج بخش) · **ثبت واقعه** (ثبت گام‌به‌گام، تصادف/فرایند، خرابی-مانع-سایر، نقشه و GPS، عکس و رسانه) · **پس از ثبت** (پیش‌نویس‌ها و همگام‌سازی، گزارش‌های من، اعلان‌ها، نقشه آفلاین) · **رفع اشکال** (پرسش‌های پرتکرار). Each Card: icon + title + intro, rotating chevron, then paragraphs, numbered steps, `Banner` callouts, and `ListRow` deep links (`/drafts`, `/map-offline`, Reports).
+4. درباره و پشتیبانی: footer note + app version; then the danger خروج از حساب `ListRow` → confirm dialog. Whole page static, offline, no backend calls.
 
 ### 9.11 Offline maps `/map-offline`
 Restyled with §7 primitives; pack status card (idle/downloading/paused/failed/done + upgrade upsell); Wi-Fi-only switch platform-native; storage hints; confirm dialogs for upgrade/delete.
@@ -348,6 +360,9 @@ Restyled with §7 primitives; pack status card (idle/downloading/paused/failed/d
 2. **Emergency offline fallback** (SMS/call) — awaiting ops policy; UI reserves the confirmation-sheet pattern.
 3. **Satellite basemap** — PDF mentions it; product decided OSM-only (`TODO.md` §5). Recorded as intentionally unsupported.
 4. **Conflict policy** for locally-edited synced reports — backend/product pending; UI surfaces server-authoritative state.
+5. **Org membership prerequisite**: officers must be assigned to a `unit(type:"Patrol")` with `roles`/`organizations` before `accident_process.getForPatrol` resolves an org. Until then the wizard answers «سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید»; the entry screen must surface this with the exact message.
+6. **`{process:null}` fallback**: when the officer's org has no active process for a type, تصادف falls back to the built-in seven-phase wizard; the non-accident types need a recorded decision (built-in lightweight form vs explicit «فرآیند ثبت برای این سازمان فعال نشده است» state). Record in `TODO_HISTORY/decisions.md`.
+7. **Module-off UX**: when `incident_patrol` is positively off (install or org), module surfaces show the Persian notice; Ghost always sees everything; stale/absent `modules` degrades to "treat as enabled". Backend remains the hard gate.
 
 ---
 

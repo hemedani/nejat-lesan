@@ -13,8 +13,8 @@ Confirm that every package supports the versions in `package.json` before instal
 - Framework: Expo SDK 57, Expo Router, React 19, React Native 0.86.
 - Entry point: `expo-router/entry`.
 - Source: `src/app`, `src/components`, `src/constants`, and `src/hooks`.
-- Product docs: `mobile/docs/TODO.md` (authoritative backlog), `mobile/docs/CONTINUE.md` (next-task prompt), and `mobile/docs/TODO_HISTORY/` (checkpoint log, decisions, working rules, checkpoint progress).
-- Backend contracts: `back/docs/04-mobile-patrol-backend-agent-guide.md` and the related patrol documents in `back/docs`.
+- Product docs: `mobile/docs/TODO.md` (authoritative backlog), `mobile/docs/CONTINUE.md` (next-task prompt), `mobile/docs/01-MOBILE_BACKEND_V2_ADOPTION.md` (backend-v2 migration brief), and `mobile/docs/TODO_HISTORY/` (checkpoint log, decisions, working rules, checkpoint progress).
+- Backend contracts: `back/docs/04-mobile-patrol-backend-agent-guide.md`, the patrol docs in `back/docs`, and `back/docs/09-…-incident-types-todo.md` / `10-…-incident-types-continue.md` (the shipped backend-v2: incident types, org/unit/roles, `accident_process`, module licensing).
 - Generated API declarations: `back/declarations/selectInp.ts`; mobile TypeScript aliases this file as `@backend/selectInp`. Keep backend declarations synchronized whenever acts or validators change.
 - Declaration synchronization: after backend declaration changes, run `cp -rv back/declarations/selectInp.ts front/src/types/declarations/` from the Lesan repository root. Mobile types read the backend copy directly; the frontend copy keeps the web client synchronized.
 - Design references: the PDFs in `mobile/ignoreAssets` and the Persian requirements documents in `back/docs`.
@@ -60,9 +60,17 @@ Confirm that every package supports the versions in `package.json` before instal
 - Make location selection auditable: distinguish the officer GPS point from the selected incident point and allow later location correction.
 - Avoid embedding operational rules only in visual components. Validation and transitions belong in testable domain logic.
 
+## Backend v2 invariants (incident types · org/unit · process wizard · modules)
+
+1. The patrol surface is licensed as the **`incident_patrol`** module (installation + per-org layers). `user.login`/`user.getMe` return `modules: string[]` and, for a single-org caller, `orgModules: string[]`. When a module is disabled the backend throws (except Ghost): «این ماژول برای این نصب فعال نیست» / «این ماژول برای این سازمان فعال نیست». Persist the arrays beside the session; gate module-owned screens on a positively-off module; never fabricate other reasons. Absent/stale arrays degrade to "treat as enabled" (backend still enforces). Do not gate `accident.add/update/get/gets` or reference loads (core).
+2. `accident` is a **polymorphic report**: `incident_type` `accident|road_breakdown|road_obstacle|other` (absent = accident), `incident_payload` struct, new `incident_severity` relation (`incidentSeverityId`), `report_id` prefixes `REP-/BRK-/OBS-/OTH-`, `incidentType` filters, `dynamic_answers`/`process_version`. Non-accident reports must not send accident-only fields (`vehicle_dtos`, `pedestrian_dtos`, `people_dtos`, `facility_damage_dtos`, `collisionTypeId`, `typeId`); they require `location` + description or `roadDefectsIds`/`equipmentDamagesIds`.
+3. Accident severity stays the `type` model (`typeId`, خسارتی/جرحی/فوتی); non-accident severity uses `incident_severity` (کم/متوسط/زیاد/بحرانی). The local seven-phase accident wizard is the fallback for تصادف; non-accident types and process-driven wizards are separate surfaces.
+4. The patrol wizard is `accident_process.getForPatrol` (steps/questions + resolved answers). It requires the officer to resolve to an org (`roles` → `unit` → `organizations`), otherwise «سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید». `{process:null}` = no active process. Submissions still flow through `accident.add`/`accident.update`; relation answers → typed ids, dynamic answers → `dynamic_answers`, and always snapshot `process_version`.
+5. Legacy `police_station`/`patrol_unit`/`shift` (shift → `patrol_unit`) stay registered for one release; the app may keep using them but must not add new dependencies on them beyond what exists.
+
 ## Authentication and security
 
-- Call the unified `user.login` contract with email, password, and device metadata: `device_id`, `fingerprint`, `platform`, `app_version`, and `model`. The device payload yields a device-scoped JWT plus `permissions` in the response; registered devices are read through the `user.devices` reverse relation.
+- Call the unified `user.login` contract with email, password, and device metadata: `device_id`, `fingerprint`, `platform`, `app_version`, and `model`. The device payload yields a device-scoped JWT plus `permissions` in the response; registered devices are read through the `user.devices` reverse relation. Store the returned `modules`/`orgModules` beside the session.
 - Store tokens only in Keychain/Keystore-backed secure storage. Do not use AsyncStorage or plain files for tokens, passwords, PINs, or biometric secrets.
 - Store only the minimum non-sensitive cache needed for offline unlock and dashboard rendering.
 - Support optional PIN/biometric unlock and app-lock timeout without forcing full credentials after every short background transition.
@@ -83,8 +91,9 @@ Confirm that every package supports the versions in `package.json` before instal
 - Pass the JWT as `token: actualToken`; do not add `Bearer`.
 - Use backend acts for login, active shift, reports, shared references, road geometry, snapping, and zone validation.
 - Accident add/update is idempotent by `client_report_uuid`; persist the server `_id` and `report_id` after acknowledgement.
-- Use `accident.getMyReports` for the officer's report history and rejection notes.
-- Treat `getSyncStatus`, announcements, categorized uploads, emergency operations, and production road geometry as explicit backend dependencies until their contracts are confirmed.
+- Use `accident.getMyReports` for the officer's report history and rejection notes (supports the `incidentType` filter).
+- Submit each incident type through `accident.add`/`accident.update` with its `incident_type` (and `incident_payload`/`incidentSeverityId` for non-accidents); never send accident-only DTO/relation keys for non-accident reports. When an org publishes an active `accident_process`, render the wizard from `accident_process.getForPatrol` and map relation/dynamic answers + `process_version` as in the Backend v2 invariants.
+- Treat `getSyncStatus`, announcements, categorized uploads, emergency operations, and production road geometry as explicit backend dependencies until their contracts are confirmed; note that the patrol acts above are `incident_patrol`-gated (module-off throws Persian errors).
 - Do not invent `body.data`, REST paths, refresh-token fields, or reference values based on assumptions. Confirm the backend act and validator first.
 
 ## Maps, GPS, and media
@@ -95,12 +104,12 @@ Confirm that every package supports the versions in `package.json` before instal
 - Use `road.validatePointInZone` for boundary validation; warn the officer without making offline draft creation impossible.
 - When GPS is unavailable, allow manual map selection and record the unavailable-GPS condition for later sync.
 - Keep `gps_coords` (officer position) separate from the selected incident `location` / `incident_coords`.
-- Categorize evidence as plate, insurance, croquis, or damage. Preserve local media until the server confirms upload.
+- Categorize evidence as plate, insurance, croquis, facility damage (`damage` alias), or `incident` (non-accident evidence). Preserve local media until the server confirms upload.
 - Never assume production road snapping works until the backend road `area` geometry has been populated.
 
 ## Forms and drafts
 
-- Implement the accident workflow as seven recoverable phases: basic information, classification, police/croquis, vehicles, people, environment/road, and facility damage.
+- Implement the accident workflow as seven recoverable phases: basic information, classification, police/croquis, vehicles, people, environment/road, and facility damage (the accident fallback wizard). Non-accident types (road_breakdown/road_obstacle/other) use the lightweight per-type flow and/or the org's process wizard — see `docs/01-MOBILE_BACKEND_V2_ADOPTION.md`.
 - Auto-save on field change, phase transition, media change, back navigation, backgrounding, and before leaving the workflow.
 - Keep server-filled metadata read-only while allowing accident date/time correction and an Edit Location action.
 - Load all form options from backend shared models. Do not hardcode vehicle, injury, damage, road, or lane lists.

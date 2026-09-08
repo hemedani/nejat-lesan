@@ -122,3 +122,25 @@ Detailed per-checkpoint history: goals, progress notes, and exit criteria as of 
 - [ ] Run `npx expo lint`, TypeScript checks, and production builds.
 - [ ] Run security review for storage, logs, screenshots, network failures, and token revocation.
 - [ ] Record unresolved backend blockers and obtain sign-off.
+
+## Checkpoint 13 - Backend-v2 adoption (incident types · org/unit · process wizard · modules)
+
+**Goal:** migrate the app from the pre-v2 (accident-only) contract to the `HEAD` backend shipped 2026-09-07. Authoritative phased brief: `mobile/docs/01-MOBILE_BACKEND_V2_ADOPTION.md` (phases A–F, STOP after each).
+
+**Backend delta (documented, no code change in this run):**
+- `accident` is now a polymorphic report: `incident_type` (accident/road_breakdown/road_obstacle/other), `incident_payload`, new `incident_severity` relation (`incidentSeverityId`), `BRK-/OBS-/OTH-` report prefixes, `incidentType` filters, `dynamic_answers` + `process_version`.
+- Org/unit/`user.roles` structure; patrol officers are `unit(type:"Patrol")` members; legacy `police_station`/`patrol_unit`/`shift` kept for one release.
+- `accident_process.getForPatrol` = the patrol wizard endpoint (steps/questions + resolved whitelisted answers); org resolution requires membership.
+- `app_modules` licensing: `incident_patrol` gates the patrol surface; `modules`/`orgModules` returned by login/getMe; module-off Persian errors; Ghost exempt.
+- `file.uploadAccidentImages` adds the `incident` photo category.
+
+**Progress:** documentation fully synced (new `01-…` brief; `CONTINUE.md`/`TODO.md`/`Design.md`/`TODO_HISTORY/*`/`mobile/AGENTS.md` updated). No mobile source changes yet.
+
+- [ ] Phase A — contract sync: session stores `modules`/`orgModules`; media categories gain `incident`; module/org Persian error branches.
+- [ ] Phase B — incident-type ungate: tiles send the chosen type; draft/mapper/sync serialize `incident_type` (+ `incident_payload`/`incidentSeverityId`).
+- [ ] Phase C — per-type capture forms (خرابی/مانع/سایر): description + road defect/equipment damage/incident severity/lane; no accident DTO phases; `incident_severity` joins the reference set.
+- [ ] Phase D — lists/map: type labels, `incidentType` filter, type-aware `nearbyAccidents` markers.
+- [ ] Phase E — process-driven wizard from `accident_process.getForPatrol`; relation/dynamic submit mapping + `process_version`; offline version-change refetch; record the `{process:null}` fallback decision.
+- [ ] Phase F — module gating UX, media enablement (`EXPO_PUBLIC_ACCIDENT_UPLOADS=on` incl. `incident`), full verification and doc update.
+
+**Exit criteria:** all four incident types register offline-first and sync with correct prefixes; non-accident reports never carry accident-only fields; process wizard renders with whitelisted answers/validation/`process_version`; module-off and no-membership states degrade gracefully (Persian notice); `tsc`/`lint`/`test` clean.
