@@ -1,7 +1,7 @@
 import type { BackendActRequest } from './backend-types';
 import type { ApiRequestOptions } from './client';
 import { callTypedAct } from './client';
-import type { Session } from '@/domain/types';
+import type { IncidentType, Session } from '@/domain/types';
 import type { AccidentAddSet } from '@/domain/accident-mapper';
 
 export type AccidentAddRequest = BackendActRequest<'main', 'accident', 'add'>;
@@ -96,6 +96,7 @@ export type MyReport = {
   _id: string;
   report_id?: string;
   client_report_uuid?: string;
+  incident_type?: IncidentType;
   date_of_accident?: string;
   reported_at?: string;
   sync_status?: 'draft' | 'queued' | 'syncing' | 'synced' | 'rejected';
@@ -107,6 +108,7 @@ const MY_REPORTS_PROJECTION = {
   _id: 1,
   report_id: 1,
   client_report_uuid: 1,
+  incident_type: 1,
   date_of_accident: 1,
   reported_at: 1,
   sync_status: 1,
@@ -114,9 +116,15 @@ const MY_REPORTS_PROJECTION = {
   rejection_reason: 1,
 } as const;
 
+export type MyReportsQuery = {
+  page?: number;
+  limit?: number;
+  incidentType?: IncidentType;
+};
+
 export function fetchMyReports(
   session: Session,
-  pagination: { page?: number; limit?: number } = {},
+  pagination: MyReportsQuery = {},
   options: ApiRequestOptions = {},
 ): Promise<MyReport[]> {
   return callTypedAct<'main', 'accident', 'getMyReports', MyReport[]>(
@@ -128,6 +136,9 @@ export function fetchMyReports(
         set: {
           ...(pagination.page != null ? { page: pagination.page } : {}),
           ...(pagination.limit != null ? { limit: pagination.limit } : {}),
+          ...(pagination.incidentType != null
+            ? { incidentType: pagination.incidentType }
+            : {}),
         },
         get: MY_REPORTS_PROJECTION,
       },

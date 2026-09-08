@@ -37,6 +37,18 @@ describe('translateApiError', () => {
     ).toBe('نشست این دستگاه باطل شده است.');
   });
 
+  it('surfaces backend-v2 module and org-membership messages verbatim', () => {
+    for (const message of [
+      'این ماژول برای این نصب فعال نیست',
+      'این ماژول برای این سازمان فعال نیست',
+      'سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید',
+    ]) {
+      expect(
+        translateApiError(new ApiError('raw', 'validation', undefined, { message })),
+      ).toBe(message);
+    }
+  });
+
   it('passes through other backend messages for validation failures without leaking details objects', () => {
     const message = translateApiError(
       new ApiError('raw', 'validation', undefined, { message: 'شما فقط به گزارش‌های خودتان می‌توانید فایل اضافه کنید' }),

@@ -15,6 +15,9 @@ const BACKEND_MESSAGES = {
   patrolAccess: 'این حساب اجازه استفاده از اپ مأمور گشت را ندارد',
   revokedDevice: 'نشست این دستگاه باطل شده است',
   noActiveShift: 'شیفت فعالی یافت نشد',
+  moduleDisabledInstall: 'این ماژول برای این نصب فعال نیست',
+  moduleDisabledOrg: 'این ماژول برای این سازمان فعال نیست',
+  orgMembershipNotFound: 'سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید',
 } as const;
 
 export class ApiError extends Error {
@@ -54,6 +57,15 @@ export function translateApiError(error: unknown): string {
     }
     if (backendMessage === BACKEND_MESSAGES.noActiveShift) {
       return 'در حال حاضر شیفت فعالی ندارید.';
+    }
+    if (
+      backendMessage === BACKEND_MESSAGES.moduleDisabledInstall ||
+      backendMessage === BACKEND_MESSAGES.moduleDisabledOrg ||
+      backendMessage === BACKEND_MESSAGES.orgMembershipNotFound
+    ) {
+      // Module-licensing and org-membership messages are user-facing Persian
+      // already; surface them verbatim (backend-v2 brief) — never fabricate.
+      return backendMessage;
     }
     if (backendMessage && (error.code === 'validation' || error.code === 'invalid_response')) {
       return backendMessage;

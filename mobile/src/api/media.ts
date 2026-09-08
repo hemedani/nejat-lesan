@@ -7,19 +7,39 @@ import type { Session } from '@/domain/types';
 /**
  * Backend categories for `file.uploadAccidentImages`. The local `damage`
  * category maps to the backend `facility_damage` (the backend also accepts
- * the alias, but the mapping is applied explicitly on the client).
+ * the alias, but the mapping is applied explicitly on the client). The
+ * backend additionally accepts an `other` category (≤10 MB ×20) but it is
+ * not the intended category for non-accident photos — `incident` is.
  */
 export type BackendUploadCategory =
   | 'plate'
   | 'insurance'
   | 'croquis'
-  | 'facility_damage';
+  | 'facility_damage'
+  | 'incident';
 
 const BACKEND_CATEGORY: Record<MediaCategory, BackendUploadCategory> = {
   croquis: 'croquis',
   damage: 'facility_damage',
+  incident: 'incident',
   insurance: 'insurance',
   plate: 'plate',
+};
+
+/**
+ * Server-enforced per-category caps for `file.uploadAccidentImages`
+ * (max bytes per file, max count per report) — mirrored here as data so the
+ * client can pre-validate before pushing base64 payloads.
+ */
+export const BACKEND_CATEGORY_LIMITS: Record<
+  MediaCategory,
+  { maxBytes: number; maxCount: number }
+> = {
+  plate: { maxBytes: 5 * 1024 * 1024, maxCount: 1 },
+  insurance: { maxBytes: 5 * 1024 * 1024, maxCount: 1 },
+  croquis: { maxBytes: 10 * 1024 * 1024, maxCount: 10 },
+  damage: { maxBytes: 5 * 1024 * 1024, maxCount: 10 },
+  incident: { maxBytes: 5 * 1024 * 1024, maxCount: 10 },
 };
 
 export function toBackendUploadCategory(category: MediaCategory): BackendUploadCategory {

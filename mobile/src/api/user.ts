@@ -15,6 +15,10 @@ export type MeProfile = {
   activeShift?: ActiveShift | null;
   /** Added server-side; count of the officer's active devices. */
   activeDevicesCount?: number;
+  /** Installation-level enabled module keys (backend v2); absent on older backends. */
+  modules?: string[];
+  /** Effective org module keys when the caller resolves to exactly one org; else null. */
+  orgModules?: string[] | null;
 };
 
 type GetMeRequest = BackendActRequest<'main', 'user', 'getMe'>;

@@ -19,6 +19,8 @@ export type RefModel =
   | 'injury_status'
   | 'person_role'
   | 'damage_severity'
+  | 'incident_severity'
+  | 'equipment_damage'
   | 'color'
   | 'system'
   | 'system_type'

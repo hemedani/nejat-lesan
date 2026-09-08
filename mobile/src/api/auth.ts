@@ -7,6 +7,10 @@ export type LoginResponse = {
   token: string;
   permissions?: PatrolPermissions;
   user: unknown;
+  /** Installation-level enabled module keys (backend v2); absent on older backends. */
+  modules?: string[];
+  /** Effective org module keys when the caller resolves to exactly one org; else null. */
+  orgModules?: string[] | null;
 };
 
 export function login(
