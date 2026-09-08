@@ -208,6 +208,7 @@ export const AppIcons = {
     insurance: md('shield-check-outline'),
     croquis: md('pencil-ruler'),
     damage: md('car-brake-alert'),
+    incident: ion('image-outline'),
     camera: ion('camera'),
     gallery: ion('images'),
     preview: ion('eye-outline'),

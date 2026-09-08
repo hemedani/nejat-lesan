@@ -26,6 +26,7 @@ const CATEGORY_ICONS: Record<MediaCategory, { name: IconName; family?: IconFamil
   insurance: AppIcons.media.insurance,
   croquis: AppIcons.media.croquis,
   damage: AppIcons.media.damage,
+  incident: AppIcons.media.incident,
 };
 
 const FAILURE_MESSAGES: Record<Exclude<AttachResult, { ok: true }>['reason'], string> = {
