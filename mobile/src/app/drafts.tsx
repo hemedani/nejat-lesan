@@ -10,6 +10,7 @@ import {
   requeueDraft,
   type DraftBoardItem,
 } from '@/domain/draft-actions';
+import { INCIDENT_TYPE_SHORT_LABEL, incidentTypeOf } from '@/domain/incident-type';
 import { getSyncWorker } from '@/services/sync-worker';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -135,12 +136,19 @@ export default function DraftsScreen() {
             return (
               <Card key={item.draft.client_report_uuid} variant="default">
                 <View style={styles.cardHeader}>
-                  <StatusPill
-                    dot
-                    label={item.statusLabel}
-                    tone={STATUS_TONES[status]}
-                    icon={status === 'syncing' ? AppIcons.status.syncing.name : undefined}
-                  />
+                  <View style={styles.pills}>
+                    <StatusPill
+                      dot
+                      label={INCIDENT_TYPE_SHORT_LABEL[incidentTypeOf(item.draft)]}
+                      tone="neutral"
+                    />
+                    <StatusPill
+                      dot
+                      label={item.statusLabel}
+                      tone={STATUS_TONES[status]}
+                      icon={status === 'syncing' ? AppIcons.status.syncing.name : undefined}
+                    />
+                  </View>
                   <Text style={styles.date}>{formatDateTime(item.draft.updated_at)}</Text>
                 </View>
 
@@ -212,6 +220,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row-reverse',
     justifyContent: 'space-between',
+  },
+  pills: {
+    flexDirection: 'row-reverse',
+    gap: 6,
   },
   date: {
     color: AppTheme.colors.textSecondary,

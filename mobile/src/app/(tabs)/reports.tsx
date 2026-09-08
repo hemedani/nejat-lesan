@@ -7,8 +7,15 @@ import { fetchMyReports } from '@/api/accident';
 import { ApiError } from '@/api/errors';
 import type { MyReport } from '@/api/accident';
 import { markDraftReturned } from '@/domain/draft-actions';
-import type { AccidentDraft } from '@/domain/types';
-import { listDrafts } from '@/storage/local-database';
+import {
+  INCIDENT_TYPE_KEYS,
+  INCIDENT_TYPE_LABEL,
+  INCIDENT_TYPE_SHORT_LABEL,
+  normalizeIncidentType,
+} from '@/domain/incident-type';
+import type { AccidentDraft, IncidentType } from '@/domain/types';
+import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
+import { listDrafts, getDraft } from '@/storage/local-database';
 import { Button } from '@/components/ui/button';
 import { Banner } from '@/components/ui/banner';
 import { Card } from '@/components/ui/card';
@@ -47,6 +54,13 @@ const FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'returned', label: REVIEW_LABELS.returned },
 ];
 
+type TypeFilterKey = 'all' | IncidentType;
+
+const TYPE_FILTERS: { key: TypeFilterKey; label: string }[] = [
+  { key: 'all', label: 'همه انواع' },
+  ...INCIDENT_TYPE_KEYS.map(type => ({ key: type as TypeFilterKey, label: INCIDENT_TYPE_LABEL[type] })),
+];
+
 const REVIEW_TONES: Record<ReviewStatus, { tone: StatusPillProps['tone']; icon?: IconName }> = {
   submitted: { tone: 'neutral' },
   under_review: { tone: 'info', icon: 'time-outline' },
@@ -63,13 +77,23 @@ export default function ReportsScreen() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterKey>('all');
+  const [typeFilter, setTypeFilter] = useState<TypeFilterKey>('all');
 
   const reload = useCallback(async () => {
     if (!session) {
       return;
     }
+    if (!isIncidentPatrolEnabled(session)) {
+      setReports(null);
+      setError(moduleDisabledMessage(session) ?? 'این بخش برای این نصب فعال نیست.');
+      return;
+    }
     try {
-      const serverReports = await fetchMyReports(session, { page: 1, limit: 50 });
+      const serverReports = await fetchMyReports(session, {
+        page: 1,
+        limit: 50,
+        incidentType: typeFilter === 'all' ? undefined : typeFilter,
+      });
       setReports(serverReports);
       setError(null);
       const drafts = await listDrafts();
@@ -81,14 +105,21 @@ export default function ReportsScreen() {
           : 'بارگیری گزارش‌ها انجام نشد.',
       );
     }
-  }, [session]);
+  }, [session, typeFilter]);
 
   useEffect(() => {
     if (!session) {
       return;
     }
+    if (!isIncidentPatrolEnabled(session)) {
+      return;
+    }
     let cancelled = false;
-    fetchMyReports(session, { page: 1, limit: 50 })
+    fetchMyReports(session, {
+      page: 1,
+      limit: 50,
+      incidentType: typeFilter === 'all' ? undefined : typeFilter,
+    })
       .then(serverReports => {
         if (!cancelled) {
           setReports(serverReports);
@@ -112,7 +143,7 @@ export default function ReportsScreen() {
     return () => {
       cancelled = true;
     };
-  }, [session]);
+  }, [session, typeFilter]);
 
   async function handleRefresh() {
     setRefreshing(true);
@@ -120,6 +151,7 @@ export default function ReportsScreen() {
     setRefreshing(false);
   }
 
+  const moduleNotice = session ? moduleDisabledMessage(session) : null;
   const visible =
     reports == null ? null : reports.filter(report => filter === 'all' || report.review_status === filter);
 
@@ -142,6 +174,20 @@ export default function ReportsScreen() {
         <Text style={styles.title}>گزارش‌های من</Text>
 
         <View style={styles.filterRow}>
+          {TYPE_FILTERS.map(item => (
+            <PressableChip
+              active={typeFilter === item.key}
+              key={item.key}
+              label={item.label}
+              onPress={() => {
+                setReports(null);
+                setTypeFilter(item.key);
+              }}
+            />
+          ))}
+        </View>
+
+        <View style={styles.filterRow}>
           {FILTERS.map(item => (
             <PressableChip
               active={filter === item.key}
@@ -152,7 +198,14 @@ export default function ReportsScreen() {
           ))}
         </View>
 
-        {!session ? null : reports === null && error != null ? (
+        {!session ? null : reports === null && moduleNotice != null ? (
+          <Banner
+            icon="information-circle-outline"
+            message={moduleNotice}
+            tone="warning"
+            title="گزارش‌ها برای این نصب/سازمان فعال نیست"
+          />
+        ) : reports === null && error != null ? (
           <Banner
             actionLabel={isOfflineError ? undefined : 'تلاش دوباره'}
             icon={isOfflineError ? AppIcons.status.offline.name : AppIcons.status.error.name}
@@ -181,6 +234,9 @@ export default function ReportsScreen() {
               report.client_report_uuid != null && localUuids.has(report.client_report_uuid);
             const dateLabel = report.date_of_accident ?? report.reported_at;
             const review = report.review_status ? REVIEW_TONES[report.review_status] : null;
+            const reportType = normalizeIncidentType(report.incident_type);
+            const correctionPath =
+              reportType === 'accident' ? '/incident/details' : '/incident/simple';
             return (
               <Card key={report._id} style={[styles.cardGap, isReturned && styles.cardReturned]}>
                 <View style={styles.cardHeader}>
@@ -192,6 +248,7 @@ export default function ReportsScreen() {
                 </View>
 
                 <View style={styles.chipRow}>
+                  <StatusPill dot label={INCIDENT_TYPE_SHORT_LABEL[reportType]} tone="neutral" />
                   {report.sync_status ? (
                     <StatusPill dot label={SYNC_LABELS[report.sync_status]} tone={report.sync_status === 'synced' ? 'success' : report.sync_status === 'rejected' ? 'danger' : 'neutral'} />
                   ) : null}
@@ -213,12 +270,19 @@ export default function ReportsScreen() {
                       const uuid = report.client_report_uuid as string;
                       void markDraftReturned(uuid, report.rejection_reason ?? undefined)
                         .catch(() => undefined)
-                        .then(() =>
+                        .then(async () => {
+                          // A report captured through an org process resumes in
+                          // the process wizard (answers + version restored).
+                          const local = await getDraft(uuid).catch(() => null);
+                          const isProcessDraft =
+                            typeof local?.data?.['process_version'] === 'number';
                           router.push({
-                            pathname: '/incident/details',
+                            pathname: isProcessDraft
+                              ? '/incident/process'
+                              : correctionPath,
                             params: { uuid },
-                          }),
-                        );
+                          });
+                        });
                     }}
                     size="md"
                     variant="soft"
