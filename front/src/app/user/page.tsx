@@ -2,8 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 const UserPage = () => {
+  const { hasModule } = useAuth();
+  const chartsEnabled = hasModule("charts");
   const [activeTab, setActiveTab] = useState("profile");
 
   const user = {
@@ -200,43 +203,47 @@ const UserPage = () => {
                         دسترسی سریع
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Link
-                          href="/charts"
-                          className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-xl">
-                              📊
+                        {chartsEnabled && (
+                          <Link
+                            href="/charts"
+                            className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-xl">
+                                📊
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-gray-900">
+                                  نمودارها
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  مشاهده نمودارهای تحلیلی
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">
-                                نمودارها
-                              </h4>
-                              <p className="text-sm text-gray-600">
-                                مشاهده نمودارهای تحلیلی
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
+                          </Link>
+                        )}
 
-                        <Link
-                          href="/maps"
-                          className="block p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-xl">
-                              🗺️
+                        {chartsEnabled && (
+                          <Link
+                            href="/maps"
+                            className="block p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-xl">
+                                🗺️
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-gray-900">
+                                  نقشه‌ها
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  مشاهده نقشه‌های تعاملی
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">
-                                نقشه‌ها
-                              </h4>
-                              <p className="text-sm text-gray-600">
-                                مشاهده نقشه‌های تعاملی
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
+                          </Link>
+                        )}
 
                         <Link
                           href="/admin"

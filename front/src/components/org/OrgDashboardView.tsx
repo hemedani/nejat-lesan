@@ -7,6 +7,7 @@ import { getOrgChart } from "@/app/actions/unit/getOrgChart";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { OrgChartResponse, OrganizationListItem, OrgChartStats, UnitType } from "@/services/org-projections";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
+import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import { ProcessPreview } from "@/components/org/ProcessPreview";
 import { OrgAnalyticsPanel } from "@/components/org/OrgAnalyticsPanel";
@@ -16,6 +17,7 @@ export function OrgDashboardView({ orgId }: { orgId: string }) {
   const [stats, setStats] = useState<OrgChartStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { has: orgHasModule } = useOrgModules(orgId);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -123,18 +125,24 @@ export function OrgDashboardView({ orgId }: { orgId: string }) {
             <p className="text-sm font-semibold text-white">افراد و نقش‌ها</p>
             <p className="mt-1 text-xs text-slate-500">افزودن افراد و انتصاب نقش سازمانی</p>
           </Link>
-          <Link href={`/org/${orgId}/processes`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
-            <p className="text-sm font-semibold text-white">فرایندهای ثبت رخداد</p>
-            <p className="mt-1 text-xs text-slate-500">ساخت و فعال‌سازی پرسشنامه موبایل</p>
-          </Link>
-          <Link href={`/org/${orgId}/inventory`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
-            <p className="text-sm font-semibold text-white">انبار و موجودی</p>
-            <p className="mt-1 text-xs text-slate-500">موجودی، درخواست‌ها و گردش کالا</p>
-          </Link>
-          <Link href={`/org/${orgId}/reports`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
-            <p className="text-sm font-semibold text-white">گزارش‌های رخداد</p>
-            <p className="mt-1 text-xs text-slate-500">فیلتر بر اساس نوع رخداد و شدت</p>
-          </Link>
+          {orgHasModule("incident_patrol") && (
+            <Link href={`/org/${orgId}/processes`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+              <p className="text-sm font-semibold text-white">فرایندهای ثبت رخداد</p>
+              <p className="mt-1 text-xs text-slate-500">ساخت و فعال‌سازی پرسشنامه موبایل</p>
+            </Link>
+          )}
+          {orgHasModule("warehouse") && (
+            <Link href={`/org/${orgId}/inventory`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+              <p className="text-sm font-semibold text-white">انبار و موجودی</p>
+              <p className="mt-1 text-xs text-slate-500">موجودی، درخواست‌ها و گردش کالا</p>
+            </Link>
+          )}
+          {orgHasModule("incident_patrol") && (
+            <Link href={`/org/${orgId}/reports`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+              <p className="text-sm font-semibold text-white">گزارش‌های رخداد</p>
+              <p className="mt-1 text-xs text-slate-500">فیلتر بر اساس نوع رخداد و شدت</p>
+            </Link>
+          )}
         </div>
       )}
     </div>

@@ -3,9 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useOrgModules } from "@/hooks/useOrgModules";
 import { Button } from "@/components/atoms/Button";
 import { ModuleGate } from "@/components/system/ModuleGate";
+import { PageSkeleton } from "@/components/patrol/ui";
 import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+
+const ORG_MODULE_OFF_MESSAGE =
+  "ماژول ثبت و مدیریت رخداد (گشت) برای این سازمان فعال نیست. برای فعال‌سازی با مدیر نصب تماس بگیرید.";
 
 interface WorkspaceLink {
   href: string;
@@ -15,6 +20,7 @@ interface WorkspaceLink {
 export function OrgWorkspace({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { userLevel, isOrgLeader, userData, logout } = useAuth();
+  const isGhost = userLevel === "Ghost";
 
   const manager = userLevel === "Ghost" || userLevel === "Manager";
   const allowed = manager || isOrgLeader;
@@ -22,10 +28,25 @@ export function OrgWorkspace({ children }: { children: React.ReactNode }) {
   const parts = pathname.split("/").filter(Boolean);
   const orgId = parts[0] === "org" && parts.length >= 2 ? parts[1] : undefined;
 
+  const { loading: modulesLoading, has: orgHasModule } = useOrgModules(orgId);
+
   const name = [userData?.first_name, userData?.last_name].filter(Boolean).join(" ") || "کاربر";
 
   if (!allowed) {
     return <RoleNotice message="داشبورد سازمان فقط برای سرپرست سازمان یا مدیران سیستم در دسترس است." />;
+  }
+
+  // Per-org module gate — when the org's incident_patrol flag is off, the whole
+  // org workspace shell is disabled for non-Ghost users (deep links land here too).
+  if (orgId && !isGhost) {
+    if (modulesLoading) return <PageSkeleton blocks={[120, 220]} />;
+    if (!orgHasModule("incident_patrol")) {
+      return (
+        <ModuleGate module="incident_patrol" enabled={false} message={ORG_MODULE_OFF_MESSAGE}>
+          {null}
+        </ModuleGate>
+      );
+    }
   }
 
   const links: WorkspaceLink[] = [
@@ -36,9 +57,13 @@ export function OrgWorkspace({ children }: { children: React.ReactNode }) {
           { href: `/org/${orgId}/org-chart`, label: "نمودار سازمانی" },
           { href: `/org/${orgId}/units`, label: "واحدها" },
           { href: `/org/${orgId}/people`, label: "افراد و نقش‌ها" },
-          { href: `/org/${orgId}/processes`, label: "فرایندهای ثبت رخداد" },
-          { href: `/org/${orgId}/inventory`, label: "انبار و موجودی" },
-          { href: `/org/${orgId}/reports`, label: "گزارش‌های رخداد" },
+          ...(orgHasModule("incident_patrol")
+            ? [
+                { href: `/org/${orgId}/processes`, label: "فرایندهای ثبت رخداد" },
+                { href: `/org/${orgId}/reports`, label: "گزارش‌های رخداد" },
+              ]
+            : []),
+          ...(orgHasModule("warehouse") ? [{ href: `/org/${orgId}/inventory`, label: "انبار و موجودی" }] : []),
         ]
       : []),
   ];
@@ -51,9 +76,8 @@ export function OrgWorkspace({ children }: { children: React.ReactNode }) {
         ? "سرپرست واحد"
         : "سازمانی";
 
-  return (
-    <ModuleGate module="incident_patrol">
-      <div className="admin-shell min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-100" dir="rtl">
+  const shell = (
+    <div className="admin-shell min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-100" dir="rtl">
         <div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] [background-size:3rem_3rem]" />
         <div className="relative mx-auto flex w-full max-w-[1600px] gap-5 px-4 py-5 sm:px-6 lg:px-8">
           <aside className="hidden w-60 shrink-0 rounded-2xl border border-white/10 bg-slate-900/75 p-3 shadow-2xl backdrop-blur-xl lg:block">
@@ -112,6 +136,7 @@ export function OrgWorkspace({ children }: { children: React.ReactNode }) {
           </main>
         </div>
       </div>
-    </ModuleGate>
   );
+
+  return orgId ? shell : <ModuleGate module="incident_patrol">{shell}</ModuleGate>;
 }

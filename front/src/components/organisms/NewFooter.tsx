@@ -1,9 +1,30 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { isAuthenticated, userLevel, hasModule, orgHasModule, isOrgLeader } = useAuth();
+
+  const adminRole = userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor";
+  const chartsEnabled = isAuthenticated && hasModule("charts");
+  const patrolEnabled = isAuthenticated && orgHasModule("incident_patrol");
+
+  const features: Array<{ href: string; label: string }> = [];
+  if (chartsEnabled) {
+    features.push({ href: "/charts/overall", label: "تحلیل و نمودارهای تصادفات" });
+    features.push({ href: "/maps/accidents", label: "نقشه تصادفات" });
+  }
+  if (patrolEnabled && isOrgLeader) {
+    features.push({ href: "/org", label: "داشبورد سازمان" });
+  }
+  if (patrolEnabled && (userLevel === "Ghost" || userLevel === "Manager")) {
+    features.push({ href: "/patrol-manager/dashboard", label: "مرکز بررسی گشت" });
+  }
+  if (adminRole) {
+    features.push({ href: "/admin", label: "پنل مدیریت سامانه" });
+  }
 
   return (
     <footer className="bg-slate-950 text-white pt-12 pb-8 border-t border-white/10 relative z-10">
@@ -36,56 +57,20 @@ export const Footer = () => {
 
           <div>
             <h3 className="text-xl font-bold mb-4 border-b border-white/10 pb-2">امکانات</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <Link
-                  href="/search"
-                  className="text-slate-300 hover:text-white transition flex items-center"
-                >
-                  <svg className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                  <span>جستجوی پیشرفته تصادفات</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/reports"
-                  className="text-slate-300 hover:text-white transition flex items-center"
-                >
-                  <svg className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 10h18M3 6h18M3 14h18M3 18h18"
-                    />
-                  </svg>
-                  <span>گزارش‌های تحلیلی</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dashboard"
-                  className="text-slate-300 hover:text-white transition flex items-center"
-                >
-                  <svg className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0v2a2 2 0 002 2h2a2 2 0 002-2v-2m-6 0h6"
-                    />
-                  </svg>
-                  <span>داشبورد ایمنی جاده‌ها</span>
-                </Link>
-              </li>
-            </ul>
+            {features.length > 0 ? (
+              <ul className="space-y-3 text-sm">
+                {features.map((feature) => (
+                  <li key={feature.href}>
+                    <Link href={feature.href} className="text-slate-300 hover:text-white transition flex items-center">
+                      <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-blue-400/70" />
+                      <span>{feature.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-slate-500">پس از ورود به سامانه، امکانات در دسترس شما نمایش داده می‌شود.</p>
+            )}
           </div>
 
           <div>
@@ -107,11 +92,6 @@ export const Footer = () => {
                   className="text-slate-300 hover:text-white transition"
                 >
                   ایمنی جاده‌ای سازمان جهانی بهداشت
-                </a>
-              </li>
-              <li>
-                <a href="/faq" className="text-slate-300 hover:text-white transition">
-                  سؤالات متداول
                 </a>
               </li>
             </ul>

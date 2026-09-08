@@ -1,12 +1,9 @@
-import { OrgScopeGuard } from "@/components/org/OrgScopeGuard";
-
 export default async function OrgIdLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ orgId: string }>;
 }) {
-  const { orgId } = await params;
-  return <OrgScopeGuard orgId={orgId}>{children}</OrgScopeGuard>;
+  // Per-org module gating happens in the shell (OrgWorkspace); this layout is a
+  // pass-through so every /org/[orgId] page is covered by the same gate.
+  return <>{children}</>;
 }

@@ -6,6 +6,7 @@ import { getAccidentProcess } from "@/app/actions/accident_process/getAccidentPr
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { AccidentProcessListItem } from "@/services/org-projections";
 import { INCIDENT_TYPE_LABELS } from "@/utils/org";
+import { useOrgModules } from "@/hooks/useOrgModules";
 import { PanelCard, PageSkeleton } from "@/components/patrol/ui";
 import { Button } from "@/components/atoms/Button";
 import { ModalShell } from "@/components/org/OrgSelect";
@@ -39,6 +40,7 @@ interface ProcessDetail {
 }
 
 export function ProcessPreview({ orgId }: { orgId: string }) {
+  const { has: orgHasModule } = useOrgModules(orgId);
   const [processes, setProcesses] = useState<AccidentProcessListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +64,10 @@ export function ProcessPreview({ orgId }: { orgId: string }) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // accident_process is licensed under incident_patrol — never surface the
+  // process preview when the module is off for this org.
+  if (!orgHasModule("incident_patrol")) return null;
 
   const openProcess = async (id: string) => {
     setViewing(undefined);

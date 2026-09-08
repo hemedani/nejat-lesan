@@ -5,6 +5,7 @@ import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { gets as getAccidents } from "@/app/actions/accident/gets";
+import { ModuleGate } from "@/components/system/ModuleGate";
 // Lazy load AdvancedSearch to prevent API calls until modal is opened
 const AdvancedSearch = dynamic(() => import("@/components/molecules/AdvancedSearch"), { ssr: false });
 import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
@@ -648,8 +649,10 @@ function MapContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<div className="w-full min-h-screen flex items-center justify-center">در حال بارگذاری...</div>}>
-      <MapContent />
-    </Suspense>
+    <ModuleGate module="charts">
+      <Suspense fallback={<div className="w-full min-h-screen flex items-center justify-center">در حال بارگذاری...</div>}>
+        <MapContent />
+      </Suspense>
+    </ModuleGate>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { getOrganizationModules } from "@/app/actions/organization/getModules";
 import { getInventoryRows } from "@/app/actions/inventory/gets";
 import { getConsumptionRows } from "@/app/actions/consumption/gets";
 import { getStockMovementRows } from "@/app/actions/stock_movement/gets";
@@ -11,7 +10,7 @@ import { getGoodsRequestRows } from "@/app/actions/goods_request/gets";
 import { approveGoodsRequest } from "@/app/actions/goods_request/approve";
 import { issueGoodsRequest } from "@/app/actions/goods_request/issue";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
-import { useAuth } from "@/context/AuthContext";
+import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import { Button } from "@/components/atoms/Button";
 
@@ -59,41 +58,12 @@ interface RequestRow {
 }
 
 export function InventoryClient({ orgId }: { orgId: string }) {
-  const { userLevel } = useAuth();
-  const [moduleReady, setModuleReady] = useState(false);
-  const [enabled, setEnabled] = useState(true);
+  const { loading: modulesLoading, has: orgHasModule } = useOrgModules(orgId);
   const [tab, setTab] = useState<TabKey>("stock");
 
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        if (userLevel === "Ghost") {
-          if (alive) {
-            setEnabled(true);
-            setModuleReady(true);
-          }
-          return;
-        }
-        const response = await getOrganizationModules({ set: { organizationId: orgId } });
-        if (!alive) return;
-        if (response.success && Array.isArray(response.body?.effective)) {
-          setEnabled(response.body.effective.includes("warehouse"));
-        }
-      } catch {
-        setEnabled(true);
-      } finally {
-        if (alive) setModuleReady(true);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [orgId, userLevel]);
+  if (modulesLoading) return <PageSkeleton blocks={[120, 240]} />;
 
-  if (!moduleReady) return <PageSkeleton blocks={[120, 240]} />;
-
-  if (!enabled) {
+  if (!orgHasModule("warehouse")) {
     return (
       <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-8 text-center text-sm text-amber-100">
         ماژول انبار برای این سازمان فعال نیست.
