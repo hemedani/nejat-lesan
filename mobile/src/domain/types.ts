@@ -20,12 +20,18 @@ export type User = {
   first_name: string;
   last_name: string;
   permissions?: PatrolPermissions;
+  /** Backend user level; used for the Ghost module exemption. */
+  level?: string;
 };
 
 export type Session = {
   token: string;
   user: User;
   device_id: string;
+  /** Installation-level enabled module keys (backend v2); absent on older backends. */
+  modules?: string[];
+  /** Effective org module keys when the caller resolves to exactly one org; else null. */
+  orgModules?: string[] | null;
 };
 
 export type PatrolUnit = {
@@ -80,6 +86,12 @@ export type ReferenceOption = {
   label: string;
 };
 
+/**
+ * Backend-v2 polymorphic report kind. `accident` is the backward-compatible
+ * default (absent `incident_type` on a server doc means accident).
+ */
+export type IncidentType = 'accident' | 'road_breakdown' | 'road_obstacle' | 'other';
+
 export type SyncStatus = 'draft' | 'queued' | 'syncing' | 'synced' | 'rejected';
 
 export type QueueRecord = {
@@ -96,6 +108,11 @@ export type AccidentDraft = {
   client_report_uuid: string;
   schema_version: number;
   sync_status: SyncStatus;
+  /**
+   * Backend-v2 report kind; absent on pre-migration rows and normalized to
+   * `accident` on read (mirrors the backend default).
+   */
+  incident_type?: IncidentType;
   gps_coords?: Coordinates;
   incident_coords?: Coordinates;
   road_snap?: RoadSnap;

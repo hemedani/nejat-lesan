@@ -1,7 +1,10 @@
-import type { AccidentDraft } from './types';
+import type { AccidentDraft, IncidentType } from './types';
 import { saveDraft, saveQueueRecord } from '@/storage/local-database';
 
 export const DRAFT_SCHEMA_VERSION = 1;
+
+/** New drafts carry an explicit type; legacy rows default to `accident` on read. */
+export const DEFAULT_INCIDENT_TYPE: IncidentType = 'accident';
 
 function createUuid(): string {
   const randomUuid = globalThis.crypto?.randomUUID?.();
@@ -17,6 +20,7 @@ export async function createAccidentDraft(): Promise<AccidentDraft> {
     client_report_uuid: createUuid(),
     schema_version: DRAFT_SCHEMA_VERSION,
     sync_status: 'draft',
+    incident_type: DEFAULT_INCIDENT_TYPE,
     updated_at: now,
     data: {},
   };
