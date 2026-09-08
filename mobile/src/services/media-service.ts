@@ -10,7 +10,7 @@ import {
   updateMediaUri,
 } from '@/storage/local-database';
 
-export type MediaCategory = 'plate' | 'insurance' | 'croquis' | 'damage';
+export type MediaCategory = 'plate' | 'insurance' | 'croquis' | 'damage' | 'incident';
 
 export type MediaOwner = string;
 

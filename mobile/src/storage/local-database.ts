@@ -10,7 +10,7 @@ export type DraftRecord = AccidentDraft;
 export type MediaRecord = {
   id: string;
   client_report_uuid: string;
-  category: 'plate' | 'insurance' | 'croquis' | 'damage';
+  category: 'plate' | 'insurance' | 'croquis' | 'damage' | 'incident';
   local_uri: string;
   mime_type?: string;
   size_bytes?: number;

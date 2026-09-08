@@ -1,4 +1,5 @@
 import { ApiError, translateApiError } from '@/api/errors';
+import { fetchPatrolProcess } from '@/api/accident-process';
 import {
   resubmitReturnedReport,
   submitAccidentReport,
@@ -6,6 +7,7 @@ import {
 } from '@/api/accident';
 import { getAppConfig } from '@/config/env';
 import { buildAccidentAddSet } from '@/domain/accident-mapper';
+import { incidentTypeOf } from '@/domain/incident-type';
 import {
   hasIncompleteRequiredVehicleCards,
   readFormState,
@@ -132,6 +134,39 @@ async function handleResubmitAfterSync(
   }
 }
 
+/**
+ * Org-process drafts snapshot `process_version` at capture time. When the org
+ * re-activates a newer wizard version, the captured answers may not match the
+ * new questions — pause the queued submission and ask the officer to reopen
+ * the draft (the wizard refetches the active process). Offline and module/org
+ * errors keep the current behavior (best-effort submit).
+ */
+async function checkProcessVersionFreshness(
+  session: Session,
+  draft: AccidentDraft,
+): Promise<'ok' | 'stale'> {
+  const raw = draft.data?.['process_version'];
+  const captured = typeof raw === 'number' ? raw : typeof raw === 'string' ? Number(raw) : NaN;
+  if (!Number.isFinite(captured)) {
+    return 'ok';
+  }
+  try {
+    const connectivity = await getConnectivitySnapshot();
+    if (connectivity.status === 'offline') {
+      return 'ok';
+    }
+    const type = incidentTypeOf(draft);
+    const result = await fetchPatrolProcess(session, type);
+    const active = result.process?.version;
+    if (result.process && active != null && Number(active) !== captured) {
+      return 'stale';
+    }
+  } catch {
+    // Module off, org membership missing, transport — do not block the report.
+  }
+  return 'ok';
+}
+
 async function processRecord(
   session: Session,
   record: QueueRecord,
@@ -153,6 +188,18 @@ async function processRecord(
       attempts: record.attempts,
       nextRetryAt: new Date(Date.now() + 15 * 60_000).toISOString(),
       lastError: 'کارت وسیله نقلیه کامل نیست؛ ارسال تا تکمیل آن متوقف می‌ماند.',
+    });
+    return 'retry';
+  }
+
+  const processFreshness = await checkProcessVersionFreshness(session, draft);
+  if (processFreshness === 'stale') {
+    await persistQueueAndDraft(draft, record, {
+      status: 'queued',
+      attempts: record.attempts,
+      nextRetryAt: new Date(Date.now() + 30 * 60_000).toISOString(),
+      lastError:
+        'فرآیند ثبت سازمان به‌روزرسانی شده است؛ گزارش را باز کنید تا با فرآیند جدید تکمیل و دوباره ارسال شود.',
     });
     return 'retry';
   }

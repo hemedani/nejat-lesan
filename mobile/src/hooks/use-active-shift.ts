@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api/errors';
 import { getActiveShift } from '@/api/shift';
 import { createSessionService, type SessionService } from '@/auth/session-service';
+import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
 import type { ActiveShift, Session } from '@/domain/types';
 import {
   getConnectivitySnapshot,
@@ -70,6 +71,14 @@ export function useActiveShift(
       }
       inFlightRef.current = true;
       try {
+        if (!isIncidentPatrolEnabled(restoredSession)) {
+          // Module-owned surface: show the Persian module notice instead of
+          // firing a dead `shift.*` call (Ghost is exempt; backend enforces).
+          setShift(null);
+          setShiftState('unavailable');
+          setErrorMessage(moduleDisabledMessage(restoredSession));
+          return false;
+        }
         const snapshot = await getConnectivitySnapshot();
         if (snapshot.status === 'offline') {
           return false;
