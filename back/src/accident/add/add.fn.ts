@@ -42,18 +42,9 @@ export const addFn: ActFn = async (body) => {
 	const incidentType = set.incident_type || "accident";
 
 	if (incidentType !== "accident") {
-		// Non-accident reports must carry a subject: free-text description,
-		// a road defect (خرابی/مانع) or an equipment damage (نقص تجهیزات).
-		const hasSubject =
-			set.incident_payload?.description ||
-			(set.roadDefectsIds && set.roadDefectsIds.length > 0) ||
-			(set.equipmentDamagesIds && set.equipmentDamagesIds.length > 0);
-		if (!hasSubject) {
-			throwError(
-				"برای رخداد غیرتصادف، شرح رخداد، نقص راه یا آسیب تجهیزات الزامی است",
-			);
-		}
-		// Accident-only fields are forbidden on non-accident reports.
+		// No field is hard-required: each organization designs its own
+		// registration process (accident_process) and decides which fields its
+		// officers must record. The server only guards type purity below.
 		const forbidden: string[] = [];
 		if (set.vehicle_dtos) forbidden.push("مشخصات خودروها");
 		if (set.pedestrian_dtos) forbidden.push("عابران پیاده");

@@ -6,36 +6,19 @@
  * Defines the validation schema for creating a new accident. It separates the
  * pure accident data from the ObjectIDs of its relations.
  */
-import {
-	array,
-	coerce,
-	date,
-	object,
-	objectIdValidation,
-	optional,
-	string,
-} from "@deps";
+import { array, object, objectIdValidation, optional } from "@deps";
 import { selectStruct } from "../../../mod.ts";
-import { geoJSONStruct } from "@model";
 import { accidentSetSchema } from "../accidentSetSchema.ts";
 
 export const addValidator = () => {
-	// Reuse the shared all-optional pure schema, but keep `location` and
-	// `date_of_accident` required for creation.
-	const optionalPureAccident = {
-		...accidentSetSchema.schema,
-		location: geoJSONStruct("Point"),
-		date_of_accident: coerce(
-			date(),
-			string(),
-			(value: string) => new Date(value),
-		),
-	};
-
+	// Reuse the shared all-optional pure schema verbatim. Every field is
+	// optional: each organization designs its own registration process
+	// (accident_process) and may select any subset of fields — the process,
+	// not the server, decides which fields are required for a given type.
 	return object({
 		set: object({
 			// Include all pure fields from the accident schema
-			...optionalPureAccident,
+			...accidentSetSchema.schema,
 
 			// --- IDs for Relational Fields ---
 			// Single Relations

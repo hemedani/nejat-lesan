@@ -156,24 +156,9 @@ export const updateFn: ActFn = async (body) => {
 			fields.incident_type || existing.incident_type || "accident";
 
 		if (mergedType !== "accident") {
-			const mergedPayload = fields.incident_payload !== undefined
-				? fields.incident_payload
-				: existing.incident_payload;
-			const existingDefects = (existing.road_defects || []) as Array<{
-				_id?: unknown;
-			}>;
-			const existingDamages = (existing.equipment_damages || []) as Array<{
-				_id?: unknown;
-			}>;
-			const hasSubject =
-				mergedPayload?.description ||
-				existingDefects.length > 0 ||
-				existingDamages.length > 0;
-			if (!hasSubject) {
-				throwError(
-					"برای رخداد غیرتصادف، شرح رخداد، نقص راه یا آسیب تجهیزات الزامی است",
-				);
-			}
+			// No field is hard-required: each organization designs its own
+			// registration process (accident_process) and decides which fields
+			// its officers must record. Only type purity is guarded below.
 			const forbidden: string[] = [];
 			const mergedVehicleDtos = fields.vehicle_dtos !== undefined
 				? fields.vehicle_dtos
