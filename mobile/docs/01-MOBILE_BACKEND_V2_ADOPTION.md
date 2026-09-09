@@ -32,7 +32,7 @@ Do **not** modify backend code, models, or acts. Build/change only `mobile/`. Wo
 - `incident_payload` pure struct: `{ description?, is_hazard?, needs_repair?, temporary_action?, follow_up_required? }`.
 - `report_id` prefix per type: `REP-` (accident), `BRK-`, `OBS-`, `OTH-`.
 - Server per-type validation on `add`/`update`:
-  - Non-accident **requires** `location` + at least one of `incident_payload.description` / `roadDefectsIds` / `equipmentDamagesIds`.
+  - **Every field is optional for every type** (no hard-required `location`/`date_of_accident`/subject) — each organization's `accident_process` decides which fields its officers must fill; `required` is enforced client-side by the wizard.
   - Non-accident **rejects** accident-only fields: `vehicle_dtos`, `pedestrian_dtos`, `people_dtos`, `facility_damage_dtos`, `collisionTypeId`, `typeId` (Persian error). Accidents unchanged.
 - `incident_type` change is rejected once `sync_status ∈ {synced, rejected}` or `review_status ∉ {submitted}` (update-by-uuid correction loop unaffected for still-editable reports).
 - **New shared relation model `incident_severity`** (seeded کم/متوسط/زیاد/بحرانی), set on `add`/`update` via **`incidentSeverityId`**; exposed on `nearbyAccidents` as `incident_severity_name`. This is distinct from the accident-severity relation (`type` → خسارتی/جرحی/فوتی) the current seven-phase wizard already drives via `typeId` — non-accident flows must NOT set `typeId`.

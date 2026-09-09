@@ -77,9 +77,7 @@ The three new types are **patrol field reports**, not new domains. They share th
 - [x] `add.val.ts` (via `accidentSetSchema`): add `incident_type` enum + `incident_payload` object + `incidentSeverityId` relation id.
 - [x] `add.fn.ts`:
   - Default `incident_type = "accident"` when absent.
-  - **Per-type validation** (pure, before insert):
-    - `accident`: current behavior, no change.
-    - `road_breakdown` / `road_obstacle` / `other`: require `location` + at least one of `incident_payload.description` / `roadDefectsIds` / `equipmentDamagesIds`; **reject** accident-only fields (`vehicle_dtos`, `passenger_dtos`, `pedestrian_dtos`, `people_dtos`, `facility_damage_dtos`, `collisionTypeId`, `typeId`) with a clear Persian error.
+  - **Type-purity validation** (before insert): every field is optional for every type — each organization's registration process (`accident_process`) decides which fields are required, so the server never hard-requires `location`/`date_of_accident`/subject. For non-accident types only: **reject** accident-only fields (`vehicle_dtos`, `passenger_dtos`, `pedestrian_dtos`, `people_dtos`, `facility_damage_dtos`, `collisionTypeId`, `typeId`) with a clear Persian error.
   - **Report id by type** (requirement 02 §5: "Unique Report ID based on incident type"):
     - keep `REP-${year}-${serial}` for `accident` (backward compat, web regex search unaffected);
     - `BRK-`, `OBS-`, `OTH-` prefixes for the other three. Single shared `serial` counter stays unique across all types.
@@ -88,7 +86,7 @@ The three new types are **patrol field reports**, not new domains. They share th
 
 ### 3.2 `accident.update` (`src/accident/update/`)
 - [x] `update.val.ts` + `accidentSetSchema`: same new fields.
-- [x] `update.fn.ts`: apply the same per-type validation to the merged `$set`. Reject changing `incident_type` on a report that is `synced`/`rejected` or already in review (`review_status !== "submitted"`), so a submitted accident can't be silently re-labeled as an obstacle.
+- [x] `update.fn.ts`: apply the same type-purity check to the merged `$set` (nothing is required). Reject changing `incident_type` on a report that is `synced`/`rejected` or already in review (`review_status !== "submitted"`), so a submitted accident can't be silently re-labeled as an obstacle.
 
 ### 3.3 `accident.getMyReports` (`src/accident/getMyReports/`)
 - [x] `getMyReports.val.ts`: add optional `incidentType` set filter (`enums([...])`).
@@ -123,10 +121,12 @@ The three new types are **patrol field reports**, not new domains. They share th
 
 | Type | Required (server-enforced) | Forbidden (server-rejected) | report_id prefix |
 | --- | --- | --- | --- |
-| `accident` | `location`, `date_of_accident` (current) | — | `REP-` |
-| `road_breakdown` | `location` + description / road_defects / equipment_damages | vehicle/people/facility/collision/severity-type fields | `BRK-` |
-| `road_obstacle` | `location` + description / road_defects | accident DTOs | `OBS-` |
-| `other` | `location` + description | accident DTOs | `OTH-` |
+| `accident` | — (none — org process decides) | — | `REP-` |
+| `road_breakdown` | — (none — org process decides) | vehicle/people/facility/collision/severity-type fields | `BRK-` |
+| `road_obstacle` | — (none — org process decides) | accident DTOs | `OBS-` |
+| `other` | — (none — org process decides) | accident DTOs | `OTH-` |
+
+> **All fields are optional on record.** Recording is driven by each organization's `accident_process`; the process questions carry their own `required` flag and are enforced client-side by the wizard. The server only guards type purity (no accident-only DTOs on non-accident reports) plus the existing sync-status/ownership rules below.
 
 Patrol can only set `draft|queued` and only their own reports (unchanged). Manager/Ghost may set any sync status and review all types (unchanged).
 
@@ -136,7 +136,7 @@ Follow the existing harness (isolated DB `nejat_patrol_ops_test`, `runAct` helpe
 
 - [x] Add one of each non-accident type via `accident.add` (Patrol token) → 200, correct `incident_type`, correct `report_id` prefix, `officerId` forced.
 - [x] Idempotency: re-add same `client_report_uuid` → returns existing doc, no duplicate (all types).
-- [x] Negative: non-accident report with `vehicle_dtos` rejected; `accident` with no `date_of_accident` rejected as today.
+- [x] Negative: non-accident report with `vehicle_dtos` rejected; minimal reports (no location/date/subject) accepted for every type — no field is hard-required.
 - [x] Patrol trying to set `sync_status: "synced"` rejected (all types).
 - [x] `getMyReports` `incidentType` filter returns only that type; Patrol scoping intact.
 - [x] Update-by-uuid on a non-accident report; `incident_type` change rejected once `review_status !== submitted`.

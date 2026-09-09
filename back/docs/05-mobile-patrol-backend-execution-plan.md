@@ -192,7 +192,7 @@ Short, logical, reviewable steps. **STOP after each step for review.** Each step
 **Status:** ✅ Complete (awaiting review)
 
 **Files changed:**
-- `src/accident/accidentSetSchema.ts` (new): shared all-optional `set` schema for all accident pure fields (meta + Phase 3–7 blocks). Used by both `add` and `update` validators so they stay in sync; `add` overrides `location`/`date_of_accident` to required via `...accidentSetSchema.schema`.
+- `src/accident/accidentSetSchema.ts` (new): shared all-optional `set` schema for all accident pure fields (meta + Phase 3–7 blocks). Used by both `add` and `update` validators so they stay in sync; **all fields are optional** — the org registration process decides requiredness.
 - `src/accident/add/add.val.ts`: refactored to reuse the shared schema (+ relation IDs).
 - `src/accident/add/add.fn.ts`:
   - **Idempotency:** if `client_report_uuid` is provided, `findOne` first and return the existing record instead of inserting a duplicate (also avoids the dangling reverse-relation bug on failed dup-key inserts from Step 6).

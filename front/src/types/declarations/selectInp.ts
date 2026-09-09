@@ -92817,11 +92817,11 @@ qty?: (0 | 1 );
 set: {
 seri?: number;
 serial?: number;
-location: {
+location?: {
 type: "Point";
 coordinates: any[];
 };
-date_of_accident: Date;
+date_of_accident?: Date;
 dead_count?: number;
 has_witness?: boolean;
 news_number?: number;
