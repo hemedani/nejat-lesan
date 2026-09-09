@@ -16,7 +16,7 @@ export const NON_ACCIDENT_TYPES: readonly IncidentType[] = [
 
 export const INCIDENT_TYPE_LABEL: Record<IncidentType, string> = {
   accident: 'تصادف',
-  road_breakdown: 'خرابی آزادراه',
+  road_breakdown: 'خرابی راه',
   road_obstacle: 'مانع یا خطر در مسیر',
   other: 'سایر رخدادها',
 };

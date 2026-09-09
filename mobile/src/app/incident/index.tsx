@@ -50,7 +50,7 @@ const TYPE_TILES: {
     type: 'road_breakdown',
     label: INCIDENT_TYPE_LABEL.road_breakdown,
     icon: AppIcons.facility.needsRepair,
-    activeCaption: `ثبت خرابی و نقص آزادراه · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.road_breakdown}-`,
+    activeCaption: `ثبت خرابی و نقص راه · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.road_breakdown}-`,
   },
   {
     type: 'road_obstacle',

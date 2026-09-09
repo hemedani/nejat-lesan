@@ -320,7 +320,7 @@ export default function IncidentLocationScreen() {
           <Banner
             actionLabel="انتقال"
             icon={AppIcons.map.locateMe.name}
-            message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با آزادراه فاصله دارد؛ انتقال به نزدیک‌ترین موقعیت مسیر؟`}
+            message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با مسیر فاصله دارد؛ انتقال به نزدیک‌ترین موقعیت روی مسیر؟`}
             tone="warning"
             title="پیشنهاد تطبیق با راه"
             onAction={moveToNearestPoint}

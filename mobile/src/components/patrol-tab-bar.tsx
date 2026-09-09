@@ -52,7 +52,7 @@ const TAB_DEFINITIONS: TabDefinition[] = [
   },
   { name: 'index', label: 'خانه', icon: 'home-outline', focusedIcon: 'home' },
   { name: 'map', label: 'نقشه', icon: 'map-outline', focusedIcon: 'map' },
-  { name: 'more', label: 'راهنما', icon: 'help-circle-outline', focusedIcon: 'help-circle' },
+  { name: 'more', label: 'بیشتر', icon: 'ellipsis-horizontal-outline', focusedIcon: 'ellipsis-horizontal' },
 ];
 
 export default function PatrolTabBar({ state, navigation }: PatrolTabBarProps) {

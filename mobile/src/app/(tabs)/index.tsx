@@ -165,9 +165,14 @@ export default function HomeScreen() {
               سلام {session.user.first_name} {session.user.last_name}
             </Text>
           </View>
-          <View style={styles.avatar}>
+          <Pressable
+            accessibilityLabel="پروفایل و بیشتر"
+            accessibilityRole="button"
+            onPress={() => router.navigate('/more')}
+            style={({ pressed }) => [styles.avatar, pressed && styles.pressedTile]}
+          >
             <Text style={styles.avatarInitials}>{initials}</Text>
-          </View>
+          </Pressable>
           <IconButton accessibilityLabel="خروج از حساب" icon="log-out" onPress={confirmLogout} tone="danger" />
         </View>
 
@@ -266,7 +271,7 @@ export default function HomeScreen() {
           size="lg"
           style={styles.heroCta}
         />
-        <Text style={styles.heroHint}>ثبت تصادف، خرابی یا رخداد آزادراه — حتی در حالت آفلاین</Text>
+        <Text style={styles.heroHint}>ثبت تصادف، خرابی یا سایر رخدادها — حتی در حالت آفلاین</Text>
 
         <OfflineMapCard
           onStartBase={() => void startNationalDownload('base')}
@@ -302,6 +307,14 @@ export default function HomeScreen() {
             onPress={() => router.navigate('/map')}
           />
         </View>
+
+        <Button
+          fullWidth
+          icon="apps-outline"
+          label="بیشتر: پروفایل، راهنما و تنظیمات"
+          onPress={() => router.navigate('/more')}
+          variant="soft"
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -552,13 +565,13 @@ const styles = StyleSheet.create({
   },
   heroCta: { marginTop: 4 },
   heroHint: {
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     color: AppTheme.colors.textSecondary,
     fontFamily: Estedad.regular,
     fontSize: 12,
     lineHeight: 18,
     marginTop: -8,
-    textAlign: 'right',
+    textAlign: 'center',
   },
   grid: {
     flexDirection: 'row-reverse',
