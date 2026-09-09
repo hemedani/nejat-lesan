@@ -52,5 +52,11 @@
     "lint": "expo lint",
     "test": "vitest run"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "unrs-resolver"
+    ]
+  },
   "private": true
 }
