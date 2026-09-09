@@ -276,38 +276,43 @@ Deno.test("non-accident report with accident-only fields is rejected", async () 
 	);
 });
 
-Deno.test("non-accident report without any subject is rejected", async () => {
-	await assertRejects(
-		() =>
-			runAct(
-				"accident",
-				"add",
-				baseAdd("road_breakdown", `neg-subject-${RUN}`),
-				patrolA,
-			),
-		Error,
-		"الزامی",
+Deno.test("non-accident report with no subject/description is accepted (all optional)", async () => {
+	// Every field is optional: each organization designs its own registration
+	// process and decides which fields are collected. A minimal non-accident
+	// report (no location/date/subject) must still be recorded.
+	const result = await runAct(
+		"accident",
+		"add",
+		{
+			set: {
+				client_report_uuid: `minimal-nonacc-${RUN}`,
+				sync_status: "queued",
+				incident_type: "road_breakdown",
+			},
+			get: REPORT_GET,
+		},
+		patrolA,
 	);
+	assertEquals(result.incident_type, "road_breakdown");
+	assert((result.report_id as string).startsWith("BRK-"));
 });
 
-Deno.test("accident without date_of_accident is rejected (validator)", async () => {
-	await assertRejects(
-		() =>
-			runAct(
-				"accident",
-				"add",
-				{
-					set: {
-						location: POINT,
-						client_report_uuid: `neg-date-${RUN}`,
-						sync_status: "queued",
-					},
-					get: REPORT_GET,
-				},
-				patrolA,
-			),
-		Error,
+Deno.test("accident may be recorded without location/date_of_accident (all optional)", async () => {
+	// Backward-compatible accident default, but no field is hard-required.
+	const result = await runAct(
+		"accident",
+		"add",
+		{
+			set: {
+				client_report_uuid: `minimal-acc-${RUN}`,
+				sync_status: "queued",
+			},
+			get: REPORT_GET,
+		},
+		patrolA,
 	);
+	assertEquals(result.incident_type, "accident");
+	assert((result.report_id as string).startsWith("REP-"));
 });
 
 Deno.test("Patrol setting sync_status to synced is rejected (all types)", async () => {
