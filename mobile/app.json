@@ -53,6 +53,14 @@
           "cameraPermission": "برای عکاسی از پلاک، بیمه‌نامه، کروکی و خسارات، دسترسی دوربین لازم است.",
           "photosPermission": "برای انتخاب تصاویر از گالری، دسترسی به تصاویر لازم است."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       ]
     ],
     "experiments": {
