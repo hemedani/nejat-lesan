@@ -1,5 +1,6 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { createSessionService } from '@/auth/session-service';
@@ -11,12 +12,20 @@ import { ListRow } from '@/components/ui/list-row';
 import { getAppConfig } from '@/config/env';
 import { AppTheme, Estedad, Radius } from '@/constants/theme';
 import { HELP_GROUPS, HELP_META } from '@/content/help-content';
+import { useServerUrl } from '@/hooks/use-server-url';
 
 const sessionService = createSessionService();
 
 export default function HelpScreen() {
   const router = useRouter();
   const session = useRequiredSession();
+  const { loading: serverUrlLoading, effectiveUrl, refresh: refreshServerUrl } = useServerUrl();
+
+  useFocusEffect(
+    useCallback(() => {
+      void refreshServerUrl();
+    }, [refreshServerUrl]),
+  );
 
   function confirmLogout() {
     Alert.alert('خروج از حساب', 'آیا برای خروج از حساب کاربری مطمئن هستید؟ پیش‌نویس‌های شما روی دستگاه باقی می‌مانند.', [
@@ -96,6 +105,16 @@ export default function HelpScreen() {
                 icon="information-circle-outline"
                 iconTone="neutral"
                 title={`نسخه برنامه ${appVersion || '۱.۰.۰'}`}
+              />
+            </View>
+            <View style={styles.versionRow}>
+              <ListRow
+                icon="server-outline"
+                iconTone="neutral"
+                onPress={() => router.push('/server-settings')}
+                showChevron
+                subtitle={serverUrlLoading ? 'در حال خواندن…' : effectiveUrl || 'تعریف نشده'}
+                title="آدرس سرور"
               />
             </View>
           </Card>

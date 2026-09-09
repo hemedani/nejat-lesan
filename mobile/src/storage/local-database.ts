@@ -419,3 +419,8 @@ export async function saveSetting(key: string, value: string): Promise<void> {
     new Date().toISOString(),
   );
 }
+
+export async function deleteSetting(key: string): Promise<void> {
+  const database = await getLocalDatabase();
+  await database.runAsync('DELETE FROM app_settings WHERE key = ?', key);
+}

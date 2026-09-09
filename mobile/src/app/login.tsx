@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
 import {
   Image,
   KeyboardAvoidingView,
@@ -24,6 +24,7 @@ import { useToast } from '@/components/ui/toast';
 import { AppIcons } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius } from '@/constants/theme';
 import { getConnectivitySnapshot, subscribeToConnectivity } from '@/services/connectivity';
+import { useServerUrl } from '@/hooks/use-server-url';
 
 const sessionService = createSessionService();
 
@@ -38,6 +39,13 @@ export default function LoginScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [online, setOnline] = useState(true);
+  const { loading: serverUrlLoading, effectiveUrl, refresh: refreshServerUrl } = useServerUrl();
+
+  useFocusEffect(
+    useCallback(() => {
+      void refreshServerUrl();
+    }, [refreshServerUrl]),
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -100,7 +108,7 @@ export default function LoginScreen() {
               source={require('@/assets/images/icon.png')}
               style={styles.logo}
             />
-            <Text style={styles.eyebrow}>سامانه مدیریت و ثبت وقایع آزادراه</Text>
+            <Text style={styles.eyebrow}>سامانه مدیریت و ثبت رخدادهای ترافیکی</Text>
             <Text style={styles.title}>ورود مأمور گشت</Text>
             <StatusPill
               dot
@@ -183,6 +191,21 @@ export default function LoginScreen() {
               <Icon color={AppTheme.colors.textSecondary} name="headset-outline" size={16} />
               <Text style={styles.footerAction}>مشکل در ورود؟ تماس با پشتیبانی</Text>
             </Pressable>
+            <Pressable
+              accessibilityLabel="تنظیم آدرس سرور"
+              accessibilityRole="button"
+              hitSlop={8}
+              onPress={() => router.push('/server-settings')}
+              style={({ pressed }) => [styles.supportLink, pressed && styles.pressed]}
+            >
+              <Icon color={AppTheme.colors.textSecondary} name="settings-outline" size={16} />
+              <Text style={styles.footerAction}>تنظیم آدرس سرور</Text>
+            </Pressable>
+            {!serverUrlLoading && effectiveUrl ? (
+              <Text selectable style={styles.serverAddress}>
+                {effectiveUrl}
+              </Text>
+            ) : null}
             <Text style={styles.version}>نسخه {version}</Text>
           </View>
         </ScrollView>
@@ -265,6 +288,13 @@ const styles = StyleSheet.create({
     fontFamily: Estedad.regular,
     fontSize: 13,
     lineHeight: 20,
+  },
+  serverAddress: {
+    color: AppTheme.colors.textFaint,
+    fontFamily: Estedad.regular,
+    fontSize: 11,
+    lineHeight: 17,
+    textAlign: 'center',
   },
   version: {
     color: AppTheme.colors.textFaint,

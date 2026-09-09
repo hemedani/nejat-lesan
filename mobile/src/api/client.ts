@@ -1,10 +1,9 @@
-import { getAppConfig } from '@/config/env';
-
 import type { BackendActRequest, BackendRequest } from './backend-types';
 import { ApiEnvelope, isApiSuccess } from './envelope';
 import { ApiError } from './errors';
 import { lesanApi } from './lesan-api';
 import { getConnectivitySnapshot } from '@/services/connectivity';
+import { getEffectiveApiBaseUrl } from '@/services/server-url';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
@@ -85,7 +84,7 @@ export async function callAct<
   request: TypedActRequest<TService, TModel, TAct>,
   options: ApiRequestOptions = {},
 ): Promise<TResponse> {
-  const { apiBaseUrl } = getAppConfig();
+  const apiBaseUrl = await getEffectiveApiBaseUrl();
   const controller = new AbortController();
   let timedOut = false;
   const timeout = setTimeout(() => {
