@@ -117,6 +117,7 @@ import type { ActFn, Document } from "@deps";
 import { accident, event } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
 import { ObjectId } from "@deps";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
@@ -178,7 +179,7 @@ export const eventSeverityAnalyticsFn: ActFn = async (body) => {
 
 	// --- 2. Build Comprehensive Base Filter ---
 	const matchFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: { $gte: overallStartDate, $lte: overallEndDate },
 	};
 

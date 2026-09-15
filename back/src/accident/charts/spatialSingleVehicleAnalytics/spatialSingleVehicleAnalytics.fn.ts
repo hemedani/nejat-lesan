@@ -22,6 +22,7 @@ import type { ActFn, Document } from "@deps";
 import { accident, coreApp } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
 import { MyContext } from "@lib";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const spatialSingleVehicleAnalyticsFn: ActFn = async (body) => {
 	const { user }: MyContext = coreApp.contextFns
@@ -64,7 +65,7 @@ export const spatialSingleVehicleAnalyticsFn: ActFn = async (body) => {
 	];
 
 	const baseFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: { $gte: startDate, $lte: endDate },
 		"collision_type.name": { $in: singleVehicleTypes },
 	};

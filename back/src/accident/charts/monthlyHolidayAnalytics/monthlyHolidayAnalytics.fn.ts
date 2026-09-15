@@ -19,6 +19,7 @@
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 /**
  * Returns official Iranian holidays (fixed Jalali dates) for a given Gregorian year.
@@ -69,7 +70,7 @@ export const monthlyHolidayAnalyticsFn: ActFn = async (body) => {
 
 	// Enforce date range in root match filter
 	const matchFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: {
 			$gte: startDate.toDate(),
 			$lte: endDate.toDate(),

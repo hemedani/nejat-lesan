@@ -1,6 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
 import { accident, coreApp } from "../../../mod.ts";
-import { type MyContext, throwError } from "@lib";
+import { incidentTypeFilter, type MyContext, throwError } from "@lib";
 
 export const getMyReportsFn: ActFn = async (body) => {
 	const {
@@ -30,7 +30,7 @@ export const getMyReportsFn: ActFn = async (body) => {
 	}
 
 	if (status) filters.sync_status = status;
-	if (incidentType) filters.incident_type = incidentType;
+	if (incidentType) Object.assign(filters, incidentTypeFilter(incidentType));
 
 	return await accident
 		.find({

@@ -21,6 +21,7 @@
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
@@ -55,7 +56,7 @@ export const temporalNightAnalyticsFn: ActFn = async (body) => {
 	// 2. BUILD BASE FILTER WITH NIGHTTIME LIGHTING CONSTRAINT
 	// =========================================================================
 	const baseFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 		"light_status.name": {
 			$in: ["شب با نور کافی", "شب با نور ناکافی"],

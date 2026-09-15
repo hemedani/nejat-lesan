@@ -19,14 +19,14 @@
 import type { ActFn, Document } from "@deps";
 // Assuming 'roadDefect' model is exported similarly to 'accident'
 import { accident, road_defect } from "../../../../mod.ts";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const roadDefectsAnalyticsFnWithCount: ActFn = async (body) => {
 	const { set: filters } = body.details;
 
 	// Build the dynamic filter query object, same as before.
-	const matchFilter: Document = {};
 	// Accidents only — non-accident incident reports must not pollute this chart.
-	matchFilter.incident_type = "accident";
+	const matchFilter: Document = { ...accidentOnlyFilter };
 	if (filters.province) matchFilter["province.name"] = filters.province;
 	if (filters.dateOfAccidentFrom || filters.dateOfAccidentTo) {
 		matchFilter.date_of_accident = {};

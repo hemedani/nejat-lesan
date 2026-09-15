@@ -31,6 +31,7 @@
 // };
 
 import type { ActFn } from "@deps";
+import { incidentTypeFilter } from "@lib";
 import { accident } from "../../../mod.ts"; // Assuming 'accident' is your MongoDB model/collection utility
 
 export const getsFn: ActFn = async (body) => {
@@ -152,7 +153,9 @@ export const getsFn: ActFn = async (body) => {
 	// --- Core Accident Details ---
 	if (seri !== undefined) matchConditions.seri = seri;
 	if (serial !== undefined) matchConditions.serial = serial;
-	if (incidentType) matchConditions.incident_type = incidentType;
+	if (incidentType) {
+		Object.assign(matchConditions, incidentTypeFilter(incidentType));
+	}
 	if (dateOfAccidentFrom || dateOfAccidentTo) {
 		matchConditions.date_of_accident = {}; // Schema field: date_of_accident
 		if (dateOfAccidentFrom) {

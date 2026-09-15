@@ -20,6 +20,7 @@
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const temporalUnlicensedDriversAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
@@ -54,7 +55,7 @@ export const temporalUnlicensedDriversAnalyticsFn: ActFn = async (body) => {
 	// 2. BUILD BASE FILTER WITH UNLICENSED DRIVER CONSTRAINT
 	// =========================================================================
 	const baseFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 		"vehicle_dtos": {
 			$elemMatch: { "driver.licence_type.name": "فاقد گواهینامه" },

@@ -19,6 +19,7 @@
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const areaUsageAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
@@ -52,7 +53,7 @@ export const areaUsageAnalyticsFn: ActFn = async (body) => {
 	}
 
 	const baseFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: { $gte: startDate, $lte: endDate },
 	};
 

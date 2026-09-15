@@ -20,6 +20,7 @@
 import type { ActFn, Document } from "@deps";
 import { accident } from "../../../../mod.ts";
 import moment from "npm:jalali-moment";
+import { accidentOnlyFilter } from "../accidentScope.ts";
 
 export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 	const { set: filters } = body.details;
@@ -52,7 +53,7 @@ export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 	}
 
 	const matchFilter: Document = {
-		incident_type: "accident",
+		...accidentOnlyFilter,
 		date_of_accident: { $gte: startDate.toDate(), $lte: endDate.toDate() },
 	};
 
@@ -359,7 +360,10 @@ export const temporalDamageAnalyticsFn: ActFn = async (body) => {
 			$addFields: {
 				all_damage_sections: {
 					$reduce: {
-						input: "$vehicle_dtos",
+						// `vehicle_dtos` is absent on non-accident incident reports,
+						// and `$reduce` yields null for a missing input — which then
+						// makes `$size` below throw. Default to an empty array.
+						input: { $ifNull: ["$vehicle_dtos", []] },
 						initialValue: [],
 						in: {
 							$concatArrays: [
