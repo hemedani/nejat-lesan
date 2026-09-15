@@ -3,13 +3,14 @@
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
 import { organizationDetailProjection } from "@/services/org-projections";
+import { asSingleItemResponse } from "@/utils/api-response";
 import type { ReqType } from "@/types/declarations/selectInp";
 
 type Act = ReqType["main"]["organization"]["get"];
 
 export async function getOrganization(request: Partial<Act>) {
   const token = (await cookies()).get("token");
-  return AppApi().send(
+  const response = await AppApi().send(
     {
       service: "main",
       model: "organization",
@@ -21,4 +22,5 @@ export async function getOrganization(request: Partial<Act>) {
     },
     { token: token?.value },
   );
+  return asSingleItemResponse(response);
 }
