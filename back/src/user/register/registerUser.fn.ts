@@ -1,6 +1,6 @@
 import { type ActFn, hash } from "@deps";
 import { user } from "../../../mod.ts";
-import { throwError } from "@lib";
+import { normalizeEmail, throwError } from "@lib";
 
 export const registerUserFn: ActFn = async (body) => {
 	const {
@@ -11,12 +11,14 @@ export const registerUserFn: ActFn = async (body) => {
 			mobile,
 			gender,
 			birth_date,
-			email,
+			email: rawEmail,
 			password,
 			national_number,
 		},
 		get,
 	} = body.details;
+
+	const email = normalizeEmail(rawEmail);
 
 	const foundedUserWithEmail = await user.findOne({
 		filters: { email },

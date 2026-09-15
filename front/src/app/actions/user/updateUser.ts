@@ -15,6 +15,9 @@ export const updateUserPure = async (data: UpdateUserSet) => {
       details: {
         set: {
           ...data,
+          ...(typeof data.email === "string"
+            ? { email: data.email.trim().toLowerCase() }
+            : {}),
         },
         get: {
           _id: 1,

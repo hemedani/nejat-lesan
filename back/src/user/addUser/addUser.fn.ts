@@ -4,6 +4,7 @@ import type { user_relations } from "@model";
 import {
 	assertRolesAssignable,
 	isGlobalManager,
+	normalizeEmail,
 	normalizeOrgRoles,
 	type OrgRoleInput,
 	throwError,
@@ -25,6 +26,10 @@ export const addUserFn: ActFn = async (body) => {
 		roles,
 		...rest
 	} = set;
+
+	if (typeof rest.email === "string") {
+		rest.email = normalizeEmail(rest.email);
+	}
 
 	if (rest.level === "Ghost" && actor.level !== "Ghost") {
 		return throwError("ساخت حساب سطح گوست مجاز نیست");

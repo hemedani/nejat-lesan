@@ -13,6 +13,7 @@ export const createUser = async (data: ReqType["main"]["user"]["addUser"]["set"]
       details: {
         set: {
           ...data,
+          email: data.email.trim().toLowerCase(),
         },
         get: {
           _id: 1,

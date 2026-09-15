@@ -1,5 +1,5 @@
 import { type ActFn, compare, jwt, ObjectId } from "@deps";
-import { jwtTokenKey, throwError } from "@lib";
+import { jwtTokenKey, normalizeEmail, throwError } from "@lib";
 import { device, user } from "../../../mod.ts";
 import {
 	getEnabledModuleKeys,
@@ -12,9 +12,11 @@ const GENERIC_LOGIN_ERROR = "ایمیل یا رمز عبور صحیح نیست";
 
 export const loginUserFn: ActFn = async (body) => {
 	const {
-		set: { email, password, device: devicePayload },
+		set: { email: rawEmail, password, device: devicePayload },
 		get,
 	} = body.details;
+
+	const email = normalizeEmail(rawEmail);
 
 	const createToken = async (
 		foundedUser: any,

@@ -1,6 +1,6 @@
 import type { ActFn } from "@deps";
 import { user } from "../../../mod.ts";
-import { throwError } from "@lib";
+import { normalizeEmail, throwError } from "@lib";
 
 export const tempUserFn: ActFn = async (body) => {
 	const {
@@ -9,11 +9,13 @@ export const tempUserFn: ActFn = async (body) => {
 			last_name,
 			father_name,
 			mobile,
-			email,
+			email: rawEmail,
 			national_number,
 		},
 		get,
 	} = body.details;
+
+	const email = normalizeEmail(rawEmail);
 
 	const foundedUser = await user.find({ filters: {} }).limit(1).toArray();
 

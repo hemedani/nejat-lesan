@@ -82,7 +82,7 @@ const LoginForm = () => {
     e.preventDefault();
     setFormError(null);
 
-    const values: LoginValues = { email: email.trim(), password };
+    const values: LoginValues = { email: email.trim().toLowerCase(), password };
     const result = LoginSchema.safeParse(values);
 
     if (!result.success) {

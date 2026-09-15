@@ -1,6 +1,7 @@
 import { type ActFn, hash, Infer, object, ObjectId } from "@deps";
 import { city, coreApp, province, user } from "../../../mod.ts";
 import { user_pure } from "../../../models/user.ts";
+import { normalizeEmail } from "@lib";
 
 export const updateUserFn: ActFn = async (body) => {
 	const {
@@ -37,7 +38,7 @@ export const updateUserFn: ActFn = async (body) => {
 		...(gender && { gender }),
 		...(birth_date && { birth_date }),
 		...(summary && { summary }),
-		...(email !== undefined && { email }),
+		...(email !== undefined && { email: normalizeEmail(email) }),
 		...(password !== undefined && { password: await hash(password) }),
 		...(national_number !== undefined && { national_number }),
 		...(address && { address }),
