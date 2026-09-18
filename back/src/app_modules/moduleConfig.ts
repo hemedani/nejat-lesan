@@ -68,7 +68,7 @@ const INCIDENT_ACCIDENT = [
 	"accident.getMyReports",
 	"accident.getSyncStatus",
 	"accident.reviewReport",
-	"accident.reviewHistory",
+	"accident.getReportReviewHistory",
 	"accident.resubmitReport",
 	"accident.getReporterDashboard",
 	"accident.getManagerDashboard",
