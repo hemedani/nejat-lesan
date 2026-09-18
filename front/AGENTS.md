@@ -69,22 +69,33 @@ front/
 ├── src/
 │   ├── app/               # Next.js app router pages
 │   │   ├── actions/       # Server actions for API calls
-│   │   ├── admin/         # Admin panel pages
+│   │   ├── admin/         # Admin panel (Ghost / Manager / Editor)
 │   │   ├── charts/        # Chart visualization pages (overall, spatial, temporal, trend)
 │   │   ├── chatbot/       # Chatbot interface
+│   │   ├── employee/      # Employee panel (org/unit members, Officer role)
 │   │   ├── graph/         # Graph visualization
 │   │   ├── login/         # Login page
 │   │   ├── maps/          # Map-related pages
+│   │   ├── orghead/       # Organization-head panel
+│   │   ├── org/           # Legacy org workspace (Ghost/Manager browsing /org/[orgId])
+│   │   ├── patrol/        # Patrol panel (incident_patrol module)
+│   │   ├── patrol-manager/ # Patrol manager panel
+│   │   ├── unit-head/     # Unit-head panel
 │   │   ├── user/          # User management pages
 │   │   ├── globals.css    # Global styles
 │   │   ├── layout.tsx     # Root layout
 │   │   └── page.tsx       # Home page
 │   ├── components/        # React components
+│   │   ├── system/        # Panel infra: PanelGuard, PanelShell, PanelScopeProvider, ScopePicker, ScopedView, RoleNotice, panel-icons
+│   │   ├── orghead/       # Org-head panel views
+│   │   ├── unithead/      # Unit-head panel views
+│   │   ├── employee/      # Employee panel views
+│   │   └── warehouse/     # Shared warehouse workspace + forms
 │   ├── context/           # React Context providers
 │   ├── hooks/             # Custom React hooks
 │   ├── services/          # API services and utilities
 │   ├── types/             # TypeScript type definitions
-│   └── utils/             # Utility functions
+│   └── utils/             # Utility functions (panels.ts, panel-nav.ts = panel registry)
 ├── Dockerfile             # Multi-stage Docker build
 ├── package.json           # Dependencies and scripts
 ├── next.config.ts         # Next.js configuration
@@ -461,6 +472,157 @@ You may still:
 - Explain what different commands do
 
 ## 📝 Recent Changes
+
+### Role-Scoped Panels (`/orghead`, `/unit-head`, `/employee`)
+
+**Scope**: `src/utils/panels.ts`, `src/utils/panel-nav.ts`, `src/components/system/*`, `src/app/{orghead,unit-head,employee}/**`
+
+**Why**: Previously OrgHead and UnitHead shared one `/org` + `/org/[orgId]/*` workspace with an
+identical sidebar (no role filtering), no route-level guards, nav logic duplicated across
+`Navbar` / `OrgWorkspace` / `PatrolWorkspace`, and **no Employee panel at all** — a unit-scoped
+Officer had no landing surface and no path to warehouse features.
+
+**Architecture** (registry → nav config → route guard → shared shell):
+
+| Layer | File | Responsibility |
+| --- | --- | --- |
+| Registry | `src/utils/panels.ts` | `PANEL_DEFINITIONS`, `PanelViewer`, `canAccessPanel`, `getAccessiblePanels`, `getDefaultPanel`, `getScopedRoles`, `makePanelViewer` |
+| Nav config | `src/utils/panel-nav.ts` | `PANEL_NAV` sidebar sections, `filterPanelSections`, `isNavItemActive` |
+| Guard | `src/components/system/PanelGuard.tsx` | Waits for `authReady`; redirects to `/login` or `getDefaultPanel(viewer)` |
+| Scope | `src/components/system/PanelScopeProvider.tsx` | Resolves `orgId`/`unitId` from `user.roles[]`; Ghost/Manager pick manually (sessionStorage `lesan_panel_scope`) |
+| Shell | `src/components/system/PanelShell.tsx` | Shared sidebar + mobile drawer + scope picker + logout |
+| Helper | `src/components/system/ScopedView.tsx` | Render-prop that waits for scope: `ScopedView({ require, children })` |
+
+**Panels**: `admin` (Ghost/Manager/Editor) · `orghead` · `unit-head` · `employee` ·
+`patrol` · `patrol-manager` · `profile`.
+
+**Key rules**:
+
+- Panels live at **flat URLs** — no `[orgId]` route param. Scope always comes from `user.roles[]`
+  (`scopeType: "organization" | "unit"`), falling back to manual selection for Ghost/Manager.
+- `getDefaultPanel(viewer)` order: super → `/admin`; OrgHead → `/orghead`; UnitHead → `/unit-head`;
+  **any scoped role → `/employee`**; Editor → `/admin`; Patrol → `/patrol/dashboard`; Enterprise →
+  `/charts/overall`; else `/user`.
+- `AuthContext` now exposes **`authReady`** — guards must wait for it before redirecting, otherwise
+  a refresh bounces an authenticated user to `/login`.
+- `"Officer"` is a valid **RoleName** but **not** a valid **UserLevel** — keep it out of `levels`.
+
+**Backend constraints that shape the UI** (verified against `back/`):
+
+- `accident.getReportScope` accepts **only** Patrol (own reports) and Manager/Ghost (all) — it
+  **throws** for OrgHead/UnitHead. Hence the employee "patrol" nav section is `allowedLevels: ["Patrol"]`.
+- `announcement.gets` / `markRead` are gated to `["Manager","Patrol"]`.
+- `accident.getReporterDashboard` requires `level === "Patrol"`.
+- Warehouse acts (`inventory.*`, `consumption.*`, `goods_receipt.*`, `goods_request.*`, `ware.*`)
+  have **no `grantAccess`** — scope is enforced inside the fn by `getScopedUnitIds(user)`.
+  `inventoryManager.ts` is the only writer to `inventory` / `stock_movement`.
+- `goods_receipt_item_struct` requires `quantity_received` + `quantity_accepted` + `quantity_rejected`
+  (snake_case), **not** `{ wareId, quantity }`.
+
+**Backend fix applied**: `back/src/app_modules/moduleConfig.ts` registered
+`accident.reviewHistory`, but the registered act is `accident.getReportReviewHistory` — so
+review-history module gating never matched. Corrected. All 38 act patterns in that file now
+resolve to one of the 369 registered acts.
+
+**Employee map** (`/employee/map`): built on `accident.nearbyAccidents`, which accepts Patrol
+(requires `patrol_permissions.can_view_map`), Manager and Ghost only — same gate shape as the
+reports section, so it lives in the Patrol-gated nav group. Uses a `dynamic(..., { ssr: false })`
+leaflet component plus a `MapBridge` that publishes `flyTo` upward and reports the visible
+bounding box so the toolbar can re-query the current viewport.
+
+### CRITICAL: never send an empty `get` projection to an aggregation act
+
+`get: {}` sent to an act whose fn forwards `get` into a Mongo **aggregation** fails with HTTP 501:
+
+```
+Invalid $project : : caused by : : projection specification must have at least one field
+```
+
+This is not a data problem and not an auth problem — it is a request-shape problem, so it surfaces
+as a red error box where a table should be.
+
+**Which acts are affected:** aggregation-based ones. `inventory.gets`, `goods_request.gets`,
+`consumption.gets`, `stock_movement.gets`, `goods_receipt.gets`, `ware.gets` all reject `{}`.
+
+**Which are NOT:** acts whose fn uses `find({ projection: get })` — Mongo's `find` accepts `{}` as
+"all fields". `announcement.gets` is fine. Acts whose validator declares `get: object({})` (e.g.
+`inventory.transfer`) are also fine. **The rule is per-act — check the fn, don't generalise.**
+
+**Always** write the default as a named projection merged with the caller's:
+
+```ts
+const DEFAULT_PROJECTION = { _id: 1, quantity: 1, ware: { _id: 1, name: 1 } };
+
+export async function getXRows(request: { set?: ...; get?: ... } = {}) {
+  return AppApi().send({ ..., details: {
+    set: request.set ?? {},
+    get: { ...DEFAULT_PROJECTION, ...request.get } as never,
+  }}, { token: token?.value });
+}
+```
+
+An unknown field inside a `$project` is **silently ignored** by Mongo — only a *totally empty*
+projection errors. So over-specifying is safe; under-specifying is not.
+
+### Related: check the model before reading a relation
+
+`goods_receipt` has **no `ware` relation** (ware identity is in the embedded `items[]`, as
+`ware_name`) and records `received_by`, not `created_by`. Reading `row.ware?.name` /
+`row.created_by` on a receipt silently yields blanks. Always confirm relation names against
+`back/models/<model>.ts` before rendering.
+
+### Empty panels may just be empty collections
+
+The warehouse domain has **no seed**. Current counts: `ware` 0, `inventory` 0, `consumption` 0,
+`goods_receipt` 0, `goods_request` 0, `stock_movement` 0, `announcement` 0 — versus `accident`
+52,828. So warehouse/announcement panels legitimately render empty until ware items are created.
+Per the `lesan-empty-result-diagnosis` skill: `success: true` + empty means the query matched
+nothing; an error means the request shape is wrong. Distinguish before debugging.
+
+### Verification tooling — `.workbuddy-ai/tools/`
+
+Two static audits that catch failures TypeScript cannot see. Run them with the managed python3.
+
+| Script | Checks | Last result |
+| --- | --- | --- |
+| `audit-module-acts.py` | every act pattern in `back/src/app_modules/moduleConfig.ts` resolves to a registered act | 369 acts / 38 patterns / 0 unresolved |
+| `audit-frontend-actions.py` | every `model:`/`act:` pair in `front/src/app/actions/**` resolves to a registered act | 417 acts / 330 calls / 0 unresolved |
+| `panel-routing-test.py` | panel access + default-landing + nav-filtering logic in `utils/panels.ts` / `utils/panel-nav.ts` | 48 assertions pass |
+| `probe-empty-get.py` | live probe: does `get: {}` get rejected by an aggregation act? | reference |
+
+`panel-routing-test.py` transpiles `panels.ts` + `panel-nav.ts` with `tsc` and runs assertions in
+node — no test framework needed. It works because both modules have only `import type`
+dependencies, so `tsc` emits standalone JS (the one `@/utils/panels` import in `panel-nav` is
+rewritten to a relative path). **Re-run it after changing `PANEL_DEFINITIONS`, `getDefaultPanel`, or
+`PANEL_NAV`** — a wrong branch there sends users to the wrong screen and is otherwise invisible.
+
+**Why they matter:** a wrong `model`/`act` pair compiles cleanly and only fails when a user clicks
+the button — the same bug class as the `accident.reviewHistory` mismatch found and fixed today.
+
+The backend registers acts in **three** styles. An audit must handle all three or it reports false
+failures:
+
+1. **Direct** — `setAct({ schema: "accident", actName: "gets" })`
+2. **Helper** — `register("getReporterDashboard", fn)` (`accident/dashboard/mod.ts`); the act name
+   is a *positional argument*, so a property-based scan misses it
+3. **Shared** — `setSharedActs("vehicle_type", model)` (`shared/setSharedActs.ts`); registers
+   `add`/`get`/`gets`/`update`/`remove`/`count` against a **variable** schema name
+
+Also: `app/actions/getGeoJSON.ts` passes a variable model
+(`model as "province" | "city" | "city_zone"`), requiring union-literal recovery.
+
+### Leaflet default-marker bug (known, partially fixed)
+
+Bare `<Marker>` with leaflet's default icon renders a **broken sprite** under Next — the sprite URL
+resolves relative to the bundler output and 404s. Fix is
+`delete L.Icon.Default.prototype._getIconUrl` + `L.Icon.Default.mergeOptions({...})` pointing at the
+cdnjs copies (see `app/map/page.tsx`). Apply it in **any** component that renders a bare `<Marker>`
+or calls `L.marker`.
+
+Still missing the fix: `components/template/FormCreateTownship.tsx`,
+`components/template/FormUpdateTownship.tsx`, `components/template/FormCreateAccident.tsx`.
+`components/maps/ClusteredAccidentMarkers.tsx` is unaffected — it passes an explicit
+`icon={L.divIcon(...)}`.
 
 ### Date Picker Migration (react-multi-date-picker)
 
