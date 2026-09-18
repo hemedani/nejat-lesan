@@ -7,7 +7,7 @@ import { useOrgModules } from "@/hooks/useOrgModules";
 import { Button } from "@/components/atoms/Button";
 import { ModuleGate } from "@/components/system/ModuleGate";
 import { PageSkeleton } from "@/components/patrol/ui";
-import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+import { RoleNotice } from "@/components/system/RoleNotice";
 
 const ORG_MODULE_OFF_MESSAGE =
   "ماژول ثبت و مدیریت رخداد (گشت) برای این سازمان فعال نیست. برای فعال‌سازی با مدیر نصب تماس بگیرید.";

@@ -13,6 +13,8 @@ const ORG_ROLE_NAMES: RoleName[] = ["OrgHead", "UnitHead", "Officer"];
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  /** False until the session has been read from cookies/sessionStorage. */
+  authReady: boolean;
   userLevel: UserLevel;
   userData: UserData | null;
   enterpriseSettings?: EnterpriseSettings;
@@ -59,6 +61,7 @@ const readStoredModuleFeed = (): ModuleFeed | null => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [authReady, setAuthReady] = useState<boolean>(false);
   const [userLevel, setUserLevel] = useState<UserLevel>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [enterpriseSettings, setEnterpriseSettings] = useState<EnterpriseSettings | undefined>(undefined);
@@ -97,6 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         sessionStorage.removeItem(MODULE_FEED_KEY);
       }
     }
+    setAuthReady(true);
   }, []);
 
   const login = (token: string, user: UserData, moduleFeed?: ModuleFeed) => {
@@ -181,6 +185,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        authReady,
         userLevel,
         userData,
         enterpriseSettings,

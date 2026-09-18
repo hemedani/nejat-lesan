@@ -3,53 +3,36 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { getUnit } from "@/app/actions/unit/getUnit";
-import { unwrapApiResponse } from "@/utils/api-response";
+import { usePanelViewer } from "@/hooks/usePanelViewer";
+import { getDefaultPanel, isOrgHeadViewer, isUnitHeadViewer } from "@/utils/panels";
 import { PageSkeleton } from "@/components/patrol/ui";
 
 /**
- * ورود به فضای سازمان:
- * - سرپرست سازمان (OrgHead با scope سازمان) → /org/{orgId}
- * - سرپرست واحد (UnitHead با scope واحد) → /org/{سازمان همان واحد}
- * - مدیر/گوست بدون نقش سازمانی → /admin/org (مدیریت چندسازمانی)
+ * Legacy `/org` entry point.
+ *
+ * Panels are now split per role (`/orghead`, `/unit-head`, `/employee`), so this
+ * route only exists to forward anyone who still has the old link. The
+ * `/org/[orgId]` routes stay available for Ghost/Manager multi-organization
+ * browsing from `/admin/org`.
  */
 export function OrgLanding() {
-  const { isAuthenticated, userLevel, isOrgLeader, primaryOrgRole } = useAuth();
+  const { isAuthenticated, authReady } = useAuth();
+  const viewer = usePanelViewer();
   const router = useRouter();
 
+  const target = !authReady
+    ? null
+    : !isAuthenticated
+      ? "/login"
+      : isOrgHeadViewer(viewer)
+        ? "/orghead"
+        : isUnitHeadViewer(viewer)
+          ? "/unit-head"
+          : getDefaultPanel(viewer);
+
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace("/login");
-      return;
-    }
-    const manager = userLevel === "Ghost" || userLevel === "Manager";
-    if (!isOrgLeader) {
-      router.replace(manager ? "/admin/org" : "/");
-      return;
-    }
-    const role = primaryOrgRole;
-    if (!role?.scopeId) {
-      router.replace(manager ? "/admin/org" : "/");
-      return;
-    }
-    if (role.scopeType === "organization") {
-      router.replace(`/org/${role.scopeId}`);
-      return;
-    }
-    if (role.scopeType === "unit") {
-      void (async () => {
-        try {
-          const unit = unwrapApiResponse<{ organization?: { _id?: string } }>(
-            await getUnit({ set: { _id: role.scopeId as string } }),
-          );
-          const orgId = unit?.organization?._id;
-          router.replace(orgId ? `/org/${orgId}` : "/");
-        } catch {
-          router.replace("/");
-        }
-      })();
-    }
-  }, [isAuthenticated, userLevel, isOrgLeader, primaryOrgRole, router]);
+    if (target) router.replace(target);
+  }, [target, router]);
 
   return <PageSkeleton blocks={[220, 260]} />;
 }

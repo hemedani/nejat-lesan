@@ -31,7 +31,18 @@ const PROJECTION = {
   incident_severity: { _id: 1, name: 1 },
 } as const;
 
-export function OrgReportsView({ orgId }: { orgId: string }) {
+export function OrgReportsView({
+  orgId,
+  detailBase,
+  heading,
+  subtitle,
+}: {
+  orgId: string;
+  /** Route prefix the report rows link into (defaults to the legacy `/org/[orgId]` panel). */
+  detailBase?: string;
+  heading?: string;
+  subtitle?: string;
+}) {
   const [roadId, setRoadId] = useState<string | null>(null);
   const [orgName, setOrgName] = useState<string | null>(null);
   const [reports, setReports] = useState<PatrolReport[]>([]);
@@ -94,8 +105,13 @@ export function OrgReportsView({ orgId }: { orgId: string }) {
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm text-blue-300">گزارش‌های رخداد</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">{orgName ? `گزارش‌های «${orgName}»` : "گزارش‌های رخداد"}</h1>
-          <p className="mt-2 text-sm text-slate-500">تمام رخدادهای ثبت‌شده (تصادف، خرابی راه، مانع و...) روی این جاده را با فیلتر نوع ببینید.</p>
+          <h1 className="mt-1 text-2xl font-bold text-white">
+            {heading || (orgName ? `گزارش‌های «${orgName}»` : "گزارش‌های رخداد")}
+          </h1>
+          <p className="mt-2 text-sm text-slate-500">
+            {subtitle ||
+              "تمام رخدادهای ثبت‌شده (تصادف، خرابی راه، مانع و...) روی این جاده را با فیلتر نوع ببینید."}
+          </p>
         </div>
       </div>
 
@@ -116,7 +132,11 @@ export function OrgReportsView({ orgId }: { orgId: string }) {
         <EmptyState message="رخدادی برای این فیلتر یافت نشد." />
       ) : (
         <>
-          <ReportList reports={reports} manager detailBase={`/org/${orgId}`} />
+          <ReportList
+            reports={reports}
+            manager
+            detailBase={detailBase || `/org/${orgId}`}
+          />
           <div className="mt-4 flex items-center justify-between">
             <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
               صفحه قبل

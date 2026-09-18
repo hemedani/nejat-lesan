@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { usePanelViewer } from "@/hooks/usePanelViewer";
+import { getAccessiblePanels } from "@/utils/panels";
 
 type NavItem = { href: string; label: string; description?: string };
 
@@ -21,7 +23,8 @@ const roleLabels: Record<string, string> = {
 };
 
 export const Navbar = () => {
-  const { isAuthenticated, userLevel, userData, hasModule, orgHasModule, isOrgLeader, isOrgHead, logout } = useAuth();
+  const { isAuthenticated, userLevel, userData, hasModule, orgHasModule, logout } = useAuth();
+  const viewer = usePanelViewer();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [panelsOpen, setPanelsOpen] = useState(false);
@@ -31,7 +34,6 @@ export const Navbar = () => {
   const displayName = [userData?.first_name, userData?.last_name].filter(Boolean).join(" ") || "کاربر";
 
   const chartsEnabled = hasModule("charts");
-  const patrolEnabled = orgHasModule("incident_patrol");
 
   const publicItems: NavItem[] = [
     ...corePublicItems,
@@ -43,41 +45,21 @@ export const Navbar = () => {
       : []),
   ];
 
-  // Panel selector ("پنل‌ها"): one clear destination per persona/role.
-  const panelItems: NavItem[] = [];
-
-  // Org-head / unit-head workspace — distinct labeled entries per role.
-  if (patrolEnabled && isOrgLeader) {
-    panelItems.push({
-      href: "/org",
-      label: isOrgHead ? "داشبورد سرپرست سازمان" : "داشبورد سرپرست واحد",
-      description: isOrgHead
-        ? "نمودار سازمان، واحدها، افراد، فرایندها و رخدادهای سازمان خودتان"
-        : "مدیریت واحد تحت سرپرستی، اعضا، فرایندها و رخدادهای آن",
-    });
-  }
-
-  // Patrol officer panel.
-  if (patrolEnabled && userLevel === "Patrol") {
-    panelItems.push({ href: "/patrol/dashboard", label: "داشبورد مأمور گشت", description: "شیفت و گزارش‌های من" });
-  }
-
-  // Manager review center (patrol incident review).
-  if (patrolEnabled && (userLevel === "Ghost" || userLevel === "Manager")) {
-    panelItems.push({ href: "/patrol-manager/dashboard", label: "مرکز بررسی گشت", description: "صف بررسی گزارش‌های مأموران" });
-  }
-
-  // Main admin panel (org management lives in its sidebar → no duplicate entry).
-  if (userLevel === "Ghost" || userLevel === "Manager" || userLevel === "Editor") {
-    panelItems.push({ href: "/admin", label: "پنل مدیریت سامانه", description: "سازمان‌ها، کاربران و داده‌های پایه" });
-  }
-
-  // Ghost-only module licensing.
-  if (userLevel === "Ghost") {
-    panelItems.push({ href: "/admin/modules", label: "تنظیمات ماژول‌ها", description: "فعال/غیرفعال کردن ماژول‌ها (نصب و سازمان)" });
-  }
-
-  if (isAuthenticated) panelItems.push({ href: "/user", label: "پنل کاربری", description: "اطلاعات حساب و تنظیمات" });
+  // Panel selector ("پنل‌ها"): one clear destination per persona, driven by the
+  // panel registry so the navbar, the guards and the landing redirect agree.
+  const panelItems: NavItem[] = useMemo(
+    () =>
+      isAuthenticated
+        ? getAccessiblePanels(viewer).map((panel) => ({
+            href: panel.path,
+            label: panel.label,
+            description: panel.description,
+          }))
+        : [],
+    // `viewer` is rebuilt each render; depend on the values it is derived from.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isAuthenticated, userLevel, userData?.roles, hasModule, orgHasModule],
+  );
 
   useEffect(() => {
     const close = (event: MouseEvent) => {

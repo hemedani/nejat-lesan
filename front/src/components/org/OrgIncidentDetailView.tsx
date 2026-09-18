@@ -8,11 +8,20 @@ import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { reportDetailProjection, historyProjection } from "@/services/patrol-projections";
 import type { PatrolReport, ReviewHistoryItem } from "@/types/patrol";
 import { useAuth } from "@/context/AuthContext";
-import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+import { RoleNotice } from "@/components/system/RoleNotice";
 import { ReportDetail } from "@/components/patrol/ReportDetail";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 
-export function OrgIncidentDetailView({ orgId, reportId }: { orgId: string; reportId: string }) {
+export function OrgIncidentDetailView({
+  orgId,
+  reportId,
+  backHref,
+}: {
+  orgId: string;
+  reportId: string;
+  /** Where the "back to reports" link points (defaults to the legacy `/org/[orgId]` panel). */
+  backHref?: string;
+}) {
   const { userLevel, isOrgLeader } = useAuth();
   const allowed = userLevel === "Manager" || userLevel === "Ghost" || isOrgLeader;
 
@@ -57,7 +66,10 @@ export function OrgIncidentDetailView({ orgId, reportId }: { orgId: string; repo
   return (
     <div>
       <div className="mb-4">
-        <Link href={`/org/${orgId}/reports`} className="text-xs text-blue-300 hover:text-cyan-200">
+        <Link
+          href={backHref || `/org/${orgId}/reports`}
+          className="text-xs text-blue-300 hover:text-cyan-200"
+        >
           → بازگشت به گزارش‌های رخداد
         </Link>
       </div>

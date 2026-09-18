@@ -1,10 +1,15 @@
-import { PatrolWorkspace } from "@/components/patrol/PatrolWorkspace";
-import { ModuleGate } from "@/components/system/ModuleGate";
+import { PanelGuard } from "@/components/system/PanelGuard";
+import { PanelScopeProvider } from "@/components/system/PanelScopeProvider";
+import { PanelShell } from "@/components/system/PanelShell";
 
 export default function PatrolManagerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ModuleGate module="incident_patrol">
-      <PatrolWorkspace manager>{children}</PatrolWorkspace>
-    </ModuleGate>
+    <PanelGuard panel="patrol-manager">
+      <PanelScopeProvider prefer="organization">
+        <PanelShell panel="patrol-manager" scopeKind="organization">
+          {children}
+        </PanelShell>
+      </PanelScopeProvider>
+    </PanelGuard>
   );
 }

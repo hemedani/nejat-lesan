@@ -5,7 +5,7 @@ import { getManagerReports } from "@/app/actions/accident/getManagerReports";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { PatrolReport, ReviewStatus, SyncStatus } from "@/types/patrol";
 import { useAuth } from "@/context/AuthContext";
-import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+import { RoleNotice } from "@/components/system/RoleNotice";
 import { DashboardHeader } from "@/components/patrol/DashboardHeader";
 import { ReportList } from "@/components/patrol/ReportList";
 import { PageSkeleton, PanelCard, RetryErrorBox } from "@/components/patrol/ui";

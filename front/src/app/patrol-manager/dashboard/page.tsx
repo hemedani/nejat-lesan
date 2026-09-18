@@ -5,7 +5,7 @@ import { getManagerDashboard } from "@/app/actions/accident/getManagerDashboard"
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { ManagerDashboardResponse } from "@/types/patrol";
 import { useAuth } from "@/context/AuthContext";
-import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+import { RoleNotice } from "@/components/system/RoleNotice";
 import { DashboardHeader } from "@/components/patrol/DashboardHeader";
 import { SummaryMetrics } from "@/components/patrol/SummaryMetrics";
 import { ReportList } from "@/components/patrol/ReportList";

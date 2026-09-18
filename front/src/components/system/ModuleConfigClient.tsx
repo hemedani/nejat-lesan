@@ -11,7 +11,7 @@ import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { MODULE_LABELS } from "@/utils/org";
 import type { ModuleKey } from "@/types/auth";
 import { useAuth } from "@/context/AuthContext";
-import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+import { RoleNotice } from "@/components/system/RoleNotice";
 import { EmptyState, PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import ToggleSwitch from "@/components/atoms/ToggleSwitch";
 import type { OrganizationListItem } from "@/services/org-projections";

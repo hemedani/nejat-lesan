@@ -8,7 +8,7 @@ import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { reportDetailProjection, historyProjection } from "@/services/patrol-projections";
 import type { PatrolReport, ReviewHistoryItem } from "@/types/patrol";
 import { useAuth } from "@/context/AuthContext";
-import { RoleNotice } from "@/components/patrol/PatrolWorkspace";
+import { RoleNotice } from "@/components/system/RoleNotice";
 import { ReportDetail } from "@/components/patrol/ReportDetail";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 

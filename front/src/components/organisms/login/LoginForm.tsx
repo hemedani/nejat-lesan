@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { z } from "zod";
 import { loginAction } from "@/app/actions/login";
 import { useAuth } from "@/context/AuthContext";
+import { getDefaultPanel, makePanelViewer } from "@/utils/panels";
 import type { UserData } from "@/types/auth";
 
 const EMAIL_PATTERN = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -108,7 +109,15 @@ const LoginForm = () => {
         sessionStorage.setItem("lesan_user", JSON.stringify(user));
         login(token, user as UserData, { modules, orgModules });
 
-        window.location.href = "/";
+        // Land on the panel that matches this account's roles instead of the
+        // public landing page.
+        const viewer = makePanelViewer({
+          level: (user as UserData).level,
+          roles: (user as UserData).roles,
+          modules,
+          orgModules,
+        });
+        window.location.href = getDefaultPanel(viewer);
       } else {
         const { message, lockoutMinutes: minutes } = getFriendlyError(res.body);
         setFormError(message);
