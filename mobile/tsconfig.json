@@ -9,6 +9,12 @@
       "@backend/*": [
         "../back/declarations/*"
       ],
+      "@forms": [
+        "../shared/form-engine/src/index.ts"
+      ],
+      "@forms/*": [
+        "../shared/form-engine/src/*"
+      ],
       "@/assets/*": [
         "./assets/*"
       ]
@@ -18,6 +24,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "../shared/form-engine/src/**/*.ts"
   ]
 }

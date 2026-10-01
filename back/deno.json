@@ -17,6 +17,7 @@
 	"imports": {
 		"@deps": "./deps.ts",
 		"@lib": "./utils/mod.ts",
+		"@forms": "../shared/form-engine/src/index.ts",
 		"@model": "./models/mod.ts",
 		"node-unrar-js": "npm:node-unrar-js@2.0.2"
 	},
