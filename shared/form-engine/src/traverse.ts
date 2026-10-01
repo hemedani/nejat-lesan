@@ -57,7 +57,9 @@ const isRecord = (value: unknown): value is Record<string, AnswerValue> =>
 const byOrder = <T extends { order?: number }>(list: T[]): T[] =>
 	list
 		.map((item, index) => ({ item, index }))
-		.sort((a, b) => (a.item.order ?? 0) - (b.item.order ?? 0) || a.index - b.index)
+		.sort((a, b) =>
+			(a.item.order ?? 0) - (b.item.order ?? 0) || a.index - b.index
+		)
 		.map(({ item }) => item);
 
 /**
@@ -86,14 +88,16 @@ const walkPage = (
 	for (const section of sections) {
 		const nodes = byOrder(section.nodes ?? []);
 		for (const node of nodes) {
-			if (!walkNode(node, answers, visit, {
-				depth: 0,
-				path: node.key,
-				instancePath: node.key,
-				pageKey: page.key,
-				sectionKey: section.key,
-				scope: [],
-			})) return;
+			if (
+				!walkNode(node, answers, visit, {
+					depth: 0,
+					path: node.key,
+					instancePath: node.key,
+					pageKey: page.key,
+					sectionKey: section.key,
+					scope: [],
+				})
+			) return;
 		}
 	}
 };
@@ -217,8 +221,19 @@ const findInNodes = (
 	nodes: ContentNode[],
 	key: string,
 ): ContentNode | undefined => {
+	// A dotted path descends: "vehicles.plateType" is `plateType` inside the
+	// `vehicles` group. Repeatable levels are transparent, since their rows are
+	// answer data rather than definition nodes.
+	const [head, ...rest] = key.split(".").filter(Boolean);
 	for (const node of nodes) {
-		if (node.key === key) return node;
+		if (node.key === head) {
+			if (rest.length === 0) return node;
+			if (node.kind === "group" || node.kind === "repeatable") {
+				const found = findInNodes(node.children, rest.join("."));
+				if (found) return found;
+			}
+			return undefined;
+		}
 		if (node.kind === "group" || node.kind === "repeatable") {
 			const found = findInNodes(node.children, key);
 			if (found) return found;

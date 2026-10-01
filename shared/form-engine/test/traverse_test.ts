@@ -3,10 +3,10 @@ import { walkNodes } from "../src/traverse.ts";
 import type {
 	AnswerTree,
 	ContentNode,
+	FieldType,
 	FormDefinition,
 	PageNode,
 	RepeatableNode,
-	FieldType,
 } from "../src/types.ts";
 import { DEFAULT_SCHEMA_VERSION } from "../src/types.ts";
 
@@ -16,15 +16,14 @@ const field = (
 	key: string,
 	type: FieldType = "text",
 	extra: Partial<Extract<ContentNode, { kind: "field" }>> = {},
-) =>
-	({
-		kind: "field",
-		key,
-		type,
-		label: key,
-		order: 0,
-		...extra,
-	}) as ContentNode;
+) => ({
+	kind: "field",
+	key,
+	type,
+	label: key,
+	order: 0,
+	...extra,
+}) as ContentNode;
 
 const definition: FormDefinition = {
 	schemaVersion: DEFAULT_SCHEMA_VERSION,
@@ -41,7 +40,13 @@ const definition: FormDefinition = {
 					order: 1,
 					nodes: [
 						field("severity", "choice_group"),
-						field("hidden1", "text", { visibleWhen: { op: "eq", path: "severity", value: "جرحی" } }),
+						field("hidden1", "text", {
+							visibleWhen: {
+								op: "eq",
+								path: "severity",
+								value: "جرحی",
+							},
+						}),
 						{
 							kind: "group",
 							key: "g1",
@@ -80,7 +85,10 @@ const definition: FormDefinition = {
 const answers: AnswerTree = {
 	severity: "جرحی",
 	vehicles: [
-		{ type: "سواری", passengers: [{ health: "سالم" }, { health: "مصدوم" }] },
+		{
+			type: "سواری",
+			passengers: [{ health: "سالم" }, { health: "مصدوم" }],
+		},
 		{ type: "کامیون", passengers: [] },
 	],
 };

@@ -17,10 +17,10 @@ import { walkNodes } from "./traverse.ts";
 import type { NodeMeta } from "./traverse.ts";
 import type {
 	AnswerTree,
+	AnswerValue,
 	ContentNode,
 	FieldNode,
 	FormDefinition,
-	AnswerValue,
 	Issue,
 	RepeatableNode,
 	ValidationResult,
@@ -256,7 +256,9 @@ const hasAnyContent = (nodes: ContentNode[], answers: AnswerTree): boolean => {
  */
 const missingMessage = (field: FieldNode, meta: NodeMeta): string => {
 	const group = meta.repeatable?.label;
-	if (!group) return field.label ? `${field.label} الزامی است.` : DEFAULT_MESSAGE;
+	if (!group) {
+		return field.label ? `${field.label} الزامی است.` : DEFAULT_MESSAGE;
+	}
 	return field.label ? `${group}: ${field.label}` : group;
 };
 
@@ -301,7 +303,8 @@ const validateValue = (
 	if (rules.minLength !== undefined || rules.maxLength !== undefined) {
 		const length = textLength(value);
 		if (
-			(rules.minLength !== undefined && length > 0 && length < rules.minLength) ||
+			(rules.minLength !== undefined && length > 0 &&
+				length < rules.minLength) ||
 			(rules.maxLength !== undefined && length > rules.maxLength)
 		) {
 			addError(field, instancePath, rules.message ?? DEFAULT_MESSAGE, "");

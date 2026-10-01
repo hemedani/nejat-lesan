@@ -1,4 +1,7 @@
-import { assert, assertEquals } from "https://deno.land/std@0.208.0/testing/asserts.ts";
+import {
+	assert,
+	assertEquals,
+} from "https://deno.land/std@0.208.0/testing/asserts.ts";
 import { evalRule } from "../src/rules.ts";
 import type { AnswerTree, Rule } from "../src/types.ts";
 
@@ -103,7 +106,10 @@ Deno.test("eq matches when ANY resolved value matches", () => {
 	// `vehicles[].type` resolves to two values; matching either is enough.
 	assert(run({ op: "eq", path: "vehicles[].type", value: "کامیون" }));
 	assert(run({ op: "eq", path: "vehicles[].type", value: "سواری" }));
-	assertEquals(run({ op: "eq", path: "vehicles[].type", value: "تریلی" }), false);
+	assertEquals(
+		run({ op: "eq", path: "vehicles[].type", value: "تریلی" }),
+		false,
+	);
 });
 
 Deno.test("in / nin over a resolved list", () => {
@@ -133,7 +139,11 @@ Deno.test("contains matches inside a multi-select array", () => {
 		run({ op: "contains", path: "emergency", value: "مصدوم" }),
 	);
 	assertEquals(
-		run({ op: "contains", path: "emergency", value: "واژگونی وسیله سنگین" }),
+		run({
+			op: "contains",
+			path: "emergency",
+			value: "واژگونی وسیله سنگین",
+		}),
 		false,
 	);
 });
@@ -157,7 +167,10 @@ Deno.test("numeric comparison coerces a numeric string", () => {
 Deno.test("boolean comparison", () => {
 	const answers: AnswerTree = { hasDamage: true, note: "" };
 	assert(evalRule({ op: "eq", path: "hasDamage", value: true }, answers));
-	assertEquals(evalRule({ op: "eq", path: "note", value: true }, answers), false);
+	assertEquals(
+		evalRule({ op: "eq", path: "note", value: true }, answers),
+		false,
+	);
 });
 
 // ---------------------------------------------------------------------------
@@ -202,9 +215,21 @@ Deno.test("filled is false when the repeatable key is absent", () => {
 Deno.test("anyIn over a nested repeatable", () => {
 	const casualties = ["مصدوم", "فوتی در صحنه"];
 	// Vehicle 1's passenger 1 is مصدوم.
-	assert(run({ op: "anyIn", path: "vehicles[].passengers[].health", value: casualties }));
+	assert(
+		run({
+			op: "anyIn",
+			path: "vehicles[].passengers[].health",
+			value: casualties,
+		}),
+	);
 	// Vehicle 2's driver is فوتی در صحنه.
-	assert(run({ op: "anyIn", path: "vehicles[].driver.health", value: casualties }));
+	assert(
+		run({
+			op: "anyIn",
+			path: "vehicles[].driver.health",
+			value: casualties,
+		}),
+	);
 });
 
 Deno.test("anyIn over pedestrians finds nothing when all are unharmed", () => {
@@ -299,8 +324,14 @@ Deno.test("someTrue / someFalse", () => {
 	};
 	assert(evalRule({ op: "someTrue", path: "vehicles[].checked" }, answers));
 	assert(evalRule({ op: "someFalse", path: "vehicles[].checked" }, answers));
-	assertEquals(evalRule({ op: "someTrue", path: "empty[].checked" }, answers), false);
-	assertEquals(evalRule({ op: "someFalse", path: "empty[].checked" }, answers), false);
+	assertEquals(
+		evalRule({ op: "someTrue", path: "empty[].checked" }, answers),
+		false,
+	);
+	assertEquals(
+		evalRule({ op: "someFalse", path: "empty[].checked" }, answers),
+		false,
+	);
 });
 
 // ---------------------------------------------------------------------------
@@ -317,7 +348,10 @@ Deno.test("count with gte / lte", () => {
 
 Deno.test("count across a nested repeatable", () => {
 	assert(run({ op: "count", path: "vehicles[].passengers[]", gte: 2 }));
-	assertEquals(run({ op: "count", path: "vehicles[].passengers[]", gte: 3 }), false);
+	assertEquals(
+		run({ op: "count", path: "vehicles[].passengers[]", gte: 3 }),
+		false,
+	);
 });
 
 Deno.test("count on an empty group", () => {
@@ -368,7 +402,10 @@ Deno.test("QA warning — damage-only severity but a casualty exists", () => {
 Deno.test("QA warning — no false positive when everyone is unharmed", () => {
 	const safe: AnswerTree = {
 		severity: "خسارتی",
-		vehicles: [{ driver: { health: "سالم" }, passengers: [{ health: "سالم" }] }],
+		vehicles: [{
+			driver: { health: "سالم" },
+			passengers: [{ health: "سالم" }],
+		}],
 		pedestrians: [{ health: "سالم" }],
 	};
 	assertEquals(

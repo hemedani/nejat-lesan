@@ -111,24 +111,35 @@ export const evalRule = (
 
 		case "in":
 			return resolvePathOf(rule, answers, scope).some((value) =>
-				asList(rule.value).some((candidate) => looseEquals(value, candidate))
+				asList(rule.value).some((candidate) =>
+					looseEquals(value, candidate)
+				)
 			);
 
 		case "nin":
 			return !resolvePathOf(rule, answers, scope).some((value) =>
-				asList(rule.value).some((candidate) => looseEquals(value, candidate))
+				asList(rule.value).some((candidate) =>
+					looseEquals(value, candidate)
+				)
 			);
 
 		case "contains":
-			return flatten(resolvePathOf(rule, answers, scope)).some((value) => {
-				if (Array.isArray(value)) {
-					return value.some((item) => looseEquals(item, rule.value));
-				}
-				if (typeof value === "string" && typeof rule.value === "string") {
-					return value.includes(rule.value);
-				}
-				return false;
-			});
+			return flatten(resolvePathOf(rule, answers, scope)).some(
+				(value) => {
+					if (Array.isArray(value)) {
+						return value.some((item) =>
+							looseEquals(item, rule.value)
+						);
+					}
+					if (
+						typeof value === "string" &&
+						typeof rule.value === "string"
+					) {
+						return value.includes(rule.value);
+					}
+					return false;
+				},
+			);
 
 		case "gt":
 		case "gte":
@@ -149,14 +160,18 @@ export const evalRule = (
 
 		case "anyIn":
 			return flatten(resolvePathOf(rule, answers, scope)).some((value) =>
-				asList(rule.value).some((candidate) => looseEquals(value, candidate))
+				asList(rule.value).some((candidate) =>
+					looseEquals(value, candidate)
+				)
 			);
 
 		case "everyIn":
 			// Vacuously true over an empty group: nothing violates the constraint.
 			return flatten(resolvePathOf(rule, answers, scope))
 				.every((value) =>
-					asList(rule.value).some((candidate) => looseEquals(value, candidate))
+					asList(rule.value).some((candidate) =>
+						looseEquals(value, candidate)
+					)
 				);
 
 		case "someTrue":

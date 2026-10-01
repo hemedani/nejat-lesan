@@ -121,7 +121,10 @@ Deno.test("resolveOptions — static optionsFilter narrows to a fixed list", () 
 		options: heavy,
 		optionsFilter: { mode: "static", values: ["کامیون", "تریلی"] },
 	});
-	assertEquals(resolveOptions(node, {}).map((o) => o.value), ["کامیون", "تریلی"]);
+	assertEquals(resolveOptions(node, {}).map((o) => o.value), [
+		"کامیون",
+		"تریلی",
+	]);
 });
 
 Deno.test("resolveOptions — dynamic optionsFilter narrows by another answer", () => {
@@ -163,7 +166,12 @@ Deno.test("resolveOptions — preserves tone, symbol and recommended flags", () 
 		options: {
 			kind: "literal",
 			items: [
-				{ value: "انسداد کامل", label: "انسداد کامل", tone: "danger", symbol: "⊖" },
+				{
+					value: "انسداد کامل",
+					label: "انسداد کامل",
+					tone: "danger",
+					symbol: "⊖",
+				},
 				{ value: "عادی", label: "عادی", recommended: true },
 			],
 		},
@@ -179,7 +187,11 @@ Deno.test("resolveOptions — reference source is resolved by the caller", () =>
 	// so the client can merge cached options.
 	const node = f({
 		key: "collisionTypeId",
-		options: { kind: "reference", model: "collision_type", allowedIds: ["a", "b"] },
+		options: {
+			kind: "reference",
+			model: "collision_type",
+			allowedIds: ["a", "b"],
+		},
 	});
 	assertEquals(resolveOptions(node, {}), []);
 });
@@ -198,7 +210,9 @@ Deno.test("resolveOptions — scoped filter sees the row's own answers", () => {
 		},
 	});
 	assertEquals(
-		resolveOptions(node, {}, [{ mobility: "نیاز به جرثقیل" }]).map((o) => o.value),
+		resolveOptions(node, {}, [{ mobility: "نیاز به جرثقیل" }]).map((o) =>
+			o.value
+		),
 		["جرثقیل"],
 	);
 });
@@ -235,17 +249,23 @@ const definition: FormDefinition = {
 };
 
 Deno.test("visiblePages — hides a conditional page", () => {
-	const keys = visiblePages(definition, { hasDamage: "خیر" }).map((p) => p.key);
+	const keys = visiblePages(definition, { hasDamage: "خیر" }).map((p) =>
+		p.key
+	);
 	assertEquals(keys, ["location", "review"]);
 });
 
 Deno.test("visiblePages — shows a conditional page once its condition holds", () => {
-	const keys = visiblePages(definition, { hasDamage: "بله" }).map((p) => p.key);
+	const keys = visiblePages(definition, { hasDamage: "بله" }).map((p) =>
+		p.key
+	);
 	assertEquals(keys, ["location", "damage", "review"]);
 });
 
 Deno.test("visiblePages — keeps declaration order", () => {
-	const keys = visiblePages(definition, { hasDamage: "بله" }).map((p) => p.title);
+	const keys = visiblePages(definition, { hasDamage: "بله" }).map((p) =>
+		p.title
+	);
 	assertEquals(keys, ["موقعیت", "آسیب تجهیزات", "بازبینی"]);
 });
 

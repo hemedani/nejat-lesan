@@ -100,7 +100,10 @@ export const resolveScoped = (
 };
 
 /** Walk `roots` through `segments`, collecting one value per terminal leaf. */
-const resolveFrom = (roots: AnswerValue[], segments: Segment[]): AnswerValue[] => {
+const resolveFrom = (
+	roots: AnswerValue[],
+	segments: Segment[],
+): AnswerValue[] => {
 	let current = roots;
 	for (const segment of segments) {
 		if (current.length === 0) return [];

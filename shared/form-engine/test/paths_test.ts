@@ -73,7 +73,9 @@ Deno.test("resolvePath — empty nested repeatable yields no matches", () => {
 
 Deno.test("resolvePath — explicit index selects one row", () => {
 	assertEquals(resolvePath(tree, "vehicles[0].type"), ["سواری"]);
-	assertEquals(resolvePath(tree, "vehicles[1].driver.health"), ["فوتی در صحنه"]);
+	assertEquals(resolvePath(tree, "vehicles[1].driver.health"), [
+		"فوتی در صحنه",
+	]);
 });
 
 Deno.test("resolvePath — two explicit indices", () => {
@@ -110,8 +112,7 @@ Deno.test("countPath — counts across explicitly indexed parents", () => {
 	assertEquals(countPath(tree, "vehicles[1].passengers[]"), 0);
 });
 
-const rowAt = (i: number): AnswerValue =>
-	(tree.vehicles as AnswerValue[])[i];
+const rowAt = (i: number): AnswerValue => (tree.vehicles as AnswerValue[])[i];
 
 Deno.test("resolveScoped — resolves relative to a repeatable row", () => {
 	// Inside vehicle row 1, a bare `type` must not leak other rows' values.

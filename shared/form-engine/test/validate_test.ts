@@ -1,4 +1,7 @@
-import { assert, assertEquals } from "https://deno.land/std@0.208.0/testing/asserts.ts";
+import {
+	assert,
+	assertEquals,
+} from "https://deno.land/std@0.208.0/testing/asserts.ts";
 import { validateForm } from "../src/validate.ts";
 import type { AnswerTree, FormDefinition } from "../src/types.ts";
 import { DEFAULT_SCHEMA_VERSION } from "../src/types.ts";
@@ -94,7 +97,8 @@ const definition: FormDefinition = {
 												},
 											],
 										},
-										message: "وسیله نیاز به جرثقیل دارد اما این پشتیبانی انتخاب نشده است.",
+										message:
+											"وسیله نیاز به جرثقیل دارد اما این پشتیبانی انتخاب نشده است.",
 									},
 								],
 							},
@@ -135,7 +139,9 @@ Deno.test("validateForm — a complete report has no errors", () => {
 
 Deno.test("validateForm — a missing required field is reported once, with its row path", () => {
 	const result = validateForm(definition, {
-		vehicles: [{ type: "سواری", passengers: [] }, { mobility: "قابل حرکت" }],
+		vehicles: [{ type: "سواری", passengers: [] }, {
+			mobility: "قابل حرکت",
+		}],
 	});
 	// Only the second vehicle is missing `type`; the first must not be re-reported.
 	assertEquals(messages(result.errors), ["وسیله نقلیه: نوع وسیله نقلیه"]);
@@ -156,28 +162,30 @@ Deno.test("validateForm — a hidden required field does not block", () => {
 	// The QA form only asks for `cargo` on heavy vehicles.
 	const conditional: FormDefinition = {
 		...definition,
-		pages: [{
-			key: "p",
-			title: "p",
-			order: 1,
-			sections: [{
-				key: "s",
-				title: "s",
+		pages: [
+			{
+				key: "p",
+				title: "p",
 				order: 1,
-				nodes: [
-					f({
-						key: "cargo",
-						label: "نوع بار",
-						visibleWhen: {
-							op: "anyIn",
-							path: "vehicles[].type",
-							value: ["کامیون", "تریلی"],
-						},
-						requiredWhen: { op: "always" },
-					}),
-				],
-			}],
-		} as FormDefinition["pages"][number]],
+				sections: [{
+					key: "s",
+					title: "s",
+					order: 1,
+					nodes: [
+						f({
+							key: "cargo",
+							label: "نوع بار",
+							visibleWhen: {
+								op: "anyIn",
+								path: "vehicles[].type",
+								value: ["کامیون", "تریلی"],
+							},
+							requiredWhen: { op: "always" },
+						}),
+					],
+				}],
+			} as FormDefinition["pages"][number],
+		],
 	};
 	// No heavy vehicles, so the cargo question never appears.
 	assertEquals(
@@ -186,7 +194,10 @@ Deno.test("validateForm — a hidden required field does not block", () => {
 	);
 	// A heavy vehicle appears, so cargo becomes visible and required.
 	assertEquals(
-		messages(validateForm(conditional, { vehicles: [{ type: "کامیون" }] }).errors),
+		messages(
+			validateForm(conditional, { vehicles: [{ type: "کامیون" }] })
+				.errors,
+		),
 		["نوع بار الزامی است."],
 	);
 });
@@ -197,7 +208,11 @@ Deno.test("validateForm — a hidden required field does not block", () => {
 
 Deno.test("validateForm — the crane mismatch is a warning, not an error", () => {
 	const result = validateForm(definition, {
-		vehicles: [{ type: "کامیون", mobility: "نیاز به جرثقیل", passengers: [] }],
+		vehicles: [{
+			type: "کامیون",
+			mobility: "نیاز به جرثقیل",
+			passengers: [],
+		}],
 	});
 	assertEquals(result.errors, []);
 	assertEquals(messages(result.warnings), [
@@ -208,7 +223,11 @@ Deno.test("validateForm — the crane mismatch is a warning, not an error", () =
 
 Deno.test("validateForm — the crane warning clears once support includes it", () => {
 	const result = validateForm(definition, {
-		vehicles: [{ type: "کامیون", mobility: "نیاز به جرثقیل", passengers: [] }],
+		vehicles: [{
+			type: "کامیون",
+			mobility: "نیاز به جرثقیل",
+			passengers: [],
+		}],
 		support: ["جرثقیل"],
 	});
 	assertEquals(result.warnings, []);
@@ -216,7 +235,11 @@ Deno.test("validateForm — the crane warning clears once support includes it", 
 
 Deno.test("validateForm — warnings carry the field they hang off", () => {
 	const result = validateForm(definition, {
-		vehicles: [{ type: "کامیون", mobility: "نیاز به جرثقیل", passengers: [] }],
+		vehicles: [{
+			type: "کامیون",
+			mobility: "نیاز به جرثقیل",
+			passengers: [],
+		}],
 	});
 	assertEquals(result.warnings[0].nodeKey, "support");
 	assertEquals(result.warnings[0].path, "support");
@@ -230,57 +253,68 @@ Deno.test("validateForm — warnings carry the field they hang off", () => {
 Deno.test("validateForm — minLength / maxLength", () => {
 	const withLength: FormDefinition = {
 		...definition,
-		pages: [{
-			key: "p",
-			title: "p",
-			order: 1,
-			sections: [{
-				key: "s",
-				title: "s",
+		pages: [
+			{
+				key: "p",
+				title: "p",
 				order: 1,
-				nodes: [
-					f({
-						key: "note",
-						label: "توضیحات",
-						validation: {
-							minLength: 5,
-							maxLength: 10,
-							message: "توضیحات باید بین ۵ تا ۱۰ نویسه باشد.",
-						},
-					}),
-				],
-			}],
-		} as FormDefinition["pages"][number]],
+				sections: [{
+					key: "s",
+					title: "s",
+					order: 1,
+					nodes: [
+						f({
+							key: "note",
+							label: "توضیحات",
+							validation: {
+								minLength: 5,
+								maxLength: 10,
+								message: "توضیحات باید بین ۵ تا ۱۰ نویسه باشد.",
+							},
+						}),
+					],
+				}],
+			} as FormDefinition["pages"][number],
+		],
 	};
 	assertEquals(
 		messages(validateForm(withLength, { note: "ab" }).errors),
 		["توضیحات باید بین ۵ تا ۱۰ نویسه باشد."],
 	);
-	assertEquals(validateForm(withLength, { note: "abcdefghijk" }).errors.length, 1);
+	assertEquals(
+		validateForm(withLength, { note: "abcdefghijk" }).errors.length,
+		1,
+	);
 	assertEquals(validateForm(withLength, { note: "abcdefghij" }).errors, []);
 });
 
 Deno.test("validateForm — numeric min / max", () => {
 	const withNumber: FormDefinition = {
 		...definition,
-		pages: [{
-			key: "p",
-			title: "p",
-			order: 1,
-			sections: [{
-				key: "s",
-				title: "s",
+		pages: [
+			{
+				key: "p",
+				title: "p",
 				order: 1,
-				nodes: [
-					f({
-						key: "count",
-						type: "number",
-						label: "تعداد",
-						validation: { min: 1, max: 5, message: "تعداد باید بین ۱ تا ۵ باشد." },
-					}),
-				],
-			}],
-		} as FormDefinition["pages"][number]],
+				sections: [{
+					key: "s",
+					title: "s",
+					order: 1,
+					nodes: [
+						f({
+							key: "count",
+							type: "number",
+							label: "تعداد",
+							validation: {
+								min: 1,
+								max: 5,
+								message: "تعداد باید بین ۱ تا ۵ باشد.",
+							},
+						}),
+					],
+				}],
+			} as FormDefinition["pages"][number],
+		],
 	};
 	assertEquals(
 		messages(validateForm(withNumber, { count: 9 }).errors),
@@ -293,28 +327,32 @@ Deno.test("validateForm — numeric min / max", () => {
 Deno.test("validateForm — minItems / maxItems on a repeatable", () => {
 	const limited: FormDefinition = {
 		...definition,
-		pages: [{
-			key: "p",
-			title: "p",
-			order: 1,
-			sections: [{
-				key: "s",
-				title: "s",
+		pages: [
+			{
+				key: "p",
+				title: "p",
 				order: 1,
-				nodes: [
-					{
-						kind: "repeatable",
-						key: "rows",
-						label: "ردیف‌ها",
-						order: 1,
-						maxItems: 2,
-						children: [f({ key: "v", label: "مقدار" })],
-					},
-				],
-			}],
-		} as FormDefinition["pages"][number]],
+				sections: [{
+					key: "s",
+					title: "s",
+					order: 1,
+					nodes: [
+						{
+							kind: "repeatable",
+							key: "rows",
+							label: "ردیف‌ها",
+							order: 1,
+							maxItems: 2,
+							children: [f({ key: "v", label: "مقدار" })],
+						},
+					],
+				}],
+			} as FormDefinition["pages"][number],
+		],
 	};
-	const three = validateForm(limited, { rows: [{ v: "a" }, { v: "b" }, { v: "c" }] });
+	const three = validateForm(limited, {
+		rows: [{ v: "a" }, { v: "b" }, { v: "c" }],
+	});
 	assertEquals(three.errors.length, 1);
 	assertEquals(messages(three.errors), ["حداکثر 2 مورد ثبت کنید."]);
 	assertEquals(validateForm(limited, { rows: [{ v: "a" }] }).errors, []);
@@ -325,38 +363,48 @@ Deno.test("validateForm — an option outside the narrowed set is rejected", () 
 	// stale "سواری" answer must not survive silently.
 	const narrowed: FormDefinition = {
 		...definition,
-		pages: [{
-			key: "p",
-			title: "p",
-			order: 1,
-			sections: [{
-				key: "s",
-				title: "s",
+		pages: [
+			{
+				key: "p",
+				title: "p",
 				order: 1,
-				nodes: [
-					f({
-						key: "type",
-						label: "نوع",
-						options: {
-							kind: "literal",
-							items: [
-								{ value: "سواری", label: "سواری" },
-								{ value: "تانکر", label: "تانکر" },
-							],
-						},
-						optionsFilter: {
-							mode: "dynamic",
-							rule: { op: "eq", path: "hazmat", value: "بله" },
-							values: ["تانکر"],
-						},
-						validation: { message: "گزینه انتخابی معتبر نیست." },
-					}),
-				],
-			}],
-		} as FormDefinition["pages"][number]],
+				sections: [{
+					key: "s",
+					title: "s",
+					order: 1,
+					nodes: [
+						f({
+							key: "type",
+							label: "نوع",
+							options: {
+								kind: "literal",
+								items: [
+									{ value: "سواری", label: "سواری" },
+									{ value: "تانکر", label: "تانکر" },
+								],
+							},
+							optionsFilter: {
+								mode: "dynamic",
+								rule: {
+									op: "eq",
+									path: "hazmat",
+									value: "بله",
+								},
+								values: ["تانکر"],
+							},
+							validation: {
+								message: "گزینه انتخابی معتبر نیست.",
+							},
+						}),
+					],
+				}],
+			} as FormDefinition["pages"][number],
+		],
 	};
 	assertEquals(
-		messages(validateForm(narrowed, { hazmat: "بله", type: "سواری" }).errors),
+		messages(
+			validateForm(narrowed, { hazmat: "بله", type: "سواری" }).errors,
+		),
 		["گزینه انتخابی معتبر نیست."],
 	);
 	assertEquals(
@@ -412,7 +460,9 @@ Deno.test("validateForm — a malformed definition does not throw", () => {
 					label: "x",
 					order: 0,
 					requiredWhen: { op: "bogus" } as never,
-					validation: { warnings: [{ rule: undefined as never, message: "بد" }] },
+					validation: {
+						warnings: [{ rule: undefined as never, message: "بد" }],
+					},
 				}],
 			}],
 		}],
