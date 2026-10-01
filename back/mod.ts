@@ -23,6 +23,8 @@ import {
 	events,
 	fault_statuses,
 	files,
+	form_definitions,
+	form_responses,
 	goods_receipts,
 	goods_requests,
 	human_reasons,
@@ -115,6 +117,8 @@ export const air_pollution_zone = air_pollution_zones();
 export const city_zone = city_zones();
 export const accident = accidents();
 export const accident_process = accident_processes();
+export const form_definition = form_definitions();
+export const form_response = form_responses();
 export const module_config = module_configs();
 export const air_status = air_statuses();
 export const area_usage = area_usages();
