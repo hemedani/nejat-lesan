@@ -29,6 +29,24 @@ export const incidentTypeTone = (type?: string): string => {
   }
 };
 
+/**
+ * A row can originate from either the legacy `accident` collection or the
+ * dynamic `incident_report` one, so the badge has to say which. The oversight
+ * table reads a row from both, hence the shared tone helper.
+ */
+export const reportSourceTone = (
+  source?: "accident" | "incident_report",
+): string => {
+  switch (source) {
+    case "accident":
+      return "border-rose-400/25 bg-rose-400/10 text-rose-200";
+    case "incident_report":
+      return "border-blue-400/25 bg-blue-400/10 text-blue-200";
+    default:
+      return "border-white/10 bg-white/[.04] text-slate-300";
+  }
+};
+
 export function IncidentBadge({ report }: { report: PatrolReport }) {
   const type = report.incident_type;
   if (!type) return null;
