@@ -8,17 +8,25 @@ header (no `Bearer` prefix), and return the standard `{ success, body }` envelop
 
 | Act | Access | Purpose |
 | --- | ------ | ------- |
-| `add` | Manager, OrgHead, UnitHead | create a draft definition |
-| `update` | Manager, OrgHead, UnitHead | replace the definition wholesale |
+| `add` | Manager, OrgHead, UnitHead (+ Ghost) | create a draft definition |
+| `update` | Manager, OrgHead, UnitHead (+ Ghost) | replace the definition wholesale |
 | `get` | any authenticated, **scoped to the caller's orgs** | read one definition |
 | `gets` | any authenticated, **scoped to the caller's orgs** | list, paged and filterable |
 | `count` | any authenticated, **scoped to the caller's orgs** | count for pagination |
-| `remove` | Manager, OrgHead, UnitHead | delete (never an active one) |
-| `activate` | Manager, OrgHead, UnitHead | validate, archive the previous, publish |
-| `duplicate` | Manager, OrgHead, UnitHead | clone as a new draft |
+| `remove` | Manager, OrgHead, UnitHead (+ Ghost) | delete (never an active one) |
+| `activate` | Manager, OrgHead, UnitHead (+ Ghost) | validate, archive the previous, publish |
+| `duplicate` | Manager, OrgHead, UnitHead (+ Ghost) | clone as a new draft |
 | `getForPatrol` | any authenticated | active definition + resolved options |
 | `getReferenceOptions` | any authenticated | option rows for a reference model |
 | `validate` | any authenticated, **scoped to the caller's orgs** | server-side rule evaluation |
+
+**Ghost is always allowed**, and is not named in the `levels` array of those acts.
+`grantAccess` (`back/utils/grantAccess.ts`) short-circuits on
+`if (levelIsInUser || user.level === "Ghost")`, so Ghost passes every level check
+whether or not it is listed. The same exemption applies to the module gate
+(both the installation and the per-organization layer) — see `back/AGENTS.md`.
+The frontend `FormAuthorGuard` admits exactly the same four: Ghost, Manager,
+OrgHead, UnitHead.
 
 `getForPatrol` and `validate` deliberately have **no `grantAccess`**: a patrol
 officer and an org head must both be able to render and check a form.

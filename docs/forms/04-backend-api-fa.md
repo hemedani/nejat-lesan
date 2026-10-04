@@ -8,17 +8,24 @@
 
 | اکشن | دسترسی | هدف |
 | ---- | ------ | ---- |
-| `add` | Manager، OrgHead، UnitHead | ساخت تعریف پیش‌نویس |
-| `update` | Manager، OrgHead، UnitHead | جایگزینی کامل تعریف |
+| `add` | Manager، OrgHead، UnitHead (+ Ghost) | ساخت تعریف پیش‌نویس |
+| `update` | Manager، OrgHead، UnitHead (+ Ghost) | جایگزینی کامل تعریف |
 | `get` | هر کاربر احراز‌شده، **محدود به سازمان‌های خودش** | خواندن یک تعریف |
 | `gets` | هر کاربر احراز‌شده، **محدود به سازمان‌های خودش** | فهرست، صفحه‌بندی و فیلتر |
 | `count` | هر کاربر احراز‌شده، **محدود به سازمان‌های خودش** | شمارش برای صفحه‌بندی |
-| `remove` | Manager، OrgHead، UnitHead | حذف (هرگز فرم فعال) |
-| `activate` | Manager، OrgHead، UnitHead | اعتبارسنجی، بایگانی قبلی، انتشار |
-| `duplicate` | Manager، OrgHead، UnitHead | کپی به‌صورت پیش‌نویس جدید |
+| `remove` | Manager، OrgHead، UnitHead (+ Ghost) | حذف (هرگز فرم فعال) |
+| `activate` | Manager، OrgHead، UnitHead (+ Ghost) | اعتبارسنجی، بایگانی قبلی، انتشار |
+| `duplicate` | Manager، OrgHead، UnitHead (+ Ghost) | کپی به‌صورت پیش‌نویس جدید |
 | `getForPatrol` | هر کاربر احراز‌شده | تعریف فعال + گزینه‌های حل‌شده |
 | `getReferenceOptions` | هر کاربر احراز‌شده | سطرهای گزینه برای یک مدل مرجع |
 | `validate` | هر کاربر احراز‌شده، **محدود به سازمان‌های خودش** | ارزیابی شرط‌ها در سرور |
+
+**Ghost همیشه مجاز است** و در آرایهٔ `levels` این اکشن‌ها نیامده است.
+`grantAccess` (`back/utils/grantAccess.ts`) با
+`if (levelIsInUser || user.level === "Ghost")` کوتاه‌می‌شود، پس Ghost از هر بررسی سطحی
+عبور می‌کند، چه در فهرست باشد چه نباشد. همین معافیت برای گیت ماژول (هم سطح نصب و هم
+سطح سازمان) هم برقرار است — `back/AGENTS.md` را ببینید. `FormAuthorGuard` در فرانت هم
+دقیقاً همین چهار سطح را می‌پذیرد: Ghost، Manager، OrgHead، UnitHead.
 
 `getForPatrol` و `validate` عمداً **بدون `grantAccess`** هستند: هم مأمور گشت و هم
 سرِ سازمان باید بتوانند فرم را رندر و بررسی کنند. مجوز آنجا بر پایهٔ حل سازمان

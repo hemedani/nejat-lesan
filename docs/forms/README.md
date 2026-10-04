@@ -50,9 +50,12 @@ The engine is imported as `@forms` in all three services:
 ## Status
 
 See **[08 Migration and Status](./08-migration-and-status.md)** for exactly what
-is finished and what is not. Short version: the engine, the backend and the
-renderer are complete and tested; the builder and the mobile screen are not yet
-linked into navigation, and `accident_process` has not been migrated.
+is finished and what is not. Short version: the engine, the backend, the `/forms`
+builder and the mobile renderer are complete and tested. The builder **is** linked
+into navigation — a «فرم‌ساز» section in the OrgHead and UnitHead sidebars plus a
+«فرم‌ساز» group in the admin sidebar, each gated on the `forms` module being on for
+the organization. `accident_process` is **not** superseded: it stays registered and
+keeps authoring accident registration until it is retired on its own schedule.
 
 ---
 

@@ -90,6 +90,22 @@ export const adminNavGroups: AdminNavGroup[] = [
       { key: "dashboard", label: "داشبورد", href: "/admin", icon: "home" },
       { key: "org", label: "سازمان‌ها", href: "/admin/org", icon: "building" },
       { key: "users", label: "کاربران", href: "/admin/users", icon: "users" },
+      // Ghost-only, and the only way to switch a module such as `forms` on for
+      // an organization — which is what reveals the «فرم‌ساز» nav section in the
+      // org/unit panels. It was reachable only by typing the URL.
+      { key: "modules", label: "ماژول‌ها", href: "/admin/modules", icon: "cog" },
+    ],
+  },
+  {
+    // `/forms` is a standalone authoring surface with its own `FormAuthorGuard`
+    // (Ghost, Manager, OrgHead, UnitHead), not an `/admin/*` route. OrgHead and
+    // UnitHead reach it from their own sidebars, but Ghost and Manager land on
+    // `/admin` — so without this they have no navigation path at all.
+    id: "forms",
+    title: "فرم‌ساز",
+    icon: "document",
+    items: [
+      { key: "dynamic_forms", label: "فرم‌های پویا", href: "/forms", icon: "document" },
     ],
   },
   {
