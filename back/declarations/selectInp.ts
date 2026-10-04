@@ -25617,6 +25617,771 @@ locked_until?: Date;
 ;
 
 
+    export type form_definitionInp = {
+      organization?: number | organizationInp
+registrer?: number | userInp
+      responses?: number | form_responseInp
+    }
+
+
+    export type form_definitionSchema = {
+_id?: string;
+name: string;
+description?: string;
+status: ("draft" | "active" | "archived" );
+version: number;
+is_active: boolean;
+incident_type?: ("accident" | "road_breakdown" | "road_obstacle" | "other" );
+schema_version: number;
+definition: {
+schemaVersion?: number;
+name?: string;
+pages?: {
+key: string;
+title: string;
+description?: string;
+icon?: string;
+order?: number;
+sections?: {
+key: string;
+title: string;
+description?: string;
+icon?: string;
+order?: number;
+nodes?: {
+kind: ("field" | "group" | "repeatable" );
+key: string;
+label?: string;
+order?: number;
+visibleWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+requiredWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+type?: ("text" | "textarea" | "number" | "date" | "time" | "datetime" | "select" | "multi_select" | "boolean" | "choice_group" | "reference" | "plate" | "file" | "location" | "computed" );
+description?: string;
+icon?: string;
+placeholder?: string;
+optionalHint?: string;
+options?: {
+kind: ("literal" | "reference" | "derived" );
+items?: {
+value: string;
+label: string;
+tone?: ("normal" | "warn" | "danger" );
+recommended?: boolean;
+symbol?: string;
+}[];
+model?: string;
+allowedIds?: string[];
+rule?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+};
+optionsFilter?: {
+mode: ("all" | "static" | "dynamic" );
+values?: string[];
+rule?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+};
+binding?: {
+kind: ("relation" | "dto" | "pure" | "dynamic" );
+path?: string;
+multi?: boolean;
+dto?: string;
+field?: string;
+from?: string;
+};
+clearOnChange?: string[];
+validation?: {
+min?: number;
+max?: number;
+minLength?: number;
+maxLength?: number;
+pattern?: string;
+message?: string;
+warnings?: {
+rule: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+message: string;
+}[];
+};
+valueFrom?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+plateVariants?: {
+when: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+parts: {
+key: string;
+label: string;
+kind: ("digits" | "letters" | "text" | "select" );
+length?: number;
+inputMode?: ("numeric" | "text" );
+items?: {
+value: string;
+label: string;
+tone?: ("normal" | "warn" | "danger" );
+recommended?: boolean;
+symbol?: string;
+}[];
+}[];
+notApplicableHint?: string;
+}[];
+transient?: boolean;
+minItems?: number;
+maxItems?: number;
+itemLabel?: string;
+itemSummary?: string;
+children?: Record<string, any>;
+}[];
+visibleWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+requiredWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+}[];
+visibleWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+requiredWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+}[];
+};
+createdAt: Date;
+updatedAt: Date;
+organization: {
+_id?: string;
+code: string;
+name: string;
+enName?: string;
+description?: string;
+is_active: boolean;
+module_flags?: {
+key: string;
+enabled: boolean;
+}[];
+createdAt: Date;
+updatedAt: Date;
+};
+registrer?: {
+_id?: string;
+first_name: string;
+last_name: string;
+father_name: string;
+mobile: string;
+gender: ("Male" | "Female" );
+email: string;
+national_number?: string;
+address: string;
+level: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" );
+is_verified: boolean;
+personnel_code?: string;
+is_active: boolean;
+patrol_permissions?: {
+can_submit_accident?: boolean;
+can_view_map?: boolean;
+can_receive_announcements?: boolean;
+can_register_emergency?: boolean;
+can_view_reports?: boolean;
+};
+roles: {
+roleId: string;
+name: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol" );
+scopeType?: ("organization" | "unit" );
+scopeId?: string;
+}[];
+failed_login_attempts: number;
+locked_until?: Date;
+};
+responses: {
+_id?: string;
+form_definition_id: string;
+definition_version: number;
+client_report_uuid?: string;
+answers?: Record<string, any>;
+flat_answers?: {
+field_key: string;
+path?: string;
+value?: string;
+values?: string[];
+}[];
+errors?: {
+path: string;
+node_key: string;
+message: string;
+severity: ("error" | "warning" );
+}[];
+warnings?: {
+path: string;
+node_key: string;
+message: string;
+severity: ("error" | "warning" );
+}[];
+createdAt: Date;
+updatedAt: Date;
+}[];
+};
+;
+
+
+    export type form_responseInp = {
+      organization?: number | organizationInp
+definition?: number | form_definitionInp
+officer?: number | userInp
+accident?: number | accidentInp
+      
+    }
+
+
+    export type form_responseSchema = {
+_id?: string;
+form_definition_id: string;
+definition_version: number;
+client_report_uuid?: string;
+answers?: Record<string, any>;
+flat_answers?: {
+field_key: string;
+path?: string;
+value?: string;
+values?: string[];
+}[];
+errors?: {
+path: string;
+node_key: string;
+message: string;
+severity: ("error" | "warning" );
+}[];
+warnings?: {
+path: string;
+node_key: string;
+message: string;
+severity: ("error" | "warning" );
+}[];
+createdAt: Date;
+updatedAt: Date;
+organization: {
+_id?: string;
+code: string;
+name: string;
+enName?: string;
+description?: string;
+is_active: boolean;
+module_flags?: {
+key: string;
+enabled: boolean;
+}[];
+createdAt: Date;
+updatedAt: Date;
+};
+definition?: {
+_id?: string;
+name: string;
+description?: string;
+status: ("draft" | "active" | "archived" );
+version: number;
+is_active: boolean;
+incident_type?: ("accident" | "road_breakdown" | "road_obstacle" | "other" );
+schema_version: number;
+definition: {
+schemaVersion?: number;
+name?: string;
+pages?: {
+key: string;
+title: string;
+description?: string;
+icon?: string;
+order?: number;
+sections?: {
+key: string;
+title: string;
+description?: string;
+icon?: string;
+order?: number;
+nodes?: {
+kind: ("field" | "group" | "repeatable" );
+key: string;
+label?: string;
+order?: number;
+visibleWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+requiredWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+type?: ("text" | "textarea" | "number" | "date" | "time" | "datetime" | "select" | "multi_select" | "boolean" | "choice_group" | "reference" | "plate" | "file" | "location" | "computed" );
+description?: string;
+icon?: string;
+placeholder?: string;
+optionalHint?: string;
+options?: {
+kind: ("literal" | "reference" | "derived" );
+items?: {
+value: string;
+label: string;
+tone?: ("normal" | "warn" | "danger" );
+recommended?: boolean;
+symbol?: string;
+}[];
+model?: string;
+allowedIds?: string[];
+rule?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+};
+optionsFilter?: {
+mode: ("all" | "static" | "dynamic" );
+values?: string[];
+rule?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+};
+binding?: {
+kind: ("relation" | "dto" | "pure" | "dynamic" );
+path?: string;
+multi?: boolean;
+dto?: string;
+field?: string;
+from?: string;
+};
+clearOnChange?: string[];
+validation?: {
+min?: number;
+max?: number;
+minLength?: number;
+maxLength?: number;
+pattern?: string;
+message?: string;
+warnings?: {
+rule: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+message: string;
+}[];
+};
+valueFrom?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+plateVariants?: {
+when: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+parts: {
+key: string;
+label: string;
+kind: ("digits" | "letters" | "text" | "select" );
+length?: number;
+inputMode?: ("numeric" | "text" );
+items?: {
+value: string;
+label: string;
+tone?: ("normal" | "warn" | "danger" );
+recommended?: boolean;
+symbol?: string;
+}[];
+}[];
+notApplicableHint?: string;
+}[];
+transient?: boolean;
+minItems?: number;
+maxItems?: number;
+itemLabel?: string;
+itemSummary?: string;
+children?: Record<string, any>;
+}[];
+visibleWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+requiredWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+}[];
+visibleWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+requiredWhen?: {
+op: string;
+rules?: Record<string, any>;
+rule?: Record<string, any>;
+path?: string;
+gte?: number;
+lte?: number;
+};
+}[];
+};
+createdAt: Date;
+updatedAt: Date;
+};
+officer?: {
+_id?: string;
+first_name: string;
+last_name: string;
+father_name: string;
+mobile: string;
+gender: ("Male" | "Female" );
+email: string;
+national_number?: string;
+address: string;
+level: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" );
+is_verified: boolean;
+personnel_code?: string;
+is_active: boolean;
+patrol_permissions?: {
+can_submit_accident?: boolean;
+can_view_map?: boolean;
+can_receive_announcements?: boolean;
+can_register_emergency?: boolean;
+can_view_reports?: boolean;
+};
+roles: {
+roleId: string;
+name: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol" );
+scopeType?: ("organization" | "unit" );
+scopeId?: string;
+}[];
+failed_login_attempts: number;
+locked_until?: Date;
+};
+accident?: {
+_id?: string;
+seri: number;
+serial: number;
+location: {
+type: "Point";
+coordinates: any[];
+};
+date_of_accident: Date;
+dead_count: number;
+has_witness: boolean;
+news_number: number;
+officer: string;
+injured_count: number;
+completion_date: Date;
+client_report_uuid?: string;
+report_id?: string;
+sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
+rejection_reason?: string;
+review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
+review_reason?: string;
+reviewed_at?: Date;
+completed_at?: Date;
+reported_at?: Date;
+gps_coords?: {
+type: "Point";
+coordinates: any[];
+};
+gps_accuracy?: number;
+travel_direction?: string;
+kilometer?: number;
+meter?: number;
+police_present?: boolean;
+police_expert_name?: string;
+police_arrival_time?: Date;
+officer_cause_description?: string;
+incident_type?: ("accident" | "road_breakdown" | "road_obstacle" | "other" );
+incident_payload?: {
+description?: string;
+is_hazard?: boolean;
+needs_repair?: boolean;
+temporary_action?: string;
+follow_up_required?: boolean;
+};
+vehicle_dtos: {
+color: {
+_id: string;
+name: string;
+};
+driver: {
+sex: ("Male" | "Female" | "Other" );
+last_name: string;
+first_name: string;
+injury_type: {
+_id: string;
+name: string;
+};
+licence_type: {
+_id: string;
+name: string;
+};
+national_code: string;
+licence_number?: string;
+total_reason?: {
+_id: string;
+name: string;
+};
+phone?: string;
+driver_status?: {
+_id: string;
+name: string;
+};
+};
+system: {
+_id: string;
+name: string;
+};
+plaque_type: {
+_id: string;
+name: string;
+};
+plaque_no: any[];
+system_type: {
+_id: string;
+name: string;
+};
+fault_status: {
+_id: string;
+name: string;
+};
+insurance_co: {
+_id: string;
+name: string;
+};
+insurance_no: string;
+plaque_usage: {
+_id: string;
+name: string;
+};
+print_number: string;
+plaque_serial?: string[];
+insurance_date: Date;
+body_insurance_co: {
+_id: string;
+name: string;
+};
+body_insurance_no?: string;
+motion_direction: {
+_id: string;
+name: string;
+};
+body_insurance_date: Date;
+max_damage_sections: {
+_id: string;
+name: string;
+}[];
+damage_section_other: string;
+insurance_warranty_limit: number;
+passenger_dtos?: {
+sex: ("Male" | "Female" | "Other" );
+last_name: string;
+first_name: string;
+injury_type: {
+_id: string;
+name: string;
+};
+fault_status: {
+_id: string;
+name: string;
+};
+total_reason?: {
+_id: string;
+name: string;
+};
+national_code: string;
+}[];
+vehicle_type?: {
+_id: string;
+name: string;
+};
+year?: number;
+final_status?: {
+_id: string;
+name: string;
+};
+plate_image?: string;
+insurance_image?: string;
+}[];
+pedestrian_dtos?: {
+sex: ("Male" | "Female" | "Other" );
+last_name: string;
+first_name: string;
+injury_type: {
+_id: string;
+name: string;
+};
+fault_status: {
+_id: string;
+name: string;
+};
+total_reason?: {
+_id: string;
+name: string;
+};
+national_code: string;
+}[];
+people_dtos?: {
+role: {
+_id: string;
+name: string;
+};
+sex: ("Male" | "Female" | "Other" );
+age?: number;
+age_range?: string;
+injury_status: {
+_id: string;
+name: string;
+};
+first_name?: string;
+last_name?: string;
+national_code?: string;
+phone?: string;
+}[];
+facility_damage_dtos?: {
+asset_group: {
+_id: string;
+name: string;
+};
+asset_code?: string;
+damage_type?: string;
+damage_severity: {
+_id: string;
+name: string;
+};
+quantity?: number;
+unit?: string;
+creates_hazard?: boolean;
+needs_repair?: boolean;
+temporary_action?: string;
+images?: string[];
+}[];
+review_history?: {
+action: ("submitted" | "started_review" | "returned" | "resubmitted" | "approved" | "completed" | "reopened" );
+reason?: string;
+action_at: Date;
+reviewer: {
+_id: string;
+first_name: string;
+last_name: string;
+};
+}[];
+dynamic_answers?: {
+step_key?: string;
+question_key?: string;
+model_name: string;
+answer_id?: string;
+answer_ids?: string[];
+answer_name?: string;
+answer_names?: string[];
+value?: string;
+}[];
+process_version?: number;
+createdAt: Date;
+updatedAt: Date;
+};
+};
+;
+
+
     export type module_configInp = {
       
       
