@@ -25,6 +25,7 @@ import { employeeRoutes } from "./employee-routes.js";
 import { canAuthorForms } from "./form-access.js";
 import { MODULE_KEYS, MODULE_LABELS } from "./org.js";
 import { getSectionCharts, isChartAccessible } from "./chartNavigation.js";
+import { reportDetailHref } from "./report-routes.js";
 
 // `forms` is a fourth module key, not a synonym for `incident_patrol`: the
 // form engine is licensed separately so disabling it must not hide the patrol
@@ -308,21 +309,16 @@ eq("orgRoutes.processes()", orgRoutes.processes(), "/orghead/processes");
 eq("orgRoutes.processNew()", orgRoutes.processNew(), "/orghead/processes/new");
 eq("orgRoutes.process(id)", orgRoutes.process("x1"), "/orghead/processes/x1");
 eq("orgRoutes.reports()", orgRoutes.reports(), "/orghead/reports");
-eq("orgRoutes.report(id)", orgRoutes.report("r1"), "/orghead/reports/r1");
-eq("orgRoutes.settings()", orgRoutes.settings(), "/orghead/settings");
 eq("orgRoutes.warehouse()", orgRoutes.warehouse(), "/orghead/warehouse");
 
 eq("unitHeadRoutes.dashboard()", unitHeadRoutes.dashboard(), "/unit-head");
 eq("unitHeadRoutes.members()", unitHeadRoutes.members(), "/unit-head/members");
-eq("unitHeadRoutes.orgChart()", unitHeadRoutes.orgChart(), "/unit-head/org-chart");
 eq("unitHeadRoutes.reports()", unitHeadRoutes.reports(), "/unit-head/reports");
-eq("unitHeadRoutes.report(id)", unitHeadRoutes.report("r1"), "/unit-head/reports/r1");
 eq("unitHeadRoutes.warehouse()", unitHeadRoutes.warehouse(), "/unit-head/warehouse");
 
 eq("employeeRoutes.dashboard()", employeeRoutes.dashboard(), "/employee");
 eq("employeeRoutes.warehouse()", employeeRoutes.warehouse(), "/employee/warehouse");
 eq("employeeRoutes.reports()", employeeRoutes.reports(), "/employee/reports");
-eq("employeeRoutes.report(id)", employeeRoutes.report("r1"), "/employee/reports/r1");
 eq("employeeRoutes.map()", employeeRoutes.map(), "/employee/map");
 eq("employeeRoutes.announcements()", employeeRoutes.announcements(), "/employee/announcements");
 
@@ -353,6 +349,25 @@ eq(
   "UNIT_HEAD_NAV uses the shared forms section",
   PANEL_NAV["unit-head"].sections.some((s) => s.label === formsNavSection().label && s.requiredModule === "forms"),
   true,
+);
+
+// The console is shared across panels, so its detail URL is built from whichever
+// panel hosts it. That made it a URL builder inside a component — a template
+// literal no grep could catch. It now lives in utils/report-routes.ts.
+eq(
+  "reportDetailHref for an org-head console",
+  reportDetailHref(orgRoutes.dashboard(), "abc123", "accident"),
+  "/orghead/reports/abc123?source=accident",
+);
+eq(
+  "reportDetailHref for a unit-head console",
+  reportDetailHref(unitHeadRoutes.dashboard(), "abc123", "incident_report"),
+  "/unit-head/reports/abc123?source=incident_report",
+);
+eq(
+  "reportDetailHref keeps the base a panel root, never the reports page",
+  reportDetailHref(orgRoutes.reports(), "abc123", "accident"),
+  "/orghead/reports/reports/abc123?source=accident",
 );
 
 // ------------------------------------------------------------------- nav reachability

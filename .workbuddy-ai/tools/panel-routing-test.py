@@ -53,6 +53,7 @@ try:
             "src/utils/form-access.ts",
             "src/utils/org.ts",
             "src/utils/chartNavigation.ts",
+            "src/utils/report-routes.ts",
             "--outDir", str(out),
             "--target", "es2020",
             "--module", "esnext",
@@ -87,7 +88,25 @@ try:
     # literal (the original defect), a `detailBase="/orghead"` prop, and a
     # `backHref="/org/..."` prop.
     offenders = []
-    banned = ("/org/${", 'detailBase="/', 'backHref="/')
+    # Three shapes of the same mistake, all of which type-check cleanly and fail
+    # only when a user clicks: a template literal (the original defect), a base
+    # prop, and a plain href/redirect literal. The panel roots are listed
+    # explicitly rather than derived, so adding a fourth panel without adding it
+    # here is visible in review.
+    banned = (
+        "/org/${",
+        'detailBase="/',
+        'backHref="/',
+        'href="/orghead',
+        'href="/unit-head',
+        'href="/employee',
+        'push("/orghead',
+        'push("/unit-head',
+        'push("/employee',
+        'replace("/orghead',
+        'replace("/unit-head',
+        'replace("/employee',
+    )
     for path in (FRONT / "src" / "components").rglob("*.tsx"):
         text = strip_comments(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
@@ -222,12 +241,16 @@ try:
     problems7 = []
     if "export const canOpenReportDetail" not in table:
         problems7.append("OversightTable.tsx: no exported canOpenReportDetail predicate")
-    # Every `detailHref(` use must be inside the component that owns the predicate.
-    if table.count("detailHref(row") != 1:
+    # No inline template-literal URL may come back. A component that appends
+    # `${base}/reports/...` is a builder again, and no grep for a literal path
+    # can see it.
+    if "/reports/${" in table:
         problems7.append(
-            "OversightTable.tsx: detailHref is called "
-            f"{table.count('detailHref(row')} time(s); it must be called once, by RowLink"
+            "OversightTable.tsx: a detail URL is built inline; use "
+            "reportDetailHref from utils/report-routes.ts"
         )
+    if "reportDetailHref(" not in table:
+        problems7.append("OversightTable.tsx: does not use reportDetailHref")
     if "canOpenReportDetail(userLevel)" not in table:
         problems7.append("OversightTable.tsx: RowLink does not consult canOpenReportDetail")
     # The review-history fetch must not be able to fail the page. Detected by its

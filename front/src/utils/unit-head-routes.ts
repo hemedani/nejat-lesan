@@ -7,13 +7,14 @@
  * `*-routes` modules — never a defaulted literal, because a defaulted literal is
  * exactly how `/orghead` ended up pointing at `/org`.
  *
+ * Scope: the URLs **components** construct. `/unit-head/org-chart` and the
+ * reports detail live in `PANEL_NAV` rather than here — R1 proves those resolve.
+ *
  * Pure and React-free so the test harness can transpile it standalone.
  */
 export const unitHeadRoutes = {
   dashboard: () => "/unit-head",
   members: () => "/unit-head/members",
-  orgChart: () => "/unit-head/org-chart",
   reports: () => "/unit-head/reports",
-  report: (reportId: string) => `/unit-head/reports/${reportId}`,
   warehouse: () => "/unit-head/warehouse",
 } as const;

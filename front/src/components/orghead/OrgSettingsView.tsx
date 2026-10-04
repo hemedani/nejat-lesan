@@ -9,6 +9,7 @@ import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import { MODULE_KEYS, MODULE_LABELS } from "@/utils/org";
 import type { OrganizationListItem, OrgChartResponse } from "@/services/org-projections";
+import { orgRoutes } from "@/utils/org-routes";
 
 
 /**
@@ -132,19 +133,19 @@ export function OrgSettingsView({ orgId }: { orgId: string }) {
         <h2 className="mb-4 font-semibold text-white">دسترسی سریع</h2>
         <div className="flex flex-wrap gap-2">
           <Link
-            href="/orghead/units"
+            href={orgRoutes.units()}
             className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
           >
             مدیریت واحدها
           </Link>
           <Link
-            href="/orghead/people"
+            href={orgRoutes.people()}
             className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
           >
             افراد و نقش‌ها
           </Link>
           <Link
-            href="/orghead/org-chart"
+            href={orgRoutes.orgChart()}
             className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
           >
             نمودار سازمانی

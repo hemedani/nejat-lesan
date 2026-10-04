@@ -10,6 +10,7 @@ import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
 import type { UnitType } from "@/services/org-projections";
+import { unitHeadRoutes } from "@/utils/unit-head-routes";
 
 interface UnitDetail {
   _id: string;
@@ -143,14 +144,14 @@ export function UnitHeadDashboard({
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
           <Link
-            href="/unit-head/members"
+            href={unitHeadRoutes.members()}
             className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
           >
             اعضای واحد
           </Link>
           {warehouseOn && (
             <Link
-              href="/unit-head/warehouse"
+              href={unitHeadRoutes.warehouse()}
               className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500"
             >
               انبار واحد

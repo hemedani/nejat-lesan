@@ -12,6 +12,11 @@
  * `.workbuddy-ai/tools/panel-routing-test.py` greps `src/components` for
  * `/org/${`, `detailBase="/` and `backHref="/` so this cannot regress.
  *
+ * Scope: these builders cover the URLs **components** construct. Sidebar hrefs are
+ * owned by `PANEL_NAV`, and `/orghead/reports` exists in the nav rather than as a
+ * builder for exactly that reason — R1 already proves every nav href resolves.
+ * A builder nothing calls would be dead code, so there are none.
+ *
  * Pure and React-free so the test harness can transpile it standalone.
  */
 export const orgRoutes = {
@@ -27,7 +32,5 @@ export const orgRoutes = {
   processNew: () => "/orghead/processes/new",
   process: (processId: string) => `/orghead/processes/${processId}`,
   reports: () => "/orghead/reports",
-  report: (reportId: string) => `/orghead/reports/${reportId}`,
-  settings: () => "/orghead/settings",
   warehouse: () => "/orghead/warehouse",
 } as const;

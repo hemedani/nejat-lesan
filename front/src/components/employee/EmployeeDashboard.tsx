@@ -12,6 +12,7 @@ import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton } from "@/components/patrol/ui";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
 import type { UnitType } from "@/services/org-projections";
+import { employeeRoutes } from "@/utils/employee-routes";
 
 interface UnitDetail {
   _id: string;
@@ -155,7 +156,7 @@ export function EmployeeDashboard({
         {warehouseOn && (
           <>
             <Link
-              href="/employee/warehouse"
+              href={employeeRoutes.warehouse()}
               className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500"
             >
               انبار واحد من
@@ -165,19 +166,19 @@ export function EmployeeDashboard({
         {patrolOn && isPatrol && (
           <>
             <Link
-              href="/employee/reports"
+              href={employeeRoutes.reports()}
               className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
             >
               رخدادهای من
             </Link>
             <Link
-              href="/employee/map"
+              href={employeeRoutes.map()}
               className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
             >
               نقشه حوادث
             </Link>
             <Link
-              href="/employee/announcements"
+              href={employeeRoutes.announcements()}
               className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
             >
               اطلاعیه‌ها

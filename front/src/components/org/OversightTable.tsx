@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { useAuth } from "@/context/AuthContext";
+import { reportDetailHref } from "@/utils/report-routes";
 
 import { FormIcon } from "@/components/org/forms/FormIcon";
 import { StatusBadge } from "@/components/patrol/StatusBadge";
@@ -26,9 +27,6 @@ export const reportLabel = (row: OversightRow): string =>
  * all open the same record, and it is written for accidents too — an explicit value
  * is one a reader can check, where an absent one is an assumption.
  */
-const detailHref = (row: OversightRow, base: string): string =>
-  `${base}/reports/${row._id}?source=${row.source}`;
-
 /**
  * Whether this viewer may open a report's detail page.
  *
@@ -74,7 +72,7 @@ function RowLink({
     );
   }
   return (
-    <Link href={detailHref(row, base)} className={className} title={title}>
+    <Link href={reportDetailHref(base, row._id, row.source)} className={className} title={title}>
       {children}
     </Link>
   );

@@ -7,6 +7,7 @@ import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { PageSkeleton, RetryErrorBox, EmptyState } from "@/components/patrol/ui";
 import { ORG_ROLE_LABELS, ORG_ROLE_TONES } from "@/components/org/role-helpers";
 import type { UserRole } from "@/types/auth";
+import { unitHeadRoutes } from "@/utils/unit-head-routes";
 
 interface Member {
   _id: string;
@@ -85,7 +86,7 @@ export function UnitMembersView({ unitId }: { unitId: string }) {
           </p>
         </div>
         <Link
-          href="/unit-head"
+          href={unitHeadRoutes.dashboard()}
           className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
         >
           بازگشت به داشبورد
