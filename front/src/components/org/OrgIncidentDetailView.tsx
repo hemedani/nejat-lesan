@@ -40,15 +40,31 @@ export function OrgIncidentDetailView({
     setLoading(true);
     setError(null);
     try {
-      const [reportResponse, historyResponse] = await Promise.all([
-        get(reportId, reportDetailProjection as never),
-        getReportReviewHistory({
+      const reportResponse = await get(reportId, reportDetailProjection as never);
+      setReport(unwrapApiResponse<PatrolReport>(reportResponse));
+
+      // Fetched separately, and never allowed to fail the page.
+      //
+      // `accident.getReportReviewHistory` resolves its scope through
+      // `getReportScope`, which handles only Patrol and Manager/Ghost and
+      // **throws** for OrgHead/UnitHead (`back/src/accident/reportScope.ts`).
+      // The org-head oversight console is built for exactly those roles, so in a
+      // `Promise.all` its rejection turned a page the org head reached by
+      // legitimate navigation into an error box.
+      //
+      // The report itself is readable by them — `accident.get` carries no
+      // `grantAccess`. So a refused history yields an empty trail, and the
+      // backend fix in `back/prompt/02-fix-review-history-scope-for-org-leaders.md`
+      // improves this surface with no further frontend change.
+      try {
+        const historyResponse = await getReportReviewHistory({
           set: { reportId, page: 1, limit: 100 },
           get: historyProjection as never,
-        }),
-      ]);
-      setReport(unwrapApiResponse<PatrolReport>(reportResponse));
-      setHistory(unwrapApiResponse<ReviewHistoryItem[]>(historyResponse) || []);
+        });
+        setHistory(unwrapApiResponse<ReviewHistoryItem[]>(historyResponse) || []);
+      } catch {
+        setHistory([]);
+      }
     } catch (cause) {
       setError(getPatrolErrorMessage(cause));
     } finally {

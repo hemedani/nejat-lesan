@@ -16,6 +16,19 @@ import subprocess
 import sys
 import tempfile
 
+def strip_comments(text: str) -> str:
+    """Drop comments so prose about a banned string does not trip a grep.
+
+    Both R6 and R7 look for code that a fix explicitly forbids, and both fixes
+    document *why* in a comment. Without this the checks would be impossible to
+    satisfy honestly.
+    """
+    text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+    text = re.sub(r"^\s*//.*$", "", text, flags=re.M)
+    text = re.sub(r"\s//[^\n\"'`]*$", "", text, flags=re.M)
+    return text
+
+
 ROOT = pathlib.Path("/Users/syd/work/madani/nejat/lesan")
 FRONT = ROOT / "front"
 TOOLS = ROOT / ".workbuddy-ai" / "tools"
@@ -76,13 +89,7 @@ try:
     offenders = []
     banned = ("/org/${", 'detailBase="/', 'backHref="/')
     for path in (FRONT / "src" / "components").rglob("*.tsx"):
-        raw = path.read_text(encoding="utf-8")
-        # Strip comments first: these strings legitimately appear in prose that
-        # documents *why* the literal form is banned, and matching that would
-        # make the check impossible to satisfy honestly.
-        text = re.sub(r"/\*.*?\*/", "", raw, flags=re.S)
-        text = re.sub(r"^\s*//.*$", "", text, flags=re.M)
-        text = re.sub(r"\s//[^\n\"'`]*$", "", text, flags=re.M)
+        text = strip_comments(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
             if any(b in line for b in banned):
                 offenders.append(f"{path.relative_to(FRONT)}:{lineno}: {line.strip()}")
@@ -196,6 +203,54 @@ try:
             print(f"  x {x}")
         sys.exit(1)
     print(f"R5 ok — {len(data_layouts)} route groups require authentication")
+
+    # R7 — the report console must not offer org leaders a detail link that the
+    # backend refuses. `accident.getReportReviewHistory` resolves scope through
+    # `getReportScope`, which throws for OrgHead/UnitHead, while the list resolves
+    # through `getOrgReportBase`, which does not. Every surface that rendered the
+    # link has to go through the one predicate, or a dead link reappears.
+    table = strip_comments(
+        (FRONT / "src" / "components" / "org" / "OversightTable.tsx").read_text(
+            encoding="utf-8"
+        )
+    )
+    detail = strip_comments(
+        (
+            FRONT / "src" / "components" / "org" / "OrgIncidentDetailView.tsx"
+        ).read_text(encoding="utf-8")
+    )
+    problems7 = []
+    if "export const canOpenReportDetail" not in table:
+        problems7.append("OversightTable.tsx: no exported canOpenReportDetail predicate")
+    # Every `detailHref(` use must be inside the component that owns the predicate.
+    if table.count("detailHref(row") != 1:
+        problems7.append(
+            "OversightTable.tsx: detailHref is called "
+            f"{table.count('detailHref(row')} time(s); it must be called once, by RowLink"
+        )
+    if "canOpenReportDetail(userLevel)" not in table:
+        problems7.append("OversightTable.tsx: RowLink does not consult canOpenReportDetail")
+    # The review-history fetch must not be able to fail the page. Detected by its
+    # degradation rather than by the absence of one specific construct: a refused
+    # history must clear the trail and carry on, so `setHistory([])` in a recovery
+    # branch is the thing that has to survive. A `Promise.all` is the shape this
+    # replaces, and its return is checked separately as a banned form.
+    if "Promise.all" in detail:
+        problems7.append(
+            "OrgIncidentDetailView.tsx: review history is fetched in a Promise.all, "
+            "so a refused scope fails the whole page instead of the trail"
+        )
+    if "setHistory([])" not in detail:
+        problems7.append(
+            "OrgIncidentDetailView.tsx: no recovery branch — a refused review "
+            "history must clear the trail rather than fail the page"
+        )
+    if problems7:
+        print("R7 FAILED — the report console offers unreachable surfaces:")
+        for x in problems7:
+            print(f"  x {x}")
+        sys.exit(1)
+    print("R7 ok — report detail is offered only where it resolves")
 
     result = subprocess.run([str(NODE), "test.mjs"], cwd=out, capture_output=True, text=True)
     print(result.stdout, end="")

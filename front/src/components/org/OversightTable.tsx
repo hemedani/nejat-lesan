@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { useAuth } from "@/context/AuthContext";
+
 import { FormIcon } from "@/components/org/forms/FormIcon";
 import { StatusBadge } from "@/components/patrol/StatusBadge";
 import { formatDate, fullName, reportSourceTone } from "@/components/patrol/ReportList";
@@ -26,6 +28,57 @@ export const reportLabel = (row: OversightRow): string =>
  */
 const detailHref = (row: OversightRow, base: string): string =>
   `${base}/reports/${row._id}?source=${row.source}`;
+
+/**
+ * Whether this viewer may open a report's detail page.
+ *
+ * The oversight *list* is scoped by `resolveOversightScope`, which handles org
+ * leaders through `getOrgReportBase`. The *detail* fetch is not:
+ * `accident.getReportReviewHistory` uses `getReportScope`, which throws for
+ * OrgHead/UnitHead. Offering an org leader a link that cannot resolve is worse
+ * than showing the row's label as plain text.
+ *
+ * One predicate rather than an inline level check at each of the four call
+ * sites. `back/prompt/02-fix-review-history-scope-for-org-leaders.md` is the
+ * server-side fix; when it lands this returns `true` for everyone.
+ */
+export const canOpenReportDetail = (level: string | null): boolean =>
+  level === "Manager" || level === "Ghost";
+
+/**
+ * A row's identifier, linked when the viewer can open it and inert when not.
+ *
+ * Wrapping the decision here rather than at four call sites means the fallback
+ * cannot be forgotten: every surface that would have shown a dead link now shows
+ * the same label in the same place, just not clickable.
+ */
+function RowLink({
+  row,
+  base,
+  className,
+  title,
+  children,
+}: {
+  row: OversightRow;
+  base: string;
+  className: string;
+  title?: string;
+  children: React.ReactNode;
+}) {
+  const { userLevel } = useAuth();
+  if (!canOpenReportDetail(userLevel)) {
+    return (
+      <span className={`${className} cursor-default text-slate-400`} title={title}>
+        {children}
+      </span>
+    );
+  }
+  return (
+    <Link href={detailHref(row, base)} className={className} title={title}>
+      {children}
+    </Link>
+  );
+}
 
 /** Exported for the CSV export's `platform` column, which must not re-invent it. */
 export const PLATFORM_LABELS: Record<string, string> = {
@@ -129,12 +182,13 @@ export function OversightTable({
                   />
                 </td>
                 <td className={cell}>
-                  <Link
-                    href={detailHref(row, detailBase)}
+                  <RowLink
+                    row={row}
+                    base={detailBase}
                     className="font-semibold text-blue-200 hover:text-cyan-200"
                   >
                     {reportLabel(row)}
-                  </Link>
+                  </RowLink>
                   <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                     <span
                       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] ${
@@ -184,13 +238,14 @@ export function OversightTable({
                   <Provenance row={row} />
                 </td>
                 <td className={cell}>
-                  <Link
-                    href={detailHref(row, detailBase)}
-                    aria-label="مشاهده گزارش"
+                  <RowLink
+                    row={row}
+                    base={detailBase}
+                    title="مشاهده گزارش"
                     className="whitespace-nowrap text-xs text-blue-300 hover:text-cyan-200"
                   >
                     مشاهده
-                  </Link>
+                  </RowLink>
                 </td>
               </tr>
             ))}
@@ -203,12 +258,13 @@ export function OversightTable({
           <article key={row._id} className="space-y-3 p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <Link
-                  href={detailHref(row, detailBase)}
+                <RowLink
+                  row={row}
+                  base={detailBase}
                   className="font-semibold text-blue-200"
                 >
                   {reportLabel(row)}
-                </Link>
+                </RowLink>
                 <p className="mt-1 text-xs text-slate-500">
                   {formatDate(row.sort_at)} · {row.group_title ?? "فرم"}
                 </p>
@@ -242,9 +298,9 @@ export function OversightTable({
                 {row.review_reason}
               </p>
             )}
-            <Link href={detailHref(row, detailBase)} className="text-xs text-blue-300">
+            <RowLink row={row} base={detailBase} className="text-xs text-blue-300">
               جزئیات
-            </Link>
+            </RowLink>
           </article>
         ))}
       </div>
