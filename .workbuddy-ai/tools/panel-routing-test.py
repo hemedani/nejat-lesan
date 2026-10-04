@@ -167,6 +167,36 @@ try:
         sys.exit(1)
     print("R4 ok — nav, route gate and role guard agree on /forms")
 
+    # R5 — every route group that renders data must require authentication.
+    # `/charts` and `/maps` had only a ModuleGate, and `AuthContext.hasModule`
+    # returns true while the module feed is unknown — which is precisely the state
+    # an anonymous visitor is in. So an unauthenticated request reached every
+    # chart page.
+    data_layouts = ("charts", "maps", "admin", "orghead", "unit-head", "employee",
+                    "patrol", "patrol-manager", "org", "user", "forms")
+    gates = ("AuthGate", "PanelGuard", "FormAuthorGuard")
+    ungated = []
+    for name in data_layouts:
+        base = FRONT / "src" / "app" / name
+        layout = base / "layout.tsx"
+        if layout.exists():
+            entry, where = layout, f"{name}/layout.tsx"
+        elif (base / "page.tsx").exists():
+            # A single-page group carries its own gate; `/org` is one, and wrapping
+            # one redirecting page in a layout would be indirection, not structure.
+            entry, where = base / "page.tsx", f"{name}/page.tsx"
+        else:
+            ungated.append(f"{name}: no layout.tsx or page.tsx")
+            continue
+        if not any(g in entry.read_text(encoding="utf-8") for g in gates):
+            ungated.append(f"{where} has no auth gate")
+    if ungated:
+        print("R5 FAILED — route groups reachable without signing in:")
+        for x in ungated:
+            print(f"  x {x}")
+        sys.exit(1)
+    print(f"R5 ok — {len(data_layouts)} route groups require authentication")
+
     result = subprocess.run([str(NODE), "test.mjs"], cwd=out, capture_output=True, text=True)
     print(result.stdout, end="")
     if result.stderr:

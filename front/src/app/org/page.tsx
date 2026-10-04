@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import { usePanelViewer } from "@/hooks/usePanelViewer";
 import { getDefaultPanel } from "@/utils/panels";
 import { PageSkeleton } from "@/components/patrol/ui";
@@ -18,18 +19,20 @@ import { PageSkeleton } from "@/components/patrol/ui";
  * That workspace is gone. The single org surface is `/orghead`, scoped from
  * `user.roles[]` by `PanelScopeProvider`.
  *
- * No `authReady` gate here on purpose: `getDefaultPanel` is pure, and the
- * destination's own `PanelGuard` settles an unauthenticated visitor. Gating here
- * too would only add a second redirect.
+ * Authentication is checked before computing a destination, rather than letting
+ * the destination's own `PanelGuard` do it: `getDefaultPanel` is pure and returns
+ * `/admin` for a viewer with no recognised role, so an anonymous visitor would be
+ * redirected twice and see a flash of the wrong panel on the way.
  */
 export default function OrgForwardPage() {
+  const { isAuthenticated, authReady } = useAuth();
   const viewer = usePanelViewer();
   const router = useRouter();
-  const target = getDefaultPanel(viewer);
 
   useEffect(() => {
-    router.replace(target);
-  }, [target, router]);
+    if (!authReady) return;
+    router.replace(isAuthenticated ? getDefaultPanel(viewer) : "/login");
+  }, [authReady, isAuthenticated, viewer, router]);
 
   return <PageSkeleton blocks={[220, 260]} />;
 }
