@@ -1,0 +1,332 @@
+/**
+ * Routing assertions for the panel registry.
+ *
+ * These functions decide where every user lands after login and which panels they
+ * can open, so a wrong branch is invisible until someone complains about the wrong
+ * screen. They are pure, so they can be tested without a browser.
+ */
+
+import {
+  canAccessPanel,
+  getAccessiblePanels,
+  getDefaultPanel,
+  getScopedRoles,
+  isOrgHeadViewer,
+  isSuperViewer,
+  isUnitHeadViewer,
+  makePanelViewer,
+  PANEL_DEFINITIONS,
+} from "./panels.js";
+import { filterPanelSections, isNavItemActive, PANEL_NAV } from "./panel-nav.js";
+import { orgRoutes } from "./org-routes.js";
+import { unitHeadRoutes } from "./unit-head-routes.js";
+import { employeeRoutes } from "./employee-routes.js";
+
+// `forms` is a fourth module key, not a synonym for `incident_patrol`: the
+// form engine is licensed separately so disabling it must not hide the patrol
+// console, and disabling patrol must not hide the builder. Omitting it here is
+// what let a missing `فرم‌ساز` section pass unnoticed.
+const ALL = ["charts", "incident_patrol", "warehouse", "forms"];
+
+const mk = (level, roles = [], mods = ALL) => ({
+  level,
+  roles,
+  hasModule: (k) => mods.includes(k),
+  orgHasModule: (k) => mods.includes(k),
+});
+
+const orgRole = (name = "Officer") => ({
+  roleId: "r1",
+  name,
+  scopeType: "organization",
+  scopeId: "org1",
+});
+const unitRole = (name = "Officer") => ({
+  roleId: "r2",
+  name,
+  scopeType: "unit",
+  scopeId: "unit1",
+});
+
+let pass = 0;
+const failures = [];
+
+function eq(label, actual, expected) {
+  const a = JSON.stringify(actual);
+  const e = JSON.stringify(expected);
+  if (a === e) {
+    pass++;
+  } else {
+    failures.push(`${label}\n     expected ${e}\n     actual   ${a}`);
+  }
+}
+
+// ---------------------------------------------------------------- default panel
+eq("Ghost -> /admin", getDefaultPanel(mk("Ghost")), "/admin");
+eq("Manager -> /admin", getDefaultPanel(mk("Manager")), "/admin");
+eq("Editor, no roles -> /admin", getDefaultPanel(mk("Editor")), "/admin");
+
+eq("OrgHead level -> /orghead", getDefaultPanel(mk("OrgHead")), "/orghead");
+eq("UnitHead level -> /unit-head", getDefaultPanel(mk("UnitHead")), "/unit-head");
+
+// A scoped role outranks the coarse level: an Editor placed in a unit is staff.
+eq(
+  "Editor + org role -> /employee",
+  getDefaultPanel(mk("Editor", [orgRole()])),
+  "/employee",
+);
+eq(
+  "Enterprise + org role -> /employee",
+  getDefaultPanel(mk("Enterprise", [orgRole()])),
+  "/employee",
+);
+
+// OrgHead/UnitHead roles are more specific than a generic scoped role.
+eq(
+  "OrgHead role -> /orghead",
+  getDefaultPanel(mk("Editor", [orgRole("OrgHead")])),
+  "/orghead",
+);
+eq(
+  "UnitHead role -> /unit-head",
+  getDefaultPanel(mk("Editor", [unitRole("UnitHead")])),
+  "/unit-head",
+);
+
+eq(
+  "Patrol + module -> /patrol/dashboard",
+  getDefaultPanel(mk("Patrol")),
+  "/patrol/dashboard",
+);
+eq(
+  "Patrol, no module -> /user",
+  getDefaultPanel(mk("Patrol", [], ["charts", "warehouse"])),
+  "/user",
+);
+eq(
+  "Enterprise + charts -> /charts/overall",
+  getDefaultPanel(mk("Enterprise")),
+  "/charts/overall",
+);
+eq(
+  "Enterprise, no charts -> /employee",
+  getDefaultPanel(mk("Enterprise", [], ["incident_patrol", "warehouse"])),
+  "/employee",
+);
+eq("null level -> /user", getDefaultPanel(mk(null)), "/user");
+
+// ------------------------------------------------------------------- predicates
+eq("isSuperViewer(Ghost)", isSuperViewer(mk("Ghost")), true);
+eq("isSuperViewer(Manager)", isSuperViewer(mk("Manager")), true);
+eq("isSuperViewer(Editor)", isSuperViewer(mk("Editor")), false);
+eq("isOrgHeadViewer(OrgHead level)", isOrgHeadViewer(mk("OrgHead")), true);
+eq("isOrgHeadViewer(OrgHead role)", isOrgHeadViewer(mk("Editor", [orgRole("OrgHead")])), true);
+eq("isUnitHeadViewer(UnitHead level)", isUnitHeadViewer(mk("UnitHead")), true);
+eq("getScopedRoles filters non-scoped", getScopedRoles([orgRole(), { name: "X" }]).length, 1);
+
+// ---------------------------------------------------------------- accessible set
+const ids = (v) => getAccessiblePanels(v).map((p) => p.id).sort();
+
+eq(
+  "Ghost can open every panel",
+  ids(mk("Ghost")),
+  ["admin", "employee", "orghead", "patrol", "patrol-manager", "profile", "unit-head"],
+);
+// OrgHead/UnitHead also get /employee via `extraLevels` — they are often staff
+// who consume from the warehouse themselves, so the employee surface is a
+// deliberate extra, not a leak.
+eq(
+  "OrgHead sees orghead + employee + profile",
+  ids(mk("OrgHead")),
+  ["employee", "orghead", "profile"],
+);
+eq(
+  "UnitHead sees unit-head + employee + profile",
+  ids(mk("UnitHead")),
+  ["employee", "profile", "unit-head"],
+);
+eq("Editor (no roles) sees admin + profile", ids(mk("Editor")), ["admin", "profile"]);
+
+// Module gating: no incident_patrol -> no patrol panel, even for Patrol level.
+// /employee survives because it is not module-gated as a whole.
+eq(
+  "Patrol without module loses /patrol but keeps /employee",
+  ids(mk("Patrol", [], ["charts", "warehouse"])),
+  ["employee", "profile"],
+);
+eq(
+  "Patrol with module gets /patrol",
+  ids(mk("Patrol")),
+  ["employee", "patrol", "profile"],
+);
+
+// profile must never be gated away
+for (const level of ["Ghost", "Manager", "Editor", "Enterprise", "Patrol", null]) {
+  const found = getAccessiblePanels(mk(level, [], [])).some((p) => p.id === "profile");
+  eq(`profile reachable for level=${level}`, found, true);
+}
+
+// ------------------------------------------------------------------ canAccessPanel
+const panel = (id) => PANEL_DEFINITIONS.find((p) => p.id === id);
+eq("admin denied to OrgHead", canAccessPanel(mk("OrgHead"), panel("admin")), false);
+eq("admin allowed to Editor", canAccessPanel(mk("Editor"), panel("admin")), true);
+eq("profile allowed to everyone", canAccessPanel(mk("Patrol", [], []), panel("profile")), true);
+eq(
+  "patrol denied without module",
+  canAccessPanel(mk("Patrol", [], ["warehouse"]), panel("patrol")),
+  false,
+);
+
+// -------------------------------------------------------------------- nav + shell
+const navIds = (v, p) => filterPanelSections(PANEL_NAV[p].sections, v).flatMap((s) => s.items.map((i) => i.href));
+const EMPLOYEE = mk("Patrol");
+eq("employee nav for Patrol includes map", navIds(EMPLOYEE, "employee").includes("/employee/map"), true);
+eq(
+  "employee nav for Patrol includes reports",
+  navIds(EMPLOYEE, "employee").includes("/employee/reports"),
+  true,
+);
+// Warehouse section is module-gated: drop the module and the link disappears.
+eq(
+  "employee nav hides warehouse without module",
+  navIds(mk("Patrol", [], ["incident_patrol"]), "employee").includes("/employee/warehouse"),
+  false,
+);
+// The patrol-gated group must not leak to a plain Enterprise employee.
+eq(
+  "employee nav hides patrol group for Enterprise",
+  navIds(mk("Enterprise"), "employee").some((h) => h.startsWith("/employee/reports")),
+  false,
+);
+
+eq("isNavItemActive exact", isNavItemActive("/employee", "/employee"), true);
+eq("isNavItemActive nested", isNavItemActive("/employee/map", "/employee"), true);
+eq("isNavItemActive sibling prefix", isNavItemActive("/employee-other", "/employee"), false);
+
+// ------------------------------------------------------------- dynamic form builder
+// `/forms` is reachable from both authoring panels, gated on the `forms`
+// module alone. These assertions exist because the link was once missing from
+// the nav entirely and nothing failed.
+eq(
+  "orghead nav reaches /forms when the forms module is on",
+  navIds(mk("OrgHead"), "orghead").includes("/forms"),
+  true,
+);
+eq(
+  "unit-head nav reaches /forms when the forms module is on",
+  navIds(mk("UnitHead"), "unit-head").includes("/forms"),
+  true,
+);
+eq(
+  "orghead nav hides /forms when the forms module is off",
+  navIds(mk("OrgHead", [], ["charts", "incident_patrol"]), "orghead").includes("/forms"),
+  false,
+);
+eq(
+  "orghead nav hides /forms when only patrol is on",
+  navIds(mk("OrgHead", [], ["incident_patrol"]), "orghead").includes("/forms"),
+  false,
+);
+// The two gates are independent: patrol off must not take the builder with it.
+eq(
+  "orghead nav keeps /forms when patrol is off but forms is on",
+  navIds(mk("OrgHead", [], ["forms"]), "orghead").includes("/forms"),
+  true,
+);
+eq(
+  "unit-head nav keeps /forms when patrol is off but forms is on",
+  navIds(mk("UnitHead", [], ["forms"]), "unit-head").includes("/forms"),
+  true,
+);
+// Authoring is for org/unit leaders only — it must not leak to the rank and file.
+eq(
+  "employee nav never reaches /forms",
+  navIds(mk("Patrol"), "employee").includes("/forms"),
+  false,
+);
+eq(
+  "patrol nav never reaches /forms",
+  navIds(mk("Patrol"), "patrol").includes("/forms"),
+  false,
+);
+eq(
+  "patrol-manager nav never reaches /forms",
+  navIds(mk("Manager"), "patrol-manager").includes("/forms"),
+  false,
+);
+// Ghost is exempt from module gating, so the builder stays reachable for it.
+// This must go through `makePanelViewer`, not the `mk()` mock: the Ghost
+// exemption lives in the factory, and `itemVisible` consults `orgHasModule`
+// before its own super-viewer bypass.
+eq(
+  "orghead nav reaches /forms for Ghost despite no modules",
+  navIds(makePanelViewer({ level: "Ghost", roles: [], modules: [] }), "orghead").includes(
+    "/forms",
+  ),
+  true,
+);
+// `/forms` is a flat top-level route, not nested under its panel, so the nav
+// item must stay active across the builder's own sub-routes.
+eq("isNavItemActive /forms on /forms", isNavItemActive("/forms", "/forms"), true);
+eq("isNavItemActive /forms on /forms/new", isNavItemActive("/forms/new", "/forms"), true);
+eq(
+  "isNavItemActive /forms on /forms/:id",
+  isNavItemActive("/forms/abc123", "/forms"),
+  true,
+);
+
+// ------------------------------------------------------------- makePanelViewer
+const viewer = makePanelViewer({
+  level: "Editor",
+  roles: [orgRole("OrgHead")],
+  modules: ["charts"],
+  orgModules: ["charts", "warehouse"],
+});
+eq("makePanelViewer level", viewer.level, "Editor");
+eq("makePanelViewer hasModule(charts)", viewer.hasModule("charts"), true);
+eq("makePanelViewer hasModule(warehouse) install-level", viewer.hasModule("warehouse"), false);
+eq("makePanelViewer orgHasModule(warehouse)", viewer.orgHasModule("warehouse"), true);
+
+// ------------------------------------------------------- route-builder invariant
+// Every org/unit URL a component renders must come from a route builder. This is
+// the assertion that would have caught the original defect: twelve components
+// hardcoded `/org/${orgId}/…`, so drilling down from `/orghead` ejected the user
+// into the legacy workspace and six `/orghead` routes were unreachable.
+eq("orgRoutes.dashboard()", orgRoutes.dashboard(), "/orghead");
+eq("orgRoutes.orgChart()", orgRoutes.orgChart(), "/orghead/org-chart");
+eq("orgRoutes.units()", orgRoutes.units(), "/orghead/units");
+eq("orgRoutes.unitNew()", orgRoutes.unitNew(), "/orghead/units/new");
+eq("orgRoutes.unit(id)", orgRoutes.unit("u1"), "/orghead/units/u1");
+eq("orgRoutes.people()", orgRoutes.people(), "/orghead/people");
+eq("orgRoutes.personNew()", orgRoutes.personNew(), "/orghead/people/add");
+eq("orgRoutes.person(id)", orgRoutes.person("p1"), "/orghead/people/p1");
+eq("orgRoutes.processes()", orgRoutes.processes(), "/orghead/processes");
+eq("orgRoutes.processNew()", orgRoutes.processNew(), "/orghead/processes/new");
+eq("orgRoutes.process(id)", orgRoutes.process("x1"), "/orghead/processes/x1");
+eq("orgRoutes.reports()", orgRoutes.reports(), "/orghead/reports");
+eq("orgRoutes.report(id)", orgRoutes.report("r1"), "/orghead/reports/r1");
+eq("orgRoutes.settings()", orgRoutes.settings(), "/orghead/settings");
+eq("orgRoutes.warehouse()", orgRoutes.warehouse(), "/orghead/warehouse");
+
+eq("unitHeadRoutes.dashboard()", unitHeadRoutes.dashboard(), "/unit-head");
+eq("unitHeadRoutes.members()", unitHeadRoutes.members(), "/unit-head/members");
+eq("unitHeadRoutes.orgChart()", unitHeadRoutes.orgChart(), "/unit-head/org-chart");
+eq("unitHeadRoutes.reports()", unitHeadRoutes.reports(), "/unit-head/reports");
+eq("unitHeadRoutes.report(id)", unitHeadRoutes.report("r1"), "/unit-head/reports/r1");
+eq("unitHeadRoutes.warehouse()", unitHeadRoutes.warehouse(), "/unit-head/warehouse");
+
+eq("employeeRoutes.dashboard()", employeeRoutes.dashboard(), "/employee");
+eq("employeeRoutes.warehouse()", employeeRoutes.warehouse(), "/employee/warehouse");
+eq("employeeRoutes.reports()", employeeRoutes.reports(), "/employee/reports");
+eq("employeeRoutes.report(id)", employeeRoutes.report("r1"), "/employee/reports/r1");
+eq("employeeRoutes.map()", employeeRoutes.map(), "/employee/map");
+eq("employeeRoutes.announcements()", employeeRoutes.announcements(), "/employee/announcements");
+
+// ------------------------------------------------------------------------- report
+console.log(`\n${pass} assertions passed`);
+if (failures.length) {
+  console.log(`${failures.length} FAILED:\n`);
+  for (const f of failures) console.log(`  x ${f}`);
+  process.exit(1);
+}
+console.log("all panel routing assertions pass\n");

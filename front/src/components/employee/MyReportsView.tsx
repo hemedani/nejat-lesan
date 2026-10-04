@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getReporterDashboard } from "@/app/actions/accident/getReporterDashboard";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
+import { employeeRoutes } from "@/utils/employee-routes";
 import type { PatrolReport } from "@/types/patrol";
 import { ReportList } from "@/components/patrol/ReportList";
 import { EmptyState, PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
@@ -73,7 +74,7 @@ export function MyReportsView() {
       ) : reports.length === 0 ? (
         <EmptyState message="رخدادی برای شما ثبت نشده است." />
       ) : (
-        <ReportList reports={reports} detailBase="/employee" />
+        <ReportList reports={reports} detailBase={employeeRoutes.dashboard()} />
       )}
     </div>
   );
