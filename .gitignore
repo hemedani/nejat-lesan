@@ -11,3 +11,8 @@ front/ignore_assets
 nejat.bundle
 mobile/.env
 mobile/pnpm-debug.log
+
+# Agent session logs — local scratch, not project history.
+# The audit/test scripts under .workbuddy-ai/tools/ ARE tracked.
+.workbuddy-ai/memory/
+**/.workbuddy-ai/memory/
