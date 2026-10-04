@@ -276,10 +276,62 @@ export const users = () => {
 		excludes: ["password"],
 	});
 
+	// `.catch()` because this promise is never awaited: `users()` runs during
+	// `functionsSetup`, and an unhandled rejection there takes the whole process
+	// down. It is sparse, so existing data does not violate it, but a suite that
+	// drops a collection while this build is in flight aborts it — which is the
+	// intermittent `Index build failed … is being dropped` in the test suites.
 	coreApp.odm.getCollection("user").createIndex(
 		{ personnel_code: 1 },
 		{ unique: true, sparse: true },
-	);
+	).catch(() => {
+		// A missing index costs uniqueness on an optional field, not correctness
+		// of the server. `applyUserIndexMigrations` covers the legacy index.
+	});
 
 	return model;
+};
+
+/**
+ * The index an older version of this schema created for `national_number`.
+ *
+ * It is unique and NOT sparse, which is the whole problem: Mongo admits exactly
+ * one document with a missing or null value under such an index, so the second
+ * user without a national number could never be inserted. Nothing declares it
+ * any more — `users()` creates only the `email` and `personnel_code` indexes,
+ * both sparse — so it survives only in databases created before that changed.
+ */
+const LEGACY_NATIONAL_NUMBER_INDEX = "national_number_1";
+
+/**
+ * Drop the unique-but-not-sparse `national_number` index left by an older
+ * schema.
+ *
+ * `createIndex` only ever adds, so an existing database keeps this index
+ * forever no matter what the model says. Nothing in the test suite can catch
+ * it either, because each suite drops its database and therefore never sees the
+ * old index — which is exactly why it belongs in a migration rather than in
+ * `users()`.
+ *
+ * Dropping it is not a loss of integrity. `national_number` is
+ * `optional(is_valid_national_number_struct)` and nothing enforces it being
+ * present or unique today. The real failure it caused was a hard `E11000` on
+ * any user inserted without a national number — including every user
+ * `user.seedDemoOrganization` creates.
+ */
+export const applyUserIndexMigrations = async (): Promise<void> => {
+	const collection = coreApp.odm.getCollection("user");
+
+	try {
+		const indexes = await collection.indexes();
+		if (
+			indexes.some((index) => index.name === LEGACY_NATIONAL_NUMBER_INDEX)
+		) {
+			await collection.dropIndex(LEGACY_NATIONAL_NUMBER_INDEX);
+		}
+	} catch {
+		// A failed drop must not stop the process from serving. The worst case is
+		// that the stale cap persists until an operator drops it by hand; the
+		// indexes this schema does declare are created regardless.
+	}
 };

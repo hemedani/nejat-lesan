@@ -7,6 +7,8 @@ import {
 	air_statuses,
 	announcement_reads,
 	announcements,
+	applyFormDefinitionMigrations,
+	applyUserIndexMigrations,
 	area_usages,
 	body_insurance_coes,
 	cities,
@@ -71,7 +73,11 @@ import {
 	wares,
 } from "@model";
 import { functionsSetup } from "./src/mod.ts";
-import { applyModuleGates, ensureModuleConfig } from "./src/app_modules/moduleConfig.ts";
+import { ensureFormDefinitionIndexes } from "@model";
+import {
+	applyModuleGates,
+	ensureModuleConfig,
+} from "./src/app_modules/moduleConfig.ts";
 
 const MONGO_URI = Deno.env.get("MONGO_URI") || "mongodb://127.0.0.1:27017/";
 const REDIS_URI = Deno.env.get("REDIS_URI");
@@ -206,6 +212,13 @@ const CORS_ORIGINS = CORS_ORIGINS_RAW
 		"http://46.245.98.10",
 		"https://46.245.98.10",
 	];
+
+// Storage-level migrations must finish before the first request, otherwise a
+// client can race a pending index change and get an error the deploy already
+// fixed. Top-level await, so this is guaranteed before `runServer` binds.
+await applyFormDefinitionMigrations();
+await ensureFormDefinitionIndexes();
+await applyUserIndexMigrations();
 
 coreApp.runServer({
 	port: PORT,
