@@ -10,6 +10,7 @@ import { updateAccidentProcess } from "@/app/actions/accident_process/updateProc
 import { activateAccidentProcess } from "@/app/actions/accident_process/activateProcess";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { INCIDENT_TYPE_LABELS } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { Button } from "@/components/atoms/Button";
 import MyInput from "@/components/atoms/MyInput";
 import ToggleSwitch from "@/components/atoms/ToggleSwitch";
@@ -130,18 +131,18 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
         const act = await activateAccidentProcess({ set: { _id: id } });
         if (!act.success) {
           toast.error(((act.body as { message?: string } | undefined)?.message) || "خطا در فعال‌سازی فرایند.");
-          router.replace(`/org/${orgId}/processes/${id}`);
+          router.replace(orgRoutes.process(id));
           return;
         }
         toast.success("فرایند ذخیره و فعال شد.");
-        router.replace(`/org/${orgId}/processes`);
+        router.replace(orgRoutes.processes());
         return;
       }
       toast.success(processId ? "فرایند به‌روزرسانی شد." : "فرایند به‌صورت پیش‌نویس ذخیره شد.");
       if (processId) {
         await load();
       } else {
-        router.replace(`/org/${orgId}/processes`);
+        router.replace(orgRoutes.processes());
       }
     } catch (cause) {
       toast.error(getPatrolErrorMessage(cause));
@@ -163,7 +164,7 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {processId && (
-            <Link href={`/org/${orgId}/processes`} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">
+            <Link href={orgRoutes.processes()} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">
               بازگشت
             </Link>
           )}

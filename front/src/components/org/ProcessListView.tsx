@@ -11,6 +11,7 @@ import { removeAccidentProcess } from "@/app/actions/accident_process/removeProc
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { AccidentProcessListItem } from "@/services/org-projections";
 import { INCIDENT_TYPE_LABELS } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { Button } from "@/components/atoms/Button";
 import { EmptyState, PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 
@@ -82,7 +83,7 @@ export function ProcessListView({ orgId }: { orgId: string }) {
           <h1 className="mt-1 text-2xl font-bold text-white">مدیریت فرایندها</h1>
           <p className="mt-2 text-sm text-slate-500">قالب پرسشنامه‌ای ثبت رخداد برای اپلیکیشن موبایل را بسازید، فعال و تکراری کنید.</p>
         </div>
-        <Link href={`/org/${orgId}/processes/new`} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-500">
+        <Link href={orgRoutes.processNew()} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-500">
           + فرایند جدید
         </Link>
       </div>
@@ -132,9 +133,9 @@ export function ProcessListView({ orgId }: { orgId: string }) {
                 <div className="mt-3 text-xs text-slate-400">نسخه {process.version}</div>
                 <div className="mt-4 flex flex-wrap gap-2 border-t border-white/10 pt-3">
                   {editable ? (
-                    <Button size="sm" variant="primary" onClick={() => router.push(`/org/${orgId}/processes/${process._id}`)}>ویرایش سازنده</Button>
+                    <Button size="sm" variant="primary" onClick={() => router.push(orgRoutes.process(process._id))}>ویرایش سازنده</Button>
                   ) : (
-                    <Button size="sm" variant="secondary" onClick={() => router.push(`/org/${orgId}/processes/${process._id}`)}>مشاهده</Button>
+                    <Button size="sm" variant="secondary" onClick={() => router.push(orgRoutes.process(process._id))}>مشاهده</Button>
                   )}
                   {editable && (
                     <Button
