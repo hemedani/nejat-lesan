@@ -69,3 +69,4 @@ export * from "./consumption.ts";
 export * from "./goods_receipt.ts";
 export * from "./goods_request.ts";
 export * from "./form_definition.ts";
+export * from "./incident_report.ts";

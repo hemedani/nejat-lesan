@@ -1,8 +1,8 @@
 import { lesan, MongoClient, redis } from "@deps";
 import { ensureDir } from "https://deno.land/std@0.208.0/fs/mod.ts";
 import {
-	accidents,
 	accident_processes,
+	accidents,
 	air_pollution_zones,
 	air_statuses,
 	announcement_reads,
@@ -28,6 +28,7 @@ import {
 	goods_receipts,
 	goods_requests,
 	human_reasons,
+	incident_reports,
 	incident_severities,
 	injury_statuses,
 	insurance_coes,
@@ -35,8 +36,8 @@ import {
 	licence_types,
 	light_statuses,
 	max_damage_sections,
-	motion_directions,
 	module_configs,
+	motion_directions,
 	operation_logs,
 	organizations,
 	patrol_operationss,
@@ -119,6 +120,7 @@ export const accident = accidents();
 export const accident_process = accident_processes();
 export const form_definition = form_definitions();
 export const form_response = form_responses();
+export const incident_report = incident_reports();
 export const module_config = module_configs();
 export const air_status = air_statuses();
 export const area_usage = area_usages();

@@ -53,6 +53,8 @@ import { patrolOperationsSetup } from "./patrol_operations/mod.ts";
 import { announcementSetup } from "./announcement/mod.ts";
 import { policeStationSetup } from "./police_station/mod.ts";
 import { emergencySetup } from "./emergency/mod.ts";
+import { formDefinitionSetup } from "./form_definition/mod.ts";
+import { incidentReportSetup } from "./incident_report/mod.ts";
 
 export const functionsSetup = () => {
 	sharedSetup();
@@ -110,4 +112,9 @@ export const functionsSetup = () => {
 	accidentSetup();
 	accidentProcessSetup();
 	announcementSetup();
+	// Without this the 14 acts exist on disk but are never registered, so the
+	// backend rejects `model: "form_definition"` and the generated declarations
+	// omit it entirely.
+	formDefinitionSetup();
+	incidentReportSetup();
 };
