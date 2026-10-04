@@ -1008,13 +1008,18 @@ Lesan's core philosophy centers on simplifying the client-server communication p
 
 ## Module licensing — per-deployment on/off (backend gate)
 
-The product is sold in three activatable modules; everything else is **core** and never gated.
+The product is sold in four activatable modules; everything else is **core** and never gated.
 
 | key | Gated acts |
 | --- | --- |
 | `charts` | `accident.*Analytics`, `accident.mapAccidents`, `accident.getCreatedAtPeriods` |
-| `incident_patrol` | `accident.{getMyReports,getSyncStatus,reviewReport,reviewHistory,resubmitReport,getReporterDashboard,getManagerDashboard,getManagerReports,nearbyAccidents}` + whole schemas `emergency|shift|vehicle|police_station|patrol_unit|patrol_operations|accident_process|announcement` + `file.uploadAccidentImages` + `user.getPatrolOfficers` |
+| `incident_patrol` | `accident.{getMyReports,getSyncStatus,reviewReport,getReportReviewHistory,resubmitReport,nearbyAccidents}` + whole schemas `emergency|shift|vehicle|police_station|patrol_unit|patrol_operations|accident_process|announcement|incident_report` + `file.uploadAccidentImages` + `user.getPatrolOfficers` |
 | `warehouse` | whole schemas `ware|inventory|consumption|goods_receipt|stock_movement|goods_request` |
+| `forms` | whole schemas `form_definition|form_response` |
+
+- **The reporter/manager dashboards live on `incident_report`, not `accident`.** `accident.getReporterDashboard` / `getManagerDashboard` / `getManagerReports` were moved to the `incident_report` schema and are covered by that schema's wildcard. Do not re-add `accident.*Dashboard` patterns — those act names no longer exist and are dead patterns.
+- **`forms` must stay last in `MODULE_KEYS`** (`src/app_modules/constants.ts`). `moduleKeyFor` returns on the **first** matching key, so a whole-schema wildcard registered under `incident_patrol` before `forms` would shadow `form_definition` and the gate would never run. The frontend mirrors the same key order in `types/auth.ts` and `utils/org.ts`.
+- **`forms` is deliberately not part of `incident_patrol`.** Form authoring is an organizational capability: licensing it must not break filing a report, and disabling it must not disable patrol.
 
 - **Config:** `models/module_config.ts` (single doc `key:"app_modules"`); created at first boot from `ENABLED_MODULES` (default: all); mutated at runtime only by Ghost.
 - **Acts (`src/app_modules/`, schema `app_modules`):** `getModules` (any authed user) and `setModules` (Ghost-only). `user.login` / `user.getMe` also return `modules`.

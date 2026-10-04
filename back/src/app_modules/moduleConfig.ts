@@ -70,9 +70,6 @@ const INCIDENT_ACCIDENT = [
 	"accident.reviewReport",
 	"accident.getReportReviewHistory",
 	"accident.resubmitReport",
-	"accident.getReporterDashboard",
-	"accident.getManagerDashboard",
-	"accident.getManagerReports",
 	"accident.nearbyAccidents",
 ];
 const INCIDENT_SCHEMAS = [
@@ -84,7 +81,17 @@ const INCIDENT_SCHEMAS = [
 	"patrol_operations",
 	"accident_process",
 	"announcement",
+	// گزارش رخدادِ غیرتصادفی + کنسول بازبینی. داشبوردهای مأمور/مدیر که قبلاً با
+	// نام `accident.*Dashboard/Reports` اینجا بودند به `incident_report` منتقل
+	// شده‌اند و از راه همین wildcard پوشش داده می‌شوند؛ آن نام‌ها دیگر هیچ
+	// اکشنی روی `accident` ندارند و الگوی مرده بودند.
+	"incident_report",
 ];
+
+// موتور فرم پویا ماژولِ خودش را دارد: «فرم‌ساز» یک قابلیتِ سازمانی است، نه
+// بخشی از گشت. لایسنس کردنش نباید ثبت گزارش را بشکند، و خاموش کردنش نباید
+// گشت را از کار بیندازد — دقیقاً همان چیزی که اکشن‌های core درباره‌اش تضمین دارند.
+const FORMS_SCHEMAS = ["form_definition", "form_response"];
 
 const WAREHOUSE_SCHEMAS = [
 	"ware",
@@ -104,6 +111,8 @@ const MODULE_PATTERNS: Record<ModuleKey, string[]> = {
 		...INCIDENT_SCHEMAS.map((s) => `${s}.*`),
 	],
 	warehouse: WAREHOUSE_SCHEMAS.map((s) => `${s}.*`),
+	// `forms` is last in MODULE_KEYS on purpose — see constants.ts.
+	forms: FORMS_SCHEMAS.map((s) => `${s}.*`),
 };
 
 // ---------------------------------------------------------------------------

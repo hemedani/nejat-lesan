@@ -1,6 +1,6 @@
 export type UserLevel = "Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" | null;
 
-export type ModuleKey = "charts" | "incident_patrol" | "warehouse";
+export type ModuleKey = "charts" | "incident_patrol" | "warehouse" | "forms";
 
 export type RoleName = "Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol";
 

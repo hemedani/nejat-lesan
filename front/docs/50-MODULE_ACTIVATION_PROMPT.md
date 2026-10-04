@@ -8,7 +8,7 @@ Copy everything below this line into your frontend AI agent.
 
 You are working on the **Next.js web frontend** (`front/`) of the LESEN traffic-management system (backend = Deno + Lesan; web calls it through server actions → `AppApi().send`).
 
-The backend now enforces **per-deployment module licensing** for the three sellable products:
+The backend now enforces **per-deployment module licensing** for the four sellable products:
 
 | key | محصول | Web route groups (your job to gate) |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Do **not** modify backend code. Build only the frontend.
 
 - `user.login` / `user.getMe` responses include **`modules: string[]`** (installation keys) and — when the caller resolves to one org — **`orgModules: string[]`** (that org's effective keys) → best source at login.
 - `app_modules.getModules`: `set {}`, `get { modules?:0|1 }` → `{ modules: [{ key, enabled }] }` (installation). Any authenticated user may call it.
-- `app_modules.setModules`: **Ghost-only**; `set { modules: [{ key, enabled }] }` (installation; `key` ∈ `charts|incident_patrol|warehouse`).
+- `app_modules.setModules`: **Ghost-only**; `set { modules: [{ key, enabled }] }` (installation; `key` ∈ `charts|incident_patrol|warehouse|forms`).
 - `organization.getModules`: `set { organizationId }`, `get { deployment?:0|1, modules?:0|1, effective?:0|1 }` → `{ deployment: string[], modules: [{key,enabled}], effective: string[] }` (org layer; any user with access to that org).
 - `organization.setModules`: **Ghost-only**; `set { organizationId, modules: [{ key, enabled }] }` → org layer. `organization.module_flags` absent = inherit installation (all on).
 - Disabled-module calls throw (for everyone **except Ghost**): installation → «این ماژول برای این نصب فعال نیست», org → «این ماژول برای این سازمان فعال نیست». When an explicit org/unit is targeted, even a Manager is blocked on a module-off org. Types are already in `front/src/types/declarations/selectInp.ts`.
@@ -56,7 +56,7 @@ Do **not** modify backend code. Build only the frontend.
 
 ### Phase C — Ghost-only config page (two layers)
 1. New route reachable only by Ghost, e.g. `src/app/admin/system/page.tsx` (entry in admin/`Navbar` for Ghost only — «تنظیمات ماژولها / سیستم»).
-2. **Installation tab:** load `app_modules.getModules` → 3 module cards with status chip (فعال/غیرفعال) + toggle.
+2. **Installation tab:** load `app_modules.getModules` → 4 module cards with status chip (فعال/غیرفعال) + toggle.
 3. **Organizations tab:** list orgs (`organization.gets` with a search), per org show its `organization.getModules` chips + toggle. On toggle call `organization.setModules` (full list), refresh. Default (no `module_flags`) = «پیرو نصب» — display that, and treat the toggle as materializing an explicit list.
 4. On any toggle: refresh the feed (and `AuthContext` for the acting Ghost session); Persian toasts.
 5. **Ghost-only enforcement in UI:** non-Ghost never sees these routes/toggles; backend also rejects `setModules` (surface the framework error via `getPatrolErrorMessage` if it slips through).

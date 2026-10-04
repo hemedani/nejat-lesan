@@ -26,6 +26,7 @@ import {
 	user,
 } from "../mod.ts";
 import { jwtTokenKey } from "@lib";
+import { MODULE_KEYS } from "../src/app_modules/constants.ts";
 
 const TEST_DB = "nejat_patrol_ops_test";
 const RUN = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
@@ -183,6 +184,10 @@ const orgSet = (orgId: ObjectId, warehouse: boolean, incident = true, charts = t
 	{ key: "charts", enabled: charts },
 	{ key: "incident_patrol", enabled: incident },
 	{ key: "warehouse", enabled: warehouse },
+	// Not a parameter: no test here varies it, and `organization.setModules`
+	// replaces the whole flag set — leaving it out would silently disable the
+	// form engine for every org these tests create.
+	{ key: "forms", enabled: true },
 ];
 
 Deno.test("seed fixtures", async () => {
@@ -207,8 +212,8 @@ Deno.test("default: every org inherits (all modules on)", async () => {
 		{ set: { organizationId: orgA.toString() }, get: { deployment: 1, modules: 1, effective: 1 } },
 		managerId,
 	);
-	assertEquals((res as any).effective.length, 3);
-	assertEquals((res as any).modules.length, 3);
+	assertEquals((res as any).effective.length, MODULE_KEYS.length);
+	assertEquals((res as any).modules.length, MODULE_KEYS.length);
 	for (const m of (res as any).modules) assertEquals(m.enabled, true);
 });
 
@@ -225,7 +230,12 @@ Deno.test("Ghost sets orgA warehouse OFF; read reflects effective", async () => 
 		{ set: { organizationId: orgA.toString() }, get: { effective: 1, modules: 1 } },
 		managerId,
 	);
-	assertEquals((res as any).effective.sort(), ["charts", "incident_patrol"]);
+	// Derived, not spelled out: adding a module key must not require editing
+	// this assertion, which is how the `forms` key silently broke it.
+	assertEquals(
+		(res as any).effective.sort(),
+		MODULE_KEYS.filter((key) => key !== "warehouse").sort(),
+	);
 	assertEquals(
 		(res as any).modules.find((m: any) => m.key === "warehouse").enabled,
 		false,
@@ -327,13 +337,13 @@ Deno.test("getMe of an org officer reflects orgModules (warehouse missing)", asy
 	);
 	const modules: string[] = (res as any).modules || [];
 	const orgModules: string[] = (res as any).orgModules || [];
-	assertEquals(modules.length, 3, "deployment modules present");
+	assertEquals(modules.length, MODULE_KEYS.length, "deployment modules present");
 	assert(!orgModules.includes("warehouse"), "officer orgModules exclude warehouse");
 	assert(orgModules.includes("charts"), "officer orgModules include charts");
 	assert(orgModules.includes("incident_patrol"), "incident on for orgA");
 });
 
-Deno.test("re-enable orgA warehouse; effective is all three again", async () => {
+Deno.test("re-enable orgA warehouse; every module is effective again", async () => {
 	await runAct(
 		"organization",
 		"setModules",
@@ -346,7 +356,7 @@ Deno.test("re-enable orgA warehouse; effective is all three again", async () => 
 		{ set: { organizationId: orgA.toString() }, get: { effective: 1 } },
 		managerId,
 	);
-	assertEquals((res as any).effective.length, 3);
+	assertEquals((res as any).effective.length, MODULE_KEYS.length);
 });
 
 // ---------------------------------------------------------------------------

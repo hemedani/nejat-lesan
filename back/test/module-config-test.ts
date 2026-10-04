@@ -18,6 +18,7 @@ import { assert as structAssert, create as structCreate } from "@deps";
 // NOTE: back/mod.ts must be evaluated before @lib (circular-init ordering).
 import { coreApp, getAtcsWithServices, module_config, user } from "../mod.ts";
 import { jwtTokenKey } from "@lib";
+import { MODULE_KEYS } from "../src/app_modules/constants.ts";
 
 const TEST_DB = "nejat_patrol_ops_test";
 const RUN = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
@@ -105,7 +106,7 @@ Deno.test("default: all modules enabled + readable via system.getModules", async
 		{ set: {}, get: { modules: 1 } },
 		managerId,
 	);
-	assertEquals((result as any).modules.length, 3);
+	assertEquals((result as any).modules.length, MODULE_KEYS.length);
 	for (const m of (result as any).modules) {
 		assertEquals(m.enabled, true);
 	}
