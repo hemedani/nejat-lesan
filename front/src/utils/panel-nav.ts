@@ -208,6 +208,17 @@ const PATROL_MANAGER_NAV: PanelNav = {
   ],
 };
 
+/**
+ * The profile panel's nav.
+ *
+ * Every item points at `/user`, because the profile is one page: identity, roles
+ * and licences. `isNavItemActive` therefore marks all three at once, which is
+ * honest for a single-page panel — a sidebar with three links to the same URL
+ * would only pretend there were three places to go.
+ *
+ * `sections: []` would make `PanelShell` drop the sidebar entirely, which is why
+ * this page was the one panel rendering without chrome.
+ */
 const PROFILE_NAV: PanelNav = {
   storageKey: "profile",
   brand: {
@@ -215,7 +226,19 @@ const PROFILE_NAV: PanelNav = {
     description: "اطلاعات حساب",
     icon: "user",
   },
-  sections: [],
+  sections: [
+    {
+      label: "حساب",
+      items: [{ href: "/user", label: "اطلاعات حساب", icon: "user" }],
+    },
+    {
+      label: "دسترسی‌ها",
+      items: [
+        { href: "/user", label: "نقش‌ها و محدوده", icon: "users" },
+        { href: "/user", label: "ماژول‌های فعال", icon: "shield" },
+      ],
+    },
+  ],
 };
 
 export const PANEL_NAV: Record<ShellPanelId, PanelNav> = {

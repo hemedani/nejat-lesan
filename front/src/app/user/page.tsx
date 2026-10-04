@@ -1,324 +1,170 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { usePanelScope } from "@/components/system/PanelScopeProvider";
+import { LEVEL_LABELS } from "@/utils/panels";
+import { MODULE_KEYS, MODULE_LABELS } from "@/utils/org";
 
-const UserPage = () => {
-  const { hasModule } = useAuth();
-  const chartsEnabled = hasModule("charts");
-  const [activeTab, setActiveTab] = useState("profile");
+/**
+ * The profile panel.
+ *
+ * This page used to render a hardcoded name and email, four invented usage
+ * statistics and three invented activity entries, while reading only
+ * `hasModule("charts")` from auth and
+ * ignoring `userData` entirely. It is the `getDefaultPanel` fallback, so an
+ * authenticated user with no matching role landed on a page of fiction about
+ * themselves — and its quick-access cards linked to `/admin`, which then
+ * redirected them straight back out.
+ *
+ * Everything below comes from a real source or is not shown. There is no
+ * endpoint for usage statistics or an activity feed, so those sections are gone
+ * rather than reworded: an empty state would promise something the backend does
+ * not provide, and a number would be a lie.
+ */
 
-  const user = {
-    name: "احمد محمدی",
-    email: "ahmad.mohammadi@example.com",
-    role: "کاربر عادی",
-    department: "پلیس راهور",
-    joinDate: "۱۴۰۲/۰۳/۱۵",
-    lastLogin: "۱۴۰۳/۰۸/۲۳ - ۱۴:۳۰",
-  };
-
-  const stats = {
-    reportsViewed: 156,
-    chartsAccessed: 89,
-    mapsViewed: 234,
-    timeSpent: "۱۲۳ ساعت",
-  };
-
-  const recentActivities = [
-    {
-      id: 1,
-      action: "مشاهده نمودار تحلیل شدت تصادفات",
-      time: "۲ ساعت پیش",
-    },
-    {
-      id: 2,
-      action: "دسترسی به نقشه تصادفات اهواز",
-      time: "۵ ساعت پیش",
-    },
-    {
-      id: 3,
-      action: "صادرات گزارش ماهانه",
-      time: "۱ روز پیش",
-    },
-  ];
-
-  return (
-    <div className="min-h-screen bg-slate-950">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                ← بازگشت به داشبورد
-              </Link>
-            </div>
-            <h1 className="text-xl font-semibold text-gray-900">
-              پروفایل کاربری
-            </h1>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="text-center">
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-white">
-                    {user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </span>
-                </div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                  {user.name}
-                </h2>
-                <p className="text-gray-600 mb-2">{user.email}</p>
-                <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                  {user.role}
-                </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">بخش:</span>
-                    <span className="font-medium text-gray-900">
-                      {user.department}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">تاریخ عضویت:</span>
-                    <span className="font-medium text-gray-900">
-                      {user.joinDate}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">آخرین ورود:</span>
-                    <span className="font-medium text-gray-900">
-                      {user.lastLogin}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                  ویرایش پروفایل
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Tabs */}
-            <div className="bg-white rounded-lg shadow-sm mb-6">
-              <div className="border-b border-gray-200">
-                <nav className="flex space-x-8" dir="rtl">
-                  <button
-                    onClick={() => setActiveTab("profile")}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      activeTab === "profile"
-                        ? "border-blue-500 text-blue-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
-                  >
-                    اطلاعات کلی
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("activity")}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      activeTab === "activity"
-                        ? "border-blue-500 text-blue-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
-                  >
-                    فعالیت‌های اخیر
-                  </button>
-                </nav>
-              </div>
-
-              <div className="p-6">
-                {activeTab === "profile" && (
-                  <div>
-                    {/* Statistics */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                      <div className="text-center p-4 bg-blue-50 rounded-lg">
-                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3 text-2xl">
-                          📊
-                        </div>
-                        <p className="text-2xl font-bold text-blue-600">
-                          {stats.reportsViewed}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          گزارش مشاهده شده
-                        </p>
-                      </div>
-
-                      <div className="text-center p-4 bg-green-50 rounded-lg">
-                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3 text-2xl">
-                          📈
-                        </div>
-                        <p className="text-2xl font-bold text-green-600">
-                          {stats.chartsAccessed}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          نمودار بررسی شده
-                        </p>
-                      </div>
-
-                      <div className="text-center p-4 bg-purple-50 rounded-lg">
-                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3 text-2xl">
-                          🗺️
-                        </div>
-                        <p className="text-2xl font-bold text-purple-600">
-                          {stats.mapsViewed}
-                        </p>
-                        <p className="text-sm text-gray-600">نقشه مشاهده شده</p>
-                      </div>
-
-                      <div className="text-center p-4 bg-orange-50 rounded-lg">
-                        <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3 text-2xl">
-                          ⏱️
-                        </div>
-                        <p className="text-2xl font-bold text-orange-600">
-                          {stats.timeSpent}
-                        </p>
-                        <p className="text-sm text-gray-600">زمان استفاده</p>
-                      </div>
-                    </div>
-
-                    {/* Quick Access */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        دسترسی سریع
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {chartsEnabled && (
-                          <Link
-                            href="/charts"
-                            className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-xl">
-                                📊
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-gray-900">
-                                  نمودارها
-                                </h4>
-                                <p className="text-sm text-gray-600">
-                                  مشاهده نمودارهای تحلیلی
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        )}
-
-                        {chartsEnabled && (
-                          <Link
-                            href="/maps"
-                            className="block p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-xl">
-                                🗺️
-                              </div>
-                              <div>
-                                <h4 className="font-medium text-gray-900">
-                                  نقشه‌ها
-                                </h4>
-                                <p className="text-sm text-gray-600">
-                                  مشاهده نقشه‌های تعاملی
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        )}
-
-                        <Link
-                          href="/admin"
-                          className="block p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-xl">
-                              ⚙️
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">
-                                مدیریت
-                              </h4>
-                              <p className="text-sm text-gray-600">
-                                پنل مدیریت سیستم
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
-
-                        <Link
-                          href="/chatbot"
-                          className="block p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-xl">
-                              💬
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">
-                                چت‌بات
-                              </h4>
-                              <p className="text-sm text-gray-600">
-                                پاسخ به سوالات شما
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === "activity" && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      فعالیت‌های اخیر
-                    </h3>
-                    <div className="space-y-4">
-                      {recentActivities.map((activity) => (
-                        <div
-                          key={activity.id}
-                          className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
-                        >
-                          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl">
-                            📝
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-gray-900">{activity.action}</p>
-                            <p className="text-sm text-gray-600">
-                              {activity.time}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+const ROLE_LABELS: Record<string, string> = {
+  Ghost: "دسترسی کامل مدیریتی",
+  Manager: "مدیر سامانه",
+  OrgHead: "سرپرست سازمان",
+  UnitHead: "سرپرست واحد",
+  Officer: "کارمند",
+  Editor: "ویرایشگر داده",
+  Enterprise: "کاربر سازمانی",
+  Patrol: "مأمور گشت",
 };
 
-export default UserPage;
+const SCOPE_LABELS: Record<string, string> = {
+  organization: "سازمان",
+  unit: "واحد",
+};
+
+function displayName(first?: string, last?: string): string {
+  return [first, last].filter(Boolean).join(" ").trim() || "کاربر";
+}
+
+export default function UserProfilePage() {
+  const { userData, userLevel, enabledModules, orgEnabledModules, modulesKnown } = useAuth();
+  // Derived rather than read off the context: `AuthContext` keeps `isGhost`
+  // private, and widening that surface for one page's convenience is not a trade
+  // worth making.
+  const isGhost = userLevel === "Ghost";
+  const { orgName, unitName } = usePanelScope();
+
+  const roles = userData?.roles ?? [];
+
+  // Which licences apply to this viewer. An org without its own list inherits the
+  // installation's, and an unknown feed degrades to "everything on" — the same
+  // rule `AuthContext.hasModule` uses. Reporting "on" for a module we have not
+  // heard about is the safe direction: it matches what the backend would allow.
+  const activeModules = isGhost
+    ? MODULE_KEYS
+    : !modulesKnown
+      ? MODULE_KEYS
+      : orgEnabledModules.length > 0
+        ? orgEnabledModules
+        : enabledModules;
+
+  return (
+    <div className="space-y-5">
+      <header className="rounded-2xl border border-white/10 bg-gradient-to-l from-blue-950/70 via-slate-900 to-slate-900 p-5 shadow-xl sm:p-6">
+        <h1 className="text-2xl font-bold text-white">
+          {displayName(userData?.first_name, userData?.last_name)}
+        </h1>
+        <p className="mt-1 text-sm text-slate-400">
+          {userLevel ? LEVEL_LABELS[userLevel] : "—"}
+        </p>
+        <dl className="mt-5 grid gap-4 sm:grid-cols-2">
+          <Field label="ایمیل" value={userData?.email} ltr />
+          <Field label="موبایل" value={userData?.mobile} ltr />
+          <Field label="کد ملی" value={userData?.national_number} ltr />
+          <Field label="کد پرسنلی" value={userData?.personnel_code} ltr />
+        </dl>
+      </header>
+
+      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
+        <h2 className="text-sm font-semibold text-white">نقش‌ها و محدوده</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          نقش‌های ثبت‌شده برای این حساب و محدوده‌ای که هر نقش در آن اعمال می‌شود.
+        </p>
+        {roles.length === 0 ? (
+          <p className="mt-4 text-sm text-slate-500">
+            هیچ نقش سازمانی یا واحدی برای این حساب ثبت نشده است.
+          </p>
+        ) : (
+          <ul className="mt-4 space-y-2">
+            {roles.map((role) => {
+              const scopeName = role.scopeType === "unit" ? unitName : orgName;
+              return (
+                <li
+                  key={`${role.roleId}-${role.scopeType ?? "none"}-${role.scopeId ?? "none"}`}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[.02] px-3 py-2.5"
+                >
+                  <span className="text-sm text-slate-200">
+                    {ROLE_LABELS[role.name] ?? role.name}
+                  </span>
+                  <span className="text-xs text-slate-500">
+                    {role.scopeType
+                      ? `${SCOPE_LABELS[role.scopeType] ?? role.scopeType}: ${scopeName ?? "—"}`
+                      : "بدون محدوده"}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
+        <h2 className="text-sm font-semibold text-white">ماژول‌های فعال</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          وضعیت قابلیت‌هایی که برای سازمان شما فعال است. تغییر این موارد در اختیار مدیر
+          نصب است و از بخش «ماژول‌ها» در پنل مدیریت انجام می‌شود.
+        </p>
+        <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+          {MODULE_KEYS.map((key) => {
+            const on = activeModules.includes(key);
+            return (
+              <li
+                key={key}
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-2.5"
+              >
+                <span className="text-xs text-slate-300">{MODULE_LABELS[key]}</span>
+                <span
+                  className={
+                    on
+                      ? "rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[11px] text-emerald-200"
+                      : "rounded-full border border-white/10 bg-white/[.04] px-2 py-0.5 text-[11px] text-slate-500"
+                  }
+                >
+                  {on ? "فعال" : "غیرفعال"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  ltr,
+}: {
+  label: string;
+  value?: string;
+  ltr?: boolean;
+}) {
+  return (
+    <div>
+      <dt className="text-xs text-slate-500">{label}</dt>
+      <dd
+        className={`mt-1 text-sm text-slate-200 ${ltr ? "truncate" : ""}`}
+        dir={ltr ? "ltr" : undefined}
+      >
+        {value || "—"}
+      </dd>
+    </div>
+  );
+}
