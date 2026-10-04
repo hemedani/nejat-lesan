@@ -88,6 +88,47 @@ try:
         sys.exit(1)
     print("R6 ok — no hand-built panel URLs in src/components")
 
+    # R1 — every href in the nav registries must resolve to a real route. A typo
+    # or a stale entry type-checks cleanly and 404s only when a user clicks it,
+    # which is how four chart pages and a workspace went unnoticed.
+    app_dir = FRONT / "src" / "app"
+    page_dirs = set()
+    for page in app_dir.rglob("page.tsx"):
+        rel = page.relative_to(app_dir).parent
+        parts = [] if str(rel) == "." else list(rel.parts)
+        # Route groups `(group)` do not appear in the URL.
+        parts = [s for s in parts if not (s.startswith("(") and s.endswith(")"))]
+        prefix = "/" + "/".join(parts)
+        page_dirs.add(prefix.rstrip("/") or "/")
+
+    def hrefs_in(path):
+        return set(
+            m.group(1)
+            for m in re.finditer(r'href:\s*"([^"]+)"', path.read_text(encoding="utf-8"))
+        )
+
+    nav_sources = [
+        FRONT / "src" / "utils" / "panel-nav.ts",
+        FRONT / "src" / "components" / "organisms" / "adminSidebarConfig.ts",
+    ]
+    dead = []
+    for src in nav_sources:
+        for href in sorted(hrefs_in(src)):
+            if not href.startswith("/"):
+                continue
+            if href in page_dirs:
+                continue
+            # A nav entry may point at the parent of a dynamic route.
+            if (app_dir / href.lstrip("/")).exists():
+                continue
+            dead.append(f"{src.name}: {href}")
+    if dead:
+        print("R1 FAILED — nav hrefs with no matching route:")
+        for d in dead:
+            print(f"  x {d}")
+        sys.exit(1)
+    print(f"R1 ok — {len(nav_sources)} nav registries, every href resolves")
+
     result = subprocess.run([str(NODE), "test.mjs"], cwd=out, capture_output=True, text=True)
     print(result.stdout, end="")
     if result.stderr:

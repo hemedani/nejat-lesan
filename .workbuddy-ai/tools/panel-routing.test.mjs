@@ -8,6 +8,7 @@
 
 import {
   canAccessPanel,
+  getPanelById,
   getAccessiblePanels,
   getDefaultPanel,
   getScopedRoles,
@@ -321,6 +322,25 @@ eq("employeeRoutes.reports()", employeeRoutes.reports(), "/employee/reports");
 eq("employeeRoutes.report(id)", employeeRoutes.report("r1"), "/employee/reports/r1");
 eq("employeeRoutes.map()", employeeRoutes.map(), "/employee/map");
 eq("employeeRoutes.announcements()", employeeRoutes.announcements(), "/employee/announcements");
+
+// ------------------------------------------------------------------- nav reachability
+// R2 — a nav href and the detail routes under it must agree. Six `/orghead`
+// routes were unreachable because their `/org/[orgId]` twins were the wired-up
+// ones, so drilling down from the panel left the panel entirely.
+const orgNavIds = filterPanelSections(PANEL_NAV.orghead.sections, mk("OrgHead")).flatMap((s) => s.items.map((i) => i.href));
+for (const route of ["/orghead/units/new", "/orghead/people/add", "/orghead/processes/new"]) {
+  const parent = "/" + route.split("/").slice(1, 3).join("/");
+  eq(`orghead nav links the parent of ${route}`, orgNavIds.includes(parent), true);
+}
+const unitNavIds = filterPanelSections(PANEL_NAV["unit-head"].sections, mk("UnitHead")).flatMap((s) => s.items.map((i) => i.href));
+// The legacy workspace is deleted; no nav may still point into it.
+eq("orghead nav has no link into the deleted /org workspace", orgNavIds.some((h) => h.startsWith("/org/")), false);
+eq("unit-head nav has no link into the deleted /org workspace", unitNavIds.some((h) => h.startsWith("/org/")), false);
+eq("employee nav has no link into the deleted /org workspace", filterPanelSections(PANEL_NAV.employee.sections, mk("Patrol")).flatMap((s) => s.items.map((i) => i.href)).some((h) => h.startsWith("/org/")), false);
+// Panel roots must match their registry definition, so a panel renamed in
+// PANEL_DEFINITIONS cannot leave its nav pointing at the old path.
+eq("orghead nav root matches PANEL_DEFINITIONS", orgNavIds.includes(getPanelById("orghead").path), true);
+eq("unit-head nav root matches PANEL_DEFINITIONS", unitNavIds.includes(getPanelById("unit-head").path), true);
 
 // ------------------------------------------------------------------------- report
 console.log(`\n${pass} assertions passed`);

@@ -11,6 +11,8 @@ import { removeOrganization } from "@/app/actions/organization/removeOrganizatio
 import { gets as getRoads } from "@/app/actions/road/gets";
 import { getUsers } from "@/app/actions/user/getUsers";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
+import { orgRoutes } from "@/utils/org-routes";
+import { usePanelScope } from "@/components/system/PanelScopeProvider";
 import type { OrganizationListItem } from "@/services/org-projections";
 import { Button } from "@/components/atoms/Button";
 import MyInput from "@/components/atoms/MyInput";
@@ -37,6 +39,7 @@ const toErrorMessage = (cause: unknown) => getPatrolErrorMessage(cause instanceo
 
 export function OrgIndexView() {
   const router = useRouter();
+  const { selectOrg } = usePanelScope();
   const [orgs, setOrgs] = useState<OrganizationListItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -143,7 +146,18 @@ export function OrgIndexView() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((org) => (
             <div key={org._id} className="group flex flex-col rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-xl transition hover:border-blue-400/25 hover:bg-slate-900">
-              <button onClick={() => router.push(`/org/${org._id}`)} className="flex flex-1 flex-col text-right">
+              <button
+                onClick={() => {
+                  // Set the panel scope, then enter the panel. This is how
+                  // Ghost/Manager browse across organizations: the org lives in
+                  // `PanelScopeProvider`'s sessionStorage, not in the URL. It
+                  // replaces the old `/org/${org._id}` workspace, which was a
+                  // second org UI rather than a scope.
+                  selectOrg(org._id);
+                  router.push(orgRoutes.dashboard());
+                }}
+                className="flex flex-1 flex-col text-right"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <span className={`rounded-full border px-2.5 py-1 text-[11px] ${org.is_active ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200" : "border-rose-400/25 bg-rose-400/10 text-rose-200"}`}>
                     {org.is_active ? "فعال" : "غیرفعال"}
