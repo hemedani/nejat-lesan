@@ -110,7 +110,7 @@ const AccidentGraphsPage = () => {
 
   if (loading || !data) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-xl text-gray-600">در حال بارگذاری داده‌ها...</div>
       </div>
     )
@@ -350,7 +350,7 @@ const AccidentGraphsPage = () => {
   }))
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6" dir="rtl">
+    <div className="min-h-screen bg-slate-950 p-6" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">

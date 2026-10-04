@@ -249,7 +249,7 @@ const AreaUsageAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       {/* Navigation */}
       <ChartNavigation currentSection="overall" />
 

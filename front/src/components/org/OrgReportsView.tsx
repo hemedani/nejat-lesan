@@ -52,8 +52,17 @@ export function OrgReportsView({
   subtitle,
 }: {
   orgId: string;
-  /** Route prefix the report rows link into (defaults to the legacy `/org/[orgId]` panel). */
-  detailBase?: string;
+  /**
+   * Route prefix the report rows link into — `orgRoutes.dashboard()` or
+   * `unitHeadRoutes.dashboard()`, i.e. the panel *root*, not the reports page.
+   * `OversightTable` appends `/reports/<id>` itself.
+   *
+   * Required, and deliberately not defaulted. It used to fall back to
+   * `/org/${orgId}`, which meant a caller that forgot it silently navigated out
+   * of the panel; that fallback is the reason the back button on
+   * `/orghead/reports/[id]` pointed at the legacy workspace.
+   */
+  detailBase: string;
   heading?: string;
   subtitle?: string;
 }) {
@@ -76,7 +85,7 @@ function OrgReportsConsole({
   subtitle,
 }: {
   orgId: string;
-  detailBase?: string;
+  detailBase: string;
   heading?: string;
   subtitle?: string;
 }) {
@@ -293,7 +302,7 @@ function OrgReportsConsole({
         <>
           <OversightTable
             rows={rows}
-            detailBase={detailBase || `/org/${orgId}`}
+            detailBase={detailBase}
             selected={selected}
             onToggle={toggle}
             onTogglePage={togglePage}

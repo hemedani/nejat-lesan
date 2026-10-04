@@ -19,9 +19,14 @@ export default function FormsLayout({
 	return (
 		<FormAuthorGuard>
 			<PanelScopeProvider prefer="organization">
-				<div dir="rtl" className="min-h-screen bg-slate-100 text-gray-800">
-					<FormAuthorHeader />
-					<main className="mx-auto w-full max-w-7xl px-4 py-6">{children}</main>
+				<div dir="rtl" className="min-h-screen bg-slate-950 text-slate-100">
+					<div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] [background-size:3rem_3rem]" />
+					<div className="relative">
+						<FormAuthorHeader />
+						<main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+							{children}
+						</main>
+					</div>
 				</div>
 			</PanelScopeProvider>
 		</FormAuthorGuard>

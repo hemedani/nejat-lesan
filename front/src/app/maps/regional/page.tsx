@@ -5,7 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 
 const RegionalPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50 to-teal-100">
+    <div className="min-h-screen bg-slate-950">
       {/* Navigation */}
       <ChartNavigation />
 

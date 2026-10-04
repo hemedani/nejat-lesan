@@ -5,7 +5,7 @@ import ChartNavigation from "@/components/navigation/ChartNavigation";
 
 const ClustersPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-pink-100">
+    <div className="min-h-screen bg-slate-950">
       {/* Navigation */}
       <ChartNavigation />
 

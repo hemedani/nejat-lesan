@@ -121,7 +121,7 @@ export function OrgChartView({ orgId }: { orgId: string }) {
       ) : (
         <div className="space-y-4">
           {visibleRoots.map((node) => (
-            <OrgTreeNode key={node._id} node={node} orgId={orgId} depth={0} />
+            <OrgTreeNode key={node._id} node={node} depth={0} />
           ))}
         </div>
       )}
@@ -129,14 +129,14 @@ export function OrgChartView({ orgId }: { orgId: string }) {
   );
 }
 
-function OrgTreeNode({ node, orgId, depth }: { node: UnitNode; orgId: string; depth: number }) {
+function OrgTreeNode({ node, depth }: { node: UnitNode; depth: number }) {
   return (
     <div className={depth === 0 ? "" : "mr-4 border-r border-white/10 pr-4 sm:mr-6 sm:pr-6"}>
-      <NodeCard node={node} orgId={orgId} />
+      <NodeCard node={node} />
       {node.children.length > 0 && (
         <div className="mt-3 space-y-3">
           {node.children.map((child) => (
-            <OrgTreeNode key={child._id} node={child} orgId={orgId} depth={depth + 1} />
+            <OrgTreeNode key={child._id} node={child} depth={depth + 1} />
           ))}
         </div>
       )}
@@ -144,7 +144,7 @@ function OrgTreeNode({ node, orgId, depth }: { node: UnitNode; orgId: string; de
   );
 }
 
-function NodeCard({ node, orgId }: { node: UnitNode; orgId: string }) {
+function NodeCard({ node }: { node: UnitNode }) {
   const inactive = node.is_active === false;
   return (
     <div className={`flex flex-col gap-3 rounded-2xl border p-4 shadow-lg transition sm:flex-row sm:items-center ${inactive ? "border-white/5 bg-slate-900/40 opacity-70" : "border-white/10 bg-slate-900/70 hover:border-blue-400/25"}`}>

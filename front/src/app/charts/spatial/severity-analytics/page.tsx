@@ -554,7 +554,7 @@ const SpatialSeverityAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       {/* Navigation */}
       <ChartNavigation currentSection="spatial" currentChart="severity-analytics" />
 

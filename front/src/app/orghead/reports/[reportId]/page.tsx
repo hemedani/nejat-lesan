@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { ScopedView } from "@/components/system/ScopedView";
 import { OrgIncidentDetailView } from "@/components/org/OrgIncidentDetailView";
+import { orgRoutes } from "@/utils/org-routes";
 
 export default function OrgHeadReportDetailPage() {
   const params = useParams<{ reportId: string }>();
@@ -10,8 +11,8 @@ export default function OrgHeadReportDetailPage() {
 
   return (
     <ScopedView>
-      {({ orgId }) => (
-        <OrgIncidentDetailView orgId={orgId} reportId={String(reportId)} />
+      {() => (
+        <OrgIncidentDetailView reportId={String(reportId)} backHref={orgRoutes.reports()} />
       )}
     </ScopedView>
   );

@@ -10,6 +10,7 @@ Usage:
 """
 
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -70,7 +71,13 @@ try:
     offenders = []
     banned = ("/org/${", 'detailBase="/', 'backHref="/')
     for path in (FRONT / "src" / "components").rglob("*.tsx"):
-        text = path.read_text(encoding="utf-8")
+        raw = path.read_text(encoding="utf-8")
+        # Strip comments first: these strings legitimately appear in prose that
+        # documents *why* the literal form is banned, and matching that would
+        # make the check impossible to satisfy honestly.
+        text = re.sub(r"/\*.*?\*/", "", raw, flags=re.S)
+        text = re.sub(r"^\s*//.*$", "", text, flags=re.M)
+        text = re.sub(r"\s//[^\n\"'`]*$", "", text, flags=re.M)
         for lineno, line in enumerate(text.splitlines(), start=1):
             if any(b in line for b in banned):
                 offenders.append(f"{path.relative_to(FRONT)}:{lineno}: {line.strip()}")

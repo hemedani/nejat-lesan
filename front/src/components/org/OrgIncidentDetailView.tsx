@@ -13,14 +13,20 @@ import { ReportDetail } from "@/components/patrol/ReportDetail";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 
 export function OrgIncidentDetailView({
-  orgId,
   reportId,
   backHref,
 }: {
-  orgId: string;
   reportId: string;
-  /** Where the "back to reports" link points (defaults to the legacy `/org/[orgId]` panel). */
-  backHref?: string;
+  /**
+   * Where the "back to reports" link points — `orgRoutes.reports()` or
+   * `unitHeadRoutes.reports()`.
+   *
+   * Required, and deliberately not defaulted. It used to fall back to
+   * `/org/${orgId}/reports`, so the back button on the org-head report detail
+   * page navigated *out* of its own panel. `orgId` went with it: the fallback was
+   * its only use.
+   */
+  backHref: string;
 }) {
   const { userLevel, isOrgLeader } = useAuth();
   const allowed = userLevel === "Manager" || userLevel === "Ghost" || isOrgLeader;
@@ -67,7 +73,7 @@ export function OrgIncidentDetailView({
     <div>
       <div className="mb-4">
         <Link
-          href={backHref || `/org/${orgId}/reports`}
+          href={backHref}
           className="text-xs text-blue-300 hover:text-cyan-200"
         >
           → بازگشت به گزارش‌های رخداد

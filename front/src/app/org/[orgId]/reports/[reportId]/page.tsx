@@ -6,5 +6,5 @@ export default async function OrgReportDetailPage({
   params: Promise<{ orgId: string; reportId: string }>;
 }) {
   const { orgId, reportId } = await params;
-  return <OrgIncidentDetailView orgId={orgId} reportId={reportId} />;
+  return <OrgIncidentDetailView reportId={reportId} backHref={`/org/${orgId}/reports`} />;
 }

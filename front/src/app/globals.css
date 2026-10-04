@@ -3,6 +3,63 @@
 
 @tailwind utilities;
 
+/**
+ * Design tokens — the single dark theme.
+ *
+ * These exist so the palette has one home. The class names already dominant in
+ * the codebase (`border-white/10`, `bg-slate-900/75`, `text-slate-400`) stay
+ * literals and are NOT renamed to these; declaring them here means the palette
+ * can be retuned in one place instead of by hand-editing ~250 files.
+ *
+ * See docs/superpowers/specs/2026-10-04-dark-theme-unification-design.md
+ */
+@theme {
+    /* Surfaces */
+    --color-surface: #020617;         /* bg-slate-950    page / root       */
+    --color-surface-raised: #0f172a;   /* bg-slate-900/75 card, header, side */
+    --color-surface-solid: #0f172a;    /* bg-slate-900    modal, menu       */
+    --color-control: #1e293b;          /* bg-slate-800    neutral control   */
+    --color-inset: #ffffff0a;          /* bg-white/[.04]  input well, inset */
+
+    /* Hairline — the single border token */
+    --color-hairline: #ffffff1a;       /* border-white/10                     */
+
+    /* Text */
+    --color-ink: #ffffff;              /* text-white      headings, values   */
+    --color-body: #e2e8f0;             /* text-slate-200  body, labels       */
+    --color-muted: #94a3b8;            /* text-slate-400  secondary nav      */
+    --color-faint: #64748b;            /* text-slate-500  captions, empty     */
+
+    /* Accent */
+    --color-accent-soft: #2563eb1f;    /* bg-blue-500/15  nav active         */
+    --color-accent-chip: #60a5fa1a;    /* bg-blue-400/10  icon / pill chip   */
+    --color-accent-line: #60a5fa4d;    /* border-blue-400/30 accent border   */
+    --color-accent-text: #bfdbfe;      /* text-blue-200   accent text        */
+
+    /* Status — each used as /10 background, /20 border, /100 text */
+    --color-rose: #fb7185;             /* rose-400     */
+    --color-amber: #fbbf24;            /* amber-400    */
+    --color-emerald: #34d399;          /* emerald-400  */
+    --color-orange: #fb923c;           /* orange-400   */
+
+    /* Shape */
+    --radius-card: 1rem;               /* rounded-2xl  containers            */
+    --radius-control: 0.75rem;         /* rounded-xl   controls, nav items   */
+
+    /* Decoration */
+    --color-grid-line: #1e293b;        /* PanelShell / Hero grid overlay      */
+}
+
+/**
+ * The app is single-theme, so native form controls, scrollbars and the
+ * browser's own focus rings follow the dark scheme everywhere — not only
+ * inside .admin-shell, which previously scoped this declaration and left
+ * /charts, /maps and /forms with light native controls.
+ */
+:root {
+    color-scheme: dark;
+}
+
 * {
     font-family: vazir-matn;
     font-feature-settings: "ss01";
@@ -525,7 +582,9 @@
     stroke-opacity: 1 !important;
 }
 
-/* React Multi Date Picker Styles - Fix for modal overlay and RTL support with Blue Theme */
+/* React Multi Date Picker — RTL + dark theme.
+   The library renders into document.body (portal), so these must be global
+   rather than scoped, and they cannot rely on any `.admin-shell` ancestor. */
 .rmdp-container,
 .z-index-calendar {
     z-index: 9999999 !important;
@@ -534,10 +593,13 @@
 .rmdp-wrapper {
     direction: rtl !important;
     font-family: vazir-matn !important;
+    background-color: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
 }
 
 .rmdp-calendar {
     direction: rtl !important;
+    background-color: #0f172a !important;
 }
 
 .rmdp-week-day {
@@ -546,82 +608,79 @@
 }
 
 .rmdp-day {
-    color: #334155 !important;
+    color: #cbd5e1 !important;
 }
 
-/* Blue Theme - Selected Date */
+/* Selected date */
 .rmdp-day.rmdp-selected span:not(.highlight) {
-    background-color: #3b82f6 !important;
-    box-shadow: 0 0 3px #3b82f6 !important;
+    background-color: #2563eb !important;
+    box-shadow: 0 0 3px rgba(37, 99, 235, 0.6) !important;
     color: white !important;
 }
 
-/* Blue Theme - Today's Date */
+/* Today */
 .rmdp-day.rmdp-today span {
-    background-color: #e0f2fe !important;
-    color: #0284c7 !important;
+    background-color: rgba(96, 165, 250, 0.15) !important;
+    color: #bfdbfe !important;
     font-weight: 600 !important;
 }
 
-/* Blue Theme - Hover Effect */
+/* Hover */
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
-    background-color: #dbeafe !important;
-    color: #1e40af !important;
+    background-color: rgba(59, 130, 246, 0.14) !important;
+    color: #dbeafe !important;
 }
 
-/* Blue Theme - Range Selection */
+/* Range selection */
 .rmdp-range {
-    background-color: #dbeafe !important;
-    box-shadow: 0 0 3px #93c5fd !important;
+    background-color: rgba(59, 130, 246, 0.14) !important;
+    box-shadow: 0 0 3px rgba(96, 165, 250, 0.3) !important;
 }
 
-/* Blue Theme - Current Month/Year Selector */
 .rmdp-header-values {
-    color: #1e293b !important;
+    color: #f1f5f9 !important;
     font-weight: 600 !important;
 }
 
-/* Blue Theme - Arrow Buttons */
 .rmdp-arrow {
     border-color: #64748b !important;
 }
 
 .rmdp-arrow-container:hover {
-    background-color: #dbeafe !important;
-    box-shadow: 0 0 3px #93c5fd !important;
+    background-color: rgba(59, 130, 246, 0.14) !important;
+    box-shadow: 0 0 3px rgba(96, 165, 250, 0.3) !important;
 }
 
 .rmdp-arrow-container:hover .rmdp-arrow {
-    border-color: #3b82f6 !important;
+    border-color: #60a5fa !important;
 }
 
-/* Blue Theme - Disabled Days */
+/* Disabled days */
 .rmdp-day.rmdp-disabled {
-    color: #cbd5e1 !important;
+    color: #475569 !important;
 }
 
-/* Custom styles for better integration with the UI */
 .rmdp-input {
     border-radius: 0.75rem !important;
     font-family: vazir-matn !important;
 }
 
 .rmdp-shadow {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5) !important;
     border-radius: 0.75rem !important;
 }
 
-/* Blue Theme - Year and Month Selector */
+/* Year and month selector */
 .rmdp-year.rmdp-selected,
 .rmdp-month.rmdp-selected {
-    background-color: #3b82f6 !important;
+    background-color: #2563eb !important;
     color: white !important;
 }
 
 .rmdp-year:hover,
 .rmdp-month:hover {
-    background-color: #dbeafe !important;
-    color: #1e40af !important;
+    background-color: rgba(59, 130, 246, 0.14) !important;
+    color: #dbeafe !important;
 }
 
 /* Custom Scrollbar Styles */

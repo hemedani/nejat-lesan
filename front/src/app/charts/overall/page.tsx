@@ -161,7 +161,7 @@ const OverallChartsPage = () => {
   }, [userLevel, enterpriseSettings]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       <ChartNavigation currentSection="overall" />
 
       <div className="flex">
