@@ -13,6 +13,7 @@ import {
   type UnitType,
 } from "@/services/org-projections";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { Button } from "@/components/atoms/Button";
 import ToggleSwitch from "@/components/atoms/ToggleSwitch";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
@@ -76,7 +77,7 @@ export function OrgChartView({ orgId }: { orgId: string }) {
           <Button variant="secondary" onClick={() => void load()} loading={loading} disabled={loading}>
             تازه‌سازی
           </Button>
-          <Link href={`/org/${orgId}/units/new`} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500">
+          <Link href={orgRoutes.unitNew()} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500">
             + واحد جدید
           </Link>
         </div>
@@ -112,7 +113,7 @@ export function OrgChartView({ orgId }: { orgId: string }) {
             {units.length === 0 ? "این سازمان هنوز واحدی ندارد." : "هیچ واحدی برای نمایش وجود ندارد."}
           </p>
           {units.length === 0 ? (
-            <Link href={`/org/${orgId}/units/new`} className="mt-5 inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500">
+            <Link href={orgRoutes.unitNew()} className="mt-5 inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500">
               ایجاد اولین واحد
             </Link>
           ) : null}
@@ -173,7 +174,7 @@ function NodeCard({ node, orgId }: { node: UnitNode; orgId: string }) {
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <Link href={`/org/${orgId}/units/${node._id}`} className="rounded-xl border border-white/10 px-3 py-2 text-xs text-slate-300 transition hover:bg-white/5 hover:text-white">
+        <Link href={orgRoutes.unit(node._id)} className="rounded-xl border border-white/10 px-3 py-2 text-xs text-slate-300 transition hover:bg-white/5 hover:text-white">
           ویرایش واحد
         </Link>
         {node.children.length > 0 && <span className="text-xs text-slate-500">{node.children.length.toLocaleString("fa-IR")} زیرمجموعه</span>}

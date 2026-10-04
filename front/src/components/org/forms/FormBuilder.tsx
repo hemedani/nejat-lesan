@@ -250,10 +250,10 @@ export function FormBuilder({
 
 	return (
 		<div className="space-y-4" dir="rtl">
-			<header className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-3">
+			<header className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-900/75 p-3">
 				<div className="min-w-64 flex-1 space-y-2">
 					<input
-						className="w-full rounded-lg border border-gray-300 p-2 text-base font-medium"
+						className="w-full rounded-lg border border-white/10 p-2 text-base font-medium"
 						value={meta.name}
 						onChange={(event) => setMeta({ ...meta, name: event.target.value })}
 						placeholder="نام فرم"
@@ -261,7 +261,7 @@ export function FormBuilder({
 					/>
 					<div className="flex flex-wrap gap-2">
 						<select
-							className="rounded-lg border border-gray-300 p-2 text-sm"
+							className="rounded-lg border border-white/10 p-2 text-sm"
 							value={meta.form_kind}
 							onChange={(event) =>
 								setMeta({
@@ -284,7 +284,7 @@ export function FormBuilder({
 								label="آیکون فرم"
 							/>
 						)}
-						<span className="self-center text-xs text-gray-500">
+						<span className="self-center text-xs text-slate-400">
 							{status === "active"
 								? `فعال — نسخه ${version ?? "—"}`
 								: status === "archived"
@@ -325,7 +325,7 @@ export function FormBuilder({
 			</header>
 
 			{readOnly && (
-				<div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+				<div className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-3 text-sm text-amber-100">
 					این فرم فعال است و قابل ویرایش نیست. برای تغییر، ابتدا آن را بایگانی کنید یا
 					یک کپی بسازید.
 				</div>
@@ -384,7 +384,7 @@ export function FormBuilder({
 
 					<div className="space-y-4">
 						{selected ? (
-							<div className="rounded-xl border border-gray-200 bg-white p-4">
+							<div className="rounded-xl border border-white/10 bg-slate-900/75 p-4">
 								<h3 className="mb-3 text-sm font-semibold">
 									تنظیمات «{selected.label ?? selected.key}»
 								</h3>
@@ -403,7 +403,7 @@ export function FormBuilder({
 								)}
 							</div>
 						) : (
-							<div className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+							<div className="rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-400">
 								برای ویرایش، یک فیلد یا گروه را از درخت انتخاب کنید.
 							</div>
 						)}
@@ -441,7 +441,7 @@ function ContainerEditor({
 						<span className="mb-1 block text-sm font-medium">حداقل تعداد</span>
 						<input
 							type="number"
-							className="w-full rounded-lg border border-gray-300 p-2 text-sm"
+							className="w-full rounded-lg border border-white/10 p-2 text-sm"
 							value={node.minItems ?? 0}
 							onChange={(event) =>
 								onPatch({ minItems: Number(event.target.value) || 0 })
@@ -452,7 +452,7 @@ function ContainerEditor({
 						<span className="mb-1 block text-sm font-medium">حداکثر تعداد</span>
 						<input
 							type="number"
-							className="w-full rounded-lg border border-gray-300 p-2 text-sm"
+							className="w-full rounded-lg border border-white/10 p-2 text-sm"
 							value={node.maxItems ?? ""}
 							placeholder="بدون محدودیت"
 							onChange={(event) =>
@@ -475,7 +475,7 @@ function ContainerEditor({
 				</div>
 			)}
 
-			<p className="text-xs text-gray-500">
+			<p className="text-xs text-slate-400">
 				{node.kind === "repeatable"
 					? "فیلدهای داخل این گروه برای هر ردیف جداگانه پر می‌شوند و می‌توانند شامل گروه تکرارشونده دیگری باشند."
 					: "گروه فقط برای دسته‌بندی فیلدها استفاده می‌شود."}

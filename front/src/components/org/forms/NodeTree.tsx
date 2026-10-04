@@ -53,7 +53,7 @@ export function NodeTree({
 	return (
 		<div className="space-y-4" dir="rtl">
 			{definition.pages.length === 0 && (
-				<div className="rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+				<div className="rounded-lg border border-dashed border-white/10 p-6 text-center text-sm text-slate-400">
 					هنوز صفحه‌ای ساخته نشده است. با «افزودن صفحه» شروع کنید.
 				</div>
 			)}
@@ -82,7 +82,7 @@ export function NodeTree({
 
 			<button
 				type="button"
-				className="w-full rounded-lg border border-dashed border-teal-500 py-2 text-sm text-teal-700 hover:bg-teal-50"
+				className="w-full rounded-lg border border-dashed border-emerald-400/40 py-2 text-sm text-emerald-200 hover:bg-emerald-400/15"
 				onClick={onAddPage}
 			>
 				+ افزودن صفحه
@@ -135,10 +135,10 @@ function PageBlock({
 	);
 
 	return (
-		<div className="rounded-xl border border-gray-200 bg-white">
-			<div className="flex items-center justify-between border-b border-gray-100 p-3">
+		<div className="rounded-xl border border-white/10 bg-slate-900/75">
+			<div className="flex items-center justify-between border-b border-white/10 p-3">
 				<input
-					className="flex-1 rounded-lg border border-gray-300 p-2 text-sm font-medium"
+					className="flex-1 rounded-lg border border-white/10 p-2 text-sm font-medium"
 					value={page.title}
 					onChange={(event) => onUpdatePage(page.key, { title: event.target.value })}
 					placeholder="عنوان صفحه"
@@ -163,7 +163,7 @@ function PageBlock({
 			</div>
 
 			{page.visibleWhen && (
-				<div className="border-b border-gray-100 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+				<div className="border-b border-white/10 bg-amber-400/10 px-3 py-2 text-xs text-amber-100">
 					نمایش این صفحه: {describeRule(page.visibleWhen, labels)}
 				</div>
 			)}
@@ -187,7 +187,7 @@ function PageBlock({
 				))}
 				<button
 					type="button"
-					className="w-full rounded-lg border border-dashed border-gray-300 py-1.5 text-xs text-gray-600 hover:bg-gray-50"
+					className="w-full rounded-lg border border-dashed border-white/10 py-1.5 text-xs text-slate-400 hover:bg-white/[.04]"
 					onClick={() => onAddSection(page.key)}
 				>
 					+ افزودن بخش
@@ -223,10 +223,10 @@ function SectionBlock({
 	onRemoveSection: (key: string) => void;
 }) {
 	return (
-		<div className="rounded-lg border border-gray-200 bg-gray-50 p-2">
+		<div className="rounded-lg border border-white/10 bg-white/[.04] p-2">
 			<div className="mb-2 flex items-center justify-between">
 				<input
-					className="flex-1 rounded-lg border border-gray-300 p-1.5 text-sm"
+					className="flex-1 rounded-lg border border-white/10 p-1.5 text-sm"
 					value={section.title}
 					onChange={(event) => onUpdateSection(section.key, { title: event.target.value })}
 					placeholder="عنوان بخش"
@@ -236,7 +236,7 @@ function SectionBlock({
 
 			<div className="space-y-1.5">
 				{section.nodes.length === 0 && (
-					<p className="py-2 text-center text-xs text-gray-500">
+					<p className="py-2 text-center text-xs text-slate-400">
 						بخش خالی است. از دکمه‌های پایین فیلد اضافه کنید.
 					</p>
 				)}
@@ -303,8 +303,10 @@ function NodeRow({
 	return (
 		<div
 			className={[
-				"rounded-lg border bg-white p-2",
-				selected ? "border-teal-600 ring-1 ring-teal-200" : "border-gray-200",
+				"rounded-lg border bg-white/[.04] p-2 transition",
+				selected
+					? "border-blue-400/60 bg-blue-400/10 ring-1 ring-blue-400/30"
+					: "border-white/10 hover:border-white/20",
 			].join(" ")}
 		>
 			<div className="flex items-center justify-between gap-2">
@@ -313,7 +315,7 @@ function NodeRow({
 					className="flex flex-1 items-center gap-2 text-right text-sm"
 					onClick={() => onSelect(node.key)}
 				>
-					<span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
+					<span className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-slate-400">
 						{node.kind === "field"
 							? FIELD_TYPE_LABELS[node.type]
 							: node.kind === "repeatable"
@@ -334,7 +336,7 @@ function NodeRow({
 					{badges.map((badge) => (
 						<span
 							key={badge}
-							className="rounded bg-teal-50 px-1.5 py-0.5 text-[10px] text-teal-700"
+							className="rounded bg-emerald-400/10 px-1.5 py-0.5 text-[10px] text-emerald-200"
 						>
 							{badge}
 						</span>
@@ -343,7 +345,7 @@ function NodeRow({
 			)}
 
 			{node.kind !== "field" && node.children.length > 0 && (
-				<div className="mt-2 space-y-1.5 border-r-2 border-gray-100 pr-2">
+				<div className="mt-2 space-y-1.5 border-r-2 border-white/10 pr-2">
 					{node.children.map((child) => (
 						<NodeRow
 							key={child.key}
@@ -365,7 +367,7 @@ function NodeRow({
 			{node.kind !== "field" && (
 				<div className="mt-2 flex gap-2">
 					<select
-						className="rounded-lg border border-gray-300 p-1 text-xs"
+						className="rounded-lg border border-white/10 p-1 text-xs"
 						defaultValue=""
 						onChange={(event) => {
 							if (event.target.value) {
@@ -387,7 +389,7 @@ function NodeRow({
 					</select>
 					<button
 						type="button"
-						className="rounded-lg border border-gray-300 px-2 py-1 text-xs"
+						className="rounded-lg border border-white/10 px-2 py-1 text-xs"
 						onClick={() => onAddRepeatable(sectionKey, node.key)}
 					>
 						+ گروه تکرارشونده
@@ -409,10 +411,10 @@ function FieldPalette({
 }) {
 	const [open, setOpen] = useState(false);
 	return (
-		<div className="mt-2 rounded-lg border border-dashed border-gray-300 p-2">
+		<div className="mt-2 rounded-lg border border-dashed border-white/10 p-2">
 			<button
 				type="button"
-				className="w-full text-xs text-gray-600"
+				className="w-full text-xs text-slate-400"
 				onClick={() => setOpen((value) => !value)}
 			>
 				{open ? "بستن افزودن" : "+ افزودن فیلد یا گروه"}
@@ -424,7 +426,7 @@ function FieldPalette({
 							<button
 								key={value}
 								type="button"
-								className="rounded-lg border border-gray-300 px-2 py-1 text-xs hover:bg-gray-50"
+								className="rounded-lg border border-white/10 px-2 py-1 text-xs hover:bg-white/[.04]"
 								onClick={() => onAddField(value as FieldType)}
 							>
 								{label}
@@ -434,14 +436,14 @@ function FieldPalette({
 					<div className="mt-2 flex gap-2">
 						<button
 							type="button"
-							className="rounded-lg border border-teal-300 px-2 py-1 text-xs text-teal-700 hover:bg-teal-50"
+							className="rounded-lg border border-emerald-400/30 px-2 py-1 text-xs text-emerald-200 hover:bg-emerald-400/15"
 							onClick={onAddRepeatable}
 						>
 							+ گروه تکرارشونده
 						</button>
 						<button
 							type="button"
-							className="rounded-lg border border-gray-300 px-2 py-1 text-xs hover:bg-gray-50"
+							className="rounded-lg border border-white/10 px-2 py-1 text-xs hover:bg-white/[.04]"
 							onClick={onAddGroup}
 						>
 							+ گروه ساده
@@ -473,7 +475,7 @@ function IconButton({
 			onClick={onClick}
 			className={[
 				"rounded px-1.5 py-1 text-xs disabled:opacity-30",
-				danger ? "text-red-600 hover:bg-red-50" : "text-gray-500 hover:bg-gray-100",
+				danger ? "text-rose-400 hover:bg-rose-400/10" : "text-slate-400 hover:bg-slate-800",
 			].join(" ")}
 		>
 			{label}

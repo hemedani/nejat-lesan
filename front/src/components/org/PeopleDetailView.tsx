@@ -172,9 +172,9 @@ export function PeopleDetailView({ orgId, userId }: { orgId: string; userId: str
 
       <PanelCard title="اطلاعات پایه">
         <div className="grid gap-4 sm:grid-cols-2">
-          <MyInput label="نام" value={person.first_name || ""} onValueChange={(v) => setPersonField("first_name", v)} variant="dark" />
-          <MyInput label="نام خانوادگی" value={person.last_name || ""} onValueChange={(v) => setPersonField("last_name", v)} variant="dark" />
-          <MyInput label="کد پرسنلی" value={person.personnel_code || ""} onValueChange={(v) => setPersonField("personnel_code", v)} variant="dark" />
+          <MyInput label="نام" value={person.first_name || ""} onValueChange={(v) => setPersonField("first_name", v)} />
+          <MyInput label="نام خانوادگی" value={person.last_name || ""} onValueChange={(v) => setPersonField("last_name", v)} />
+          <MyInput label="کد پرسنلی" value={person.personnel_code || ""} onValueChange={(v) => setPersonField("personnel_code", v)} />
           {person.mobile && <p className="flex items-end px-1 pb-2 text-xs text-slate-500">موبایل: <span className="mr-1 text-slate-300" dir="ltr">{person.mobile}</span></p>}
           <OrgSelect
             label="سطح دسترسی"

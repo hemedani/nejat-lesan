@@ -182,14 +182,14 @@ export function PeopleAddView({ orgId }: { orgId: string }) {
 
       <div className="space-y-5 rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
         <div className="grid gap-4 sm:grid-cols-2">
-          <MyInput label="نام" value={firstName} onValueChange={setFirstName} variant="dark" errMsg={fieldErrors.first_name} />
-          <MyInput label="نام خانوادگی" value={lastName} onValueChange={setLastName} variant="dark" errMsg={fieldErrors.last_name} />
-          <MyInput label="نام پدر" value={fatherName} onValueChange={setFatherName} variant="dark" errMsg={fieldErrors.father_name} />
-          <MyInput label="کد ملی" value={nationalNumber} onValueChange={setNationalNumber} variant="dark" placeholder="۱۰ رقم" errMsg={fieldErrors.national_number} />
-          <MyInput label="شماره موبایل" value={mobile} onValueChange={setMobile} variant="dark" placeholder="09xxxxxxxxx" errMsg={fieldErrors.mobile} />
-          <MyInput label="ایمیل" value={email} onValueChange={setEmail} variant="dark" errMsg={fieldErrors.email} />
-          <MyInput label="رمز عبور (حداقل ۸ کاراکتر)" value={password} onValueChange={setPassword} variant="dark" type="password" errMsg={fieldErrors.password} />
-          <MyInput label="نشانی" value={address} onValueChange={setAddress} variant="dark" />
+          <MyInput label="نام" value={firstName} onValueChange={setFirstName} errMsg={fieldErrors.first_name} />
+          <MyInput label="نام خانوادگی" value={lastName} onValueChange={setLastName} errMsg={fieldErrors.last_name} />
+          <MyInput label="نام پدر" value={fatherName} onValueChange={setFatherName} errMsg={fieldErrors.father_name} />
+          <MyInput label="کد ملی" value={nationalNumber} onValueChange={setNationalNumber} placeholder="۱۰ رقم" errMsg={fieldErrors.national_number} />
+          <MyInput label="شماره موبایل" value={mobile} onValueChange={setMobile} placeholder="09xxxxxxxxx" errMsg={fieldErrors.mobile} />
+          <MyInput label="ایمیل" value={email} onValueChange={setEmail} errMsg={fieldErrors.email} />
+          <MyInput label="رمز عبور (حداقل ۸ کاراکتر)" value={password} onValueChange={setPassword} type="password" errMsg={fieldErrors.password} />
+          <MyInput label="نشانی" value={address} onValueChange={setAddress} />
           <OrgSelect label="جنسیت" value={gender} onChange={setGender} errMsg={fieldErrors.gender} options={[{ value: "Male", label: "مرد" }, { value: "Female", label: "زن" }]} />
           <OrgSelect label="سطح دسترسی" value={level} onChange={setLevel} errMsg={fieldErrors.level} options={levelOptions} />
         </div>

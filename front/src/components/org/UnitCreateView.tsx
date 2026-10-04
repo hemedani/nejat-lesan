@@ -155,16 +155,16 @@ export function UnitCreateView({ orgId }: { orgId: string }) {
 
       <div className="space-y-5 rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
         <div className="grid gap-4 sm:grid-cols-2">
-          <MyInput label="کد واحد" value={code} onValueChange={setCode} variant="dark" placeholder="مثلاً UN-001" />
-          <MyInput label="نام واحد" value={name} onValueChange={setName} variant="dark" placeholder="مثلاً گشت آزادراه تهران-قم" />
+          <MyInput label="کد واحد" value={code} onValueChange={setCode} placeholder="مثلاً UN-001" />
+          <MyInput label="نام واحد" value={name} onValueChange={setName} placeholder="مثلاً گشت آزادراه تهران-قم" />
         </div>
         <OrgSelect label="نوع واحد" value={type} onChange={(value) => setType(value as UnitType)} options={typeOptions} placeholder="نوع واحد را انتخاب کنید" />
         <OrgSelect label="زیرمجموعه (واحد بالادست)" value={parentUnitId} onChange={setParentUnitId} options={parentOptions} placeholder="در صورت ایجاد ستاد، خالی بگذارید" />
         <OrgSelect label="سرپرست واحد" value={headId} onChange={setHeadId} options={headOptionsSelect} placeholder="(اختیاری)" />
-        <MyInput label="عنوان سرپرست" value={headTitle} onValueChange={setHeadTitle} variant="dark" placeholder="(اختیاری) مثلاً رئیس گشت" />
-        <MyInput label="تلفن" value={phone} onValueChange={setPhone} variant="dark" placeholder="(اختیاری)" />
-        <MyInput label="نشانی" value={address} onValueChange={setAddress} variant="dark" placeholder="(اختیاری)" />
-        <MyInput label="توضیحات" type="textarea" value={description} onValueChange={setDescription} variant="dark" />
+        <MyInput label="عنوان سرپرست" value={headTitle} onValueChange={setHeadTitle} placeholder="(اختیاری) مثلاً رئیس گشت" />
+        <MyInput label="تلفن" value={phone} onValueChange={setPhone} placeholder="(اختیاری)" />
+        <MyInput label="نشانی" value={address} onValueChange={setAddress} placeholder="(اختیاری)" />
+        <MyInput label="توضیحات" type="textarea" value={description} onValueChange={setDescription} />
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
           <span className="text-sm text-slate-300">واحد فعال باشد</span>
           <ToggleSwitch checked={isActive} onChange={setIsActive} />

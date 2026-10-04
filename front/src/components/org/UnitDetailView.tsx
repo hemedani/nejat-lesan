@@ -236,21 +236,21 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
 
       <PanelCard title="اطلاعات واحد">
         <div className="grid gap-4 sm:grid-cols-2">
-          <MyInput label="کد واحد" value={unit.code} onValueChange={(v) => setUnit({ ...unit, code: v })} variant="dark" />
-          <MyInput label="نام واحد" value={unit.name} onValueChange={(v) => setUnit({ ...unit, name: v })} variant="dark" />
+          <MyInput label="کد واحد" value={unit.code} onValueChange={(v) => setUnit({ ...unit, code: v })} />
+          <MyInput label="نام واحد" value={unit.name} onValueChange={(v) => setUnit({ ...unit, name: v })} />
         </div>
         <div className="mt-4">
           <OrgSelect label="نوع واحد" value={unit.type} onChange={(v) => setUnit({ ...unit, type: v as UnitType })} options={typeOptions} />
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <MyInput label="تلفن" value={unit.phone || ""} onValueChange={(v) => setUnit({ ...unit, phone: v })} variant="dark" />
-          <MyInput label="عنوان سرپرست" value={unit.head_title || ""} onValueChange={(v) => setUnit({ ...unit, head_title: v })} variant="dark" />
+          <MyInput label="تلفن" value={unit.phone || ""} onValueChange={(v) => setUnit({ ...unit, phone: v })} />
+          <MyInput label="عنوان سرپرست" value={unit.head_title || ""} onValueChange={(v) => setUnit({ ...unit, head_title: v })} />
         </div>
         <div className="mt-4">
-          <MyInput label="نشانی" value={unit.address || ""} onValueChange={(v) => setUnit({ ...unit, address: v })} variant="dark" />
+          <MyInput label="نشانی" value={unit.address || ""} onValueChange={(v) => setUnit({ ...unit, address: v })} />
         </div>
         <div className="mt-4">
-          <MyInput label="توضیحات" type="textarea" value={unit.description || ""} onValueChange={(v) => setUnit({ ...unit, description: v })} variant="dark" />
+          <MyInput label="توضیحات" type="textarea" value={unit.description || ""} onValueChange={(v) => setUnit({ ...unit, description: v })} />
         </div>
         <div className="mt-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
           <span className="text-sm text-slate-300">واحد فعال باشد</span>

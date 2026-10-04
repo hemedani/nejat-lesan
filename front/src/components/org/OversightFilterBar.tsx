@@ -172,7 +172,6 @@ export function OversightFilterBar({
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <MyInput
-            variant="dark"
             type="date"
             name="dateFrom"
             label="از تاریخ"
@@ -180,7 +179,6 @@ export function OversightFilterBar({
             onValueChange={(next) => change({ ...value, dateFrom: next || undefined })}
           />
           <MyInput
-            variant="dark"
             type="date"
             name="dateTo"
             label="تا تاریخ"
@@ -195,7 +193,6 @@ export function OversightFilterBar({
             }}
           >
             <MyInput
-              variant="dark"
               type="search"
               name="search"
               label="جستجو"

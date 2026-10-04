@@ -16,18 +16,18 @@ export function FormAuthorHeader() {
 	const home = getDefaultPanel(viewer);
 
 	return (
-		<header className="border-b border-gray-200 bg-white">
-			<div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+		<header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl">
+			<div className="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
 				<div className="flex items-center gap-3">
 					<Link
 						href={home}
-						className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 transition hover:bg-gray-50"
+						className="rounded-xl border border-white/10 bg-white/[.06] px-3 py-1.5 text-xs text-slate-200 transition hover:bg-white/10 hover:text-white"
 					>
 						بازگشت به پنل
 					</Link>
 					<div>
-						<h1 className="text-sm font-bold text-gray-800">فرم‌ساز پویا</h1>
-						<p className="text-[11px] text-gray-500">
+						<h1 className="text-sm font-bold text-white">فرم‌ساز پویا</h1>
+						<p className="text-[11px] text-slate-500">
 							هر فرم فقط در سازمان خودش ذخیره و به مأموران همان سازمان نمایش داده می‌شود.
 						</p>
 					</div>
@@ -37,7 +37,7 @@ export function FormAuthorHeader() {
 				{needsOrgSelection ? (
 					<ScopePicker scopeKind="organization" />
 				) : (
-					<span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs text-emerald-700">
+					<span className="rounded-full border border-blue-400/30 bg-blue-400/10 px-3 py-1.5 text-xs text-blue-200">
 						{orgName ? `سازمان ${orgName}` : "سازمان"}
 					</span>
 				)}

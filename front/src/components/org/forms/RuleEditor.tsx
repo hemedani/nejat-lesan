@@ -41,37 +41,37 @@ export function RuleEditor({
 
 	if (fields.length === 0) {
 		return (
-			<div className="rounded-lg border border-gray-200 p-3 text-sm text-gray-500">
+			<div className="rounded-lg border border-white/10 p-3 text-sm text-slate-400">
 				پس از افزودن فیلد دیگر، می‌توانید شرط تعریف کنید.
 			</div>
 		);
 	}
 
 	return (
-		<div className="rounded-lg border border-gray-200">
+		<div className="rounded-lg border border-white/10">
 			<button
 				type="button"
 				className="flex w-full items-center justify-between p-3 text-right"
 				onClick={() => setOpen((value) => !value)}
 			>
 				<span className="text-sm font-medium">{title}</span>
-				<span className="text-xs text-gray-500">
+				<span className="text-xs text-slate-400">
 					{rule ? describeRule(rule, labels) || "تنظیم شده" : "بدون شرط"}
 				</span>
 			</button>
 
 			{open && (
-				<div className="space-y-3 border-t border-gray-200 p-3">
-					<p className="text-xs text-gray-500">{hint}</p>
+				<div className="space-y-3 border-t border-white/10 p-3">
+					<p className="text-xs text-slate-400">{hint}</p>
 
 					{rule && (
-						<div className="rounded-lg bg-teal-50 p-3 text-sm">
+						<div className="rounded-lg bg-emerald-400/10 p-3 text-sm">
 							<strong>معنی شرط:</strong> {describeRule(rule, labels)}
 						</div>
 					)}
 
 					{unresolved.length > 0 && (
-						<div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">
+						<div className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-100">
 							<strong>هشدار:</strong> این شرط به فیلدی اشاره می‌کند که وجود ندارد (
 							{unresolved.join("، ")}) و هرگز برقرار نخواهد شد.
 						</div>
@@ -162,9 +162,9 @@ function RuleButton({
 			className={[
 				"rounded-lg border px-3 py-1.5 text-xs",
 				active
-					? "border-teal-600 bg-teal-50 text-teal-800"
-					: "border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
-				danger ? "border-red-300 text-red-600" : "",
+					? "border-emerald-400/40 bg-emerald-400/10 text-emerald-100"
+					: "border-white/10 bg-white text-slate-300 hover:bg-white/[.04]",
+				danger ? "border-rose-400/50 text-rose-400" : "",
 			].join(" ")}
 		>
 			{label}
@@ -188,15 +188,15 @@ function RuleTreeEditor({
 	if (rule.op === "and" || rule.op === "or") {
 		const children = (rule.rules as AnyRule[] | undefined) ?? [];
 		return (
-			<div className="space-y-2 rounded-lg border border-dashed border-gray-300 p-3">
+			<div className="space-y-2 rounded-lg border border-dashed border-white/10 p-3">
 				{children.map((child, index) => (
 					<div key={index} className="space-y-2">
-						<div className="flex items-center justify-between text-xs text-gray-500">
+						<div className="flex items-center justify-between text-xs text-slate-400">
 							<span>{rule.op === "and" ? "و" : "یا"}</span>
 							{children.length > 2 && (
 								<button
 									type="button"
-									className="text-red-600 hover:underline"
+									className="text-rose-400 hover:underline"
 									onClick={() =>
 										onChange({
 											...rule,
@@ -222,7 +222,7 @@ function RuleTreeEditor({
 				))}
 				<button
 					type="button"
-					className="text-xs text-teal-700 hover:underline"
+					className="text-xs text-emerald-200 hover:underline"
 					onClick={() =>
 						onChange({
 							...rule,
@@ -248,7 +248,7 @@ function RuleTreeEditor({
 	return (
 		<div className="flex flex-wrap items-center gap-2">
 			<select
-				className="rounded-lg border border-gray-300 p-2 text-sm"
+				className="rounded-lg border border-white/10 p-2 text-sm"
 				value={String(rule.path ?? "")}
 				onChange={(event) => onChange({ ...rule, path: event.target.value } as Rule)}
 			>
@@ -260,7 +260,7 @@ function RuleTreeEditor({
 			</select>
 
 			<select
-				className="rounded-lg border border-gray-300 p-2 text-sm"
+				className="rounded-lg border border-white/10 p-2 text-sm"
 				value={rule.op}
 				onChange={(event) => {
 					const next = LEAF_OPS.find((entry) => entry.op === event.target.value);
@@ -279,10 +279,10 @@ function RuleTreeEditor({
 			</select>
 
 			{rule.op === "count" ? (
-				<div className="flex items-center gap-1 text-xs text-gray-600">
+				<div className="flex items-center gap-1 text-xs text-slate-400">
 					<input
 						type="number"
-						className="w-20 rounded-lg border border-gray-300 p-1.5"
+						className="w-20 rounded-lg border border-white/10 p-1.5"
 						placeholder="حداقل"
 						value={rule.gte ?? ""}
 						onChange={(event) =>
@@ -295,7 +295,7 @@ function RuleTreeEditor({
 					<span>تا</span>
 					<input
 						type="number"
-						className="w-20 rounded-lg border border-gray-300 p-1.5"
+						className="w-20 rounded-lg border border-white/10 p-1.5"
 						placeholder="حداکثر"
 						value={rule.lte ?? ""}
 						onChange={(event) =>
@@ -309,7 +309,7 @@ function RuleTreeEditor({
 			) : currentOpEntry?.needsValue ? (
 				valueOptions.length > 0 ? (
 					<select
-						className="rounded-lg border border-gray-300 p-2 text-sm"
+						className="rounded-lg border border-white/10 p-2 text-sm"
 						value={Array.isArray(rule.value) ? (rule.value as string[])[0] ?? "" : String(rule.value ?? "")}
 						onChange={(event) =>
 							onChange({
@@ -330,7 +330,7 @@ function RuleTreeEditor({
 					</select>
 				) : (
 					<input
-						className="rounded-lg border border-gray-300 p-2 text-sm"
+						className="rounded-lg border border-white/10 p-2 text-sm"
 						value={Array.isArray(rule.value) ? (rule.value as string[]).join("، ") : String(rule.value ?? "")}
 						onChange={(event) =>
 							onChange({

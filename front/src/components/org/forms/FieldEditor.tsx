@@ -98,7 +98,7 @@ export function FieldEditor({
 				<label className="block">
 					<span className="mb-1 block text-sm font-medium">نوع فیلد</span>
 					<select
-						className="w-full rounded-lg border border-gray-300 bg-white p-2 text-sm"
+						className="w-full rounded-lg border border-white/10 bg-white/[.04] p-2 text-sm"
 						value={node.type}
 						onChange={(event) => onPatch({ type: event.target.value as FieldNode["type"] })}
 					>
@@ -135,7 +135,7 @@ export function FieldEditor({
 				<label className="block">
 					<span className="mb-1 block text-sm font-medium">مدل مرجع</span>
 					<select
-						className="w-full rounded-lg border border-gray-300 bg-white p-2 text-sm"
+						className="w-full rounded-lg border border-white/10 bg-white/[.04] p-2 text-sm"
 						value={node.options?.kind === "reference" ? node.options.model : ""}
 						onChange={(event) =>
 							onPatch({
@@ -151,12 +151,12 @@ export function FieldEditor({
 						))}
 					</select>
 					{selectedModel && !selectedModel.hasRecords && (
-						<span className="mt-1 block text-xs text-amber-700">
+						<span className="mt-1 block text-xs text-amber-200">
 							این مدل هیچ رکوردی ندارد؛ گزینه‌ای برای نمایش وجود نخواهد داشت و
 							فعال‌سازی فرم تا افزودن رکورد ممکن نیست.
 						</span>
 					)}
-					<span className="mt-1 block text-xs text-gray-500">
+					<span className="mt-1 block text-xs text-slate-400">
 						گزینه‌ها از همین مدل در سرور خوانده می‌شوند و نباید دستی وارد شوند.
 					</span>
 				</label>
@@ -229,7 +229,7 @@ export function FieldEditor({
 				node.validation?.maxLength !== undefined ||
 				node.validation?.min !== undefined ||
 				node.validation?.max !== undefined) && (
-				<div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+				<div className="rounded-lg border border-white/10 bg-white/[.04] p-3 text-sm text-slate-300">
 					<strong>محدودیت عددی فعال است.</strong>{" "}
 					{node.type === "number" ? (
 						<span>
@@ -273,12 +273,12 @@ function OptionListEditor({
 	};
 
 	return (
-		<div className="rounded-lg border border-gray-200 p-3">
+		<div className="rounded-lg border border-white/10 p-3">
 			<div className="mb-2 flex items-center justify-between">
 				<span className="text-sm font-medium">گزینه‌ها</span>
 				<button
 					type="button"
-					className="text-sm text-teal-700 hover:underline"
+					className="text-sm text-emerald-200 hover:underline"
 					onClick={() =>
 						write([...items, { value: `گزینه ${items.length + 1}`, label: `گزینه ${items.length + 1}` }])
 					}
@@ -288,7 +288,7 @@ function OptionListEditor({
 			</div>
 
 			{items.length === 0 ? (
-				<p className="text-sm text-gray-500">
+				<p className="text-sm text-slate-400">
 					هنوز گزینه‌ای تعریف نشده است. بدون گزینه، این فیلد گزینه‌ای برای نمایش ندارد.
 				</p>
 			) : (
@@ -305,7 +305,7 @@ function OptionListEditor({
 								placeholder="عنوان گزینه"
 							/>
 							<select
-								className="rounded-lg border border-gray-300 p-2 text-sm"
+								className="rounded-lg border border-white/10 p-2 text-sm"
 								value={item.tone ?? "normal"}
 								onChange={(event) => {
 									const next = [...items];
@@ -322,7 +322,7 @@ function OptionListEditor({
 							</select>
 							<button
 								type="button"
-								className="text-sm text-red-600 hover:underline"
+								className="text-sm text-rose-400 hover:underline"
 								onClick={() => write(items.filter((_, i) => i !== index))}
 							>
 								حذف
@@ -359,15 +359,15 @@ function CascadeEditor({
 	const targets = node.clearOnChange ?? [];
 
 	return (
-		<div className="rounded-lg border border-gray-200 p-3">
+		<div className="rounded-lg border border-white/10 p-3">
 			<span className="mb-1 block text-sm font-medium">
 				پاک‌سازی خودکار فیلدهای وابسته
 			</span>
-			<p className="mb-2 text-xs text-gray-500">
+			<p className="mb-2 text-xs text-slate-400">
 				با تغییر این فیلد، موارد انتخاب‌شده پاک می‌شوند تا مقدار بی‌معنا باقی نماند.
 			</p>
 			{fields.length === 0 ? (
-				<p className="text-sm text-gray-500">فیلد دیگری برای انتخاب وجود ندارد.</p>
+				<p className="text-sm text-slate-400">فیلد دیگری برای انتخاب وجود ندارد.</p>
 			) : (
 				<ul className="max-h-40 space-y-1 overflow-y-auto">
 					{fields.map((field) => {
@@ -387,7 +387,7 @@ function CascadeEditor({
 								/>
 								<label htmlFor={`cascade-${node.key}-${field.key}`}>
 									{field.label}
-									<span className="text-xs text-gray-400"> ({field.type})</span>
+									<span className="text-xs text-slate-500"> ({field.type})</span>
 								</label>
 							</li>
 						);

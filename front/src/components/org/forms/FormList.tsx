@@ -31,9 +31,18 @@ const KIND_LABELS: Record<FormKind, string> = {
 };
 
 const STATUS_LABELS: Record<string, { label: string; tone: string }> = {
-	active: { label: "فعال", tone: "bg-emerald-50 text-emerald-700" },
-	draft: { label: "پیش‌نویس", tone: "bg-amber-50 text-amber-700" },
-	archived: { label: "بایگانی", tone: "bg-slate-100 text-slate-600" },
+	active: {
+		label: "فعال",
+		tone: "border border-emerald-400/20 bg-emerald-400/10 text-emerald-100",
+	},
+	draft: {
+		label: "پیش‌نویس",
+		tone: "border border-amber-400/20 bg-amber-400/10 text-amber-100",
+	},
+	archived: {
+		label: "بایگانی",
+		tone: "border border-white/10 bg-white/[.04] text-slate-400",
+	},
 };
 
 const countFields = (definition?: FormDefinition): number => {
@@ -102,9 +111,9 @@ export function FormList({ orgId }: { orgId: string }) {
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="flex flex-wrap items-center justify-between gap-3">
-				<h2 className="text-sm font-bold text-gray-800">
+				<h2 className="text-sm font-bold text-white">
 					فرم‌های این سازمان
-					<span className="ms-2 text-xs font-normal text-gray-500">
+					<span className="ms-2 text-xs font-normal text-slate-500">
 						{rows.length} فرم
 					</span>
 				</h2>
@@ -115,7 +124,7 @@ export function FormList({ orgId }: { orgId: string }) {
 
 			{rows.length === 0
 				? (
-					<div className="rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-sm text-gray-500">
+					<div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-10 text-center text-sm text-slate-400">
 						هنوز فرمی برای این سازمان تعریف نشده است. تا زمانی که فرمی نسازید، مأموران
 						گشت گزارش را با فرم استاندارد ثبت می‌کنند.
 					</div>
@@ -128,16 +137,20 @@ export function FormList({ orgId }: { orgId: string }) {
 							return (
 								<li
 									key={row._id}
-									className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3"
+									className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-900/75 px-4 py-3 shadow-xl transition hover:border-blue-400/30"
 								>
 									<div className="flex flex-col gap-1">
 										<div className="flex items-center gap-2">
 											{/* The icon the author picked, drawn from the same shared
 											    vocabulary the officer's phone uses. */}
-											<FormIcon name={row.icon} size={18} className="text-gray-500" />
+											<FormIcon
+												name={row.icon}
+												size={18}
+												className="text-slate-400"
+											/>
 											<Link
 												href={`/forms/${row._id}`}
-												className="text-sm font-bold text-gray-800 hover:text-blue-700"
+												className="text-sm font-bold text-white hover:text-blue-300"
 											>
 												{row.name}
 											</Link>
@@ -147,12 +160,12 @@ export function FormList({ orgId }: { orgId: string }) {
 												{status.label}
 											</span>
 											{row.status === "active" && (
-												<span className="text-[10px] text-gray-400">
+												<span className="text-[10px] text-slate-500">
 													نسخه {row.version}
 												</span>
 											)}
 										</div>
-										<p className="text-xs text-gray-500">
+										<p className="text-xs text-slate-500">
 											{row.description || "بدون توضیح"} ·{" "}
 											{KIND_LABELS[row.form_kind ?? "accident"]} ·{" "}
 											{countFields(row.definition)} بخش

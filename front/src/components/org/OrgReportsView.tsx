@@ -1,36 +1,50 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { getOrganization } from "@/app/actions/organization/getOrganization";
-import { gets as getAccidents } from "@/app/actions/accident/gets";
-import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
-import type { OrganizationListItem } from "@/services/org-projections";
-import type { PatrolReport } from "@/types/patrol";
-import { INCIDENT_TYPE_LABELS, INCIDENT_TYPE_ORDER } from "@/utils/org";
-import { ReportList } from "@/components/patrol/ReportList";
-import { EmptyState, PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
-import { Button } from "@/components/atoms/Button";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-type IncidentFilter = "" | (typeof INCIDENT_TYPE_ORDER)[number];
+import { fetchOversightList } from "@/app/actions/incident_report/getOversightList";
+import { fetchOversightStats } from "@/app/actions/incident_report/getOversightStats";
+import { getFormDefinitions } from "@/app/actions/form_definition/gets";
+import { unwrapApiResponse } from "@/utils/api-response";
+import { getPatrolErrorMessage } from "@/utils/api-response";
+import type {
+  OversightFilters,
+  OversightRow,
+  OversightStats,
+} from "@/services/report-sources";
+import type { SyncStatus, ReviewStatus } from "@/types/patrol";
+import { OversightFilterBar } from "@/components/org/OversightFilterBar";
+import { OversightStatsCards } from "@/components/org/OversightStatsCards";
+import { OversightTable } from "@/components/org/OversightTable";
+import { OversightActionBar } from "@/components/org/OversightActionBar";
+import { PageSkeleton, RetryErrorBox, EmptyState } from "@/components/patrol/ui";
 
-const PROJECTION = {
-  _id: 1,
-  report_id: 1,
-  serial: 1,
-  date_of_accident: 1,
-  reported_at: 1,
-  sync_status: 1,
-  review_status: 1,
-  review_reason: 1,
-  officer: { _id: 1, first_name: 1, last_name: 1, personnel_code: 1 },
-  patrol_unit: { _id: 1, code: 1, name: 1 },
-  vehicle: { _id: 1, plaque_no: 1 },
-  type: { _id: 1, name: 1 },
-  incident_type: 1,
-  incident_payload: 1,
-  incident_severity: { _id: 1, name: 1 },
-} as const;
+const PAGE_SIZE = 25;
 
+/** How long a report may sit in the queue before the ageing card calls it stuck. */
+const STUCK_THRESHOLD_HOURS = 24;
+
+const EMPTY_STATS: OversightStats = {
+  byOfficer: [],
+  byAppVersion: [],
+  aging: { queued: 0, under_review: 0, thresholdHours: STUCK_THRESHOLD_HOURS },
+};
+
+/**
+ * The oversight console, hosted on the reports route.
+ *
+ * This component used to resolve the organization's road and call
+ * `accident.gets({ road: [roadId] })`, but that act filters on `road.**name**`
+ * (Persian strings) — an ObjectId never matched, so all three routes rendered an
+ * empty list. It also capped at one page and filtered in the browser, which cannot
+ * express "these 52,000 reports, page 4".
+ *
+ * It now hosts the console built alongside it: `incident_report.getOversightList`
+ * merges accidents and non-accident reports server-side, pages and filters in Mongo,
+ * and `getOversightStats` describes exactly the rows above the table. The route and
+ * its nav entry are unchanged; only the host was missing.
+ */
 export function OrgReportsView({
   orgId,
   detailBase,
@@ -43,124 +57,315 @@ export function OrgReportsView({
   heading?: string;
   subtitle?: string;
 }) {
-  const [roadId, setRoadId] = useState<string | null>(null);
-  const [orgName, setOrgName] = useState<string | null>(null);
-  const [reports, setReports] = useState<PatrolReport[]>([]);
-  const [incidentFilter, setIncidentFilter] = useState<IncidentFilter>("");
-  const [page, setPage] = useState(1);
+  return (
+    <Suspense fallback={<PageSkeleton blocks={[120, 160, 260]} />}>
+      <OrgReportsConsole
+        orgId={orgId}
+        detailBase={detailBase}
+        heading={heading}
+        subtitle={subtitle}
+      />
+    </Suspense>
+  );
+}
+
+function OrgReportsConsole({
+  orgId,
+  detailBase,
+  heading,
+  subtitle,
+}: {
+  orgId: string;
+  detailBase?: string;
+  heading?: string;
+  subtitle?: string;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [rows, setRows] = useState<OversightRow[]>([]);
+  const [total, setTotal] = useState(0);
+  const [stats, setStats] = useState<OversightStats>(EMPTY_STATS);
+  const [forms, setForms] = useState<
+    Array<{ groupKey: string; title: string; icon?: string }>
+  >([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [formsError, setFormsError] = useState(false);
 
-  const pageSize = 15;
+  const filter = useMemo(() => parseFilter(searchParams, orgId), [searchParams, orgId]);
+  const page = filter.page ?? 1;
 
-  const loadOrg = useCallback(async () => {
-    try {
-      const organization = unwrapApiResponse<OrganizationListItem>(await getOrganization({ set: { _id: orgId } }));
-      setRoadId(organization.road?._id || null);
-      setOrgName(organization.name);
-    } catch {
-      setRoadId(null);
-    }
-  }, [orgId]);
-
-  useEffect(() => {
-    void loadOrg();
-  }, [loadOrg]);
+  const push = useCallback(
+    (next: OversightFilters) => {
+      const params = new URLSearchParams();
+      params.set("page", String(next.page ?? 1));
+      for (const [key, value] of Object.entries(next)) {
+        if (key === "page" || key === "organizationId") continue;
+        if (Array.isArray(value)) {
+          if (value.length > 0) params.set(key, value.join(","));
+        } else if (value !== undefined && value !== "" && value !== false) {
+          params.set(key, String(value));
+        }
+      }
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [router],
+  );
 
   const load = useCallback(async () => {
-    if (!roadId) return;
     setLoading(true);
     setError(null);
     try {
-      const data = unwrapApiResponse<PatrolReport[]>(
-        await getAccidents({
-          set: {
-            page,
-            limit: pageSize,
-            road: [roadId],
-            ...(incidentFilter ? { incidentType: incidentFilter } : {}),
-          },
-          get: PROJECTION,
-        }),
-      );
-      setReports(Array.isArray(data) ? data : []);
+      const result = await fetchOversightList(filter);
+      setRows(result.rows);
+      setTotal(result.total);
     } catch (cause) {
       setError(getPatrolErrorMessage(cause));
     } finally {
       setLoading(false);
     }
-  }, [roadId, page, incidentFilter]);
+  }, [filter]);
+
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      setStats(
+        await fetchOversightStats({
+          ...filter,
+          thresholdHours: STUCK_THRESHOLD_HOURS,
+        }),
+      );
+    } catch {
+      // The table is the source of truth. A failed statistics panel must not blank
+      // it, so the cards fall back to zeroes rather than replacing the view.
+    } finally {
+      setStatsLoading(false);
+    }
+  }, [filter]);
 
   useEffect(() => {
-    if (roadId !== null) void load();
-  }, [load, roadId]);
+    void load();
+  }, [load]);
 
-  const changeIncident = (filter: IncidentFilter) => {
-    setIncidentFilter(filter);
-    setPage(1);
-  };
+  useEffect(() => {
+    void loadStats();
+  }, [loadStats]);
+
+  // The filter bar's form list is the one option set with no console act behind it,
+  // so it is read straight from the definitions this organization authored. Its
+  // failure is a footnote only — every other control still works without it.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = unwrapApiResponse<
+          Array<{ _id: string; name: string; icon?: string }>
+        >(await getFormDefinitions({ set: { organizationId: orgId } }));
+        if (cancelled) return;
+        setForms(
+          (Array.isArray(data) ? data : []).map((form) => ({
+            groupKey: form._id,
+            title: form.name,
+            icon: form.icon,
+          })),
+        );
+        setFormsError(false);
+      } catch {
+        if (!cancelled) setFormsError(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [orgId]);
+
+  // A new page or filter invalidates the selection: the ids on screen are gone.
+  useEffect(() => {
+    setSelected([]);
+  }, [filter]);
+
+  const refresh = useCallback(async () => {
+    await Promise.all([load(), loadStats()]);
+  }, [load, loadStats]);
+
+  const changeFilter = useCallback(
+    (next: OversightFilters) => push({ ...next, page: 1 }),
+    [push],
+  );
+
+  const officers = useMemo(
+    () =>
+      stats.byOfficer
+        .filter((stat) => !stat.unattributed && stat.officer_id)
+        .map((stat) => ({
+          _id: stat.officer_id,
+          label: [stat.first_name, stat.last_name]
+            .filter(Boolean)
+            .join(" ") || stat.personnel_code || stat.officer_id,
+        })),
+    [stats.byOfficer],
+  );
+
+  const appVersions = useMemo(
+    () =>
+      stats.byAppVersion
+        .map((stat) => stat.app_version)
+        .filter((version): version is string => Boolean(version)),
+    [stats.byAppVersion],
+  );
+
+  const pageIds = useMemo(() => rows.map((row) => row._id), [rows]);
+
+  const toggle = useCallback((id: string) => {
+    setSelected((current) =>
+      current.includes(id)
+        ? current.filter((value) => value !== id)
+        : [...current, id],
+    );
+  }, []);
+
+  const togglePage = useCallback(() => {
+    setSelected((current) => {
+      const allSelected = pageIds.every((id) => current.includes(id));
+      return allSelected
+        ? current.filter((id) => !pageIds.includes(id))
+        : [...new Set([...current, ...pageIds])];
+    });
+  }, [pageIds]);
+
+  /**
+   * How an id reads, for rows the reviewer selected but that are no longer on the
+   * page — the action bar labels its confirmation from this, so an id it cannot
+   * name is one it cannot safely act on.
+   */
+  const labelFor = useCallback(
+    (id: string) => {
+      const row = rows.find((candidate) => candidate._id === id);
+      if (!row) return id;
+      return row.report_id || row.serial?.toString() || id;
+    },
+    [rows],
+  );
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const headingText = heading || "گزارش‌های رخداد";
+  const subtitleText =
+    subtitle ||
+    "تصادف‌ها و گزارش‌های رخداد ثبت‌شده در این سازمان، با فیلتر و بازبینی گروهی.";
 
   return (
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="text-sm text-blue-300">گزارش‌های رخداد</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">
-            {heading || (orgName ? `گزارش‌های «${orgName}»` : "گزارش‌های رخداد")}
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            {subtitle ||
-              "تمام رخدادهای ثبت‌شده (تصادف، خرابی راه، مانع و...) روی این جاده را با فیلتر نوع ببینید."}
-          </p>
+          <h1 className="mt-1 text-2xl font-bold text-white">{headingText}</h1>
+          <p className="mt-2 text-sm text-slate-500">{subtitleText}</p>
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <FilterPill active={incidentFilter === ""} onClick={() => changeIncident("")} label="همه رخدادها" />
-        {INCIDENT_TYPE_ORDER.map((type) => (
-          <FilterPill key={type} active={incidentFilter === type} onClick={() => changeIncident(type)} label={INCIDENT_TYPE_LABELS[type]} />
-        ))}
-      </div>
+      <OversightStatsCards
+        byOfficer={stats.byOfficer}
+        byAppVersion={stats.byAppVersion}
+        aging={stats.aging}
+        loading={statsLoading}
+      />
 
-      {roadId === null && !loading ? (
-        <EmptyState message="این سازمان به جاده/آزادراهی گره نخورده است؛ گزارش‌های رخداد بر اساس جادهٔ سازمان نمایش داده می‌شوند." />
-      ) : loading ? (
-        <PageSkeleton blocks={[160, 260]} />
-      ) : error ? (
+      <OversightFilterBar
+        value={filter}
+        forms={forms}
+        officers={officers}
+        appVersions={appVersions}
+        onChange={changeFilter}
+        onReset={() => push({ page: 1 })}
+        formsError={formsError}
+      />
+
+      {error ? (
         <RetryErrorBox message={error} onRetry={() => void load()} />
-      ) : reports.length === 0 ? (
-        <EmptyState message="رخدادی برای این فیلتر یافت نشد." />
+      ) : loading ? (
+        <PageSkeleton blocks={[260]} />
+      ) : rows.length === 0 ? (
+        <EmptyState message="گزارشی با این فیلتر یافت نشد." />
       ) : (
         <>
-          <ReportList
-            reports={reports}
-            manager
+          <OversightTable
+            rows={rows}
             detailBase={detailBase || `/org/${orgId}`}
+            selected={selected}
+            onToggle={toggle}
+            onTogglePage={togglePage}
           />
-          <div className="mt-4 flex items-center justify-between">
-            <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-              صفحه قبل
-            </Button>
-            <span className="text-xs text-slate-500">صفحه {page.toLocaleString("fa-IR")}</span>
-            <Button variant="secondary" size="sm" disabled={reports.length < pageSize} onClick={() => setPage((p) => p + 1)}>
-              صفحه بعد
-            </Button>
-          </div>
+
+          {total > PAGE_SIZE && (
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => push({ ...filter, page: page - 1 })}
+                className="rounded-xl border border-white/10 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                صفحه قبل
+              </button>
+              <span className="text-xs text-slate-500">
+                صفحه {page.toLocaleString("fa-IR")} از{" "}
+                {totalPages.toLocaleString("fa-IR")} ·{" "}
+                {total.toLocaleString("fa-IR")} گزارش
+              </span>
+              <button
+                type="button"
+                disabled={page >= totalPages}
+                onClick={() => push({ ...filter, page: page + 1 })}
+                className="rounded-xl border border-white/10 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                صفحه بعد
+              </button>
+            </div>
+          )}
         </>
       )}
+
+      <OversightActionBar
+        selected={selected}
+        presentedIds={new Set(pageIds)}
+        filter={filter}
+        total={total}
+        labelFor={labelFor}
+        onSelectionChange={setSelected}
+        onRefresh={refresh}
+      />
     </div>
   );
 }
 
-function FilterPill({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-xs transition ${
-        active ? "border-blue-400/40 bg-blue-400/10 text-blue-100" : "border-white/10 text-slate-400 hover:bg-white/5 hover:text-white"
-      }`}
-    >
-      {label}
-    </button>
-  );
+/** URL query → the console's filter object. `organizationId` is never read from the URL. */
+function parseFilter(
+  searchParams: { get(key: string): string | null },
+  orgId: string,
+): OversightFilters {
+  const list = (key: string): string[] | undefined => {
+    const raw = searchParams.get(key);
+    if (!raw) return undefined;
+    const values = raw.split(",").filter(Boolean);
+    return values.length > 0 ? values : undefined;
+  };
+
+  const page = Number.parseInt(searchParams.get("page") ?? "1", 10);
+
+  return {
+    organizationId: orgId,
+    page: Number.isFinite(page) && page > 0 ? page : 1,
+    limit: PAGE_SIZE,
+    dateFrom: searchParams.get("dateFrom") || undefined,
+    dateTo: searchParams.get("dateTo") || undefined,
+    groupKeys: list("groupKeys"),
+    syncStatus: list("syncStatus") as SyncStatus[] | undefined,
+    reviewStatus: list("reviewStatus") as ReviewStatus[] | undefined,
+    officerIds: list("officerIds"),
+    appVersions: list("appVersions"),
+    unlinkedOnly: searchParams.get("unlinkedOnly") === "true" || undefined,
+    search: searchParams.get("search") || undefined,
+  };
 }

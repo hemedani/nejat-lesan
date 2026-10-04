@@ -484,7 +484,6 @@ export function OversightActionBar({
         </p>
         <SelectedReportList selected={selected} labelFor={labelFor} />
         <MyInput
-          variant="dark"
           type="textarea"
           name="oversight-return-reason"
           label="دلیل برگشت برای اصلاح"

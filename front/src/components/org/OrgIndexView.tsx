@@ -276,12 +276,12 @@ function CreateOrgModal({ onClose, onCreated }: { onClose: () => void; onCreated
   return (
     <ModalShell title="افزودن سازمان" onClose={onClose}>
       <div className="space-y-4">
-        <MyInput label="کد سازمان" value={code} onValueChange={setCode} variant="dark" placeholder="مثلاً ORG-001" />
-        <MyInput label="نام سازمان" value={name} onValueChange={setName} variant="dark" placeholder="نام فارسی جاده/آزادراه یا شهرداری" />
-        <MyInput label="نام انگلیسی" value={enName} onValueChange={setEnName} variant="dark" placeholder="(اختیاری)" />
+        <MyInput label="کد سازمان" value={code} onValueChange={setCode} placeholder="مثلاً ORG-001" />
+        <MyInput label="نام سازمان" value={name} onValueChange={setName} placeholder="نام فارسی جاده/آزادراه یا شهرداری" />
+        <MyInput label="نام انگلیسی" value={enName} onValueChange={setEnName} placeholder="(اختیاری)" />
         <OrgSelect label="جاده/آزادراه" value={roadId} onChange={setRoadId} options={roadOptions} placeholder="(اختیاری — برای شهرداری‌ها خالی بگذارید)" />
         <OrgSelect label="سرپرست سازمان" value={headId} onChange={setHeadId} options={managerOptions} placeholder="(اختیاری)" />
-        <MyInput label="توضیحات" type="textarea" value={description} onValueChange={setDescription} variant="dark" />
+        <MyInput label="توضیحات" type="textarea" value={description} onValueChange={setDescription} />
         <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
           <span className="text-sm text-slate-300">سازمان فعال باشد</span>
           <ToggleSwitch checked={isActive} onChange={setIsActive} />

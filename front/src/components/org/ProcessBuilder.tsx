@@ -193,7 +193,7 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
 
       <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
         <div className="grid gap-4 sm:grid-cols-2">
-          <MyInput label="نام فرایند" value={draft.name} onValueChange={(v) => setDraft({ ...draft, name: v })} variant="dark" />
+          <MyInput label="نام فرایند" value={draft.name} onValueChange={(v) => setDraft({ ...draft, name: v })} />
           <OrgSelect
             label="نوع رخداد"
             value={draft.incident_type || ""}
@@ -203,7 +203,7 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
           />
         </div>
         <div className="mt-4">
-          <MyInput label="توضیحات" type="textarea" value={draft.description || ""} onValueChange={(v) => setDraft({ ...draft, description: v })} variant="dark" />
+          <MyInput label="توضیحات" type="textarea" value={draft.description || ""} onValueChange={(v) => setDraft({ ...draft, description: v })} />
         </div>
       </div>
 
@@ -349,14 +349,14 @@ function StepCard({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-        <MyInput label="عنوان گام" value={step.title} onValueChange={(v) => onStep({ title: v })} variant="dark" />
+        <MyInput label="عنوان گام" value={step.title} onValueChange={(v) => onStep({ title: v })} />
         <div className="flex items-end gap-2 pb-2 text-xs text-slate-300">
           الزامی
           <ToggleSwitch checked={step.required} onChange={(v) => onStep({ required: v })} disabled={readOnly} />
         </div>
       </div>
       <div className="mt-3">
-        <MyInput label="توضیح گام (اختیاری)" value={step.description || ""} onValueChange={(v) => onStep({ description: v })} variant="dark" />
+        <MyInput label="توضیح گام (اختیاری)" value={step.description || ""} onValueChange={(v) => onStep({ description: v })} />
       </div>
 
       <div className="mt-4 space-y-3">
@@ -433,7 +433,7 @@ function QuestionRow({
       </div>
 
       <div className="mt-2 space-y-2">
-        <MyInput label="متن پرسش" value={question.question} onValueChange={(v) => onChange({ question: v })} variant="dark" />
+        <MyInput label="متن پرسش" value={question.question} onValueChange={(v) => onChange({ question: v })} />
         <OrgSelect
           label="مدل پاسخ"
           value={question.model_name}

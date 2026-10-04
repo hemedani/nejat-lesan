@@ -7,6 +7,7 @@ import { getOrgChart } from "@/app/actions/unit/getOrgChart";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { OrgChartResponse, OrganizationListItem, OrgChartStats, UnitType } from "@/services/org-projections";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import { ProcessPreview } from "@/components/org/ProcessPreview";
@@ -71,10 +72,10 @@ export function OrgDashboardView({ orgId }: { orgId: string }) {
           </div>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
-          <Link href={`/org/${orgId}/units/new`} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
+          <Link href={orgRoutes.unitNew()} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
             + واحد جدید
           </Link>
-          <Link href={`/org/${orgId}/org-chart`} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
+          <Link href={orgRoutes.orgChart()} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
             نمودار سازمانی
           </Link>
         </div>
@@ -107,38 +108,38 @@ export function OrgDashboardView({ orgId }: { orgId: string }) {
           <p className="mx-auto mt-2 max-w-md text-xs leading-6 text-slate-500">
             اولین گام، ایجاد واحد «ستاد» (HQ) به‌عنوان ریشه نمودار سازمانی است؛ سپس پاسگاه‌ها و واحدهای گشت را زیر آن بسازید.
           </p>
-          <Link href={`/org/${orgId}/units/new`} className="mt-5 inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
+          <Link href={orgRoutes.unitNew()} className="mt-5 inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
             ایجاد اولین واحد
           </Link>
         </div>
       ) : (
         <div className="flex flex-wrap gap-3">
-          <Link href={`/org/${orgId}/org-chart`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+          <Link href={orgRoutes.orgChart()} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
             <p className="text-sm font-semibold text-white">نمایش درخت سازمانی</p>
             <p className="mt-1 text-xs text-slate-500">مشاهده سلسله‌مراتب واحدها با سرپرستان</p>
           </Link>
-          <Link href={`/org/${orgId}/units`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+          <Link href={orgRoutes.units()} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
             <p className="text-sm font-semibold text-white">مدیریت واحدها</p>
             <p className="mt-1 text-xs text-slate-500">لیست، ویرایش، سرپرست و اعضا</p>
           </Link>
-          <Link href={`/org/${orgId}/people`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+          <Link href={orgRoutes.people()} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
             <p className="text-sm font-semibold text-white">افراد و نقش‌ها</p>
             <p className="mt-1 text-xs text-slate-500">افزودن افراد و انتصاب نقش سازمانی</p>
           </Link>
           {orgHasModule("incident_patrol") && (
-            <Link href={`/org/${orgId}/processes`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+            <Link href={orgRoutes.processes()} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
               <p className="text-sm font-semibold text-white">فرایندهای ثبت رخداد</p>
               <p className="mt-1 text-xs text-slate-500">ساخت و فعال‌سازی پرسشنامه موبایل</p>
             </Link>
           )}
           {orgHasModule("warehouse") && (
-            <Link href={`/org/${orgId}/inventory`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+            <Link href={orgRoutes.warehouse()} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
               <p className="text-sm font-semibold text-white">انبار و موجودی</p>
               <p className="mt-1 text-xs text-slate-500">موجودی، درخواست‌ها و گردش کالا</p>
             </Link>
           )}
           {orgHasModule("incident_patrol") && (
-            <Link href={`/org/${orgId}/reports`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
+            <Link href={orgRoutes.reports()} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 transition hover:border-blue-400/25">
               <p className="text-sm font-semibold text-white">گزارش‌های رخداد</p>
               <p className="mt-1 text-xs text-slate-500">فیلتر بر اساس نوع رخداد و شدت</p>
             </Link>
