@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Select, { PropsValue } from "react-select";
+import React, { useEffect, useMemo, useState } from "react";
+import Select, { PropsValue, StylesConfig } from "react-select";
 import {
   FieldValues,
   FieldPath,
@@ -40,11 +40,76 @@ export type SelectBoxProps<T extends FieldValues = FieldValues> =
   | RhfSelectProps<T>
   | ControlledSelectProps;
 
+type Option = ReactSelectOption;
+
+/**
+ * react-select renders its own DOM, so the dark theme has to be handed to it
+ * as inline `styles` — the global stylesheet cannot reach these nodes by class
+ * name alone. Colours mirror the @theme tokens in globals.css.
+ */
+const darkStyles = (errMsg?: string): StylesConfig<Option, false> => ({
+  control: (provided, state) => ({
+    ...provided,
+    minHeight: "44px",
+    backgroundColor: errMsg
+      ? "rgba(251, 113, 133, 0.10)"
+      : "rgba(255, 255, 255, 0.04)",
+    borderColor: errMsg
+      ? "rgba(251, 113, 133, 0.50)"
+      : state.isFocused
+        ? "rgba(96, 165, 250, 0.65)"
+        : "rgba(255, 255, 255, 0.10)",
+    borderRadius: "12px",
+    boxShadow: "none",
+    "&:hover": { borderColor: errMsg ? "#fb7185" : "rgba(255,255,255,.20)" },
+  }),
+  valueContainer: (provided) => ({ ...provided, padding: "2px 12px" }),
+  input: (provided) => ({ ...provided, color: "#e2e8f0" }),
+  placeholder: (provided) => ({ ...provided, color: "#64748b" }),
+  singleValue: (provided) => ({ ...provided, color: "#e2e8f0" }),
+  indicatorSeparator: () => ({ display: "none" }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: "#64748b",
+    padding: "6px 10px",
+    "&:hover": { color: "#60a5fa" },
+  }),
+  clearIndicator: (provided) => ({
+    ...provided,
+    color: "#64748b",
+    padding: "6px",
+    "&:hover": { color: "#fb7185" },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: "#0f172a",
+    border: "1px solid rgba(255,255,255,.10)",
+    borderRadius: "12px",
+    boxShadow: "0 20px 40px -12px rgba(0,0,0,.5)",
+    marginTop: "4px",
+    zIndex: 9999,
+  }),
+  menuList: (provided) => ({ ...provided, padding: "6px", maxHeight: "240px" }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? "rgba(37, 99, 235, 0.35)"
+      : state.isFocused
+        ? "rgba(59, 130, 246, 0.14)"
+        : "transparent",
+    color: state.isSelected ? "#dbeafe" : "#cbd5e1",
+    borderRadius: "8px",
+    cursor: "pointer",
+  }),
+  noOptionsMessage: (provided) => ({ ...provided, color: "#64748b" }),
+});
+
 const SelectBox = <T extends FieldValues = FieldValues>(
   props: SelectBoxProps<T>,
 ) => {
   const { options, placeholder = "انتخاب کنید", className = "", errMsg, disabled = false, clearable } = props;
   const id = props.name || props.label;
+  const styles = useMemo(() => darkStyles(errMsg), [errMsg]);
 
   // react-select renders an aria-live region on the server; render it only after
   // mount to avoid React hydration mismatches (SSR) on pages that use SelectBox.
@@ -61,15 +126,9 @@ const SelectBox = <T extends FieldValues = FieldValues>(
   const isClearable = clearable ?? !("setValue" in props);
 
   return (
-    <div
-      className={
-        "setValue" in props
-          ? `w-1/2 p-4 flex flex-col gap-1 ${className}`
-          : `flex flex-col gap-2 ${className}`
-      }
-    >
+    <div className={`flex flex-col gap-2 ${className}`}>
       {props.label && (
-        <label htmlFor={id} className="text-sm font-medium text-gray-700">
+        <label htmlFor={id} className="text-sm font-medium text-slate-300">
           {props.label}
         </label>
       )}
@@ -97,14 +156,15 @@ const SelectBox = <T extends FieldValues = FieldValues>(
           }}
           placeholder={placeholder}
           noOptionsMessage={() => "گزینه‌ای یافت نشد"}
-          classNamePrefix="react-select"
-          className={`text-sm ${errMsg ? "border-red-500" : "border-gray-300"}`}
+          isRtl
+          styles={styles}
+          className="text-sm"
         />
       ) : (
-        <div aria-hidden className="min-h-[38px]" />
+        <div aria-hidden className="min-h-[44px]" />
       )}
       {errMsg && (
-        <span className="text-red-500 text-xs">{errMsg}</span>
+        <span className="text-xs font-medium text-rose-400">{errMsg}</span>
       )}
     </div>
   );

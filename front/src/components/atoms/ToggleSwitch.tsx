@@ -25,7 +25,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       onClick={() => onChange(!checked)}
       dir="ltr"
       className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-white/10 p-0.5 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 ${
-        checked ? "bg-blue-600" : "bg-gray-200"
+        checked ? "bg-blue-600" : "bg-white/10"
       } ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
     >
       <span

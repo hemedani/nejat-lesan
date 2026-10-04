@@ -104,7 +104,6 @@ export function ReviewActions({
           <div className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
             <h3 className="mb-4 text-lg font-bold text-white">برگشت گزارش برای اصلاح</h3>
             <MyInput
-              variant="dark"
               type="textarea"
               name="return-reason"
               label="دلیل برگشت برای اصلاح"

@@ -31,7 +31,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
 }: DateInputProps<T>) => {
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
-      <label htmlFor={name} className="text-sm font-medium text-slate-700 text-right">
+      <label htmlFor={name} className="text-sm font-medium text-slate-300 text-right">
         {label}
       </label>
 
@@ -68,17 +68,12 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
               disabled={disabled}
               containerClassName="w-full"
               inputClass={`
-                w-full pr-4 pl-10 py-3 text-slate-800 bg-white border rounded-xl
-                placeholder:text-slate-400 text-right
-                transition-all duration-200 ease-in-out
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:border-blue-500
-                hover:border-slate-400
-                ${disabled ? "bg-slate-100 cursor-not-allowed opacity-60" : "hover:bg-slate-50/50"}
-                ${
-                  errMsg
-                    ? "border-red-300 bg-red-50/30 focus:ring-red-500 focus:border-red-500"
-                    : "border-slate-300"
-                }
+                w-full pr-4 pl-10 py-2.5 text-sm text-white bg-white/[.04] border rounded-xl
+                placeholder:text-slate-600 text-right
+                transition-colors duration-200
+                focus:outline-none focus:border-blue-400/50
+                ${disabled ? "opacity-60 cursor-not-allowed" : "hover:border-white/20"}
+                ${errMsg ? "border-rose-400/50" : "border-white/10"}
               `}
               placeholder={placeholder || label}
               className="blue not-close-modal"
@@ -112,7 +107,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
                   e.stopPropagation();
                   onChange(null);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none p-1 rounded-full hover:bg-slate-100 transition-colors z-10"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none p-1 rounded-full hover:bg-white/10 transition-colors z-10"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -135,7 +130,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
       />
 
       {errMsg && (
-        <span className="text-red-500 text-xs font-medium text-right mt-1 flex items-center gap-1">
+        <span className="text-rose-400 text-xs font-medium text-right mt-1 flex items-center gap-1">
           <svg className="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"

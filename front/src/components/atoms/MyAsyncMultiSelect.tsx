@@ -101,18 +101,18 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
     control: (provided, state) => ({
       ...provided,
       minHeight: '48px',
-      backgroundColor: errMsg ? '#fef2f2' : 'white',
+      backgroundColor: errMsg ? 'rgba(251, 113, 133, 0.10)' : 'rgba(255, 255, 255, 0.04)',
       borderColor: errMsg
-        ? (state.isFocused ? '#ef4444' : '#fca5a5')
-        : (state.isFocused ? '#3b82f6' : (state.menuIsOpen ? '#64748b' : '#cbd5e1')),
+        ? (state.isFocused ? '#fb7185' : 'rgba(251, 113, 133, 0.50)')
+        : (state.isFocused ? 'rgba(96, 165, 250, 0.65)' : (state.menuIsOpen ? '#64748b' : 'rgba(255, 255, 255, 0.10)')),
       borderWidth: '1px',
       borderRadius: '12px',
       boxShadow: state.isFocused
-        ? (errMsg ? '0 0 0 2px rgba(239, 68, 68, 0.1)' : '0 0 0 2px rgba(59, 130, 246, 0.1)')
+        ? (errMsg ? '0 0 0 2px rgba(251, 113, 133, 0.10)' : '0 0 0 2px rgba(59, 130, 246, 0.14)')
         : 'none',
       '&:hover': {
-        borderColor: errMsg ? '#f87171' : '#64748b',
-        backgroundColor: errMsg ? '#fef2f2' : '#f8fafc'
+        borderColor: errMsg ? '#fb7185' : 'rgba(255, 255, 255, 0.20)',
+        backgroundColor: errMsg ? 'rgba(251, 113, 133, 0.14)' : 'rgba(255, 255, 255, 0.06)'
       },
       transition: 'all 0.2s ease-in-out',
       cursor: 'pointer',
@@ -129,13 +129,13 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
       ...provided,
       margin: '0',
       padding: '0',
-      color: '#1e293b',
+      color: '#e2e8f0',
       direction: 'rtl'
     }),
 
     placeholder: (provided) => ({
       ...provided,
-      color: '#94a3b8',
+      color: '#64748b',
       fontSize: '14px',
       direction: 'rtl',
       textAlign: 'right'
@@ -143,14 +143,15 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
 
     singleValue: (provided) => ({
       ...provided,
-      color: '#1e293b',
+      color: '#e2e8f0',
       direction: 'rtl',
       textAlign: 'right'
     }),
 
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: '#e2e8f0',
+      backgroundColor: 'rgba(96, 165, 250, 0.14)',
+      border: '1px solid rgba(96, 165, 250, 0.30)',
       borderRadius: '8px',
       margin: '2px',
       direction: 'rtl'
@@ -158,7 +159,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
 
     multiValueLabel: (provided) => ({
       ...provided,
-      color: '#475569',
+      color: '#bfdbfe',
       fontSize: '13px',
       fontWeight: '500',
       padding: '4px 8px',
@@ -167,11 +168,11 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
 
     multiValueRemove: (provided) => ({
       ...provided,
-      color: '#64748b',
+      color: '#94a3b8',
       borderRadius: '0 8px 8px 0',
       '&:hover': {
-        backgroundColor: '#ef4444',
-        color: 'white'
+        backgroundColor: '#fb7185',
+        color: '#0f172a'
       },
       cursor: 'pointer',
       transition: 'all 0.2s ease-in-out'
@@ -186,7 +187,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
       color: '#64748b',
       padding: '8px 12px',
       '&:hover': {
-        color: '#3b82f6'
+        color: '#60a5fa'
       },
       transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
       transition: 'all 0.2s ease-in-out'
@@ -197,7 +198,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
       color: '#64748b',
       padding: '8px',
       '&:hover': {
-        color: '#ef4444'
+        color: '#fb7185'
       },
       cursor: 'pointer',
       transition: 'all 0.2s ease-in-out'
@@ -205,10 +206,10 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
 
     menu: (provided) => ({
       ...provided,
-      backgroundColor: 'white',
-      border: '1px solid #e2e8f0',
+      backgroundColor: '#0f172a',
+      border: '1px solid rgba(255, 255, 255, 0.10)',
       borderRadius: '12px',
-      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.5)',
       marginTop: '4px',
       overflow: 'hidden',
       zIndex: 9999
@@ -223,9 +224,9 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? '#3b82f6'
-        : (state.isFocused ? '#f1f5f9' : 'transparent'),
-      color: state.isSelected ? 'white' : '#1e293b',
+        ? 'rgba(37, 99, 235, 0.35)'
+        : (state.isFocused ? 'rgba(59, 130, 246, 0.14)' : 'transparent'),
+      color: state.isSelected ? '#dbeafe' : '#cbd5e1',
       borderRadius: '8px',
       margin: '2px 0',
       padding: '12px 16px',
@@ -235,7 +236,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
       direction: 'rtl',
       textAlign: 'right',
       '&:hover': {
-        backgroundColor: state.isSelected ? '#2563eb' : '#f1f5f9'
+        backgroundColor: state.isSelected ? 'rgba(37, 99, 235, 0.45)' : 'rgba(59, 130, 246, 0.14)'
       },
       transition: 'all 0.15s ease-in-out'
     }),
@@ -263,7 +264,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
     <div className={`flex flex-col gap-2 ${className || ""}`}>
       <label
         htmlFor={name}
-        className="text-sm font-medium text-slate-700 text-right"
+        className="text-sm font-medium text-slate-300 text-right"
       >
         {label}
       </label>
@@ -306,7 +307,7 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
       </div>
 
       {errMsg && (
-        <span className="text-red-500 text-xs font-medium text-right mt-1 flex items-center gap-1">
+        <span className="text-rose-400 text-xs font-medium text-right mt-1 flex items-center gap-1">
           <svg
             className="w-3 h-3 flex-shrink-0"
             fill="currentColor"
