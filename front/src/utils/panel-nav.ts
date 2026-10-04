@@ -205,6 +205,25 @@ const PATROL_MANAGER_NAV: PanelNav = {
         { href: "/patrol-manager/reports", label: "صف گزارش‌ها", icon: "clipboard" },
       ],
     },
+    {
+      // `announcement.gets` is `grantAccess({ levels: ["Manager", "Patrol"] })`,
+      // so a Manager could already read announcements — the only nav entry for
+      // them sat inside EMPLOYEE_NAV's `گشت و رخدادها` section, which is
+      // `allowedLevels: ["Patrol"]`. Readable but unreachable.
+      //
+      // `allowedLevels` is redundant against this panel's own `levels` gate
+      // (Manager/Ghost) but is stated because the href points into `/employee/*`:
+      // it keeps the link correct if the section is ever reused elsewhere.
+      label: "اطلاع‌ها",
+      items: [
+        {
+          href: "/employee/announcements",
+          label: "اطلاعیه‌ها",
+          icon: "bell",
+          allowedLevels: ["Manager", "Ghost"],
+        },
+      ],
+    },
   ],
 };
 

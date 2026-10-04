@@ -70,9 +70,6 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
   // Map section navigation
   const mapSections: NavigationItem[] = [
     { id: "accidents", label: "نقشه تصادفات", href: "/maps/accidents" },
-    // { id: "heatmap", label: "نقشه حرارتی", href: "/maps/heatmap" },
-    // { id: "clusters", label: "تحلیل خوشه‌ای", href: "/maps/clusters" },
-    // { id: "regional", label: "تحلیل منطقه‌ای", href: "/maps/regional" },
     { id: "comparison", label: "مقایسه نقشه‌ها", href: "/maps/comparison" },
   ];
 

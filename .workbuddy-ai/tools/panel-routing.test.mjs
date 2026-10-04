@@ -24,6 +24,7 @@ import { unitHeadRoutes } from "./unit-head-routes.js";
 import { employeeRoutes } from "./employee-routes.js";
 import { canAuthorForms } from "./form-access.js";
 import { MODULE_KEYS, MODULE_LABELS } from "./org.js";
+import { getSectionCharts, isChartAccessible } from "./chartNavigation.js";
 
 // `forms` is a fourth module key, not a synonym for `incident_patrol`: the
 // form engine is licensed separately so disabling it must not hide the patrol
@@ -387,6 +388,79 @@ eq(
   "MODULE_LABELS covers every MODULE_KEY",
   MODULE_KEYS.every((k) => typeof MODULE_LABELS[k] === "string"),
   true,
+);
+
+// ------------------------------------------------- every analytics act is reachable
+// Four analytics were fully built pages that no navigation listed, so they were
+// reachable only by typing a URL. The temporal index even defined a card for
+// damage-analytics that never rendered, because the page renders
+// getSectionCharts() instead — dead metadata proving the omission was a bug.
+const EXPECTED_SECTION_HREFS = {
+  overall: [
+    "/charts/overall/road-defects",
+    "/charts/overall/monthly-holiday",
+    "/charts/overall/hourly-day-of-week",
+    "/charts/overall/collision-analytics",
+    "/charts/overall/accident-severity",
+    "/charts/overall/area-usage-analytics",
+    "/charts/overall/total-reason-analytics",
+    "/charts/overall/human-reason-analytics",
+    "/charts/overall/vehicle-reason-analytics",
+    "/charts/overall/company-performance-analytics",
+  ],
+  temporal: [
+    "/charts/temporal/count-analytics",
+    "/charts/temporal/severity-analytics",
+    "/charts/temporal/night-analytics",
+    "/charts/temporal/collision-analytics",
+    "/charts/temporal/total-reason-analytics",
+    "/charts/temporal/unlicensed-drivers-analytics",
+    "/charts/temporal/damage-analytics",
+  ],
+  spatial: [
+    "/charts/spatial/severity-analytics",
+    "/charts/spatial/light-analytics",
+    "/charts/spatial/collision-analytics",
+    "/charts/spatial/safety-index",
+    "/charts/spatial/single-vehicle-analytics",
+  ],
+  trend: ["/charts/trend/severity-analytics", "/charts/trend/collision-analytics"],
+};
+for (const [section, expected] of Object.entries(EXPECTED_SECTION_HREFS)) {
+  eq(`${section} section hrefs`, getSectionCharts(section).map((c) => c.href), expected);
+}
+// Every entry needs an Enterprise permission mapping, or an Enterprise viewer
+// looks the chart up by its own id and gets nothing.
+for (const [section, expected] of Object.entries(EXPECTED_SECTION_HREFS)) {
+  const missing = getSectionCharts(section).filter((c) => !isChartAccessible(c.id, null, null));
+  eq(`${section} ids all resolvable`, missing.length, 0);
+}
+
+// ------------------------------------------------------- readable must mean reachable
+// `announcement.gets` is `grantAccess({ levels: ["Manager", "Patrol"] })`, so a
+// Manager could read announcements while the only nav entry sat inside
+// EMPLOYEE_NAV's Patrol-gated section. Readable but unreachable is a bug the
+// type-checker cannot see.
+eq(
+  "patrol-manager nav reaches announcements for a Manager",
+  filterPanelSections(PANEL_NAV["patrol-manager"].sections, mk("Manager"))
+    .flatMap((s) => s.items.map((i) => i.href))
+    .includes("/employee/announcements"),
+  true,
+);
+eq(
+  "patrol nav never reaches announcements (Patrol has its own panel entry)",
+  filterPanelSections(PANEL_NAV.patrol.sections, mk("Patrol"))
+    .flatMap((s) => s.items.map((i) => i.href))
+    .includes("/employee/announcements"),
+  false,
+);
+eq(
+  "orghead nav never reaches announcements",
+  filterPanelSections(PANEL_NAV.orghead.sections, mk("OrgHead"))
+    .flatMap((s) => s.items.map((i) => i.href))
+    .includes("/employee/announcements"),
+  false,
 );
 
 // ------------------------------------------------------------------------- report
