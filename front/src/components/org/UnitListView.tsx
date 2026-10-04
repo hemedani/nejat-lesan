@@ -9,6 +9,7 @@ import { removeUnit } from "@/app/actions/unit/removeUnit";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { UnitListItem, UnitType } from "@/services/org-projections";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { Button } from "@/components/atoms/Button";
 import { EmptyState, PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import { OrgFilterSelect } from "@/components/org/OrgSelect";
@@ -72,7 +73,7 @@ export function UnitListView({ orgId }: { orgId: string }) {
           <h1 className="mt-1 text-2xl font-bold text-white">مدیریت واحدها</h1>
           <p className="mt-2 text-sm text-slate-500">واحدها ساختار درخت سازمانی را می‌سازند؛ از گشت تا پاسگاه و واحدهای ستادی.</p>
         </div>
-        <Link href={`/org/${orgId}/units/new`} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
+        <Link href={orgRoutes.unitNew()} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
           + واحد جدید
         </Link>
       </div>
@@ -111,7 +112,7 @@ export function UnitListView({ orgId }: { orgId: string }) {
               return (
                 <div key={unit._id} className="grid grid-cols-1 gap-3 px-4 py-3 transition hover:bg-white/[.02] md:grid-cols-12 md:items-center">
                   <div className="col-span-4 flex min-w-0 flex-col md:flex-row md:items-center md:gap-3">
-                    <button onClick={() => router.push(`/org/${orgId}/units/${unit._id}`)} className="min-w-0 text-right">
+                    <button onClick={() => router.push(orgRoutes.unit(unit._id))} className="min-w-0 text-right">
                       <span className="block truncate font-semibold text-white hover:text-blue-200">{unit.name}</span>
                       <span className="mt-0.5 block font-mono text-[10px] text-slate-500" dir="ltr">{unit.code}</span>
                     </button>
@@ -131,7 +132,7 @@ export function UnitListView({ orgId }: { orgId: string }) {
                     </span>
                   </div>
                   <div className="col-span-12 flex justify-end gap-2 border-t border-white/5 pt-2 md:col-span-12 md:border-t-0 md:pt-0">
-                    <Link href={`/org/${orgId}/units/${unit._id}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/5 hover:text-white">ویرایش</Link>
+                    <Link href={orgRoutes.unit(unit._id)} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/5 hover:text-white">ویرایش</Link>
                     <Button variant="danger" size="sm" onClick={() => void handleRemove(unit)}>حذف</Button>
                   </div>
                 </div>

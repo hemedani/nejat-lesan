@@ -11,6 +11,7 @@ import { getUsers } from "@/app/actions/user/getUsers";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { OrganizationListItem, UnitListItem, UnitType } from "@/services/org-projections";
 import { UNIT_TYPE_LABELS } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { Button } from "@/components/atoms/Button";
 import MyInput from "@/components/atoms/MyInput";
 import ToggleSwitch from "@/components/atoms/ToggleSwitch";
@@ -129,7 +130,7 @@ export function UnitCreateView({ orgId }: { orgId: string }) {
       });
       if (response.success && response.body?._id) {
         toast.success("واحد با موفقیت ایجاد شد.");
-        router.push(`/org/${orgId}/units/${(response.body as { _id: string })._id}`);
+        router.push(orgRoutes.unit((response.body as { _id: string })._id));
       } else {
         const message = (response.body as { message?: string } | undefined)?.message || "";
         setFormError(getPatrolErrorMessage(new Error(message)));
@@ -171,7 +172,7 @@ export function UnitCreateView({ orgId }: { orgId: string }) {
         </div>
         {formError && <p className="rounded-xl border border-rose-400/25 bg-rose-400/10 px-3 py-2 text-xs text-rose-200">{formError}</p>}
         <div className="flex justify-end gap-2 border-t border-white/10 pt-4">
-          <Button variant="neutral" onClick={() => router.push(`/org/${orgId}/units`)}>انصراف</Button>
+          <Button variant="neutral" onClick={() => router.push(orgRoutes.units())}>انصراف</Button>
           <Button onClick={() => void handleSubmit()} loading={submitting} disabled={submitting}>
             {submitting ? "در حال ثبت..." : "ثبت واحد"}
           </Button>

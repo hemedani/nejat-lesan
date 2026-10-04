@@ -14,6 +14,7 @@ import { getVehicles } from "@/app/actions/vehicle/gets";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import type { UnitListItem, UnitType } from "@/services/org-projections";
 import { UNIT_TYPE_LABELS, UNIT_TYPE_TONES } from "@/utils/org";
+import { orgRoutes } from "@/utils/org-routes";
 import { Button } from "@/components/atoms/Button";
 import MyInput from "@/components/atoms/MyInput";
 import ToggleSwitch from "@/components/atoms/ToggleSwitch";
@@ -207,7 +208,7 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
     const response = await removeUnit({ set: { _id: unit._id } });
     if (response.success) {
       toast.success("واحد حذف شد.");
-      router.push(`/org/${orgId}/units`);
+      router.push(orgRoutes.units());
     } else {
       toast.error(((response.body as { message?: string } | undefined)?.message) || "خطا در حذف واحد.");
     }
@@ -229,7 +230,7 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
           <p className="mt-2 text-sm text-slate-500" dir="ltr">{unit.code}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/org/${orgId}/org-chart`} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">نمودار</Link>
+          <Link href={orgRoutes.orgChart()} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">نمودار</Link>
           <Button variant="danger" onClick={() => void handleDelete()}>حذف واحد</Button>
         </div>
       </div>
