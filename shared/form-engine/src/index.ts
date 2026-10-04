@@ -52,6 +52,18 @@ export type {
 
 export { DEFAULT_SCHEMA_VERSION } from "./types.ts";
 
+export {
+	DEFAULT_FORM_ICON,
+	FORM_ICON_GROUP_KEYS,
+	FORM_ICON_GROUP_LABELS,
+	FORM_ICON_GROUPS,
+	FORM_ICON_NAMES,
+	isFormIconName,
+	phosphorComponentName,
+	validateIconNames,
+} from "./icons.ts";
+export type { FormIconGroupKey, FormIconName } from "./icons.ts";
+
 export { countPath, parsePath, resolvePath, resolveScoped } from "./paths.ts";
 
 export { evalRule, isEmptyAnswer } from "./rules.ts";
@@ -73,3 +85,8 @@ export { toLatinNumber, validateForm } from "./validate.ts";
 export { applyCascades, pruneHidden } from "./cascade.ts";
 
 export { buildBindings, buildFlatAnswers, relationSetKey } from "./bindings.ts";
+
+export { buildDynamicAnswers } from "./snapshot.ts";
+export type { DynamicAnswerRow } from "./snapshot.ts";
+
+export { qaAccidentFormDefinition } from "./qa-accident-form.ts";

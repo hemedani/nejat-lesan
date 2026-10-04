@@ -17,7 +17,6 @@ import {
 } from "@deps";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
 import { user_excludes } from "@model";
-import { process_incident_type_emums } from "./accident_process.ts";
 
 export const form_definition_status_array = [
 	"draft",
@@ -239,14 +238,45 @@ export const form_definition_struct = object({
  * express any field type, conditional visibility, conditional requiredness,
  * narrowed option lists, and arbitrarily nested repeatable groups.
  */
+/**
+ * The kinds of form a definition can be.
+ *
+ * This replaces the older `incident_type` taxonomy. `incident_type` named a
+ * category of *accident*; these name which model the answers are stored in, so
+ * the same question shape can mean different things for an accident form than
+ * for a road-damage form — which is the point of splitting the models.
+ */
+export const form_definition_kind_array = [
+	"accident",
+	"incident_report",
+] as const;
+export const form_definition_kind_emums = enums(form_definition_kind_array);
+
+/**
+ * Which model each kind's answers live in.
+ *
+ * `checkBindings` resolves an answer's target through this, so an invalid
+ * binding cannot be authored: a form declares relations, and whether a relation
+ * is bindable at all is a property of the model its answers are stored in.
+ */
+export const FORM_KIND_TARGET_MODEL = {
+	accident: "accident",
+	incident_report: "incident_report",
+} as const;
+
 export const form_definition_pure = {
 	name: string(),
 	description: optional(string()),
 	status: defaulted(form_definition_status_emums, "draft"),
 	version: defaulted(number(), 1), // bumped on every activate
-	is_active: defaulted(boolean(), false),
-	// absent = applies to every incident type
-	incident_type: optional(process_incident_type_emums),
+	// Which model this form's answers are stored in. Absent on documents written
+	// before the split, and the model defaults it to `accident` — which is what
+	// those documents meant.
+	form_kind: defaulted(form_definition_kind_emums, "accident"),
+	// Phosphor base name, validated against FORM_ICON_NAMES at activate time. It
+	// lives beside the definition tree rather than inside it because the mobile
+	// picker needs one icon per form without walking nine pages of nodes.
+	icon: optional(string()),
 	schema_version: defaulted(number(), FORM_SCHEMA_VERSION),
 	definition: form_definition_struct,
 	...createUpdateAt,
@@ -278,24 +308,74 @@ export const form_definition_relations = {
 };
 
 export const form_definitions = () => {
+	// Indexes are NOT created here. `newModel`'s factory runs during
+	// `functionsSetup`, which fires before `runServer`, and `createIndex` returns a
+	// promise nobody awaits — so a build that fails takes the process down with an
+	// unhandled rejection before any migration gets a chance to run. That is
+	// exactly how the retired `{organization._id, incident_type}` index used to
+	// crash the boot on any organization holding two active forms. Creation now
+	// lives in `ensureFormDefinitionIndexes()`, awaited in `mod.ts`.
 	const model = coreApp.odm.newModel(
 		"form_definition",
 		form_definition_pure,
 		form_definition_relations,
 	);
 
-	// One active definition per (organization, incident_type). The activate act
-	// enforces this in software with Persian messages; this index makes it a
-	// database guarantee.
-	coreApp.odm.getCollection("form_definition").createIndex(
-		{ "organization._id": 1, incident_type: 1 },
-		{
-			unique: true,
-			partialFilterExpression: { status: "active" },
-		},
-	);
-
 	return model;
+};
+
+/** Both index specs this collection is meant to carry. */
+const FORM_DEFINITION_INDEXES: Array<{
+	name: string;
+	keys: Record<string, 1>;
+	options?: Record<string, unknown>;
+}> = [
+	{
+		// The one-active-accident-form guarantee, as a database constraint rather
+		// than only `activateFn`'s software check. `form_kind` rather than the
+		// retired `incident_type`, and partial so report forms — which are
+		// deliberately unbounded — are excluded from the index entirely.
+		name: "organization._id_1",
+		keys: { "organization._id": 1 },
+		options: {
+			unique: true,
+			partialFilterExpression: {
+				status: "active",
+				form_kind: "accident",
+			},
+		},
+	},
+	{
+		// Serves every listing that filters an organization's forms by kind.
+		name: "org_form_kind_status",
+		keys: { "organization._id": 1, form_kind: 1, status: 1 },
+	},
+];
+
+/**
+ * Create this collection's indexes, awaited before the server accepts traffic.
+ *
+ * Idempotent — `createIndex` is a no-op when the spec already matches — and it
+ * swallows its own failures, because an index that cannot be built must not stop
+ * the process from serving. The worst case is a missing uniqueness guarantee
+ * until an operator builds it by hand; the acts' own validation still applies.
+ *
+ * A unique index built over documents that already violate it fails outright, so
+ * this can legitimately fail on a database holding two active accident forms for
+ * one organization. That is worth surfacing rather than crashing on, hence the
+ * catch.
+ */
+export const ensureFormDefinitionIndexes = async (): Promise<void> => {
+	const collection = coreApp.odm.getCollection("form_definition");
+
+	for (const { name, keys, options } of FORM_DEFINITION_INDEXES) {
+		try {
+			await collection.createIndex(keys, { name, ...(options ?? {}) });
+		} catch {
+			// See the doc comment: a failed index build is degraded enforcement,
+			// not a reason to refuse to boot.
+		}
+	}
 };
 
 // ---------------------------------------------------------------------------
@@ -394,3 +474,39 @@ export const form_responses = () =>
 		form_response_pure,
 		form_response_relations,
 	);
+
+/**
+ * The index the model carried before the accident/incident_report split, when
+ * forms were keyed by `incident_type`.
+ */
+const LEGACY_FORM_KIND_INDEX = "organization._id_1_incident_type_1";
+
+/**
+ * Drop the pre-split unique index, which capped an organization at **one active
+ * form of any kind**.
+ *
+ * Form definitions no longer carry `incident_type`; `form_kind` replaced it. So
+ * every active form indexed as `incident_type: null` and collided, and the
+ * partial filter (`{status: "active"}`) matched report forms too — the index
+ * was simultaneously too strict and, via its build failure on existing data,
+ * capable of taking the process down.
+ *
+ * Idempotent, and it swallows its own failure so a drop that cannot happen
+ * cannot stop the process from serving. The uniqueness guarantee is not lost:
+ * `ensureFormDefinitionIndexes()` builds `{organization._id}` unique filtered to
+ * `{status: "active", form_kind: "accident"}`, which enforces the
+ * one-active-accident-form rule and ignores report forms entirely.
+ */
+export const applyFormDefinitionMigrations = async (): Promise<void> => {
+	const collection = coreApp.odm.getCollection("form_definition");
+
+	try {
+		const indexes = await collection.indexes();
+		if (indexes.some((index) => index.name === LEGACY_FORM_KIND_INDEX)) {
+			await collection.dropIndex(LEGACY_FORM_KIND_INDEX);
+		}
+	} catch {
+		// See the doc comment: a failed drop leaves the old cap in place until an
+		// operator removes it by hand, and the new indexes are created regardless.
+	}
+};
