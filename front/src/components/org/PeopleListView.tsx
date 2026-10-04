@@ -7,6 +7,7 @@ import { getUsers } from "@/app/actions/user/getUsers";
 import { CountUsers } from "@/app/actions/user/countUsers";
 import { getUnits } from "@/app/actions/unit/getUnits";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
+import { orgRoutes } from "@/utils/org-routes";
 import type { UnitListItem } from "@/services/org-projections";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 import {
@@ -110,7 +111,7 @@ export function PeopleListView({ orgId }: { orgId: string }) {
           <h1 className="mt-1 text-2xl font-bold text-white">اعضای سازمان</h1>
           <p className="mt-2 text-sm text-slate-500">افراد را اضافه کنید و نقش سازمانی (سرپرست سازمان/واحد یا مامور) به آن‌ها بدهید.</p>
         </div>
-        <Link href={`/org/${orgId}/people/add`} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-500">
+        <Link href={orgRoutes.personNew()} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-500">
           + افزودن فرد
         </Link>
       </div>
@@ -144,7 +145,7 @@ export function PeopleListView({ orgId }: { orgId: string }) {
           {filtered.map((member) => (
             <button
               key={member._id}
-              onClick={() => router.push(`/org/${orgId}/people/${member._id}`)}
+              onClick={() => router.push(orgRoutes.person(member._id))}
               className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-right transition hover:border-blue-400/25"
             >
               <div className="flex items-start justify-between gap-3">

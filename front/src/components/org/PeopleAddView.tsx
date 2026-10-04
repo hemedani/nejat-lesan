@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createUser } from "@/app/actions/user/createUser";
 import { getUnits } from "@/app/actions/unit/getUnits";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
+import { orgRoutes } from "@/utils/org-routes";
 import type { UnitListItem } from "@/services/org-projections";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/atoms/Button";
@@ -155,7 +156,7 @@ export function PeopleAddView({ orgId }: { orgId: string }) {
       });
       if (response.success && response.body?._id) {
         toast.success("فرد با موفقیت اضافه شد.");
-        router.push(`/org/${orgId}/people/${(response.body as { _id: string })._id}`);
+        router.push(orgRoutes.person((response.body as { _id: string })._id));
       } else {
         const message = (response.body as { message?: string } | undefined)?.message || "";
         setFormError(getPatrolErrorMessage(new Error(message)));
@@ -214,7 +215,7 @@ export function PeopleAddView({ orgId }: { orgId: string }) {
 
         {formError && <p className="rounded-xl border border-rose-400/25 bg-rose-400/10 px-3 py-2 text-xs text-rose-200">{formError}</p>}
         <div className="flex justify-end gap-2 border-t border-white/10 pt-4">
-          <Button variant="neutral" onClick={() => router.push(`/org/${orgId}/people`)}>انصراف</Button>
+          <Button variant="neutral" onClick={() => router.push(orgRoutes.people())}>انصراف</Button>
           <Button onClick={() => void handleSubmit()} loading={submitting} disabled={submitting}>
             {submitting ? "در حال ثبت..." : "ثبت فرد"}
           </Button>

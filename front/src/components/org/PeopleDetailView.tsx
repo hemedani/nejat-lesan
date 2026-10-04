@@ -8,6 +8,7 @@ import { updateUserPure } from "@/app/actions/user/updateUser";
 import { updateUserRoles } from "@/app/actions/user/addOrRemoveRoles";
 import { getUnits } from "@/app/actions/unit/getUnits";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
+import { orgRoutes } from "@/utils/org-routes";
 import type { UnitListItem } from "@/services/org-projections";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/atoms/Button";
@@ -167,7 +168,7 @@ export function PeopleDetailView({ orgId, userId }: { orgId: string; userId: str
           <h1 className="text-2xl font-bold text-white">{`${person.first_name || ""} ${person.last_name || ""}`.trim() || "کاربر"}</h1>
           {person.email && <p className="mt-1 text-xs text-slate-500" dir="ltr">{person.email}</p>}
         </div>
-        <Button variant="secondary" onClick={() => router.push(`/org/${orgId}/people`)}>بازگشت به لیست</Button>
+        <Button variant="secondary" onClick={() => router.push(orgRoutes.people())}>بازگشت به لیست</Button>
       </div>
 
       <PanelCard title="اطلاعات پایه">
