@@ -36,6 +36,10 @@ const navigationIdToPermissionKey: Record<string, string> = {
   "severity-analytics-trend": "eventSeverityAnalytics",
   "collision-analytics-trend": "eventCollisionAnalytics",
   "total-reason-analytics-overall": "totalReasonAnalytics",
+  "company-performance-analytics": "companyPerformanceAnalytics",
+  "damage-analytics-temporal": "temporalDamageAnalytics",
+  "safety-index": "spatialSafetyIndexAnalytics",
+  "single-vehicle-analytics": "spatialSingleVehicleAnalytics",
 };
 
 export function isChartAccessible(
@@ -63,6 +67,7 @@ export function getSectionCharts(section: string): NavigationItem[] {
         { id: "total-reason-analytics-overall", label: "علل تامه تصادفات", href: "/charts/overall/total-reason-analytics" },
         { id: "human-reason-analytics", label: "عوامل انسانی مؤثر", href: "/charts/overall/human-reason-analytics" },
         { id: "vehicle-reason-analytics", label: "توزیع عامل وسیله نقلیه", href: "/charts/overall/vehicle-reason-analytics" },
+        { id: "company-performance-analytics", label: "عملکرد شرکت‌های بیمه", href: "/charts/overall/company-performance-analytics" },
       ];
     case "temporal":
       return [
@@ -72,12 +77,15 @@ export function getSectionCharts(section: string): NavigationItem[] {
         { id: "collision-analytics-temporal", label: "نحوه و نوع برخورد", href: "/charts/temporal/collision-analytics" },
         { id: "total-reason-analytics-temporal", label: "علت تامه", href: "/charts/temporal/total-reason-analytics" },
         { id: "unlicensed-drivers-analytics", label: "کاربران فاقد گواهینامه", href: "/charts/temporal/unlicensed-drivers-analytics" },
+        { id: "damage-analytics-temporal", label: "تحلیل خسارت", href: "/charts/temporal/damage-analytics" },
       ];
     case "spatial":
       return [
         { id: "severity-analytics-spatial", label: "سهم شدت تصادفات", href: "/charts/spatial/severity-analytics" },
         { id: "light-analytics", label: "وضعیت روشنایی", href: "/charts/spatial/light-analytics" },
         { id: "collision-analytics-spatial", label: "نحوه و نوع برخورد", href: "/charts/spatial/collision-analytics" },
+        { id: "safety-index", label: "شاخص ایمنی", href: "/charts/spatial/safety-index" },
+        { id: "single-vehicle-analytics", label: "تحلیل تک‌وسیله‌ای", href: "/charts/spatial/single-vehicle-analytics" },
       ];
     case "trend":
       return [

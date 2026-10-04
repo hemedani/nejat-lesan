@@ -39,6 +39,7 @@ try:
             "src/utils/employee-routes.ts",
             "src/utils/form-access.ts",
             "src/utils/org.ts",
+            "src/utils/chartNavigation.ts",
             "--outDir", str(out),
             "--target", "es2020",
             "--module", "esnext",
