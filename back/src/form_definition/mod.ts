@@ -1,0 +1,31 @@
+import { addSetup } from "./add/mod.ts";
+import { getSetup } from "./get/mod.ts";
+import { getsSetup } from "./gets/mod.ts";
+import { updateSetup } from "./update/mod.ts";
+import { removeSetup } from "./remove/mod.ts";
+import { countSetup } from "./count/mod.ts";
+import { activateSetup } from "./activate/mod.ts";
+import { duplicateSetup } from "./duplicate/mod.ts";
+import { getForPatrolSetup } from "./getForPatrol/mod.ts";
+import { getReferenceOptionsSetup } from "./getReferenceOptions/mod.ts";
+import { validateSetup } from "./validate/mod.ts";
+import { archiveSetup } from "./archive/mod.ts";
+import { getBindableRelationsSetup } from "./getBindableRelations/mod.ts";
+import { getReferenceModelsSetup } from "./getReferenceModels/mod.ts";
+
+export const formDefinitionSetup = () => {
+	addSetup();
+	updateSetup();
+	getSetup();
+	getsSetup();
+	countSetup();
+	removeSetup();
+	activateSetup();
+	duplicateSetup();
+	getForPatrolSetup();
+	getReferenceOptionsSetup();
+	validateSetup();
+	archiveSetup();
+	getBindableRelationsSetup();
+	getReferenceModelsSetup();
+};
