@@ -1,5 +1,5 @@
 import { ObjectId } from "@deps";
-import { organization } from "../../mod.ts";
+import { organization, unit } from "../../mod.ts";
 import { getScopedOrgIds } from "../app_modules/orgScope.ts";
 import type { MyContext } from "@lib";
 
@@ -90,4 +90,54 @@ export const getReportScope = (
 	}
 
 	throw new Error("شما اجازه مشاهده گزارش‌ها را ندارید");
+};
+
+/**
+ * Which organization a report should be filed under.
+ *
+ * Returns an organization **only when the actor's unit set resolves to a single
+ * organization.** Anything else returns `null`, which is not an error: the report
+ * is still filed, and the console groups it under "unlinked"
+ * (`cleanupDemoSeed` targets exactly those rows).
+ *
+ * `unit.officers` is the only trustworthy source here, never `user.unit`. The
+ * reverse of a single relation is written with an unconditional `$set`, so seating
+ * an officer in a second unit silently moves `user.unit` while the first unit's
+ * `officers` array still lists them — the exact state in which a report cannot be
+ * attributed to any console. `people.ts` rejects that membership for the same
+ * reason, and the demo seed keeps every officer in exactly one unit.
+ *
+ * A genuine multi-organization actor is disambiguated by `roadId`, since each
+ * highway is one organization and the oversight console already treats
+ * `organization._id` and `road._id` as the same attribution. It never picks
+ * arbitrarily: if the road's organization does not narrow the candidate set to
+ * one, the answer stays `null`. The extra lookup is paid only when the set is
+ * already ambiguous, so the ordinary single-unit path stays one query.
+ */
+export const resolveFilingOrgId = async (
+	actor: ActorUser,
+	roadId?: string | null,
+): Promise<ObjectId | null> => {
+	const units = await unit
+		.find({
+			filters: { "officers._id": new ObjectId(actor._id) },
+			projection: { "organization._id": 1 },
+		})
+		.toArray();
+
+	const orgIds = new Set<string>();
+	for (const u of units) {
+		const id = (u as { organization?: { _id?: ObjectId } })?.organization?._id;
+		if (id) orgIds.add(id.toString());
+	}
+
+	if (orgIds.size === 1) return new ObjectId([...orgIds][0]);
+	if (orgIds.size === 0 || !roadId || !ObjectId.isValid(roadId)) return null;
+
+	const onRoad = await organization.findOne({
+		filters: { "road._id": new ObjectId(roadId) },
+		projection: { _id: 1 },
+	});
+	const roadOrgId = (onRoad as { _id?: ObjectId } | null)?._id;
+	return roadOrgId && orgIds.has(roadOrgId.toString()) ? roadOrgId : null;
 };
