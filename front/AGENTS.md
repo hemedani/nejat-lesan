@@ -530,6 +530,78 @@ reports section, so it lives in the Patrol-gated nav group. Uses a `dynamic(...,
 leaflet component plus a `MapBridge` that publishes `flyTo` upward and reports the visible
 bounding box so the toolbar can re-query the current viewport.
 
+### Dynamic form authoring (`/forms`)
+
+The form builder is a **flat, standalone route** — not nested under `/orghead` or
+`/unit-head`, because OrgHead and UnitHead both author forms but enter from different
+panels. It therefore has its own chrome rather than a duplicated route per panel:
+
+| Layer | File | Responsibility |
+| --- | --- | --- |
+| Guard | `components/org/forms/FormAuthorGuard.tsx` | admits **Ghost, Manager, OrgHead, UnitHead**; everyone else is redirected to `getDefaultPanel(viewer)` |
+| Scope | `components/system/PanelScopeProvider.tsx` | org comes from `user.roles[]`; Ghost/Manager hold no org role and pick one manually |
+| Chrome | `components/org/forms/FormAuthorHeader.tsx` | org chip + "بازگشت به پنل" back to the viewer's own panel |
+
+Routes: `/forms` (list), `/forms/new`, `/forms/[formId]`.
+
+**Two separate nav registries exist — a link missing from one is invisible in the other.**
+
+| Registry | Panels | Module gate field |
+| --- | --- | --- |
+| `utils/panel-nav.ts` → `ORGHEAD_NAV` / `UNIT_HEAD_NAV` | role panels drawn by `PanelShell` | `requiredModule` |
+| `components/organisms/adminSidebarConfig.ts` | the `/admin` panel drawn by `AdminSidebar` | **none** — `AdminNavItem` has no module field |
+
+Both carry a `/forms` entry (a «فرم‌ساز» section / group). Ghost and Manager land on
+`/admin`, so the admin sidebar is their **only** navigation path to the builder.
+
+**`forms` is its own module key, not part of `incident_patrol`.** Authoring is an
+organizational capability: licensing it must not break filing a report, and disabling
+it must not disable patrol. It is also the **last** key in `MODULE_KEYS`, which is declared
+once in `utils/org.ts`. The ordering is load-bearing on the backend — `moduleKeyFor` in
+`back/src/app_modules/moduleConfig.ts` returns on the first match, so an `incident_patrol`
+whole-schema wildcard registered first would shadow `form_definition` and the gate would
+never run. **There is no `moduleKeyFor` in `front/`**: the frontend list has no resolver of
+its own and exists only to mirror the backend's order, so the two licensing screens cannot
+disagree about what is licensed. The key union is `types/auth.ts` (`ModuleKey`); the labels
+are `utils/org.ts` (`MODULE_LABELS`).
+
+**The `/forms` gate is deliberately split in two, and R4 enforces the split.** The nav entry
+declares `requiredModule: "forms"` so the menu hides itself; `/forms/layout.tsx` renders
+`<ModuleGate module="forms" scoped>` so an author who *is* entitled to the feature gets an
+explanation rather than a silent bounce; and `FormAuthorGuard` checks **role only**, via
+`canAuthorForms` in `utils/form-access.ts`. Putting the licensing check in the guard makes
+`ModuleGate` unreachable — R4 fails if `orgHasModule` ever appears there. Only **Ghost** is
+exempt from licensing (`assertModuleOpen` in the backend returns early for Ghost alone);
+Manager is not, matching `canAccessPanel`, which checks `requiredModule` *before* its
+super-viewer bypass.
+
+### Route builders — never hand-write a panel URL
+
+Three modules own every panel URL, one per panel:
+
+| Module | Panel |
+| --- | --- |
+| `utils/org-routes.ts` | `/orghead` |
+| `utils/unit-head-routes.ts` | `/unit-head` |
+| `utils/employee-routes.ts` | `/employee` |
+
+No component may construct one. `OrgReportsView`'s `detailBase` and
+`OrgIncidentDetailView`'s `backHref` are **required** props for the same reason: they used to
+default to `/org/${orgId}`, which is how a caller that forgot them navigated out of the
+panel. **R6** in `panel-routing-test.py` greps `src/components` for `/org/${`,
+`detailBase="/` and `backHref="/` and fails the build on a hit. It strips comments first, so
+prose documenting *why* the literal form is banned does not trip it.
+
+If the «فرم‌ساز» nav section is missing, the `forms` module is off for that
+organization — enable it at `/admin/modules` (Ghost-only). That page is itself only
+reachable from the admin sidebar.
+
+`panel-routing-test.py` asserts both nav entries, both module gates (including that
+`/forms` survives when `incident_patrol` is off), and that it never leaks to the
+employee / patrol / patrol-manager panels. **Its module list must include `"forms"`** —
+it was originally omitted, which is why a missing nav entry passed unnoticed. Re-run it
+after touching `PANEL_NAV`.
+
 ### CRITICAL: never send an empty `get` projection to an aggregation act
 
 `get: {}` sent to an act whose fn forwards `get` into a Mongo **aggregation** fails with HTTP 501:

@@ -7,11 +7,9 @@ import { getOrgChart } from "@/app/actions/unit/getOrgChart";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { useOrgModules } from "@/hooks/useOrgModules";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
-import { MODULE_LABELS } from "@/utils/org";
-import type { ModuleKey } from "@/types/auth";
+import { MODULE_KEYS, MODULE_LABELS } from "@/utils/org";
 import type { OrganizationListItem, OrgChartResponse } from "@/services/org-projections";
 
-const MODULE_KEYS: ModuleKey[] = ["charts", "incident_patrol", "warehouse"];
 
 /**
  * Organization settings for the OrgHead panel.

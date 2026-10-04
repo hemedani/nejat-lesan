@@ -38,6 +38,7 @@ try:
             "src/utils/unit-head-routes.ts",
             "src/utils/employee-routes.ts",
             "src/utils/form-access.ts",
+            "src/utils/org.ts",
             "--outDir", str(out),
             "--target", "es2020",
             "--module", "esnext",

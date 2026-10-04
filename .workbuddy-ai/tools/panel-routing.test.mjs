@@ -23,6 +23,7 @@ import { orgRoutes } from "./org-routes.js";
 import { unitHeadRoutes } from "./unit-head-routes.js";
 import { employeeRoutes } from "./employee-routes.js";
 import { canAuthorForms } from "./form-access.js";
+import { MODULE_KEYS, MODULE_LABELS } from "./org.js";
 
 // `forms` is a fourth module key, not a synonym for `incident_patrol`: the
 // form engine is licensed separately so disabling it must not hide the patrol
@@ -371,6 +372,22 @@ eq("employee nav has no link into the deleted /org workspace", filterPanelSectio
 // PANEL_DEFINITIONS cannot leave its nav pointing at the old path.
 eq("orghead nav root matches PANEL_DEFINITIONS", orgNavIds.includes(getPanelById("orghead").path), true);
 eq("unit-head nav root matches PANEL_DEFINITIONS", unitNavIds.includes(getPanelById("unit-head").path), true);
+
+// `forms` must stay last. `moduleKeyFor` on the backend
+// (`back/src/app_modules/moduleConfig.ts`) returns on the FIRST matching key,
+// and `incident_patrol` registers a whole-schema `incident_report.*` wildcard
+// that would otherwise shadow `form_definition` — the gate would never run, so
+// authoring would stay reachable with the module switched off. The frontend list
+// has no resolver, but it must mirror the backend's order or the two licensing
+// screens disagree about what is licensed.
+eq("MODULE_KEYS order", MODULE_KEYS, ["charts", "incident_patrol", "warehouse", "forms"]);
+eq("MODULE_KEYS is last-position forms", MODULE_KEYS[MODULE_KEYS.length - 1], "forms");
+eq("MODULE_KEYS covers every labelled module", MODULE_KEYS.length, Object.keys(MODULE_LABELS).length);
+eq(
+  "MODULE_LABELS covers every MODULE_KEY",
+  MODULE_KEYS.every((k) => typeof MODULE_LABELS[k] === "string"),
+  true,
+);
 
 // ------------------------------------------------------------------------- report
 console.log(`\n${pass} assertions passed`);

@@ -37,8 +37,25 @@ export const INCIDENT_TYPE_ORDER: Array<"accident" | "road_breakdown" | "road_ob
   "other",
 ];
 
+/**
+ * The four licensable modules, in the order the backend expects.
+ *
+ * **`forms` is last on purpose.** `moduleKeyFor` in
+ * `back/src/app_modules/moduleConfig.ts` iterates this list and returns on the
+ * first match. `incident_patrol` registers whole-schema wildcards including
+ * `incident_report.*`, so a `forms` key registered earlier would be shadowed and
+ * the `form_definition` gate would never run — authoring would stay reachable
+ * with the module switched off.
+ *
+ * This list has no resolver of its own; it mirrors the backend's order so the two
+ * licensing screens cannot disagree about what is licensed. Asserted by R4-class
+ * checks in `.workbuddy-ai/tools/panel-routing.test.mjs`.
+ */
+export const MODULE_KEYS: ModuleKey[] = ["charts", "incident_patrol", "warehouse", "forms"];
+
 export const MODULE_LABELS: Record<ModuleKey, string> = {
   charts: "تحلیل و نمودار تصادفات",
   incident_patrol: "ثبت رخداد موبایل و داشبورد گشت",
   warehouse: "مدیریت انبار",
+  forms: "فرم‌ساز پویا",
 };
