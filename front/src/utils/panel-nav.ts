@@ -39,7 +39,27 @@ export interface PanelNav {
   sections: PanelNavSection[];
 }
 
-const ORGHEAD_NAV: PanelNav = {
+/**
+ * The «فرم‌ساز» section, shared by the org-head and unit-head panels.
+ *
+ * Authoring is an organizational capability, so it is licensed as `forms` rather
+ * than as part of `incident_patrol`: turning the form engine off must not hide
+ * the patrol console, and turning patrol off must not disable the builder. The
+ * gate matches `FORMS_SCHEMAS` in `back/src/app_modules/moduleConfig.ts`.
+ *
+ * One definition rather than two copies, because two copies is how the two panels
+ * drifted before — and because `canAuthorForms` has to agree with both. The
+ * assertion harness checks that both navs use this section.
+ */
+export function formsNavSection(): PanelNavSection {
+  return {
+    label: "فرم‌ساز",
+    requiredModule: "forms",
+    items: [{ href: "/forms", label: "فرم‌های پویا", icon: "clipboard" }],
+  };
+}
+
+export const ORGHEAD_NAV: PanelNav = {
   storageKey: "orghead",
   brand: {
     label: "مدیریت سازمان",
@@ -67,6 +87,7 @@ const ORGHEAD_NAV: PanelNav = {
         { href: "/orghead/reports", label: "گزارش‌های رخداد", icon: "reports" },
       ],
     },
+    formsNavSection(),
     {
       label: "انبار و موجودی",
       requiredModule: "warehouse",
@@ -103,10 +124,9 @@ const UNIT_HEAD_NAV: PanelNav = {
     {
       label: "رخدادها",
       requiredModule: "incident_patrol",
-      items: [
-        { href: "/unit-head/reports", label: "رخدادهای واحد", icon: "reports" },
-      ],
+      items: [{ href: "/unit-head/reports", label: "رخدادهای واحد", icon: "reports" }],
     },
+    formsNavSection(),
     {
       label: "انبار و موجودی",
       requiredModule: "warehouse",

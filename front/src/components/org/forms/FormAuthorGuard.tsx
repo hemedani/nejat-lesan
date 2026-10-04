@@ -4,30 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { usePanelViewer } from "@/hooks/usePanelViewer";
-import {
-	getDefaultPanel,
-	getRoleNames,
-	isSuperViewer,
-	type PanelViewer,
-} from "@/utils/panels";
-import type { RoleName, UserLevel } from "@/types/auth";
+import { getDefaultPanel } from "@/utils/panels";
+import { canAuthorForms } from "@/utils/form-access";
 
-/**
- * Who may author an incident form.
- *
- * The builder writes `form_definition` documents, which the backend also gates —
- * this is the client-side half, so a deep link does not simply render the editor
- * for a role that could not save anything.
- */
-const AUTHOR_LEVELS: UserLevel[] = ["Ghost", "Manager", "OrgHead", "UnitHead"];
-const AUTHOR_ROLES: RoleName[] = ["OrgHead", "UnitHead"];
-
-export function canAuthorForms(viewer: PanelViewer): boolean {
-	if (isSuperViewer(viewer)) return true;
-	if (AUTHOR_LEVELS.includes(viewer.level)) return true;
-	const roles = getRoleNames(viewer.roles);
-	return AUTHOR_ROLES.some((name) => roles.includes(name));
-}
+export { canAuthorForms } from "@/utils/form-access";
 
 /**
  * Route guard for `/forms`.
@@ -35,7 +15,11 @@ export function canAuthorForms(viewer: PanelViewer): boolean {
  * `/forms` sits outside the role panels because authoring is available to
  * OrgHead and UnitHead alike, and the two live in separate panels. PanelGuard
  * works on `PanelId`s, so this applies the same three rules — authenticated,
- * role may author, otherwise redirect to that viewer's own home panel.
+ * role may author *and* holds the `forms` module, otherwise redirect to that
+ * viewer's own home panel.
+ *
+ * The access rule itself lives in `utils/form-access.ts` so the assertion
+ * harness can verify it agrees with the nav entry that links here.
  */
 export function FormAuthorGuard({ children }: { children: React.ReactNode }) {
 	const { isAuthenticated, authReady } = useAuth();

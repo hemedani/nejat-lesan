@@ -37,6 +37,7 @@ try:
             "src/utils/org-routes.ts",
             "src/utils/unit-head-routes.ts",
             "src/utils/employee-routes.ts",
+            "src/utils/form-access.ts",
             "--outDir", str(out),
             "--target", "es2020",
             "--module", "esnext",
@@ -56,10 +57,12 @@ try:
         print("transpile produced no output — aborting")
         sys.exit(1)
 
-    # `@/utils/panels` cannot be resolved by node; make it relative.
-    nav_js.write_text(
-        nav_js.read_text().replace('from "@/utils/panels"', 'from "./panels.js"')
-    )
+    # `@/utils/*` cannot be resolved by node; make those imports relative.
+    for name in ("panel-nav.js", "form-access.js"):
+        f = out / name
+        f.write_text(
+            f.read_text().replace('from "@/utils/panels"', 'from "./panels.js"')
+        )
 
     shutil.copy(TOOLS / "panel-routing.test.mjs", out / "test.mjs")
 
@@ -128,6 +131,39 @@ try:
             print(f"  x {d}")
         sys.exit(1)
     print(f"R1 ok — {len(nav_sources)} nav registries, every href resolves")
+
+    # R4 — three places must agree on the forms gate: the nav entry hides itself,
+    # the route explains itself, and the guard decides who may author. They
+    # disagreed for a long time: the nav hid `/forms` on the module while the
+    # guard ignored it, so the URL served a builder the sidebar claimed did not
+    # exist.
+    nav_text = (FRONT / "src" / "utils" / "panel-nav.ts").read_text(encoding="utf-8")
+    forms_layout = (FRONT / "src" / "app" / "forms" / "layout.tsx").read_text(encoding="utf-8")
+    gate_text = (FRONT / "src" / "components" / "system" / "ModuleGate.tsx").read_text(encoding="utf-8")
+    guard_text = (
+        FRONT / "src" / "components" / "org" / "forms" / "FormAuthorGuard.tsx"
+    ).read_text(encoding="utf-8")
+    problems = []
+    if 'requiredModule: "forms"' not in nav_text:
+        problems.append("panel-nav.ts: no forms section declares requiredModule")
+    if nav_text.count('href: "/forms"') != 1:
+        problems.append("panel-nav.ts: /forms must appear once, in the shared formsNavSection()")
+    if 'ModuleGate module="forms" scoped' not in forms_layout:
+        problems.append("forms/layout.tsx: must render <ModuleGate module=\"forms\" scoped>")
+    if 'forms:' not in gate_text:
+        problems.append("ModuleGate.tsx: MODULE_NOTICES has no `forms` entry, so the off state is generic")
+    if "canAuthorForms" not in guard_text:
+        problems.append("FormAuthorGuard.tsx: must use the shared canAuthorForms predicate")
+    # The licensing check must NOT be in the guard: that would make ModuleGate
+    # unreachable, and the amber explanation could never appear.
+    if "orgHasModule" in guard_text:
+        problems.append("FormAuthorGuard.tsx: licensing leaked into the role guard")
+    if problems:
+        print("R4 FAILED — the forms gates disagree:")
+        for x in problems:
+            print(f"  x {x}")
+        sys.exit(1)
+    print("R4 ok — nav, route gate and role guard agree on /forms")
 
     result = subprocess.run([str(NODE), "test.mjs"], cwd=out, capture_output=True, text=True)
     print(result.stdout, end="")

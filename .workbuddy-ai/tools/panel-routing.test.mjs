@@ -18,10 +18,11 @@ import {
   makePanelViewer,
   PANEL_DEFINITIONS,
 } from "./panels.js";
-import { filterPanelSections, isNavItemActive, PANEL_NAV } from "./panel-nav.js";
+import { filterPanelSections, formsNavSection, isNavItemActive, ORGHEAD_NAV, PANEL_NAV } from "./panel-nav.js";
 import { orgRoutes } from "./org-routes.js";
 import { unitHeadRoutes } from "./unit-head-routes.js";
 import { employeeRoutes } from "./employee-routes.js";
+import { canAuthorForms } from "./form-access.js";
 
 // `forms` is a fourth module key, not a synonym for `incident_patrol`: the
 // form engine is licensed separately so disabling it must not hide the patrol
@@ -322,6 +323,35 @@ eq("employeeRoutes.reports()", employeeRoutes.reports(), "/employee/reports");
 eq("employeeRoutes.report(id)", employeeRoutes.report("r1"), "/employee/reports/r1");
 eq("employeeRoutes.map()", employeeRoutes.map(), "/employee/map");
 eq("employeeRoutes.announcements()", employeeRoutes.announcements(), "/employee/announcements");
+
+// --------------------------------------------------------------- R4: forms role gate
+// `canAuthorForms` decides *who* may author; licensing is ModuleGate's job in
+// `/forms/layout.tsx`, and the nav entry hides itself via `requiredModule`.
+// The Python side of R4 asserts those three agree. These assertions exist because
+// the rule lived inside a React component, so it had no test at all.
+eq("canAuthorForms allows Ghost", canAuthorForms(mk("Ghost")), true);
+eq("canAuthorForms allows Manager", canAuthorForms(mk("Manager")), true);
+eq("canAuthorForms allows OrgHead by level", canAuthorForms(mk("OrgHead")), true);
+eq("canAuthorForms allows UnitHead by level", canAuthorForms(mk("UnitHead")), true);
+eq("canAuthorForms allows an OrgHead by role on an Editor level", canAuthorForms(mk("Editor", [orgRole("OrgHead")])), true);
+eq("canAuthorForms allows a UnitHead by role on an Editor level", canAuthorForms(mk("Editor", [unitRole("UnitHead")])), true);
+eq("canAuthorForms refuses a Patrol officer", canAuthorForms(mk("Patrol")), false);
+eq("canAuthorForms refuses an Enterprise user", canAuthorForms(mk("Enterprise")), false);
+eq("canAuthorForms refuses a plain Editor", canAuthorForms(mk("Editor")), false);
+eq("canAuthorForms refuses a generic Officer", canAuthorForms(mk("Editor", [orgRole("Officer")])), false);
+
+// One section definition, shared by both authoring panels. Two copies is how
+// they drifted before, and the guard has to agree with both.
+eq(
+  "ORGHEAD_NAV uses the shared forms section",
+  ORGHEAD_NAV.sections.some((s) => s.label === formsNavSection().label && s.requiredModule === "forms"),
+  true,
+);
+eq(
+  "UNIT_HEAD_NAV uses the shared forms section",
+  PANEL_NAV["unit-head"].sections.some((s) => s.label === formsNavSection().label && s.requiredModule === "forms"),
+  true,
+);
 
 // ------------------------------------------------------------------- nav reachability
 // R2 — a nav href and the detail routes under it must agree. Six `/orghead`

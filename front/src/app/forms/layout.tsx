@@ -1,6 +1,7 @@
 "use client";
 
 import { PanelScopeProvider } from "@/components/system/PanelScopeProvider";
+import { ModuleGate } from "@/components/system/ModuleGate";
 import { FormAuthorGuard } from "@/components/org/forms/FormAuthorGuard";
 import { FormAuthorHeader } from "@/components/org/forms/FormAuthorHeader";
 
@@ -10,6 +11,13 @@ import { FormAuthorHeader } from "@/components/org/forms/FormAuthorHeader";
  * Intentionally not nested under `/orghead` or `/unit-head`: both OrgHead and
  * UnitHead author forms, but they enter from different panels, so the shared
  * surface gets its own guard and scope provider instead of a duplicated route.
+ *
+ * `ModuleGate` sits inside the guard, and the division of labour is deliberate:
+ * the guard decides *who* may be here and bounces anyone else to their own
+ * panel; the gate decides whether the *feature* is licensed for this
+ * organization, and an author who is entitled to use it gets an explanation
+ * instead of a silent redirect. The nav entry hides itself via
+ * `requiredModule: "forms"`, so all three say the same thing — see R4.
  */
 export default function FormsLayout({
 	children,
@@ -19,15 +27,21 @@ export default function FormsLayout({
 	return (
 		<FormAuthorGuard>
 			<PanelScopeProvider prefer="organization">
-				<div dir="rtl" className="min-h-screen bg-slate-950 text-slate-100">
-					<div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] [background-size:3rem_3rem]" />
-					<div className="relative">
-						<FormAuthorHeader />
-						<main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
-							{children}
-						</main>
+				{/*
+					`scoped`: the builder is licensed per *organization*, so this
+					must consult `orgHasModule`, not the installation feed.
+				*/}
+				<ModuleGate module="forms" scoped>
+					<div dir="rtl" className="min-h-screen bg-slate-950 text-slate-100">
+						<div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] [background-size:3rem_3rem]" />
+						<div className="relative">
+							<FormAuthorHeader />
+							<main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+								{children}
+							</main>
+						</div>
 					</div>
-				</div>
+				</ModuleGate>
 			</PanelScopeProvider>
 		</FormAuthorGuard>
 	);
