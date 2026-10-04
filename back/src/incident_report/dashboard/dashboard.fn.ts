@@ -1,0 +1,149 @@
+import { type ActFn, ObjectId } from "@deps";
+import { coreApp, incident_report, shift } from "../../../mod.ts";
+import { type MyContext, throwError } from "@lib";
+import {
+	getOrgReportBase,
+	getReportScope,
+	isManagerViewer,
+	isOrgLeaderLevel,
+} from "../../accident/reportScope.ts";
+
+const reviewStatuses = [
+	"submitted",
+	"under_review",
+	"returned",
+	"approved",
+	"completed",
+];
+const syncStatuses = ["draft", "queued", "syncing", "synced", "rejected"];
+
+const getSet = (body: any) => body.details.set || {};
+
+const countReports = async (base: Record<string, unknown>) => {
+	const sync = Object.fromEntries(
+		await Promise.all(
+			syncStatuses.map(async (status) => [
+				status,
+				await incident_report.countDocument({
+					filter: { ...base, sync_status: status },
+				}),
+			]),
+		),
+	);
+	const review = Object.fromEntries(
+		await Promise.all(
+			reviewStatuses.map(async (status) => [
+				status,
+				await incident_report.countDocument({
+					filter: status === "submitted"
+						? {
+							...base,
+							$or: [
+								{ review_status: "submitted" },
+								{ review_status: { $exists: false } },
+							],
+						}
+						: { ...base, review_status: status },
+				}),
+			]),
+		),
+	);
+	return { sync, review };
+};
+
+const recentReports = async (
+	base: Record<string, unknown>,
+	get: Record<string, unknown>,
+	page = 1,
+	limit = 20,
+) => await incident_report.find({
+	filters: base,
+	projection: get as any,
+}).sort({ reported_at: -1, _id: -1 }).skip((page - 1) * limit).limit(limit)
+	.toArray();
+
+/**
+ * Officer and manager dashboards for non-accident reports.
+ *
+ * Same three acts as `accident.dashboard` against a different collection. They
+ * exist because that console is deliberately type-agnostic — it is where the
+ * control centre reviews everything the patrol app filed — so without these the
+ * dashboard would silently stop counting road damage, obstructions and other
+ * events the moment they moved out of `accident`.
+ */
+
+export const getReporterDashboardFn: ActFn = async (body) => {
+	const context = coreApp.contextFns.getContextModel() as MyContext;
+	if (context.user.level !== "Patrol") {
+		return throwError("این داشبورد فقط برای مأمور گشت است");
+	}
+	const set = getSet(body);
+	const get = body.details.get;
+	const base = getReportScope(context.user);
+	const activeShift = await shift.findOne({
+		filters: {
+			"officer._id": new ObjectId(context.user._id),
+			status: "active",
+		},
+		projection: {
+			_id: 1,
+			shift_type: 1,
+			status: 1,
+			start_at: 1,
+			end_at: 1,
+			patrol_unit: 1,
+			vehicle: 1,
+		},
+	});
+	return {
+		activeShift,
+		summary: await countReports(base),
+		recentReports: await recentReports(
+			base,
+			get,
+			set.page || 1,
+			Math.min(set.limit || 10, 50),
+		),
+	};
+};
+
+export const getManagerDashboardFn: ActFn = async (body) => {
+	const context = coreApp.contextFns.getContextModel() as MyContext;
+	if (
+		!isManagerViewer(context.user.level) &&
+		!isOrgLeaderLevel(context.user.level)
+	) {
+		return throwError("شما اجازه مشاهده داشبورد مدیر را ندارید");
+	}
+	const set = getSet(body);
+	const base = await getOrgReportBase(context.user, set.userId);
+	return {
+		summary: await countReports(base),
+		recentReports: await recentReports(
+			base,
+			body.details.get as any,
+			set.page || 1,
+			Math.min(set.limit || 20, 100),
+		),
+	};
+};
+
+export const getManagerReportsFn: ActFn = async (body) => {
+	const context = coreApp.contextFns.getContextModel() as MyContext;
+	if (
+		!isManagerViewer(context.user.level) &&
+		!isOrgLeaderLevel(context.user.level)
+	) {
+		return throwError("شما اجازه مشاهده گزارش‌ها را ندارید");
+	}
+	const set = getSet(body);
+	const filters = await getOrgReportBase(context.user, set.userId);
+	if (set.reviewStatus) filters.review_status = set.reviewStatus;
+	if (set.syncStatus) filters.sync_status = set.syncStatus;
+	return await recentReports(
+		filters,
+		body.details.get as any,
+		set.page || 1,
+		Math.min(set.limit || 50, 100),
+	);
+};
