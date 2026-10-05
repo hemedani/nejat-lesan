@@ -1,5 +1,5 @@
 /**
- * A `date`, `time` or `datetime` field.
+ * A `date`, `time` or `datetime` field, presented in the Jalali calendar.
  *
  * The definition says only *that* a value is temporal — the engine never
  * validates the format — so the shape is this app's own contract
@@ -8,38 +8,47 @@
  * happen, asked an officer at the roadside to hand-type `2026-10-01T12:30` from
  * memory and silently accepted a typo as "some string".
  *
- * The picker is `@expo/ui`'s drop-in `DateTimePicker`: it wraps the native
- * SwiftUI `DatePicker` on iOS and the Jetpack Compose dialogs on Android. It is
- * already a dependency and ships inside Expo Go for SDK 57, so this adds no
- * native module and no development-build requirement.
+ * Two separate concerns meet here, and they must not be confused:
  *
- * Two platform facts drive the structure below:
+ *   - **What is stored** is Gregorian ISO (`2026-10-01`, `12:30`,
+ *     `2026-10-01T12:30`). The backend accepts it through `date()` and the web
+ *     panel and reports render it unchanged, so it is not ours to change.
+ *   - **What the officer reads and taps** is Jalali, in Persian digits, from
+ *     `@/domain/jalali`.
  *
- *   - Android's picker has **no** combined date + time mode (`mode: 'datetime'`
- *     degrades to date only), so a `datetime` field is collected in two dialogs
- *     and the chosen day is held aside between them.
- *   - The web build of the picker renders `null`, so the web target keeps a text
- *     input — exactly the control the app used for these fields before.
+ * The Jalali picker is built in JavaScript rather than handed to a native
+ * control. `@expo/ui`'s `DateTimePicker` can be *told* a locale on iOS, but its
+ * Android implementation ignores the prop entirely, so the same field would show
+ * a Persian calendar on one platform and a Gregorian one on the other. Owning
+ * the calendar keeps both platforms identical, and — because it is pure JS — it
+ * needs no native module and no development build.
+ *
+ * The web build keeps a text input: that is the control the web form builder
+ * preview already renders for these types, and changing it is a separate job.
  */
 
-import { useMemo, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-
-import { DateTimePicker } from '@expo/ui/community/datetime-picker';
+import { useState } from 'react';
+import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { AnswerValue } from '@forms';
 
 import {
   datetimeFormatHint,
-  formatStoredValue,
   parseStoredValue,
   toStoredValue,
   type DateTimeFieldType,
 } from '@/domain/form-datetime';
+import {
+  formatJalaliClock,
+  formatJalaliDate,
+  formatJalaliDateTime,
+} from '@/domain/jalali';
 import { AppTheme, Estedad, Radius } from '@/constants/theme';
 
 import { FormInput } from '../form-fields';
 import { Icon } from '../ui/icon';
+import { JalaliCalendar } from './jalali-calendar';
+import { JalaliTimeColumns } from './jalali-time-columns';
 
 /** Which glyph an officer associates with the value they are choosing. */
 const ICON_FOR: Record<DateTimeFieldType, 'calendar-outline' | 'time-outline'> = {
@@ -54,6 +63,20 @@ const LABEL_FOR: Record<DateTimeFieldType, string> = {
   datetime: 'انتخاب تاریخ و ساعت',
 };
 
+/** The Jalali text an officer reads for a value. */
+const formatDisplay = (type: DateTimeFieldType, date: Date): string => {
+  if (type === 'date') return formatJalaliDate(date);
+  if (type === 'time') return formatJalaliClock(date);
+  return formatJalaliDateTime(date);
+};
+
+/** Label for the "jump to now" action, which differs by what is being set. */
+const NOW_LABEL_FOR: Record<DateTimeFieldType, string> = {
+  date: 'امروز',
+  time: 'اکنون',
+  datetime: 'اکنون',
+};
+
 export function DateTimeField({
   type,
   value,
@@ -66,19 +89,18 @@ export function DateTimeField({
   onCommit: (next: string | undefined) => void;
   hasError?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  /** Only Android uses a stage: the day first, then the clock. */
-  const [stage, setStage] = useState<'date' | 'time'>('date');
-  /** The day chosen in the first Android dialog, while the time is being picked. */
-  const [pendingDay, setPendingDay] = useState<Date | null>(null);
+  /**
+   * The moment being edited inside the sheet, or `null` when it is closed.
+   *
+   * Edits are held here and only written on «تأیید»: paging through months or
+   * scrolling past an hour must not commit a value the officer did not choose.
+   */
+  const [draft, setDraft] = useState<Date | null>(null);
+  /** Which half of a `datetime` the sheet is showing. */
+  const [tab, setTab] = useState<'date' | 'time'>('date');
 
-  const display = formatStoredValue(type, value);
-  // `new Date()` is only a starting position; nothing is committed until the
-  // officer actually changes the value.
-  const anchor = useMemo(
-    () => parseStoredValue(type, value) ?? new Date(),
-    [type, value],
-  );
+  const parsed = parseStoredValue(type, value);
+  const display = parsed ? formatDisplay(type, parsed) : '';
 
   if (Platform.OS === 'web') {
     return (
@@ -91,57 +113,34 @@ export function DateTimeField({
     );
   }
 
-  const androidTwoStage = type === 'datetime' && Platform.OS === 'android';
-  // `datetime` is a real mode on iOS; on Android it has to be two passes.
-  const mode: DateTimeFieldType = androidTwoStage ? stage : type;
-
-  const close = () => {
-    setOpen(false);
-    setStage('date');
-    setPendingDay(null);
+  const open = () => {
+    setTab(type === 'time' ? 'time' : 'date');
+    // Start from the stored value, or from now when the field is unanswered.
+    setDraft(parseStoredValue(type, value) ?? new Date());
   };
 
-  const toggle = () => {
-    if (open) close();
-    else setOpen(true);
+  const close = () => setDraft(null);
+
+  const confirm = () => {
+    if (draft) onCommit(toStoredValue(type, draft));
+    setDraft(null);
   };
 
-  const handleChange = (_event: unknown, date: Date) => {
-    if (androidTwoStage && stage === 'date') {
-      // Remember the day and reopen as a clock dialog; committing here would
-      // throw away the time the officer is about to choose.
-      setPendingDay(date);
-      setStage('time');
-      return;
-    }
-
-    if (androidTwoStage) {
-      const day = pendingDay ?? new Date();
-      const combined = new Date(
-        day.getFullYear(),
-        day.getMonth(),
-        day.getDate(),
-        date.getHours(),
-        date.getMinutes(),
-      );
-      onCommit(toStoredValue('datetime', combined));
-      close();
-      return;
-    }
-
-    onCommit(toStoredValue(type, date));
-    // iOS keeps the picker inline so the officer can keep adjusting; Android's
-    // dialog is a one-shot modal that must be unmounted once it has answered.
-    if (Platform.OS === 'android') close();
+  const clear = () => {
+    onCommit(undefined);
+    setDraft(null);
   };
+
+  const showCalendar = draft !== null && type !== 'time' && (type === 'date' || tab === 'date');
+  const showTime = draft !== null && type !== 'date' && (type === 'time' || tab === 'time');
 
   return (
     <View style={styles.wrap}>
       <Pressable
         accessibilityLabel={display || LABEL_FOR[type]}
         accessibilityRole="button"
-        accessibilityState={{ expanded: open }}
-        onPress={toggle}
+        accessibilityState={{ expanded: draft !== null }}
+        onPress={open}
         style={({ pressed }) => [
           styles.control,
           hasError && styles.controlError,
@@ -165,41 +164,126 @@ export function DateTimeField({
         </Pressable>
       ) : null}
 
-      {open ? (
-        <View style={styles.pickerHost}>
-          <DateTimePicker
-            accentColor={AppTheme.colors.primary}
-            display="default"
-            is24Hour
-            // Android presents its picker as a dialog that opens **on mount**, so
-            // moving from the day stage to the clock stage has to remount it —
-            // changing `mode` alone would update the props of a dialog that has
-            // already been dismissed and nothing would appear.
-            key={mode}
-            mode={mode}
-            onDismiss={close}
-            onValueChange={handleChange}
-            presentation="dialog"
-            value={anchor}
-          />
-          {Platform.OS === 'ios' ? (
-            // iOS has no dialog presentation — the picker is inline and there is
-            // nothing to dismiss, so the officer needs a way to fold it away.
-            <Pressable
-              accessibilityRole="button"
-              onPress={close}
-              style={({ pressed }) => [styles.confirm, pressed && styles.pressed]}
-            >
-              <Text style={styles.confirmText}>تأیید</Text>
-            </Pressable>
-          ) : null}
-        </View>
-      ) : null}
+      <Modal
+        animationType="fade"
+        onRequestClose={close}
+        transparent
+        visible={draft !== null}
+      >
+        {/* Tapping the scrim dismisses; the sheet swallows its own taps. */}
+        <Pressable onPress={close} style={styles.backdrop}>
+          <Pressable onPress={() => undefined} style={styles.sheet}>
+            <View style={styles.sheetHead}>
+              <Text style={styles.sheetTitle}>{LABEL_FOR[type]}</Text>
+              {draft ? <Text style={styles.summary}>{formatDisplay(type, draft)}</Text> : null}
+            </View>
+
+            {type === 'datetime' ? (
+              <View style={styles.tabs}>
+                {(['date', 'time'] as const).map((candidate) => {
+                  const active = tab === candidate;
+                  return (
+                    <Pressable
+                      accessibilityRole="tab"
+                      accessibilityState={{ selected: active }}
+                      key={candidate}
+                      onPress={() => setTab(candidate)}
+                      style={[styles.tab, active && styles.tabActive]}
+                    >
+                      <Text style={[styles.tabText, active && styles.tabTextActive]}>
+                        {candidate === 'date' ? 'تاریخ' : 'ساعت'}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ) : null}
+
+            {showCalendar && draft ? (
+              <JalaliCalendar onChange={setDraft} value={draft} />
+            ) : null}
+            {showTime && draft ? (
+              <JalaliTimeColumns onChange={setDraft} value={draft} />
+            ) : null}
+
+            <View style={styles.actions}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={clear}
+                style={({ pressed }) => [pressed && styles.pressed]}
+              >
+                <Text style={styles.actionMuted}>پاک کردن</Text>
+              </Pressable>
+
+              <View style={styles.actionsTrailing}>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setDraft(new Date())}
+                  style={({ pressed }) => [styles.actionGhost, pressed && styles.pressed]}
+                >
+                  <Text style={styles.actionGhostText}>{NOW_LABEL_FOR[type]}</Text>
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={confirm}
+                  style={({ pressed }) => [styles.actionPrimary, pressed && styles.pressed]}
+                >
+                  <Text style={styles.actionPrimaryText}>تأیید</Text>
+                </Pressable>
+              </View>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  actions: {
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+  },
+  actionsTrailing: { flexDirection: 'row-reverse', gap: 8 },
+  actionGhost: {
+    borderColor: AppTheme.colors.borderStrong,
+    borderRadius: Radius.pill,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  actionGhostText: {
+    color: AppTheme.colors.textBody,
+    fontFamily: Estedad.medium,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  actionMuted: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.medium,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  actionPrimary: {
+    backgroundColor: AppTheme.colors.primary,
+    borderRadius: Radius.pill,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  actionPrimaryText: {
+    color: AppTheme.colors.onPrimary,
+    fontFamily: Estedad.semiBold,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  backdrop: {
+    backgroundColor: AppTheme.colors.overlayScrim,
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   clear: { alignSelf: 'flex-start' },
   clearText: {
     color: AppTheme.colors.textSecondary,
@@ -207,21 +291,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 19,
     textAlign: 'right',
-  },
-  confirm: {
-    alignSelf: 'flex-start',
-    backgroundColor: AppTheme.colors.primarySoft,
-    borderColor: AppTheme.colors.primaryBorder,
-    borderRadius: Radius.pill,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-  },
-  confirmText: {
-    color: AppTheme.colors.primaryStrong,
-    fontFamily: Estedad.medium,
-    fontSize: 13,
-    lineHeight: 20,
   },
   control: {
     alignItems: 'center',
@@ -238,13 +307,14 @@ const styles = StyleSheet.create({
     backgroundColor: AppTheme.status.danger.bg,
     borderColor: AppTheme.status.danger.border,
   },
-  // The stored value is Latin and read left-to-right, so it is not mirrored.
+  // Persian digits with slashes are a single left-to-right run, so the text is
+  // laid out LTR and aligned to the right where the officer reads from.
   value: {
     color: AppTheme.colors.textStrong,
     flex: 1,
     fontFamily: Estedad.regular,
     fontSize: 15,
-    textAlign: 'left',
+    textAlign: 'right',
     writingDirection: 'ltr',
   },
   placeholder: {
@@ -254,7 +324,49 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'right',
   },
-  pickerHost: { gap: 8 },
   pressed: { opacity: 0.82 },
+  sheet: {
+    backgroundColor: AppTheme.colors.surface,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
+    gap: 12,
+    paddingBottom: 28,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  sheetHead: { alignItems: 'center', gap: 2 },
+  sheetTitle: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.medium,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  summary: {
+    color: AppTheme.colors.textStrong,
+    fontFamily: Estedad.semiBold,
+    fontSize: 17,
+    lineHeight: 26,
+    writingDirection: 'ltr',
+  },
+  tab: {
+    alignItems: 'center',
+    borderRadius: Radius.pill,
+    flex: 1,
+    paddingVertical: 8,
+  },
+  tabActive: { backgroundColor: AppTheme.colors.surface },
+  tabText: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.medium,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  tabTextActive: { color: AppTheme.colors.primaryStrong, fontFamily: Estedad.semiBold },
+  tabs: {
+    backgroundColor: AppTheme.colors.surfaceMuted,
+    borderRadius: Radius.pill,
+    flexDirection: 'row-reverse',
+    padding: 3,
+  },
   wrap: { gap: 8 },
 });
