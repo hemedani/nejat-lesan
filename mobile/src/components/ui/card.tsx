@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import type { ReactNode } from 'react';
 
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
@@ -10,11 +17,48 @@ export function Card({
   children,
   variant = 'default',
   style,
+  onPress,
+  accessibilityLabel,
 }: {
   children: ReactNode;
   variant?: 'default' | 'flat' | 'outlined';
   style?: StyleProp<ViewStyle>;
+  /**
+   * Makes the whole card one target.
+   *
+   * A card that opens something has to *be* the target: an inner "open" button
+   * makes the obvious gesture — tapping the row — do nothing, which is how a list
+   * of drafts reads as a list of dead ends. Controls inside the card keep working;
+   * React Native gives the innermost pressable the touch.
+   */
+  onPress?: () => void;
+  accessibilityLabel?: string;
 }) {
+  const body = (
+    <>
+      {children}
+    </>
+  );
+
+  if (onPress) {
+    return (
+      <Pressable
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        onPress={onPress}
+        style={({ pressed }) => [
+          styles.base,
+          variant === 'default' && styles.default,
+          variant === 'outlined' && styles.outlined,
+          pressed && styles.pressed,
+          style,
+        ]}
+      >
+        {body}
+      </Pressable>
+    );
+  }
+
   return (
     <View
       style={[
@@ -24,7 +68,7 @@ export function Card({
         style,
       ]}
     >
-      {children}
+      {body}
     </View>
   );
 }
@@ -72,6 +116,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppTheme.colors.border,
     ...Shadow.card,
+  },
+  pressed: {
+    opacity: 0.85,
   },
   outlined: {
     borderWidth: 1,
