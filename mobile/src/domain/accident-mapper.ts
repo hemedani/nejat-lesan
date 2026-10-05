@@ -107,6 +107,18 @@ function resolveIncidentType(draft: AccidentDraft): IncidentType | undefined {
   return isIncidentType(draft.incident_type) ? draft.incident_type : undefined;
 }
 
+/**
+ * Build the `accident.add`/`accident.update` payload for a draft.
+ *
+ * `sync_status` is deliberately **not** sent. It describes whether a report reached
+ * the server, which only the server can witness: a row that exists has arrived, and
+ * the backend records that arrival itself (`accident/add/add.fn.ts`). Sending our own
+ * queue state was worse than redundant — a correction is submitted from a draft the
+ * editor reset to `draft`, so the payload claimed `draft` for a report the server had
+ * already accepted, and the backend's own guard then refused the correction outright
+ * («نمی‌توان وضعیت گزارش تأیید شده را تغییر داد»). The device's queue state is kept
+ * where it belongs: in the local draft and its queue record.
+ */
 export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
   const selectedCoords = draft.incident_coords ?? draft.gps_coords;
   if (!selectedCoords) {
@@ -127,7 +139,6 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
     location: toPoint(selectedCoords),
     date_of_accident: dateOfAccident,
     client_report_uuid: draft.client_report_uuid,
-    sync_status: draft.sync_status === 'draft' ? 'draft' : 'queued',
   };
 
   if (incidentType) {
@@ -284,7 +295,6 @@ export function buildIncidentReportAddSet(
     location: toPoint(selectedCoords),
     client_report_uuid: draft.client_report_uuid,
     form_definition_id: formDefinitionId,
-    sync_status: draft.sync_status === 'draft' ? 'draft' : 'queued',
   };
 
   if (draft.gps_coords) {

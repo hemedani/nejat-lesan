@@ -40,7 +40,7 @@ Confirm that every package supports the versions in `package.json` before instal
 - Separate server state, local draft state, session state, connectivity state, and UI state.
 - Do not duplicate backend schemas casually. When generated declarations or backend contracts are available, derive client types from them or document the deliberate mobile projection.
 - Keep relation and API field names aligned with Lesan contracts, including snake_case fields such as `client_report_uuid`, `gps_coords`, and `sync_status`.
-- Keep sync transitions explicit: `draft -> queued -> syncing -> synced` or `rejected`.
+- Keep sync transitions explicit: `draft -> queued -> syncing -> synced` or `rejected`. This is the **device** queue: it lives in the local draft and its queue record, and it is never sent upstream. The server records its own arrival (`synced` + `synced_at` at creation), so the mappers must not put `sync_status` in a submission payload — asserting `draft` for a report the server had already accepted is what used to make every correction fail.
 - Make retries idempotent, bounded, observable, and resumable. Never create a new report because a request timed out.
 - Do not hardcode permissions, active shift information, vehicle context, or shared reference lists.
 - Do not silently discard fields that are not currently rendered. Preserve unknown or future-compatible draft data where practical.

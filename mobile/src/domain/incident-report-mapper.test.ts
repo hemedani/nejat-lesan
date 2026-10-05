@@ -122,15 +122,17 @@ describe('buildIncidentReportAddSet', () => {
     expect(set['incidentSeverityId']).toBe('s1');
   });
 
-  it('records the sync state so the control centre sees it as queued', () => {
-    const result = buildIncidentReportAddSet(makeDraft({ form_definition_id: 'fd-1' }));
-    expect(result.ok && (result.set as Record<string, unknown>)['sync_status']).toBe('queued');
-
-    const draft = buildIncidentReportAddSet({
-      ...makeDraft({ form_definition_id: 'fd-1' }),
-      sync_status: 'draft',
-    });
-    expect(draft.ok && (draft.set as Record<string, unknown>)['sync_status']).toBe('draft');
+  it('never asserts a sync state — arrival is the server’s to record', () => {
+    // The device's queue state belongs to the device. Sending it made the payload
+    // claim `draft` for a report the server had already accepted whenever a
+    // correction was submitted, and the backend then refused the correction.
+    for (const local of ['draft', 'queued', 'syncing', 'synced'] as const) {
+      const result = buildIncidentReportAddSet({
+        ...makeDraft({ form_definition_id: 'fd-1' }),
+        sync_status: local,
+      });
+      expect(result.ok && result.set).not.toHaveProperty('sync_status');
+    }
   });
 
   it('stamps the submitting app build so the backend can link the organization', () => {

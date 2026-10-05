@@ -35,6 +35,18 @@ describe('buildAccidentAddSet', () => {
     }
   });
 
+  it('never asserts a sync state — arrival is the server’s to record', () => {
+    // The device's queue state belongs to the device, and asserting it broke the
+    // correction flow: the editor resets the local draft to `draft`, so the payload
+    // claimed `draft` for a report the server had already accepted, and the
+    // backend's own guard refused the correction («نمی‌توان وضعیت گزارش تأیید شده را
+    // تغییر داد»).
+    for (const local of ['draft', 'queued', 'syncing', 'synced'] as const) {
+      const result = buildAccidentAddSet(makeDraft({ sync_status: local }));
+      expect(result.ok && result.set).not.toHaveProperty('sync_status');
+    }
+  });
+
   it('falls back to the draft timestamp when no accident date was captured', () => {
     const result = buildAccidentAddSet(makeDraft());
     if (result.ok) {
