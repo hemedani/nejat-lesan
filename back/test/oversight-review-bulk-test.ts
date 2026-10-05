@@ -134,7 +134,32 @@ const seedSyncedReport = async (label: string) =>
 		projection: { _id: 1 },
 	}))!._id as ObjectId;
 
-/** A report still queued — the state machine refuses to review it. */
+/** A report that never reached the server as a filed report — review refuses it. */
+const seedUnfiledReport = async (label: string) =>
+	(await incident_report.insertOne({
+		doc: {
+			form_definition_id: new ObjectId(),
+			form_title: label,
+			serial: ++seq,
+			report_id: `INC-${RUN}-${seq}`,
+			reported_at: new Date(),
+			sync_status: "draft",
+			review_status: "submitted",
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		relations: { officer: { _ids: patrolId } },
+		projection: { _id: 1 },
+	}))!._id as ObjectId;
+
+/**
+ * A report the console is holding whose arrival instant was never recorded.
+ *
+ * `queued` is what every app-filed report used to be born as, and it is still what a
+ * row filed before the arrival was stamped looks like — so it has to stay reviewable,
+ * or the queue it sits in can never be worked.
+ */
 const seedQueuedReport = async (label: string) =>
 	(await incident_report.insertOne({
 		doc: {
@@ -346,11 +371,11 @@ Deno.test(
 	"bulk review reports per-row outcomes instead of failing the batch",
 	async () => {
 		const good = await seedSyncedReport("bulk-good");
-		const notSynced = await seedQueuedReport("bulk-queued");
+		const unfiled = await seedUnfiledReport("bulk-draft");
 
 		const { results } = await reviewReports(
 			{
-				reportIds: [String(good), String(notSynced)],
+				reportIds: [String(good), String(unfiled)],
 				action: "start_review",
 			},
 			managerId,
@@ -359,16 +384,98 @@ Deno.test(
 		assertEquals(results.length, 2, "one outcome per requested id");
 		const goodResult = results.find((row) => row.reportId === String(good));
 		const badResult = results.find((row) =>
-			row.reportId === String(notSynced)
+			row.reportId === String(unfiled)
 		);
 		assert(goodResult?.ok, "the eligible row succeeded");
-		assert(!badResult?.ok, "the queued row was refused");
+		assert(!badResult?.ok, "the unfiled row was refused");
 		assert(
 			(badResult?.error ?? "").includes("همگام"),
 			`the refusal explains why: ${badResult?.error}`,
 		);
 	},
 );
+
+// The exact chain that used to be impossible, filed the way the app files it.
+//
+// A report from the app was born `queued`; only a Manager could write `synced`; no
+// console action did; and the review gate refuses anything but `synced`. So a report
+// the console could see could never be moved, and the reviewer was answered with
+// «تغییر وضعیت گزارش از submitted امکانپذیر نیست» — the state machine's own message
+// for a transition that was never the problem.
+Deno.test("an app-filed accident is reviewable without any manual sync step", async () => {
+	const uuid = `uuid-${RUN}-chain`;
+	await callAct("accident", "add", {
+		client_report_uuid: uuid,
+		location: { type: "Point", coordinates: [51.4, 35.7] },
+		date_of_accident: new Date().toISOString(),
+	}, patrolId);
+
+	const row = await accident.findOne({
+		filters: { client_report_uuid: uuid },
+		projection: { _id: 1, sync_status: 1, review_status: 1 },
+	}) as {
+		_id: ObjectId;
+		sync_status?: string;
+		review_status?: string;
+	};
+	assertEquals(row.sync_status, "synced", "filing the report is the sync");
+	assertEquals(row.review_status, "submitted");
+
+	const started = await reviewReports(
+		{ reportIds: [String(row._id)], action: "start_review" },
+		managerId,
+	);
+	assert(
+		started.results[0].ok,
+		`start_review must be accepted: ${started.results[0].error}`,
+	);
+
+	const approved = await reviewReports(
+		{ reportIds: [String(row._id)], action: "approve" },
+		managerId,
+	);
+	assert(
+		approved.results[0].ok,
+		`approve must be accepted: ${approved.results[0].error}`,
+	);
+
+	const stored = await accident.findOne({
+		filters: { _id: row._id },
+		projection: { review_status: 1, sync_status: 1 },
+	}) as { review_status?: string; sync_status?: string };
+	assertEquals(stored.review_status, "approved");
+	assertEquals(stored.sync_status, "synced");
+});
+
+// The state that used to be the dead end, and is now the acknowledgement.
+Deno.test("a queued report is reviewable, and the review acknowledges it", async () => {
+	const target = await seedQueuedReport("bulk-ack");
+
+	const { results } = await reviewReports(
+		{ reportIds: [String(target)], action: "start_review" },
+		managerId,
+	);
+	assert(
+		results[0].ok,
+		`a row the console is holding must be reviewable: ${results[0].error}`,
+	);
+
+	const stored = await incident_report.findOne({
+		filters: { _id: target },
+		projection: { review_status: 1, sync_status: 1, synced_at: 1 },
+	}) as { review_status?: string; sync_status?: string; synced_at?: Date };
+
+	assertEquals(stored.review_status, "under_review");
+	assertEquals(
+		stored.sync_status,
+		"synced",
+		"starting the review is the acknowledgement it was waiting for",
+	);
+	assert(
+		stored.synced_at instanceof Date,
+		"and the acknowledgement instant is recorded, once",
+	);
+});
 
 Deno.test("bulk return requires a reason for the whole batch", async () => {
 	const target = await seedSyncedReport("bulk-reason");
@@ -465,6 +572,43 @@ Deno.test("bulk review reaches accidents as well as reports", async () => {
 		projection: { review_status: 1 },
 	}) as { review_status?: string };
 	assertEquals(stored.review_status, "under_review");
+});
+
+// `accident.reviewReport` is the one-report surface of the same machine. It used to
+// be a copy of it, and the copy drifted — it kept refusing a `queued` row after the
+// shared machine learned to acknowledge one, so the same click answered differently
+// depending on which model the row happened to be.
+Deno.test("the single accident act runs the shared machine, gate included", async () => {
+	const target = (await accident.insertOne({
+		doc: {
+			seri: ++seq,
+			serial: ++seq,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			date_of_accident: new Date(),
+			sync_status: "queued",
+			review_status: "submitted",
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		relations: { officer: { _ids: patrolId } },
+		projection: { _id: 1 },
+	}))!._id as ObjectId;
+
+	await callAct("accident", "reviewReport", {
+		reportId: String(target),
+		action: "start_review",
+	}, managerId);
+
+	const stored = await accident.findOne({
+		filters: { _id: target },
+		projection: { review_status: 1, sync_status: 1 },
+	}) as { review_status?: string; sync_status?: string };
+	assertEquals(stored.review_status, "under_review");
+	assertEquals(
+		stored.sync_status,
+		"synced",
+		"and it acknowledges the arrival the same way the batch does",
+	);
 });
 
 // The extraction exists so the two surfaces cannot drift, so pin the artefact they

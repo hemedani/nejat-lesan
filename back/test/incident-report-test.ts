@@ -763,7 +763,7 @@ Deno.test("reports — filing a report records the form and derives its title", 
 		"the title comes from the stored form, not the request",
 	);
 	assertEquals(created["form_icon"], "roadHorizon");
-	assertEquals(created["sync_status"], "queued");
+	assertEquals(created["sync_status"], "synced");
 	assertEquals(created["review_status"], "submitted");
 	assert(
 		String(created["report_id"]).startsWith("INC-"),
@@ -918,7 +918,15 @@ Deno.test("reports — review transitions work on the new model", async () => {
 	}, officer) as { _id: ObjectId };
 	const reportId = created._id;
 
-	// A report must be synced before review — the same rule as an accident.
+	// A report must be on the server before review — the same rule as an accident.
+	// Filing one already puts it there, so the state the gate refuses has to be
+	// forced: `draft` is a report the control centre does not hold at all.
+	await incident_report.findOneAndUpdate({
+		filter: { _id: reportId },
+		update: { $set: { sync_status: "draft" } },
+		projection: { _id: 1 },
+	});
+
 	let notSynced = "";
 	try {
 		await runAct("incident_report", "reviewReport", {

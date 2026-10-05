@@ -19,13 +19,13 @@ export const addFn: ActFn = async (body) => {
 	const { user }: MyContext = coreApp.contextFns
 		.getContextModel() as MyContext;
 
-	// --- Sync Status Validation ---
-	// Patrol users can only create draft/queued reports
-	// Manager/Ghost can set any status
-	const allowedPatrolStatuses = ["draft", "queued"];
+	// --- 0. Sync-status claim and officer attribution --------------------------
+	// A client may *assert* `draft` or `queued` — those are its own queue states —
+	// but never a state only the server can witness. What the server actually
+	// records for an app submission is decided in 1d below, where the arrival is.
 	if (user.level === "Patrol") {
 		const requestedStatus = set.sync_status || "queued";
-		if (!allowedPatrolStatuses.includes(requestedStatus)) {
+		if (!["draft", "queued"].includes(requestedStatus)) {
 			throwError(
 				"مأمور گشت تنها می‌تواند گزارش با وضعیت draft یا queued ثبت کند",
 			);
@@ -163,9 +163,24 @@ export const addFn: ActFn = async (body) => {
 			: "REP";
 		doc.report_id = `${prefix}-${year}-${String(doc.serial).padStart(6, "0")}`;
 	}
-	// Mobile reports default to "queued" until validated by the control center
-	if (client_report_uuid && doc.sync_status === undefined) {
-		doc.sync_status = "queued";
+	// --- 1d. The arrival *is* the sync ---------------------------------------
+	// A report carrying a `client_report_uuid` was filed by the app, and this
+	// request is its arrival: the document cannot exist on the server before it
+	// arrives, so a record that exists has — by definition — synced. Recording it
+	// as `queued` here would state a fact about the *device's* local queue on a
+	// document only the server owns, and `queued` is exactly the state the review
+	// gate refuses (`oversight/reviewTransition.ts`), so every app report would be
+	// born unreviewable with nothing able to promote it: a Patrol may only write
+	// `draft|queued`, and the console has no sync action at all.
+	//
+	// `synced_at` is stamped here, once, because this is the only moment the server
+	// observes the arrival — which is what the per-officer "median sync time"
+	// measures (`oversight/stats.ts`: `synced_at - reported_at`). A row typed in at
+	// the control centre carries no uuid and so never claims an arrival it did not
+	// observe.
+	if (client_report_uuid) {
+		doc.sync_status = "synced";
+		doc.synced_at = new Date();
 	}
 	if (client_report_uuid && doc.review_status === undefined) {
 		doc.review_status = "submitted";

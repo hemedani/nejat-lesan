@@ -20,9 +20,11 @@ export const addFn: ActFn = async (body) => {
 
 	const formDefinitionId = set.form_definition_id as string;
 
-	// --- 0. Officer attribution and sync state are server-enforced ------------
+	// --- 0. Officer attribution and the client's sync claim --------------------
 	// Without this an officer could file a report attributed to a colleague, which
-	// would land in that colleague's history and their manager's dashboard.
+	// would land in that colleague's history and their manager's dashboard. The
+	// sync-status check only polices what a client may *assert*; what the server
+	// records is decided in 4b below, where the arrival is.
 	if (user.level === "Patrol") {
 		const requested = set.sync_status as string | undefined;
 		if (requested && !["draft", "queued"].includes(requested)) {
@@ -113,11 +115,21 @@ export const addFn: ActFn = async (body) => {
 		doc.report_id = `INC-${year}-${String(doc.serial).padStart(6, "0")}`;
 	}
 
-	// Mobile reports default to queued until the control centre acknowledges them.
-	if (clientReportUuid && doc.sync_status === undefined) {
-		doc.sync_status = "queued";
-	}
-	if (clientReportUuid && doc.review_status === undefined) {
+	// --- 4b. The arrival *is* the sync -----------------------------------------
+	// Every report filed through this act arrived through the app: `submitted_from`
+	// is *required* by the validator (`add.val.ts`), which is what makes this act an
+	// app-only entry point rather than a control-centre one. So the arrival is
+	// recorded unconditionally — the row is `synced` from the moment it exists, and
+	// `synced_at` is stamped here because this is the only moment the server observes
+	// the arrival (the per-officer "median sync time" is `synced_at - reported_at`).
+	//
+	// Recording `queued` instead — a claim about the device's local queue, on a
+	// document only the server owns — made every app report unreviewable: `queued` is
+	// the state the review gate refuses, a Patrol may only write `draft|queued`, and
+	// no console action writes `synced`, so nothing could ever promote one.
+	doc.sync_status = "synced";
+	doc.synced_at = new Date();
+	if (doc.review_status === undefined) {
 		doc.review_status = "submitted";
 	}
 

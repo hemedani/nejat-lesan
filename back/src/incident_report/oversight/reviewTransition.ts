@@ -20,13 +20,17 @@ import {
 type ActorUser = MyContext["user"];
 
 /** Either report model. Both carry the same `sync_status`/`review_status` shape. */
-type ReviewModel = Pick<typeof incident_report, "findOne" | "findOneAndUpdate">;
+export type ReviewModel = Pick<
+	typeof incident_report,
+	"findOne" | "findOneAndUpdate"
+>;
 
 /** What the transition reads off a report before it decides anything. */
 type StoredReviewRow = {
 	_id: ObjectId;
 	review_status?: string;
 	sync_status?: string;
+	synced_at?: Date;
 };
 
 const transitions: Record<string, string[]> = {
@@ -41,6 +45,23 @@ const actionStatus: Record<string, string> = {
 	approve: "approved",
 	complete: "completed",
 };
+
+/**
+ * The sync states a report may be reviewed in.
+ *
+ * A report can only reach the server by arriving, so `synced` and `queued` both
+ * mean the console is holding it. `queued` is a row filed before the arrival
+ * instant was recorded — an older build of the app, or a row the control centre
+ * typed in itself — and it is reviewable because the alternative is a report that
+ * no one can ever review: a Patrol may only write `draft|queued`, and no console
+ * action writes `synced`. Starting its review *is* the acknowledgement, so the
+ * transition promotes it (see the update below) instead of refusing it.
+ *
+ * `draft`, `syncing` and `rejected` are refused: a draft has not been filed, a
+ * `syncing` row is mid-retry and will settle, and a `rejected` row is waiting on
+ * the reporter's correction rather than on the reviewer.
+ */
+const REVIEWABLE_SYNC = ["synced", "queued"];
 
 export type ReviewOutcome =
 	| { ok: true; review_status?: string; doc?: unknown }
@@ -137,7 +158,12 @@ export const applyReviewTransition = async ({
 
 	const id = new ObjectId(reportId);
 	const filters = { _id: id, ...scope };
-	const readProjection = { _id: 1, review_status: 1, sync_status: 1 };
+	const readProjection = {
+		_id: 1,
+		review_status: 1,
+		sync_status: 1,
+		synced_at: 1,
+	};
 
 	let target: ReviewModel | null = null;
 	let report: StoredReviewRow | null = null;
@@ -174,7 +200,7 @@ export const applyReviewTransition = async ({
 			error: `تغییر وضعیت گزارش از ${current} امکان‌پذیر نیست`,
 		};
 	}
-	if (report.sync_status !== "synced") {
+	if (!REVIEWABLE_SYNC.includes(report.sync_status ?? "")) {
 		return {
 			ok: false,
 			error: "گزارش قبل از بررسی باید با موفقیت همگام‌سازی شود",
@@ -188,6 +214,14 @@ export const applyReviewTransition = async ({
 		reviewed_at: now,
 		updatedAt: now,
 	};
+	// The acknowledgement half of the transition: a `queued` row becomes `synced`
+	// as it enters review, because the reviewer holding it is the acknowledgement
+	// it was waiting for. `synced_at` is written once, like everywhere else — a row
+	// that already carries an instant keeps the moment it arrived.
+	if (report.sync_status !== "synced") {
+		update.sync_status = "synced";
+		if (!report.synced_at) update.synced_at = now;
+	}
 	if (action === "return") update.review_reason = reason?.trim();
 	if (action === "complete") update.completed_at = now;
 	const unset = action !== "return" ? { review_reason: "" } : {};

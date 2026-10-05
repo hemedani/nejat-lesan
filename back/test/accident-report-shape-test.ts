@@ -125,7 +125,7 @@ Deno.test("add — an accident gets a REP- report id and its own serial", async 
 		String(created.report_id).startsWith("REP-"),
 		`unexpected report id: ${created.report_id}`,
 	);
-	assertEquals(created.sync_status, "queued");
+	assertEquals(created.sync_status, "synced");
 	assertEquals(created.review_status, "submitted");
 });
 

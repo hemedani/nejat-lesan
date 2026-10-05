@@ -198,17 +198,20 @@ const fileReport = async (uuid: string) =>
 		get: { _id: 1 },
 	}, patrolId) as { _id: ObjectId };
 
-Deno.test("synced_at is not set while a report is only queued", async () => {
-	const created = await fileAccident(`uuid-${RUN}-queued`);
+Deno.test("an app-filed report arrives synced, and records the arrival instant", async () => {
+	// The request *is* the arrival: the document cannot exist on the server before it
+	// lands, so a row carrying a `client_report_uuid` has synced by the time it
+	// exists. The instant is stamped here because this is the only moment the server
+	// observes the arrival — which is what `median_sync_ms` measures.
+	const created = await fileAccident(`uuid-${RUN}-arrived`);
 	const stored = await accident.findOne({
 		filters: { _id: created._id },
 		projection: { sync_status: 1, synced_at: 1 },
 	}) as Record<string, unknown>;
-	assertEquals(stored["sync_status"], "queued");
-	assertEquals(
-		stored["synced_at"],
-		undefined,
-		"no sync instant before it synced",
+	assertEquals(stored["sync_status"], "synced");
+	assert(
+		stored["synced_at"] instanceof Date,
+		"the arrival instant is recorded",
 	);
 });
 
@@ -233,9 +236,11 @@ Deno.test("a report created already synced records no sync instant", async () =>
 	// deliberate: the server never observed an arrival, and inventing one would
 	// record filing time rather than sync time. Oversight statistics must exclude
 	// these rows, never read the missing instant as zero seconds.
+	//
+	// The row carries no `client_report_uuid`, and that is exactly what separates it
+	// from an app submission: the app's idempotency key is the arrival marker.
 	const created = await runAct("accident", "add", {
 		set: {
-			client_report_uuid: `uuid-${RUN}-born-synced`,
 			location: { type: "Point", coordinates: [51.4, 35.7] },
 			sync_status: "synced",
 		},
@@ -405,33 +410,34 @@ Deno.test("incident_report's synced_at is never rewritten by a later synced-to-s
 	);
 });
 
-Deno.test("an incident report created already synced records no sync instant", async () => {
-	// The same hole as an accident, and the same deliberate answer: a Manager may
-	// file a report straight into `synced` — it was typed in at the control centre
-	// and never arrived through the app — and the absence is deliberate because the
-	// server never observed an arrival. Inventing one would record filing time
-	// rather than sync time, so the statistics must exclude these rows instead of
-	// reading the missing instant as zero seconds.
+Deno.test("an incident report is synced the moment it is filed", async () => {
+	// The mirror of the accident rule, and simpler: `incident_report.add` requires
+	// `submitted_from`, so every report filed through it arrived through the app and
+	// there is no control-centre path to distinguish. The arrival instant is stamped
+	// at creation, and a client cannot talk it out of that by claiming another state.
 	const created = await runAct("incident_report", "add", {
 		set: {
 			form_definition_id: formId.toString(),
-			client_report_uuid: `uuid-${RUN}-report-born-synced`,
+			client_report_uuid: `uuid-${RUN}-report-arrived`,
 			location: { type: "Point", coordinates: [51.4, 35.7] },
 			submitted_from: { app_version: "1.4.2", platform: "ios" },
-			sync_status: "synced",
+			sync_status: "queued",
 		},
 		get: { _id: 1 },
-	}, managerId) as { _id: ObjectId };
+	}, patrolId) as { _id: ObjectId };
 
 	const stored = await incident_report.findOne({
 		filters: { _id: created._id },
 		projection: { sync_status: 1, synced_at: 1 },
 	}) as Record<string, unknown>;
-	assertEquals(stored["sync_status"], "synced");
 	assertEquals(
-		stored["synced_at"],
-		undefined,
-		"a report born synced has no observed arrival to record",
+		stored["sync_status"],
+		"synced",
+		"the row has synced by the time it exists",
+	);
+	assert(
+		stored["synced_at"] instanceof Date,
+		"and the arrival instant is recorded",
 	);
 });
 

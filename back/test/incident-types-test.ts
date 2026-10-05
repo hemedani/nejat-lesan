@@ -552,12 +552,14 @@ Deno.test("getSyncStatus buckets include non-accident reports", async () => {
 		{ set: {}, get: { _id: 1, incident_type: 1 } },
 		patrolA,
 	);
-	const queued: any[] = result.queued || [];
+	// A report filed by the app has arrived, so it is bucketed as synced — the
+	// `queued` bucket is for a device-side queue the server has not seen.
+	const synced: any[] = result.synced || [];
 	assert(
-		queued.some(
+		synced.some(
 			(r) => r._id.toString() === created._id.toString(),
 		),
-		"queued bucket should contain the non-accident report",
+		"synced bucket should contain the non-accident report",
 	);
 });
 

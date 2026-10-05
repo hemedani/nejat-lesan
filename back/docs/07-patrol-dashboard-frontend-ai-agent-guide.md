@@ -155,6 +155,15 @@ Suggested Persian labels:
 | `synced` | Server received the report | همگام‌سازی‌شده |
 | `rejected` | Server rejected sync/validation | ردشده در همگام‌سازی |
 
+These are **client** queue states. On the server, a report that exists has arrived, so
+a report filed by the app is recorded `synced` at creation and `synced_at` is stamped
+at that moment (`accident/add`, `incident_report/add`); a row typed in at the control
+centre carries no `client_report_uuid` and so never claims an arrival it did not
+observe. `queued` on a server row therefore means "reached the server before the
+arrival instant was recorded", which is why the review console treats it as reviewable
+and acknowledges it (see Review Status below). A client may still *assert* `draft` or
+`queued` in a payload; it is never trusted for a state only the server can witness.
+
 ### Review status
 
 `review_status` describes managerial workflow:
@@ -625,7 +634,12 @@ Additional rules:
 
 - Only Manager/Ghost can use `reviewReport`.
 - The report must be inside the server-enforced manager scope.
-- The report must have `sync_status: "synced"` before review.
+- The report must be on the server: `sync_status` must be `synced` **or** `queued`.
+  An app-filed report is recorded `synced` when it arrives (`add` is the arrival), so
+  this is satisfied by filing. `queued` is a row that reached the server before the
+  arrival instant was recorded — an older build, or a row the control centre typed in
+  — and starting its review acknowledges it, promoting it to `synced` in the same
+  atomic write. `draft`, `syncing` and `rejected` are refused.
 - `return` requires a non-empty `reason`.
 - Invalid transitions are rejected by the backend.
 - The backend records an audit history row for every successful action.

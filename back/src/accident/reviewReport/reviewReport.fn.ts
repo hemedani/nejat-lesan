@@ -1,105 +1,48 @@
-import { type ActFn, ObjectId } from "@deps";
+import { type ActFn } from "@deps";
 import { accident, coreApp } from "../../../mod.ts";
 import { type MyContext, throwError } from "@lib";
 import {
-	getOrgReportBase,
-	isManagerViewer,
-	isOrgLeaderLevel,
-} from "../reportScope.ts";
+	applyReviewTransition,
+	assertReviewBatchAllowed,
+	reviewScopeFor,
+	type ReviewModel,
+} from "../../incident_report/oversight/reviewTransition.ts";
 
-const transitions: Record<string, string[]> = {
-	submitted: ["start_review"],
-	under_review: ["return", "approve"],
-	approved: ["complete"],
-};
-
-const actionStatus: Record<string, string> = {
-	start_review: "under_review",
-	return: "returned",
-	approve: "approved",
-	complete: "completed",
-};
-
+/**
+ * Managerial review for a single accident.
+ *
+ * The state machine itself lives in `incident_report/oversight/reviewTransition.ts`
+ * and is shared with the report acts, because it keys on `sync_status`,
+ * `review_status` and `review_history` — the same three columns on both models. It
+ * used to be a second copy here, and the copy drifted: it kept refusing a `queued`
+ * report after the shared machine learned to acknowledge one, so the same click gave
+ * two different answers depending on which model the row happened to be. `model` is
+ * pinned so this act keeps its own collection boundary, and it throws (rather than
+ * returning per-row outcomes) because there is only one row to answer about.
+ */
 export const reviewReportFn: ActFn = async (body) => {
 	const { reportId, action, reason } = body.details.set;
 	const { get } = body.details;
-	const context = coreApp.contextFns.getContextModel() as MyContext;
-	const actor = context.user;
+	const { user } = coreApp.contextFns.getContextModel() as MyContext;
 
-	if (!isManagerViewer(actor.level) && !isOrgLeaderLevel(actor.level)) {
-		return throwError("شما اجازه بررسی گزارش‌ها را ندارید");
-	}
-	if (action === "return" && !reason?.trim()) {
-		return throwError("برای برگشت گزارش، ثبت دلیل الزامی است");
-	}
-
-	const reportScope = await getOrgReportBase(actor);
-
-	const report = await accident.findOne({
-		filters: {
-			_id: new ObjectId(reportId as string),
-			...reportScope,
-		},
-		projection: { _id: 1, review_status: 1, sync_status: 1 },
+	// Before the scope is resolved, so a caller without permission gets the role
+	// guard rather than whatever the scope lookup says about their level.
+	assertReviewBatchAllowed({
+		actor: user,
+		action: action as string,
+		reason: reason as string | undefined,
 	});
-	if (!report) return throwError("گزارش یافت نشد یا دسترسی ندارید");
 
-	const storedStatus = report.review_status as string | undefined;
-	const current = (storedStatus || "submitted") as
-		| "submitted"
-		| "under_review"
-		| "returned"
-		| "approved"
-		| "completed";
-	if (!transitions[current]?.includes(action as string)) {
-		return throwError(`تغییر وضعیت گزارش از ${current} امکان‌پذیر نیست`);
-	}
-	if (report.sync_status !== "synced") {
-		return throwError("گزارش قبل از بررسی باید با موفقیت همگام‌سازی شود");
-	}
-
-	const now = new Date();
-	const nextStatus = actionStatus[action as string];
-	const update: Record<string, unknown> = {
-		review_status: nextStatus,
-		reviewed_at: now,
-		updatedAt: now,
-	};
-	if (action === "return") update.review_reason = reason?.trim();
-	if (action === "complete") update.completed_at = now;
-	const unset = action !== "return" ? { review_reason: "" } : {};
-
-	const historyEntry = {
-		action: action === "start_review"
-			? "started_review"
-			: action === "return"
-			? "returned"
-			: action === "approve"
-			? "approved"
-			: "completed",
-		reason: reason?.trim(),
-		action_at: now,
-		reviewer: {
-			_id: new ObjectId(actor._id),
-			first_name: actor.first_name ?? "",
-			last_name: actor.last_name ?? "",
-		},
-	};
-
-	const result = await accident.findOneAndUpdate({
-		filter: {
-			_id: new ObjectId(reportId as string),
-			...(storedStatus
-				? { review_status: current }
-				: { review_status: { $exists: false } }),
-		},
-		update: {
-			$set: update,
-			$push: { review_history: historyEntry },
-			...(Object.keys(unset).length ? { $unset: unset } : {}),
-		} as any,
+	const outcome = await applyReviewTransition({
+		model: accident as unknown as ReviewModel,
+		reportId: reportId as string,
+		action: action as string,
+		reason: reason as string | undefined,
+		actor: user,
+		scope: await reviewScopeFor(user),
 		projection: get,
 	});
 
-	return result;
+	if (!outcome.ok) return throwError(outcome.error);
+	return outcome.doc;
 };

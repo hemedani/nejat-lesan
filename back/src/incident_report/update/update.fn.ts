@@ -44,9 +44,17 @@ export const updateFn: ActFn = async (body) => {
 		synced_at?: Date;
 	};
 
+	// A delivered report is frozen for the officer who filed it — with one
+	// exception, and it is the exception the correction flow is built on: the
+	// control centre has handed the report back, so editing it is the whole point.
+	// `resubmitReport` requires a report that is simultaneously `synced` and
+	// `returned`, so the edit that precedes a resubmission is precisely the case a
+	// blanket terminal guard refuses — which left a returned report unfixable.
+	const delivered = TERMINAL_SYNC.includes(current.sync_status ?? "");
 	if (
 		user.level === "Patrol" &&
-		TERMINAL_SYNC.includes(current.sync_status ?? "")
+		delivered &&
+		current.review_status !== "returned"
 	) {
 		return throwError("این گزارش همگام شده و دیگر قابل ویرایش نیست");
 	}
