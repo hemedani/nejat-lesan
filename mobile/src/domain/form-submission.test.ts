@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { AnswerTree, FieldNode, FormDefinition } from '@forms';
 import { DEFAULT_SCHEMA_VERSION } from '@forms';
 
-import { formAnswersToDraftData, isFormDraftData } from './form-submission';
+import { formAnswersToDraftData, hasFormAnswers, isFormDraftData } from './form-submission';
 
 const f = (partial: Partial<FieldNode> & { key: string }): FieldNode =>
   ({ kind: 'field', type: 'text', label: partial.key, order: 0, ...partial }) as FieldNode;
@@ -136,5 +136,33 @@ describe('isFormDraftData', () => {
     expect(isFormDraftData({})).toBe(false);
     expect(isFormDraftData(null)).toBe(false);
     expect(isFormDraftData(undefined)).toBe(false);
+  });
+
+  it('does not accept an empty id — it would render an error, not a form', () => {
+    expect(isFormDraftData({ form_definition_id: '' })).toBe(false);
+  });
+});
+
+describe('hasFormAnswers', () => {
+  it('recognizes the answer tree the bundled default form leaves behind', () => {
+    // The bundled accident default writes no `form_definition_id` — it has no
+    // backend document — so the tree is the only marker that it came from a form.
+    expect(hasFormAnswers({ form_answers: {}, form_page_index: 0 })).toBe(true);
+    expect(hasFormAnswers({ form_answers: { damage: 'yes' } })).toBe(true);
+  });
+
+  it('does not mistake a process draft for a form draft', () => {
+    // The process wizard writes `dynamic_answers`; confusing the two would reopen an
+    // org-process draft in the wrong editor and lose its answers.
+    expect(hasFormAnswers({ dynamic_answers: [{ key: 'x' }], process_version: 3 })).toBe(false);
+    expect(hasFormAnswers({})).toBe(false);
+    expect(hasFormAnswers(null)).toBe(false);
+    expect(hasFormAnswers(undefined)).toBe(false);
+  });
+
+  it('rejects a non-object answer value', () => {
+    expect(hasFormAnswers({ form_answers: 'nope' })).toBe(false);
+    expect(hasFormAnswers({ form_answers: [] })).toBe(false);
+    expect(hasFormAnswers({ form_answers: null })).toBe(false);
   });
 });

@@ -51,10 +51,26 @@ export function formAnswersToDraftData(
  * Whether a draft was captured through the dynamic form rather than the built-in
  * flows or the org process wizard.
  *
- * `reports.tsx` uses this to send a returned report back to the right editor, so
- * a correction does not drop the officer into a different form than the one they
- * filed.
+ * The presence of the definition id, not the draft's incident type: a form-filed
+ * report and a wizard-filed one can both be an accident, and only the id tells them
+ * apart. An empty string is not an id — the screen would fetch nothing and render an
+ * error instead of a form.
  */
 export function isFormDraftData(data: Record<string, unknown> | undefined | null): boolean {
-  return typeof data?.['form_definition_id'] === 'string';
+  const id = data?.['form_definition_id'];
+  return typeof id === 'string' && id.length > 0;
+}
+
+/**
+ * Whether a draft carries an answer tree, which only the dynamic form produces.
+ *
+ * Needed because the **bundled accident default writes no `form_definition_id`** —
+ * it has no backend document — so its drafts would otherwise look like legacy
+ * wizard drafts. The tree is the marker that survives; `form_answers` is written by
+ * `form.tsx` and `formAnswersToDraftData` alone, and the org process wizard writes
+ * `process_version` + `dynamic_answers` instead, never this key.
+ */
+export function hasFormAnswers(data: Record<string, unknown> | undefined | null): boolean {
+  const answers = data?.['form_answers'];
+  return Boolean(answers) && typeof answers === 'object' && !Array.isArray(answers);
 }

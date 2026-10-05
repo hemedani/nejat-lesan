@@ -15,6 +15,7 @@ import {
 } from '@/domain/incident-type';
 import type { AccidentDraft, IncidentType } from '@/domain/types';
 import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
+import { resumeRouteFor } from '@/domain/form-routing';
 import { listDrafts, getDraft } from '@/storage/local-database';
 import { Button } from '@/components/ui/button';
 import { Banner } from '@/components/ui/banner';
@@ -235,8 +236,6 @@ export default function ReportsScreen() {
             const dateLabel = report.date_of_accident ?? report.reported_at;
             const review = report.review_status ? REVIEW_TONES[report.review_status] : null;
             const reportType = normalizeIncidentType(report.incident_type);
-            const correctionPath =
-              reportType === 'accident' ? '/incident/details' : '/incident/simple';
             return (
               <Card key={report._id} style={[styles.cardGap, isReturned && styles.cardReturned]}>
                 <View style={styles.cardHeader}>
@@ -271,17 +270,21 @@ export default function ReportsScreen() {
                       void markDraftReturned(uuid, report.rejection_reason ?? undefined)
                         .catch(() => undefined)
                         .then(async () => {
-                          // A report captured through an org process resumes in
-                          // the process wizard (answers + version restored).
+                          // The draft's own provenance picks the editor — a report
+                          // captured in a form or an org process has to reopen there,
+                          // or the officer is shown different questions and loses the
+                          // answers on the next save. Falls back to the type's standard
+                          // flow when the local draft is gone.
                           const local = await getDraft(uuid).catch(() => null);
-                          const isProcessDraft =
-                            typeof local?.data?.['process_version'] === 'number';
-                          router.push({
-                            pathname: isProcessDraft
-                              ? '/incident/process'
-                              : correctionPath,
-                            params: { uuid },
-                          });
+                          const target = resumeRouteFor(local ?? { incident_type: reportType });
+                          if (target.pathname === '/incident/form') {
+                            router.push({
+                              pathname: '/incident/form',
+                              params: { definitionId: target.definitionId, uuid },
+                            });
+                            return;
+                          }
+                          router.push({ pathname: target.pathname, params: { uuid } });
                         });
                     }}
                     size="md"

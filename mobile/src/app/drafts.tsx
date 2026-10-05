@@ -10,8 +10,10 @@ import {
   requeueDraft,
   type DraftBoardItem,
 } from '@/domain/draft-actions';
+import { resumeRouteFor } from '@/domain/form-routing';
 import { INCIDENT_TYPE_SHORT_LABEL, incidentTypeOf } from '@/domain/incident-type';
-import { getSyncWorker } from '@/services/sync-worker';
+import { getSyncWorker, type SyncRunSummary } from '@/services/sync-worker';
+import { Banner } from '@/components/ui/banner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -32,8 +34,47 @@ const STATUS_TONES: Record<SyncStatus, PillTone> = {
   rejected: 'danger',
 };
 
+const count = (value: number): string => value.toLocaleString('fa-IR');
+
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString('fa-IR');
+}
+
+/**
+ * What a sync run did, in words.
+ *
+ * The button used to discard this. A run with nothing to do looked exactly like a
+ * run that had failed — which is how a report the server had already accepted sat in
+ * the list looking like it still needed sending, and the officer pressed
+ * «همگام‌سازی همه» over and over with no way to tell that there was nothing left to
+ * send. The counts come from the worker itself, so the notice describes the run
+ * rather than guessing at it.
+ */
+function describeRun(summary: SyncRunSummary): { message: string; tone: StatusTone } {
+  if (!summary.started) {
+    return {
+      message: 'یک همگام‌سازی دیگر در جریان است؛ نتیجه پس از پایان آن نمایش داده می‌شود.',
+      tone: 'neutral',
+    };
+  }
+  if (summary.processed === 0) {
+    return {
+      message: 'چیزی برای همگام‌سازی نبود؛ گزارش‌های این فهرست پیش‌تر به مرکز رسیده‌اند.',
+      tone: 'neutral',
+    };
+  }
+
+  const parts: string[] = [];
+  if (summary.synced > 0) parts.push(`${count(summary.synced)} گزارش ارسال شد`);
+  if (summary.retried > 0) {
+    parts.push(`${count(summary.retried)} گزارش در انتظار تلاش دوباره است`);
+  }
+  if (summary.rejected > 0) parts.push(`${count(summary.rejected)} گزارش رد شد`);
+
+  return {
+    message: `${parts.join('؛ ')}.`,
+    tone: summary.rejected > 0 ? 'warning' : 'success',
+  };
 }
 
 export default function DraftsScreen() {
@@ -41,6 +82,7 @@ export default function DraftsScreen() {
   const [items, setItems] = useState<DraftBoardItem[] | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [runNotice, setRunNotice] = useState<{ message: string; tone: StatusTone } | null>(null);
 
   const reload = useCallback(async () => {
     const board = await loadDraftBoard();
@@ -64,9 +106,14 @@ export default function DraftsScreen() {
   async function handleRetry(item: DraftBoardItem) {
     await requeueDraft(item.draft.client_report_uuid);
     await reload();
-    void getSyncWorker().run(true).finally(() => {
-      void reload();
-    });
+    setIsSyncing(true);
+    setRunNotice(null);
+    try {
+      setRunNotice(describeRun(await getSyncWorker().run(true)));
+    } finally {
+      setIsSyncing(false);
+      await reload();
+    }
   }
 
   async function handleSyncAll() {
@@ -74,8 +121,9 @@ export default function DraftsScreen() {
       return;
     }
     setIsSyncing(true);
+    setRunNotice(null);
     try {
-      await getSyncWorker().run(true);
+      setRunNotice(describeRun(await getSyncWorker().run(true)));
       await reload();
     } finally {
       setIsSyncing(false);
@@ -86,6 +134,27 @@ export default function DraftsScreen() {
     setRefreshing(true);
     await reload();
     setRefreshing(false);
+  }
+
+  /**
+   * Reopen a draft in the editor that produced it.
+   *
+   * The draft's own provenance picks the screen (`resumeRouteFor`), because the
+   * answers stored on the device only make sense to the questions that collected
+   * them — a form-filed draft reopened in the built-in wizard would show different
+   * questions and overwrite the answers on the next save.
+   */
+  function openDraft(item: DraftBoardItem) {
+    const target = resumeRouteFor(item.draft);
+    const uuid = item.draft.client_report_uuid;
+    if (target.pathname === '/incident/form') {
+      router.push({
+        pathname: '/incident/form',
+        params: { definitionId: target.definitionId, uuid },
+      });
+      return;
+    }
+    router.push({ pathname: target.pathname, params: { uuid } });
   }
 
   return (
@@ -117,7 +186,12 @@ export default function DraftsScreen() {
       >
         <Text style={styles.description}>
           پیش‌نویس‌ها روی همین دستگاه ذخیره می‌شوند و با برقراری اینترنت به‌صورت خودکار ارسال می‌شوند.
+          برای تکمیل یا ویرایش، روی هر پیش‌نویس بزنید.
         </Text>
+
+        {runNotice ? (
+          <Banner message={runNotice.message} tone={runNotice.tone} />
+        ) : null}
 
         {items === null ? (
           <SkeletonList rows={3} rowHeight={120} />
@@ -134,7 +208,12 @@ export default function DraftsScreen() {
             const status: SyncStatus = item.queue?.status ?? item.draft.sync_status;
             const retryable = canManuallyRetry(item);
             return (
-              <Card key={item.draft.client_report_uuid} variant="default">
+              <Card
+                accessibilityLabel={`باز کردن پیش‌نویس ${item.draft.report_id ?? ''}`.trim()}
+                key={item.draft.client_report_uuid}
+                onPress={() => openDraft(item)}
+                variant="default"
+              >
                 <View style={styles.cardHeader}>
                   <View style={styles.pills}>
                     <StatusPill
@@ -175,6 +254,20 @@ export default function DraftsScreen() {
                   <View style={styles.errorBox}>
                     <Icon color={AppTheme.status.danger.text} name="alert-circle" size={15} />
                     <Text style={styles.error}>{item.lastError}</Text>
+                  </View>
+                ) : null}
+
+                {/*
+                  A delivered draft is finished, not pending: its progress from here
+                  happens at the control centre, and the only screen that shows it is
+                  «گزارش‌های من». Without this line the row read as a stuck upload.
+                */}
+                {status === 'synced' ? (
+                  <View style={styles.detailRow}>
+                    <Icon color={AppTheme.colors.textSecondary} name="checkmark-circle" size={14} />
+                    <Text style={styles.detail}>
+                      به مرکز رسیده است؛ وضعیت بررسی در «گزارش‌های من» دیده می‌شود.
+                    </Text>
                   </View>
                 ) : null}
 
@@ -238,6 +331,7 @@ const styles = StyleSheet.create({
   },
   detail: {
     color: AppTheme.colors.textBody,
+    flexShrink: 1,
     fontFamily: Estedad.regular,
     fontSize: 12.5,
     lineHeight: 19,
