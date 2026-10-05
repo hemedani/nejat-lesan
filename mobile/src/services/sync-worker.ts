@@ -56,6 +56,15 @@ export type SyncRunSummary = {
   synced: number;
   rejected: number;
   retried: number;
+  /**
+   * Whether this call actually ran.
+   *
+   * False when another run already held the lock: the lock is what stops two runs
+   * double-submitting the same queue, and a caller that reported the counts of a run
+   * that never happened would be describing somebody else's run — or, worse, saying
+   * "nothing to do" about a queue that is being worked right now.
+   */
+  started: boolean;
 };
 
 export type SyncWorker = {
@@ -414,11 +423,18 @@ export function createSyncWorker(sessionService = createSessionService()): SyncW
   let unsubscribe: (() => void) | undefined;
 
   async function run(manual = false): Promise<SyncRunSummary> {
-    const summary: SyncRunSummary = { processed: 0, synced: 0, rejected: 0, retried: 0 };
+    const summary: SyncRunSummary = {
+      processed: 0,
+      synced: 0,
+      rejected: 0,
+      retried: 0,
+      started: false,
+    };
     if (running) {
       return summary;
     }
     running = true;
+    summary.started = true;
     try {
       const session = await sessionService.restore();
       if (!session) {

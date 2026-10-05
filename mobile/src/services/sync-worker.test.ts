@@ -250,6 +250,44 @@ describe('deferred road snap', () => {
     expect(snapPointToRoad).not.toHaveBeenCalled();
     expect(submitAccidentReport).not.toHaveBeenCalled();
   });
+
+  it('says it did not run when another run already holds the lock', async () => {
+    // The lock is what stops two runs double-submitting the same queue. A caller
+    // that reported this as "processed 0" would be claiming a run that never
+    // happened — and telling an officer there was nothing to send about a queue
+    // that is being sent right now.
+    let release = () => {};
+    vi.mocked(submitAccidentReport).mockImplementation(
+      () =>
+        new Promise(resolve => {
+          release = () => resolve({ _id: 'server-1', report_id: 'REP-1' });
+        }),
+    );
+    enqueue(makeDraft());
+
+    const worker = createSyncWorker();
+    const first = worker.run(true);
+    // Let the first run reach the submission, so the lock is genuinely held when the
+    // second call arrives.
+    await vi.waitFor(() => expect(submitAccidentReport).toHaveBeenCalledTimes(1));
+
+    const second = await worker.run(true);
+    expect(second.started).toBe(false);
+    expect(second.processed).toBe(0);
+    expect(submitAccidentReport).toHaveBeenCalledTimes(1);
+
+    release();
+    expect((await first).started).toBe(true);
+  });
+
+  it('reports that it ran even when there was nothing to do', async () => {
+    // "Ran and found nothing" is not the same answer as "did not run", and the
+    // queue screen shows them differently.
+    const summary = await createSyncWorker().run(true);
+
+    expect(summary.started).toBe(true);
+    expect(summary.processed).toBe(0);
+  });
 });
 
 describe('submission outcome bookkeeping', () => {
