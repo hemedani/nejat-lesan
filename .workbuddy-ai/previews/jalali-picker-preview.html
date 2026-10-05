@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>پیش‌نمایش تقویم شمسی — LESEN</title>
+<style>
+  :root {
+    --primary: #087f8c;
+    --primary-strong: #066671;
+    --primary-soft: #e5f3f4;
+    --primary-border: #b8dee2;
+    --on-primary: #ffffff;
+    --background: #f4f7f9;
+    --surface: #ffffff;
+    --surface-muted: #f0f3f6;
+    --text-strong: #123248;
+    --text-body: #294858;
+    --text-secondary: #607482;
+    --text-faint: #90a4ae;
+    --border: #e3eaee;
+    --border-strong: #d6e0e5;
+    --danger-text: #b33a3a;
+    --danger-bg: #fff0f0;
+    --danger-border: #f5cccc;
+    --scrim: rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text-body);
+    font-family: -apple-system, "Segoe UI", Tahoma, sans-serif;
+    padding: 24px 16px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .note {
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 22px;
+    color: var(--text-secondary);
+  }
+  .note b { color: var(--text-strong); }
+  .note code {
+    background: var(--surface-muted);
+    border-radius: 5px;
+    padding: 1px 5px;
+    font-size: 12px;
+    direction: ltr;
+    display: inline-block;
+  }
+
+  /* ---- the form field control ---- */
+  .field { width: 340px; max-width: 100%; display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-size: 14px; font-weight: 600; color: var(--text-body); }
+  .control {
+    display: flex; flex-direction: row-reverse; align-items: center; gap: 8px;
+    min-height: 50px; padding: 0 14px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  .control .glyph { color: var(--text-secondary); font-size: 15px; }
+  .control .val { flex: 1; text-align: right; font-size: 15px; color: var(--text-strong); }
+  .control .ph { flex: 1; text-align: right; font-size: 15px; color: var(--text-faint); }
+  .field-hint { font-size: 11px; color: var(--text-secondary); }
+
+  /* ---- the sheet ---- */
+  .sheet {
+    width: 340px; max-width: 100%;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 16px 16px 22px;
+    display: flex; flex-direction: column; gap: 12px;
+    box-shadow: 0 18px 40px rgba(18,50,72,.18);
+  }
+  .sheet-head { text-align: center; }
+  .sheet-title { font-size: 12px; color: var(--text-secondary); }
+  .summary { font-size: 17px; font-weight: 600; color: var(--text-strong); direction: ltr; }
+
+  .tabs { display: flex; flex-direction: row-reverse; background: var(--surface-muted); border-radius: 999px; padding: 3px; }
+  .tab { flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; font-size: 13px; color: var(--text-secondary); cursor: pointer; border: 0; background: transparent; font-family: inherit; }
+  .tab.active { background: var(--surface); color: var(--primary-strong); font-weight: 600; }
+
+  /* ---- calendar ---- */
+  .cal { display: flex; flex-direction: column; gap: 6px; }
+  .cal-head { display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; }
+  .nav { width: 34px; height: 34px; border-radius: 999px; border: 0; background: transparent; color: var(--text-body); font-size: 16px; cursor: pointer; }
+  .nav:hover { background: var(--surface-muted); }
+  .cal-title { font-size: 15px; font-weight: 600; color: var(--text-strong); }
+  .weekday-row { display: flex; flex-direction: row-reverse; }
+  .weekday { flex: 1; text-align: center; font-size: 12px; color: var(--text-faint); }
+  .week { display: flex; flex-direction: row-reverse; }
+  .cell { flex: 1; height: 40px; display: flex; align-items: center; justify-content: center; }
+  .day {
+    width: 34px; height: 34px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--text-body);
+    border: 1px solid transparent; background: transparent;
+    cursor: pointer; font-family: inherit;
+  }
+  .day:hover { background: var(--surface-muted); }
+  .day.holiday { color: var(--danger-text); }
+  .day.today { border-color: var(--primary-border); }
+  .day.selected { background: var(--primary); color: var(--on-primary); font-weight: 600; }
+  .day.selected:hover { background: var(--primary-strong); }
+
+  /* ---- time columns ---- */
+  .time-wrap { display: flex; flex-direction: row-reverse; gap: 10px; }
+  .time-col { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .time-col-label { text-align: center; font-size: 12px; color: var(--text-secondary); }
+  .time-list { height: 160px; overflow-y: auto; background: var(--background); border-radius: 14px; scrollbar-width: thin; }
+  .time-row { height: 40px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text-body); cursor: pointer; border: 0; background: transparent; width: 100%; font-family: inherit; }
+  .time-row.selected { background: var(--primary-soft); color: var(--primary-strong); font-weight: 600; }
+
+  /* ---- actions ---- */
+  .actions { display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; padding-top: 4px; }
+  .actions-end { display: flex; flex-direction: row-reverse; gap: 8px; }
+  .btn { border-radius: 999px; font-family: inherit; cursor: pointer; font-size: 13px; }
+  .btn-muted { border: 0; background: transparent; color: var(--text-secondary); }
+  .btn-ghost { border: 1px solid var(--border-strong); background: transparent; color: var(--text-body); padding: 8px 14px; }
+  .btn-primary { border: 0; background: var(--primary); color: var(--on-primary); padding: 8px 20px; font-weight: 600; }
+
+  .stage-label { font-size: 12px; color: var(--text-faint); letter-spacing: .04em; }
+</style>
+</head>
+<body>
+
+<div class="note">
+  <b>پیش‌نمایش تقویم شمسی</b><br />
+  همان ساختاری که در اپ موبایل پیاده شده است. ذخیره‌سازی همچنان میلادی است
+  (<code>2026-10-01T12:30</code>) و فقط نمایش و انتخاب شمسی شده‌اند.
+  مقدار انتخاب‌شده: <b id="out" style="direction:ltr;display:inline-block"></b>
+</div>
+
+<div class="stage-label">کنترل فیلد</div>
+<div class="field">
+  <div class="field-label">تاریخ و ساعت دقیق وقوع تصادف</div>
+  <div class="control">
+    <span class="glyph">📅</span>
+    <span class="val" id="control-val">انتخاب کنید</span>
+  </div>
+  <div class="field-hint">مقدار ذخیره‌شده (میلادی): <span id="stored" style="direction:ltr;display:inline-block"></span></div>
+</div>
+
+<div class="stage-label">پنل انتخاب</div>
+<div class="sheet">
+  <div class="sheet-head">
+    <div class="sheet-title">انتخاب تاریخ و ساعت</div>
+    <div class="summary" id="summary">—</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="date">تاریخ</button>
+    <button class="tab" data-tab="time">ساعت</button>
+  </div>
+
+  <div class="cal" id="cal">
+    <div class="cal-head">
+      <button class="nav" id="prev" aria-label="ماه قبل">›</button>
+      <div class="cal-title" id="cal-title"></div>
+      <button class="nav" id="next" aria-label="ماه بعد">‹</button>
+    </div>
+    <div class="weekday-row" id="weekdays"></div>
+    <div id="weeks"></div>
+  </div>
+
+  <div class="time-wrap" id="times" style="display:none"></div>
+
+  <div class="actions">
+    <button class="btn btn-muted" id="clear">پاک کردن</button>
+    <div class="actions-end">
+      <button class="btn btn-ghost" id="now">اکنون</button>
+      <button class="btn btn-primary" id="confirm">تأیید</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// The same Jalali arithmetic the app uses (src/domain/jalali.ts).
+// ---------------------------------------------------------------------------
+const div = (a, b) => Math.trunc(a / b);
+const mod = (a, b) => a - Math.trunc(a / b) * b;
+const BREAKS = [-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];
+
+function jalCal(jy) {
+  const bl = BREAKS.length, gy = jy + 621;
+  let leapJ = -14, jp = BREAKS[0], jump = 0;
+  for (let i = 1; i < bl; i += 1) {
+    const jm = BREAKS[i]; jump = jm - jp;
+    if (jy < jm) break;
+    leapJ = leapJ + div(jump, 33) * 8 + div(mod(jump, 33), 4);
+    jp = jm;
+  }
+  let n = jy - jp;
+  leapJ = leapJ + div(n, 33) * 8 + div(mod(n, 33) + 3, 4);
+  if (mod(jump, 33) === 4 && jump - n === 4) leapJ += 1;
+  const leapG = div(gy, 4) - div((div(gy, 100) + 1) * 3, 4) - 150;
+  const march = 20 + leapJ - leapG;
+  if (jump - n < 6) n = n - jump + div(jump + 4, 33) * 33;
+  let leap = mod(mod(n + 1, 33) - 1, 4);
+  if (leap === -1) leap = 4;
+  return { leap, gy, march };
+}
+const g2d = (gy, gm, gd) => {
+  let d = div((gy + div(gm - 8, 6) + 100100) * 1461, 4) + div(153 * mod(gm + 9, 12) + 2, 5) + gd - 34840408;
+  d = d - div(div(gy + 100100 + div(gm - 8, 6), 100) * 3, 4) + 752;
+  return d;
+};
+const d2g = (jdn) => {
+  let j = 4 * jdn + 139361631;
+  j = j + div(div(4 * jdn + 183187720, 146097) * 3, 4) * 4 - 3908;
+  const i = div(mod(j, 1461), 4) * 5 + 308;
+  const gd = div(mod(i, 153), 5) + 1;
+  const gm = mod(div(i, 153), 12) + 1;
+  const gy = div(j, 1461) - 100100 + div(8 - gm, 6);
+  return { gy, gm, gd };
+};
+const j2d = (jy, jm, jd) => { const r = jalCal(jy); return g2d(r.gy, 3, r.march) + (jm - 1) * 31 - div(jm, 7) * (jm - 7) + jd - 1; };
+const d2j = (jdn) => {
+  const gy = d2g(jdn).gy; let jy = gy - 621;
+  const r = jalCal(jy), jdn1f = g2d(gy, 3, r.march);
+  let k = jdn - jdn1f;
+  if (k >= 0) { if (k <= 185) return { year: jy, month: 1 + div(k, 31), day: mod(k, 31) + 1 }; k -= 186; }
+  else { jy -= 1; k += 179; if (r.leap === 1) k += 1; }
+  return { year: jy, month: 7 + div(k, 30), day: mod(k, 30) + 1 };
+};
+const toJalali = (d) => d2j(g2d(d.getFullYear(), d.getMonth() + 1, d.getDate()));
+const toGregorianDate = ({ year, month, day }) => { const { gy, gm, gd } = d2g(j2d(year, month, day)); return new Date(gy, gm - 1, gd); };
+const isLeap = (y) => jalCal(y).leap === 0;
+const monthLength = (y, m) => (m <= 6 ? 31 : m <= 11 ? 30 : isLeap(y) ? 30 : 29);
+const weekdayIndex = (d) => (d.getDay() + 1) % 7;
+const buildWeeks = (y, m) => {
+  const offset = weekdayIndex(toGregorianDate({ year: y, month: m, day: 1 }));
+  const length = monthLength(y, m);
+  const cells = [];
+  for (let i = 0; i < offset; i += 1) cells.push(null);
+  for (let d = 1; d <= length; d += 1) cells.push(d);
+  while (cells.length < 42) cells.push(null);
+  const weeks = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+  return weeks;
+};
+const addMonths = ({ year, month, day }, delta) => {
+  const absolute = year * 12 + (month - 1) + delta;
+  const y = Math.floor(absolute / 12), m = mod(absolute, 12) + 1;
+  return { year: y, month: m, day: Math.min(day, monthLength(y, m)) };
+};
+const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const WEEKDAYS = ['ش','ی','د','س','چ','پ','ج'];
+const PERSIAN = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+const fa = (v) => String(v).replace(/\d/g, (d) => PERSIAN[Number(d)]);
+const pad2 = (v) => String(v).padStart(2, '0');
+const fmtDate = (d) => { const j = toJalali(d); return fa(`${j.year}/${pad2(j.month)}/${pad2(j.day)}`); };
+const fmtClock = (d) => fa(`${pad2(d.getHours())}:${pad2(d.getMinutes())}`);
+const fmtDateTime = (d) => `${fmtDate(d)} - ${fmtClock(d)}`;
+// The Gregorian ISO string that is actually stored.
+const toStored = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+const dayKey = (d) => { const j = toJalali(d); return `${j.year}-${j.month}-${j.day}`; };
+
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+
+const state = {
+  draft: new Date(2026, 9, 5, 12, 30),
+  view: { year: 1405, month: 7 },
+  tab: 'date',
+  committed: null,
+};
+
+const todayKey = dayKey(new Date());
+
+function renderCalendar() {
+  document.getElementById('cal-title').textContent = `${MONTHS[state.view.month - 1]} ${fa(state.view.year)}`;
+  const weeks = buildWeeks(state.view.year, state.view.month);
+  const selectedKey = dayKey(state.draft);
+  const host = document.getElementById('weeks');
+  host.innerHTML = '';
+  for (const week of weeks) {
+    const row = document.createElement('div');
+    row.className = 'week';
+    week.forEach((day, dayIndex) => {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      if (day !== null) {
+        const key = `${state.view.year}-${state.view.month}-${day}`;
+        const btn = document.createElement('button');
+        btn.className = 'day';
+        if (dayIndex === 6) btn.classList.add('holiday');
+        if (key === todayKey) btn.classList.add('today');
+        if (key === selectedKey) btn.classList.add('selected');
+        btn.textContent = fa(day);
+        btn.onclick = () => {
+          const target = toGregorianDate({ year: state.view.year, month: state.view.month, day });
+          state.draft = new Date(target.getFullYear(), target.getMonth(), target.getDate(), state.draft.getHours(), state.draft.getMinutes());
+          render();
+        };
+        cell.appendChild(btn);
+      }
+      row.appendChild(cell);
+    });
+    host.appendChild(row);
+  }
+}
+
+function renderTimes() {
+  const host = document.getElementById('times');
+  host.innerHTML = '';
+  const cols = [
+    { label: 'ساعت', values: HOURS, selected: state.draft.getHours(), apply: (v) => new Date(state.draft.getFullYear(), state.draft.getMonth(), state.draft.getDate(), v, state.draft.getMinutes()) },
+    { label: 'دقیقه', values: MINUTES, selected: state.draft.getMinutes(), apply: (v) => new Date(state.draft.getFullYear(), state.draft.getMonth(), state.draft.getDate(), state.draft.getHours(), v) },
+  ];
+  for (const col of cols) {
+    const wrap = document.createElement('div');
+    wrap.className = 'time-col';
+    const label = document.createElement('div');
+    label.className = 'time-col-label';
+    label.textContent = col.label;
+    wrap.appendChild(label);
+    const list = document.createElement('div');
+    list.className = 'time-list';
+    for (const value of col.values) {
+      const row = document.createElement('button');
+      row.className = 'time-row' + (value === col.selected ? ' selected' : '');
+      row.textContent = fa(pad2(value));
+      row.onclick = () => { state.draft = col.apply(value); render(); };
+      list.appendChild(row);
+    }
+    wrap.appendChild(list);
+    host.appendChild(wrap);
+  }
+  // Scroll each column so the selected value is in view.
+  host.querySelectorAll('.time-list').forEach((list) => {
+    const sel = list.querySelector('.selected');
+    if (sel) list.scrollTop = sel.offsetTop - 80;
+  });
+}
+
+function render() {
+  document.getElementById('summary').textContent = fmtDateTime(state.draft);
+  document.getElementById('control-val').textContent = state.committed ? fmtDateTime(state.committed) : 'انتخاب کنید';
+  document.getElementById('control-val').className = state.committed ? 'val' : 'ph';
+  document.getElementById('stored').textContent = state.committed ? toStored(state.committed) : '—';
+  document.getElementById('out').textContent = state.committed ? `${fmtDateTime(state.committed)}  →  ${toStored(state.committed)}` : '—';
+  document.getElementById('cal').style.display = state.tab === 'date' ? 'flex' : 'none';
+  document.getElementById('times').style.display = state.tab === 'time' ? 'flex' : 'none';
+  if (state.tab === 'date') renderCalendar(); else renderTimes();
+}
+
+// Weekday header.
+document.getElementById('weekdays').innerHTML = WEEKDAYS.map((w) => `<div class="weekday">${w}</div>`).join('');
+
+document.getElementById('prev').onclick = () => { const n = addMonths({ ...state.view, day: 1 }, -1); state.view = { year: n.year, month: n.month }; render(); };
+document.getElementById('next').onclick = () => { const n = addMonths({ ...state.view, day: 1 }, 1); state.view = { year: n.year, month: n.month }; render(); };
+document.querySelectorAll('.tab').forEach((tab) => {
+  tab.onclick = () => {
+    state.tab = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t === tab));
+    render();
+  };
+});
+document.getElementById('now').onclick = () => { state.draft = new Date(); const j = toJalali(state.draft); state.view = { year: j.year, month: j.month }; render(); };
+document.getElementById('confirm').onclick = () => { state.committed = state.draft; render(); };
+document.getElementById('clear').onclick = () => { state.committed = null; render(); };
+
+render();
+</script>
+</body>
+</html>
