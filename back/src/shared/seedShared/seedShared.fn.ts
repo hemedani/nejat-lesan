@@ -1,6 +1,7 @@
 import { type ActFn } from "@deps";
 import { type MyContext } from "@lib";
 import {
+	air_status,
 	coreApp,
 	croquis_type,
 	damage_severity,
@@ -8,6 +9,7 @@ import {
 	equipment_damage,
 	incident_severity,
 	injury_status,
+	light_status,
 	person_role,
 	position,
 	road_defect,
@@ -17,6 +19,19 @@ import {
 	vehicle_type,
 	ware,
 } from "../../../mod.ts";
+
+/**
+ * Stamped on every row this seed inserts, and read back by
+ * `user.cleanupDemoSeed` to decide what it is allowed to delete.
+ *
+ * The seed skips a name that already exists, so a row it skipped carries no
+ * marker and must survive a cleanup even though it shares a seeded name. The
+ * marker is therefore the only thing that distinguishes "ours" from
+ * "pre-existing but same-named" — a name-based cleanup would destroy the
+ * latter. Exported because the cleanup act and its tests both need the exact
+ * same value; two copies of the literal would drift.
+ */
+export const SEED_SHARED_MARKER = "seedShared";
 
 export const seedSharedFn: ActFn = async (body) => {
 	const { user }: MyContext = coreApp.contextFns
@@ -88,6 +103,27 @@ export const seedSharedFn: ActFn = async (body) => {
 	incident_severity: {
 		model: incident_severity,
 		values: ["کم", "متوسط", "زیاد", "بحرانی"],
+	},
+	// `air_status` and `light_status` are in `seedSharedReferenceModels()` — the
+	// cleanup's own list — and the cleanup test asserts the two lists agree and
+	// that the seed actually stamps these tables. They were missing here, so a
+	// cleanup could never have removed them and the "stamped rows are gone"
+	// assertion had nothing to find.
+	air_status: {
+		model: air_status,
+		values: [
+			"آفتابی",
+			"ابری",
+			"بارانی",
+			"برفی",
+			"مه‌آلود",
+			"گرد و غبار",
+			"طوفانی",
+		],
+	},
+	light_status: {
+		model: light_status,
+		values: ["روز", "شب", "طلوع", "غروب", "نیمه‌روشن"],
 	},
 	position: {
 		model: position,
@@ -165,6 +201,8 @@ export const seedSharedFn: ActFn = async (body) => {
 			await model.insertOne({
 				doc: {
 					name,
+					// Marks the row as ours, so `cleanupDemoSeed` may delete it.
+					seed: SEED_SHARED_MARKER,
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				},
@@ -213,6 +251,7 @@ export const seedSharedFn: ActFn = async (body) => {
 			doc: {
 				name: w.name,
 				ware_type: w.ware_type,
+				seed: SEED_SHARED_MARKER,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
