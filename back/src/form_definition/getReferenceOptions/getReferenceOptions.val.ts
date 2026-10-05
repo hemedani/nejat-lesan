@@ -1,4 +1,4 @@
-import { array, object, objectIdValidation, optional, string } from "@deps";
+import { array, enums, object, objectIdValidation, optional, string } from "@deps";
 
 /**
  * Fetch the `{ _id, name }` options for a reference model.
@@ -16,8 +16,10 @@ export const getReferenceOptionsValidator = () =>
 			search: optional(string()),
 			limit: optional(string()),
 		}),
+		// Want-markers, not projections: the fn returns `{ model, items }` whole,
+		// so the codebase idiom `enums([0, 1])` is what keeps a client's `1` valid.
 		get: object({
-			model: optional(string()),
-			items: optional(object({})),
+			model: optional(enums([0, 1])),
+			items: optional(enums([0, 1])),
 		}),
 	});

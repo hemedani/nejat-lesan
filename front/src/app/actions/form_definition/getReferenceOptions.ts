@@ -22,7 +22,8 @@ export async function getReferenceOptions(request: {
       act: "getReferenceOptions",
       details: {
         set: request.set,
-        get: { model: 1, items: 1 } as never,
+        // Want-marker, not a projection — see getForPatrol.ts. No cast needed.
+        get: { model: 1, items: 1 },
       },
     },
     { token: token?.value },

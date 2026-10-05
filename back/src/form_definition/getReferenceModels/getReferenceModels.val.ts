@@ -1,7 +1,9 @@
-import { object, optional, string } from "@deps";
+import { enums, object, optional } from "@deps";
 
 export const getReferenceModelsValidator = () =>
 	object({
 		set: object({}),
-		get: object({ models: optional(object({})) }),
+		// Want-marker, not a projection: the fn returns the whole payload, so the
+		// codebase idiom `enums([0, 1])` is what keeps a client's `1` valid.
+		get: object({ models: optional(enums([0, 1])) }),
 	});

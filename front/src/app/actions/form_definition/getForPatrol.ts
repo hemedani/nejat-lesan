@@ -38,7 +38,10 @@ export async function getPatrolForm(request: {
       act: "getForPatrol",
       details: {
         set: { ...request.set },
-        get: { form: 1, options: 1, version: 1 } as never,
+        // `get` is a want-marker (`enums([0, 1])`), not a projection — the act
+        // returns its whole payload. No cast is needed now that the validator
+        // uses the codebase idiom; keeping one would hide a future drift.
+        get: { form: 1, options: 1, version: 1 },
       },
     },
     { token: token?.value },

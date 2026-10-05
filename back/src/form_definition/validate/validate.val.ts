@@ -1,5 +1,6 @@
 import {
 	any as anyStruct,
+	enums,
 	object,
 	objectIdValidation,
 	optional,
@@ -23,10 +24,13 @@ export const validateValidator = () =>
 			/** Restrict the check to one page, for incremental per-page feedback. */
 			pageKey: optional(string()),
 		}),
+		// Want-markers, not projections: the fn returns the ad-hoc result whole
+		// (see the `void get` there), so the codebase idiom `enums([0, 1])` is
+		// what keeps a client's `1` valid instead of "Expected an object".
 		get: object({
-			errors: optional(object({})),
-			warnings: optional(object({})),
-			blockedPages: optional(object({})),
-			canSubmit: optional(object({})),
+			errors: optional(enums([0, 1])),
+			warnings: optional(enums([0, 1])),
+			blockedPages: optional(enums([0, 1])),
+			canSubmit: optional(enums([0, 1])),
 		}),
 	});

@@ -17,7 +17,8 @@ export async function activateFormDefinition(request: {
       act: "activate",
       details: {
         set: request.set,
-        get: { success: 1, version: 1, status: 1, message: 1 } as never,
+        // Want-marker, not a projection — see getForPatrol.ts. No cast needed.
+        get: { success: 1, version: 1, status: 1, message: 1 },
       },
     },
     { token: token?.value },
