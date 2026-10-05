@@ -4,13 +4,26 @@ import { Animated, StyleSheet, View } from 'react-native';
 import type { IconFamily, IconName } from '@/constants/icon-map';
 import { AppTheme, Motion, Radius } from '@/constants/theme';
 
+import { FormIcon, isFormIconAvailable } from '@/components/form/form-icon';
+
 import { Icon } from './icon';
 
 export type StepperStep = {
   key: string;
   label: string;
-  icon: IconName;
+  /** An Ionicons / MaterialCommunityIcons / Feather name. */
+  icon?: IconName;
   family?: IconFamily;
+  /**
+   * A shared form-engine icon name (`FORM_ICON_NAMES` from `@forms`).
+   *
+   * A form definition carries its own icon vocabulary (`mapPin`, `fileText`,
+   * `sun`, …) which is *not* an Ionicons name. Handing one to `Icon` draws
+   * nothing and logs `"mapPin" is not a valid icon name for family "ionicons"`,
+   * so it goes through `FormIcon` instead. Takes precedence over `icon` when it
+   * resolves to a known name.
+   */
+  formIcon?: string | null;
 };
 
 export function StepperHeader({
@@ -40,6 +53,14 @@ export function StepperHeader({
       <View style={styles.stepsRow}>
         {steps.map((step, index) => {
           const state = index < currentIndex ? 'done' : index === currentIndex ? 'current' : 'upcoming';
+          const color =
+            state === 'current'
+              ? AppTheme.colors.onPrimary
+              : state === 'done'
+                ? AppTheme.colors.primaryStrong
+                : AppTheme.colors.textFaint;
+          // A completed step always shows a checkmark, whatever the step declared.
+          const showFormIcon = state !== 'done' && isFormIconAvailable(step.formIcon);
           return (
             <View key={step.key} style={styles.stepGroup}>
               {index > 0 ? <View style={[styles.connector, index <= currentIndex && styles.connectorActive]} /> : null}
@@ -53,18 +74,16 @@ export function StepperHeader({
                   state === 'upcoming' && styles.dotUpcoming,
                 ]}
               >
-                <Icon
-                  color={
-                    state === 'current'
-                      ? AppTheme.colors.onPrimary
-                      : state === 'done'
-                        ? AppTheme.colors.primaryStrong
-                        : AppTheme.colors.textFaint
-                  }
-                  family={step.family}
-                  name={state === 'done' ? 'checkmark' : step.icon}
-                  size={14}
-                />
+                {showFormIcon ? (
+                  <FormIcon color={color} name={step.formIcon} size={14} />
+                ) : (
+                  <Icon
+                    color={color}
+                    family={step.family}
+                    name={state === 'done' ? 'checkmark' : step.icon ?? 'clipboard-outline'}
+                    size={14}
+                  />
+                )}
               </View>
             </View>
           );

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { evalRule, isNodeRequired, resolveOptions, visiblePages } from '@forms';
+import {
+  evalRule,
+  FORM_ICON_NAMES,
+  isFormIconName,
+  isNodeRequired,
+  resolveOptions,
+  visiblePages,
+} from '@forms';
 import type { AnswerTree, ContentNode, FieldNode } from '@forms';
 import { qaAccidentFormDefinition } from './qa-accident-form';
 import { canLeavePage, reachablePages, setFieldAnswer } from './form-state';
@@ -93,6 +100,47 @@ describe('QA form definition — structure', () => {
         visit(section.nodes ?? []);
       }
     }
+  });
+
+  it('declares only icons the shared form-icon vocabulary can draw', () => {
+    // A definition's icons come from `FORM_ICON_NAMES` — Phosphor names such as
+    // `mapPin`, `fileText`, `sun` — *not* from Ionicons. The stepper draws them
+    // through `FormIcon`, so a definition that carried an Ionicons-style name
+    // (`map-pin`) or a typo (`mappin`) would render a blank glyph and log
+    // `"…" is not a valid icon name for family "ionicons"`. This is the exact
+    // shape of the bug this test exists to keep fixed: the definition's icons are
+    // one shared vocabulary, and it has to be the one the renderer resolves.
+    const declared: { where: string; icon: unknown }[] = [];
+    for (const page of definition.pages) {
+      declared.push({ where: `page ${page.key}`, icon: page.icon });
+      for (const section of page.sections ?? []) {
+        declared.push({ where: `section ${section.key}`, icon: section.icon });
+        const visit = (nodes: ContentNode[]) => {
+          for (const node of nodes) {
+            // `GroupNode` is the one kind with no `icon`, so read it defensively.
+            declared.push({
+              where: `node ${node.key}`,
+              icon: 'icon' in node ? (node.icon as string | undefined) : undefined,
+            });
+            if (node.kind !== 'field') visit(node.children);
+          }
+        };
+        visit(section.nodes ?? []);
+      }
+    }
+
+    const present = declared.filter(
+      ({ icon }) => icon !== undefined && icon !== null && icon !== '',
+    );
+    const offenders = present
+      .filter(({ icon }) => !isFormIconName(icon))
+      .map(({ where, icon }) => `${where}: ${String(icon)}`);
+
+    expect(offenders).toEqual([]);
+    // Guard the guard: a walk that collected no icons would pass vacuously, so
+    // assert the reference form really does declare some.
+    expect(present.length).toBeGreaterThan(0);
+    expect(FORM_ICON_NAMES.length).toBeGreaterThan(0);
   });
 
   it('nests a repeatable inside a repeatable for passengers', () => {

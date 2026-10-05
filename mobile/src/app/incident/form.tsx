@@ -374,7 +374,11 @@ export default function IncidentFormScreen() {
   const steps: StepperStep[] = pages.map((candidate) => ({
     key: candidate.key,
     label: candidate.title,
-    icon: (candidate.icon ?? 'document-text-outline') as StepperStep['icon'],
+    // Page icons come from the definition's own vocabulary (`mapPin`, `sun`, …),
+    // not from Ionicons. They used to be cast into `icon`, which made the stepper
+    // log `"mapPin" is not a valid icon name for family "ionicons"` and draw
+    // nothing; `formIcon` routes them through the shared form-icon renderer.
+    formIcon: candidate.icon ?? null,
   }));
 
   if (!page) {
