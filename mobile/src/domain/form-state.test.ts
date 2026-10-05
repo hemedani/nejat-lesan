@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import type { AnswerTree, FormDefinition } from '@forms';
+import type { AnswerTree, AnswerValue, FormDefinition } from '@forms';
 import {
+  addNestedRow,
   addRow,
   canLeavePage,
+  instancePathOf,
   isDefinitionRenderable,
   issuesByNode,
   mergeAnswers,
   normalizeDefinition,
   parseAnswers,
   reachablePages,
+  readRows,
   removeNestedRow,
   removeRow,
   seedCapturedAnswers,
@@ -16,6 +19,7 @@ import {
   serializeAnswers,
   setFieldAnswer,
   setRowAnswer,
+  setRowFieldAnswer,
   toggleMultiAnswer,
   validateAll,
   validatePage,
@@ -302,6 +306,99 @@ describe('repeatable rows', () => {
     const tree: AnswerTree = { damages: [{ type: 'گاردریل' }, { type: 'تابلو' }] };
     const next = removeNestedRow(tree, ['damages'], 0);
     expect((next.damages as unknown[]).length).toBe(1);
+  });
+});
+
+/**
+ * The renderer addresses a row field by its row chain — the repeatable key
+ * followed by the index chosen at each level. These cover the helpers that turn
+ * that chain into a write, because the previous implementation built the chain
+ * in the wrong order and silently discarded every write *inside* a row: a new
+ * vehicle could be added, but none of its fields could be filled in.
+ */
+describe('row field addressing', () => {
+  it('renders a row chain as an instance path', () => {
+    expect(instancePathOf(['vehicles', 0])).toBe('vehicles[0]');
+    expect(instancePathOf(['vehicles', 0, 'passengers', 1])).toBe('vehicles[0].passengers[1]');
+  });
+
+  it('reads rows from the nearest enclosing row, not the answer root', () => {
+    const scope: AnswerValue[] = [{ passengers: [{ health: 'سالم' }] }];
+    expect(readRows({}, scope, 'passengers')).toEqual([{ health: 'سالم' }]);
+  });
+
+  it('falls back to the answer root for a top-level repeatable', () => {
+    expect(readRows({ damages: [{ type: 'گاردریل' }] }, [], 'damages')).toEqual([{ type: 'گاردریل' }]);
+  });
+
+  it('writes a field on a top-level row', () => {
+    const before: AnswerTree = { vehicles: [{}, {}] };
+    const after = setRowFieldAnswer(definition, before, ['vehicles', 1], 'plateType', 'ملی');
+    const rows = after.vehicles as Array<Record<string, unknown>>;
+    expect(rows[1].plateType).toBe('ملی');
+    expect(rows[0].plateType).toBeUndefined();
+  });
+
+  it('writes a field on a nested row addressed by its full chain', () => {
+    const before: AnswerTree = { vehicles: [{ passengers: [{}] }] };
+    const after = setRowFieldAnswer(
+      definition,
+      before,
+      ['vehicles', 0, 'passengers', 0],
+      'health',
+      'مصدوم',
+    );
+    const rows = after.vehicles as Array<Record<string, unknown>>;
+    expect((rows[0].passengers as Array<Record<string, unknown>>)[0].health).toBe('مصدوم');
+  });
+
+  it('drives the row’s own cascade, clearing only the edited row', () => {
+    const before: AnswerTree = {
+      vehicles: [
+        { plateType: 'ملی', plate: { parts: ['12'] } },
+        { plateType: 'ملی', plate: { parts: ['98'] } },
+      ],
+    };
+    const after = setRowFieldAnswer(definition, before, ['vehicles', 0], 'plateType', 'موتورسیکلت');
+    const rows = after.vehicles as Array<Record<string, unknown>>;
+    expect(rows[0].plateType).toBe('موتورسیکلت');
+    expect(rows[0].plate).toBeUndefined();
+    // The sibling row is untouched: a cascade is anchored to the changed row.
+    expect(rows[1].plate).toEqual({ parts: ['98'] });
+  });
+
+  it('clears the key outright rather than storing undefined', () => {
+    const before: AnswerTree = { vehicles: [{ plateType: 'ملی' }] };
+    const after = setRowFieldAnswer(definition, before, ['vehicles', 0], 'plateType', undefined);
+    const rows = after.vehicles as Array<Record<string, unknown>>;
+    expect('plateType' in rows[0]).toBe(false);
+  });
+
+  it('is a no-op when the chain does not end in a row index', () => {
+    const before: AnswerTree = { vehicles: [{}] };
+    expect(setRowFieldAnswer(definition, before, ['vehicles'], 'plateType', 'ملی')).toBe(before);
+  });
+
+  it('supports the add-then-fill cycle inside a nested repeatable', () => {
+    // Mirrors the QA flow the bug report describes: add a vehicle, add a row
+    // inside it (a passenger / driver), then answer a field on that row.
+    let tree: AnswerTree = addNestedRow({}, ['vehicles'], {});
+    tree = addNestedRow(tree, ['vehicles', 0, 'passengers'], {});
+    tree = setRowFieldAnswer(definition, tree, ['vehicles', 0, 'passengers', 0], 'health', 'مصدوم');
+
+    const rows = tree.vehicles as Array<Record<string, unknown>>;
+    const passengers = rows[0].passengers as Array<Record<string, unknown>>;
+    expect(passengers).toHaveLength(1);
+    expect(passengers[0].health).toBe('مصدوم');
+
+    // And it reads back through the very scope the renderer passes down.
+    expect(readRows(tree, [rows[0] as AnswerValue], 'passengers')).toEqual([{ health: 'مصدوم' }]);
+  });
+
+  it('is immutable', () => {
+    const before: AnswerTree = { vehicles: [{ plateType: 'ملی' }] };
+    setRowFieldAnswer(definition, before, ['vehicles', 0], 'plateType', 'موتورسیکلت');
+    expect((before.vehicles as Array<Record<string, unknown>>)[0].plateType).toBe('ملی');
   });
 });
 

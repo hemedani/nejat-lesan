@@ -333,6 +333,83 @@ export const setNestedRowAnswer = (
 };
 
 // ---------------------------------------------------------------------------
+// Addressing a field inside a repeatable row
+// ---------------------------------------------------------------------------
+
+/**
+ * Render a row chain as an instance path.
+ *
+ * `['vehicles', 0]` → `vehicles[0]`
+ * `['vehicles', 0, 'passengers', 1]` → `vehicles[0].passengers[1]`
+ *
+ * This is the form the engine's cascade pass addresses a row with, which is what
+ * lets a row field be written through `setFieldAnswer` — and therefore keeps the
+ * definition's `clearOnChange` cascade working *inside* a row, as the QA form's
+ * licence-plate reset requires.
+ */
+export const instancePathOf = (path: readonly Step[]): string => {
+  let rendered = '';
+  for (const step of path) {
+    if (typeof step === 'number') rendered += `[${step}]`;
+    else rendered += rendered ? `.${step}` : step;
+  }
+  return rendered;
+};
+
+/**
+ * Rows of a repeatable, read from the nearest enclosing row that defines them.
+ *
+ * A nested repeatable's rows live on their parent row, not at the answer root —
+ * `answers.passengers` does not exist when passengers sit inside a vehicle — so
+ * this mirrors `readValue`'s innermost-outward search.
+ */
+export const readRows = (
+  answers: AnswerTree,
+  scope: readonly AnswerValue[],
+  key: string,
+): RowRecord[] => {
+  for (let index = scope.length - 1; index >= 0; index--) {
+    const candidate = scope[index];
+    if (isRow(candidate) && Array.isArray(candidate[key])) {
+      return candidate[key] as RowRecord[];
+    }
+  }
+  return Array.isArray(answers[key]) ? (answers[key] as RowRecord[]) : [];
+};
+
+/**
+ * Write one leaf inside a repeatable row, addressed by its row chain.
+ *
+ * `rowPath` ends in the row's index (`['vehicles', 0]`).
+ *
+ * Setting delegates to `setFieldAnswer` on the row's instance path, so the
+ * field's declared cascade clears run anchored to *this* row. Clearing delegates
+ * to `setNestedRowAnswer`, whose leaf `setRowAnswer` deletes the key outright —
+ * the engine distinguishes "not answered" from "answered empty", and the cascade
+ * pass has no delete at a nested path.
+ */
+export const setRowFieldAnswer = (
+  definition: FormDefinition,
+  tree: AnswerTree,
+  rowPath: readonly Step[],
+  fieldKey: string,
+  value: AnswerValue | undefined,
+): AnswerTree => {
+  const rowIndex = rowPath[rowPath.length - 1];
+  if (typeof rowIndex !== 'number') return tree;
+  const repeatablePath = rowPath.slice(0, -1);
+  if (value === undefined) {
+    return setNestedRowAnswer(tree, repeatablePath, rowIndex, fieldKey, undefined);
+  }
+  return setFieldAnswer(
+    definition,
+    tree,
+    `${instancePathOf(rowPath)}.${fieldKey}`,
+    value,
+  );
+};
+
+// ---------------------------------------------------------------------------
 // Visibility and validation
 // ---------------------------------------------------------------------------
 

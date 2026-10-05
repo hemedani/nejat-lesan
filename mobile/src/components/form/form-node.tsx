@@ -13,14 +13,12 @@ import type {
 } from '@forms';
 import { evalRule, isNodeRequired, isNodeVisible, resolveOptions } from '@forms';
 import type { ReferenceOption } from '@/api/form-definition';
-import { addNestedRow, removeNestedRow, setFieldAnswer, setNestedRowAnswer } from '@/domain/form-state';
+import { addNestedRow, readRows, removeNestedRow, setFieldAnswer, setRowFieldAnswer } from '@/domain/form-state';
 import { isDateTimeFieldType } from '@/domain/form-datetime';
 import { ChipsRow, ErrorText, FieldLabel, FormInput } from '@/components/form-fields';
 import { CardShell } from '@/components/form-fields';
 import { DateTimeField } from '@/components/form/date-time-field';
 import { AppTheme } from '@/constants/theme';
-
-type Row = Record<string, AnswerValue>;
 
 /**
  * Render one definition node.
@@ -93,6 +91,7 @@ export function FormNode({
         definition={definition}
         answers={answers}
         options={options}
+        scope={scope}
         path={path}
         onEditLocation={onEditLocation}
         onChange={onChange}
@@ -123,6 +122,7 @@ function RepeatableList({
   definition,
   answers,
   options,
+  scope,
   path,
   onEditLocation,
   onChange,
@@ -131,12 +131,21 @@ function RepeatableList({
   definition: FormDefinition;
   answers: AnswerTree;
   options: Record<string, ReferenceOption[]>;
+  /**
+   * Enclosing row objects.
+   *
+   * A nested repeatable's rows live on its *parent row*, not at the answer root,
+   * so this is how they are found — `answers.passengers` does not exist when the
+   * passengers sit inside a vehicle.
+   */
+  scope: AnswerValue[];
+  /** Chain of repeatable keys and row indices addressing this repeatable. */
   path: Array<string | number>;
   onEditLocation?: () => void;
   onChange: (next: AnswerTree) => void;
 }) {
   const [openRow, setOpenRow] = useState<number | null>(null);
-  const rows = Array.isArray(answers[node.key]) ? (answers[node.key] as Row[]) : [];
+  const rows = readRows(answers, scope, node.key);
 
   const max = node.maxItems;
   const atMax = typeof max === 'number' && rows.length >= max;
@@ -155,13 +164,19 @@ function RepeatableList({
 
       {rows.map((row, index) => {
         const expanded = openRow === index;
+        // Root-to-leaf: the repeatable key is appended and the index follows it,
+        // so the chain reads `vehicles[0].passengers[1]` — the same address the
+        // engine uses to read, write and cascade a row. Prepending the key
+        // instead (as this used to) produced a chain the domain helpers could not
+        // resolve, which is why nothing inside a new row could be selected.
+        const rowPath = [...path, node.key, index];
         return (
           <CardShell
             key={index}
             index={index}
             title={node.itemLabel ?? node.label}
             onRemove={rows.length > (node.minItems ?? 0)
-              ? () => onChange(removeNestedRow(answers, [node.key, ...path], index))
+              ? () => onChange(removeNestedRow(answers, [...path, node.key], index))
               : undefined}
           >
             {expanded ? (
@@ -177,8 +192,8 @@ function RepeatableList({
                     warnings={[]}
                     onChange={onChange}
                     onEditLocation={onEditLocation}
-                    scope={[...scopeOf(path), row]}
-                    path={[node.key, index, ...path]}
+                    scope={[...scope, row]}
+                    path={rowPath}
                   />
                 ))}
                 <Text
@@ -204,9 +219,12 @@ function RepeatableList({
         style={[styles.add, atMax && styles.addDisabled]}
         onPress={() => {
           if (atMax) return;
-          const next = addNestedRow(answers, [node.key, ...path], {});
+          const next = addNestedRow(answers, [...path, node.key], {});
           onChange(next);
-          setOpenRow((Array.isArray(next[node.key]) ? (next[node.key] as Row[]).length : 1) - 1);
+          // The appended row sits at the count read *before* the add. Reading it
+          // back from the tree instead would miss a nested repeatable whose rows
+          // did not exist yet, and leave the new row collapsed.
+          setOpenRow(rows.length);
         }}
       >
         {atMax ? `حداکثر ${max} مورد` : `+ افزودن ${node.itemLabel ?? node.label}`}
@@ -214,11 +232,6 @@ function RepeatableList({
     </View>
   );
 }
-
-/** Enclosing row objects for a path, so row-scoped rules can read their row. */
-const scopeOf = (path: Array<string | number>): AnswerValue[] => path.filter(
-  (step): step is string => typeof step === 'string',
-);
 
 // ---------------------------------------------------------------------------
 
@@ -249,10 +262,13 @@ function Field({
   const value = readValue(answers, scope, node.key);
 
   const write = (next: AnswerValue | undefined) => {
-    // Inside a row the write is row-scoped; at the top level it is a normal
-    // field, which also applies any declared cascade clears.
-    if (scope.length > 0) {
-      onChange(setNestedRowAnswer(answers, [...path], lastIndex(path), node.key, next));
+    // A non-empty chain means this field sits inside a row, so the write is
+    // addressed by that row's instance path. Routing it through
+    // `setRowFieldAnswer` (rather than a plain nested-row setter) keeps the
+    // field's declared cascade anchored to *this* row — the QA form's licence
+    // plate depends on it. At the top level it is an ordinary field write.
+    if (path.length > 0) {
+      onChange(setRowFieldAnswer(definition, answers, path, node.key, next));
       return;
     }
     onChange(setFieldAnswer(definition, answers, node.key, next));
@@ -576,14 +592,6 @@ const readValue = (
     }
   }
   return answers[key];
-};
-
-const lastIndex = (path: Array<string | number>): number => {
-  for (let index = path.length - 1; index >= 0; index--) {
-    const step = path[index];
-    if (typeof step === 'number') return step;
-  }
-  return 0;
 };
 
 /** Persian digits to ASCII, so a numeric part compares correctly. */
