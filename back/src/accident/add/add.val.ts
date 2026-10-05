@@ -9,6 +9,7 @@
 import { array, object, objectIdValidation, optional } from "@deps";
 import { selectStruct } from "../../../mod.ts";
 import { accidentSetSchema } from "../accidentSetSchema.ts";
+import { accident_submitted_from_struct } from "@model";
 
 export const addValidator = () => {
 	// Reuse the shared all-optional pure schema verbatim. Every field is
@@ -19,6 +20,12 @@ export const addValidator = () => {
 		set: object({
 			// Include all pure fields from the accident schema
 			...accidentSetSchema.schema,
+
+			// Which app build filed this accident (snapshot, see
+			// `accident_submitted_from_struct`). `add` only: a correction of a
+			// returned report must not restamp the build that originally filed it.
+			// `organization` is resolved server-side and is deliberately not an input.
+			submitted_from: optional(accident_submitted_from_struct),
 
 			// --- IDs for Relational Fields ---
 			// Single Relations

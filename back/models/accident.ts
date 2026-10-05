@@ -61,6 +61,19 @@ export const accident_review_struct = object({
 	}),
 });
 
+/**
+ * Provenance of an accident filed from the patrol app.
+ *
+ * Snapshotted at submission: `device.app_version` is overwritten on every login
+ * and so cannot describe a specific submission. Absent for anything not filed
+ * from the app (web console, JSON import), which is exactly what keeps those
+ * records distinguishable from app submissions.
+ */
+export const accident_submitted_from_struct = object({
+	app_version: string(),
+	platform: enums(["ios", "android"]),
+});
+
 export const accident_pure = {
 	seri: number(), // seri number for the accident record
 	serial: number(), // Unique serial number for the accident record
@@ -87,6 +100,11 @@ export const accident_pure = {
 	),
 	// Reason set when sync_status becomes "rejected"
 	rejection_reason: optional(string()),
+	// The instant this accident reached `synced`, written once and never rewritten.
+	// Per-officer "median sync time" in the oversight console depends on it, and
+	// nothing else records it: `updatedAt` keeps moving after a correction.
+	// Server-owned — never a client input (absent from the act set schemas).
+	synced_at: optional(date()),
 	// Managerial review lifecycle. This is independent from sync_status.
 	review_status: optional(
 		enums([
@@ -252,12 +270,33 @@ export const accident_pure = {
 	// which active process version produced this report (re-render guard)
 	process_version: optional(number()),
 
+	/**
+	 * Which build filed this accident, when it came from the app.
+	 *
+	 * Its presence is the signal that this is an app submission: the filing
+	 * organization is then resolved server-side from the session and never from
+	 * the request. Optional on purpose — records that did not come from the app
+	 * leave it empty and are not backfilled.
+	 */
+	submitted_from: optional(accident_submitted_from_struct),
+
 	...createUpdateAt,
 };
 
 export const accident_relations = {
 	reviewer: {
 		schemaName: "user",
+		type: "single" as RelationDataType,
+		optional: true,
+		relatedRelations: {},
+	},
+	// Which organization filed this accident, when it came from the app. Optional,
+	// so records that did not come from the app stay valid.
+	//
+	// No embedded reverse: the console filters on `"organization._id"` and a
+	// capped duplicate array would only be misleading.
+	organization: {
+		schemaName: "organization",
 		type: "single" as RelationDataType,
 		optional: true,
 		relatedRelations: {},

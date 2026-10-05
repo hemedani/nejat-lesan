@@ -4557,6 +4557,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -4760,6 +4761,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -5014,6 +5019,7 @@ locked_until?: Date;
 
     export type accidentInp = {
       reviewer?: number | userInp
+organization?: number | organizationInp
 officer?: number | userInp
 patrol_unit?: number | patrol_unitInp
 vehicle?: number | vehicleInp
@@ -7078,6 +7084,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -7281,6 +7288,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 reviewer?: {
@@ -9295,6 +9306,20 @@ driverInjuryType?: boolean;
 createdAt: Date;
 updatedAt: Date;
 };
+organization?: {
+_id?: string;
+code: string;
+name: string;
+enName?: string;
+description?: string;
+is_active: boolean;
+module_flags?: {
+key: string;
+enabled: boolean;
+}[];
+createdAt: Date;
+updatedAt: Date;
+};
 patrol_unit?: {
 _id?: string;
 code: string;
@@ -9314,6 +9339,7 @@ updatedAt: Date;
 lane?: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
@@ -9337,6 +9363,7 @@ updatedAt: Date;
 croquis_type?: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
@@ -9387,66 +9414,82 @@ population: number;
 type?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 area_usages?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 position?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 ruling_type?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 air_statuses?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 light_status?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 road_defects?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 human_reasons?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 collision_type?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 incident_severity?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 road_situation?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 road_repair_type?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 shoulder_status?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 vehicle_reasons?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 equipment_damages?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 road_surface_conditions?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 attachments?: {
 _id?: string;
@@ -9525,6 +9568,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -9728,6 +9772,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 };
 };
 ;
@@ -13801,6 +13849,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -14004,6 +14053,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -14092,6 +14145,7 @@ updatedAt: Date;
     export type vehicle_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14137,6 +14191,7 @@ locked_until?: Date;
     export type croquis_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14188,6 +14243,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -14391,6 +14447,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -14407,6 +14467,7 @@ updatedAt: Date;
     export type vehicle_final_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14452,6 +14513,7 @@ locked_until?: Date;
     export type driver_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14497,6 +14559,7 @@ locked_until?: Date;
     export type injury_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14542,6 +14605,7 @@ locked_until?: Date;
     export type person_roleSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14587,6 +14651,7 @@ locked_until?: Date;
     export type damage_severitySchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14633,6 +14698,7 @@ incident_reports?: number | incident_reportInp
     export type incident_severitySchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -14684,6 +14750,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -14887,6 +14954,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -15119,6 +15190,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -15322,6 +15394,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -15500,6 +15576,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -15703,6 +15780,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -17833,6 +17914,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -18036,6 +18118,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -18116,6 +18202,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -18319,6 +18406,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -18462,6 +18553,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -18665,6 +18757,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -18745,6 +18841,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -18948,6 +19045,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 }[];
@@ -25148,18 +25249,21 @@ updatedAt: Date;
 color?: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 plaque_type?: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 system_type?: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
@@ -25319,6 +25423,7 @@ updatedAt: Date;
     export type typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25364,6 +25469,7 @@ locked_until?: Date;
     export type area_usageSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25409,6 +25515,7 @@ locked_until?: Date;
     export type positionSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25454,6 +25561,7 @@ locked_until?: Date;
     export type ruling_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25499,6 +25607,7 @@ locked_until?: Date;
     export type air_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25544,6 +25653,7 @@ locked_until?: Date;
     export type light_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25589,6 +25699,7 @@ locked_until?: Date;
     export type road_defectSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25634,6 +25745,7 @@ locked_until?: Date;
     export type human_reasonSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25679,6 +25791,7 @@ locked_until?: Date;
     export type collision_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25724,6 +25837,7 @@ locked_until?: Date;
     export type road_situationSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25769,6 +25883,7 @@ locked_until?: Date;
     export type road_repair_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25814,6 +25929,7 @@ locked_until?: Date;
     export type shoulder_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25859,6 +25975,7 @@ locked_until?: Date;
     export type vehicle_reasonSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25904,6 +26021,7 @@ locked_until?: Date;
     export type equipment_damageSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -25949,6 +26067,7 @@ locked_until?: Date;
     export type road_surface_conditionSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -26627,6 +26746,7 @@ client_report_uuid?: string;
 report_id?: string;
 sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
 rejection_reason?: string;
+synced_at?: Date;
 review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
 review_reason?: string;
 reviewed_at?: Date;
@@ -26830,6 +26950,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 createdAt: Date;
 updatedAt: Date;
 };
@@ -27070,38 +27194,47 @@ updatedAt: Date;
 position?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 incident_severity?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 road_defects?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 equipment_damages?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 light_status?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 air_statuses?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 road_surface_conditions?: {
 _id?: string;
 name: string;
+seed?: string;
 }[];
 road_situation?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 shoulder_status?: {
 _id?: string;
 name: string;
+seed?: string;
 };
 reviewer?: {
 _id?: string;
@@ -27165,6 +27298,7 @@ updatedAt: Date;
     export type body_insurance_coSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27210,6 +27344,7 @@ locked_until?: Date;
     export type colorSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27255,6 +27390,7 @@ locked_until?: Date;
     export type fault_statusSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27300,6 +27436,7 @@ locked_until?: Date;
     export type insurance_coSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27345,6 +27482,7 @@ locked_until?: Date;
     export type licence_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27390,6 +27528,7 @@ locked_until?: Date;
     export type max_damage_sectionSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27435,6 +27574,7 @@ locked_until?: Date;
     export type motion_directionSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27480,6 +27620,7 @@ locked_until?: Date;
     export type plaque_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27525,6 +27666,7 @@ locked_until?: Date;
     export type plaque_usageSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27570,6 +27712,7 @@ locked_until?: Date;
     export type systemSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27615,6 +27758,7 @@ locked_until?: Date;
     export type system_typeSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 registrer?: {
@@ -27663,6 +27807,7 @@ goods_requests?: number | goods_requestInp
     export type wareSchema = {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 enName?: string;
@@ -27816,6 +27961,7 @@ updatedAt: Date;
 ware: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 enName?: string;
@@ -27914,6 +28060,7 @@ locked_until?: Date;
 ware?: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 enName?: string;
@@ -28013,6 +28160,7 @@ updatedAt: Date;
 ware: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 enName?: string;
@@ -28186,6 +28334,7 @@ updatedAt: Date;
 ware: {
 _id?: string;
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 enName?: string;
@@ -34564,12 +34713,14 @@ locked_until?: Date;
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -34602,6 +34753,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -34717,6 +34869,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -34740,6 +34893,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -34905,6 +35059,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -35020,6 +35175,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -35043,6 +35199,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -35207,6 +35364,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -35262,12 +35420,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -35305,6 +35465,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -35328,6 +35489,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -35342,6 +35504,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -35457,6 +35620,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -35480,6 +35644,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -35671,6 +35836,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -35694,6 +35860,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -35720,6 +35887,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -35739,6 +35917,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -35756,6 +35935,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -35803,66 +35983,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -35886,6 +36082,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -36001,6 +36198,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -36024,6 +36222,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -36215,6 +36414,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -36238,6 +36438,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -36264,6 +36465,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -36283,6 +36495,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -36300,6 +36513,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -36347,66 +36561,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -36429,6 +36659,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -36466,6 +36697,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -36489,6 +36721,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -36526,12 +36759,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -36564,6 +36799,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -36679,6 +36915,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -36702,6 +36939,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -36867,6 +37105,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -36982,6 +37221,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -37005,6 +37245,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -37169,6 +37410,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -37224,12 +37466,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -37262,6 +37506,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -37377,6 +37622,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -37400,6 +37646,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -37565,6 +37812,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -37680,6 +37928,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -37703,6 +37952,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -37867,6 +38117,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -37922,12 +38173,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -37960,6 +38213,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -38075,6 +38329,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -38098,6 +38353,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -38263,6 +38519,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -38378,6 +38635,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -38401,6 +38659,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -38565,6 +38824,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -38620,12 +38880,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -38658,6 +38920,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -38773,6 +39036,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -38796,6 +39060,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -38961,6 +39226,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -39076,6 +39342,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -39099,6 +39366,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -39263,6 +39531,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -39318,12 +39587,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -39356,6 +39627,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -39471,6 +39743,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -39494,6 +39767,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -39659,6 +39933,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -39774,6 +40049,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -39797,6 +40073,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -39961,6 +40238,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -40016,12 +40294,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -40059,6 +40339,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -40082,6 +40363,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -40132,6 +40414,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -40247,6 +40530,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -40270,6 +40554,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -40461,6 +40746,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -40484,6 +40770,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -40510,6 +40797,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -40529,6 +40827,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -40546,6 +40845,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -40593,66 +40893,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -40802,38 +41118,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -40868,6 +41193,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -40983,6 +41309,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -41006,6 +41333,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -41197,6 +41525,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -41220,6 +41549,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -41246,6 +41576,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -41265,6 +41606,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -41282,6 +41624,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -41329,66 +41672,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -41538,38 +41897,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -41603,6 +41971,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -41640,6 +42009,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -41663,6 +42033,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -43855,6 +44226,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -43878,6 +44250,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -44103,6 +44476,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -44126,6 +44500,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 national_card?: {
@@ -44172,6 +44547,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -44195,6 +44571,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 organizations?: {
@@ -44579,6 +44956,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -44602,6 +44980,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 police_station?: {
@@ -44678,6 +45057,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -44701,6 +45081,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -44788,6 +45169,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -44811,6 +45193,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -44837,6 +45220,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -44856,6 +45250,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -44873,6 +45268,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -44920,66 +45316,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -45129,38 +45541,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -45673,6 +46094,7 @@ locked_until?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -45747,6 +46169,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -45869,6 +46292,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -46253,6 +46677,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -46276,6 +46701,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 national_card?: {
@@ -46322,6 +46748,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -46345,6 +46772,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 organizations?: {
@@ -46729,6 +47157,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -46752,6 +47181,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 police_station?: {
@@ -46828,6 +47258,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -46851,6 +47282,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -46938,6 +47370,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -46961,6 +47394,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -46987,6 +47421,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -47006,6 +47451,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -47023,6 +47469,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -47070,66 +47517,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -47279,38 +47742,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -47823,6 +48295,7 @@ locked_until?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -47897,6 +48370,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -48019,6 +48493,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -48465,6 +48940,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -48488,6 +48964,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -48861,6 +49338,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -48884,6 +49362,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -49160,6 +49639,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -49183,6 +49663,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -51443,6 +51924,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -51466,6 +51948,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -51751,6 +52234,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -51774,6 +52258,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -52052,6 +52537,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -52075,6 +52561,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -52305,6 +52792,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -52328,6 +52816,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 national_card?: {
@@ -52374,6 +52863,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -52397,6 +52887,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 organizations?: {
@@ -52781,6 +53272,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -52804,6 +53296,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 police_station?: {
@@ -52880,6 +53373,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -52903,6 +53397,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -52990,6 +53485,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -53013,6 +53509,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -53039,6 +53536,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -53058,6 +53566,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -53075,6 +53584,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -53122,66 +53632,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -53331,38 +53857,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -53875,6 +54410,7 @@ locked_until?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -53949,6 +54485,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -54071,6 +54608,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -54531,6 +55069,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -54554,6 +55093,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -54932,6 +55472,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -54955,6 +55496,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -55105,6 +55647,109 @@ recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
+};
+};
+};
+
+          
+            seedDemoOrganization: {
+set: {
+};
+get: {
+demoPassword?: (0 | 1 );
+alreadySeeded?: boolean;
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+};
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+}[];
+orgHead?: {
+_id?: (0 | 1 );
+email?: (0 | 1 );
+level?: (0 | 1 );
+};
+unitHeads?: {
+_id?: (0 | 1 );
+email?: (0 | 1 );
+unitCode?: (0 | 1 );
+}[];
+officers?: {
+_id?: (0 | 1 );
+email?: (0 | 1 );
+unitCode?: (0 | 1 );
+}[];
+vehicles?: {
+_id?: (0 | 1 );
+plaque_no?: (0 | 1 );
+title?: (0 | 1 );
+unitCode?: (0 | 1 );
+}[];
+forms?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+form_kind?: (0 | 1 );
+icon?: (0 | 1 );
+status?: (0 | 1 );
+version?: (0 | 1 );
+activated?: (0 | 1 );
+}[];
+totalCreated?: (0 | 1 );
+totalReused?: (0 | 1 );
+};
+};
+
+          
+            cleanupDemoSeed: {
+set: {
+scope?: ("demo" | "reference" | "modules" | "all" )[];
+confirm?: boolean;
+};
+get: {
+dryRun?: boolean;
+deleted?: boolean;
+scope?: ("demo" | "reference" | "modules" | "all" )[];
+total?: (0 | 1 );
+nothingToDo?: boolean;
+wouldDelete?: {
+organizations?: (0 | 1 );
+roads?: (0 | 1 );
+units?: (0 | 1 );
+users?: (0 | 1 );
+vehicles?: (0 | 1 );
+formDefinitions?: (0 | 1 );
+formResponses?: (0 | 1 );
+accidents?: (0 | 1 );
+incidentReports?: (0 | 1 );
+referenceRows?: (0 | 1 );
+moduleConfig?: (0 | 1 );
+};
+removed?: {
+organizations?: (0 | 1 );
+roads?: (0 | 1 );
+units?: (0 | 1 );
+users?: (0 | 1 );
+vehicles?: (0 | 1 );
+formDefinitions?: (0 | 1 );
+formResponses?: (0 | 1 );
+accidents?: (0 | 1 );
+incidentReports?: (0 | 1 );
+referenceRows?: (0 | 1 );
+moduleConfig?: (0 | 1 );
+};
+preserved?: {
+referenceRows?: (0 | 1 );
+names?: string[];
+note?: string;
 };
 };
 };
@@ -55534,6 +56179,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -55557,6 +56203,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -55753,6 +56400,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -55776,6 +56424,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 registrer?: {
@@ -55891,6 +56540,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -55914,6 +56564,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -57659,6 +58310,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -57682,6 +58334,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -57868,18 +58521,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -58046,6 +58702,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -58069,6 +58726,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -58334,6 +58992,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -58357,6 +59016,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -58551,6 +59211,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -58620,6 +59281,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -58694,6 +59356,7 @@ locked_until?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -58768,6 +59431,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -58949,6 +59613,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59050,6 +59715,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59393,6 +60059,7 @@ stats?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 enName?: string;
@@ -59412,6 +60079,7 @@ is_active: boolean;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59521,6 +60189,7 @@ is_active?: boolean;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59616,6 +60285,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59719,6 +60389,7 @@ is_active?: boolean;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59889,6 +60560,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -59968,6 +60640,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60056,6 +60729,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60138,6 +60812,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60277,6 +60952,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60358,6 +61034,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60443,6 +61120,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60768,6 +61446,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60877,6 +61556,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -60985,6 +61665,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -61093,6 +61774,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -61207,6 +61889,7 @@ updatedAt?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -61333,6 +62016,7 @@ locked_until?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -61409,6 +62093,7 @@ locked_until?: (0 | 1 );
 ware?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 enName?: (0 | 1 );
@@ -61800,6 +62485,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -61823,6 +62509,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -62049,6 +62736,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -62072,6 +62760,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -62154,18 +62843,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -62332,6 +63024,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -62355,6 +63048,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -62761,6 +63455,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -62784,6 +63479,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -63010,6 +63706,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -63033,6 +63730,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -63115,18 +63813,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -63293,6 +63994,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -63316,6 +64018,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -63726,6 +64429,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -63749,6 +64453,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -63975,6 +64680,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -63998,6 +64704,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -64080,18 +64787,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -64258,6 +64968,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -64281,6 +64992,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -64710,6 +65422,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -64733,6 +65446,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -65003,6 +65717,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -65026,6 +65741,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -65309,18 +66025,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -65504,6 +66223,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -65527,6 +66247,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -65797,6 +66518,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -65820,6 +66542,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -66103,18 +66826,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -66298,6 +67024,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -66321,6 +67048,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -66591,6 +67319,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -66614,6 +67343,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -66897,18 +67627,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -67096,6 +67829,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -67119,6 +67853,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -67389,6 +68124,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -67412,6 +68148,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -67695,18 +68432,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -67810,18 +68550,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -67914,18 +68657,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -68015,18 +68761,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -68121,18 +68870,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -68323,6 +69075,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -68346,6 +69099,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -68475,6 +69229,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -68498,6 +69253,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -68631,6 +69387,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -68654,6 +69411,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -68796,6 +69554,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -68819,6 +69578,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69190,6 +69950,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -69213,6 +69974,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69278,6 +70040,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -69301,6 +70064,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69432,6 +70196,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -69455,6 +70220,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69668,6 +70434,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -69691,6 +70458,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69770,6 +70538,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -69793,6 +70562,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -69819,6 +70589,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -69838,6 +70619,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69855,6 +70637,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -69902,66 +70685,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -70105,6 +70904,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -70128,6 +70928,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -70341,6 +71142,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -70364,6 +71166,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -70443,6 +71246,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -70466,6 +71270,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -70492,6 +71297,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -70511,6 +71327,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -70528,6 +71345,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -70575,66 +71393,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -70679,12 +71513,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -70718,6 +71554,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -70750,6 +71587,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -70865,6 +71703,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -70888,6 +71727,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -71054,6 +71894,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -71169,6 +72010,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -71192,6 +72034,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -71378,12 +72221,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -71417,6 +72262,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -71449,6 +72295,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -71564,6 +72411,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -71587,6 +72435,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -71753,6 +72602,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -71868,6 +72718,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -71891,6 +72742,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -72077,12 +72929,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -72116,6 +72970,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -72148,6 +73003,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -72263,6 +73119,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -72286,6 +73143,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -72451,6 +73309,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -72566,6 +73425,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -72589,6 +73449,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -72855,6 +73716,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -72878,6 +73740,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73001,6 +73864,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73024,6 +73888,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73137,6 +74002,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73160,6 +74026,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73329,6 +74196,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73352,6 +74220,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73560,6 +74429,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73583,6 +74453,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73676,6 +74547,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73699,6 +74571,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73784,6 +74657,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73807,6 +74681,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73856,6 +74731,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73879,6 +74755,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -73958,6 +74835,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -73981,6 +74859,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -74007,6 +74886,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -74026,6 +74916,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -74043,6 +74934,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -74090,66 +74982,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -74299,38 +75207,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -74486,6 +75403,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -74509,6 +75427,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -74717,6 +75636,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -74740,6 +75660,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -74833,6 +75754,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -74856,6 +75778,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -74941,6 +75864,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -74964,6 +75888,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -75013,6 +75938,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -75036,6 +75962,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -75115,6 +76042,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -75138,6 +76066,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -75164,6 +76093,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -75183,6 +76123,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -75200,6 +76141,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -75247,66 +76189,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -75456,38 +76414,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -75612,6 +76579,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -75635,6 +76603,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -75712,6 +76681,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -75735,6 +76705,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -75873,6 +76844,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -75896,6 +76868,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76104,6 +77077,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -76127,6 +77101,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76214,6 +77189,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -76237,6 +77213,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -76263,6 +77240,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -76282,6 +77270,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76299,6 +77288,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76346,66 +77336,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -76553,6 +77559,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -76576,6 +77583,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76784,6 +77792,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -76807,6 +77816,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76894,6 +77904,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -76917,6 +77928,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -76943,6 +77955,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -76962,6 +77985,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -76979,6 +78003,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77026,66 +78051,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -77198,6 +78239,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -77221,6 +78263,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77322,6 +78365,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -77345,6 +78389,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77512,6 +78557,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -77535,6 +78581,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77748,6 +78795,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -77771,6 +78819,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77850,6 +78899,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -77873,6 +78923,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -77899,6 +78950,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -77918,6 +78980,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77935,6 +78998,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -77982,66 +79046,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -78191,38 +79271,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -78377,6 +79466,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -78400,6 +79490,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -78613,6 +79704,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -78636,6 +79728,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -78715,6 +79808,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -78738,6 +79832,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -78764,6 +79859,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -78783,6 +79889,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -78800,6 +79907,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -78847,66 +79955,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -79056,38 +80180,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -79154,12 +80287,14 @@ summary: (1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -79193,6 +80328,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -79225,6 +80361,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -79340,6 +80477,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -79363,6 +80501,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -79528,6 +80667,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -79643,6 +80783,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -79666,6 +80807,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -79852,12 +80994,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -79891,6 +81035,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -79923,6 +81068,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -80038,6 +81184,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -80061,6 +81208,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -80226,6 +81374,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -80341,6 +81490,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -80364,6 +81514,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -80550,12 +81701,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -80589,6 +81742,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -80621,6 +81775,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -80736,6 +81891,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -80759,6 +81915,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -80925,6 +82082,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -81040,6 +82198,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -81063,6 +82222,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -81422,12 +82582,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -81461,6 +82623,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -81493,6 +82656,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -81608,6 +82772,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -81631,6 +82796,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -81796,6 +82962,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -81911,6 +83078,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -81934,6 +83102,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -82246,6 +83415,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -82269,6 +83439,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -82460,6 +83631,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -82483,6 +83655,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 reviewer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -82507,6 +83680,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -82526,6 +83710,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -82543,6 +83728,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -82590,66 +83776,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -82714,6 +83916,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -82737,6 +83940,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -82797,6 +84001,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -82820,6 +84025,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -82873,6 +84079,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -82896,6 +84103,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -82910,12 +84118,14 @@ process_version?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -82949,6 +84159,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -82981,6 +84192,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -83096,6 +84308,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -83119,6 +84332,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -83285,6 +84499,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -83400,6 +84615,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -83423,6 +84639,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -83609,12 +84826,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -83648,6 +84867,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -83680,6 +84900,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -83795,6 +85016,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -83818,6 +85040,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -83983,6 +85206,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -84098,6 +85322,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -84121,6 +85346,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -84307,12 +85533,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -84346,6 +85574,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -84378,6 +85607,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -84493,6 +85723,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -84516,6 +85747,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -84681,6 +85913,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -84796,6 +86029,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -84819,6 +86053,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -85005,12 +86240,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85044,6 +86281,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85076,6 +86314,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85191,6 +86430,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -85214,6 +86454,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -85379,6 +86620,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85494,6 +86736,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -85517,6 +86760,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -85703,12 +86947,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85742,6 +86988,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85774,6 +87021,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -85889,6 +87137,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -85912,6 +87161,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -86078,6 +87328,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -86193,6 +87444,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -86216,6 +87468,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -86402,12 +87655,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -86441,6 +87696,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -86473,6 +87729,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -86588,6 +87845,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -86611,6 +87869,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -86776,6 +88035,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -86891,6 +88151,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -86914,6 +88175,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -87100,12 +88362,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87139,6 +88403,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87171,6 +88436,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87286,6 +88552,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -87309,6 +88576,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -87474,6 +88742,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87589,6 +88858,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -87612,6 +88882,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -87798,12 +89069,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87837,6 +89110,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87869,6 +89143,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -87984,6 +89259,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -88007,6 +89283,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -88172,6 +89449,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -88287,6 +89565,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -88310,6 +89589,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -88496,12 +89776,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -88535,6 +89817,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -88567,6 +89850,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -88682,6 +89966,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -88705,6 +89990,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -88870,6 +90156,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -88985,6 +90272,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -89008,6 +90296,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -89267,6 +90556,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -89290,6 +90580,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -89416,6 +90707,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -89439,6 +90731,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -89616,6 +90909,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -89639,6 +90933,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -89842,6 +91137,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -89865,6 +91161,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -89934,6 +91231,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -89957,6 +91255,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -90036,6 +91335,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -90059,6 +91359,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -90085,6 +91386,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -90104,6 +91416,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -90121,6 +91434,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -90168,66 +91482,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -90377,38 +91707,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -90621,6 +91960,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -90644,6 +91984,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -90847,6 +92188,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -90870,6 +92212,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -90939,6 +92282,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -90962,6 +92306,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -91041,6 +92386,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -91064,6 +92410,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -91090,6 +92437,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -91109,6 +92467,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -91126,6 +92485,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -91173,66 +92533,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -91382,38 +92758,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -91806,6 +93191,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -91829,6 +93215,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -92037,6 +93424,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -92060,6 +93448,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -92548,6 +93937,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -92571,6 +93961,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -92779,6 +94170,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -92802,6 +94194,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -93241,12 +94634,14 @@ count?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -93280,6 +94675,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -93312,6 +94708,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -93427,6 +94824,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -93450,6 +94848,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -93616,6 +95015,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -93731,6 +95131,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -93754,6 +95155,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -93940,12 +95342,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -93979,6 +95383,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -94011,6 +95416,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -94126,6 +95532,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -94149,6 +95556,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -94314,6 +95722,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -94429,6 +95838,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -94452,6 +95862,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -94638,12 +96049,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -94677,6 +96090,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -94709,6 +96123,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -94824,6 +96239,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -94847,6 +96263,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -95012,6 +96429,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -95127,6 +96545,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -95150,6 +96569,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -95336,12 +96756,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -95375,6 +96797,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -95407,6 +96830,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -95522,6 +96946,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -95545,6 +96970,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -95711,6 +97137,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -95826,6 +97253,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -95849,6 +97277,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -96035,12 +97464,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96074,6 +97505,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96106,6 +97538,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96221,6 +97654,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -96244,6 +97678,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -96409,6 +97844,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96524,6 +97960,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -96547,6 +97984,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -96733,12 +98171,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96772,6 +98212,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96804,6 +98245,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -96919,6 +98361,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -96942,6 +98385,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -97107,6 +98551,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -97222,6 +98667,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -97245,6 +98691,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -97431,12 +98878,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -97470,6 +98919,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -97502,6 +98952,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -97617,6 +99068,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -97640,6 +99092,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -97805,6 +99258,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -97920,6 +99374,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -97943,6 +99398,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -98129,12 +99585,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -98168,6 +99626,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -98200,6 +99659,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -98315,6 +99775,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -98338,6 +99799,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -98503,6 +99965,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -98618,6 +100081,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -98641,6 +100105,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -98883,6 +100348,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -98906,6 +100372,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -99006,6 +100473,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -99029,6 +100497,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -99196,6 +100665,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -99219,6 +100689,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -99432,6 +100903,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -99455,6 +100927,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -99534,6 +101007,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -99557,6 +101031,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -99583,6 +101058,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -99602,6 +101088,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -99619,6 +101106,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -99666,66 +101154,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -99875,38 +101379,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -100058,6 +101571,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -100081,6 +101595,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -100294,6 +101809,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -100317,6 +101833,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -100396,6 +101913,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -100419,6 +101937,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -100445,6 +101964,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -100464,6 +101994,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -100481,6 +102012,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -100528,66 +102060,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -100737,38 +102285,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -100835,12 +102392,14 @@ summary: (1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -100874,6 +102433,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -100906,6 +102466,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -101021,6 +102582,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -101044,6 +102606,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -101209,6 +102772,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -101324,6 +102888,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -101347,6 +102912,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -101533,12 +103099,14 @@ qty?: (0 | 1 );
             add: {
 set: {
 name: string;
+seed?: string;
 createdAt: Date;
 updatedAt: Date;
 };
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -101572,6 +103140,7 @@ name?: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -101604,6 +103173,7 @@ _id: string;
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -101719,6 +103289,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -101742,6 +103313,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -101908,6 +103480,7 @@ names?: string[];
 get: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -102023,6 +103596,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -102046,6 +103620,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -102438,6 +104013,10 @@ answer_names?: string[];
 value?: string;
 }[];
 process_version?: number;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
 officerId?: string;
 patrolUnitId?: string;
 vehicleId?: string;
@@ -102505,6 +104084,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -102528,6 +104108,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -102554,6 +104135,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -102573,6 +104165,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -102590,6 +104183,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -102637,66 +104231,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -102960,6 +104570,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -102983,6 +104594,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -103009,6 +104621,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -103028,6 +104651,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -103045,6 +104669,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -103092,66 +104717,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -103296,6 +104937,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -103319,6 +104961,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -103477,6 +105120,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -103500,6 +105144,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -103620,6 +105265,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -103643,6 +105289,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -103791,6 +105438,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -103926,18 +105657,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -103989,6 +105723,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -104085,6 +105820,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104108,6 +105844,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104159,6 +105896,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -104196,6 +105934,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104219,6 +105958,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104279,6 +106019,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104302,6 +106043,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104411,6 +106153,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104434,6 +106177,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104525,6 +106269,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104548,6 +106293,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104655,6 +106401,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104678,6 +106425,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104763,6 +106511,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104786,6 +106535,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104871,6 +106621,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -104894,6 +106645,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -104901,6 +106653,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -104924,6 +106677,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -104947,6 +106701,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -104970,6 +106725,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -104993,6 +106749,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105016,6 +106773,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105039,6 +106797,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105062,6 +106821,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105085,6 +106845,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105108,6 +106869,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105143,6 +106905,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -105166,6 +106929,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -105209,6 +106973,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105232,6 +106997,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105255,6 +107021,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105278,6 +107045,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105301,6 +107069,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105324,6 +107093,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -105386,6 +107156,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -105409,6 +107180,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -105634,6 +107406,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -105657,6 +107430,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -105815,6 +107589,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -105838,6 +107613,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -105958,6 +107734,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -105981,6 +107758,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106129,6 +107907,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106264,18 +108126,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106327,6 +108192,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -106423,6 +108289,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -106446,6 +108313,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106497,6 +108365,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -106534,6 +108403,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -106557,6 +108427,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106617,6 +108488,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -106640,6 +108512,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106749,6 +108622,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -106772,6 +108646,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106863,6 +108738,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -106886,6 +108762,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -106993,6 +108870,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -107016,6 +108894,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -107101,6 +108980,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -107124,6 +109004,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -107209,6 +109090,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -107232,6 +109114,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -107239,6 +109122,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107262,6 +109146,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107285,6 +109170,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107308,6 +109194,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107331,6 +109218,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107354,6 +109242,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107377,6 +109266,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107400,6 +109290,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107423,6 +109314,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107446,6 +109338,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107481,6 +109374,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -107504,6 +109398,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -107547,6 +109442,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107570,6 +109466,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107593,6 +109490,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107616,6 +109514,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107639,6 +109538,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107662,6 +109562,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -107724,6 +109625,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -107747,6 +109649,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -107800,6 +109703,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -107823,6 +109727,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -107849,6 +109754,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -107868,6 +109784,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -107885,6 +109802,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -107932,66 +109850,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -108177,6 +110111,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -108200,6 +110135,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -108226,6 +110162,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -108245,6 +110192,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -108262,6 +110210,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -108309,66 +110258,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -108515,6 +110480,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -108538,6 +110504,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -108696,6 +110663,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -108719,6 +110687,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -108839,6 +110808,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -108862,6 +110832,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109010,6 +110981,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109145,18 +111200,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109208,6 +111266,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -109304,6 +111363,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -109327,6 +111387,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109378,6 +111439,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -109415,6 +111477,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -109438,6 +111501,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109498,6 +111562,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -109521,6 +111586,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109630,6 +111696,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -109653,6 +111720,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109744,6 +111812,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -109767,6 +111836,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109874,6 +111944,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -109897,6 +111968,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -109982,6 +112054,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -110005,6 +112078,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -110090,6 +112164,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -110113,6 +112188,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -110120,6 +112196,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110143,6 +112220,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110166,6 +112244,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110189,6 +112268,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110212,6 +112292,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110235,6 +112316,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110258,6 +112340,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110281,6 +112364,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110304,6 +112388,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110327,6 +112412,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110362,6 +112448,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -110385,6 +112472,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -110428,6 +112516,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110451,6 +112540,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110474,6 +112564,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110497,6 +112588,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110520,6 +112612,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110543,6 +112636,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -110605,6 +112699,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -110628,6 +112723,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -110769,6 +112865,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -110792,6 +112889,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -110950,6 +113048,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -110973,6 +113072,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -111093,6 +113193,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -111116,6 +113217,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111264,6 +113366,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111399,18 +113585,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111462,6 +113651,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -111558,6 +113748,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -111581,6 +113772,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111632,6 +113824,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -111669,6 +113862,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -111692,6 +113886,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111752,6 +113947,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -111775,6 +113971,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111884,6 +114081,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -111907,6 +114105,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -111998,6 +114197,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -112021,6 +114221,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -112128,6 +114329,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -112151,6 +114353,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -112236,6 +114439,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -112259,6 +114463,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -112344,6 +114549,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -112367,6 +114573,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -112374,6 +114581,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112397,6 +114605,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112420,6 +114629,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112443,6 +114653,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112466,6 +114677,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112489,6 +114701,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112512,6 +114725,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112535,6 +114749,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112558,6 +114773,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112581,6 +114797,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112616,6 +114833,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -112639,6 +114857,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -112682,6 +114901,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112705,6 +114925,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112728,6 +114949,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112751,6 +114973,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112774,6 +114997,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112797,6 +115021,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -112859,6 +115084,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -112882,6 +115108,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -113023,6 +115250,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -113046,6 +115274,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -113204,6 +115433,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -113227,6 +115457,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -113347,6 +115578,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -113370,6 +115602,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -113518,6 +115751,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -113653,18 +115970,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -113716,6 +116036,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -113812,6 +116133,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -113835,6 +116157,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -113886,6 +116209,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -113923,6 +116247,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -113946,6 +116271,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114006,6 +116332,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114029,6 +116356,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114138,6 +116466,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114161,6 +116490,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114252,6 +116582,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114275,6 +116606,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114382,6 +116714,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114405,6 +116738,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114490,6 +116824,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114513,6 +116848,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114598,6 +116934,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114621,6 +116958,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114628,6 +116966,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114651,6 +116990,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114674,6 +117014,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114697,6 +117038,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114720,6 +117062,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114743,6 +117086,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114766,6 +117110,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114789,6 +117134,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114812,6 +117158,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114835,6 +117182,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114870,6 +117218,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -114893,6 +117242,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -114936,6 +117286,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114959,6 +117310,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -114982,6 +117334,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -115005,6 +117358,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -115028,6 +117382,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -115051,6 +117406,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -115113,6 +117469,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -115136,6 +117493,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -115277,6 +117635,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -115300,6 +117659,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -115458,6 +117818,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -115481,6 +117842,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -115601,6 +117963,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -115624,6 +117987,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -115772,6 +118136,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -115907,18 +118355,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -115970,6 +118421,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -116066,6 +118518,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116089,6 +118542,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116140,6 +118594,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -116177,6 +118632,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116200,6 +118656,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116260,6 +118717,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116283,6 +118741,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116392,6 +118851,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116415,6 +118875,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116506,6 +118967,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116529,6 +118991,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116636,6 +119099,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116659,6 +119123,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116744,6 +119209,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116767,6 +119233,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116852,6 +119319,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -116875,6 +119343,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -116882,6 +119351,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -116905,6 +119375,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -116928,6 +119399,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -116951,6 +119423,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -116974,6 +119447,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -116997,6 +119471,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117020,6 +119495,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117043,6 +119519,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117066,6 +119543,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117089,6 +119567,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117124,6 +119603,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -117147,6 +119627,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -117190,6 +119671,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117213,6 +119695,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117236,6 +119719,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117259,6 +119743,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117282,6 +119767,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117305,6 +119791,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -117367,6 +119854,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -117390,6 +119878,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -117441,6 +119930,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -117464,6 +119954,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -117490,6 +119981,17 @@ settings?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
 patrol_unit?: {
 _id?: (0 | 1 );
 code?: (0 | 1 );
@@ -117509,6 +120011,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -117526,6 +120029,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -117573,66 +120077,82 @@ population?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 attachments?: {
 _id?: (0 | 1 );
@@ -117777,6 +120297,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -117800,6 +120321,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -117958,6 +120480,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -117981,6 +120504,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -118101,6 +120625,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -118124,6 +120649,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -118272,6 +120798,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -118407,18 +121017,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -118470,6 +121083,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -118566,6 +121180,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -118589,6 +121204,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -118640,6 +121256,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -118677,6 +121294,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -118700,6 +121318,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -118760,6 +121379,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -118783,6 +121403,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -118892,6 +121513,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -118915,6 +121537,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -119006,6 +121629,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -119029,6 +121653,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -119136,6 +121761,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -119159,6 +121785,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -119244,6 +121871,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -119267,6 +121895,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -119352,6 +121981,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -119375,6 +122005,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -119382,6 +122013,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119405,6 +122037,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119428,6 +122061,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119451,6 +122085,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119474,6 +122109,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119497,6 +122133,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119520,6 +122157,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119543,6 +122181,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119566,6 +122205,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119589,6 +122229,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119624,6 +122265,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -119647,6 +122289,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -119690,6 +122333,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119713,6 +122357,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119736,6 +122381,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119759,6 +122405,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119782,6 +122429,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119805,6 +122453,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -119867,6 +122516,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -119890,6 +122540,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -122230,6 +124881,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -122253,6 +124905,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -122411,6 +125064,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -122434,6 +125088,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 reviewer?: {
@@ -122554,6 +125209,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -122577,6 +125233,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -122725,6 +125382,90 @@ location?: (0 | 1 );
 gps_accuracy?: (0 | 1 );
 recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+};
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+head?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+logo?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+registrer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+units?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+type?: (0 | 1 );
+address?: (0 | 1 );
+phone?: (0 | 1 );
+head_title?: (0 | 1 );
+features?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -122860,18 +125601,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -122923,6 +125667,7 @@ updatedAt?: (0 | 1 );
 lane?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -123019,6 +125764,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123042,6 +125788,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123093,6 +125840,7 @@ updatedAt?: (0 | 1 );
 croquis_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 registrer?: {
@@ -123130,6 +125878,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123153,6 +125902,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123213,6 +125963,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123236,6 +125987,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123345,6 +126097,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123368,6 +126121,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123459,6 +126213,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123482,6 +126237,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123589,6 +126345,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123612,6 +126369,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123697,6 +126455,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123720,6 +126479,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123805,6 +126565,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -123828,6 +126589,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -123835,6 +126597,7 @@ updatedAt?: (0 | 1 );
 type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123858,6 +126621,7 @@ locked_until?: (0 | 1 );
 area_usages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123881,6 +126645,7 @@ locked_until?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123904,6 +126669,7 @@ locked_until?: (0 | 1 );
 ruling_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123927,6 +126693,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123950,6 +126717,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123973,6 +126741,7 @@ locked_until?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -123996,6 +126765,7 @@ locked_until?: (0 | 1 );
 human_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124019,6 +126789,7 @@ locked_until?: (0 | 1 );
 collision_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124042,6 +126813,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124077,6 +126849,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -124100,6 +126873,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -124143,6 +126917,7 @@ updatedAt?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124166,6 +126941,7 @@ locked_until?: (0 | 1 );
 road_repair_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124189,6 +126965,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124212,6 +126989,7 @@ locked_until?: (0 | 1 );
 vehicle_reasons?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124235,6 +127013,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124258,6 +127037,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -124320,6 +127100,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -124343,6 +127124,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 };
 };
 };
@@ -125573,10 +128355,10 @@ _id: string;
 force?: string;
 };
 get: {
-success?: number;
-version?: number;
-status?: string;
-message?: string;
+success?: (0 | 1 );
+version?: (0 | 1 );
+status?: (0 | 1 );
+message?: (0 | 1 );
 };
 };
 
@@ -125650,12 +128432,9 @@ orgId?: string;
 definitionId?: string;
 };
 get: {
-form?: {
-};
-options?: {
-};
-version?: {
-};
+form?: (0 | 1 );
+options?: (0 | 1 );
+version?: (0 | 1 );
 };
 };
 
@@ -125668,9 +128447,8 @@ search?: string;
 limit?: string;
 };
 get: {
-model?: string;
-items?: {
-};
+model?: (0 | 1 );
+items?: (0 | 1 );
 };
 };
 
@@ -125682,14 +128460,10 @@ answers: Record<string, any>;
 pageKey?: string;
 };
 get: {
-errors?: {
-};
-warnings?: {
-};
-blockedPages?: {
-};
-canSubmit?: {
-};
+errors?: (0 | 1 );
+warnings?: (0 | 1 );
+blockedPages?: (0 | 1 );
+canSubmit?: (0 | 1 );
 };
 };
 
@@ -125761,9 +128535,8 @@ set: {
 formKind?: ("accident" | "incident_report" );
 };
 get: {
-formKind?: number;
-relations?: {
-};
+formKind?: (0 | 1 );
+relations?: (0 | 1 );
 };
 };
 
@@ -125772,8 +128545,7 @@ relations?: {
 set: {
 };
 get: {
-models?: {
-};
+models?: (0 | 1 );
 };
 };
 
@@ -125990,38 +128762,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -126249,38 +129030,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -126448,38 +129238,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -126653,38 +129452,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -126879,38 +129687,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -127078,38 +129895,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -127372,6 +130198,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -127395,6 +130222,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -127678,18 +130506,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -127812,6 +130643,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -127835,6 +130667,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -127943,6 +130776,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -127966,6 +130800,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -128079,6 +130914,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -128102,6 +130938,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -128248,6 +131085,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -128271,6 +131109,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -128359,6 +131198,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -128382,6 +131222,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -128425,6 +131266,7 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128448,6 +131290,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128483,6 +131326,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -128506,6 +131350,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -128549,6 +131394,7 @@ updatedAt?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128572,6 +131418,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128595,6 +131442,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128618,6 +131466,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128641,6 +131490,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128664,6 +131514,7 @@ locked_until?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128687,6 +131538,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -128820,6 +131672,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -128843,6 +131696,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -129144,38 +131998,47 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 };
 reviewer?: {
 _id?: (0 | 1 );
@@ -129436,6 +132299,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -129459,6 +132323,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -129742,18 +132607,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -129876,6 +132744,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -129899,6 +132768,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -130007,6 +132877,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -130030,6 +132901,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -130143,6 +133015,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -130166,6 +133039,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -130312,6 +133186,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -130335,6 +133210,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -130423,6 +133299,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -130446,6 +133323,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -130489,6 +133367,7 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130512,6 +133391,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130547,6 +133427,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -130570,6 +133451,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -130613,6 +133495,7 @@ updatedAt?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130636,6 +133519,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130659,6 +133543,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130682,6 +133567,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130705,6 +133591,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130728,6 +133615,7 @@ locked_until?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130751,6 +133639,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -130884,6 +133773,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -130907,6 +133797,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -131304,6 +134195,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -131327,6 +134219,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -131610,18 +134503,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -131744,6 +134640,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -131767,6 +134664,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -131875,6 +134773,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -131898,6 +134797,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -132011,6 +134911,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -132034,6 +134935,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -132180,6 +135082,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -132203,6 +135106,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -132291,6 +135195,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -132314,6 +135219,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -132357,6 +135263,7 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132380,6 +135287,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132415,6 +135323,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -132438,6 +135347,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -132481,6 +135391,7 @@ updatedAt?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132504,6 +135415,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132527,6 +135439,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132550,6 +135463,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132573,6 +135487,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132596,6 +135511,7 @@ locked_until?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132619,6 +135535,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -132752,6 +135669,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -132775,6 +135693,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -133172,6 +136091,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -133195,6 +136115,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -133478,18 +136399,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -133612,6 +136536,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -133635,6 +136560,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -133743,6 +136669,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -133766,6 +136693,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -133879,6 +136807,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -133902,6 +136831,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -134048,6 +136978,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -134071,6 +137002,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -134159,6 +137091,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -134182,6 +137115,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -134225,6 +137159,7 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134248,6 +137183,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134283,6 +137219,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -134306,6 +137243,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -134349,6 +137287,7 @@ updatedAt?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134372,6 +137311,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134395,6 +137335,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134418,6 +137359,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134441,6 +137383,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134464,6 +137407,7 @@ locked_until?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134487,6 +137431,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -134620,6 +137565,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -134643,6 +137589,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -135040,6 +137987,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -135063,6 +138011,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -135346,18 +138295,21 @@ updatedAt?: (0 | 1 );
 color?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 plaque_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 system_type?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -135480,6 +138432,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -135503,6 +138456,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -135611,6 +138565,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -135634,6 +138589,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -135747,6 +138703,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -135770,6 +138727,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -135916,6 +138874,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -135939,6 +138898,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -136027,6 +138987,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -136050,6 +139011,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -136093,6 +139055,7 @@ updatedAt?: (0 | 1 );
 position?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136116,6 +139079,7 @@ locked_until?: (0 | 1 );
 incident_severity?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136151,6 +139115,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -136174,6 +139139,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
@@ -136217,6 +139183,7 @@ updatedAt?: (0 | 1 );
 road_defects?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136240,6 +139207,7 @@ locked_until?: (0 | 1 );
 equipment_damages?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136263,6 +139231,7 @@ locked_until?: (0 | 1 );
 light_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136286,6 +139255,7 @@ locked_until?: (0 | 1 );
 air_statuses?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136309,6 +139279,7 @@ locked_until?: (0 | 1 );
 road_surface_conditions?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136332,6 +139303,7 @@ locked_until?: (0 | 1 );
 road_situation?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136355,6 +139327,7 @@ locked_until?: (0 | 1 );
 shoulder_status?: {
 _id?: (0 | 1 );
 name?: (0 | 1 );
+seed?: (0 | 1 );
 registrer?: {
 _id?: (0 | 1 );
 first_name?: (0 | 1 );
@@ -136488,6 +139461,7 @@ client_report_uuid?: (0 | 1 );
 report_id?: (0 | 1 );
 sync_status?: (0 | 1 );
 rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
 review_status?: (0 | 1 );
 review_reason?: (0 | 1 );
 reviewed_at?: (0 | 1 );
@@ -136511,6 +139485,7 @@ facility_damage_dtos?: (0 | 1 );
 review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };

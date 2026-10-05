@@ -12,6 +12,7 @@ import { accident, coreApp } from "../../../mod.ts";
 import type { MyContext } from "@lib";
 import { accident_relations } from "@model";
 import { throwError } from "@lib";
+import { resolveFilingOrgId } from "../reportScope.ts";
 
 export const addFn: ActFn = async (body) => {
 	const { set, get } = body.details;
@@ -359,7 +360,30 @@ export const addFn: ActFn = async (body) => {
 		};
 	}
 
-	// --- 3. Insert the Document with its Relations ---
+	// --- 3. Provenance: link the filing organization, for app submissions ------
+	// `submitted_from` is the app declaring which build filed the report, so its
+	// presence is the signal that this is an app submission. The organization is
+	// then resolved from the session — never from the request — mirroring
+	// `incident_report/add/add.fn.ts` so both models attribute identically.
+	if (doc.submitted_from) {
+		const roadRelation = relations.road as
+			| { _ids?: ObjectId }
+			| undefined;
+		const filingOrgId = await resolveFilingOrgId(
+			user as unknown as Parameters<typeof resolveFilingOrgId>[0],
+			roadRelation?._ids?.toString() ?? null,
+		);
+		if (filingOrgId) {
+			relations.organization = {
+				_ids: filingOrgId,
+				relatedRelations: {},
+			};
+		}
+		// Unresolvable organization is not an error: the report is still filed and
+		// the console groups it under "unlinked".
+	}
+
+	// --- 4. Insert the Document with its Relations ---
 	return await accident.insertOne({
 		doc,
 		relations,

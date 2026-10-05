@@ -62,9 +62,25 @@ export const getOrgReportBase = async (
 	if (!roads?.length) {
 		throw new Error("شما دسترسی به گزارش‌های این سازمان ندارید");
 	}
+	// Two clauses, deliberately, and an `$or` rather than a merge because the two
+	// populations are disjoint: a report filed from the patrol app carries the
+	// officer's `organization` and no road at all, while the legacy rows filed
+	// before that link existed carry only a `road`. Matching on either alone
+	// silently empties one half of the console — road-only hides every app
+	// submission, and organization-only hides the entire back catalogue. This is
+	// the shape `incident_report/oversight/filters.ts` already documents for the
+	// Manager narrowing, which was written to mirror this one.
+	const orgIds = await getScopedOrgIds(actor);
 	const scope: Record<string, unknown> = {
 		"officer.level": "Patrol",
-		"road._id": { $in: roads },
+		$or: [
+			{
+				"organization._id": {
+					$in: orgIds.map((id) => new ObjectId(id)),
+				},
+			},
+			{ "road._id": { $in: roads } },
+		],
 	};
 	if (userId) scope["officer._id"] = new ObjectId(userId);
 	return scope;

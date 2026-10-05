@@ -195,6 +195,23 @@ export const updateFn: ActFn = async (body) => {
 		if (fields[key] !== undefined) updateObj[key] = fields[key];
 	}
 
+	// --- 3b. First transition to `synced` records the instant ---------------
+	// Written once: a later synced→synced correction must not move it, or the
+	// per-officer "median sync time" would describe the last correction rather
+	// than the submission. A record born `synced` (a Manager typing it in at the
+	// control centre) records nothing here — the server never observed an
+	// arrival, and inventing one would record filing time rather than sync time.
+	// Mirrors `incident_report/update/update.fn.ts` so both models behave alike.
+	if (updateObj.sync_status === "synced") {
+		const current = await accident.findOne({
+			filters: filter,
+			projection: { synced_at: 1 },
+		});
+		if (current && !(current as { synced_at?: Date }).synced_at) {
+			updateObj.synced_at = new Date();
+		}
+	}
+
 	// --- 4. Handle attachment linking for new image ObjectIds ---
 	// Check for new image ObjectIds in plate_image, insurance_image, vehicle_dtos, facility_damage_dtos
 	const attachmentIds: string[] = [];
