@@ -10,7 +10,20 @@ import {
   incidentTypeOf,
 } from '@/domain/incident-type';
 import { isProcessRenderable } from '@/domain/process-form';
+import { resolveIncidentRoute } from '@/domain/form-routing';
 import { fetchPatrolProcess } from '@/api/accident-process';
+import { fetchPatrolForms } from '@/api/form-definition';
+import {
+  buildFormPicker,
+  defaultAccidentPickerForm,
+  type FormKind,
+  type PickerForm,
+} from '@/domain/form-picker';
+import {
+  DEFAULT_ACCIDENT_FORM_ICON,
+  DEFAULT_ACCIDENT_FORM_ID,
+  DEFAULT_ACCIDENT_FORM_TITLE,
+} from '@/domain/default-accident-form';
 import { translateApiError } from '@/api/errors';
 import { getConnectivitySnapshot } from '@/services/connectivity';
 import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
@@ -66,12 +79,24 @@ const TYPE_TILES: {
   },
 ];
 
+/** The row the picker shows for the form bundled with the app. */
+const BUNDLED_ACCIDENT_FORM: PickerForm = {
+  _id: DEFAULT_ACCIDENT_FORM_ID,
+  name: DEFAULT_ACCIDENT_FORM_TITLE,
+  description: 'فرم پیش‌فرض برنامه؛ تا زمانی که سازمان فرم تصادفی بسازد استفاده می‌شود.',
+  icon: DEFAULT_ACCIDENT_FORM_ICON,
+  form_kind: 'accident',
+};
+
 export default function IncidentDraftScreen() {
   const router = useRouter();
   const session = useRequiredSession();
   const [draft, setDraft] = useState<AccidentDraft | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [processNotice, setProcessNotice] = useState<string | null>(null);
+  const [forms, setForms] = useState<PickerForm[]>([]);
+  const [formsLoaded, setFormsLoaded] = useState(false);
+  const [showAllForms, setShowAllForms] = useState(false);
   const uuidRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -116,6 +141,39 @@ export default function IncidentDraftScreen() {
     }, []),
   );
 
+  // --- the organization's own forms ---------------------------------------
+  // Fetched once per screen visit and deliberately best-effort. Product invariant
+  // 2 says offline must never disable incident creation, so a failed or skipped
+  // fetch leaves the standard flow and the bundled accident form fully usable
+  // rather than blocking the officer behind an error.
+  useEffect(() => {
+    let cancelled = false;
+    if (!session) {
+      return;
+    }
+    (async () => {
+      try {
+        const connectivity = await getConnectivitySnapshot();
+        if (connectivity.status === 'offline') {
+          return;
+        }
+        const rows = await fetchPatrolForms(session);
+        if (!cancelled) {
+          setForms(rows);
+        }
+      } catch {
+        // Module off, org membership missing, transport — the fallbacks cover it.
+      } finally {
+        if (!cancelled) {
+          setFormsLoaded(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
   if (!session) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -155,10 +213,13 @@ export default function IncidentDraftScreen() {
     }
     setProcessNotice(null);
 
-    // Org process first: when the officer's org publishes an active wizard for
-    // the type, it wins over the built-in flows (process-first decision). A
-    // positively-off `incident_patrol` module shows the notice instead of a
-    // dead `accident_process.*` call.
+    // The precedence lives in `resolveIncidentRoute` rather than here: a chosen
+    // form wins, then the org's process wizard (accidents only — it no longer
+    // authors non-accident forms, and its answers would be rejected by
+    // `incident_report`), then the built-in standard flow. Keeping it in one
+    // tested place is what stops the screen drifting from the product decision.
+    let online = false;
+    let hasRenderableProcess = false;
     if (session && effective === type) {
       if (!isIncidentPatrolEnabled(session)) {
         setProcessNotice(moduleDisabledMessage(session));
@@ -166,11 +227,11 @@ export default function IncidentDraftScreen() {
         try {
           const connectivity = await getConnectivitySnapshot();
           if (connectivity.status === 'online') {
+            online = true;
             const result = await fetchPatrolProcess(session, effective);
-            if (result.process && isProcessRenderable(result.process)) {
-              router.push({ pathname: '/incident/process', params: { uuid } });
-              return;
-            }
+            hasRenderableProcess = Boolean(
+              result.process && isProcessRenderable(result.process),
+            );
           }
         } catch (error) {
           const message = translateApiError(error);
@@ -181,11 +242,15 @@ export default function IncidentDraftScreen() {
       }
     }
 
-    if (effective === 'accident') {
-      router.push({ pathname: '/incident/details', params: { uuid } });
-    } else {
-      router.push({ pathname: '/incident/simple', params: { uuid } });
-    }
+    router.push({
+      pathname: resolveIncidentRoute({
+        incidentType: effective,
+        online,
+        hasChosenForm: false,
+        hasRenderableProcess,
+      }),
+      params: { uuid },
+    });
   }
 
   const currentType = draft ? incidentTypeOf(draft) : 'accident';
@@ -193,13 +258,61 @@ export default function IncidentDraftScreen() {
   const zoneCheck = draft?.data['zone_check'] as ZoneCheckData | undefined;
   const hasLocation = Boolean(draft?.incident_coords);
 
+  // Which model will receive the report fixes which forms apply: an accident goes
+  // to `accident`, everything else to `incident_report`.
+  const formKind: FormKind = currentType === 'accident' ? 'accident' : 'incident_report';
+  const picker = buildFormPicker(
+    forms.filter((form) => (form.form_kind ?? 'accident') === formKind),
+  );
+  const visibleForms = showAllForms ? [...picker.inline, ...picker.overflow] : picker.inline;
+  // The bundled form is appended only when the organization has authored no
+  // accident form of its own, so an accident card is always present — an
+  // unconfigured organization must still be able to file one.
+  const formCards: PickerForm[] =
+    formKind === 'accident' && picker.usingDefaultAccidentForm
+      ? [defaultAccidentPickerForm(BUNDLED_ACCIDENT_FORM), ...visibleForms]
+      : visibleForms;
+  const hiddenFormCount = showAllForms ? 0 : picker.overflow.length;
+
+  /**
+   * Open one of the organization's own forms (or the bundled accident default).
+   *
+   * The chosen id travels in the route so the form screen opens *that* form
+   * rather than whatever is currently active.
+   */
+  async function openChosenForm(form: PickerForm) {
+    if (!draft || !hasLocation) {
+      return;
+    }
+    const uuid = draft.client_report_uuid;
+    // A form fixes which collection stores the report, so it also fixes the
+    // draft's type: an `incident_report` form is never an accident. The sub-type
+    // (خرابی/مانع/سایر) is a local classification only — the server groups a
+    // report under the form it was filed with — so the officer's current choice is
+    // kept when there is one.
+    const type: IncidentType = form.form_kind === 'incident_report'
+      ? (currentType === 'accident' ? 'road_breakdown' : currentType)
+      : 'accident';
+    try {
+      await setDraftIncidentType(uuid, type);
+    } catch {
+      // Persisting the type is best-effort; navigation still proceeds so the
+      // officer can capture the report (the mapper defaults missing types).
+    }
+    setProcessNotice(null);
+    router.push({
+      pathname: '/incident/form',
+      params: { uuid, definitionId: form._id },
+    });
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScreenHeader onBack={() => router.back()} title="ثبت واقعه جدید" />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.description}>
-          ابتدا محل حادثه را روی نقشه مشخص کنید؛ سپس نوع واقعه را انتخاب و گزارش را تکمیل کنید.
-          همه‌چیز حتی در حالت آفلاین ذخیره و قابل ادامه است.
+          ابتدا محل حادثه را روی نقشه مشخص کنید؛ سپس نوع واقعه و فرم ثبت را انتخاب و گزارش را
+          تکمیل کنید. همه‌چیز حتی در حالت آفلاین ذخیره و قابل ادامه است.
         </Text>
 
         {!draft && !errorMessage ? (
@@ -319,6 +432,38 @@ export default function IncidentDraftScreen() {
                 style={styles.cta}
               />
             ) : null}
+
+            <SectionHeader
+              icon={AppIcons.home.myReports.name}
+              iconFamily={AppIcons.home.myReports.family}
+              title="فرم‌های سازمان"
+            />
+            {formCards.length > 0 ? (
+              <View style={styles.formList}>
+                {formCards.map(form => (
+                  <FormCard
+                    disabled={!hasLocation}
+                    form={form}
+                    key={form._id}
+                    onPress={() => void openChosenForm(form)}
+                  />
+                ))}
+              </View>
+            ) : formsLoaded ? (
+              <Text style={styles.emptyLocation}>
+                سازمان شما فرمی برای این نوع رخداد منتشر نکرده است؛ می‌توانید از فرم استاندارد ادامه دهید.
+              </Text>
+            ) : (
+              <SkeletonCard height={72} />
+            )}
+            {hiddenFormCount > 0 ? (
+              <Button
+                fullWidth
+                label={`نمایش ${hiddenFormCount.toLocaleString('fa-IR')} فرم دیگر`}
+                onPress={() => setShowAllForms(true)}
+                variant="outline"
+              />
+            ) : null}
           </>
         ) : null}
 
@@ -389,6 +534,55 @@ function TypeTile({
       <Text numberOfLines={2} style={[styles.typeCaption, disabled && styles.typeLabelDisabled]}>
         {caption}
       </Text>
+    </Pressable>
+  );
+}
+
+function FormCard({
+  form,
+  disabled = false,
+  onPress,
+}: {
+  form: PickerForm;
+  disabled?: boolean;
+  onPress?: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityLabel={form.name}
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.formCard,
+        Shadow.card,
+        pressed && !disabled && styles.pressed,
+        disabled && styles.typeTileDisabled,
+      ]}
+    >
+      <View style={[styles.typeIcon, disabled && styles.typeIconMuted]}>
+        <Icon
+          color={disabled ? AppTheme.colors.textFaint : AppTheme.colors.primaryStrong}
+          name={AppIcons.phases.basicInfo.name}
+          family={AppIcons.phases.basicInfo.family}
+          size={20}
+        />
+      </View>
+      <View style={styles.formCardBody}>
+        <View style={styles.formCardTitleRow}>
+          <Text style={[styles.formCardTitle, disabled && styles.typeLabelDisabled]}>
+            {form.name}
+          </Text>
+          {form.isDefault ? <Text style={styles.formCardBadge}>پیش‌فرض</Text> : null}
+        </View>
+        {form.description ? (
+          <Text numberOfLines={2} style={styles.formCardDescription}>
+            {form.description}
+          </Text>
+        ) : null}
+      </View>
+      <Icon color={AppTheme.colors.textFaint} name="chevron-back" size={16} />
     </Pressable>
   );
 }
@@ -500,4 +694,47 @@ const styles = StyleSheet.create({
   },
   cta: { marginTop: 4 },
   pressed: { opacity: 0.82 },
+  formList: { gap: 10 },
+  formCard: {
+    alignItems: 'center',
+    backgroundColor: AppTheme.colors.surface,
+    borderColor: AppTheme.colors.border,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    flexDirection: 'row-reverse',
+    gap: 12,
+    padding: 12,
+  },
+  formCardBody: { flex: 1, gap: 4 },
+  formCardTitleRow: {
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    gap: 8,
+    justifyContent: 'space-between',
+  },
+  formCardTitle: {
+    color: AppTheme.colors.textStrong,
+    flexShrink: 1,
+    fontFamily: Estedad.semiBold,
+    fontSize: 14.5,
+    lineHeight: 22,
+    textAlign: 'right',
+  },
+  formCardBadge: {
+    backgroundColor: AppTheme.colors.primarySoft,
+    borderRadius: Radius.sm,
+    color: AppTheme.colors.primaryStrong,
+    fontFamily: Estedad.medium,
+    fontSize: 10.5,
+    overflow: 'hidden',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  formCardDescription: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.regular,
+    fontSize: 11.5,
+    lineHeight: 18,
+    textAlign: 'right',
+  },
 });

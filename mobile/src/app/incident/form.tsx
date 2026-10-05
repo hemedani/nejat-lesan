@@ -11,7 +11,13 @@ import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator } from 'react-native';
 
-import { fetchPatrolForm, type PatrolForm, type ReferenceOption } from '@/api/form-definition';
+import {
+  fetchPatrolForm,
+  fetchPatrolFormById,
+  type PatrolForm,
+  type PatrolFormResult,
+  type ReferenceOption,
+} from '@/api/form-definition';
 import { translateApiError } from '@/api/errors';
 import type { AnswerTree, ContentNode, FieldNode, FormDefinition } from '@forms';
 import { isNodeVisible, resolveOptions, type ValidationResult } from '@forms';
@@ -35,8 +41,9 @@ import {
 import { saveDraftFormData, requeueDraft } from '@/domain/draft-actions';
 import { formAnswersToDraftData } from '@/domain/form-submission';
 import {
-	defaultAccidentFormPayload,
-	isDefaultAccidentForm,
+  DEFAULT_ACCIDENT_FORM_ID,
+  defaultAccidentFormPayload,
+  isDefaultAccidentForm,
 } from '@/domain/default-accident-form';
 import { standardRouteFor } from '@/domain/form-routing';
 import { incidentTypeOf } from '@/domain/incident-type';
@@ -80,8 +87,9 @@ type LoadState =
 export default function IncidentFormScreen() {
   const router = useRouter();
   const session = useRequiredSession();
-  const params = useLocalSearchParams<{ uuid?: string }>();
+  const params = useLocalSearchParams<{ uuid?: string; definitionId?: string }>();
   const draftId = params.uuid ?? '';
+  const definitionId = params.definitionId ?? '';
 
   const [load, setLoad] = useState<LoadState>({ phase: 'loading' });
   const [definition, setDefinition] = useState<FormDefinition | null>(null);
@@ -116,7 +124,18 @@ export default function IncidentFormScreen() {
           ? 'accident'
           : 'incident_report';
 
-        let payload = await fetchPatrolForm(session, kind);
+        // An explicit id is the officer's choice from the entry screen and wins
+        // over "whatever is active": asking for the active form of a kind would
+        // silently open a different form if another was activated in between.
+        let payload: PatrolFormResult | ReturnType<typeof defaultAccidentFormPayload>;
+        if (definitionId === DEFAULT_ACCIDENT_FORM_ID) {
+          // The bundled form has no backend document, so there is nothing to fetch.
+          payload = defaultAccidentFormPayload();
+        } else if (definitionId) {
+          payload = await fetchPatrolFormById(session, definitionId);
+        } else {
+          payload = await fetchPatrolForm(session, kind);
+        }
 
         if (cancelled) return;
 
@@ -142,7 +161,10 @@ export default function IncidentFormScreen() {
         setForm(nextForm);
         setFormVersion(payload?.version?.version);
         setDefinition(normalized);
-        setOptions(payload?.options ?? {});
+        // The bundled form resolves no reference options, so its `options` is an
+        // empty object typed loosely; the stored form's is already the resolved
+        // shape. Neither can hold a wrong entry, so one assertion covers both.
+        setOptions((payload?.options ?? {}) as Record<string, ReferenceOption[]>);
         setLoad({ phase: 'ready' });
       } catch (cause) {
         if (cancelled) return;
@@ -161,7 +183,7 @@ export default function IncidentFormScreen() {
     return () => {
       cancelled = true;
     };
-  }, [draftId, session]);
+  }, [draftId, definitionId, session]);
 
   // --- resume the draft ---------------------------------------------------
   useEffect(() => {

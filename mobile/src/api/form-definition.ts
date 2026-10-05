@@ -4,7 +4,7 @@ import type {
   BackendActRequest,
 } from './backend-types';
 import type { ApiRequestOptions } from './client';
-import type { PickerForm } from '@/domain/form-picker';
+import type { FormKind, PickerForm } from '@/domain/form-picker';
 import type { Session } from '@/domain/types';
 
 /** `{ _id, name }` option rows for a reference field's source model. */
@@ -17,7 +17,13 @@ export type PatrolForm = {
   _id: string;
   name: string;
   description?: string;
-  incident_type?: string;
+  /**
+   * `form_kind`, not the retired `incident_type`: the definition was renamed when
+   * the report model split, and `getForPatrol` returns `form_kind`. The report is
+   * classified by its form, so this is what tells the caller which model will
+   * receive the answers.
+   */
+  form_kind?: FormKind;
   schema_version: number;
   definition: FormDefinition;
 };
@@ -34,8 +40,15 @@ export type PatrolFormResult = {
   version: { version: number };
 };
 
-type GetForPatrolRequest = BackendActRequest<'main', 'form_definition', 'getForPatrol'>;
-type ValidateRequest = BackendActRequest<'main', 'form_definition', 'validate'>;
+/**
+ * `get` is a want-marker (`enums([0, 1])` on the backend), not a projection:
+ * the act returns its whole payload and the framework never narrows it.
+ *
+ * The values are the idiomatic `1` every Lesan client sends — the validators
+ * were the outliers and used to declare the *response* type here instead, which
+ * rejected this payload with "Expected an object, but received: 1".
+ */
+const PATROL_FORM_GET = { form: 1, options: 1, version: 1 } as const;
 
 /**
  * Fetch the org's active form definition plus its reference options.
@@ -46,7 +59,7 @@ type ValidateRequest = BackendActRequest<'main', 'form_definition', 'validate'>;
  */
 export function fetchPatrolForm(
   session: Session,
-  formKind: 'accident' | 'incident_report' | undefined,
+  formKind: FormKind | undefined,
   options: ApiRequestOptions = {},
 ): Promise<PatrolFormResult> {
   return callTypedAct<'main', 'form_definition', 'getForPatrol', PatrolFormResult>(
@@ -58,9 +71,37 @@ export function fetchPatrolForm(
         set: {
           ...(formKind ? { formKind } : {}),
         },
-        get: { form: 1, options: 1, version: 1 },
+        get: PATROL_FORM_GET,
       },
-    } as unknown as GetForPatrolRequest,
+    },
+    { token: session.token, ...options },
+  );
+}
+
+/**
+ * Fetch one specific definition by id.
+ *
+ * The entry screen lets the officer pick a form, and the id they picked has to
+ * survive the navigation — asking `getForPatrol` for "the active accident form"
+ * instead would silently swap in a different form if the organization activated
+ * another one in between. `definitionId` is resolved without the `status:
+ * active` filter, so a form that was just archived still opens.
+ */
+export function fetchPatrolFormById(
+  session: Session,
+  definitionId: string,
+  options: ApiRequestOptions = {},
+): Promise<PatrolFormResult> {
+  return callTypedAct<'main', 'form_definition', 'getForPatrol', PatrolFormResult>(
+    {
+      service: 'main',
+      model: 'form_definition',
+      act: 'getForPatrol',
+      details: {
+        set: { definitionId },
+        get: PATROL_FORM_GET,
+      },
+    },
     { token: session.token, ...options },
   );
 }
@@ -71,17 +112,21 @@ export function fetchPatrolForm(
  * A separate list act from `getForPatrol`, because the entry screen has to show
  * *many* forms at once — the officer chooses one — while `getForPatrol` resolves
  * the single form for a report already in progress.
+ *
+ * `gets` filters on `form_kind` (the act's own snake_case key), and `callTypedAct`
+ * has already unwrapped the `{ success, body }` envelope, so the resolved value
+ * *is* the row array — reading `.body` off it would find nothing.
  */
 export async function fetchPatrolForms(
   session: Session,
-  formKind: 'accident' | 'incident_report' | undefined,
+  formKind?: FormKind,
   options: ApiRequestOptions = {},
 ): Promise<PickerForm[]> {
-  const response = await callTypedAct<
+  const rows = await callTypedAct<
     'main',
     'form_definition',
     'gets',
-    Array<Record<string, unknown>>
+    Record<string, unknown>[]
   >(
     {
       service: 'main',
@@ -92,7 +137,7 @@ export async function fetchPatrolForms(
           page: 1,
           limit: 100,
           status: 'active',
-          ...(formKind ? { formKind } : {}),
+          ...(formKind ? { form_kind: formKind } : {}),
         },
         get: {
           _id: 1,
@@ -105,12 +150,8 @@ export async function fetchPatrolForms(
     } as unknown as BackendActRequest<'main', 'form_definition', 'gets'>,
     { token: session.token, ...options },
   );
-  const value = response as unknown as {
-    success?: boolean;
-    body?: Array<Record<string, unknown>>;
-  };
-  if (!value?.success || !Array.isArray(value.body)) return [];
-  return value.body.map((row) => ({
+  if (!Array.isArray(rows)) return [];
+  return rows.map((row) => ({
     _id: String(row._id),
     name: String(row.name ?? ''),
     description: typeof row.description === 'string' ? row.description : undefined,
@@ -141,7 +182,7 @@ export function validateFormAnswers(
         set: { _id: definitionId, answers },
         get: {},
       },
-    } as unknown as ValidateRequest,
+    },
     { token: session.token, ...options },
   );
 }
