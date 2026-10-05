@@ -18,6 +18,8 @@ import { dashboardStatisticSetup } from "./dashboardStatistic/mod.ts";
 import { seedSetup } from "./seed/mod.ts";
 import { getPatrolOfficersSetup } from "./getPatrolOfficers/mod.ts";
 import { addOrRemoveRolesSetup } from "./addOrRemoveRoles/mod.ts";
+import { seedDemoOrganizationSetup } from "./seedDemoOrganization/mod.ts";
+import { cleanupDemoSeedSetup } from "./cleanupDemoSeed/mod.ts";
 
 export const userSetup = () => {
 	addUserSetup();
@@ -40,4 +42,11 @@ export const userSetup = () => {
 	getPatrolOfficersSetup();
 	seedSetup();
 	addOrRemoveRolesSetup();
+	// The demo-organization seed and its cleanup are registered here, not from
+	// `src/mod.ts`: they are `user` acts, so they belong to this module's setup.
+	// They were defined but never called — the same silent class of bug as the
+	// missing `formDefinitionSetup`, invisible to any textual audit because the
+	// `setAct` calls exist on disk either way. Verify registration at runtime.
+	seedDemoOrganizationSetup();
+	cleanupDemoSeedSetup();
 };
