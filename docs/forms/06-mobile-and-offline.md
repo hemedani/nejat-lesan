@@ -49,14 +49,35 @@ mobile/src/constants/form-icon-map.ts          the explicit 80-name native map
 
 `/incident` shows the organization's active forms, not a fixed list of incident
 types — an organization can author as many report forms as it needs. `buildFormPicker`
-sorts accidents first, then report forms by title, shows the first three inline and
-hides the rest behind one button.
+sorts accidents first, then report forms by title, and lists **all** of them: the
+form list is the officer's incident-type menu, so hiding one behind a second tap
+would hide the type they came for.
 
-Each tile draws the `icon` the organization's form declared, resolved from the
-shared name through `form-icon.tsx`. The names are the same on web and mobile, so a
-form looks like itself in the builder, in the console and in the field.
+The screen has two modes, and `buildFormPicker` returns which one applies:
 
-If the org has no active accident form, the app appends its own
+- **`forms`** — the organization has authored at least one active **report** form,
+  which together with the bundled accident default covers every incident type. Its
+  forms *are* the types, so the built-in «نوع واقعه» tiles and the «ادامه ثبت …»
+  button are hidden. Showing both would ask the same question twice, and the tiles
+  cannot reach an authored form at all: tapping «خرابی راه» runs the standard flow,
+  never the organization's own «خرابی سطح راه» form. The list is **not** filtered by
+  the draft's current incident type — `form_kind` decides which model stores the
+  report, and filtering by the type is what once showed one of an organization's four
+  forms.
+- **`types`** — it has authored none, **or only an accident form**. The built-in tiles
+  and the standard flow behind them stay: without them a خرابی/مانع/سایر report would
+  have no form to be filed with at all. This is also the offline state, where the form
+  list cannot load and incident creation must never be blocked.
+
+Until the backend answers, neither mode is known, so the chooser renders a skeleton
+rather than the tiles — otherwise the tiles would flash and be replaced.
+
+Each card draws the `icon` the organization's form declared, resolved from the
+shared name through `form-icon.tsx`; a form that declared none falls back to a
+generic glyph. The names are the same on web and mobile, so a form looks like itself
+in the builder, in the console and in the field.
+
+If the org has no active accident form, the app prepends its own
 `DEFAULT_ACCIDENT_FORM`. Two consequences follow from that form having no backend
 counterpart: its draft carries **no** `form_definition_id`, and it is fully
 literal, so it renders and validates with no network at all. An officer is never

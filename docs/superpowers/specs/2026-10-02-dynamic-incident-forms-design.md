@@ -265,6 +265,16 @@ Phosphor icons, the **first three inline and the rest behind a "بقیه فرم�
 accident form is always present because it is a singleton. If an organization has zero
 non-accident forms, one extra standard-flow entry routes to `/incident/simple`.
 
+> **Superseded (2026-10-05).** The two shipped deviations from this paragraph were both
+> bugs. The list is no longer split into "three inline + the rest behind a button": the
+> picker is the officer's incident-type menu, so hiding a form behind a second tap hides
+> the type they came for. It is also no longer filtered by the draft's `incident_type`,
+> which showed one of an organization's four forms — `form_kind` decides the model, not
+> the type. The tiles are now shown only when the organization's forms cannot stand in
+> for them: no report form authored (so خرابی/مانع/سایر would have nothing to file
+> with), or offline, where the list cannot load at all. Otherwise the forms replace them.
+> See `docs/forms/06-mobile-and-offline.md` § *The entry screen is a picker*.
+
 No new list act is needed — the org-scoped `form_definition.gets` returns the active forms
 and `getForPatrol({ definitionId })` already fetches the chosen one.
 

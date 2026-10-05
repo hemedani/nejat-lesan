@@ -206,11 +206,19 @@ incident creation must never require connectivity.
 The entry screen is a **form picker**, not a fixed list of incident types, because
 an organization can author as many report forms as it needs. `fetchPatrolForms`
 loads them, `buildFormPicker` sorts accidents first and then report forms by
-title, shows the first three inline and hides the rest behind one button. When
-the org has no active accident form, the app's own `DEFAULT_ACCIDENT_FORM` is
-appended so an officer is never blocked because an administrator has not finished
-setup — and because that form has no backend counterpart, its draft deliberately
-submits **without** `form_definition_id`.
+title and lists **all** of them — the list is the officer's incident-type menu, so
+there is no "first N, the rest behind a button" tier to hide a type behind. It also
+reports which of the screen's two modes applies: when the organization has authored at
+least one active **report** form (`forms`) — enough, with the bundled accident default,
+to cover every incident type — its forms replace the built-in «نوع واقعه» tiles and the
+standard-flow button, which are shown only in the `types` mode: an organization that
+authored nothing, one with an accident form but no report form (whose officers would
+otherwise have no way to file خرابی/مانع/سایر), or an offline device that could not load
+the list. The list is never filtered by the draft's current incident type; `form_kind`
+decides which model stores the report. When the org has no active accident form, the
+app's own `DEFAULT_ACCIDENT_FORM` is prepended so an officer is never blocked because
+an administrator has not finished setup — and because that form has no backend
+counterpart, its draft deliberately submits **without** `form_definition_id`.
 
 `/incident/form` no longer dead-ends either. `empty`, `unsupported` **and** a
 transport failure while offline all fall through to the standard flow for the
