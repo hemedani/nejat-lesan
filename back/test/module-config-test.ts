@@ -19,6 +19,11 @@ import { assert as structAssert, create as structCreate } from "@deps";
 import { coreApp, getAtcsWithServices, module_config, user } from "../mod.ts";
 import { jwtTokenKey } from "@lib";
 import { MODULE_KEYS } from "../src/app_modules/constants.ts";
+import {
+	ensureModuleConfig,
+	getEnabledModuleKeys,
+	getModuleConfigRows,
+} from "../src/app_modules/moduleConfig.ts";
 
 const TEST_DB = "nejat_patrol_ops_test";
 const RUN = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
@@ -88,6 +93,7 @@ const allOn = [
 	{ key: "charts", enabled: true },
 	{ key: "incident_patrol", enabled: true },
 	{ key: "warehouse", enabled: true },
+	{ key: "forms", enabled: true },
 ];
 
 let ghostId: ObjectId;
@@ -143,6 +149,91 @@ Deno.test("invalid module key is rejected", async () => {
 				ghostId,
 			),
 		Error,
+	);
+});
+
+Deno.test("a stored doc missing a module key does NOT keep that module off", async () => {
+	// سندِ «قدیمی»: تنها سه ماژولی که هنگام نوشتنش وجود داشتند — `forms` نیست.
+	// این وضعیت برای هر نصبی رخ می‌دهد که پیش از معرفی ماژولِ تازه پیکربندی شده.
+	await module_config.findOneAndUpdate({
+		filter: { key: "app_modules" },
+		update: {
+			$set: {
+				modules: [
+					{ key: "charts", enabled: true },
+					{ key: "incident_patrol", enabled: true },
+					{ key: "warehouse", enabled: true },
+				],
+			},
+		},
+		projection: { _id: 1 },
+	});
+
+	// مسیر بوت: ensureModuleConfig روی سندِ موجود، refreshEnabledSet را صدا می‌زند.
+	await ensureModuleConfig();
+
+	assert(
+		getEnabledModuleKeys().includes("forms"),
+		"کلیدِ غایب در سند نباید ماژول را برای همیشه خاموش کند",
+	);
+
+	// UI باید همان را بگوید — گیت و getModuleConfigRows هم‌داستان باشند.
+	const rows = await getModuleConfigRows();
+	assertEquals(rows.find((r) => r.key === "forms")?.enabled, true);
+
+	// و در عمل: اکشنِ ماژولِ فرم نباید برای Manager رد شود.
+	const formResult = await runAct(
+		"form_definition",
+		"gets",
+		{ set: { page: 1, limit: 1 }, get: { _id: 1 } },
+		managerId,
+	);
+	assert(
+		Array.isArray((formResult as any).data ?? formResult),
+		"form_definition.gets باید باز باشد",
+	);
+
+	await runAct(
+		"app_modules",
+		"setModules",
+		{ set: { modules: allOn }, get: { success: 1 } },
+		ghostId,
+	);
+});
+
+Deno.test("a partial setModules write never silently disables other modules", async () => {
+	// فقط یک ماژول می‌فرستیم (مثل UI که فقط ماژول‌های همان صفحه را می‌فرستد).
+	// بقیه باید روشن بمانند و در سند هم ردیف داشته باشند.
+	await runAct(
+		"app_modules",
+		"setModules",
+		{ set: { modules: [{ key: "charts", enabled: true }] }, get: { success: 1 } },
+		ghostId,
+	);
+
+	const doc = await module_config.findOne({
+		filters: { key: "app_modules" },
+		projection: { modules: 1 },
+	});
+	const stored = (doc as any).modules as Array<{ key: string; enabled: boolean }>;
+	assertEquals(
+		stored.length,
+		MODULE_KEYS.length,
+		"سند باید برای هر کلیدِ ماژول ردیف داشته باشد",
+	);
+	for (const key of MODULE_KEYS) {
+		assert(stored.some((m) => m.key === key), `${key} باید در سند ذخیره شود`);
+		assert(
+			getEnabledModuleKeys().includes(key),
+			`${key} نباید با ذخیرهٔ جزئی خاموش شود`,
+		);
+	}
+
+	await runAct(
+		"app_modules",
+		"setModules",
+		{ set: { modules: allOn }, get: { success: 1 } },
+		ghostId,
 	);
 });
 

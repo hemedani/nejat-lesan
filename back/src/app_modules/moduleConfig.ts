@@ -132,20 +132,24 @@ const moduleKeyFor = (schema: string, actName: string): ModuleKey | null => {
 	return null;
 };
 
-/** خواندن پیکربندی از دیتابیس (یک بار در بوت و پس از هر تغییر). */
+/**
+ * خواندن پیکربندی از دیتابیس (یک بار در بوت و پس از هر تغییر).
+ *
+ * کلیدِ **غایب** در سند = فعال، دقیقاً همان قاعده‌ای که getModuleConfigRows و
+ * orgModules دارند. این هم‌ارزی حیاتی است: سندِ ذخیره‌شده ممکن است کلیدی را
+ * نداشته باشد — نصبی که پیش از معرفی آن ماژول پیکربندی شده، یا ذخیرهٔ جزئی از UI.
+ * اگر آن کلید را خاموش بگیریم، ماژول برای همیشه غیرفعال می‌ماند در حالی که UI
+ * (getModuleConfigRows با `?? true`) آن را روشن نشان می‌دهد؛ نتیجه‌اش این است که
+ * گیتِ اکشن‌ها رد می‌کند و لینکِ ناوبریِ ماژول هرگز دیده نمی‌شود.
+ */
 const refreshEnabledSet = async (): Promise<void> => {
 	const doc = await module_config.findOne({
 		filters: { key: CONFIG_KEY },
 		projection: { modules: 1 },
 	});
-	if (!doc?.modules?.length) {
-		enabledModules = new Set(MODULE_KEYS);
-		return;
-	}
+	const rows = (doc?.modules || []) as Array<{ key: string; enabled: boolean }>;
 	enabledModules = new Set(
-		(doc.modules as Array<{ key: string; enabled: boolean }>)
-			.filter((m) => m.enabled)
-			.map((m) => m.key),
+		MODULE_KEYS.filter((key) => rows.find((r) => r.key === key)?.enabled ?? true),
 	);
 };
 
@@ -181,15 +185,27 @@ export const ensureModuleConfig = async (): Promise<void> => {
 	await refreshEnabledSet();
 };
 
-/** ذخیره‌سازی از طریق اکشن Ghost (setModules). */
+/**
+ * ذخیره‌سازی از طریق اکشن Ghost (setModules).
+ *
+ * سند همیشه با یک ردیف برای **هر** کلیدِ MODULE_KEYS نوشته می‌شود؛ کلیدِ نیامده
+ * «فعال» فرض می‌شود. بدون این نرمال‌سازی، یک ذخیرهٔ جزئی از UI (که فقط ماژول‌های
+ * همان صفحه را می‌فرستد) بقیهٔ ماژول‌ها را بی‌صدا از سند حذف می‌کند و آن‌ها با
+ * قاعدهٔ «غیاب = فعال» در سندِ ناقص باقی می‌مانند. نوشتنِ کامل، سند را خودترمیم
+ * می‌کند و تضمین می‌کند UI و گیت همیشه یک چیز را می‌گویند.
+ */
 export const setModuleConfig = async (
 	modules: Array<{ key: string; enabled: boolean }>,
 ): Promise<void> => {
+	const normalized = MODULE_KEYS.map((key) => ({
+		key,
+		enabled: modules.find((m) => m.key === key)?.enabled ?? true,
+	}));
 	await module_config.findOneAndUpdate({
 		filter: { key: CONFIG_KEY },
 		update: {
 			$set: {
-				modules,
+				modules: normalized,
 				updatedAt: new Date(),
 			},
 		},
