@@ -35,11 +35,18 @@ import { Notice } from "@/components/patrol/ui";
  */
 type BulkAction = "start_review" | "approve" | "return";
 
-/** What each action did, in the past tense, for the batch summary. */
-const ACTION_VERBS: Record<BulkAction, string> = {
-  start_review: "وارد بررسی شد",
-  approve: "تأیید شد",
-  return: "برای اصلاح برگشت خورد",
+/**
+ * What each action did, in the past tense, for the batch summary.
+ *
+ * Two forms, because a batch that moved nothing needs the *negated* verb: «هیچیک از
+ * ۳ گزارش تأیید شد» says the opposite of what happened. The negative is written out
+ * rather than derived by a rule, because Persian negation is not a prefix — «تأیید
+ * نشد», «وارد بررسی نشد», «برگشت نخورد».
+ */
+const ACTION_VERBS: Record<BulkAction, { done: string; notDone: string }> = {
+  start_review: { done: "وارد بررسی شد", notDone: "وارد بررسی نشد" },
+  approve: { done: "تأیید شد", notDone: "تأیید نشد" },
+  return: { done: "برای اصلاح برگشت خورد", notDone: "برای اصلاح برگشت نخورد" },
 };
 
 /**
@@ -59,6 +66,15 @@ const MAX_LISTED_REFUSALS = 8;
 const MAX_LISTED_TARGETS = 8;
 
 const count = (value: number): string => value.toLocaleString("fa-IR");
+
+/**
+ * The selection, named, for the confirmation copy.
+ *
+ * Same rule as `headline`: «همهٔ ۱ گزارش» is not Persian, because there is no "all
+ * of one", so a single row is named rather than counted.
+ */
+const selectionLabel = (n: number): string =>
+  n === 1 ? "گزارش انتخاب‌شده" : `همهٔ ${count(n)} گزارش انتخاب‌شده`;
 
 /**
  * The console's words for the export's enum columns.
@@ -108,8 +124,8 @@ type RefusedRow = { id: string; label: string; error: string };
 
 type BatchSummary = {
   tone: "emerald" | "amber";
-  /** What the action did, in the past tense: «وارد بررسی شد». */
-  verb: string;
+  /** Which action this batch ran, so the summary can name it in either tense. */
+  action: BulkAction;
   /** How many rows actually transitioned. */
   moved: number;
   /** How many rows the backend answered about at all. */
@@ -143,28 +159,45 @@ const summarize = (
   const moved = results.length - refused.length;
 
   return {
+    action,
     tone: moved > 0 && refused.length === 0 ? "emerald" : "amber",
-    verb: ACTION_VERBS[action],
     moved,
     answered: results.length,
     refused,
   };
 };
 
-/** The one sentence that says whether the batch worked, before the refusals. */
+/**
+ * The one sentence that says whether the batch worked, before the refusals.
+ *
+ * A single report is *named*, not counted. Persian does not pluralise a noun after a
+ * numeral — «۳ گزارش» is right — but a pronoun that presumes a plurality is not:
+ * «هیچیک از ۱ گزارش» and «همهٔ ۱ گزارش» are both wrong, because there is no "one of
+ * many" when there is exactly one, and the batch bar is a one-row batch most of the
+ * time a reviewer uses it. The negated verb matters just as much: a batch that moved
+ * nothing did not «تأیید شد».
+ */
 const headline = (summary: BatchSummary): string => {
   if (summary.answered === 0) {
     return "نتیجه‌ای برای این دسته برنگشت؛ هیچ گزارشی تغییر نکرد.";
   }
+
+  const verb = ACTION_VERBS[summary.action];
+  const single = summary.answered === 1;
+
   if (summary.moved === 0) {
-    return `هیچ‌یک از ${count(summary.answered)} گزارش انتخاب‌شده ${summary.verb}. دلیل هر مورد:`;
+    return single
+      ? `گزارش انتخاب‌شده ${verb.notDone}. دلیل:`
+      : `هیچ‌یک از ${count(summary.answered)} گزارش انتخاب‌شده ${verb.notDone}. دلیل هر مورد:`;
   }
   if (summary.refused.length === 0) {
-    return `همهٔ ${count(summary.moved)} گزارش انتخاب‌شده ${summary.verb}.`;
+    return single
+      ? `گزارش انتخاب‌شده ${verb.done}.`
+      : `همهٔ ${count(summary.moved)} گزارش انتخاب‌شده ${verb.done}.`;
   }
   return (
     `${count(summary.moved)} گزارش از ${count(summary.answered)} گزارش انتخاب‌شده ` +
-    `${summary.verb}. ${count(summary.refused.length)} گزارش اعمال نشد:`
+    `${verb.done}. ${count(summary.refused.length)} گزارش اعمال نشد:`
   );
 };
 
@@ -479,8 +512,8 @@ export function OversightActionBar({
         }
       >
         <p className="mb-3 text-xs leading-6 text-slate-400">
-          این دلیل روی همهٔ {count(selectedCount)} گزارش انتخاب‌شده ثبت می‌شود؛ ثبت دلیل برای
-          برگشت الزامی است.
+          این دلیل روی {selectionLabel(selectedCount)} ثبت می‌شود؛ ثبت دلیل برای برگشت
+          الزامی است.
         </p>
         <SelectedReportList selected={selected} labelFor={labelFor} />
         <MyInput
