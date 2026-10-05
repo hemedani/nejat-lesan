@@ -16,6 +16,30 @@ export type MapperResult =
   | { ok: true; set: AccidentAddSet }
   | { ok: false; reason: string };
 
+/**
+ * The build that filed a report, snapshotted verbatim.
+ *
+ * Sent only when the running version is actually known: an unknown version must
+ * never be reported as a real one, and the *absence* of this object is also what
+ * tells the backend the report did not arrive through the app. The backend
+ * resolves the filing organization from the session — the client can never name
+ * one.
+ */
+export type SubmissionProvenance = {
+  app_version: string;
+  platform: 'ios' | 'android';
+};
+
+export type IncidentReportAddSet = Record<string, unknown> & {
+  location: AccidentLocation;
+  client_report_uuid: string;
+  form_definition_id: string;
+};
+
+export type IncidentReportMapperResult =
+  | { ok: true; set: IncidentReportAddSet }
+  | { ok: false; reason: string };
+
 function toPoint(coords: Coordinates): AccidentLocation {
   return { type: 'Point', coordinates: [coords.longitude, coords.latitude] };
 }
@@ -165,6 +189,159 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
   const dynamicAnswers = data['dynamic_answers'];
   if (Array.isArray(dynamicAnswers) && dynamicAnswers.length > 0) {
     set['dynamic_answers'] = dynamicAnswers;
+  }
+
+  return { ok: true, set };
+}
+
+// ---------------------------------------------------------------------------
+// Non-accident reports (`incident_report`)
+// ---------------------------------------------------------------------------
+
+/**
+ * Plain columns `incident_report_set_schema` declares that a form can answer.
+ * Deliberately an allowlist rather than a copy-everything-except loop: the
+ * report model and the accident model overlap, and one shared exclusion list
+ * would silently start forwarding accident fields the day a new one is added.
+ */
+const REPORT_PASSTHROUGH_KEYS = [
+  'is_hazard',
+  'needs_repair',
+  'follow_up_required',
+  'temporary_action',
+  'gps_accuracy',
+  'travel_direction',
+  'kilometer',
+  'meter',
+  'reported_at',
+  'occurred_at',
+] as const;
+
+/** Single-valued relations `incident_report` accepts. */
+const REPORT_RELATION_KEYS = [
+  'officerId',
+  'patrolUnitId',
+  'vehicleId',
+  'policeStationId',
+  'provinceId',
+  'cityId',
+  'roadId',
+  'trafficZoneId',
+  'cityZoneId',
+  'positionId',
+  'incidentSeverityId',
+  'lightStatusId',
+  'roadSituationId',
+  'shoulderStatusId',
+] as const;
+
+/** Multi-valued relations `incident_report` accepts. */
+const REPORT_ARRAY_RELATION_KEYS = [
+  'roadDefectsIds',
+  'equipmentDamagesIds',
+  'airStatusesIds',
+  'roadSurfaceConditionsIds',
+] as const;
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Build the `incident_report.add` payload for a non-accident report.
+ *
+ * The split from `buildAccidentAddSet` is the whole point of the second model:
+ * `incident_report` declares no vehicle/people/facility cards, no collision type
+ * and no `typeId`, so forwarding an accident-shaped draft would be rejected by
+ * the server's strict validator. Only keys the report model actually declares
+ * are ever emitted, which is also why the two mappers cannot share one key list.
+ *
+ * A report is *classified by its form*, never by a category enum, so
+ * `form_definition_id` is the one thing that cannot be missing.
+ */
+export function buildIncidentReportAddSet(
+  draft: AccidentDraft,
+  provenance?: SubmissionProvenance | null,
+): IncidentReportMapperResult {
+  const data = draft.data ?? {};
+
+  const formDefinitionId = data['form_definition_id'];
+  if (typeof formDefinitionId !== 'string' || formDefinitionId.length === 0) {
+    return {
+      ok: false,
+      reason: 'این گزارش به فرمی متصل نیست؛ ابتدا فرم ثبت را انتخاب کنید.',
+    };
+  }
+
+  // Same rule as the accident mapper: the chosen pin wins, the officer's own fix
+  // is the fallback, so a report is never lost to a missing pin.
+  const selectedCoords = draft.incident_coords ?? draft.gps_coords;
+  if (!selectedCoords) {
+    return { ok: false, reason: 'موقعیت رخداد ثبت نشده است؛ ابتدا محل رخداد را مشخص کنید.' };
+  }
+
+  const set: IncidentReportAddSet = {
+    location: toPoint(selectedCoords),
+    client_report_uuid: draft.client_report_uuid,
+    form_definition_id: formDefinitionId,
+    sync_status: draft.sync_status === 'draft' ? 'draft' : 'queued',
+  };
+
+  if (draft.gps_coords) {
+    set['gps_coords'] = toPoint(draft.gps_coords);
+  }
+
+  // The form's free-text answer is promoted to a real column so the console can
+  // search and show it without decoding the answer tree.
+  const rawDescription = data['description'];
+  if (typeof rawDescription === 'string' && rawDescription.trim().length > 0) {
+    set['description'] = rawDescription.trim();
+  }
+
+  // The answer tree and the definition version are kept verbatim: a returned
+  // report has to be reopenable against the exact questions it answered.
+  const formAnswers = data['form_answers'];
+  if (isPlainObject(formAnswers)) {
+    set['form_answers'] = formAnswers;
+  }
+  const formVersion = data['form_version'];
+  if (typeof formVersion === 'number') {
+    set['form_version'] = formVersion;
+  }
+  const dynamicAnswers = data['dynamic_answers'];
+  if (Array.isArray(dynamicAnswers) && dynamicAnswers.length > 0) {
+    set['dynamic_answers'] = dynamicAnswers;
+  }
+
+  for (const key of REPORT_PASSTHROUGH_KEYS) {
+    const value = data[key];
+    if (value !== undefined && value !== null) {
+      (set as Record<string, unknown>)[key] = value;
+    }
+  }
+
+  for (const key of REPORT_RELATION_KEYS) {
+    const value = data[key];
+    if (typeof value === 'string' && value.length > 0) {
+      (set as Record<string, unknown>)[key] = value;
+    }
+  }
+
+  for (const key of REPORT_ARRAY_RELATION_KEYS) {
+    const value = data[key];
+    if (Array.isArray(value)) {
+      const ids = value.filter((v): v is string => typeof v === 'string' && v.length > 0);
+      if (ids.length > 0) {
+        (set as Record<string, unknown>)[key] = ids;
+      }
+    }
+  }
+
+  if (provenance) {
+    set['submitted_from'] = {
+      app_version: provenance.app_version,
+      platform: provenance.platform,
+    };
   }
 
   return { ok: true, set };

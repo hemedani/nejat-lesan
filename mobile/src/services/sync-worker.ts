@@ -5,9 +5,21 @@ import {
   submitAccidentReport,
   updateAccidentReportByUuid,
 } from '@/api/accident';
+import {
+  resubmitReturnedIncidentReport,
+  submitIncidentReport,
+  updateIncidentReportByUuid,
+} from '@/api/incident-report';
+import { snapPointToRoad } from '@/api/road';
 import { getAppConfig } from '@/config/env';
-import { buildAccidentAddSet } from '@/domain/accident-mapper';
+import {
+  buildAccidentAddSet,
+  buildIncidentReportAddSet,
+  type AccidentAddSet,
+  type SubmissionProvenance,
+} from '@/domain/accident-mapper';
 import { incidentTypeOf } from '@/domain/incident-type';
+import { toRoadSnap } from '@/domain/road-snap';
 import {
   hasIncompleteRequiredVehicleCards,
   readFormState,
@@ -21,7 +33,7 @@ import {
   recoverStaleSyncing,
   shouldProcessRecord,
 } from '@/domain/sync-rules';
-import type { AccidentDraft, QueueRecord, Session } from '@/domain/types';
+import type { AccidentDraft, QueueRecord, RoadSnap, Session } from '@/domain/types';
 import { createSessionService } from '@/auth/session-service';
 import { syncReportMedia } from '@/services/media-upload-service';
 import {
@@ -53,6 +65,60 @@ export type SyncWorker = {
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+/**
+ * The build that filed this report, or `null` when it cannot be named.
+ *
+ * `0.0.0` is what `getAppConfig` returns when the running build has no version —
+ * in an Expo Go dev session, for instance. That is not a version, so it is never
+ * stamped: a report must not claim a build we cannot vouch for, and the absence
+ * is also what keeps it out of the app-submitted population the oversight
+ * statistics measure.
+ */
+function submissionProvenance(): SubmissionProvenance | null {
+  const { appVersion, platform } = getAppConfig();
+  if (!appVersion || appVersion === '0.0.0') {
+    return null;
+  }
+  return { app_version: appVersion, platform };
+}
+
+/**
+ * The road snap for a draft, resolving it now if the pin was confirmed offline.
+ *
+ * The location picker promises «اطلاعات راه پس از اتصال تکمیل میشود» and stores
+ * no snap when the officer confirms without a connection, so this is the only
+ * place that lookup ever happens. Best-effort by contract: the officer was told
+ * they could continue without the road, so a failed lookup must never block the
+ * report — it just leaves the road reference unset.
+ */
+async function resolveRoadSnap(draft: AccidentDraft): Promise<RoadSnap | null> {
+  if (draft.road_snap) {
+    return draft.road_snap;
+  }
+  const coords = draft.incident_coords ?? draft.gps_coords;
+  if (!coords) {
+    return null;
+  }
+  try {
+    return toRoadSnap(await snapPointToRoad(coords));
+  } catch {
+    return null;
+  }
+}
+
+/** The report columns a snap contributes. Absent values are never sent. */
+function roadFields(snap: RoadSnap | null): Record<string, unknown> {
+  if (!snap) {
+    return {};
+  }
+  const fields: Record<string, unknown> = {};
+  if (snap.road_id) fields['roadId'] = snap.road_id;
+  if (typeof snap.kilometer === 'number') fields['kilometer'] = snap.kilometer;
+  if (typeof snap.meter === 'number') fields['meter'] = snap.meter;
+  if (snap.direction) fields['travel_direction'] = snap.direction;
+  return fields;
 }
 
 function isProcessable(record: QueueRecord, manual: boolean, nowMs: number): boolean {
@@ -100,9 +166,16 @@ async function handleResubmitAfterSync(
   session: Session,
   draft: AccidentDraft,
   record: QueueRecord,
+  isReport: boolean,
 ): Promise<'synced' | 'rejected' | 'retry'> {
   try {
-    await resubmitReturnedReport(session, draft.server_id as string);
+    // The two models have their own resubmit act, and a report announced through
+    // the accident one would simply not be found.
+    if (isReport) {
+      await resubmitReturnedIncidentReport(session, draft.server_id as string);
+    } else {
+      await resubmitReturnedReport(session, draft.server_id as string);
+    }
     await clearDraftReturnedFlag(draft.client_report_uuid);
     return 'synced';
   } catch (error) {
@@ -182,7 +255,13 @@ async function processRecord(
     attempts: record.attempts,
   });
 
-  if (hasIncompleteRequiredVehicleCards(readFormState(draft))) {
+  // Which model this draft belongs to decides the mapper, the submission act and
+  // the resubmit act. `accident` is the backward-compatible default, so only an
+  // explicit road_breakdown/road_obstacle/other routes to `incident_report`.
+  const isReport = incidentTypeOf(draft) !== 'accident';
+
+  // A report has no vehicle cards by construction, so the gate is accident-only.
+  if (!isReport && hasIncompleteRequiredVehicleCards(readFormState(draft))) {
     await persistQueueAndDraft(draft, record, {
       status: 'queued',
       attempts: record.attempts,
@@ -234,7 +313,10 @@ async function processRecord(
     }
   }
 
-  const mapped = buildAccidentAddSet(workingDraft);
+  const provenance = submissionProvenance();
+  const mapped = isReport
+    ? buildIncidentReportAddSet(workingDraft, provenance)
+    : buildAccidentAddSet(workingDraft);
   if (!mapped.ok) {
     await persistQueueAndDraft(draft, record, {
       status: 'rejected',
@@ -245,18 +327,47 @@ async function processRecord(
     return 'rejected';
   }
 
+  // The deferred half of the road snap. Run only after the mapper accepts, so a
+  // draft with no coordinates at all is rejected without a pointless lookup.
+  const roadSnap = await resolveRoadSnap(workingDraft);
+  const submissionDraft: AccidentDraft =
+    roadSnap && !workingDraft.road_snap
+      ? { ...workingDraft, road_snap: roadSnap }
+      : workingDraft;
+
+  const set: Record<string, unknown> = { ...mapped.set, ...roadFields(roadSnap) };
+  // The report mapper already stamps provenance; the accident mapper does not, so
+  // this fills it in once for both rather than teaching each mapper the same rule.
+  if (provenance && set['submitted_from'] === undefined) {
+    set['submitted_from'] = {
+      app_version: provenance.app_version,
+      platform: provenance.platform,
+    };
+  }
+
   try {
-    const submission = pickSubmissionAction(workingDraft);
-    const ack =
-      submission.act === 'update'
-        ? await updateAccidentReportByUuid(session, workingDraft.client_report_uuid, mapped.set)
-        : await submitAccidentReport(session, mapped.set);
+    const submission = pickSubmissionAction(submissionDraft);
+    const ack = isReport
+      ? submission.act === 'update'
+        ? await updateIncidentReportByUuid(
+            session,
+            submissionDraft.client_report_uuid,
+            set,
+          )
+        : await submitIncidentReport(session, set)
+      : submission.act === 'update'
+        ? await updateAccidentReportByUuid(
+            session,
+            submissionDraft.client_report_uuid,
+            set as unknown as AccidentAddSet,
+          )
+        : await submitAccidentReport(session, set as unknown as AccidentAddSet);
 
     const syncedDraft: AccidentDraft = {
-      ...workingDraft,
+      ...submissionDraft,
       sync_status: 'synced',
       server_id: ack._id,
-      report_id: ack.report_id ?? workingDraft.report_id,
+      report_id: ack.report_id ?? submissionDraft.report_id,
       rejection_reason: undefined,
       updated_at: nowIso(),
     };
@@ -268,7 +379,7 @@ async function processRecord(
     });
 
     if (needsResubmit(syncedDraft)) {
-      return await handleResubmitAfterSync(session, syncedDraft, record);
+      return await handleResubmitAfterSync(session, syncedDraft, record, isReport);
     }
     return 'synced';
   } catch (error) {
