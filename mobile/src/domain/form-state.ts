@@ -24,6 +24,7 @@ import type {
   AnswerTree,
   AnswerValue,
   ContentNode,
+  FieldNode,
   FormDefinition,
   Issue,
   RepeatableNode,
@@ -421,6 +422,53 @@ export const mergeAnswers = (
     base[key] = value;
   }
   return base;
+};
+
+/** A point captured outside the form, e.g. on the map screen. */
+export type CapturedLocation = { latitude: number; longitude: number };
+
+/**
+ * Project answers the app captured *before* the form was opened into the tree.
+ *
+ * A `location` field is a capture marker, not an input: the officer sets the
+ * point on the map screen and it lands on the draft, so the field itself never
+ * writes an answer. Without this projection the form cannot see the location at
+ * all — and because the QA definition marks that field `must()`, the first page
+ * is unsatisfiable and the officer can never reach step two.
+ *
+ * The map screen is the single source of truth for a `location` field, so the
+ * captured point is written unconditionally: re-running this after the officer
+ * moves the point updates the answer, and an answer left over in a saved draft
+ * cannot shadow the real coordinate column.
+ *
+ * Matching is by field **type**, not by key, so a definition may name the field
+ * whatever it likes. Only top-level fields are seeded: one captured point cannot
+ * address a `location` field inside a repeatable's rows, and guessing which row
+ * it meant would be wrong.
+ */
+export const seedCapturedAnswers = (
+  definition: FormDefinition,
+  answers: AnswerTree,
+  captured: { location?: CapturedLocation | null },
+): AnswerTree => {
+  const point = captured.location;
+  if (!point) return answers;
+
+  let seeded: AnswerTree | null = null;
+  walkNodes(definition, answers, (node, meta) => {
+    if (node.kind !== 'field') return;
+    // Repeatable rows are skipped deliberately — see the note above.
+    if (meta.depth !== 0 || meta.scope.length > 0) return;
+    const field = node as FieldNode;
+    if (field.type !== 'location') return;
+
+    seeded = {
+      ...(seeded ?? answers),
+      [field.key]: { latitude: point.latitude, longitude: point.longitude },
+    };
+  });
+
+  return seeded ?? answers;
 };
 
 /** Serialize answers for the `drafts.payload_json` column. */

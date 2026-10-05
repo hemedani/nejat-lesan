@@ -11,6 +11,7 @@ import {
   reachablePages,
   removeNestedRow,
   removeRow,
+  seedCapturedAnswers,
   setNestedRowAnswer,
   serializeAnswers,
   setFieldAnswer,
@@ -363,5 +364,102 @@ describe('draft persistence', () => {
     const merged = mergeAnswers({ a: '1' }, { b: undefined as never });
     expect(merged.a).toBe('1');
     expect('b' in merged).toBe(false);
+  });
+});
+
+/**
+ * The QA form's first page requires a `location` field, but the point is captured
+ * on the map screen and stored on the draft — the field itself never writes an
+ * answer. Without projecting it back, that page can never be left, which is the
+ * bug these cover.
+ */
+describe('seedCapturedAnswers', () => {
+  const locationDefinition: FormDefinition = {
+    schemaVersion: 1,
+    name: 'موقعیت',
+    pages: [
+      {
+        key: 'location',
+        title: 'موقعیت واقعه',
+        order: 1,
+        sections: [
+          {
+            key: 'locationSection',
+            title: 'موقعیت',
+            order: 1,
+            nodes: [
+              // Deliberately *not* named `incident_coords`: matching is by type,
+              // so a definition is free to name the field anything.
+              {
+                kind: 'field',
+                key: 'point',
+                type: 'location',
+                label: 'موقعیت روی نقشه',
+                order: 1,
+                requiredWhen: { op: 'always' },
+              },
+              {
+                kind: 'field',
+                key: 'note',
+                type: 'text',
+                label: 'توضیح',
+                order: 2,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  const point = { latitude: 35.6892, longitude: 51.389 };
+
+  it('writes the captured point onto a location field', () => {
+    const seeded = seedCapturedAnswers(locationDefinition, {}, { location: point });
+    expect(seeded.point).toEqual(point);
+  });
+
+  it('makes the required page satisfiable', () => {
+    const seeded = seedCapturedAnswers(locationDefinition, {}, { location: point });
+    // This is the actual regression: before the seed, the page could not be left.
+    expect(validatePage(locationDefinition, seeded, 'location').errors).toEqual([]);
+    expect(validatePage(locationDefinition, {}, 'location').errors.length).toBeGreaterThan(0);
+  });
+
+  it('overwrites a stale point so a moved location wins', () => {
+    const stale = { point: { latitude: 1, longitude: 2 } };
+    const seeded = seedCapturedAnswers(locationDefinition, stale, { location: point });
+    expect(seeded.point).toEqual(point);
+  });
+
+  it('leaves other answers untouched', () => {
+    const seeded = seedCapturedAnswers(locationDefinition, { note: 'محفوظ' }, { location: point });
+    expect(seeded.note).toBe('محفوظ');
+  });
+
+  it('is a no-op when no point was captured', () => {
+    const answers = { note: 'محفوظ' };
+    expect(seedCapturedAnswers(locationDefinition, answers, { location: null })).toBe(answers);
+    expect(seedCapturedAnswers(locationDefinition, answers, {})).toBe(answers);
+  });
+
+  it('does not invent a key for a definition with no location field', () => {
+    const textOnly: FormDefinition = {
+      schemaVersion: 1,
+      name: 'متن',
+      pages: [{
+        key: 'p',
+        title: 'صفحه',
+        order: 1,
+        sections: [{
+          key: 's',
+          title: 'بخش',
+          order: 1,
+          nodes: [{ kind: 'field', key: 'note', type: 'text', label: 'توضیح', order: 1 }],
+        }],
+      }],
+    };
+    const seeded = seedCapturedAnswers(textOnly, { note: 'x' }, { location: point });
+    expect(seeded).toEqual({ note: 'x' });
   });
 });

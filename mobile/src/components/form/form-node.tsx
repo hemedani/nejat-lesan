@@ -14,8 +14,10 @@ import type {
 import { evalRule, isNodeRequired, isNodeVisible, resolveOptions } from '@forms';
 import type { ReferenceOption } from '@/api/form-definition';
 import { addNestedRow, removeNestedRow, setFieldAnswer, setNestedRowAnswer } from '@/domain/form-state';
+import { isDateTimeFieldType } from '@/domain/form-datetime';
 import { ChipsRow, ErrorText, FieldLabel, FormInput } from '@/components/form-fields';
 import { CardShell } from '@/components/form-fields';
+import { DateTimeField } from '@/components/form/date-time-field';
 import { AppTheme } from '@/constants/theme';
 
 type Row = Record<string, AnswerValue>;
@@ -35,6 +37,7 @@ export function FormNode({
   errors,
   warnings,
   onChange,
+  onEditLocation,
   scope = [],
   path = [],
 }: {
@@ -45,6 +48,13 @@ export function FormNode({
   errors: Issue[];
   warnings: Issue[];
   onChange: (next: AnswerTree) => void;
+  /**
+   * Opens the map screen for a `location` field.
+   *
+   * Omitted where there is nothing to capture into (e.g. a preview), in which
+   * case the field is display-only.
+   */
+  onEditLocation?: () => void;
   /** Enclosing repeatable rows, for rules scoped to the current row. */
   scope?: AnswerValue[];
   /** Chain of repeatable keys and row indices addressing this node. */
@@ -67,6 +77,7 @@ export function FormNode({
             errors={[]}
             warnings={[]}
             onChange={onChange}
+            onEditLocation={onEditLocation}
             scope={scope}
             path={path}
           />
@@ -83,6 +94,7 @@ export function FormNode({
         answers={answers}
         options={options}
         path={path}
+        onEditLocation={onEditLocation}
         onChange={onChange}
       />
     );
@@ -98,6 +110,7 @@ export function FormNode({
       warnings={warnings}
       scope={scope}
       path={path}
+      onEditLocation={onEditLocation}
       onChange={onChange}
     />
   );
@@ -111,6 +124,7 @@ function RepeatableList({
   answers,
   options,
   path,
+  onEditLocation,
   onChange,
 }: {
   node: RepeatableNode;
@@ -118,6 +132,7 @@ function RepeatableList({
   answers: AnswerTree;
   options: Record<string, ReferenceOption[]>;
   path: Array<string | number>;
+  onEditLocation?: () => void;
   onChange: (next: AnswerTree) => void;
 }) {
   const [openRow, setOpenRow] = useState<number | null>(null);
@@ -161,6 +176,7 @@ function RepeatableList({
                     errors={[]}
                     warnings={[]}
                     onChange={onChange}
+                    onEditLocation={onEditLocation}
                     scope={[...scopeOf(path), row]}
                     path={[node.key, index, ...path]}
                   />
@@ -215,6 +231,7 @@ function Field({
   warnings,
   scope,
   path,
+  onEditLocation,
   onChange,
 }: {
   node: FieldNode;
@@ -225,6 +242,7 @@ function Field({
   warnings: Issue[];
   scope: AnswerValue[];
   path: Array<string | number>;
+  onEditLocation?: () => void;
   onChange: (next: AnswerTree) => void;
 }) {
   const required = isNodeRequired(node, answers, scope);
@@ -301,12 +319,17 @@ function Field({
         />
       ) : node.type === 'plate' ? (
         <PlateField node={node} value={value} scope={scope} answers={answers} onChange={write} />
-      ) : node.type === 'file' || node.type === 'location' ? (
-        // Captured by the dedicated location/media screens and stored on the
-        // draft; the field itself records that capture happened.
-        <Text style={styles.hint}>
-          {node.type === 'file' ? 'مستندات از بخش رسانه ثبت می‌شود.' : 'موقعیت از بخش نقشه ثبت می‌شود.'}
-        </Text>
+      ) : node.type === 'location' ? (
+        <CapturedLocationField onEdit={onEditLocation} value={value} />
+      ) : isDateTimeFieldType(node.type) ? (
+        // A temporal field has a wire format the engine does not police, so it
+        // gets a picker rather than a text box: the format is then something the
+        // app guarantees instead of something the officer has to remember.
+        <DateTimeField hasError={errors.length > 0} onCommit={write} type={node.type} value={value} />
+      ) : node.type === 'file' ? (
+        // Captured by the dedicated media screens and stored on the draft; the
+        // field itself records that capture happened.
+        <Text style={styles.hint}>مستندات از بخش رسانه ثبت می‌شود.</Text>
       ) : (
         <FormInput
           value={String(value ?? '')}
@@ -491,6 +514,55 @@ const PlateField = ({
 
 // ---------------------------------------------------------------------------
 
+/**
+ * A `location` field.
+ *
+ * The point is captured on the map screen and lives on the draft, so this shows
+ * what was captured rather than offering a text input. It used to render a bare
+ * hint, which made a `must()` location look unsatisfiable and impossible to
+ * check — the officer could see neither the value nor any way to set it.
+ *
+ * An unanswered field says so plainly instead of rendering nothing, and the
+ * action is labelled to match what it will do.
+ */
+const CapturedLocationField = ({
+  value,
+  onEdit,
+}: {
+  value: AnswerValue | undefined;
+  onEdit?: () => void;
+}) => {
+  const point = asPoint(value);
+
+  return (
+    <View style={styles.captured}>
+      <Text style={point ? styles.capturedValue : styles.hint}>
+        {point
+          ? `${point.latitude.toFixed(5)}, ${point.longitude.toFixed(5)}`
+          : 'موقعیتی برای این واقعه ثبت نشده است.'}
+      </Text>
+      {onEdit ? (
+        <Text style={styles.link} onPress={onEdit}>
+          {point ? 'تغییر موقعیت' : 'ثبت موقعیت'}
+        </Text>
+      ) : null}
+    </View>
+  );
+};
+
+/** Read a `{ latitude, longitude }` answer, tolerating anything else. */
+const asPoint = (
+  value: AnswerValue | undefined,
+): { latitude: number; longitude: number } | null => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const row = value as Record<string, AnswerValue>;
+  const { latitude, longitude } = row;
+  if (typeof latitude !== 'number' || typeof longitude !== 'number') return null;
+  return { latitude, longitude };
+};
+
+// ---------------------------------------------------------------------------
+
 const readValue = (
   answers: AnswerTree,
   scope: AnswerValue[],
@@ -567,4 +639,16 @@ const styles = StyleSheet.create({
   dropdownItem: { fontSize: 13, padding: 10, color: AppTheme.colors.textBody },
   plate: { gap: 8 },
   platePart: { gap: 4 },
+  captured: {
+    gap: 6,
+    backgroundColor: AppTheme.colors.background,
+    padding: 10,
+    borderRadius: 10,
+  },
+  capturedValue: {
+    fontSize: 14,
+    color: AppTheme.colors.textBody,
+    textAlign: 'left',
+    writingDirection: 'ltr',
+  },
 });

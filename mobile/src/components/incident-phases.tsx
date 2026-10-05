@@ -15,6 +15,7 @@ import {
   type VehicleCard,
 } from '@/domain/accident-form';
 import { toInt } from '@/domain/number-utils';
+import { DateTimeField } from '@/components/form/date-time-field';
 import { MediaSection } from '@/components/media-section';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -119,14 +120,14 @@ export function PhaseBasics({ form, update, errors }: WithUpdate) {
   return (
     <>
       <FieldLabel text="تاریخ و ساعت دقیق وقوع تصادف" />
-      <FormInput
+      <DateTimeField
         hasError={Boolean(errors['date_of_accident'])}
-        onChangeText={value => update({ date_of_accident: value })}
-        placeholder="2026-08-23T14:30"
+        onCommit={value => update({ date_of_accident: value ?? '' })}
+        type="datetime"
         value={form.date_of_accident}
       />
       {errors['date_of_accident'] && <ErrorText text={errors['date_of_accident']} />}
-      <HintRow text='پیش‌فرض زمان جاری است. قالب میلادی: YYYY-MM-DDTHH:mm' />
+      <HintRow text="پیش‌فرض زمان جاری است." />
 
       <BoolChips
         label="آیا شاهدی وجود دارد؟"
@@ -310,10 +311,10 @@ export function PhasePolice({ form, update, errors, refs, uuid }: WithRefs) {
           {errors['police_expert_name'] && <ErrorText text={errors['police_expert_name']} />}
 
           <FieldLabel text="زمان حضور پلیس" />
-          <FormInput
+          <DateTimeField
             hasError={Boolean(errors['police_arrival_time'])}
-            onChangeText={value => update({ police_arrival_time: value })}
-            placeholder="2026-08-23T15:10"
+            onCommit={value => update({ police_arrival_time: value ?? '' })}
+            type="datetime"
             value={form.police_arrival_time ?? ''}
           />
           {errors['police_arrival_time'] && <ErrorText text={errors['police_arrival_time']} />}

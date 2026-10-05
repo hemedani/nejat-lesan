@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator } from 'react-native';
 
@@ -26,6 +26,7 @@ import {
   reachablePages,
   removeNestedRow,
   removeRow,
+  seedCapturedAnswers,
   setFieldAnswer,
   setNestedRowAnswer,
   validateAll,
@@ -95,6 +96,8 @@ export default function IncidentFormScreen() {
 
   const dirty = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Set once the draft has been merged in, so the focus re-seed can't race it. */
+  const resumed = useRef(false);
 
   // --- load ---------------------------------------------------------------
   useEffect(() => {
@@ -171,15 +174,54 @@ export default function IncidentFormScreen() {
       setDraft(record);
       // Shallow-merge so a draft written by a newer build keeps its extra keys.
       const stored = (record.data ?? {}) as Record<string, unknown>;
-      setAnswers((current) => mergeAnswers(stored, current));
+      setAnswers((current) => {
+        const merged = mergeAnswers(stored, current);
+        // A `location` field is captured on the map screen, so its value comes
+        // from the draft's coordinate column, not from the answers blob. Without
+        // this the required location on the QA form's first page is
+        // unsatisfiable and the officer can never reach step two.
+        return definition
+          ? seedCapturedAnswers(definition, merged, { location: record.incident_coords })
+          : merged;
+      });
       const savedPage = stored.form_page_index;
       if (typeof savedPage === 'number') setPageIndex(savedPage);
+      resumed.current = true;
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [load.phase, draftId]);
+  }, [load.phase, draftId, definition]);
+
+  /**
+   * Pick up a location captured after the form was already open.
+   *
+   * The map screen writes the point to the draft and pops back, so without this
+   * "تغییر موقعیت" would appear to do nothing and the stale point would be
+   * submitted. Only the captured fields are re-projected, so an in-progress
+   * answer is never disturbed.
+   *
+   * Guarded on `resumed` because the initial load already seeded: re-running on
+   * the first focus would be a redundant read and could race the merge above.
+   */
+  useFocusEffect(
+    useCallback(() => {
+      if (!resumed.current || !draftId || !definition) return;
+      let cancelled = false;
+      (async () => {
+        const record = await getDraft(draftId);
+        if (cancelled || !record) return;
+        setDraft(record);
+        setAnswers((current) =>
+          seedCapturedAnswers(definition, current, { location: record.incident_coords }),
+        );
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [draftId, definition]),
+  );
 
   // --- autosave -----------------------------------------------------------
   const flush = useCallback(async () => {
@@ -220,6 +262,25 @@ export default function IncidentFormScreen() {
     dirty.current = true;
     setAnswers(next);
   }, []);
+
+  /**
+   * Re-open the map screen for this draft.
+   *
+   * The screen pops back here on confirm and the focus effect re-projects the
+   * new point, so the officer can correct the location without losing the page
+   * they were on. The current point is passed so the map opens centred on it.
+   */
+  const editLocation = useCallback(() => {
+    if (!draftId) return;
+    const coords = draft?.incident_coords;
+    router.push({
+      pathname: '/incident/location',
+      params: {
+        uuid: draftId,
+        ...(coords ? { lat: String(coords.latitude), lng: String(coords.longitude) } : {}),
+      },
+    });
+  }, [draftId, draft, router]);
 
   /**
    * Hand the report to the built-in flow for its incident type.
@@ -417,6 +478,7 @@ export default function IncidentFormScreen() {
                   errors={grouped.errors.get(node.key) ?? []}
                   warnings={grouped.warnings.get(node.key) ?? []}
                   onChange={(next) => update(next)}
+                  onEditLocation={editLocation}
                 />
               ))}
             </View>
