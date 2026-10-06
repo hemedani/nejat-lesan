@@ -62,14 +62,33 @@ export const getOrgReportBase = async (
 	if (!roads?.length) {
 		throw new Error("شما دسترسی به گزارش‌های این سازمان ندارید");
 	}
-	// Two clauses, deliberately, and an `$or` rather than a merge because the two
-	// populations are disjoint: a report filed from the patrol app carries the
-	// officer's `organization` and no road at all, while the legacy rows filed
-	// before that link existed carry only a `road`. Matching on either alone
-	// silently empties one half of the console — road-only hides every app
-	// submission, and organization-only hides the entire back catalogue. This is
-	// the shape `incident_report/oversight/filters.ts` already documents for the
-	// Manager narrowing, which was written to mirror this one.
+	// Two clauses, and an `$or` rather than a merge, because a report filed from the
+	// patrol app carries the officer's `organization`, while an older row may carry only
+	// a `road`.
+	//
+	// Measured against the production-shaped collection, though, the second clause does
+	// not currently reach anything, and the reason is the term above it rather than the
+	// `$or`. Of 52,842 accidents:
+	//
+	//   officer.level absent · organization absent · road present ....... 52,809
+	//   officer.level absent · organization absent · road absent .........     18
+	//   officer.level Patrol  · organization present · road absent ........     14
+	//   officer.level Patrol  · organization absent · road absent .........      1
+	//
+	// The legacy catalogue carries a `road` but **no officer at all**, so
+	// `"officer.level": "Patrol"` excludes it before the `$or` is ever evaluated: the
+	// `road._id` clause matches 0 rows, and no row has both an organization and a road.
+	// The two populations are not disjoint — the road population sits entirely outside
+	// the gate. The org-leader console therefore shows 14 reports, not ~52,000.
+	//
+	// The clause is kept rather than deleted because it is the only hook that would pick
+	// the legacy catalogue up if `officer.level` is ever backfilled onto those rows, and
+	// removing it would make that a code change instead of a data change. Anyone widening
+	// this scope to include the legacy rows has to relax `officer.level` too — matching
+	// on `road._id` alone does nothing.
+	//
+	// This is the shape `incident_report/oversight/filters.ts` mirrors for the Manager
+	// narrowing.
 	const orgIds = await getScopedOrgIds(actor);
 	const scope: Record<string, unknown> = {
 		"officer.level": "Patrol",

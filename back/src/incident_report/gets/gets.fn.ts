@@ -1,6 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
 import { coreApp, incident_report } from "../../../mod.ts";
-import { getReportScope } from "../../accident/reportScope.ts";
+import { getOrgReportBase } from "../../accident/reportScope.ts";
 import { type MyContext } from "@lib";
 
 /**
@@ -25,7 +25,9 @@ export const getsFn: ActFn = async (body) => {
 		search,
 	} = set;
 
-	const filters: Record<string, unknown> = { ...getReportScope(user) };
+	const filters: Record<string, unknown> = {
+		...(await getOrgReportBase(user)),
+	};
 	if (form_definition_id) {
 		filters.form_definition_id = new ObjectId(form_definition_id as string);
 	}

@@ -1,7 +1,11 @@
 import { type ActFn, ObjectId } from "@deps";
 import { coreApp, incident_report } from "../../../mod.ts";
 import { type MyContext, throwError } from "@lib";
-import { getReportScope } from "../../accident/reportScope.ts";
+import {
+	getOrgReportBase,
+	getOrgScopedRoadIds,
+	isOrgLeaderLevel,
+} from "../../accident/reportScope.ts";
 
 /**
  * The embedded review trail for one non-accident report, newest action first.
@@ -14,10 +18,20 @@ export const reviewHistoryFn: ActFn = async (body) => {
 	const context = coreApp.contextFns.getContextModel() as MyContext;
 	const { reportId, page = 1, limit = 50 } = body.details.set;
 
+	// A zero-road organization is the one scope failure `getOrgReportBase` reports by
+	// throwing rather than by matching nothing, and this is a sub-resource of a report
+	// the caller can already see — so the truthful answer is an empty trail, not a
+	// refusal. Checked explicitly rather than by catching the throw, so that a genuine
+	// failure still surfaces instead of reading as "never reviewed".
+	if (isOrgLeaderLevel(context.user.level)) {
+		const roads = await getOrgScopedRoadIds(context.user);
+		if (!roads?.length) return [];
+	}
+
 	const report = await incident_report.findOne({
 		filters: {
 			_id: new ObjectId(reportId as string),
-			...getReportScope(context.user),
+			...(await getOrgReportBase(context.user)),
 		},
 		projection: { review_history: 1 },
 	});

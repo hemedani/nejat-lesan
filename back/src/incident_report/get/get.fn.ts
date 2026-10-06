@@ -1,6 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
 import { coreApp, incident_report } from "../../../mod.ts";
-import { getReportScope } from "../../accident/reportScope.ts";
+import { getOrgReportBase } from "../../accident/reportScope.ts";
 import { type MyContext, throwError } from "@lib";
 
 /**
@@ -17,7 +17,7 @@ export const getFn: ActFn = async (body) => {
 	const report = await incident_report.findOne({
 		filters: {
 			_id: new ObjectId(set._id as string),
-			...getReportScope(user),
+			...(await getOrgReportBase(user)),
 		},
 		projection: get,
 	});
