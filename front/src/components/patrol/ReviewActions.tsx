@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { reviewReport } from "@/app/actions/accident/reviewReport";
+import { reviewIncidentReport } from "@/app/actions/incident_report/reviewReport";
 import { getPatrolErrorMessage, unwrapApiResponse } from "@/utils/api-response";
 import { availableReviewActions, reviewActionLabels } from "@/utils/patrol-status";
-import type { PatrolReport, ReviewAction } from "@/types/patrol";
+import type { ReviewAction, ReviewStatus } from "@/types/patrol";
+import type { ReportSource } from "@/types/report-detail";
 import MyInput from "@/components/atoms/MyInput";
 import { Button } from "@/components/atoms/Button";
 import { Notice } from "@/components/patrol/ui";
@@ -16,14 +18,40 @@ const reviewProjection = {
   review_status: 1,
   review_reason: 1,
   reviewed_at: 1,
+  completed_at: 1,
   reviewer: { _id: 1, first_name: 1, last_name: 1, personnel_code: 1 },
 } as const;
 
+/**
+ * Apply one transition to one report, on whichever collection it lives.
+ *
+ * Both acts run the **same shared state machine** server-side
+ * (`incident_report/oversight/reviewTransition.ts`) and differ only in which
+ * collection the id is resolved against. Dispatching on `source` is therefore not
+ * a nicety: this component used to hardcode `accident.reviewReport`, so approving
+ * a row whose `source` was `incident_report` sent an id that is not in
+ * `accident`. The act throws in that case, so the failure was loud — but a
+ * reviewer could not complete a non-accident review from the detail page at all,
+ * while the console's *bulk* bar could, because `bulkReviewReports` resolves the
+ * model per row.
+ *
+ * `source` is required rather than defaulted to `accident`. A default would
+ * reintroduce exactly that bug, quietly, for whoever adds the next caller.
+ */
 export function ReviewActions({
   report,
+  source,
   onComplete,
 }: {
-  report: PatrolReport;
+  /**
+   * Only what this component reads.
+   *
+   * Structural and minimal rather than `PatrolReport` or `ReportDetailDoc`: the
+   * actions need an id and a review status, and naming a whole report shape here
+   * would make every future change to that shape a compile error in this file.
+   */
+  report: { _id: string; review_status?: ReviewStatus };
+  source: ReportSource;
   onComplete: () => Promise<void> | void;
 }) {
   const [pending, setPending] = useState<ReviewAction | null>(null);
@@ -48,16 +76,16 @@ export function ReviewActions({
     setError(null);
     setPending(action);
     try {
-      unwrapApiResponse(
-        await reviewReport({
-          set: {
-            reportId: report._id,
-            action,
-            ...(actionReason ? { reason: actionReason } : {}),
-          },
-          get: reviewProjection as never,
-        }),
-      );
+      const set = {
+        reportId: report._id,
+        action,
+        ...(actionReason ? { reason: actionReason } : {}),
+      };
+      const response =
+        source === "incident_report"
+          ? await reviewIncidentReport({ set, get: reviewProjection as never })
+          : await reviewReport({ set, get: reviewProjection as never });
+      unwrapApiResponse(response);
       setReturnOpen(false);
       setReason("");
       await onComplete();

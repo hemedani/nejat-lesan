@@ -3,24 +3,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { get } from "@/app/actions/accident/get";
-import { getReportReviewHistory } from "@/app/actions/accident/getReportReviewHistory";
-import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
-import { reportDetailProjection, historyProjection } from "@/services/patrol-projections";
-import type { PatrolReport, ReviewHistoryItem } from "@/types/patrol";
+import { fetchReportDetail } from "@/app/actions/incident_report/getReportDetail";
+import { getPatrolErrorMessage } from "@/utils/api-response";
+import type { ReportDetailDoc } from "@/types/report-detail";
 import { useAuth } from "@/context/AuthContext";
 import { ScopedView } from "@/components/system/ScopedView";
+import { employeeRoutes } from "@/utils/employee-routes";
 import { ReportDetail } from "@/components/patrol/ReportDetail";
 import { PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
 
 export default function EmployeeReportDetailPage() {
   const params = useParams<{ reportId: string }>();
-  const reportId = String(params?.reportId);
   const { userLevel } = useAuth();
   const allowed = userLevel === "Patrol";
-
-  const [report, setReport] = useState<PatrolReport | null>(null);
-  const [history, setHistory] = useState<ReviewHistoryItem[]>([]);
+  const [report, setReport] = useState<ReportDetailDoc | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,21 +24,13 @@ export default function EmployeeReportDetailPage() {
     setLoading(true);
     setError(null);
     try {
-      const [reportResponse, historyResponse] = await Promise.all([
-        get(reportId, reportDetailProjection as never),
-        getReportReviewHistory({
-          set: { reportId, page: 1, limit: 100 },
-          get: historyProjection as never,
-        }),
-      ]);
-      setReport(unwrapApiResponse<PatrolReport>(reportResponse));
-      setHistory(unwrapApiResponse<ReviewHistoryItem[]>(historyResponse) || []);
+      setReport(await fetchReportDetail(String(params?.reportId), "accident"));
     } catch (cause) {
       setError(getPatrolErrorMessage(cause));
     } finally {
       setLoading(false);
     }
-  }, [reportId]);
+  }, [params]);
 
   useEffect(() => {
     if (allowed) void load();
@@ -59,7 +47,7 @@ export default function EmployeeReportDetailPage() {
             </div>
           );
         }
-        if (loading) return <PageSkeleton blocks={[96, 320]} />;
+        if (loading) return <PageSkeleton blocks={[72, 220, 320]} />;
         if (error || !report) {
           return (
             <RetryErrorBox message={error || "گزارش یافت نشد."} onRetry={() => void load()} />
@@ -67,20 +55,15 @@ export default function EmployeeReportDetailPage() {
         }
         return (
           <div>
-            <div className="mb-4">
+            <div className="mb-3">
               <Link
-                href="/employee/reports"
+                href={employeeRoutes.reports()}
                 className="text-xs text-blue-300 hover:text-cyan-200"
               >
                 → بازگشت به رخدادهای من
               </Link>
             </div>
-            <ReportDetail
-              report={report}
-              history={history}
-              manager={false}
-              onRefresh={load}
-            />
+            <ReportDetail report={report} source="accident" onRefresh={load} />
           </div>
         );
       }}
