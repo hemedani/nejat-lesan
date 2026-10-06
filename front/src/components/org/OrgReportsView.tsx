@@ -5,8 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { fetchOversightList } from "@/app/actions/incident_report/getOversightList";
 import { fetchOversightStats } from "@/app/actions/incident_report/getOversightStats";
-import { getFormDefinitions } from "@/app/actions/form_definition/gets";
-import { unwrapApiResponse } from "@/utils/api-response";
+import { loadOrgFormDefinitions } from "@/services/form-definition-cache";
 import { getPatrolErrorMessage } from "@/utils/api-response";
 import type {
   OversightFilters,
@@ -166,26 +165,24 @@ function OrgReportsConsole({
   // The filter bar's form list is the one option set with no console act behind it,
   // so it is read straight from the definitions this organization authored. Its
   // failure is a footnote only — every other control still works without it.
+  //
+  // Through the shared cache rather than the act directly, because a report detail
+  // page needs the same definitions to label a non-accident report's answers.
+  // `loadOrgFormDefinitions` caches one read per organization for the session, so
+  // the second surface costs nothing.
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const data = unwrapApiResponse<
-          Array<{ _id: string; name: string; icon?: string }>
-        >(await getFormDefinitions({ set: { organizationId: orgId } }));
-        if (cancelled) return;
-        setForms(
-          (Array.isArray(data) ? data : []).map((form) => ({
-            groupKey: form._id,
-            title: form.name,
-            icon: form.icon,
-          })),
-        );
-        setFormsError(false);
-      } catch {
-        if (!cancelled) setFormsError(true);
-      }
-    })();
+    void loadOrgFormDefinitions(orgId).then(({ definitions, failed }) => {
+      if (cancelled) return;
+      setForms(
+        definitions.map((form) => ({
+          groupKey: form._id,
+          title: form.name ?? form._id,
+          icon: form.icon,
+        })),
+      );
+      setFormsError(failed);
+    });
     return () => {
       cancelled = true;
     };

@@ -1,5 +1,8 @@
+import type { ReportSource } from "@/types/report-detail";
+
 /**
- * The report-detail URL, wherever the console is hosted.
+ * The report-detail URL, wherever the console is hosted, and the reader for the
+ * one parameter it carries.
  *
  * `OversightTable` is shared by the org-head and unit-head panels, so it cannot
  * know which one it is rendering into — it is handed a `detailBase` and appends
@@ -20,6 +23,31 @@
  * `base` is a panel *root* (`orgRoutes.dashboard()`, `unitHeadRoutes.dashboard()`),
  * not the reports page.
  */
-export function reportDetailHref(base: string, reportId: string, source: string): string {
+export function reportDetailHref(
+  base: string,
+  reportId: string,
+  source: ReportSource,
+): string {
   return `${base}/reports/${reportId}?source=${source}`;
+}
+
+/**
+ * Read a `?source=` value back.
+ *
+ * Sits beside the builder that writes it because the pair is one contract: a
+ * value `reportDetailHref` can produce and `parseReportSource` cannot read would
+ * make a report unreachable, not merely untidy.
+ *
+ * Defaults to `accident`, which is the safe direction — the legacy `accident`
+ * collection holds the overwhelming majority of reports, so a hand-typed or
+ * bookmarked URL with no parameter opens a report rather than erroring. An
+ * *unrecognised* value falls back the same way rather than being trusted: this
+ * parameter decides which collection gets queried, so a string that arrived from
+ * anywhere but `reportDetailHref` must not become one, and a typo must not turn
+ * into an opaque backend validation error.
+ */
+export function parseReportSource(
+  raw: string | null | undefined,
+): ReportSource {
+  return raw === "incident_report" ? "incident_report" : "accident";
 }

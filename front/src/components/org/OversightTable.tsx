@@ -30,18 +30,30 @@ export const reportLabel = (row: OversightRow): string =>
 /**
  * Whether this viewer may open a report's detail page.
  *
- * The oversight *list* is scoped by `resolveOversightScope`, which handles org
- * leaders through `getOrgReportBase`. The *detail* fetch is not:
- * `accident.getReportReviewHistory` uses `getReportScope`, which throws for
- * OrgHead/UnitHead. Offering an org leader a link that cannot resolve is worse
- * than showing the row's label as plain text.
+ * **Everyone who can reach this console may open a row.** It used to admit only
+ * `Manager` and `Ghost`, on the grounds that `accident.getReportReviewHistory`
+ * resolves its scope through `getReportScope`, which throws for OrgHead/UnitHead —
+ * so offering an org leader a link that could not resolve was treated as worse
+ * than a dead row.
  *
- * One predicate rather than an inline level check at each of the four call
- * sites. `back/prompt/02-fix-review-history-scope-for-org-leaders.md` is the
- * server-side fix; when it lands this returns `true` for everyone.
+ * That reasoning is no longer true. The backend fix closed all four gates:
+ * `incident_report.get` and `incident_report.gets` now admit both org-leader
+ * levels at the `grantAccess` preAct, and `incident_report.get`, `accident.get` and
+ * both `reviewHistory` fns resolve scope through `getOrgReportBase` instead of the
+ * narrower `getReportScope`. `accident.get` additionally gained the `preAct` it had
+ * never had at all — it used to match on `_id` alone, with no level check and no
+ * tenancy check.
+ *
+ * The predicate is kept as a named export rather than deleted because it is the
+ * one place the decision lives, and because it is the seam a future restriction
+ * would go through. It now has no `false` branch for any level that can reach the
+ * console; `Patrol`, `Editor` and `Enterprise` never see this table.
  */
 export const canOpenReportDetail = (level: string | null): boolean =>
-  level === "Manager" || level === "Ghost";
+  level === "Manager" ||
+  level === "Ghost" ||
+  level === "OrgHead" ||
+  level === "UnitHead";
 
 /**
  * A row's identifier, linked when the viewer can open it and inert when not.
