@@ -83,3 +83,18 @@ export const useBasemap = (): BasemapContextType => {
   }
   return context;
 };
+
+/**
+ * The basemap preference, or `undefined` outside a provider.
+ *
+ * For components that must render *somewhere* — a report map that can be mounted
+ * without the app shell, a test, a storybook. Catching the throw from `useBasemap`
+ * would work but turns a missing provider into exception-driven control flow in the
+ * middle of a render, and `useContext` would still have been called on one path and
+ * not the other as far as a reader is concerned.
+ *
+ * Hook order is stable: `useContext` is called on every render and only the
+ * *result* is narrowed, so this is safe where a conditional `useBasemap()` is not.
+ */
+export const useOptionalBasemap = (): BasemapContextType | undefined =>
+  useContext(BasemapContext);;
