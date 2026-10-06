@@ -223,11 +223,13 @@ try:
         sys.exit(1)
     print(f"R5 ok — {len(data_layouts)} route groups require authentication")
 
-    # R7 — the report console must not offer org leaders a detail link that the
-    # backend refuses. `accident.getReportReviewHistory` resolves scope through
-    # `getReportScope`, which throws for OrgHead/UnitHead, while the list resolves
-    # through `getOrgReportBase`, which does not. Every surface that rendered the
-    # link has to go through the one predicate, or a dead link reappears.
+    # R7 — the report console must offer a detail link that actually resolves, and
+    # must reach the right collection.
+    #
+    # This used to assert that `OrgIncidentDetailView` degraded a refused review
+    # history (`setHistory([])` in a recovery branch, no `Promise.all`). That
+    # scenario was real once and is now unreachable, so the assertion was rewritten
+    # rather than deleted — see the two halves below.
     table = strip_comments(
         (FRONT / "src" / "components" / "org" / "OversightTable.tsx").read_text(
             encoding="utf-8"
@@ -238,6 +240,8 @@ try:
             FRONT / "src" / "components" / "org" / "OrgIncidentDetailView.tsx"
         ).read_text(encoding="utf-8")
     )
+    # The predicate is the one place the offer/refuse decision lives. Every surface
+    # that renders a row must go through it, or a dead link reappears.
     problems7 = []
     if "export const canOpenReportDetail" not in table:
         problems7.append("OversightTable.tsx: no exported canOpenReportDetail predicate")
@@ -253,27 +257,51 @@ try:
         problems7.append("OversightTable.tsx: does not use reportDetailHref")
     if "canOpenReportDetail(userLevel)" not in table:
         problems7.append("OversightTable.tsx: RowLink does not consult canOpenReportDetail")
-    # The review-history fetch must not be able to fail the page. Detected by its
-    # degradation rather than by the absence of one specific construct: a refused
-    # history must clear the trail and carry on, so `setHistory([])` in a recovery
-    # branch is the thing that has to survive. A `Promise.all` is the shape this
-    # replaces, and its return is checked separately as a banned form.
-    if "Promise.all" in detail:
+
+    # `?source=` decides which collection is queried, and the console merges both
+    # into one table. A detail view that ignores it sends every non-accident id to
+    # `accident`, where it misses — which is exactly the bug this replaced: the
+    # component called `accident.get` unconditionally while the URL carried
+    # `?source=incident_report`.
+    if "fetchReportDetail(" not in detail:
         problems7.append(
-            "OrgIncidentDetailView.tsx: review history is fetched in a Promise.all, "
-            "so a refused scope fails the whole page instead of the trail"
+            "OrgIncidentDetailView.tsx: does not go through fetchReportDetail, so it "
+            "cannot resolve a row whose ?source= is incident_report"
         )
-    if "setHistory([])" not in detail:
+    if "source" not in detail:
         problems7.append(
-            "OrgIncidentDetailView.tsx: no recovery branch — a refused review "
-            "history must clear the trail rather than fail the page"
+            "OrgIncidentDetailView.tsx: does not accept a source, so it would read "
+            "every id from the accident collection"
         )
+
+    # `review_history` is an EMBEDDED array on both models whose reviewer is a
+    # snapshot, so the trail arrives inside the report fetch. The separate
+    # `getReportReviewHistory` call existed only because `accident.get` used to
+    # carry no `preAct` and no scope at all: it always succeeded, so the history
+    # was the single thing that could be refused, and the page needed a recovery
+    # branch to keep that refusal off screen. `accident.get` now resolves its scope
+    # through `getOrgReportBase`, so a report the viewer may not see fails the MAIN
+    # fetch — the correct answer — and there is no second call left to degrade.
+    #
+    # Asserting its absence is what stops the two-request shape from creeping back:
+    # it is one round trip saved on every report page, and it removes a failure mode
+    # rather than papering over it.
+    for banned, why in (
+        ("getReportReviewHistory", "the review trail is embedded in the report document"),
+        ("Promise.all", "there is no second request whose rejection could fail the page"),
+        ("reviewHistory", "the review trail is embedded in the report document"),
+    ):
+        if banned in detail:
+            problems7.append(
+                f"OrgIncidentDetailView.tsx: mentions {banned} — {why}"
+            )
+
     if problems7:
         print("R7 FAILED — the report console offers unreachable surfaces:")
         for x in problems7:
             print(f"  x {x}")
         sys.exit(1)
-    print("R7 ok — report detail is offered only where it resolves")
+    print("R7 ok — one source-aware fetch, embedded history, no unreachable link")
 
     result = subprocess.run([str(NODE), "test.mjs"], cwd=out, capture_output=True, text=True)
     print(result.stdout, end="")
