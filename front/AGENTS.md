@@ -856,9 +856,12 @@ only **and** applies no organization scope, so it would leak cross-org rows.
 
 ### Known limitations (documented, not faked)
 
-- `accident.dynamic_answers` labels are **not** resolved — those keys come from
-  `accident_process`, a different model with its own lifecycle. Shown raw under
-  «یادداشت‌های تکمیلی».
+- `accident.dynamic_answers` labels resolve from `qaAccidentFormDefinition` in the shared
+  engine (`services/process-labels.ts`) — **not** from `accident_process`, whose step keys
+  are uuids that do not correspond to the stored slugs. On `REP-2026-4423441` those 27
+  rows are the whole report body, so they carry the page; index them with a **structural**
+  walk, never `walkNodes`, which visits a repeatable's children only for rows that exist
+  and therefore leaves every `vehicles[]`/`passenger[]` key unlabelled.
 - `AttachmentGallery` is `accident`-only and may be empty. Files live at
   `<LESAN_URL>/uploads/accidents/<name>` — a path **not stored on the document**,
   derived from which act wrote them. That inference lives in one line.

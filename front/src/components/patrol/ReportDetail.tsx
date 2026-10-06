@@ -1,6 +1,12 @@
 "use client";
 
-import type { ReportDetailDoc, ReportSource } from "@/types/report-detail";
+import { useMemo } from "react";
+
+import type {
+  DynamicAnswerRow,
+  ReportDetailDoc,
+  ReportSource,
+} from "@/types/report-detail";
 import { ReviewActions } from "@/components/patrol/ReviewActions";
 import { ResubmitAction } from "@/components/patrol/ResubmitAction";
 import { ExpandableReportMap } from "@/components/report/ExpandableReportMap";
@@ -11,6 +17,7 @@ import { FacilityDamageSection } from "@/components/report/FacilityDamageSection
 import { FormAnswersSection } from "@/components/report/FormAnswersSection";
 import { AttachmentGallery } from "@/components/report/AttachmentGallery";
 import { ReviewTimeline } from "@/components/report/ReviewTimeline";
+import { labelForQuestion, labelForStep } from "@/services/process-labels";
 import { Field } from "@/components/report/kit";
 import { reviewStatusMeta, syncStatusMeta } from "@/utils/patrol-status";
 import { formatJalaliDateTime } from "@/utils/formatters";
@@ -232,40 +239,145 @@ function ReportContext({ report }: { report: ReportDetailDoc }) {
 }
 
 /**
- * `accident.dynamic_answers`, shown raw.
+ * `accident.dynamic_answers` — what the officer actually filled in, in Persian.
  *
- * These `question_key`s come from `accident_process` — a different model with its
- * own versioning lifecycle — not from `form_definition`, so the labels resolved
- * for a non-accident report are not available here. The key is still a readable
- * path (`vehicles[1].plate`), and the answer beside it is already resolved text,
- * so the section is honest rather than blank. Labelling it wrongly, by reusing
- * the form definition's keys, would be worse than showing the key.
+ * A stored row is `{step_key, question_key, answer}`: keys only, no text. On a report
+ * filed through the built-in patrol form that means the *entire* body of the report —
+ * 27 rows on `REP-2026-4423441`, the very report whose detail page this is — would read
+ * as `direction`, `lane`, `vehicles[0].driver[0].driver_health`. `labelForQuestion`
+ * resolves those keys against the same `qaAccidentFormDefinition` the app files
+ * through, which already ships with Persian labels, so nothing extra is fetched.
+ *
+ * Rows are grouped under their step, because that is the order the officer gave them
+ * and a flat list of 27 label/value pairs is unreadable regardless of how good the
+ * labels are.
+ *
+ * ## An unresolved key is shown, not hidden
+ *
+ * When a key is absent from the built-in form the raw key is rendered instead, and the
+ * section says so. A visible English key is a defect a reader can report; a fabricated
+ * or borrowed label is a defect they cannot. That is the whole reason this falls back
+ * rather than skipping the row — a skipped answer would read as "nothing was recorded",
+ * which is false.
  */
-function DynamicAnswers({
-  answers,
-}: {
-  answers: NonNullable<ReportDetailDoc["dynamic_answers"]>;
-}) {
+function DynamicAnswers({ answers }: { answers: DynamicAnswerRow[] }) {
+  const groups = useMemo(() => groupByStep(answers), [answers]);
+  const resolved = answers.filter(
+    (answer) => labelForQuestion(answer.question_key) !== undefined,
+  ).length;
+  const anyLabel = resolved > 0;
+
   return (
     <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-      <h2 className="mb-3 text-sm font-semibold text-white">یادداشت‌های تکمیلی</h2>
-      <dl className="divide-y divide-white/5">
-        {answers.map((answer, index) => (
-          <div key={`${answer.question_key}-${index}`} className="flex flex-wrap gap-x-3 gap-y-1 py-2">
-            <dt className="min-w-[9rem] text-xs text-slate-500" dir="ltr">
-              {answer.question_key}
-            </dt>
-            <dd className="flex-1 text-xs leading-6 text-slate-200">
-              {answer.answer_names?.join("، ") ??
-                answer.answer_name ??
-                answer.value ??
-                "—"}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-sm font-semibold text-white">پاسخ‌های مأمور</h2>
+        <span className="text-xs text-slate-500">
+          {answers.length.toLocaleString("fa-IR")} مورد
+        </span>
+      </div>
+
+      {groups.map((group) => (
+        <div key={group.stepKey} className="mb-4 last:mb-0">
+          <h3 className="mb-2 text-xs font-semibold text-cyan-200">
+            {group.title}
+          </h3>
+          <dl className="divide-y divide-white/5">
+            {group.rows.map((row) => (
+              <div
+                key={`${row.stepKey}:${row.path}`}
+                className="flex flex-wrap gap-x-3 gap-y-1 py-2"
+              >
+                <dt className="min-w-[10rem] text-xs text-slate-400">
+                  {row.group && (
+                    <span className="ml-1.5 text-slate-600">{row.group}</span>
+                  )}
+                  {row.label}
+                </dt>
+                <dd className="flex-1 text-xs leading-6 text-slate-100">
+                  {row.text}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
+
+      {anyLabel ? (
+        resolved < answers.length && (
+          <p className="mt-3 rounded-xl border border-white/10 bg-white/[.03] p-3 text-[11px] leading-6 text-slate-500">
+            {`${(answers.length - resolved).toLocaleString("fa-IR")} پاسخ با کلید خام نمایش داده شده‌اند، چون در فرم داخلی اپ تعریف نشده‌اند.`}
+          </p>
+        )
+      ) : (
+        <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-xs leading-6 text-amber-100">
+          این گزارش با فرمی خارج از فرم داخلی اپ ثبت شده است، بنابراین عنوان پرسش‌ها
+          در دسترس نیست و کلیدهای خام نمایش داده می‌شوند.
+        </p>
+      )}
     </section>
   );
+}
+
+type AnswerLine = {
+  stepKey: string;
+  path: string;
+  label: string;
+  group?: string;
+  text: string;
+};
+
+type AnswerGroup = { stepKey: string; title: string; rows: AnswerLine[] };
+
+function groupByStep(answers: DynamicAnswerRow[]): AnswerGroup[] {
+  const groups = new Map<string, AnswerGroup>();
+
+  for (const answer of answers) {
+    const stepKey = answer.step_key ?? "";
+    const resolved = labelForQuestion(answer.question_key);
+    const text = answerText(answer);
+
+    const group = groups.get(stepKey) ?? {
+      stepKey,
+      // An unknown step keeps its key visible rather than being dropped or given an
+      // invented heading.
+      title: labelForStep(stepKey) ?? stepKey ?? "سایر",
+      rows: [],
+    };
+    group.rows.push({
+      stepKey,
+      path: answer.question_key,
+      label: resolved?.label ?? answer.question_key,
+      group: repeatLabel(resolved),
+      text,
+    });
+    groups.set(stepKey, group);
+  }
+
+  return [...groups.values()];
+}
+
+/** `خودرو ۱ —` for a repeatable instance, omitted for a top-level question. */
+const repeatLabel = (resolved: ReturnType<typeof labelForQuestion>): string | undefined => {
+  if (!resolved?.group) return undefined;
+  const ordinal = (resolved.row ?? 0) + 1;
+  return `${resolved.group} ${ordinal.toLocaleString("fa-IR")} —`;
+};
+
+/**
+ * The answer, resolved to text.
+ *
+ * A multi-value answer keeps its labels in `answer_names`; a single reference answer
+ * keeps the id in `answer_id` and its label in `answer_name`. A reference with no
+ * snapshot — an option deleted since the report was filed — has only the id, and
+ * showing an id beats showing nothing.
+ */
+function answerText(answer: DynamicAnswerRow): string {
+  if (answer.answer_names?.length) return answer.answer_names.join("، ");
+  if (answer.answer_name) return answer.answer_name;
+  if (answer.value) return answer.value;
+  if (answer.answer_ids?.length) return answer.answer_ids.join("، ");
+  if (answer.answer_id) return answer.answer_id;
+  return "—";
 }
 
 
