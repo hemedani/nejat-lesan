@@ -770,3 +770,201 @@ Run `pnpm install` to install the new dependencies before testing.
 - Login with valid email + password → `{ success: true, body: { token, user } }`
 - `setGhostPassword` sets the Ghost password to `password123` (one-time, public)
 - `changeUserPassword` works only for Ghost-level users
+
+---
+
+## Report detail page (`/orghead/reports/[reportId]`, `/unit-head/…`)
+
+**Design**: `../docs/superpowers/specs/2026-10-06-report-detail-page-design.md`
+**Backend**: `../back/prompt/03-scope-report-detail-and-list-for-org-leaders.md`
+
+### The button that was not a button
+
+`OversightTable.tsx` gated the **مشاهده** link with `canOpenReportDetail(level)`,
+which returned `true` only for `Manager | Ghost`. An `OrgHead` therefore got an
+inert `<span>` — the console's primary audience could not open a single one of its
+own rows, while every other control on the page worked. Behind it were four
+server gates, now fixed in `back/src/**`; `canOpenReportDetail` admits org leaders.
+
+**Do not re-gate this without reading that diff.** `accident.get` now resolves
+scope through `getOrgReportBase` — it used to carry **no `preAct` at all**, matching
+on `_id` alone, so any authenticated caller could read any accident by id.
+
+### Two collection names, one route
+
+`?source=` (`accident` | `incident_report`) decides which collection is queried,
+written by `reportDetailHref` and read by `parseReportSource`. `OrgIncidentDetailView`
+used to call `accident.get` unconditionally, so every non-accident row missed.
+**`fetchReportDetail` is the only place that branches.** `ReviewActions` takes a
+**required** `source` and dispatches to `reviewReport` or `reviewIncidentReport` —
+it used to hardcode the `accident` act, so approving a non-accident row sent an id
+that was not in `accident`. Both default-to-`accident` defaults are deliberate
+anti-patterns.
+
+### One request, not two
+
+`review_history` is an **embedded array** on both models whose `reviewer` is a
+snapshot, so `get: { review_history: 1 }` returns the whole trail inside the report
+fetch. The separate `getReportReviewHistory` call existed only because `accident.get`
+had no scope and always succeeded; it is deleted, along with its
+`incident_report` twin and `historyProjection`. `ReviewTimeline` re-sorts
+newest-first client-side, which the act used to do.
+
+**Do not re-add a second fetch for the trail.** R7 in `panel-routing-test.py`
+asserts its absence, and `Promise.all` is banned in the detail view.
+
+### Two response shapes — the trap
+
+`accident.get`'s fn is `accident.aggregation(...).toArray()`, so `body` is a
+**one-element array**; `incident_report.get`'s fn is `findOne`, so `body` is the
+**object**. `fetchReportDetail` normalises this once. `accident/get.ts` never called
+`asSingleItemResponse`, which is why every detail page used to render an empty shell.
+
+Two named projections, never one shared superset: `incident_report.get`'s validator
+is `selectStruct("incident_report", 1)` and **rejects** `serial` / `collision_type`
+as unknown keys. Superstruct validates `get` strictly, so an over-wide projection is
+an error, not an ignored field.
+
+### Form labels cost no extra request
+
+`incident_report.form_answers` is the answer tree verbatim and `dynamic_answers`
+carries `question_key` as an **instance path** (`vehicles[1].plate`, from
+`buildDynamicAnswers`). Neither carries the question's Persian text, so
+`FormAnswersSection` needs the definition — and gets it through
+`loadOrgFormDefinitions`, which caches **one read per organization per session**.
+`OrgReportsView` already made exactly that read for its filter bar, so arriving from
+the console costs nothing.
+
+The cache returns `{definitions, failed}`, never a bare array: "no forms" and "the
+read was refused" need opposite responses, and collapsing them is the same
+silent-wrong-answer failure as a swallowed scope error.
+
+`FormAnswersSection` walks the tree with the shared engine's `walkNodes` +
+`resolvePath`, so repeatable rows render one labelled line each. Without a
+definition it degrades to raw keys and **says so**.
+
+### Layout
+
+Sticky rail on the **right** (RTL) — summary, review actions, map — beside
+scrolling content. Below `lg` the rail becomes the first block in flow. Vehicle
+cards show plate, fault status, final status and driver name always; the twelve
+other fields sit behind «جزئیات بیشتر», which renders nothing when there is nothing
+to reveal.
+
+No surrounding-accident layer: `accident.nearbyAccidents` is Patrol/Manager/Ghost
+only **and** applies no organization scope, so it would leak cross-org rows.
+
+### Known limitations (documented, not faked)
+
+- `accident.dynamic_answers` labels are **not** resolved — those keys come from
+  `accident_process`, a different model with its own lifecycle. Shown raw under
+  «یادداشت‌های تکمیلی».
+- `AttachmentGallery` is `accident`-only and may be empty. Files live at
+  `<LESAN_URL>/uploads/accidents/<name>` — a path **not stored on the document**,
+  derived from which act wrote them. That inference lives in one line.
+- The org console shows **14 rows, not 52,000**: the legacy catalogue has a road but
+  no officer, so `"officer.level": "Patrol"` excludes it before the `$or` runs.
+  Widening it is a data decision, not a `$or` change.
+
+### CRITICAL: a relation's `get` projection must be an object, never `1`
+
+The sibling rule to the empty-projection one above, and the one that breaks the report
+detail page:
+
+| Field kind | Send | Example |
+| --- | --- | --- |
+| Relation | **an object** | `road: { name: 1 }` |
+| Scalar / embedded struct | `1` | `dead_count: 1` |
+
+`attachments` is a relation to `file`, so `attachments: 1` is rejected at runtime with
+
+```
+At path: get.attachments -- Expected an object,  but received:  1
+```
+
+Superstruct fails on the **first** bad path, so a projection with several mistakes reports
+only one — fix, then re-run.
+
+**Make the projection type-checked.** The generated declarations already encode the rule:
+a relation is typed as an object, a scalar as `(0|1)`. So the fix is a type, not a cast —
+`as never` silences every field check, which is exactly how `attachments: 1` reached
+production with a clean `tsc`:
+
+```ts
+type AccidentGet = ReqType["main"]["accident"]["get"]["get"];
+const ACCIDENT_PROJECTION = { /* … */ } as const satisfies AccidentGet;
+```
+
+`accident` has 32 relations and `incident_report` has 20 — the full list is derivable from
+the declarations, which is what `audit-projection-shapes.py` does for the projections that
+are dynamic (`Record<string, unknown>`, built per column) and so cannot use `satisfies`.
+Run it after editing `utils/accidentProjection.ts` or `services/patrol-projections.ts`.
+
+### Map tiles must work without international internet
+
+`osm` is served from `tile.openstreetmap.org` and is unreliable from inside Iran;
+`mapir` (Map.ir) and `neshan` are reachable. `DEFAULT_BASEMAP` stays `osm` deliberately
+(changing it would alter every map in the app), so **every `MapContainer` map needs a way
+to switch.** The registry, the persisted preference and the selector already exist:
+
+| Piece | File |
+| --- | --- |
+| provider registry + labels + attribution | `utils/basemaps.ts` |
+| preference, persisted as `lesan-basemap` | `context/BasemapContext.tsx` |
+| the selector, `variant="dark"` for the panels | `components/maps/BasemapSelector.tsx` |
+
+**Neshan cannot be a `TileLayer`.** It sets `useSdk: true` with an empty `url` because it
+loads its own Leaflet SDK from `static.neshan.org` that *replaces* `window.L`. So:
+
+- `TILE_BASEMAPS` (`osm`, `mapir`) is the set a `<MapContainer>` can actually render.
+- `resolveTileBasemap(context.basemap)` maps anything else to `mapir` — **not** to `osm`,
+  because falling back to the unreachable provider would recreate the problem.
+- `BasemapSelector` defaults to `scope="tile"`, so Neshan is never offered where it
+  cannot work. Passing the raw context value to `BasemapLayer` instead leaves markers
+  and polylines on a **blank background**, which is why the report map builds its own
+  `TileLayer` from `getBasemapUrl(resolveTileBasemap(...))` and reuses only the token
+  handling.
+
+**Adding a satellite source** is one entry in `BASEMAPS` plus its key in `TILE_BASEMAPS`.
+Do not guess a tile template: a wrong URL renders a blank map with no error. All three
+current entries are *standard* raster — there is no satellite layer configured.
+
+### Two bugs the map's hooks had, and the rules behind them
+
+1. **A hook after an early return changes hook order.** `useTileBasemap()` was called after
+   `if (!incident && !officer) return null`, so it was skipped on a render with no points and
+   called on the next — React then discards that component's memoised state. Every hook goes
+   **above** every early return.
+2. **A `useMap()` fit-bounds effect must not depend on converted coordinates.** `[lat, lng]`
+   arrays are fresh references every render, so depending on them re-fits after every render
+   and yanks the view back the moment the user pans. Read the points from a ref and depend on
+   `[map, trigger]` only — the button works by *changing* `trigger`, which is the whole point of
+   passing it.
+
+### CRITICAL: site chrome lives at z-index 9999+, not z-50
+
+A dialog at a conventional `z-50` (or even `z-[2100]`) renders **underneath** the
+navbar. The existing stacking tiers:
+
+| z-index | Element |
+| --- | --- |
+| `9999` | `Navbar` — `fixed inset-x-0 top-0` (`components/organisms/Navbar.tsx:81`) |
+| `10000`–`10002` | `GlobalFiltersBar` FAB, overlay, drawer |
+| `100000` | the full-screen modal convention (`components/modals/AccidentDetailsModal.tsx:183`) |
+
+**A full-screen dialog uses `z-[100000]`.** Anything modal should follow that, not
+invent a number.
+
+**Portal a dialog into `document.body`.** `position: fixed` is viewport-relative only
+while no ancestor has a `transform`, `filter`, `backdrop-filter`, `perspective`,
+`contain` or `will-change` — each of which creates a containing block *and* a stacking
+context, trapping the dialog inside the page and capping it below the navbar no matter
+how large its z-index is. `main` happens to be clean today, so this is a dependency on
+that staying true rather than a live bug; `createPortal` (already used in
+`components/atoms/MyAsyncMultiSelect.tsx`) removes it. `createPortal` inside a dialog is
+also safe with `useScrollLock`, which sets `position: fixed` on `body`.
+
+Related: the ⤢ expand button over the rail map needs `z-[1100]`. `globals.css` forces
+`.leaflet-control-container { z-index: 1000 !important }` and `.leaflet-container
+{ z-index: 1 !important }`, so a plain `absolute` button (z-index auto) is painted over
+by the map.
