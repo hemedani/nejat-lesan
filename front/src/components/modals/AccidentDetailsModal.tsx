@@ -117,8 +117,21 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         );
       case "has_witness":
         return value ? "بله" : "خیر";
-      case "officer":
-        return (value as string) || "—";
+      case "officer": {
+        // `officer` is a relation to `user`, so it arrives as `{first_name,
+        // last_name, personnel_code}` rather than as a string. The projection in
+        // `utils/accidentProjection.ts` used to send `officer: 1`, which the act
+        // rejected outright — so this branch was unreachable and the cast was never
+        // exercised. Read the name properly now that the request succeeds.
+        const officer = value as
+          | { first_name?: string; last_name?: string; personnel_code?: string }
+          | undefined;
+        return (
+          [officer?.first_name, officer?.last_name].filter(Boolean).join(" ") ||
+          officer?.personnel_code ||
+          "—"
+        );
+      }
       case "completion_date":
       case "createdAt":
       case "updatedAt":

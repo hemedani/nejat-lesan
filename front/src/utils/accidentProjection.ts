@@ -1,3 +1,17 @@
+/**
+ * One selectable column: the key it reads, and the projection fragment that
+ * fetches it.
+ *
+ * **A Lesan relation's fragment must be an object; only a scalar or an embedded
+ * struct takes `1`.** The two exceptions this file used to make — `officer` and
+ * `attachments`, both sent as `1` — are rejected at runtime by the act's validator
+ * with `Expected an object, but received: 1`, so ticking either column in the
+ * console's column picker 500'd the request. Neither is in
+ * `DEFAULT_FIELD_KEYS`, which is why the default view never hit it.
+ *
+ * `audit-projection-shapes.py` now enforces this for every fragment here and in
+ * `services/patrol-projections.ts`.
+ */
 export interface AccidentFieldOption {
   key: string;
   label: string;
@@ -13,7 +27,11 @@ export const ACCIDENT_FIELD_OPTIONS: AccidentFieldOption[] = [
   { key: "dead_count", label: "تعداد متوفیان", projection: { dead_count: 1 } },
   { key: "has_witness", label: "دارای شاهد", projection: { has_witness: 1 } },
   { key: "news_number", label: "شماره خبر", projection: { news_number: 1 } },
-  { key: "officer", label: "مامور", projection: { officer: 1 } },
+  {
+    key: "officer",
+    label: "مامور",
+    projection: { officer: { first_name: 1, last_name: 1, personnel_code: 1 } },
+  },
   { key: "injured_count", label: "تعداد مجروحان", projection: { injured_count: 1 } },
   { key: "completion_date", label: "تاریخ تکمیل", projection: { completion_date: 1 } },
   { key: "createdAt", label: "زمان ثبت", projection: { createdAt: 1 } },
@@ -39,7 +57,11 @@ export const ACCIDENT_FIELD_OPTIONS: AccidentFieldOption[] = [
   { key: "vehicle_reasons", label: "عوامل وسیله نقلیه", projection: { vehicle_reasons: { name: 1 } } },
   { key: "equipment_damages", label: "خسارات تجهیزات", projection: { equipment_damages: { name: 1 } } },
   { key: "road_surface_conditions", label: "وضعیت سطح راه", projection: { road_surface_conditions: { name: 1 } } },
-  { key: "attachments", label: "پیوست‌ها", projection: { attachments: 1 } },
+  {
+    key: "attachments",
+    label: "پیوست‌ها",
+    projection: { attachments: { name: 1, type: 1, size: 1 } },
+  },
   { key: "vehicle_dtos", label: "وسایل نقلیه", projection: { vehicle_dtos: 1 } },
   { key: "pedestrian_dtos", label: "عابران پیاده", projection: { pedestrian_dtos: 1 } },
 ];
