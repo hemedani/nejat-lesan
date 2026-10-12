@@ -7,7 +7,11 @@ export const updateFn: ActFn = async (body) => {
 	const { user }: MyContext = coreApp.contextFns
 		.getContextModel() as MyContext;
 
-	const { _id, client_report_uuid, ...fields } = set;
+	// `attachmentsIds` is pulled out with the lookup keys rather than left in
+	// `fields`: `fields` is spread verbatim into `$set`, and a relation id array
+	// has no place on the document. It is written through `addRelation` in
+	// step 6 instead, exactly as `add` does it.
+	const { _id, client_report_uuid, attachmentsIds, ...fields } = set;
 
 	// --- 1. Resolve the target record ---
 	const filter: Record<string, unknown> = {};
@@ -215,6 +219,15 @@ export const updateFn: ActFn = async (body) => {
 	// --- 4. Handle attachment linking for new image ObjectIds ---
 	// Check for new image ObjectIds in plate_image, insurance_image, vehicle_dtos, facility_damage_dtos
 	const attachmentIds: string[] = [];
+	// Files the client uploaded itself and is now attaching — a dynamic form's
+	// `file` fields. Seeded here so they join the same dedupe + `addRelation`
+	// pass below, which appends: the report's existing attachments are never
+	// replaced, so a correction cannot drop what the original submission linked.
+	if (Array.isArray(attachmentsIds)) {
+		for (const id of attachmentsIds) {
+			if (typeof id === "string" && id.length > 0) attachmentIds.push(id);
+		}
+	}
 	if (fields.plate_image) attachmentIds.push(fields.plate_image as string);
 	if (fields.insurance_image) {
 		attachmentIds.push(fields.insurance_image as string);
