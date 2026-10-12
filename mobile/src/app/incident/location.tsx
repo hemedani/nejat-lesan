@@ -25,6 +25,7 @@ import { ScreenHeader } from '@/components/ui/screen-header';
 import { StatusPill } from '@/components/ui/status-pill';
 import { AppIcons, type IconFamily, type IconName } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
+import { useBottomInset } from '@/hooks/use-bottom-inset';
 import { useDeviceLocation } from '@/hooks/use-device-location';
 import { getConnectivitySnapshot } from '@/services/connectivity';
 import { useRequiredSession } from '@/auth/use-required-session';
@@ -33,6 +34,7 @@ const FALLBACK_CENTER: Coordinates = { latitude: 35.6892, longitude: 51.389 };
 
 const SNAP_DEBOUNCE_MS = 900;
 const SNAP_SUGGEST_METERS = 20;
+const SHEET_MIN_BOTTOM_PADDING = 16;
 
 type SnapState = 'idle' | 'loading' | 'done' | 'failed' | 'no_road' | 'offline';
 
@@ -72,6 +74,7 @@ function usePinPulse() {
 export default function IncidentLocationScreen() {
   const router = useRouter();
   const session = useRequiredSession();
+  const sheetBottomPadding = useBottomInset(SHEET_MIN_BOTTOM_PADDING);
   const params = useLocalSearchParams<{ uuid?: string; lat?: string; lng?: string }>();
   const deviceLocation = useDeviceLocation();
   const { locate } = deviceLocation;
@@ -258,7 +261,11 @@ export default function IncidentLocationScreen() {
         <ThemedText style={styles.attribution}>© OpenStreetMap contributors</ThemedText>
       </View>
 
-      <View style={styles.sheet}>
+      {/* The confirm CTA lives at the bottom of this sheet, so the sheet — not the
+          screen — has to clear the Android navigation bar. `edges={['top']}` above
+          deliberately leaves the bottom to this element: padding the whole screen
+          would lift the map off the bottom edge for no reason. */}
+      <View style={[styles.sheet, { paddingBottom: sheetBottomPadding }]}>
         <View style={styles.grabber} />
         {officerDistance != null ? (
           <SummaryRow
@@ -285,11 +292,11 @@ export default function IncidentLocationScreen() {
           }
         />
         {snapState === 'loading' ? (
-          <SummaryRow icon={AppIcons.map.route} label="تطبیق با راه" value="در حال محاسبه…" />
+          <SummaryRow icon={AppIcons.map.route} label="راه نزدیک" value="در حال محاسبه…" />
         ) : null}
         {snapState === 'done' && roadSnap ? (
           <>
-            <SummaryRow icon={AppIcons.map.route} label="راه" value={roadSnap.road_name ?? '—'} />
+            <SummaryRow icon={AppIcons.map.route} label="راه نزدیک" value={roadSnap.road_name ?? '—'} />
             <SummaryRow icon={AppIcons.map.direction} label="جهت" value={roadSnap.direction ?? '—'} />
             <SummaryRow
               icon={AppIcons.map.kilometer}
@@ -316,12 +323,18 @@ export default function IncidentLocationScreen() {
           />
         )}
 
+        {/* A suggestion, never a rule. Incidents legitimately happen off the
+            carriageway — on a ramp, in a service area, or on the road boundary —
+            so the officer keeps whatever point they chose and only moves it if
+            they want to. This is why the banner is `info` and not `warning`: a
+            warning tone reads as "something is wrong and must be fixed", and the
+            confirm CTA below stays enabled either way. */}
         {suggestSnap && roadSnap?.nearest_point ? (
           <Banner
-            actionLabel="انتقال"
-            icon={AppIcons.map.locateMe.name}
-            message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با مسیر فاصله دارد؛ انتقال به نزدیک‌ترین موقعیت روی مسیر؟`}
-            tone="warning"
+            actionLabel="انتقال به مسیر"
+            icon={AppIcons.map.route.name}
+            message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با محور راه فاصله دارد. اگر واقعه روی سطح سواره‌رو رخ داده، آن را به نزدیک‌ترین موقعیت روی محور منتقل کنید؛ در غیر این صورت همین نقطه ثبت می‌شود.`}
+            tone="info"
             title="پیشنهاد تطبیق با راه"
             onAction={moveToNearestPoint}
           />
@@ -478,7 +491,7 @@ const styles = StyleSheet.create({
     maxHeight: '48%',
     paddingHorizontal: 18,
     paddingTop: 10,
-    paddingBottom: 16,
+    // `paddingBottom` is set inline from the safe-area inset — see the sheet.
   },
   grabber: {
     alignSelf: 'center',
