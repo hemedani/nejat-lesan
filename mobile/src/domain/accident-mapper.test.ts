@@ -104,6 +104,35 @@ describe('buildAccidentAddSet', () => {
     }
   });
 
+  it('links the files a dynamic form attached', () => {
+    // Written by `syncFormAssets` once each file has a server `_id`; the console's
+    // «مستندات» gallery is built from this relation, so a file that never lands
+    // here is uploaded but invisible.
+    const result = buildAccidentAddSet(
+      makeDraft({
+        data: { attachmentsIds: ['507f1f77bcf86cd799439011', '', null] },
+      }),
+    );
+    if (result.ok) {
+      expect(result.set['attachmentsIds']).toEqual(['507f1f77bcf86cd799439011']);
+    }
+  });
+
+  it('never emits attachmentsIds for a non-accident report', () => {
+    // `incident_report` declares no attachments relation and its `set` validator
+    // is strict, so an extra key is a validation error rather than an ignored
+    // field — it would take the whole submission down.
+    const result = buildAccidentAddSet(
+      makeDraft({
+        incident_type: 'road_breakdown',
+        data: { attachmentsIds: ['507f1f77bcf86cd799439011'] },
+      }),
+    );
+    if (result.ok) {
+      expect(result.set).not.toHaveProperty('attachmentsIds');
+    }
+  });
+
   it('passes through nested DTO payloads untouched', () => {
     const vehicleDto = { plaque_no: ['22', '111', ' Iran55'], driver: { national_code: '0012' } };
     const result = buildAccidentAddSet(makeDraft({ data: { vehicle_dtos: [vehicleDto] } }));

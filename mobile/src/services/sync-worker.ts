@@ -35,6 +35,7 @@ import {
 } from '@/domain/sync-rules';
 import type { AccidentDraft, QueueRecord, RoadSnap, Session } from '@/domain/types';
 import { createSessionService } from '@/auth/session-service';
+import { syncFormAssets } from '@/services/asset-upload-service';
 import { syncReportMedia } from '@/services/media-upload-service';
 import {
   clearDraftReturnedFlag,
@@ -292,13 +293,18 @@ async function processRecord(
     return 'retry';
   }
 
-  // Categorized media upload (dormant unless EXPO_PUBLIC_ACCIDENT_UPLOADS=on):
-  // files go up first so their server `_id`s can ride inside the report payload.
+  // Uploads (dormant unless EXPO_PUBLIC_ACCIDENT_UPLOADS=on): files go up first
+  // so their server `_id`s can ride inside the report payload. The accident
+  // wizard's fixed media slots go through the base64 image act; a dynamic form's
+  // `file` fields go through the general multipart act, because they can carry
+  // videos and documents as well as photos.
   let workingDraft = draft;
   if (getAppConfig().uploadsEnabled) {
     try {
       const mediaSync = await syncReportMedia(session, workingDraft);
       workingDraft = { ...workingDraft, data: mediaSync.data };
+      const assetSync = await syncFormAssets(session, workingDraft);
+      workingDraft = { ...workingDraft, data: assetSync.data };
     } catch (error) {
       const code = error instanceof ApiError ? error.code : 'unknown';
       const outcome = decideOutcome(code, record.attempts, Date.now());

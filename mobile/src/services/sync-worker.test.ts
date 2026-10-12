@@ -51,6 +51,12 @@ vi.mock('@/services/media-upload-service', () => ({
   syncReportMedia: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({ data: draft.data })),
 }));
 
+// Form-asset uploads ride the same gate as the accident media pipeline; mocked
+// so the worker's tests stay free of `expo-file-system`.
+vi.mock('@/services/asset-upload-service', () => ({
+  syncFormAssets: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({ data: draft.data })),
+}));
+
 vi.mock('@/api/accident-process', () => ({
   fetchPatrolProcess: vi.fn(async () => ({ process: null })),
 }));

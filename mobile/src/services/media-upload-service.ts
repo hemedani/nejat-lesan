@@ -3,6 +3,7 @@ import { File } from 'expo-file-system';
 import { uploadAccidentImage } from '@/api/media';
 import { applyServerFileIds, type MediaUploadResult } from '@/domain/media-writeback';
 import type { AccidentDraft, Session } from '@/domain/types';
+import type { MediaCategory } from '@/services/media-service';
 import type { MediaRecord } from '@/storage/local-database';
 import { listMedia, updateMediaMetadata } from '@/storage/local-database';
 
@@ -15,6 +16,20 @@ function serverFileId(record: MediaRecord): string | undefined {
   const value = (record.metadata as Record<string, unknown> | undefined)?.['server_file_id'];
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
+
+/**
+ * A not-yet-uploaded record that belongs to the accident wizard's fixed media
+ * slots.
+ *
+ * A dynamic form's `file` fields store their captures under the `asset`
+ * category, which this pipeline does not own: they can be videos and documents,
+ * which `file.uploadAccidentImages` rejects, so they are uploaded by
+ * `syncFormAssets` through the general file act instead.
+ */
+const isPendingWizardMedia = (
+  record: MediaRecord,
+): record is MediaRecord & { category: MediaCategory } =>
+  record.category !== 'asset' && serverFileId(record) === undefined;
 
 async function readBase64(record: MediaRecord): Promise<string> {
   const file = new File(record.local_uri);
@@ -34,7 +49,7 @@ export async function syncReportMedia(
   draft: AccidentDraft,
 ): Promise<ReportMediaSyncResult> {
   const media = await listMedia(draft.client_report_uuid);
-  const pending = media.filter(record => !serverFileId(record));
+  const pending = media.filter(isPendingWizardMedia);
   if (pending.length === 0) {
     return { data: draft.data, uploaded: 0 };
   }

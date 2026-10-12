@@ -41,6 +41,12 @@ export const INCIDENT_TYPE_REPORT_PREFIX: Record<IncidentType, string> = {
  * Server-rejected accident-only fields. Non-accident reports must never emit
  * the vehicle/people/facility DTO arrays nor the accident severity/collision
  * relations (`typeId`/`collisionTypeId`).
+ *
+ * `attachmentsIds` belongs here for the same reason: it is a relation on
+ * `accident` alone, `incident_report` declares none, and the report's `set`
+ * validator is strict — an extra key is a validation error, not an ignored
+ * field. The mobile only ever builds it for an accident, so this is the guard
+ * that keeps that true if the two mappers are ever unified.
  */
 export const ACCIDENT_ONLY_DATA_KEYS: readonly string[] = [
   'vehicle_dtos',
@@ -50,6 +56,7 @@ export const ACCIDENT_ONLY_DATA_KEYS: readonly string[] = [
   'facility_damage_dtos',
   'collisionTypeId',
   'typeId',
+  'attachmentsIds',
 ];
 
 export function isIncidentType(value: unknown): value is IncidentType {

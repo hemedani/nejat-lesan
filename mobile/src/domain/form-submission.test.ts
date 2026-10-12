@@ -124,6 +124,63 @@ describe('formAnswersToDraftData', () => {
       },
     ]);
   });
+
+  /**
+   * A `file` field answers with the local ids of the assets the officer captured.
+   * Those ids have to reach the payload, because that is the only place the sync
+   * worker can rewrite them to the server's file ids — an answer dropped here is
+   * evidence silently lost from the report.
+   */
+  it('carries a file field’s asset ids into the payload', () => {
+    const definition = def([f({ key: 'attachments', type: 'file' })]);
+    const answers: AnswerTree = { attachments: ['asset-1-a', 'asset-2-b'] };
+
+    const data = formAnswersToDraftData(definition, answers, {});
+
+    // An unbound array answer is snapshotted into `answer_names` — the only
+    // string-list column `dynamic_answers` declares.
+    expect(data['dynamic_answers']).toEqual([
+      {
+        step_key: 'scene',
+        question_key: 'attachments',
+        model_name: 'dynamic',
+        answer_names: ['asset-1-a', 'asset-2-b'],
+      },
+    ]);
+    expect(data['form_answers']).toEqual(answers);
+  });
+
+  it('tags a file field inside a repeatable row by its instance path', () => {
+    const definition = def([
+      {
+        kind: 'repeatable',
+        key: 'vehicles',
+        label: 'وسیله',
+        order: 0,
+        children: [f({ key: 'vehicle_attachments', type: 'file' })],
+      },
+    ]);
+    const answers: AnswerTree = { vehicles: [{ vehicle_attachments: ['asset-9-z'] }] };
+
+    const data = formAnswersToDraftData(definition, answers, {});
+
+    expect(data['dynamic_answers']).toEqual([
+      {
+        step_key: 'scene',
+        question_key: 'vehicles[0].vehicle_attachments',
+        model_name: 'dynamic',
+        answer_names: ['asset-9-z'],
+      },
+    ]);
+  });
+
+  it('omits a file field with no assets, so an empty array is not "answered"', () => {
+    const definition = def([f({ key: 'attachments', type: 'file' })]);
+
+    const data = formAnswersToDraftData(definition, { attachments: [] }, {});
+
+    expect(data).not.toHaveProperty('dynamic_answers');
+  });
 });
 
 describe('isFormDraftData', () => {

@@ -94,6 +94,11 @@ const ARRAY_RELATION_KEYS = [
   'humanReasonsIds',
   'vehicleReasonsIds',
   'equipmentDamagesIds',
+  // The files a dynamic-form `file` field attached. Written by
+  // `syncFormAssets` once each one has a server `_id`, and what the console's
+  // «مستندات» gallery is built from — a file that never lands here is uploaded
+  // but invisible.
+  'attachmentsIds',
 ] as const;
 
 /** Keys skipped entirely when the report is not an accident. */
@@ -175,6 +180,9 @@ export function buildAccidentAddSet(draft: AccidentDraft): MapperResult {
   for (const key of ARRAY_RELATION_KEYS) {
     const value = data[key];
     if (Array.isArray(value)) {
+      if (!isAccident && FORBIDDEN_KEYS.has(key)) {
+        continue;
+      }
       const ids = value.filter((v): v is string => typeof v === 'string' && v.length > 0);
       if (ids.length > 0) {
         (set as Record<string, unknown>)[key] = ids;

@@ -13,11 +13,12 @@ import type {
 } from '@forms';
 import { evalRule, isNodeRequired, isNodeVisible, resolveOptions } from '@forms';
 import type { ReferenceOption } from '@/api/form-definition';
-import { addNestedRow, readRows, removeNestedRow, setFieldAnswer, setRowFieldAnswer } from '@/domain/form-state';
+import { addNestedRow, instancePathOf, readRows, removeNestedRow, setFieldAnswer, setRowFieldAnswer } from '@/domain/form-state';
 import { isDateTimeFieldType } from '@/domain/form-datetime';
 import { ChipsRow, ErrorText, FieldLabel, FormInput } from '@/components/form-fields';
 import { CardShell } from '@/components/form-fields';
 import { DateTimeField } from '@/components/form/date-time-field';
+import { FileField } from '@/components/form/file-field';
 import { AppTheme } from '@/constants/theme';
 
 /**
@@ -36,6 +37,7 @@ export function FormNode({
   warnings,
   onChange,
   onEditLocation,
+  reportUuid,
   scope = [],
   path = [],
 }: {
@@ -53,6 +55,12 @@ export function FormNode({
    * case the field is display-only.
    */
   onEditLocation?: () => void;
+  /**
+   * The draft the form is filling. A `file` field stores its captured assets
+   * against it, so without this the field can only report that it is empty.
+   * Omitted in a preview, where nothing is capturable.
+   */
+  reportUuid?: string;
   /** Enclosing repeatable rows, for rules scoped to the current row. */
   scope?: AnswerValue[];
   /** Chain of repeatable keys and row indices addressing this node. */
@@ -76,6 +84,7 @@ export function FormNode({
             warnings={[]}
             onChange={onChange}
             onEditLocation={onEditLocation}
+            reportUuid={reportUuid}
             scope={scope}
             path={path}
           />
@@ -94,6 +103,7 @@ export function FormNode({
         scope={scope}
         path={path}
         onEditLocation={onEditLocation}
+        reportUuid={reportUuid}
         onChange={onChange}
       />
     );
@@ -110,6 +120,7 @@ export function FormNode({
       scope={scope}
       path={path}
       onEditLocation={onEditLocation}
+      reportUuid={reportUuid}
       onChange={onChange}
     />
   );
@@ -125,6 +136,7 @@ function RepeatableList({
   scope,
   path,
   onEditLocation,
+  reportUuid,
   onChange,
 }: {
   node: RepeatableNode;
@@ -142,6 +154,7 @@ function RepeatableList({
   /** Chain of repeatable keys and row indices addressing this repeatable. */
   path: Array<string | number>;
   onEditLocation?: () => void;
+  reportUuid?: string;
   onChange: (next: AnswerTree) => void;
 }) {
   const [openRow, setOpenRow] = useState<number | null>(null);
@@ -192,6 +205,7 @@ function RepeatableList({
                     warnings={[]}
                     onChange={onChange}
                     onEditLocation={onEditLocation}
+                    reportUuid={reportUuid}
                     scope={[...scope, row]}
                     path={rowPath}
                   />
@@ -245,6 +259,7 @@ function Field({
   scope,
   path,
   onEditLocation,
+  reportUuid,
   onChange,
 }: {
   node: FieldNode;
@@ -256,6 +271,7 @@ function Field({
   scope: AnswerValue[];
   path: Array<string | number>;
   onEditLocation?: () => void;
+  reportUuid?: string;
   onChange: (next: AnswerTree) => void;
 }) {
   const required = isNodeRequired(node, answers, scope);
@@ -343,9 +359,21 @@ function Field({
         // app guarantees instead of something the officer has to remember.
         <DateTimeField hasError={errors.length > 0} onCommit={write} type={node.type} value={value} />
       ) : node.type === 'file' ? (
-        // Captured by the dedicated media screens and stored on the draft; the
-        // field itself records that capture happened.
-        <Text style={styles.hint}>مستندات از بخش رسانه ثبت می‌شود.</Text>
+        // An asset field. The officer captures photos, videos or documents here
+        // and the bytes are stored against the draft; the field's answer is the
+        // list of captured assets, uploaded when the report syncs. A field with
+        // nothing to capture into (a preview) still renders, display-only.
+        reportUuid ? (
+          <FileField
+            clientReportUuid={reportUuid}
+            owner={instancePathOf([...path, node.key])}
+            value={value}
+            onChange={write}
+            hasError={errors.length > 0}
+          />
+        ) : (
+          <Text style={styles.hint}>این فیلد در پیش‌نمایش قابل تکمیل نیست.</Text>
+        )
       ) : (
         <FormInput
           value={String(value ?? '')}

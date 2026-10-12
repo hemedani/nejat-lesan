@@ -87,6 +87,15 @@ async function compressToJpeg(uri: string, width: number): Promise<string> {
   return saved.uri;
 }
 
+/**
+ * Downscale and re-encode an image to JPEG.
+ *
+ * Exported because a dynamic form's `file` field can hold a photo too, and it
+ * must respect the same upload budget as an accident slot. Keeping one
+ * implementation means the two paths cannot drift apart on quality or width.
+ */
+export const compressImageToJpeg = compressToJpeg;
+
 function buildId(): string {
   return `media-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -176,7 +185,7 @@ export async function removeMedia(record: MediaRecord): Promise<void> {
 
 export async function listMediaFor(
   clientReportUuid: string,
-  category?: MediaCategory,
+  category?: MediaCategory | 'asset',
   owner?: MediaOwner,
 ): Promise<MediaRecord[]> {
   const all = await listMedia(clientReportUuid);

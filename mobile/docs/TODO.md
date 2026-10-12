@@ -48,7 +48,7 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 
 ### Module licensing and media enablement
 - [x] Gate module-owned surfaces when `incident_patrol` is positively known-off (install or org) via a central `domain/modules.ts` helper (Ghost exempt; absent/stale `modules` degrade to "treat as enabled"; backend still enforces). Wired: Home shift feed, Reports, incident process fetch.
-- [-] Enable media upload (`EXPO_PUBLIC_ACCIDENT_UPLOADS=on`) incl. the `incident` category; verify how non-accident files bind; remove the dormancy caveat in docs. Code path remains dormant until a reachable-backend/device E2E confirms upload + binding; non-accident binding is unresolved (no DTO field to write file ids into).
+- [-] Enable media upload (`EXPO_PUBLIC_ACCIDENT_UPLOADS=on`) incl. the `incident` category; verify how non-accident files bind; remove the dormancy caveat in docs. Code path remains dormant until a reachable-backend/device E2E confirms upload + binding; non-accident binding is unresolved (no DTO field to write file ids into). The flag now gates **two** pipelines: the accident wizard's base64 image slots (`uploadAccidentImages`) and the dynamic form's `file` fields (multipart `uploadFile`, §7).
 
 ## 1. Project foundation
 
@@ -157,9 +157,10 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 - [-] Request and explain Camera, Microphone, Location, and Notifications permissions at the appropriate workflow point. Camera/library + location flows present; microphone/notifications pending.
 - [x] Add image capture/selection, compression, preview, replacement, deletion, and offline persistence. Media sections restyled on the design system.
 - [x] Categorize media as plate, insurance, croquis, or damage; owner tags scope to the exact card. Backend v2 adds the `incident` category for non-accident evidence (§0).
-- [-] Wait for backend-contract confidence before treating media as synced. The contract is pinned (base64 `set.file.data`, `damage → facility_damage` alias, Patrol ownership, categories incl. `incident`); the mobile pipeline is coded and integrated behind the default-off `EXPO_PUBLIC_ACCIDENT_UPLOADS` flag — enablement and device E2E pending.
+- [-] Wait for backend-contract confidence before treating media as synced. The contract is pinned (base64 `set.file.data`, `damage → facility_damage` alias, Patrol ownership, categories incl. `incident`); the mobile pipeline is coded and integrated behind the `EXPO_PUBLIC_ACCIDENT_UPLOADS` flag — now **on** in `.env.development` (it defaults off, and with it off captured assets stay local and their ids reach the server unresolved). Device E2E pending.
 - [x] Define file size/type limits, upload retry behavior, and cleanup of abandoned local media. Local cleanup of a deleted draft's folder pending draft deletion.
 - [x] Ensure media paths are stable under edit: files live under `Documents/media/<uuid>/` keyed by stable ids.
+- [-] Dynamic-form `file` fields capture and upload assets. `FileField` renders camera / gallery / document buttons with thumbnails, remove, and preview, and writes the captured asset ids into the answer tree (top-level and inside repeatable rows). Assets are stored in the `media` table under the `asset` category keyed by the field's instance path, so they survive restart and stay resumable offline. Upload goes through `file.uploadFile` (multipart `file` + `lesan-body`, mirroring the web client) because the field can carry photos, videos and documents — `uploadAccidentImages` is image-only. On sync the writeback does three things: swaps every local id for its server `_id` across the payload, splits each file row into `answer_ids` (server ids) and `answer_names` (filenames, so the review screen shows `photo-1234.jpg` instead of hex), and collects the referenced files as `attachmentsIds` so they join the report's «مستندات» gallery. The backend records the upload `path` on the file doc, which is what the console reads to build the URL. Remaining: on-device E2E of the multipart path against a reachable backend, and an E2E check that a file attached *during a correction* reaches the gallery (the `accident.update` act was extended to accept `attachmentsIds` for this).
 
 ## 8. Reports, announcements, and More
 
@@ -190,6 +191,6 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 - Road `area` geometry backfill for production roads (~1490) — blocks snapping, zone validation, and offline road caching.
 - `police_station` seed data with real station polygons.
 - Patrol email distribution (login is email-based).
-- Mobile-side enablement + device E2E of media upload behind `EXPO_PUBLIC_ACCIDENT_UPLOADS=on`.
+- Device E2E of media upload: the flag is on and the writeback is wired end to end, but no upload has been exercised against a reachable backend from a device yet. Verify a form `file` field's photo and PDF appear in the console's «مستندات» gallery and as a filename (not an id) in the answers list.
 - Push delivery (FCM/APNs provider credentials) for announcements and sync-result notifications; `device.push_token` is accepted at device-scoped login.
 - Emergency: `emergency.register / gets / get / updateStatus` exist; the mobile Emergency flow and offline SOS fallback remain ops/product decisions.

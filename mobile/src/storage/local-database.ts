@@ -7,10 +7,18 @@ const DATABASE_VERSION = 2;
 
 export type DraftRecord = AccidentDraft;
 
+/**
+ * A locally captured file attached to a report.
+ *
+ * `category` covers the accident wizard's fixed media slots (`plate`,
+ * `insurance`, `croquis`, `damage`, `incident`) plus `asset`, which is the slot
+ * used by a dynamic form's `file` fields — those can carry photos, videos and
+ * documents, so they are not interchangeable with an accident photo slot.
+ */
 export type MediaRecord = {
   id: string;
   client_report_uuid: string;
-  category: 'plate' | 'insurance' | 'croquis' | 'damage' | 'incident';
+  category: 'plate' | 'insurance' | 'croquis' | 'damage' | 'incident' | 'asset';
   local_uri: string;
   mime_type?: string;
   size_bytes?: number;

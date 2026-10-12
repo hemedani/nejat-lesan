@@ -20,7 +20,7 @@ import {
 } from '@/api/form-definition';
 import { translateApiError } from '@/api/errors';
 import type { AnswerTree, ContentNode, FieldNode, FormDefinition } from '@forms';
-import { isNodeVisible, resolveOptions, type ValidationResult } from '@forms';
+import { isNodeVisible, resolveOptions, seedDefaultAnswers, type ValidationResult } from '@forms';
 import {
   addNestedRow,
   addRow,
@@ -187,25 +187,32 @@ export default function IncidentFormScreen() {
 
   // --- resume the draft ---------------------------------------------------
   useEffect(() => {
-    if (load.phase !== 'ready' || !draftId) return;
+    if (load.phase !== 'ready' || !definition) return;
     let cancelled = false;
 
     (async () => {
-      const record = await getDraft(draftId);
-      if (cancelled || !record) return;
-      setDraft(record);
+      const record = draftId ? await getDraft(draftId) : null;
+      if (cancelled) return;
+      if (record) setDraft(record);
+
       // Shallow-merge so a draft written by a newer build keeps its extra keys.
-      const stored = (record.data ?? {}) as Record<string, unknown>;
+      const stored = (record?.data ?? {}) as Record<string, unknown>;
       setAnswers((current) => {
         const merged = mergeAnswers(stored, current);
         // A `location` field is captured on the map screen, so its value comes
         // from the draft's coordinate column, not from the answers blob. Without
         // this the required location on the QA form's first page is
         // unsatisfiable and the officer can never reach step two.
-        return definition
-          ? seedCapturedAnswers(definition, merged, { location: record.incident_coords })
-          : merged;
+        const withLocation = seedCapturedAnswers(definition, merged, {
+          location: record?.incident_coords,
+        });
+        // Starting values go last, and only for fields the draft left blank, so
+        // an officer's own answer always beats a default. The accident date and
+        // time open pre-filled with now; without this pass they would open empty
+        // and the officer would have to pick a moment that just happened.
+        return seedDefaultAnswers(definition, withLocation);
       });
+
       const savedPage = stored.form_page_index;
       if (typeof savedPage === 'number') setPageIndex(savedPage);
       resumed.current = true;
@@ -505,6 +512,7 @@ export default function IncidentFormScreen() {
                   warnings={grouped.warnings.get(node.key) ?? []}
                   onChange={(next) => update(next)}
                   onEditLocation={editLocation}
+                  reportUuid={draftId}
                 />
               ))}
             </View>
