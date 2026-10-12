@@ -1,35 +1,63 @@
 /**
- * The QA reference form, expressed as a form definition.
+ * The accident report form, expressed as a form definition.
  *
  * Moved here from `mobile/src/domain/qa-accident-form.ts`, which is now a
  * re-export shim. It lives in the engine so the backend can activate this exact
  * definition as an organization's accident form — one artifact, imported by both
  * `mobile/src/domain/default-accident-form.ts` and the backend's seed.
  *
- * This file is the acceptance test for the whole engine. It is a faithful
- * encoding of `qa_docs/QA_AR/Accident_Report_App.html` (739 lines) with **no
- * application code at all** — every behaviour the QA team's prototype achieves
- * with hand-written JavaScript is expressed declaratively here.
- *
- * The mapping, section by section:
+ * It began as a faithful encoding of `qa_docs/QA_AR/Accident_Report_App.html`
+ * (739 lines of hand-written JavaScript) with **no application code at all**:
+ * every behaviour the QA team's prototype achieved with code is expressed
+ * declaratively here. It is still the engine's acceptance test, and the mapping
+ * still holds for everything it covers:
  *
  * | QA prototype                    | Definition mechanism                     |
  * | ------------------------------- | --------------------------------------- |
- * | 9-step wizard with a side rail  | `pages[]`                               |
- * | `hasDamage === 'بله'` gate      | `visibleWhen` on a page                  |
+ * | multi-step wizard with a rail   | `pages[]`                                |
+ * | `hasDamage === 'بله'` gate      | `visibleWhen` on a group                 |
  * | `plateType` → 4 different parts | `plateVariants` selected by a rule        |
  * | heavy vehicle → cargo select    | `visibleWhen` on a field                  |
- * | `emergency` → suggested support | `optionsFilter` with `mode: "dynamic"`    |
- * | `suggestions()` + overrides     | `optionsFilter.values` + officer selection |
  * | nested `vehicles[].passengers[]`| nested `repeatable`                       |
  * | `errors()` blocks, `warnings()` | `requiredWhen` vs `validation.warnings`   |
  * | plate type clears plate parts   | `clearOnChange`                           |
  * | min one vehicle                 | `minItems: 1`                             |
  * | tone-coded danger choices       | `OptionItem.tone`                         |
- * | reference lists from the server | `options: { kind: "reference" }`         |
+ * | vehicle collision, one vehicle  | `count` under `not`                       |
  *
- * A definition that needed code to express would mean the engine is not general
- * enough; that is why this file is treated as a test rather than as seed data.
+ * The prototype's `reference` option lists are not mapped: every list here is
+ * literal, so the form renders with no network at all — which a definition the
+ * app ships as its offline fallback has to be able to do.
+ *
+ * ## Where it deliberately differs from the prototype
+ *
+ * The client's arrangement has moved the form on from the prototype, so this is
+ * no longer a verbatim copy. Every difference below is a product decision rather
+ * than an engine gap — none of them needed code to express, which is the whole
+ * reason this file is still the acceptance test:
+ *
+ * - **The traffic/emergency page is gone.** It existed to feed a control centre
+ *   that is not operational yet. Until it is, road-equipment damage is reported
+ *   by the officer on its own page and nothing waits on a dispatch decision.
+ *   That removed `traffic`, `emergency`, `emergencyNotes`, `support` and
+ *   `supportNotes`, and with them the prototype's `emergency → support`
+ *   suggestion and its crane advisory.
+ * - **Road-equipment damage is unconditional.** `hasDamage` used to gate a whole
+ *   page, which left the page unreachable until it had been answered. It now
+ *   gates only the damage list, so the page is always reachable and «بله»
+ *   enables «افزودن آسیب» on the spot.
+ * - **The lane list has two carriageways.** آزادراه خلیج فارس — the demo road —
+ *   carries one lane each way, so «خط ۳» does not exist.
+ * - **Pedestrians and cyclists are not collision partners.** Neither belongs on
+ *   a limited-access freeway, so «برخورد با عابر» and «برخورد با دوچرخه» are
+ *   not offered.
+ * - **The driver has no health field.** «وضعیت راننده» restated what
+ *   `driver_presence` already records («در صحنه فوت شده», «به بیمارستان منتقل
+ *   شده») and the two could disagree. The severity advisory reads
+ *   `driver_presence` instead.
+ * - **The accident date and time start at now.** A patrol officer at the
+ *   roadside is describing something that has just happened, so both fields
+ *   declare `defaultSource: "now"`.
  */
 
 import type {
@@ -55,36 +83,6 @@ const options = (
 		...(tone ? { tone } : {}),
 	}));
 
-const TRAFFIC = options([
-	["عادی"],
-	["اختلال در تردد"],
-	["انسداد جزئی", "انسداد جزئی", "warn"],
-	["انسداد کامل", "انسداد کامل", "danger"],
-]);
-
-const EMERGENCY = options([
-	["حریق یا دود شدید", "حریق یا دود شدید", "danger"],
-	["واژگونی وسیله سنگین", "واژگونی وسیله سنگین", "warn"],
-	["فرد محبوس", "فرد محبوس", "warn"],
-	["مصدوم", "مصدوم", "warn"],
-	["نشت سوخت یا مواد خطرناک", "نشت سوخت یا مواد خطرناک", "danger"],
-	["ریزش بار در سطح راه", "ریزش بار در سطح راه", "warn"],
-	["مانع خطرناک در سواره‌رو", "مانع خطرناک در سواره‌رو", "warn"],
-	["خطر انفجار", "خطر انفجار", "danger"],
-	["سایر"],
-	["وضعیت اضطراری وجود ندارد"],
-]);
-
-const SUPPORT = options([
-	["اورژانس ۱۱۵"],
-	["آتش‌نشانی"],
-	["هلال احمر ۱۱۲"],
-	["پلیس راه"],
-	["اکیپ راهداری"],
-	["یدک‌کش"],
-	["جرثقیل"],
-]);
-
 const SEVERITY = options([
 	["خسارتی"],
 	["جرحی", "جرحی", "warn"],
@@ -96,9 +94,7 @@ const COLLISION = options([
 	["واژگونی و سقوط"],
 	["خروج از جاده"],
 	["برخورد با شیء ثابت"],
-	["برخورد با عابر"],
 	["برخورد با موتورسیکلت"],
-	["برخورد با دوچرخه"],
 	["برخورد با حیوان"],
 	["برخورد با وسیله پارک‌شده"],
 	["چندبرخوردی"],
@@ -199,11 +195,21 @@ const HEAVY_VEHICLES = [
 	"خودروی آتش‌نشانی",
 ];
 
+/**
+ * Paths that record a person's condition, for the severity advisory.
+ *
+ * The driver is deliberately absent: the form no longer asks for a driver's
+ * health, because `driver_presence` already says whether they were killed or
+ * taken to hospital. That answer is read separately below, so a driver casualty
+ * is still seen by the check.
+ */
 const PERSON_PATHS = [
-	"vehicles[].driver.health",
 	"vehicles[].passengers[].health",
 	"pedestrians[].health",
 ];
+
+/** `driver_presence` answers that mean the driver was hurt, not merely present. */
+const DRIVER_CASUALTY = ["در صحنه فوت شده", "به بیمارستان منتقل شده"];
 
 // ---------------------------------------------------------------------------
 // Field helpers
@@ -236,17 +242,6 @@ const choice = (
 	extra: Partial<FieldNode> = {},
 ): FieldNode =>
 	field(key, label, "choice_group", {
-		options: { kind: "literal", items },
-		...extra,
-	});
-
-const multiChoice = (
-	key: string,
-	label: string,
-	items: OptionItem[],
-	extra: Partial<FieldNode> = {},
-): FieldNode =>
-	field(key, label, "multi_select", {
 		options: { kind: "literal", items },
 		...extra,
 	});
@@ -456,17 +451,13 @@ const vehicleFields = (): ContentNode[] => [
 	}),
 	choice("mobility", "وضعیت جابه‌جایی پس از تصادف", MOBILITY, must()),
 	field("vehicle_attachments", "مستندات وسیله", "file"),
-	// Nested repeatable: passengers inside each vehicle.
-	{
-		kind: "repeatable",
-		key: "passengers",
-		label: "سرنشینان",
-		order: nextOrder(),
-		children: personFields("passenger_"),
-	} as RepeatableNode,
 	// The driver belongs to the vehicle, so the two are one row. The QA prototype
 	// keeps them on separate sheets keyed by index, which can drift out of step;
 	// nesting removes the possibility of a driver attached to the wrong vehicle.
+	//
+	// Declared before `passengers` because the officer identifies who was driving
+	// before counting who was riding: the driver's row is the one that carries the
+	// documents question, and answering it first is what the client asked for.
 	{
 		kind: "repeatable",
 		key: "driver",
@@ -482,7 +473,6 @@ const vehicleFields = (): ContentNode[] => [
 				DRIVER_PRESENCE,
 				must(),
 			),
-			choice("driver_health", "وضعیت راننده", PERSON_HEALTH, must()),
 			field("driver_gender", "جنسیت راننده", "select", {
 				options: {
 					kind: "literal",
@@ -503,6 +493,14 @@ const vehicleFields = (): ContentNode[] => [
 				...must({ op: "eq", path: "driver_documents", value: "بله" }),
 			}),
 		],
+	} as RepeatableNode,
+	// Nested repeatable: passengers inside each vehicle.
+	{
+		kind: "repeatable",
+		key: "passengers",
+		label: "سرنشینان",
+		order: nextOrder(),
+		children: personFields("passenger_"),
 	} as RepeatableNode,
 ];
 
@@ -530,11 +528,13 @@ const pages: PageNode[] = [
 				choice(
 					"lane",
 					"خط / باند",
+					// Two carriageways, not three: آزادراه خلیج فارس — the road this
+					// form's demo organization patrols — carries one lane each way, so
+					// «خط ۳» would offer a lane the officer cannot be standing in.
 					options([
 						["شانه راست"],
 						["خط ۱"],
 						["خط ۲"],
-						["خط ۳"],
 						["شانه چپ / میانی"],
 					]),
 					must(),
@@ -554,121 +554,30 @@ const pages: PageNode[] = [
 			title: "زمان وقوع",
 			order: 1,
 			nodes: [
+				// Both start at now: an officer at the roadside is describing an
+				// incident that has just happened, and the common case should not
+				// need a picker opened at all. It is a default, not a fact — the
+				// officer can change either answer, and a value restored from a
+				// saved draft always wins over it (`seedDefaultAnswers`).
 				field("date_of_accident", "تاریخ وقوع", "date", {
 					...must(),
 					binding: { kind: "pure", path: "date_of_accident" },
+					defaultSource: "now",
 				}),
-				field("time_of_accident", "ساعت وقوع", "time", must()),
+				field("time_of_accident", "ساعت وقوع", "time", {
+					...must(),
+					defaultSource: "now",
+				}),
 				field("notes", "توضیحات (اختیاری)", "textarea"),
 			],
 		}],
-	},
-	{
-		key: "emergencyActions",
-		title: "اقدامات فوری",
-		description: "ابتدا وضعیت صحنه و نیاز به پشتیبانی را ثبت کنید.",
-		icon: "warning",
-		order: 3,
-		sections: [
-			{
-				key: "sceneSection",
-				title: "وضعیت تردد و اضطراری",
-				order: 1,
-				nodes: [
-					choice("traffic", "وضعیت تردد", TRAFFIC, must()),
-					multiChoice(
-						"emergency",
-						"وضعیت‌های اضطراری صحنه",
-						EMERGENCY,
-						must(),
-					),
-					field(
-						"emergencyNotes",
-						"توضیح تکمیلی (اختیاری)",
-						"textarea",
-					),
-				],
-			},
-			{
-				key: "damageGateSection",
-				title: "آسیب تجهیزات راه",
-				order: 3,
-				nodes: [
-					choice(
-						"hasDamage",
-						"آیا به تجهیزات راه آسیبی وارد شده است؟",
-						YES_NO,
-						{
-							...must(),
-							description:
-								"در صورت انتخاب «بله»، در مرحله آسیب تجهیزات جزئیات هر آسیب ثبت می‌شود.",
-						},
-					),
-				],
-			},
-			{
-				key: "supportSection",
-				title: "نیاز به پشتیبانی",
-				order: 2,
-				// The QA app recommends services derived from the emergency answers;
-				// here the recommendation is expressed as a narrowing filter, and the
-				// officer's own selection is still recorded.
-				nodes: [
-					multiChoice("support", "پشتیبانی مورد نیاز", SUPPORT, {
-						visibleWhen: {
-							op: "anyIn",
-							path: "emergency",
-							value: [
-								"حریق یا دود شدید",
-								"واژگونی وسیله سنگین",
-								"فرد محبوس",
-								"مصدوم",
-								"نشت سوخت یا مواد خطرناک",
-								"ریزش بار در سطح راه",
-								"مانع خطرناک در سواره‌رو",
-								"خطر انفجار",
-							],
-						},
-						validation: {
-							warnings: [{
-								rule: {
-									op: "and",
-									rules: [
-										{
-											op: "anyIn",
-											path: "vehicles[].mobility",
-											value: ["نیاز به جرثقیل"],
-										},
-										{
-											op: "not",
-											rule: {
-												op: "contains",
-												path: "support",
-												value: "جرثقیل",
-											},
-										},
-									],
-								},
-								message:
-									"وسیله نیاز به جرثقیل دارد اما این پشتیبانی انتخاب نشده است.",
-							}],
-						},
-					}),
-					field(
-						"supportNotes",
-						"توضیح پشتیبانی (اختیاری)",
-						"textarea",
-					),
-				],
-			},
-		],
 	},
 	{
 		key: "accidentDetails",
 		title: "مشخصات تصادف",
 		description: "شدت و رخداد نهایی تصادف را مشخص کنید.",
 		icon: "car",
-		order: 4,
+		order: 3,
 		sections: [{
 			key: "accidentDetailsSection",
 			title: "شدت و نوع برخورد",
@@ -694,11 +603,31 @@ const pages: PageNode[] = [
 									},
 									{
 										op: "or",
-										rules: PERSON_PATHS.map((path) => ({
-											op: "anyIn",
-											path,
-											value: ["مصدوم", "فوتی در صحنه"],
-										})),
+										rules: [
+											// `: Rule` is not decoration: spreading a mapped array
+											// into a larger literal drops the contextual type,
+											// and `op` would widen to `string`.
+											...PERSON_PATHS.map((
+												path,
+											): Rule => ({
+												op: "anyIn",
+												path,
+												value: [
+													"مصدوم",
+													"فوتی در صحنه",
+												],
+											})),
+											// The driver's own condition, now that the form
+											// asks for no driver health. Without this the
+											// check would stop seeing a driver casualty at
+											// all — the one person every vehicle has.
+											{
+												op: "anyIn",
+												path:
+													"vehicles[].driver.presence",
+												value: DRIVER_CASUALTY,
+											},
+										],
 									},
 								],
 							},
@@ -720,7 +649,12 @@ const pages: PageNode[] = [
 										path: "collision",
 										value: "برخورد با وسیله نقلیه",
 									},
-									{ op: "count", path: "vehicles", gte: 2 },
+									// «Fewer than two vehicles on file», written as the
+									// negation of `gte: 2` because `count` has no `lt`.
+									// The rule used to carry `count >= 2` *and*
+									// `not (count >= 2)` — a contradiction, false for
+									// every possible answer, so this warning could never
+									// fire however the report was filled in.
 									{
 										op: "not",
 										rule: {
@@ -744,7 +678,7 @@ const pages: PageNode[] = [
 		title: "شرایط محیطی",
 		description: "شرایط قابل مشاهده در زمان حضور در صحنه.",
 		icon: "sun",
-		order: 5,
+		order: 4,
 		sections: [{
 			key: "environmentSection",
 			title: "روشنایی و هوا",
@@ -763,7 +697,7 @@ const pages: PageNode[] = [
 		title: "وسایل نقلیه",
 		description: "اطلاعات هر وسیله درگیر را جداگانه ثبت کنید.",
 		icon: "car",
-		order: 6,
+		order: 5,
 		sections: [{
 			key: "vehiclesSection",
 			title: "وسایل",
@@ -786,7 +720,7 @@ const pages: PageNode[] = [
 		title: "افراد",
 		description: "وضعیت رانندگان، سرنشینان و عابران.",
 		icon: "users",
-		order: 7,
+		order: 6,
 		sections: [{
 			key: "peopleSection",
 			title: "عابران",
@@ -819,16 +753,31 @@ const pages: PageNode[] = [
 	{
 		key: "facilityDamage",
 		title: "آسیب تجهیزات راه",
-		description: "برای هر تجهیز آسیب‌دیده یک رکورد ثبت کنید.",
+		description:
+			"اگر به تجهیزات راه آسیبی وارد شده، جزئیات آن را ثبت کنید.",
 		icon: "wrench",
-		order: 8,
-		// The whole page is conditional — the QA app's step-7 gate.
-		visibleWhen: { op: "eq", path: "hasDamage", value: "بله" },
+		order: 7,
+		// Always reachable. This page used to be conditional on `hasDamage`, which
+		// made the question that gates it unanswerable — the QA prototype's own
+		// circular gate. It is also the only place road-equipment damage is
+		// reported now that the control centre is not yet operational, so it must
+		// not be skipped. The answer gates the *list* instead: «بله» reveals
+		// «افزودن آسیب» on the spot, «خیر» files the page with nothing on it.
 		sections: [{
 			key: "facilityDamageSection",
 			title: "آسیب تجهیزات",
 			order: 1,
 			nodes: [
+				choice(
+					"hasDamage",
+					"آیا به تجهیزات راه آسیبی وارد شده است؟",
+					YES_NO,
+					{
+						...must(),
+						description:
+							"در صورت انتخاب «بله»، فهرست آسیب‌ها برای ثبت جزئیات فعال می‌شود.",
+					},
+				),
 				{
 					kind: "repeatable",
 					key: "damages",
@@ -836,8 +785,11 @@ const pages: PageNode[] = [
 					itemLabel: "آسیب",
 					order: nextOrder(),
 					minItems: 1,
+					// No `requiredWhen`: an invisible node is never required
+					// (`isNodeRequired` says so), and the validator skips it outright,
+					// so a rule here would read like a second gate without being one.
+					// `minItems` is what makes «بله» mean "record at least one".
 					visibleWhen: { op: "eq", path: "hasDamage", value: "بله" },
-					...must({ op: "eq", path: "hasDamage", value: "بله" }),
 					children: [
 						choice(
 							"damage_type",
@@ -885,7 +837,7 @@ const pages: PageNode[] = [
 		title: "بازبینی نهایی",
 		description: "اطلاعات را کنترل و گزارش را برای ارسال آماده کنید.",
 		icon: "checkCircle",
-		order: 9,
+		order: 8,
 		sections: [{
 			key: "reviewSection",
 			title: "توضیحات نهایی",

@@ -5,11 +5,13 @@ import {
   isFormIconName,
   isNodeRequired,
   resolveOptions,
+  seedDefaultAnswers,
   visiblePages,
 } from '@forms';
 import type { AnswerTree, ContentNode, FieldNode } from '@forms';
 import { qaAccidentFormDefinition } from './qa-accident-form';
 import { canLeavePage, reachablePages, setFieldAnswer } from './form-state';
+import { toStoredValue } from './form-datetime';
 
 const definition = qaAccidentFormDefinition;
 
@@ -23,6 +25,21 @@ const fieldKeysOf = (pageKey: string): string[] => {
 		}
 	};
 	for (const section of page?.sections ?? []) visit(section.nodes ?? []);
+	return keys;
+};
+
+/** Every node key in the definition, across every page. */
+const allKeysOf = (): string[] => {
+	const keys: string[] = [];
+	const visit = (nodes: ContentNode[]) => {
+		for (const node of nodes) {
+			keys.push(node.key);
+			if (node.kind !== 'field') visit(node.children);
+		}
+	};
+	for (const page of definition.pages) {
+		for (const section of page.sections ?? []) visit(section.nodes ?? []);
+	}
 	return keys;
 };
 
@@ -51,6 +68,12 @@ const fieldOf = (key: string): FieldNode | undefined => {
 	return node?.kind === 'field' ? (node as FieldNode) : undefined;
 };
 
+/** The literal options a field declares, or an empty list for any other source. */
+const optionsOf = (key: string) => {
+	const source = fieldOf(key)?.options;
+	return source?.kind === 'literal' ? source.items ?? [] : [];
+};
+
 /**
  * These tests are the acceptance criterion for the whole engine.
  *
@@ -59,10 +82,27 @@ const fieldOf = (key: string): FieldNode | undefined => {
  * from a *definition alone* — if any of these needs custom code to express, the
  * engine is not general enough and the gap belongs in the engine, not in a
  * special-case definition.
+ *
+ * The definition has since moved on from the prototype on the client's
+ * instructions (the control centre is not operational yet, the demo road has two
+ * carriageways, the driver carries no health field). Those differences are
+ * asserted too, and they are all still declarative — the reason this file can
+ * keep calling itself the acceptance test.
  */
-describe('QA form definition — structure', () => {
-  it('covers all nine sections of the reference prototype', () => {
-    expect(definition.pages).toHaveLength(9);
+describe('Accident form definition — structure', () => {
+  it('covers every step of the report', () => {
+    expect(definition.pages).toHaveLength(8);
+  });
+
+  it('numbers the steps without gaps and ends on the review step', () => {
+    // Page order is what the stepper reads; a gap left behind by a deleted page
+    // would silently reshuffle the wizard.
+    expect(definition.pages.map((page) => page.order)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(definition.pages.at(-1)?.key).toBe('review');
+  });
+
+  it('files road-equipment damage on the second-to-last step', () => {
+    expect(definition.pages.at(-2)?.key).toBe('facilityDamage');
   });
 
   it('uses only field types the engine renders', () => {
@@ -194,30 +234,50 @@ describe('QA form definition — structure', () => {
   });
 });
 
-describe('QA form — conditional visibility (prototype step 7)', () => {
-  it('hides the damage page until damage is confirmed', () => {
-    const answers: AnswerTree = { hasDamage: 'خیر' };
-    expect(reachablePages(definition, answers).map((page) => page.key)).not.toContain(
+describe('Accident form — the damage question no longer gates its own page', () => {
+  it('reaches the damage page before the question is answered', () => {
+    // The gate used to be circular: the page only appeared once `hasDamage` was
+    // «بله», which made the question that gates it impossible to answer. The page
+    // is now unconditional and only the damage *list* depends on the answer.
+    expect(reachablePages(definition, {}).map((page) => page.key)).toContain(
       'facilityDamage',
     );
   });
 
-  it('shows the damage page once damage is confirmed', () => {
-    const answers: AnswerTree = { hasDamage: 'بله' };
+  it('still reaches it when there is no damage at all', () => {
+    const answers: AnswerTree = { hasDamage: 'خیر' };
     expect(reachablePages(definition, answers).map((page) => page.key)).toContain(
       'facilityDamage',
     );
   });
 
-  it('never renders the damage group when damage is refused', () => {
+  it('never renders the damage list when damage is refused', () => {
     const group = nodeOf('damages');
     expect(group?.visibleWhen).toBeDefined();
     expect(evalRule(group!.visibleWhen!, { hasDamage: 'خیر' })).toBe(false);
     expect(evalRule(group!.visibleWhen!, { hasDamage: 'بله' })).toBe(true);
   });
+
+  it('blocks the page once damage is confirmed but nothing is recorded', () => {
+    // «بله» reveals «افزودن آسیب»; `minItems` is what makes one record mandatory.
+    expect(canLeavePage(definition, { hasDamage: 'بله' }, 'facilityDamage')).toBe(false);
+  });
+
+  it('lets the page through when damage is refused', () => {
+    expect(canLeavePage(definition, { hasDamage: 'خیر' }, 'facilityDamage')).toBe(true);
+  });
+
+  it('declares no second gate on the damage list', () => {
+    // `minItems` is what makes «بله» mean "record at least one", and an invisible
+    // node is never required — so a `requiredWhen` here would be dead weight that
+    // reads like a second gate without being one.
+    const group = nodeOf('damages');
+    expect(group?.requiredWhen).toBeUndefined();
+    expect(group?.kind === 'repeatable' ? group.minItems : undefined).toBe(1);
+  });
 });
 
-describe('QA form — field-shape switching (prototype plateFields)', () => {
+describe('Accident form — field-shape switching (prototype plateFields)', () => {
   it('shows only the national plate for a national plate type', () => {
     const national = fieldOf('plate_national')!;
     const motorcycle = fieldOf('plate_motorcycle')!;
@@ -254,7 +314,7 @@ describe('QA form — field-shape switching (prototype plateFields)', () => {
   });
 });
 
-describe('QA form — cargo only for heavy vehicles (prototype heavy())', () => {
+describe('Accident form — cargo only for heavy vehicles (prototype heavy())', () => {
   it('hides cargo for a passenger car', () => {
     const cargo = fieldOf('cargo')!;
     expect(evalRule(cargo.visibleWhen!, { vehicleType: 'سواری' })).toBe(false);
@@ -268,40 +328,12 @@ describe('QA form — cargo only for heavy vehicles (prototype heavy())', () => 
   });
 
   it('marks hazardous cargo as a danger tone, as the prototype does', () => {
-    const cargo = fieldOf('cargo')!;
-    const items = cargo.options?.kind === 'literal' ? cargo.options.items : [];
+    const items = optionsOf('cargo');
     expect(items.find((item) => item.value === 'مواد خطرناک')?.tone).toBe('danger');
   });
 });
 
-describe('QA form — derived support services (prototype suggestions())', () => {
-  it('offers no support list until an emergency is reported', () => {
-    const support = fieldOf('support')!;
-    expect(evalRule(support.visibleWhen!, { emergency: ['وضعیت اضطراری وجود ندارد'] })).toBe(
-      false,
-    );
-  });
-
-  it('offers support once any emergency is selected', () => {
-    const support = fieldOf('support')!;
-    expect(evalRule(support.visibleWhen!, { emergency: ['مصدوم'] })).toBe(true);
-  });
-
-  it('shows all seven services rather than guessing for the officer', () => {
-    // The QA prototype marks suggestions; here the officer chooses, and the
-    // advisory rule below catches a mismatch. Choosing for them would be wrong.
-    const support = fieldOf('support')!;
-    const items = support.options?.kind === 'literal' ? support.options.items : [];
-    expect(items).toHaveLength(7);
-  });
-});
-
-describe('QA form — two-tier validation (prototype errors vs warnings)', () => {
-  it('blocks the damage page when it is revealed with no damage recorded', () => {
-    const answers: AnswerTree = { hasDamage: 'بله' };
-    expect(canLeavePage(definition, answers, 'facilityDamage')).toBe(false);
-  });
-
+describe('Accident form — two-tier validation (prototype errors vs warnings)', () => {
   it('warns, but does not block, on damage-only severity with a casualty', () => {
     const severity = fieldOf('severity')!;
     const warning = severity.validation!.warnings![0];
@@ -309,47 +341,75 @@ describe('QA form — two-tier validation (prototype errors vs warnings)', () =>
     // The prototype's warning: severity is damage-only but a passenger is hurt.
     const answers: AnswerTree = {
       severity: 'خسارتی',
-      vehicles: [
-        { driver: { health: 'سالم' }, passengers: [{ health: 'مصدوم' }] },
-      ],
+      vehicles: [{ passengers: [{ health: 'مصدوم' }] }],
     };
     expect(evalRule(warning.rule, answers)).toBe(true);
     // A warning must never become a blocker.
     expect(severity.requiredWhen?.op).toBe('always');
   });
 
+  it('warns when a damage-only severity hides a driver casualty', () => {
+    // The driver has no health field any more, so their condition is carried by
+    // `driver_presence`. This is the case that field has to keep visible: a
+    // driver is the one person every vehicle always has.
+    const warning = fieldOf('severity')!.validation!.warnings![0];
+    const answers: AnswerTree = {
+      severity: 'خسارتی',
+      vehicles: [{ driver: { presence: 'در صحنه فوت شده' } }],
+    };
+    expect(evalRule(warning.rule, answers)).toBe(true);
+  });
+
+  it('does not warn for a driver who merely drove away', () => {
+    // «متواری شده است» means the driver left, not that they were hurt — the
+    // check must not read it as a casualty.
+    const warning = fieldOf('severity')!.validation!.warnings![0];
+    const answers: AnswerTree = {
+      severity: 'خسارتی',
+      vehicles: [{ driver: { presence: 'متواری شده است' } }],
+    };
+    expect(evalRule(warning.rule, answers)).toBe(false);
+  });
+
   it('does not warn when every person is unharmed', () => {
     const warning = fieldOf('severity')!.validation!.warnings![0];
     const answers: AnswerTree = {
       severity: 'خسارتی',
-      vehicles: [{ driver: { health: 'سالم' }, passengers: [{ health: 'سالم' }] }],
+      vehicles: [
+        {
+          driver: { presence: 'در صحنه حضور دارد' },
+          passengers: [{ health: 'سالم' }],
+        },
+      ],
       pedestrians: [{ health: 'سالم' }],
     };
     expect(evalRule(warning.rule, answers)).toBe(false);
   });
 
-  it('warns when a vehicle needs a crane that was not requested', () => {
-    const warning = fieldOf('support')!.validation!.warnings![0];
+  it('warns when a vehicle collision has only one vehicle on file', () => {
+    // This warning was unreachable until the contradictory `count >= 2` half of
+    // its rule was dropped: it read `count >= 2` *and* `not (count >= 2)`.
+    const warning = fieldOf('collision')!.validation!.warnings![0];
     const answers: AnswerTree = {
-      emergency: ['مصدوم'],
-      vehicles: [{ mobility: 'نیاز به جرثقیل' }],
-      support: ['اورژانس ۱۱۵'],
+      collision: 'برخورد با وسیله نقلیه',
+      vehicles: [{}, {}],
     };
-    expect(evalRule(warning.rule, answers)).toBe(true);
+    expect(evalRule(warning.rule, { ...answers, vehicles: [{}] })).toBe(true);
+    // Two vehicles is the case the message asks for, so nothing to say.
+    expect(evalRule(warning.rule, answers)).toBe(false);
   });
 
-  it('clears the crane warning once support includes it', () => {
-    const warning = fieldOf('support')!.validation!.warnings![0];
+  it('says nothing about a collision that involved no other vehicle', () => {
+    const warning = fieldOf('collision')!.validation!.warnings![0];
     const answers: AnswerTree = {
-      emergency: ['مصدوم'],
-      vehicles: [{ mobility: 'نیاز به جرثقیل' }],
-      support: ['جرثقیل'],
+      collision: 'واژگونی و سقوط',
+      vehicles: [{}],
     };
     expect(evalRule(warning.rule, answers)).toBe(false);
   });
 });
 
-describe('QA form — cascade clears (prototype plate type reset)', () => {
+describe('Accident form — cascade clears (prototype plate type reset)', () => {
   it('clears the national plate parts when the type changes', () => {
     const before: AnswerTree = { plateType: 'ملی', plate_national: { a: '12' } };
     const after = setFieldAnswer(definition, before, 'plateType', 'موتورسیکلت');
@@ -372,7 +432,7 @@ describe('QA form — cascade clears (prototype plate type reset)', () => {
   });
 });
 
-describe('QA form — minimum rows (prototype minItems)', () => {
+describe('Accident form — minimum rows (prototype minItems)', () => {
   it('requires at least one vehicle', () => {
     expect(canLeavePage(definition, {}, 'vehiclesPage')).toBe(false);
   });
@@ -393,7 +453,6 @@ describe('QA form — minimum rows (prototype minItems)', () => {
         mobility: 'قابل حرکت',
         driver: [{
           driver_presence: 'در صحنه حضور دارد',
-          driver_health: 'سالم',
           driver_documents: 'خیر',
         }],
       }],
@@ -402,19 +461,15 @@ describe('QA form — minimum rows (prototype minItems)', () => {
   });
 });
 
-describe('QA form — option lists (prototype tone styling)', () => {
-  it('marks fire and explosion emergency choices as danger', () => {
-    const source = fieldOf('emergency')!.options!;
-    expect(source.kind).toBe('literal');
-    const items = source.kind === 'literal' ? source.items ?? [] : [];
-    expect(items.find((item) => item.value === 'حریق یا دود شدید')?.tone).toBe('danger');
-    expect(items.find((item) => item.value === 'مصدوم')?.tone).toBe('warn');
+describe('Accident form — option lists (prototype tone styling)', () => {
+  it('marks the fatal severity as danger', () => {
+    expect(optionsOf('severity').find((item) => item.value === 'فوتی در صحنه')?.tone)
+      .toBe('danger');
   });
 
-  it('marks full road closure as danger', () => {
-    const source = fieldOf('traffic')!.options!;
-    const items = source.kind === 'literal' ? source.items ?? [] : [];
-    expect(items.find((item) => item.value === 'انسداد کامل')?.tone).toBe('danger');
+  it('marks a hazardous-goods tanker as danger', () => {
+    expect(optionsOf('vehicleType').find((item) => item.value === 'تانکر حمل مواد خطرناک')?.tone)
+      .toBe('danger');
   });
 
   it('narrows a field by another answer without a filter, using visibility', () => {
@@ -425,7 +480,89 @@ describe('QA form — option lists (prototype tone styling)', () => {
   });
 });
 
-describe('QA form — a complete report validates cleanly', () => {
+describe('Accident form — the client arrangement that replaced the prototype', () => {
+  it('offers two carriageways, because the freeway has one lane each way', () => {
+    // آزادراه خلیج فارس, the demo organization's road, carries one lane each way:
+    // a third lane would be a lane the officer cannot be standing in.
+    expect(optionsOf('lane').map((item) => item.value)).toEqual([
+      'شانه راست',
+      'خط ۱',
+      'خط ۲',
+      'شانه چپ / میانی',
+    ]);
+  });
+
+  it('does not offer pedestrians or cyclists as collision partners', () => {
+    const values = optionsOf('collision').map((item) => item.value);
+    expect(values).not.toContain('برخورد با عابر');
+    expect(values).not.toContain('برخورد با دوچرخه');
+    // A narrowing, not a rewrite: the rest of the list is untouched.
+    expect(values).toContain('برخورد با موتورسیکلت');
+  });
+
+  it('asks for the driver before the passengers', () => {
+    const order = fieldKeysOf('vehiclesPage');
+    expect(order.indexOf('driver')).toBeGreaterThan(-1);
+    expect(order.indexOf('driver')).toBeLessThan(order.indexOf('passengers'));
+  });
+
+  it('has no driver health field, because driver_presence already records it', () => {
+    const order = fieldKeysOf('vehiclesPage');
+    expect(order).not.toContain('driver_health');
+    expect(order).toContain('driver_presence');
+  });
+
+  it('starts the accident date and time at now', () => {
+    // A patrol officer at the roadside is describing something that has just
+    // happened, so both fields open pre-filled.
+    expect(fieldOf('date_of_accident')?.defaultSource).toBe('now');
+    expect(fieldOf('time_of_accident')?.defaultSource).toBe('now');
+  });
+
+  it('seeds them in the format the picker itself writes', () => {
+    // The engine resolves the default and `form-datetime` formats a value the
+    // officer picked. If the two ever disagreed, the pre-filled answer would be a
+    // shape the picker could not read back and the field would look empty the
+    // moment it was opened.
+    const now = new Date(2026, 9, 12, 14, 37, 0, 0);
+    expect(seedDefaultAnswers(definition, {}, now)).toEqual({
+      date_of_accident: toStoredValue('date', now),
+      time_of_accident: toStoredValue('time', now),
+    });
+  });
+
+  it('leaves a date the officer already chose alone', () => {
+    const now = new Date(2026, 9, 12, 14, 37, 0, 0);
+    const answers: AnswerTree = { date_of_accident: '2026-09-30' };
+    expect(seedDefaultAnswers(definition, answers, now)).toEqual({
+      date_of_accident: '2026-09-30',
+      time_of_accident: toStoredValue('time', now),
+    });
+  });
+
+  it('no longer carries the traffic and emergency page', () => {
+    // The control centre that page fed is not operational yet, so the whole step
+    // is gone rather than hidden — including the support list it derived.
+    expect(definition.pages.map((page) => page.key)).not.toContain('emergencyActions');
+
+    const keys = allKeysOf();
+    for (
+      const gone of [
+        'traffic',
+        'emergency',
+        'emergencyNotes',
+        'support',
+        'supportNotes',
+        'sceneSection',
+        'supportSection',
+      ]
+    ) {
+      expect(keys).not.toContain(gone);
+    }
+  });
+});
+
+describe('Accident form — a complete report validates cleanly', () => {
   it('produces no errors once every required answer is present', () => {
     const answers: AnswerTree = {
       direction: 'اهواز به بندر امام',
@@ -433,8 +570,6 @@ describe('QA form — a complete report validates cleanly', () => {
       incident_coords: { lat: 30.86, lng: 48.94 },
       date_of_accident: '2026-10-01',
       time_of_accident: '12:30',
-      traffic: 'عادی',
-      emergency: ['وضعیت اضطراری وجود ندارد'],
       severity: 'خسارتی',
       collision: 'برخورد با وسیله نقلیه',
       lighting: 'روز',
@@ -447,7 +582,6 @@ describe('QA form — a complete report validates cleanly', () => {
           mobility: 'قابل حرکت',
           driver: [{
             driver_presence: 'در صحنه حضور دارد',
-            driver_health: 'سالم',
             driver_documents: 'خیر',
           }],
         },

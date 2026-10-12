@@ -14,7 +14,7 @@ import { qaAccidentFormDefinition } from './qa-accident-form';
  * same `/incident/form` screen, the same engine, and the same validation.
  *
  * Why it is derived from `qa-accident-form` rather than written separately: that
- * definition is the engine's acceptance test — 36 assertions covering pages,
+ * definition is the engine's acceptance test — 48 assertions covering pages,
  * conditions, cascades, nested repeatables, plate variants, option narrowing and
  * reference sources. Duplicating it would mean two accident forms to keep in step,
  * and the copy is the one nobody tests. Deriving keeps the shipped artifact covered
@@ -34,8 +34,14 @@ export const DEFAULT_ACCIDENT_FORM_ICON = 'car';
 /**
  * Bumped alongside `qa-accident-form`'s structure so a draft captured against an
  * older bundled form can be told apart from one captured against the current one.
+ *
+ * `2`: the traffic/emergency step was removed and road-equipment damage became an
+ * unconditional page of its own, so a v1 draft can carry answers (`traffic`,
+ * `emergency`, `driver_health`) that this build no longer renders. They are
+ * preserved untouched and simply ignored — a report in progress must never be
+ * damaged by the form moving on under it.
  */
-export const DEFAULT_ACCIDENT_FORM_VERSION = 1;
+export const DEFAULT_ACCIDENT_FORM_VERSION = 2;
 
 export const DEFAULT_ACCIDENT_FORM_SCHEMA_VERSION = 1;
 

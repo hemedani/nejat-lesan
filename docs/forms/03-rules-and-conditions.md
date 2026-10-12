@@ -234,14 +234,22 @@ A second warning, on `support`: a vehicle needs a crane that was not requested.
 A page can be conditional, which is how a whole step disappears:
 
 ```jsonc
-{ "key": "facilityDamage", "title": "آسیب تجهیزات راه", "order": 8,
-  "visibleWhen": { "op": "eq", "path": "hasDamage", "value": "بله" },
+{ "key": "hazmatStep", "title": "مواد خطرناک", "order": 8,
+  "visibleWhen": { "op": "eq", "path": "carryingHazmat", "value": "بله" },
   "sections": [ /* … */ ] }
 ```
 
-> **Place the gating question on a page that is always visible.** Putting
-> `hasDamage` on the page it gates makes answering it impossible — the page only
+> **Place the gating question on a page that is always visible.** Putting the
+> question on the page it gates makes answering it impossible — the page only
 > appears once it is answered.
+>
+> The reference form (`qa-accident-form.ts`) is the worked example of both the
+> mistake and its fix. The accident report used to gate its whole
+> «آسیب تجهیزات راه» step on `hasDamage`, which left the question unanswerable.
+> `hasDamage` now sits on that page and gates only the damage list — a
+> `visibleWhen` on the `damages` repeatable. **A gate belongs on the smallest
+> node that should disappear**, and a page gate is only right when nothing on it
+> decides the gate.
 
 ## Robustness guarantees
 
