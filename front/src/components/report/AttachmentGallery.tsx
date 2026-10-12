@@ -9,19 +9,21 @@ import { formatFileSize } from "@/utils/formatters";
 /**
  * The photos and documents filed with an accident.
  *
- * ## The URL is derived, not stored
+ * ## The URL is stored, with a legacy fallback
  *
- * A `file` document records `name`, `type`, `size` and `category` — **not** the
- * directory it was written to. Two acts write uploads to two different trees:
+ * A `file` document records the directory its bytes were written to in `path`,
+ * relative to the backend's `./uploads` — e.g. `images/<name>` or
+ * `accidents/<name>`. Two acts write uploads to two different trees:
  * `file.uploadFile` picks `./uploads/{images,docs,videos,geo,json}` from the
  * declared type, while `file.uploadAccidentImages` always writes
- * `./uploads/accidents`. Only the second populates `accident.attachments`, so
- * everything reached through this relation lives under `/uploads/accidents/` —
- * which is why the path is assembled here rather than read from the document.
+ * `./uploads/accidents`. Both now record where they wrote, so the URL is read
+ * from the document instead of guessed from its `type`.
  *
- * That is an inference, not a fact carried by the data, so it is stated once here
- * rather than repeated at every call site. If a future act writes attachments
- * elsewhere, this is the one line that has to change.
+ * Documents inserted before `path` existed have none. Everything reached
+ * through `accident.attachments` used to come from `file.uploadAccidentImages`,
+ * so `accidents/<name>` is the fallback — the one place that assumption is
+ * stated, and the only line that would have to change if a third tree ever
+ * populated this relation.
  *
  * `incident_report` has no `attachments` field at all, so this section is
  * `accident`-only and renders nothing on a non-accident report.
@@ -62,8 +64,23 @@ function isImage(file: AttachmentDto): boolean {
   return (file.type ?? "").startsWith("image/");
 }
 
+/**
+ * The URL of an attachment's bytes.
+ *
+ * `path` is the directory the writing act recorded, so the URL is read rather
+ * than inferred; `accidents/` is the fallback for rows written before the field
+ * existed. Segments are encoded individually so a filename containing a space,
+ * `#` or a Persian glyph cannot truncate the URL — while a plain ASCII name
+ * (`asset-1791356903221-aqqdvv.jpg`) encodes to itself.
+ */
 function href(file: AttachmentDto): string {
-  return `${getLesanBaseUrl()}/uploads/accidents/${file.name}`;
+  const relative = file.path ?? `accidents/${file.name}`;
+  const encoded = relative
+    .split("/")
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join("/");
+  return `${getLesanBaseUrl()}/uploads/${encoded}`;
 }
 
 function AttachmentTile({

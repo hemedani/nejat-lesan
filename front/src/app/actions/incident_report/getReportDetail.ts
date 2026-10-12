@@ -131,7 +131,7 @@ const ACCIDENT_PROJECTION = {
   pedestrian_dtos: 1,
   people_dtos: 1,
   facility_damage_dtos: 1,
-  attachments: { _id: 1, name: 1, type: 1, size: 1, category: 1, sequence: 1 },
+  attachments: { _id: 1, name: 1, type: 1, size: 1, path: 1, category: 1, sequence: 1 },
   dynamic_answers: 1,
   review_history: 1,
   submitted_from: 1,

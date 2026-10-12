@@ -114,6 +114,16 @@ export type AttachmentDto = {
   name?: string;
   type?: string;
   size?: number;
+  /**
+   * Where the bytes were written, relative to the backend's `./uploads` — e.g.
+   * `accidents/<name>` or `images/<name>`.
+   *
+   * Recorded by the writing act rather than inferred by the reader. Documents
+   * inserted before the field existed have no `path`; readers fall back to
+   * `accidents/<name>`, which is where every legacy attachment lives (only
+   * `file.uploadAccidentImages` populated `accident.attachments` before).
+   */
+  path?: string;
   category?: string;
   sequence?: number;
 };
