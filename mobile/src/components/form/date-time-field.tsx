@@ -44,6 +44,7 @@ import {
   formatJalaliDateTime,
 } from '@/domain/jalali';
 import { AppTheme, Estedad, Radius } from '@/constants/theme';
+import { useBottomInset } from '@/hooks/use-bottom-inset';
 
 import { FormInput } from '../form-fields';
 import { Icon } from '../ui/icon';
@@ -62,6 +63,9 @@ const LABEL_FOR: Record<DateTimeFieldType, string> = {
   time: 'انتخاب ساعت',
   datetime: 'انتخاب تاریخ و ساعت',
 };
+
+/** The sheet's action row is its last element, so it has to clear the system bar. */
+const SHEET_MIN_BOTTOM_PADDING = 28;
 
 /** The Jalali text an officer reads for a value. */
 const formatDisplay = (type: DateTimeFieldType, date: Date): string => {
@@ -98,6 +102,7 @@ export function DateTimeField({
   const [draft, setDraft] = useState<Date | null>(null);
   /** Which half of a `datetime` the sheet is showing. */
   const [tab, setTab] = useState<'date' | 'time'>('date');
+  const sheetBottomPadding = useBottomInset(SHEET_MIN_BOTTOM_PADDING);
 
   const parsed = parseStoredValue(type, value);
   const display = parsed ? formatDisplay(type, parsed) : '';
@@ -172,7 +177,10 @@ export function DateTimeField({
       >
         {/* Tapping the scrim dismisses; the sheet swallows its own taps. */}
         <Pressable onPress={close} style={styles.backdrop}>
-          <Pressable onPress={() => undefined} style={styles.sheet}>
+          <Pressable
+            onPress={() => undefined}
+            style={[styles.sheet, { paddingBottom: sheetBottomPadding }]}
+          >
             <View style={styles.sheetHead}>
               <Text style={styles.sheetTitle}>{LABEL_FOR[type]}</Text>
               {draft ? <Text style={styles.summary}>{formatDisplay(type, draft)}</Text> : null}
@@ -330,9 +338,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     gap: 12,
-    paddingBottom: 28,
     paddingHorizontal: 16,
     paddingTop: 16,
+    // `paddingBottom` is set inline from the safe-area inset — see the sheet.
   },
   sheetHead: { alignItems: 'center', gap: 2 },
   sheetTitle: {

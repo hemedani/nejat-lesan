@@ -78,6 +78,9 @@ export default function PatrolTabBar({ state, navigation }: PatrolTabBarProps) {
     state.routes.find(route => route.name === definition.name),
   ).filter((route): route is TabRoute => Boolean(route));
 
+  // This bar owns the window's bottom inset. It is the last element in the tab
+  // navigator's column, so every tab screen must ask for `edges={['top']}` — a
+  // screen that reserves the bottom as well leaves a band of dead space here.
   return (
     <View style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, 10) }]}>
       <View style={styles.dock}>

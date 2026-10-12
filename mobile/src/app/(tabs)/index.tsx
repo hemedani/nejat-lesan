@@ -143,8 +143,10 @@ export default function HomeScreen() {
 
   const initials = `${session.user.first_name.charAt(0)}${session.user.last_name.charAt(0)}`;
 
+  // Top only: the tab bar sits below this screen and already reserves the bottom
+  // inset, so asking for it here would reserve it twice.
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
