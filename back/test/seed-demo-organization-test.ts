@@ -87,6 +87,27 @@ const FILED_REPORT_FORM = REPORT_FORMS[0].name;
 /** One point on the demo road, used as the capture location for both filings. */
 const DEMO_POINT = [48.67, 31.3183];
 
+/**
+ * The corridor alignment the demo road must carry: 91 vertices tracing the
+ * آزادراه/بزرگراه خلیج فارس, and 116,342 m as `utils/geo.ts` measures it.
+ *
+ * The vertex count is the part that matters. The straight 7-vertex line this
+ * replaced passed every test in this file — the road existed, was bound to the
+ * organization, and snapped — while putting the reported point hundreds of
+ * metres off the carriageway on the map. A count that only the real alignment
+ * satisfies is the cheapest guard against that regressing.
+ */
+const DEMO_ROAD_VERTICES = 91;
+const DEMO_ROAD_LENGTH_METERS = 116342;
+
+/** The superseded line, to prove the seed repairs a database that still holds it. */
+const DEMO_LEGACY_ROAD: [number, number][] = [
+	[48.6706, 31.3183],
+	[48.75, 31.25],
+	[49.2, 30.556],
+];
+const DEMO_LEGACY_ROAD_LENGTH_METERS = 60000;
+
 // --- Harness ------------------------------------------------------------------
 
 const makeToken = async (userId: string) =>
@@ -372,6 +393,72 @@ Deno.test("the demo organization is the Ahvaz–Bandar Imam freeway company, bou
 		str(roadRow!.organization?._id),
 		str(stored._id),
 		"the road points back at the demo organization",
+	);
+});
+
+Deno.test("the demo road carries the real corridor, and a drifted geometry is repaired in place", async () => {
+	const org = await readDemoOrg();
+	const roadId = org.road?._id;
+	assertExists(roadId, "the demo organization is bound to a road");
+
+	type RoadGeomRow = {
+		_id: ObjectId;
+		area?: { coordinates?: number[][][] };
+		total_length_meters?: number;
+	};
+	const readRoadGeometry = async (): Promise<RoadGeomRow> => {
+		const row = await road.findOne({
+			filters: { _id: roadId },
+			projection: { _id: 1, area: 1, total_length_meters: 1 },
+		}) as unknown as RoadGeomRow | null;
+		assertExists(row, "the demo road exists");
+		return row;
+	};
+
+	const seeded = await readRoadGeometry();
+	assertEquals(
+		seeded.area?.coordinates?.[0]?.length,
+		DEMO_ROAD_VERTICES,
+		"the road is the corridor alignment, not a straight line between its endpoints",
+	);
+	assertEquals(
+		seeded.total_length_meters,
+		DEMO_ROAD_LENGTH_METERS,
+		"total_length_meters is the length of the geometry it is paired with",
+	);
+
+	// The seed is idempotent, so a database that already holds the road gets no
+	// write at all — which is exactly how the imprecise line would have survived
+	// forever on every install seeded before it was corrected. Write the old
+	// geometry back and prove the next run repairs it rather than shrugging.
+	await road.findOneAndUpdate({
+		filter: { _id: roadId },
+		update: {
+			$set: {
+				area: { type: "MultiLineString", coordinates: [DEMO_LEGACY_ROAD] },
+				total_length_meters: DEMO_LEGACY_ROAD_LENGTH_METERS,
+			},
+		},
+		projection: { _id: 1 },
+	});
+
+	await runAct("user", "seedDemoOrganization", { set: {}, get: {} }, managerId);
+
+	const repaired = await readRoadGeometry();
+	assertEquals(
+		repaired.area?.coordinates?.[0]?.length,
+		DEMO_ROAD_VERTICES,
+		"the drifted geometry was restored to the corridor alignment",
+	);
+	assertEquals(
+		repaired.total_length_meters,
+		DEMO_ROAD_LENGTH_METERS,
+		"and so was the length that goes with it",
+	);
+	assertEquals(
+		await road.countDocument({ filter: { name: DEMO_ROAD_NAME } }),
+		1,
+		"repairing in place did not fork a second road",
 	);
 });
 
