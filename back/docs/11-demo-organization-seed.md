@@ -1,16 +1,18 @@
 # Demo organization seed — credentials, data and how to run it
 
-Reference for the act `user.seedDemoOrganization`, which seeds one realistic demo organization:
-**شرکت احداث، نگهداری و بهره‌برداری آزادراه اهواز – بندر امام (ره)** — the Ahvaz – Bandar Imam
+Reference for the act `user.seedDemoOrganization`, which seeds one realistic demo organization:  
+**شرکت احداث، نگهداری و بهره‌برداری آزادراه اهواز – بندر امام (ره)** — the Ahvaz – Bandar Imam  
 (RAH) Freeway Construction, Maintenance and Operation Company.
 
-It creates the road, the organization, 6 units, 17 people, 12 vehicles, and 4 **active** form
+It creates the road, the organization, 6 units, 17 people, 12 vehicles, and 4 **active** form  
 definitions — so a demo can log in as a patrol officer on a phone and actually file reports.
 
 - **Act:** `user.seedDemoOrganization` (service `main`, model `user`)
-- **Source:** `back/src/user/seedDemoOrganization/` — `org.ts`, `people.ts`, `forms.ts`,
+- **Source:** `back/src/user/seedDemoOrganization/` — `org.ts`, `people.ts`, `forms.ts`,  
   `seedDemoOrganization.fn.ts`, `seedDemoOrganization.val.ts`, `mod.ts`
-- **Proof test:** `back/test/seed-demo-organization-test.ts` (16 tests)
+- **Proof test:** `back/test/seed-demo-organization-test.ts` (17 tests)
+- **Rebuild-order test:** `back/test/cleanup-demo-seed-test.ts` (13 tests) — covers  
+  `user.cleanupDemoSeed` and the four-act rebuild in §7
 
 Every value below is read from those source files, so this table cannot drift from the code.
 
@@ -29,8 +31,8 @@ deno task bc-dev
 
 ### The order matters — run these three steps in sequence
 
-Two preconditions are checked _before_ the seed creates anything, and each has its own precondition
-of its own. Skipping a step does not half-seed the organization; it refuses with a clear Persian
+Two preconditions are checked *before* the seed creates anything, and each has its own precondition  
+of its own. Skipping a step does not half-seed the organization; it refuses with a clear Persian  
 error naming what to do.
 
 | # | Act                         | Run as           | Why it comes first                                                                                                                          |
@@ -39,12 +41,16 @@ error naming what to do.
 | 2 | `user.seedShared`           | Manager or Ghost | Fills the 16 reference models (`road_defect`, `position`, `light_status`, …). Without records, `activate` refuses any form that names them. |
 | 3 | `user.seedDemoOrganization` | Manager or Ghost | The seed itself.                                                                                                                            |
 
-> **A brand-new database has no modules enabled at all.** If you skip step 1 you get
+> **A brand-new database has no modules enabled at all.** If you skip step 1 you get  
 > «این ماژول برای این نصب فعال نیست».
+
+> **Changing a form that is already seeded?** These three steps will not pick the change up — a  
+> seeded definition is never overwritten, by design. See **§7** for the four-act rebuild order that  
+> does.
 
 ### Step 1 is just `"set": {}`
 
-`setModules` takes an **optional** `modules` list, and omitting it means "turn everything on" — the
+`setModules` takes an **optional** `modules` list, and omitting it means "turn everything on" — the  
 same default a fresh install already gets. So leave the **Set** panel empty:
 
 ```json
@@ -56,7 +62,7 @@ same default a fresh install already gets. So leave the **Set** panel empty:
 }
 ```
 
-You only need to send the list if you want something _off_:
+You only need to send the list if you want something *off*:
 
 ```json
 "set": {"modules": [
@@ -67,9 +73,9 @@ You only need to send the list if you want something _off_:
 ]}
 ```
 
-`modules` **replaces** the whole stored set — it is not a patch. `key` must be one of exactly four
-values: `charts`, `incident_patrol`, `warehouse`, `forms`. A stored list that is empty or missing also
-reads as "all on", so you cannot switch _every_ module off through this act.
+`modules` **replaces** the whole stored set — it is not a patch. `key` must be one of exactly four  
+values: `charts`, `incident_patrol`, `warehouse`, `forms`. A stored list that is empty or missing also  
+reads as "all on", so you cannot switch *every* module off through this act.
 
 ### Option A — the Playground (easiest)
 
@@ -77,7 +83,7 @@ reads as "all on", so you cannot switch _every_ module off through this act.
 2. First sign in as the Ghost account (see §6 for the bootstrap password) so you can enable modules.
 3. Run the three acts from the schema/act selectors, in order.
 
-The Playground builds the `get` object for you from the act's own validator, so you can leave the
+The Playground builds the `get` object for you from the act's own validator, so you can leave the  
 **Get** panel empty for every step.
 
 ### Option B — curl
@@ -125,26 +131,26 @@ curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' \
   | jq
 ```
 
-Both seed acts take **no input at all** — `set` is `{}`. Everything comes from the constants, and
-both are idempotent: run them twice and nothing is duplicated. Each also _says_ so —
-`user.seedShared` returns `alreadySeeded: true` and `user.setModules` returns `changed: false` when
+Both seed acts take **no input at all** — `set` is `{}`. Everything comes from the constants, and  
+both are idempotent: run them twice and nothing is duplicated. Each also *says* so —  
+`user.seedShared` returns `alreadySeeded: true` and `user.setModules` returns `changed: false` when  
 there was nothing to do.
 
 ### Option C — the proof test
 
-The fastest way to get a fully seeded database with nothing else in it, since the test clears the
-collections first:
+The fastest way to check the seed end to end, since the test empties the collections first:
 
 ```bash
 cd back && deno test -A test/seed-demo-organization-test.ts
 ```
 
-It leaves the data in place (its final cleanup empties the collections), so run it, then start the
-dev server against the same database if you want to click around.
+It is **not** a way to leave a seeded database behind — its final `cleanup` test empties every  
+collection it touched, so the data is gone when the run finishes. To click around in a seeded  
+database, use the Playground or curl flow above against your dev server.
 
 ### The response
 
-`set` and `get` can both be left empty, but the full summary is what you want in practice — it hands
+`set` and `get` can both be left empty, but the full summary is what you want in practice — it hands  
 you every id the seed just created, plus which entities were created versus reused:
 
 ```jsonc
@@ -190,13 +196,13 @@ you every id the seed just created, plus which entities were created versus reus
 }
 ```
 
-`activated: false` means that form was already active and this run deliberately left it alone.
-`totalCreated: 37` on a clean database (1 road + 1 org + 6 units + 17 users + 12 vehicles); the four
+`activated: false` means that form was already active and this run deliberately left it alone.  
+`totalCreated: 37` on a clean database (1 road + 1 org + 6 units + 17 users + 12 vehicles); the four  
 forms are reported separately in `forms`.
 
-`alreadySeeded: true` means nothing was created **and** every form was already active — i.e. this
-call changed nothing. It is deliberately not just `totalCreated === 0`: a half-seeded organization
-(road and units present, forms missing) also reports `totalCreated === 0`, and saying
+`alreadySeeded: true` means nothing was created **and** every form was already active — i.e. this  
+call changed nothing. It is deliberately not just `totalCreated === 0`: a half-seeded organization  
+(road and units present, forms missing) also reports `totalCreated === 0`, and saying  
 `alreadySeeded` there would be a lie.
 
 To request it from the Playground, tick the boxes in the **Get** panel, or send:
@@ -219,10 +225,10 @@ To request it from the Playground, tick the boxes in the **Get** panel, or send:
 Demo@1404
 ```
 
-It is 9 characters because `user.login` validates the password with `size(string(), 8, 100)`. It is
-hashed **once** with bcrypt and reused for all 17 accounts (bcrypt is deliberately slow; 17
-identical hashes would be 17× the work for no gain). The constant lives at
-`back/src/user/seedDemoOrganization/people.ts` and is returned by the act as `demoPassword` — this is
+It is 9 characters because `user.login` validates the password with `size(string(), 8, 100)`. It is  
+hashed **once** with bcrypt and reused for all 17 accounts (bcrypt is deliberately slow; 17  
+identical hashes would be 17× the work for no gain). The constant lives at  
+`back/src/user/seedDemoOrganization/people.ts` and is returned by the act as `demoPassword` — this is  
 a demo, not a secret.
 
 **Sign in as any of them:**
@@ -234,7 +240,7 @@ curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' \
                   "get":{"token":1,"permissions":1}}}'
 ```
 
-Add a `device` payload to get a device-scoped patrol session (this is what the mobile app sends; it
+Add a `device` payload to get a device-scoped patrol session (this is what the mobile app sends; it  
 requires `level: "Patrol"` or `"Ghost"`):
 
 ```json
@@ -244,12 +250,12 @@ requires `level: "Patrol"` or `"Ghost"`):
 
 ### All 17 accounts
 
-Email = `<key>@ahvaz-freeway.ir`. Mobile = `0912` + 7 digits. Personnel code is numeric-only and
+Email = `<key>@ahvaz-freeway.ir`. Mobile = `0912` + 7 digits. Personnel code is numeric-only and  
 unique. `no` is the sequence number the other fields derive from.
 
 | #  | Email                            | Name           | Father's name | Level       | Mobile        | Personnel code |
 | -- | -------------------------------- | -------------- | ------------- | ----------- | ------------- | -------------- |
-| 1  | `orghead@ahvaz-freeway.ir`       | کریم نیک‌روش    | علی           | **OrgHead** | `09121000001` | `1404001`      |
+| 1  | `orghead@ahvaz-freeway.ir`       | کریم نیک‌روش   | علی           | **OrgHead** | `09121000001` | `1404001`      |
 | 2  | `head.nm01@ahvaz-freeway.ir`     | حسن فراهانی    | اکبر          | UnitHead    | `09121000002` | `1404002`      |
 | 3  | `head.op02@ahvaz-freeway.ir`     | مریم شریفی     | حسین          | UnitHead    | `09121000003` | `1404003`      |
 | 4  | `head.gs03@ahvaz-freeway.ir`     | سعید بهرامی    | محمد          | UnitHead    | `09121000004` | `1404004`      |
@@ -267,6 +273,7 @@ unique. `no` is the sequence number the other fields derive from.
 | 16 | `patrol.lj05.1@ahvaz-freeway.ir` | رویا امینی     | سهراب         | Patrol      | `09121000016` | `1404016`      |
 | 17 | `patrol.ad06.1@ahvaz-freeway.ir` | کامران یزدانی  | بهروز         | Patrol      | `09121000017` | `1404017`      |
 
+
 **Which account to use for what**
 
 | To do this                           | Sign in as                                                     |
@@ -276,36 +283,47 @@ unique. `no` is the sequence number the other fields derive from.
 | Re-seed or manage modules            | a Manager, or the Ghost                                        |
 | Bootstrap the very first account     | `ghost@nejat.ai` / `password123` — see `user.setGhostPassword` |
 
-> **The OrgHead is not optional.** `resolveOversightScope` routes OrgHead/UnitHead to
-> `getOrgReportBase` and rejects every other level, so without account #1 **nobody** can see the
+> **The OrgHead is not optional.** `resolveOversightScope` routes OrgHead/UnitHead to  
+> `getOrgReportBase` and rejects every other level, so without account #1 **nobody** can see the  
 > demo reports in the console.
 
-> **Every officer belongs to exactly one unit, deliberately.** `resolveFilingOrgId` returns an
-> organization only when the officer's unit set resolves to a single org, so a two-unit officer would
+> **Every officer belongs to exactly one unit, deliberately.** `resolveFilingOrgId` returns an  
+> organization only when the officer's unit set resolves to a single org, so a two-unit officer would  
 > file reports the console cannot attribute. The seed refuses (in Persian) rather than create that.
 
 ---
 
 ## 3. Organization and road
 
-|                         |                                                                                            |
-| ----------------------- | ------------------------------------------------------------------------------------------ |
-| **Organization `code`** | `AHR` — required and uniquely indexed; this is the idempotency key                         |
+|                         |                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------- |
+| **Organization `code`** | `AHR` — required and uniquely indexed; this is the idempotency key                          |
 | **Name**                | شرکت احداث، نگهداری و بهره‌برداری آزادراه اهواز – بندر امام (ره)                            |
-| **English name**        | Ahvaz – Bandar Imam (RAH) Freeway Construction, Maintenance, and Operation Company         |
-| **Road**                | آزادراه اهواز – بندر امام — origin اهواز, destination بندر امام, 60,000 m                  |
-| **Geometry**            | 7-vertex GeoJSON `MultiLineString`, `[longitude, latitude]`, Ahvaz (NW) → Bandar Imam (SE) |
+| **English name**        | Ahvaz – Bandar Imam (RAH) Freeway Construction, Maintenance, and Operation Company          |
+| **Road**                | آزادراه اهواز – بندر امام — origin اهواز, destination بندر امام, 116,342 m                  |
+| **Geometry**            | 91-vertex GeoJSON `MultiLineString`, `[longitude, latitude]`, Ahvaz (NW) → Bandar Imam (SE) |
 
-`organization.road` also creates the reverse `road.organization`. An org is road-bound in this
-schema, and the oversight console reaches legacy records through `road._id`, so a roadless demo org
+The geometry traces the real corridor — بزرگراه/آزادراه خلیج فارس (`ref=5` on OSM) out of Ahvaz  
+and the Bandar Imam approach — rather than a straight line between the endpoints. It is the OSM  
+driving route between the two ends, simplified with Ramer–Douglas–Peucker at a 25 m tolerance  
+(worst remaining deviation ≈ 24.5 m). `total_length_meters` is the length of that same geometry as  
+`utils/geo.ts` computes it, so `road.snapPointToRoad` returns a kilometre/meter that agrees with the  
+line it snapped to.
+
+`ensureDemoRoad` also **repairs** an existing demo road whose `area` or `total_length_meters` no  
+longer match the constants — re-running the seed converges a database seeded with the older 7-vertex  
+line instead of leaving the deviation on the map forever.
+
+`organization.road` also creates the reverse `road.organization`. An org is road-bound in this  
+schema, and the oversight console reaches legacy records through `road._id`, so a roadless demo org  
 would be much less useful.
 
 ---
 
 ## 4. The 6 units
 
-Each unit carries the organization's **own road** — that equality is a real invariant
-(`unit.add` refuses a unit whose road differs from its org's, and the seed inserts directly, so
+Each unit carries the organization's **own road** — that equality is a real invariant  
+(`unit.add` refuses a unit whose road differs from its org's, and the seed inserts directly, so  
 nothing else would check it). Two vehicles per unit.
 
 | Code        | Name                            | Type           | Head (email)                | Officers (emails)                    | Phone          |
@@ -346,19 +364,19 @@ Unit types come from `unit_type_array` in `back/models/unit.ts`.
 
 ## 6. The 4 forms
 
-All are activated through the **real `form_definition.activate` act**, so every publish-time check
-(structure, reference models, icons, bindings) actually ran. A form that survived activation is a
+All are activated through the **real `form_definition.activate` act**, so every publish-time check  
+(structure, reference models, icons, bindings) actually ran. A form that survived activation is a  
 form that can genuinely record.
 
-| Name                                  | `form_kind`       | Icon          | What it demonstrates                                                                                                                                                           |
-| ------------------------------------- | ----------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| گزارش تصادف آزادراه اهواز ـ بندر امام | `accident`        | `car`         | The QA team's exact form, verbatim — 9 pages, nested passengers, dynamic option filters, tone-coded choices. The org's **single** active accident form.                        |
-| خرابی سطح راه (road damage)           | `incident_report` | `roadHorizon` | `reference` option lists, a **multi-relation** binding to `road_defects`, a single-relation binding to `incident_severity`, `number` fields with min/max validation, `boolean` |
-| مانع در سطح راه (road obstruction)    | `incident_report` | `barricade`   | A `computed` field driven by `valueFrom`, `datetime`, conditional requiredness (`requiredWhen`), binding to `position` and `equipment_damages`                                 |
-| خرابی روشنایی (lighting failure)      | `incident_report` | `lightbulb`   | Binding to `light_status` and `road_situation`, numeric validation, conditional visibility                                                                                     |
+| Name                                  | `form_kind`       | Icon          | What it demonstrates                                                                                                                                                                                                       |
+| ------------------------------------- | ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| گزارش تصادف آزادراه اهواز ـ بندر امام | `accident`        | `car`         | The accident form the patrol app ships — 8 pages, nested passengers, a driver record per vehicle, tone-coded choices, and `defaultSource: "now"` on the accident date and time. The org's **single** active accident form. |
+| خرابی سطح راه (road damage)           | `incident_report` | `roadHorizon` | `reference` option lists, a **multi-relation** binding to `road_defects`, a single-relation binding to `incident_severity`, `number` fields with min/max validation, `boolean`                                             |
+| مانع در سطح راه (road obstruction)    | `incident_report` | `barricade`   | A `computed` field driven by `valueFrom`, `datetime`, conditional requiredness (`requiredWhen`), binding to `position` and `equipment_damages`                                                                             |
+| خرابی روشنایی (lighting failure)      | `incident_report` | `lightbulb`   | Binding to `light_status` and `road_situation`, numeric validation, conditional visibility                                                                                                                                 |
 
-The three report forms exercise reference-driven options and relation bindings that the QA form does
-not use at all — it has **zero** `reference` options and exactly one binding. That is deliberate: the
+The three report forms exercise reference-driven options and relation bindings that the QA form does  
+not use at all — it has **zero** `reference` options and exactly one binding. That is deliberate: the  
 demo shows the engine's range rather than three copies of one shape.
 
 An officer's device fetches the active form for their organization with:
@@ -387,33 +405,92 @@ An OrgHead can see the org's forms through `form_definition.gets` instead.
 | Vehicle      | `plaque_no`                             |
 | Form         | `(organization, form_kind, name)`       |
 
-On the second run you get `totalCreated: 0`, `totalReused: 37`, and every form reports
-`activated: false` with an **unchanged `version`** — the seed skips an already-active form rather
+On the second run you get `totalCreated: 0`, `totalReused: 37`, and every form reports  
+`activated: false` with an **unchanged `version`** — the seed skips an already-active form rather  
 than re-activating it (which `activate` would refuse anyway with «فرم از قبل فعال است»).
 
 Two deliberate non-destructive choices, so re-running never destroys work:
 
-- An existing form's `definition` is **never** overwritten. If you edited a form in the builder, the
+- An existing form's `definition` is **never** overwritten. If you edited a form in the builder, the  
   seed leaves your edit alone.
-- Multiple relations (`unit.officers`, `unit.vehicles`) are patched additively. An officer or vehicle
+- Multiple relations (`unit.officers`, `unit.vehicles`) are patched additively. An officer or vehicle  
   a demo operator added by hand survives.
 
-### Known consequence: forms are write-once
+### Consequence: a re-run cannot pick up a change to `forms.ts`
 
-Because the seed never overwrites a definition and skips already-active forms, **a fix to
-`forms.ts` will not reach an already-seeded organization.** To pick up a definition change you must
-`form_definition.remove` the form and re-run the seed, or drop the database. This is the right
-default for a demo seeder — it will not silently revert an operator's edits — but it is worth knowing
-before you change a form and wonder why nothing moved.
+Because the definition is never overwritten and an already-active form is skipped, **editing a form  
+in `forms.ts` changes nothing in an already-seeded database.** The re-run reports  
+`alreadySeeded: true`, `activated: false`, and the organization keeps serving the old tree — a  
+retired «خط ۳» still sitting in the lane list is exactly what that looks like from the phone.
 
-There is deliberately **no `reset` flag**. Re-running already converges; a destructive path has no
-place in a demo seeder.
+That is the right default for a seeder that must not silently revert an operator's builder edits, and  
+it is why the rebuild order below exists instead of a `reset` flag. There is deliberately **no  
+`reset` flag** on the seed.
+
+### Picking up a change — the four-act rebuild order
+
+`user.cleanupDemoSeed` is the way through. Run these four, in this order; each is a precondition of  
+the next, and a skipped step refuses with a Persian error naming it rather than half-building.
+
+
+| # | Act                         | Run as           | Why it is in this position                                                                                   |
+| - | --------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1 | `user.cleanupDemoSeed`      | Manager or Ghost | Removes the org, its road, units, people, vehicles, **its 4 form definitions**, and anything that exists only because they used the demo (login devices, uploaded files). Needs `"confirm": true`. |
+| 2 | `app_modules.setModules`    | **Ghost**        | Step 1 also removes the module-config singleton (`modules` is part of `all`), so it must be written again.   |
+| 3 | `user.seedShared`           | Manager or Ghost | Step 1 removed the stamped reference rows too, and `activate` refuses a form whose reference model is empty. |
+| 4 | `user.seedDemoOrganization` | Manager or Ghost | Re-creates everything, publishing the **current** definitions from `forms.ts`.                               |
+
+```bash
+# 1 — dry run first (scope defaults to "all"), then confirm
+curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' -H "token: $MANAGER_TOKEN" \
+  -d '{"service":"main","model":"user","act":"cleanupDemoSeed","details":{"set":{}}}'
+curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' -H "token: $MANAGER_TOKEN" \
+  -d '{"service":"main","model":"user","act":"cleanupDemoSeed","details":{"set":{"confirm":true}}}'
+
+# 2 — Ghost
+curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' -H "token: $GHOST_TOKEN" \
+  -d '{"service":"main","model":"app_modules","act":"setModules","details":{"set":{}}}'
+
+# 3, then 4 — Manager
+curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' -H "token: $MANAGER_TOKEN" \
+  -d '{"service":"main","model":"user","act":"seedShared","details":{"set":{}}}'
+curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' -H "token: $MANAGER_TOKEN" \
+  -d '{"service":"main","model":"user","act":"seedDemoOrganization","details":{"set":{}}}'
+```
+
+`back/test/cleanup-demo-seed-test.ts` runs exactly this sequence and asserts the rebuilt accident form  
+matches `qaAccidentFormDefinition` page for page, so the order cannot rot silently.
+
+> **Everything in the demo organization is destroyed** — including reports its officers filed, and the  
+> devices and photos that exist only because they used the app. That is what makes the rebuild clean,  
+> and it is only acceptable because this organization is not real data. The acts touch nothing else:  
+> `cleanupDemoSeed` matches on `organization.code` and the seed's own email domain, its `reference`  
+> scope deletes only rows carrying the seed's marker, and the extra rows it removes are only ever ones  
+> that point at a demo document through a relation the seed itself would have to create (§8).
+
+### Why not just archive the old form and re-run the seed?
+
+Because the acts deliberately refuse, and the refusals are the feature: an organization must never be  
+left without an accident form, and officers may be holding drafts built against the live one.
+
+| Attempt                                                          | Result                                                                                                |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `form_definition.update` on the active form                      | «فرم فعال قابل ویرایش نیست؛ ابتدا آن را غیرفعال کنید»                                                 |
+| `form_definition.archive` on the org's only active accident form | «تنها فرم فعال تصادف این سازمان است و نمیتوان آن را غیرفعال کرد؛ ابتدا فرم تصادف دیگری را فعال کنید.» |
+| `form_definition.remove` on an active form                       | «فرم فعال قابل حذف نیست؛ ابتدا آن را بایگانی کنید»                                                    |
+
+So `archive → remove → re-seed` is a dead end. Replacing **one** form without wiping the organization  
+goes the other way round: publish a new draft and `activate` it, which archives the previous active  
+accident form in the same step — `form_definition.add` (with `definition`) → `form_definition.activate`  
+→ optionally `form_definition.remove` the now-archived predecessor. `cleanupDemoSeed` takes the  
+opposite trade: it deletes the whole demo so the seed can rebuild it from the source, which is the  
+right call while the demo is still being designed.
 
 ---
 
 ## 8. Cleaning up — `user.cleanupDemoSeed`
 
-Removes what the three seeding acts created. **Every call is a dry run unless you pass
+Removes what the three seeding acts created. **Every call is a dry run unless you pass  
 `confirm: true`**, so the first call always tells you what a confirming call would remove:
 
 ```bash
@@ -423,39 +500,74 @@ curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' \
        "details":{"set":{"scope":["demo"]}}}'
 ```
 
-The response carries `wouldDelete`, a count per model, and `preserved` — the rows it declined to
+The response carries `wouldDelete`, a count per model, and `preserved` — the rows it declined to  
 touch. To actually delete, add `"confirm": true`.
 
 | `scope`     | Removes                                                                                                                                |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `demo`      | org `AHR`, its road, 6 units, 17 users, 12 vehicles, its 4 form definitions, plus any accident or incident report those officers filed |
 | `reference` | only rows `user.seedShared` actually inserted                                                                                          |
-| `modules`   | the module-config singleton; it is recreated as all-on at the next boot                                                                |
+| `modules`   | the module-config singleton; `app_modules.setModules` writes it again, and so does the next boot                                       |
 | `all`       | all three (the default when `scope` is omitted)                                                                                        |
 
-Level: **Ghost or Manager**. A Manager can clear a demo seed without borrowing Ghost; only Ghost
-resets the `modules` scope, matching `setModules`' own Ghost-only gate.
+Level: **Ghost or Manager**, for every scope. `setModules` itself is Ghost-only, so a Manager cannot  
+choose *which* modules are on — but they can run the `modules` scope here. That deletes the singleton  
+and lets it come back all-on, which is a reset to the permissive default and never a way to switch a  
+module off.
 
-### What `reference` will _not_ delete
+> Removing the `modules` scope is why `setModules` has to come second in the rebuild order of §7:  
+> `setModuleConfig` used to be a plain update with no upsert, so against the missing row it failed  
+> with Lesan's «can not update this doc» and the order died on its second step. It now recreates the  
+> row first, which also gives it a real `createdAt` — something an upsert cannot do.
 
-`user.seedShared` skips any name that already exists, so a row that shares a seeded name is
-**never stamped** and is indistinguishable from a seeded one by name. Those are real rows of yours,
-so cleanup preserves them and lists them under `preserved.names` rather than passing over them in
+### Rows that exist only because the demo was *used*
+
+The `demo` scope removes more than the seed's own list. An officer who logs in from the phone and  
+attaches a photo creates two documents no seed writes:
+
+| Model    | Required relation | Written by                                      |
+| -------- | ----------------- | ----------------------------------------------- |
+| `device` | `device.owner`    | every device-scoped `user.login` from the app   |
+| `file`   | `file.uploader`   | `file.uploadFile` / `file.uploadAccidentImages` |
+
+Both relations are `optional: false`, and `removeRelation` refuses a required relation — Lesan's  
+answer is «please use addRelation to replace it». So the only legal way to end the link is to **delete  
+the document holding it**, and a list of "models the seeds write" can never contain them. Without  
+this, a demo nobody had touched cleaned up fine while a demo that had actually been used could not be  
+cleaned at all — the officer's delete failed with «please clear below relations status before  
+deletion», naming `device`: a collection nothing in the seed's list mentions.
+
+The act therefore derives the set instead of listing it. It walks Lesan's schema registry for  
+`mainRelations` whose `schemaName` is a collection it owns and whose `optional` is `false`, and takes  
+the matching documents — the same structure Lesan's own delete guard walks, so a relation the guard  
+will check cannot be missed. Rounds repeat outward from the findings, so a dependent of a dependent is  
+picked up too, and a model that gains such a relation later is covered without anyone editing a list.
+
+These rows are reported under `requiredDependents`, per model, in both the dry run and the confirmed  
+response — `"requiredDependents": {"device": 1, "file": 2}` — and counted in `total`. The same sweep  
+also covers `inventory`, `stock_movement`, `consumption`, `goods_receipt` and `goods_request` against  
+a unit, which is why a demo organization that has used the warehouse module can be rebuilt as well.
+
+### What `reference` will *not* delete
+
+`user.seedShared` skips any name that already exists, so a row that shares a seeded name is  
+**never stamped** and is indistinguishable from a seeded one by name. Those are real rows of yours,  
+so cleanup preserves them and lists them under `preserved.names` rather than passing over them in  
 silence.
 
-In practice this means your pre-existing `air_status` rows — `صاف`, `ابری`, `بارانی`, `باد شدید`,
-`گرد و غبار`, `مه‌آلود` — survive a `reference` cleanup, because they were in the database before
-the seed ever ran. Only rows the seed inserted itself carry the marker. If you want that data gone,
+In practice this means your pre-existing `air_status` rows — `صاف`, `ابری`, `بارانی`, `باد شدید`,  
+`گرد و غبار`, `مه‌آلود` — survive a `reference` cleanup, because they were in the database before  
+the seed ever ran. Only rows the seed inserted itself carry the marker. If you want that data gone,  
 delete it directly rather than through this act.
 
 ## 9. If seeding fails with `E11000 duplicate key … national_number_1`
 
-A database created before `national_number` became optional carries a **unique, non-sparse** index
-on that field, and Mongo allows only one document with a missing value under it — so the _second_
+A database created before `national_number` became optional carries a **unique, non-sparse** index  
+on that field, and Mongo allows only one document with a missing value under it — so the *second*  
 seeded user can never be inserted.
 
-`applyUserIndexMigrations()` drops that index at boot, so this is fixed automatically on any
-database the current code starts. If you are running against a database that has not been restarted
+`applyUserIndexMigrations()` drops that index at boot, so this is fixed automatically on any  
+database the current code starts. If you are running against a database that has not been restarted  
 since this change, drop it by hand:
 
 ```bash
@@ -479,22 +591,28 @@ curl -s -X POST "$BACKEND" -H 'Content-Type: application/json' \
        "details":{"set":{"page":1,"limit":20},"get":{}}}'
 ```
 
-A `null` or empty list means the `organization` relation was not resolved server-side on the filed
+A `null` or empty list means the `organization` relation was not resolved server-side on the filed  
 document — that is the one seam the whole feature rests on, and the test asserts it explicitly.
 
 ---
 
 ## 11. Troubleshooting
 
-| Error (Persian)                                               | Meaning                                                | Fix                                                                               |
-| ------------------------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| ماژول «forms» برای سازمان این دمو فعال نیست…                  | The `forms` module is off                              | Run `app_modules.setModules` as **Ghost** (step 1 above)                          |
-| فرم‌های دمو به مدل‌های مرجعی نیاز دارند که هیچ رکوردی ندارند: … | `seedShared` has not run                               | Run `user.seedShared` (step 2), then the seed again                               |
-| ایمیل یا رمز عبور صحیح نیست                                   | Wrong password                                         | `Demo@1404`, capital D, capital `@`                                               |
-| این حساب اجازه استفاده از اپ مأمور گشت را ندارد               | Logged in with a `device` payload as a non-Patrol user | Use a `Patrol` account, or drop the `device` payload                              |
-| فرم از قبل فعال است                                           | Something tried to activate an active form             | Nothing to do — the seed skips these; only appears if you call `activate` by hand |
+| Error (Persian)                                                 | Meaning                                                                                           | Fix                                                                                                                          |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| ماژول «forms» برای سازمان این دمو فعال نیست…                    | The `forms` module is off                                                                         | Run `app_modules.setModules` as **Ghost** (step 1 above)                                                                     |
+| فرم‌های دمو به مدل‌های مرجعی نیاز دارند که هیچ رکوردی ندارند: … | `seedShared` has not run                                                                          | Run `user.seedShared` (step 2), then the seed again                                                                          |
+| ایمیل یا رمز عبور صحیح نیست                                     | Wrong password                                                                                    | `Demo@1404`, capital D, capital `@`                                                                                          |
+| این حساب اجازه استفاده از اپ مأمور گشت را ندارد                 | Logged in with a `device` payload as a non-Patrol user                                            | Use a `Patrol` account, or drop the `device` payload                                                                         |
+| فرم از قبل فعال است                                             | Something tried to activate an active form                                                        | Nothing to do — the seed skips these; only appears if you call `activate` by hand                                            |
+| `can not update this doc` (English, from Lesan)                 | `setModules` ran while the module-config singleton was missing — `cleanupDemoSeed` had removed it | Fixed: `setModuleConfig` now recreates it. On a build without the fix, restart the server once, which recreates it as all-on |
+| `please clear below relations status before deletion` (English)  | `cleanupDemoSeed` hit a document the seed does not write — an officer's `device` or an uploaded `file` | Fixed: the act derives these from the schema registry (see §8). On a build without the fix, delete the named `device`/`file` rows by hand, then re-run |
 
-Both seed refusals are raised **before** anything is created, so a refusal never leaves a
+**Not an error, but a stale form.** If the app still shows an option you removed from `forms.ts`, no  
+act has failed — the seeded definition simply predates your change, and re-running the seed will never  
+replace it. Run the four-act rebuild order in §7.
+
+Both seed refusals are raised **before** anything is created, so a refusal never leaves a  
 half-built form set.
 
 ---
@@ -502,11 +620,11 @@ half-built form set.
 ## 12. What the seed deliberately does not do
 
 - **No police stations, shifts, announcements or geo records.** Core scope only, per the plan.
-- **It does not grant a module licence.** `organization.module_flags` is Ghost-only via
+- **It does not grant a module licence.** `organization.module_flags` is Ghost-only via  
   `organization.setModules`; the seed checks and reports instead of handing out a licence.
-- **An accident cannot be filed against a form by id.** The `accident` model declares no
-  `form_definition_id`, so sending one is rejected outright. This is the shipped mobile design: an
-  accident filed under a form carries its answers in `dynamic_answers` and sends no form id. Only
+- **An accident cannot be filed against a form by id.** The `accident` model declares no  
+  `form_definition_id`, so sending one is rejected outright. This is the shipped mobile design: an  
+  accident filed under a form carries its answers in `dynamic_answers` and sends no form id. Only  
   `incident_report.add` takes a `form_definition_id`, and it requires one.
-- **No police-station-style detail pages for org leaders.** Org leaders can list and see stats, but
+- **No police-station-style detail pages for org leaders.** Org leaders can list and see stats, but  
   opening a single record throws for both models. Pre-existing, unrelated to this seed.

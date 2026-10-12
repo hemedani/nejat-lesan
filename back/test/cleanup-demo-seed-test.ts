@@ -26,15 +26,23 @@ import { type Document, jwt, MongoClient, ObjectId } from "@deps";
 import {
 	air_status,
 	coreApp,
+	device,
+	file,
+	form_definition,
 	getAtcsWithServices,
 	organization,
 	unit,
 	user,
 } from "../mod.ts";
 import { jwtTokenKey } from "@lib";
+import { qaAccidentFormDefinition } from "@forms";
 import { MODULE_KEYS } from "../src/app_modules/constants.ts";
 import { seedSharedReferenceModels } from "../src/user/cleanupDemoSeed/cleanupDemoSeed.fn.ts";
 import { SEED_SHARED_MARKER } from "../src/shared/seedShared/seedShared.fn.ts";
+import {
+	DEMO_EMAIL_DOMAIN,
+	DEMO_PASSWORD,
+} from "../src/user/seedDemoOrganization/people.ts";
 
 const TEST_DB = "nejat_patrol_ops_test";
 const RUN = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
@@ -300,6 +308,273 @@ Deno.test("modules scope reports and removes the singleton", async () => {
 Deno.test("all expands to the three real scopes", async () => {
 	const dry = await cleanup({ scope: ["all"] }, managerId);
 	assertEquals(dry.scope.sort(), ["demo", "modules", "reference"]);
+});
+
+// ---------------------------------------------------------------------------
+// The rebuild order — what an operator actually runs to pick up a form change
+// ---------------------------------------------------------------------------
+
+const moduleConfigCount = () =>
+	coreApp.odm.getCollection("module_config")
+		.countDocuments({ key: "app_modules" });
+
+/** Every `lane` option list in a definition, flattened. */
+const laneOptions = (definition: unknown): string[] => {
+	const found: string[] = [];
+	const walk = (nodes: unknown[]) => {
+		for (const raw of nodes) {
+			const node = raw as {
+				key?: string;
+				kind?: string;
+				options?: { items?: Array<{ value?: string }> };
+				children?: unknown[];
+			};
+			if (node.key === "lane") {
+				for (const item of node.options?.items ?? []) {
+					if (item.value) found.push(item.value);
+				}
+			}
+			if (node.kind !== "field" && node.children) walk(node.children);
+		}
+	};
+	const pages = (definition as { pages?: unknown[] } | null)?.pages ?? [];
+	for (const page of pages) {
+		for (
+			const section
+				of (page as { sections?: Array<{ nodes?: unknown[] }> })
+					.sections ?? []
+		) {
+			walk(section.nodes ?? []);
+		}
+	}
+	return found;
+};
+
+const pageKeys = (definition: unknown): string[] =>
+	((definition as { pages?: Array<{ key?: string }> } | null)?.pages ?? [])
+		.map((page) => String(page.key));
+
+const accidentForm = async () =>
+	await form_definition.findOne({
+		filters: { form_kind: "accident" },
+		projection: { _id: 1, status: 1, version: 1, definition: 1 },
+	}) as unknown as
+		| {
+			_id: ObjectId;
+			status?: string;
+			version?: number;
+			definition?: unknown;
+		}
+		| null;
+
+Deno.test("setModules recreates the module singleton that a cleanup removed", async () => {
+	// The regression this pins. `setModuleConfig` was a bare `findOneAndUpdate`
+	// with no upsert, so once `cleanupDemoSeed` had removed the row — its `modules`
+	// scope, included in `all` — the next `app_modules.setModules` died with
+	// Lesan's «can not update this doc». That is step 2 of the documented rebuild
+	// order, so the whole order was unusable: cleanup left the database in a state
+	// the next step could not recover from, and only a server boot could.
+	assertEquals(
+		await moduleConfigCount(),
+		0,
+		"precondition: the previous test removed the singleton",
+	);
+
+	await runAct("app_modules", "setModules", {
+		set: { modules: MODULE_KEYS.map((key) => ({ key, enabled: true })) },
+		get: {},
+	}, ghostId);
+
+	assertEquals(await moduleConfigCount(), 1, "setModules recreated it");
+	const row = await coreApp.odm.getCollection("module_config")
+		.findOne({ key: "app_modules" }) as
+			| { modules?: Array<{ key: string; enabled: boolean }> }
+			| null;
+	assertEquals(
+		row?.modules?.length,
+		MODULE_KEYS.length,
+		"and wrote a row for every module key, not a partial set",
+	);
+	assertEquals(
+		row?.modules?.every((entry) => entry.enabled),
+		true,
+		"all enabled, as asked",
+	);
+});
+
+Deno.test("the rebuild order picks up a changed form definition", async () => {
+	// What an operator runs after changing `forms.ts`, and the reason this file
+	// has to cover it: the seed is create-only, so a stale definition survives any
+	// number of re-runs. Only removing the rows first gets the new tree in.
+	//
+	// `seedShared` has to run here as well as inside the rebuild below: the
+	// preceding test's `reference` cleanup removed the stamped rows, and
+	// `seedDemoOrganization` refuses to publish a form whose reference model is
+	// empty. That is the same ordering constraint the rebuild order encodes.
+	await runAct("user", "seedShared", { set: {}, get: {} }, managerId);
+	await seed(managerId);
+	const first = await accidentForm();
+	assertEquals(first?.status, "active", "precondition: seeded and active");
+	assertEquals(
+		laneOptions(first?.definition),
+		laneOptions(qaAccidentFormDefinition),
+		"precondition: it starts out matching the source",
+	);
+
+	// Make the stored tree stale, which is the state this whole procedure exists
+	// to recover from.
+	const stale = JSON.parse(JSON.stringify(first!.definition)) as {
+		pages?: Array<{ sections?: Array<{ nodes?: unknown[] }> }>;
+	};
+	const bump = (nodes: unknown[]) => {
+		for (const raw of nodes) {
+			const node = raw as {
+				key?: string;
+				kind?: string;
+				options?: { items?: Array<{ value?: string }> };
+				children?: unknown[];
+			};
+			if (node.key === "lane" && node.options?.items) {
+				node.options.items = [...node.options.items, { value: "خط ۳" }];
+			}
+			if (node.kind !== "field" && node.children) bump(node.children);
+		}
+	};
+	for (const page of stale.pages ?? []) {
+		for (const section of page.sections ?? []) bump(section.nodes ?? []);
+	}
+	await form_definition.findOneAndUpdate({
+		filter: { _id: first!._id },
+		update: { $set: { definition: stale } } as never,
+		projection: { _id: 1 },
+	});
+	assertEquals(
+		laneOptions((await accidentForm())?.definition).includes("خط ۳"),
+		true,
+		"precondition: the stored tree is now stale",
+	);
+
+	// --- the four acts, in the documented order ------------------------------
+	await cleanup({ scope: ["all"], confirm: true }, managerId);
+	await runAct("app_modules", "setModules", {
+		set: { modules: MODULE_KEYS.map((key) => ({ key, enabled: true })) },
+		get: {},
+	}, ghostId);
+	await runAct("user", "seedShared", { set: {}, get: {} }, managerId);
+	await runAct(
+		"user",
+		"seedDemoOrganization",
+		{ set: {}, get: {} },
+		managerId,
+	);
+
+	const rebuilt = await accidentForm();
+	assertEquals(rebuilt?.status, "active", "the rebuilt form is live");
+	assertEquals(
+		pageKeys(rebuilt?.definition),
+		pageKeys(qaAccidentFormDefinition),
+		"the rebuilt definition is the current source's, page for page",
+	);
+	assertEquals(
+		laneOptions(rebuilt?.definition),
+		laneOptions(qaAccidentFormDefinition),
+		"including the lane list the client narrowed to two carriageways",
+	);
+	assertEquals(
+		JSON.stringify(rebuilt?.definition).includes("خط ۳"),
+		false,
+		"and the stale answer is gone from the stored document entirely",
+	);
+
+	// The rebuild leaves exactly one demo org, not a second one beside the first.
+	assertEquals(await count(organization, { code: "AHR" }), 1, "one demo org");
+});
+
+Deno.test("a demo an officer has actually used can still be cleaned", async () => {
+	// The regression this pins, and the state every operator's database is in.
+	//
+	// `device.owner` and `file.uploader` are both declared `optional: false`, and
+	// neither is written by a seed: they appear the first time an officer logs in
+	// from the phone, and again when they attach a photo. `removeRelation` refuses
+	// a required relation — Lesan answers «please use addRelation to replace it» —
+	// so the only legal way to end that link is to delete the document holding it.
+	// Before the schema sweep this act died with `please clear below relations
+	// status before deletion`, naming `device`: a collection the seed's own list
+	// does not mention, so nothing in the operator's mental model connected it to
+	// the demo. A demo nobody had touched cleaned up fine; one that had been used
+	// could not be cleaned at all — which is exactly when it is needed.
+	//
+	// The officer is the one from the original report.
+	const email = `patrol.nm01.1@${DEMO_EMAIL_DOMAIN}`;
+	const login = await runAct("user", "login", {
+		set: {
+			email,
+			password: DEMO_PASSWORD,
+			device: {
+				device_id: `lesen-test-${RUN}-device`,
+				fingerprint: `fingerprint-${RUN}`,
+				platform: "android",
+				app_version: "1.0.0",
+				model: "Test Device",
+			},
+		},
+		get: { token: 1, user: { _id: 1 } },
+	}) as { token?: string; user?: { _id: string } };
+	assert(login.user?._id, "precondition: the officer can log in");
+	const officerId = new ObjectId(login.user!._id);
+
+	const owned = await device.findOne({
+		filters: { "owner._id": officerId },
+		projection: { _id: 1 },
+	}) as unknown as { _id: ObjectId } | null;
+	assert(
+		owned?._id,
+		"precondition: the device-scoped login wrote a device row",
+	);
+
+	// The shape `file.uploadFile` writes — the uploader relation is required — with
+	// the multipart upload left out.
+	const uploaded = await file.insertOne({
+		doc: {
+			name: `photo-${RUN}.jpg`,
+			type: "image/jpeg",
+			size: 1024,
+			path: "images/photo.jpg",
+			category: "other",
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		relations: {
+			uploader: {
+				_ids: officerId,
+				relatedRelations: { uploadedAssets: true },
+			},
+		},
+		projection: { _id: 1 },
+	});
+	const fileId = uploaded!._id as ObjectId;
+
+	const dry = await cleanup({ scope: ["demo"] }, managerId);
+	assertEquals(
+		dry.wouldDelete.requiredDependents.device,
+		1,
+		"the dry run names the officer's device",
+	);
+	assertEquals(
+		dry.wouldDelete.requiredDependents.file,
+		1,
+		"and the photo they attached",
+	);
+
+	// The whole point: this used to reject.
+	const done = await cleanup({ scope: ["demo"], confirm: true }, managerId);
+	assertEquals(done.deleted, true, "the confirming call resolves");
+	assertEquals(done.removed.requiredDependents.device, 1, "device counted");
+	assertEquals(done.removed.requiredDependents.file, 1, "file counted");
+
+	assertEquals(await count(device, { _id: owned!._id }), 0, "device removed");
+	assertEquals(await count(file, { _id: fileId }), 0, "file removed");
+	assertEquals(await count(user, { email }), 0, "and so is its owner");
 });
 
 Deno.test("cleanup test database", async () => {
