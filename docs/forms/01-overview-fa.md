@@ -43,10 +43,11 @@ shared/form-engine/
 │   ├── conditions.ts  # نمایش، الزام، محدودسازی گزینه‌ها
 │   ├── validate.ts    # اعتبارسنجی دو سطحی: خطا و هشدار
 │   ├── cascade.ts     # clearOnChange — پاک‌سازی پاسخ‌های وابسته
+│   ├── defaults.ts    # مقدار آغازین: defaultValue و defaultSource
 │   ├── bindings.ts    # نگاشت پاسخ‌ها onto فیلدهای typed در accident
 │   ├── snapshot.ts    # پهن‌کردن پاسخ‌ها به سطرهای dynamic_answers
 │   └── icons.ts       # واژگان مشترک ۸۰ آیکون Phosphor (داده، نه کامپوننت)
-└── test/              # ۱۴۰ تست
+└── test/              # ۱۶۱ تست
 ```
 
 هیچ‌کدام از فایل‌های این بسته، React یا Deno یا Expo را ایمپورت نمی‌کنند.

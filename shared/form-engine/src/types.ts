@@ -154,6 +154,20 @@ export type FieldType =
 	| "location"
 	| "computed";
 
+/**
+ * A starting value only the client can supply.
+ *
+ * `defaultValue` is a literal carried inside the definition, so it cannot say
+ * "today" — one definition is written once and answered by every report ever
+ * filed against it. A field that should start at the current moment therefore
+ * names a *source* instead, and the client resolves it against its own clock
+ * when the form is opened.
+ *
+ * `"now"` is resolved per field type: `date` takes today's date, `time` the
+ * current time, `datetime` both. A non-temporal field ignores it.
+ */
+export type DefaultSource = "now";
+
 export type FieldNode = {
 	kind: "field";
 	key: string;
@@ -166,6 +180,8 @@ export type FieldNode = {
 	optionalHint?: string;
 	order: number;
 	defaultValue?: AnswerValue;
+	/** Resolved against the client clock when the form is opened. */
+	defaultSource?: DefaultSource;
 
 	visibleWhen?: Rule;
 	requiredWhen?: Rule;

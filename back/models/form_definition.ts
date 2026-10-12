@@ -175,6 +175,11 @@ export const form_content_node_struct = object({
 	placeholder: optional(string()),
 	optionalHint: optional(string()),
 	defaultValue: optional(anyStruct()),
+	// A value only the client can know, resolved when the form is opened — the
+	// only member today is `"now"`, which the accident date and time use. It is
+	// modelled here because superstruct's `object()` is strict: an unlisted key
+	// rejects the whole definition, so the seed's own form would fail to activate.
+	defaultSource: optional(enums(["now"])),
 	options: optional(form_option_source_struct),
 	optionsFilter: optional(
 		object({

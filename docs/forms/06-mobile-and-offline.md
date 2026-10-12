@@ -31,8 +31,9 @@ mobile/src/domain/form-picker.ts               3 inline + overflow, accidents fi
 mobile/src/domain/form-routing.ts              which screen files the report
 mobile/src/domain/default-accident-form.ts      the app's own accident form
 shared/form-engine/src/qa-accident-form.ts   the QA form as a definition (its home)
+shared/form-engine/src/defaults.ts           starting values: defaultValue, defaultSource
 mobile/src/domain/qa-accident-form.ts           re-export shim to that one artifact
-mobile/src/domain/qa-accident-form.test.ts      35 acceptance tests
+mobile/src/domain/qa-accident-form.test.ts      48 acceptance tests
 mobile/src/domain/accident-mapper.ts            buildAccidentAddSet / buildIncidentReportAddSet
 mobile/src/services/sync-worker.ts             picks model + mapper per report kind
 mobile/src/app/incident/index.tsx              the form picker entry screen
@@ -115,6 +116,28 @@ A missing answer three steps ahead is not this step's problem, and blocking on i
 would strand the officer in a page they already filled correctly. On the final
 page, `validateAll` decides whether the report can be submitted; if not, the stepper
 jumps to the first blocked page.
+
+### Starting values
+
+When the form opens, two passes fill in answers the officer did not type, in this
+order:
+
+1. `seedCapturedAnswers` — a `location` field is a *capture marker*, not an input.
+   The point is chosen on the map screen and lands on the draft's coordinate
+   column, so it is projected onto the answer tree here. Without it the required
+   location on step one is unsatisfiable and the officer never reaches step two.
+2. `seedDefaultAnswers` — the definition's own `defaultValue` / `defaultSource`.
+   `defaultSource: "now"` resolves against the device clock, which is what opens
+   the accident date and time pre-filled.
+
+Order matters twice over. Defaults run **last**, so a value restored from a saved
+draft beats one; and both are **additive**, so neither can overwrite an answer the
+officer gave. Seeding is also the only thing that runs on open rather than on every
+keystroke — re-resolving "now" while the officer types would fight their edit.
+
+The clock is the device's, never UTC: a report is about the wall clock the officer
+is standing in front of, and a UTC conversion would file an evening incident under
+tomorrow.
 
 ## Answer-tree transitions
 

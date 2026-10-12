@@ -31,6 +31,7 @@ export type {
 	AnswerValue,
 	Binding,
 	ContentNode,
+	DefaultSource,
 	FieldNode,
 	FieldType,
 	FormDefinition,
@@ -83,6 +84,8 @@ export {
 export { toLatinNumber, validateForm } from "./validate.ts";
 
 export { applyCascades, pruneHidden } from "./cascade.ts";
+
+export { formatDefaultMoment, seedDefaultAnswers } from "./defaults.ts";
 
 export { buildBindings, buildFlatAnswers, relationSetKey } from "./bindings.ts";
 

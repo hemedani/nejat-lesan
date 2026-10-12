@@ -30,8 +30,9 @@ mobile/src/domain/form-picker.ts               سه فرم در صفحه + بق�
 mobile/src/domain/form-routing.ts              کدام صفحه گزارش را ثبت کند
 mobile/src/domain/default-accident-form.ts      فرم تصادف داخلی خود برنامه
 shared/form-engine/src/qa-accident-form.ts   فرم QA به‌صورت تعریف (خانهٔ اصلی آن)
+shared/form-engine/src/defaults.ts           مقدار آغازین: defaultValue و defaultSource
 mobile/src/domain/qa-accident-form.ts           شیم باز-اکسپورت به همان یک artefact
-mobile/src/domain/qa-accident-form.test.ts      ۳۵ تست پذیرش
+mobile/src/domain/qa-accident-form.test.ts      ۴۸ تست پذیرش
 mobile/src/domain/accident-mapper.ts            buildAccidentAddSet / buildIncidentReportAddSet
 mobile/src/services/sync-worker.ts             انتخاب مدل و mapper بر اساس نوع گزارش
 mobile/src/app/incident/index.tsx              صفحهٔ ورود با انتخابگر فرم
@@ -109,6 +110,28 @@ canLeavePage(definition, answers, pageKey)
 پاسخِ ناقص سه گام جلوتر مشکل این گام نیست، و جلوگیری روی آن مأمور را در صفحه‌ای
 که درست پر کرده گیر می‌اندازد. در گام آخر، `validateAll` تعیین می‌کند آیا گزارش
 قابل ثبت است؛ اگر نباشد، stepper به نخستین صفحهٔ مسدودشده می‌پرد.
+
+### مقدار آغازین
+
+هنگام باز شدن فرم، دو گذر پاسخ‌هایی را پر می‌کنند که مأمور تایپ نکرده، به این
+ترتیب:
+
+1. `seedCapturedAnswers` — فیلد `location` یک *نشانگر برداشت* است، نه ورودی.
+   نقطه در صفحهٔ نقشه انتخاب می‌شود و روی ستون مختصات پیش‌نویس می‌نشیند، پس
+   اینجا به درخت پاسخ نگاشت می‌شود. بدون آن، موقعیت الزامی گام یک هرگز
+   برآورده نمی‌شود و مأمور به گام دو نمی‌رسد.
+2. `seedDefaultAnswers` — مقادیر `defaultValue` / `defaultSource` خودِ تعریف.
+   `defaultSource: "now"` بر پایهٔ ساعت دستگاه حل می‌شود و همین است که تاریخ و
+   ساعت وقوع تصادف را پیش‌پر می‌کند.
+
+ترتیب از دو جهت مهم است. مقادیر آغازین **آخر** اجرا می‌شوند تا مقدار بازیابی‌شده
+از پیش‌نویس بر آن‌ها مقدم باشد؛ و هر دو **افزودنی**‌اند، پس هیچ‌کدام نمی‌تواند
+پاسخی را که مأمور داده بازنویسی کند. مقداردهی همچنین تنها کاری است که فقط
+هنگام باز شدن انجام می‌شود، نه با هر کلید — حل دوبارهٔ «اکنون» هنگام تایپ با
+ویرایش مأمور می‌جنگد.
+
+ساعت، ساعت دستگاه است و نه UTC: گزارش دربارهٔ ساعت دیواری‌ای است که مأمور
+روبه‌روی آن ایستاده، و تبدیل به UTC یک واقعهٔ شبانه را زیر تاریخ فردا ثبت می‌کند.
 
 ## انتقال‌های درخت پاسخ
 

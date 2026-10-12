@@ -43,10 +43,11 @@ shared/form-engine/
 │   ├── conditions.ts  # visibility, requiredness, option narrowing
 │   ├── validate.ts    # two-tier validation: errors and warnings
 │   ├── cascade.ts     # clearOnChange — dependent-answer cleanup
+│   ├── defaults.ts    # starting values: defaultValue and defaultSource
 │   ├── bindings.ts    # project answers onto typed accident fields
 │   ├── snapshot.ts    # flatten answers into dynamic_answers rows
 │   └── icons.ts       # the shared 80-name Phosphor vocabulary (data, not components)
-└── test/              # 140 tests
+└── test/              # 161 tests
 ```
 
 Nothing in that package imports React, Deno, or Expo. It is pure functions over

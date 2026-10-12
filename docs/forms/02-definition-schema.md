@@ -116,6 +116,7 @@ type FieldNode = {
   icon?: string;
   order: number;
   defaultValue?: AnswerValue;
+  defaultSource?: DefaultSource; // resolved when the form is opened; today: "now"
 
   // Conditional behaviour — see doc 03
   visibleWhen?: Rule;
@@ -130,6 +131,28 @@ type FieldNode = {
   binding?: Binding;
 };
 ```
+
+### Starting values
+
+Two ways to say what a field holds *before* the officer touches it:
+
+| Slot | Resolved | Use for |
+| ---- | -------- | ------- |
+| `defaultValue` | at authoring time — a literal in the definition | a value that is always the same |
+| `defaultSource` | when the form is opened, against the client's clock | a value that is always *now* |
+
+`defaultSource: "now"` is resolved per field type: `date` takes today's date,
+`time` the current time, `datetime` both. Any other field type ignores it — a
+`text` field has no moment to hold.
+
+Both slots are **additive**: a field the officer has already answered is never
+overwritten, so a default can never undo a correction. The accident report's
+`date_of_accident` and `time_of_accident` are the shipped example: a patrol
+officer at the roadside is describing something that has just happened.
+
+Seeding happens once, when the form opens, in `seedDefaultAnswers`. The backend
+does not resolve either slot — by the time a report arrives the answer is a
+literal in the payload, and a missing one is a missing answer.
 
 ### Field types
 

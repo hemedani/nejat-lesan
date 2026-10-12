@@ -219,6 +219,22 @@ Deno.test("form_content_node_struct — accepts cascade clears", () => {
 	);
 });
 
+Deno.test("form_content_node_struct — accepts a literal and a dynamic default", () => {
+	valid(node({ defaultValue: "خسارتی" }), form_content_node_struct);
+	// `"now"` is the one dynamic source: the client resolves it against its own
+	// clock when the form is opened.
+	valid(
+		node({ key: "date_of_accident", type: "date", defaultSource: "now" }),
+		form_content_node_struct,
+	);
+});
+
+Deno.test("form_content_node_struct — rejects an unknown default source", () => {
+	// The engine would ignore it, so the field would silently start empty and the
+	// author would have no idea why.
+	assert(rejects(node({ defaultSource: "tomorrow" }), form_content_node_struct));
+});
+
 Deno.test("form_content_node_struct — accepts composite plate variants", () => {
 	valid(
 		node({
