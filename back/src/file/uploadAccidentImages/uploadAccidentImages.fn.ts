@@ -127,6 +127,8 @@ export const uploadAccidentImagesFn: ActFn = async (body) => {
 		name: finalFileName,
 		type: filePayload.type,
 		size: bytes.length,
+		// Relative to `./uploads`, recorded rather than inferred by the reader.
+		path: `accidents/${finalFileName}`,
 		category,
 		sequence: sequence || 0,
 	};

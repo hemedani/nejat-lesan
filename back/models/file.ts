@@ -21,6 +21,19 @@ export const file_pure = {
 	name: string(),
 	type: string(),
 	size: number(),
+	/**
+	 * Where the bytes were written, relative to `./uploads` — e.g.
+	 * `images/<name>` or `accidents/<name>`.
+	 *
+	 * `name` alone is not enough to fetch a file back: two acts write to two
+	 * different trees (`file.uploadFile` picks a directory from its declared
+	 * type, `file.uploadAccidentImages` always writes `accidents`), and the
+	 * directory was never recorded. A reader had to infer it from the relation
+	 * it arrived through, which is why only `accident.attachments` could be
+	 * rendered. Optional so documents written before this field existed stay
+	 * valid; readers fall back to `accidents/<name>` for those.
+	 */
+	path: optional(string()),
 	category: optional(string()),
 	sequence: optional(number()),
 	...createUpdateAt,

@@ -35,6 +35,10 @@ export const uploadFileFn: ActFn = async (body) => {
 		: "./uploads/docs";
 	await ensureDir(uploadDir);
 
+	// The directory the bytes land in, recorded so a reader does not have to
+	// infer it. Kept relative to `./uploads`, which is what the server exposes.
+	const uploadSubdir = uploadDir.replace("./uploads/", "");
+
 	let finalFileName = `${new ObjectId()}-${fileToUpload.name}`;
 	let finalFileSize = fileToUpload.size;
 	let finalFileType = fileToUpload.type;
@@ -102,6 +106,7 @@ export const uploadFileFn: ActFn = async (body) => {
 			name: finalFileName,
 			type: finalFileType,
 			size: finalFileSize,
+			path: `${uploadSubdir}/${finalFileName}`,
 			...rest,
 		},
 		relations: {
