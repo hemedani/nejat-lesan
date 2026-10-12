@@ -197,6 +197,19 @@ export const ensureModuleConfig = async (): Promise<void> => {
 export const setModuleConfig = async (
 	modules: Array<{ key: string; enabled: boolean }>,
 ): Promise<void> => {
+	// The singleton may not exist. `user.cleanupDemoSeed` removes it (its
+	// `modules` scope, which `all` includes) so a demo can be rebuilt from a clean
+	// installation, and the only thing that used to put it back was a server boot
+	// — `ensureModuleConfig`. The write below is a `findOneAndUpdate` with no
+	// `upsert`, so against a missing row it fails with Lesan's «can not update
+	// this doc»: the documented rebuild order (cleanupDemoSeed → setModules →
+	// seedShared → seedDemoOrganization) died on its second step, and a database
+	// whose config had never been created failed on its first.
+	//
+	// Recreating it here rather than upserting gives the row a real `createdAt`,
+	// which an upsert cannot, and keeps a single definition of "the default".
+	await ensureModuleConfig();
+
 	const normalized = MODULE_KEYS.map((key) => ({
 		key,
 		enabled: modules.find((m) => m.key === key)?.enabled ?? true,

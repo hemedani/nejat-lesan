@@ -152,6 +152,37 @@ Deno.test("invalid module key is rejected", async () => {
 	);
 });
 
+Deno.test("setModules with no `modules` payload falls back to the all-on default", async () => {
+	// اول همه را خاموش می‌کنیم تا مطمئن شویم پیش‌فرض واقعاً جای خالی را پر می‌کند و
+	// فقط «بی‌اثر» نیست.
+	await runAct(
+		"app_modules",
+		"setModules",
+		{
+			set: { modules: MODULE_KEYS.map((key) => ({ key, enabled: false })) },
+			get: { success: 1 },
+		},
+		ghostId,
+	);
+	assertEquals(getEnabledModuleKeys().length, 0);
+
+	// `set: {}` — پیش از این با «Expected an array value, but received: undefined»
+	// در اعتبارسنجی رد می‌شد.
+	const result = await runAct(
+		"app_modules",
+		"setModules",
+		{ set: {}, get: { success: 1 } },
+		ghostId,
+	);
+	assertEquals((result as any).success, true);
+	assertEquals(getEnabledModuleKeys().sort(), [...MODULE_KEYS].sort());
+
+	// سند هم باید کامل باشد (یک ردیف برای هر کلید) — مثل هر نوشتنِ دیگری.
+	const rows = await getModuleConfigRows();
+	assertEquals(rows.length, MODULE_KEYS.length);
+	for (const row of rows) assertEquals(row.enabled, true);
+});
+
 Deno.test("a stored doc missing a module key does NOT keep that module off", async () => {
 	// سندِ «قدیمی»: تنها سه ماژولی که هنگام نوشتنش وجود داشتند — `forms` نیست.
 	// این وضعیت برای هر نصبی رخ می‌دهد که پیش از معرفی ماژولِ تازه پیکربندی شده.

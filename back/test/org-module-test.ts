@@ -295,6 +295,49 @@ Deno.test("explicit unitId of a module-off org blocks even a Manager; Ghost bypa
 	assert((ghost as any).data !== undefined, "ghost bypasses");
 });
 
+Deno.test("organization.setModules with no `modules` falls back to the all-on default", async () => {
+	// orgB را جزئی خاموش می‌کنیم تا مطمئن شویم پیش‌فرض واقعاً اثر دارد.
+	await runAct(
+		"organization",
+		"setModules",
+		{
+			set: { organizationId: orgB.toString(), modules: orgSet(orgB, false) },
+			get: { success: 1 },
+		},
+		ghostId,
+	);
+	const off = await runAct(
+		"organization",
+		"getModules",
+		{ set: { organizationId: orgB.toString() }, get: { effective: 1 } },
+		managerId,
+	);
+	assert(
+		!(off as any).effective.includes("warehouse"),
+		"orgB warehouse should be off before the default write",
+	);
+
+	// بدون `modules` — پیش از این با «Expected an array value, but received:
+	// undefined» در اعتبارسنجی رد می‌شد.
+	const result = await runAct(
+		"organization",
+		"setModules",
+		{ set: { organizationId: orgB.toString() }, get: { success: 1 } },
+		ghostId,
+	);
+	assertEquals((result as any).success, true);
+
+	const on = await runAct(
+		"organization",
+		"getModules",
+		{ set: { organizationId: orgB.toString() }, get: { modules: 1, effective: 1 } },
+		managerId,
+	);
+	assertEquals((on as any).effective.sort(), [...MODULE_KEYS].sort());
+	assertEquals((on as any).modules.length, MODULE_KEYS.length);
+	for (const m of (on as any).modules) assertEquals(m.enabled, true);
+});
+
 Deno.test("Manager cannot set org modules (Ghost-only); invalid key rejected", async () => {
 	await assertRejects(
 		() =>
