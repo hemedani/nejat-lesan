@@ -3,6 +3,7 @@ import {
 	array,
 	boolean,
 	defaulted,
+	number,
 	object,
 	optional,
 	type RelationDataType,
@@ -10,7 +11,7 @@ import {
 	string,
 } from "@deps";
 import { createUpdateAt } from "../utils/createUpdateAt.ts";
-import { user_excludes } from "@model";
+import { geoJSONStruct, user_excludes } from "@model";
 
 /**
  * Organization — هر راه/بزرگراه/آزادراه یا شهرداری یک سازمان.
@@ -26,6 +27,14 @@ export const organization_pure = {
 	enName: optional(string()),
 	description: optional(string()),
 	is_active: defaulted(boolean(), true),
+	// مرکز عملیاتی سازمان: نقطه‌ای که نقشه‌ی اپلیکیشن مأمور با آن باز می‌شود
+	// (وقتی GPS در دسترس نیست) و از آن «مرکز سازمان» زده می‌شود.
+	// ترتیب مختصات در GeoDB همیشه [longitude, latitude] است، نه [lat, lng].
+	location: optional(geoJSONStruct("Point")),
+	// بزرگ‌نمایی پیش‌فرض نقشه برای این سازمان. آزادراه کوتاه شهری ۱۶ می‌خواهد
+	// و کریدور ۱۰۰ کیلومتری ۱۲؛ پس این عدد همراه نقطه می‌آید، نه داخل آن.
+	// بازه‌ی ۳..۱۹ را مصرف‌کننده‌ها اعمال می‌کنند (نقشه‌ی وب و اپ مأمور).
+	location_zoom: optional(number()),
 	// پرچم‌های ماژول این سازمان (مجوز فروش سطح سازمان).
 	// غیاب = ارث‌بری از سطح نصب (همه فعال). فقط Ghost تغییر می‌دهد.
 	module_flags: optional(array(object({
@@ -84,6 +93,12 @@ export const organizations = () => {
 	coreApp.odm.getCollection("organization").createIndex({
 		name: "text",
 		enName: "text",
+	});
+
+	// `location` اختیاری است، پس ایندکس روی سندهای بدون نقطه هم ساخته می‌شود؛
+	// MongoDB فیلد غایب را در ایندکس جغرافیایی نادیده می‌گیرد، نه اینکه خطا بدهد.
+	coreApp.odm.getCollection("organization").createIndex({
+		location: "2dsphere",
 	});
 
 	return model;

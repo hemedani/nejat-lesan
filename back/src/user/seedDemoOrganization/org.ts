@@ -151,11 +151,40 @@ export const DEMO_ROAD_LENGTH_METERS = 116342;
 const geometrySignature = (coordinates: [number, number][][]): string =>
 	coordinates
 		.map((line) =>
-			line.map(([lng, lat]) => `${lng.toFixed(5)},${lat.toFixed(5)}`).join(";")
+			line.map(([lng, lat]) => `${lng.toFixed(5)},${lat.toFixed(5)}`)
+				.join(";")
 		)
 		.join("|");
 
 const DEMO_ROAD_SIGNATURE = geometrySignature(DEMO_ROAD_AREA.coordinates);
+
+/**
+ * مرکز عملیاتی سازمان دمو — همان سرِ اهوازِ محور.
+ *
+ * نقطه از `DEMO_ROAD_AREA` *مشتق* می‌شود، نه اینکه جداگانه نوشته شود: اگر
+ * روزی هندسه‌ی محور بازتولید شد، مرکزِ سازمان نمی‌تواند از محور جدا بیفتد.
+ * ترتیب مختصات هم مثل بقیه‌ی GeoDB است: `[longitude, latitude]`.
+ *
+ * این نقطه در اپ مأمور دو جا می‌آید: قابِ اولیه‌ی صفحه‌ی «انتخاب محل حادثه»
+ * وقتی GPS در دسترس نیست، و دکمه‌ی «مرکز سازمان».
+ */
+export const DEMO_ORG_LOCATION: {
+	type: "Point";
+	coordinates: [number, number];
+} = {
+	type: "Point",
+	coordinates: DEMO_ROAD_AREA.coordinates[0][0],
+};
+
+/**
+ * بزرگ‌نمایی پیش‌فرض نقشه برای سازمان دمو.
+ *
+ * محور اهواز – بندر امام حدود ۱۱۶ کیلومتر است؛ ۱۳ قابِ نقشه تقریباً دوسومِ
+ * شرقیِ همین کریدور را می‌گیرد. عدد عمداً ثابت و صریح است، نه «پیش‌فرضِ» مدل،
+ * چون قابِ خوب برای یک کریدورِ بلند با قابِ خوبِ یک آزادراهِ کوتاهِ شهری فرق
+ * دارد.
+ */
+export const DEMO_ORG_ZOOM = 13;
 
 export type DemoRoad = {
 	_id: ObjectId;
@@ -168,6 +197,8 @@ export type DemoOrganization = {
 	code: string;
 	name: string;
 	road?: { _id?: ObjectId };
+	location?: { type: "Point"; coordinates: [number, number] };
+	location_zoom?: number;
 };
 
 export type Ensured<TRow> = { doc: TRow; created: boolean };
@@ -300,13 +331,25 @@ export const ensureDemoRoad = async (
  * بی‌فایده است — `resolveOversightScope` گزارش‌های قدیمی را از راهِ
  * `organization.road._id` پیدا می‌کند و `unit.add` واحدی را که راهش با راهِ
  * سازمان فرق کند رد می‌کند.
+ *
+ * مرکز (`location`/`location_zoom`) هم فقط *غایب* بودنش ترمیم می‌شود، نه
+ * هر ناهم‌خوانی‌ای: سازمانی که اپراتور خودش نقطه‌ای روی آن گذاشته، با اجرای
+ * دوباره‌ی seed نباید جابه‌جا شود. سازمانِ seed‌شده *پیش* از افزودن این فیلد
+ * همین‌طور بی‌نقطه می‌ماند، چون روی درخواستِ idempotent چیزی نمی‌نویسد.
  */
 export const ensureDemoOrganization = async (
 	{ registrer, roadId }: { registrer: ObjectId; roadId: ObjectId },
 ): Promise<Ensured<DemoOrganization>> => {
 	const existing = await organization.findOne({
 		filters: { code: DEMO_ORG_CODE },
-		projection: { _id: 1, code: 1, name: 1, "road._id": 1 },
+		projection: {
+			_id: 1,
+			code: 1,
+			name: 1,
+			"road._id": 1,
+			location: 1,
+			location_zoom: 1,
+		},
 	}) as unknown as DemoOrganization | null;
 
 	if (existing) {
@@ -324,6 +367,24 @@ export const ensureDemoOrganization = async (
 				projection: { _id: 1 },
 			});
 		}
+
+		// هر دو pure هستند، نه رابطه، پس `findOneAndUpdate` جای `addRelation`.
+		if (!existing.location) {
+			await organization.findOneAndUpdate({
+				filter: { _id: existing._id },
+				update: {
+					$set: {
+						location: DEMO_ORG_LOCATION,
+						location_zoom: DEMO_ORG_ZOOM,
+						updatedAt: new Date(),
+					},
+				},
+				projection: { _id: 1 },
+			});
+			existing.location = DEMO_ORG_LOCATION;
+			existing.location_zoom = DEMO_ORG_ZOOM;
+		}
+
 		return {
 			doc: { ...existing, road: { _id: roadId } },
 			created: false,
@@ -338,6 +399,8 @@ export const ensureDemoOrganization = async (
 			description:
 				"سازمان دموی آزادراه اهواز – بندر امام: نگهداری، بهره‌برداری و گشت محور.",
 			is_active: true,
+			location: DEMO_ORG_LOCATION,
+			location_zoom: DEMO_ORG_ZOOM,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		},
@@ -345,7 +408,14 @@ export const ensureDemoOrganization = async (
 			road: { _ids: roadId, relatedRelations: { organization: true } },
 			registrer: { _ids: registrer },
 		},
-		projection: { _id: 1, code: 1, name: 1, "road._id": 1 },
+		projection: {
+			_id: 1,
+			code: 1,
+			name: 1,
+			"road._id": 1,
+			location: 1,
+			location_zoom: 1,
+		},
 	}) as unknown as DemoOrganization | null;
 
 	return {

@@ -1,5 +1,13 @@
-import { boolean, object, objectIdValidation, optional, string } from "@deps";
+import {
+	boolean,
+	number,
+	object,
+	objectIdValidation,
+	optional,
+	string,
+} from "@deps";
 import { selectStruct } from "../../../mod.ts";
+import { geoJSONStruct } from "@model";
 
 export const updateValidator = () => {
 	return object({
@@ -10,6 +18,8 @@ export const updateValidator = () => {
 			enName: optional(string()),
 			description: optional(string()),
 			is_active: optional(boolean()),
+			location: optional(geoJSONStruct("Point")),
+			location_zoom: optional(number()),
 			headId: optional(objectIdValidation),
 			logoId: optional(objectIdValidation),
 		}),

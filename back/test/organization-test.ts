@@ -149,6 +149,8 @@ const ORG_GET: Document = {
 	name: 1,
 	enName: 1,
 	is_active: 1,
+	location: 1,
+	location_zoom: 1,
 	road: { _id: 1, name: 1 },
 	head: { _id: 1, first_name: 1, last_name: 1 },
 };
@@ -172,6 +174,7 @@ let roadR: ObjectId;
 let roadS: ObjectId;
 let orgA: ObjectId;
 let orgB: ObjectId;
+let geoOrgId: ObjectId;
 let hqA: ObjectId;
 let stationA: ObjectId;
 let patrolUnitA: ObjectId;
@@ -224,6 +227,121 @@ Deno.test("create organizations bound to roads", async () => {
 	);
 	assertEquals(b.road._id.toString(), roadS.toString());
 	orgB = b._id as ObjectId;
+});
+
+// ---------------------------------------------------------------------------
+// 1b. Organization location point + default map zoom
+// ---------------------------------------------------------------------------
+
+Deno.test("organization stores a GeoJSON location point and a map zoom", async () => {
+	const created = await runAct(
+		"organization",
+		"add",
+		{
+			set: {
+				code: `ORG-GEO-${RUN}`,
+				name: "سازمان دارای مرکز",
+				// GeoJSON order is [longitude, latitude] — not [lat, lng].
+				location: { type: "Point", coordinates: [48.67056, 31.31823] },
+				location_zoom: 13,
+			},
+			get: ORG_GET,
+		},
+		managerId,
+	);
+
+	assertEquals(created.location.type, "Point");
+	assertEquals(created.location.coordinates, [48.67056, 31.31823]);
+	assertEquals(created.location_zoom, 13);
+	geoOrgId = created._id as ObjectId;
+
+	const stored = await organization.findOne({
+		filters: { _id: created._id as ObjectId },
+		projection: { _id: 1, location: 1, location_zoom: 1 },
+	});
+	assertEquals((stored as any).location.coordinates, [48.67056, 31.31823]);
+	assertEquals((stored as any).location_zoom, 13);
+});
+
+Deno.test("organization location stays absent when it is not supplied", async () => {
+	const created = await runAct(
+		"organization",
+		"add",
+		{
+			set: { code: `ORG-NOGEO-${RUN}`, name: "سازمان بی‌مرکز" },
+			get: ORG_GET,
+		},
+		managerId,
+	);
+
+	// The field is optional, so a roadless org is still creatable and the
+	// 2dsphere index must tolerate documents with no `location` at all.
+	assert(
+		created.location === undefined || created.location === null,
+		"an org created without a location carries none",
+	);
+	assert(
+		created.location_zoom === undefined || created.location_zoom === null,
+		"an org created without a zoom carries none",
+	);
+});
+
+Deno.test("organization.update moves the location point and the zoom", async () => {
+	const updated = await runAct(
+		"organization",
+		"update",
+		{
+			set: {
+				_id: geoOrgId.toString(),
+				location: { type: "Point", coordinates: [49.068, 30.645] },
+				location_zoom: 14,
+			},
+			get: ORG_GET,
+		},
+		managerId,
+	);
+
+	assertEquals(updated.location.coordinates, [49.068, 30.645]);
+	assertEquals(updated.location_zoom, 14);
+});
+
+Deno.test("organization.update rejects a malformed location point", async () => {
+	await assertRejects(
+		() =>
+			runAct(
+				"organization",
+				"update",
+				{
+					set: {
+						_id: geoOrgId.toString(),
+						// Not a GeoJSON Point — the struct must refuse it.
+						location: { type: "Circle", coordinates: [49, 30] },
+					},
+					get: ORG_GET,
+				},
+				managerId,
+			),
+		Error,
+	);
+});
+
+Deno.test("organization.update rejects a non-numeric zoom", async () => {
+	await assertRejects(
+		() =>
+			runAct(
+				"organization",
+				"update",
+				{
+					set: {
+						_id: geoOrgId.toString(),
+						location_zoom: "بزرگ",
+					},
+					get: ORG_GET,
+				},
+				managerId,
+			),
+		Error,
+	);
 });
 
 Deno.test("organization add rejects a roadId that does not exist", async () => {

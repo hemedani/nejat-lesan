@@ -309,6 +309,10 @@ export const seedDemoOrganizationFn: ActFn = async () => {
 			_id: str(orgRow._id),
 			code: orgRow.code,
 			name: orgRow.name,
+			// در پاسخ هم می‌آید تا اپراتور بتواند بدون یک `organization.get`
+			// جداگانه ببیند مرکز سازمان واقعاً نوشته شده یا نه.
+			location: orgRow.location ?? null,
+			location_zoom: orgRow.location_zoom ?? null,
 		},
 		road: { _id: str(roadRow._id), name: roadRow.name },
 		units: units.map((entry) => ({

@@ -151,6 +151,8 @@ type OrgRow = {
 	enName?: string;
 	road?: Rel & { name?: string };
 	head?: Rel;
+	location?: { type: string; coordinates: number[] };
+	location_zoom?: number;
 };
 
 type UnitRow = {
@@ -211,6 +213,8 @@ const readDemoOrg = async (): Promise<OrgRow> => {
 			"road._id": 1,
 			"road.name": 1,
 			"head._id": 1,
+			location: 1,
+			location_zoom: 1,
 		},
 	}) as unknown as OrgRow | null;
 	assertExists(row, `the demo organization (code ${DEMO_ORG_CODE}) exists`);
@@ -435,14 +439,22 @@ Deno.test("the demo road carries the real corridor, and a drifted geometry is re
 		filter: { _id: roadId },
 		update: {
 			$set: {
-				area: { type: "MultiLineString", coordinates: [DEMO_LEGACY_ROAD] },
+				area: {
+					type: "MultiLineString",
+					coordinates: [DEMO_LEGACY_ROAD],
+				},
 				total_length_meters: DEMO_LEGACY_ROAD_LENGTH_METERS,
 			},
 		},
 		projection: { _id: 1 },
 	});
 
-	await runAct("user", "seedDemoOrganization", { set: {}, get: {} }, managerId);
+	await runAct(
+		"user",
+		"seedDemoOrganization",
+		{ set: {}, get: {} },
+		managerId,
+	);
 
 	const repaired = await readRoadGeometry();
 	assertEquals(
@@ -1041,6 +1053,109 @@ Deno.test("the seeded OrgHead's oversight console shows both the accident and th
 // ---------------------------------------------------------------------------
 // 8. Re-running creates no duplicates
 // ---------------------------------------------------------------------------
+
+Deno.test("the demo organization carries an Ahvaz location point and a map zoom", async () => {
+	const stored = await readDemoOrg();
+
+	assertEquals(stored.location?.type, "Point");
+	// GeoJSON order is [longitude, latitude]. 48.67/31.31 is the Ahvaz end of the
+	// corridor, hundreds of km from the old hardcoded Tehran fallback.
+	assertEquals(stored.location?.coordinates, [48.67056, 31.31823]);
+	assertEquals(stored.location_zoom, 13);
+});
+
+Deno.test("the org location point stays pinned to the road's Ahvaz vertex", async () => {
+	const org = await readDemoOrg();
+	assertExists(org.location?.coordinates, "the org carries a point");
+
+	const roadRow = await road.findOne({
+		filters: { _id: org.road!._id },
+		projection: { _id: 1, area: 1 },
+	}) as unknown as
+		| { _id: ObjectId; area?: { coordinates?: number[][][] } }
+		| null;
+	assertExists(roadRow, "the demo road exists");
+
+	// Derived, not copied: if the corridor geometry is ever regenerated the org
+	// centre must follow it rather than drift onto the old motorway.
+	const firstVertex = roadRow!.area?.coordinates?.[0]?.[0];
+	assertExists(firstVertex, "the corridor has a first vertex");
+	assertEquals(
+		org.location!.coordinates,
+		firstVertex,
+		"the org centre is the road's own Ahvaz vertex",
+	);
+});
+
+Deno.test("a demo organization seeded before location existed is repaired in place", async () => {
+	const org = await readDemoOrg();
+
+	// Simulate a database that predates the `location` field: the org exists,
+	// with its road, but has no centre of its own.
+	await organization.findOneAndUpdate({
+		filter: { _id: org._id },
+		update: { $unset: { location: "", location_zoom: "" } },
+		projection: { _id: 1 },
+	});
+	assert(
+		(await readDemoOrg()).location === undefined,
+		"the org is now centre-less, as a pre-field database would be",
+	);
+
+	await runAct(
+		"user",
+		"seedDemoOrganization",
+		{ set: {}, get: {} },
+		managerId,
+	);
+
+	const repaired = await readDemoOrg();
+	assertEquals(
+		str(repaired._id),
+		str(org._id),
+		"repaired in place — no second organization",
+	);
+	assertEquals(repaired.location?.coordinates, [48.67056, 31.31823]);
+	assertEquals(repaired.location_zoom, 13);
+});
+
+Deno.test("an operator's own org location is never overwritten by a re-run", async () => {
+	const org = await readDemoOrg();
+	const chosen = { type: "Point", coordinates: [50.5, 30.2] };
+
+	await organization.findOneAndUpdate({
+		filter: { _id: org._id },
+		update: { $set: { location: chosen, location_zoom: 16 } },
+		projection: { _id: 1 },
+	});
+
+	await runAct(
+		"user",
+		"seedDemoOrganization",
+		{ set: {}, get: {} },
+		managerId,
+	);
+
+	const after = await readDemoOrg();
+	assertEquals(
+		after.location?.coordinates,
+		chosen.coordinates,
+		"a point that already exists is left alone",
+	);
+	assertEquals(after.location_zoom, 16);
+
+	// Restore the seeded value so the later re-run tests see the demo default.
+	await organization.findOneAndUpdate({
+		filter: { _id: org._id },
+		update: {
+			$set: {
+				location: { type: "Point", coordinates: [48.67056, 31.31823] },
+				location_zoom: 13,
+			},
+		},
+		projection: { _id: 1 },
+	});
+});
 
 Deno.test("re-running the seed creates no duplicates", async () => {
 	const org = await readDemoOrg();
