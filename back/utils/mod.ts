@@ -15,3 +15,4 @@ export * from "./logOperation.ts";
 export * from "./inventoryManager.ts";
 export * from "./unitScope.ts";
 export * from "./roleAuth.ts";
+export * from "./geo.ts";

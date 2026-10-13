@@ -42,6 +42,22 @@ const polylineLengthMeters = (line: [number, number][]): number => {
 	return total;
 };
 
+/**
+ * طول کل یک `MultiLineString` بر حسب متر — همان روشی که
+ * `projectPointToMultiLine` با آن نقطه را می‌نشاند.
+ *
+ * این تنها مرجعِ طول جاده است: `road.total_length_meters` از همین گرفته و
+ * ذخیره می‌شود، تا مقدارِ ذخیره‌شده و خطی که رویش snap می‌شود هرگز اختلاف
+ * نگیرند. تخمینِ equirectangular در حداقل جابه‌جایی بین دو نقطه از خط
+ * (نه قطب‌ها) دقیق است.
+ *
+ * مقطعِ کمتر از دو رأس طولی ندارد و صفر می‌دهد، نه `NaN`.
+ */
+export const multiLineLengthMeters = (
+	lines: [number, number][][],
+): number =>
+	lines.reduce((total, line) => total + polylineLengthMeters(line), 0);
+
 export interface PolylineProjection {
 	alongMeters: number; // distance along the polyline from its start
 	perpMeters: number; // perpendicular distance from the point to the line
