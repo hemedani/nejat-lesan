@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { isEmptyAnswer, resolvePath, walkNodes } from "@forms";
 import type { AnswerTree, AnswerValue, FieldNode, FormDefinition } from "@forms";
-import type { ReportDetailDoc } from "@/types/report-detail";
+import type { AttachmentDto, ReportDetailDoc } from "@/types/report-detail";
 import { loadFormDefinitionMap } from "@/services/form-definition-cache";
+import { attachmentIndex, resolveFileAnswer } from "@/services/answer-files";
 import { PanelCard } from "@/components/patrol/ui";
 import { SectionTitle } from "@/components/report/kit";
+import { AnswerFileList } from "@/components/report/attachment-viewer";
 
 /**
  * A non-accident report's answers, as the officer's own questions.
@@ -60,10 +62,11 @@ export function FormAnswersSection({
   }, [organizationId, formDefinitionId]);
 
   const answers = report.form_answers as AnswerTree | undefined;
+  const files = useMemo(() => attachmentIndex(report.attachments), [report.attachments]);
 
   const rows = useMemo(
-    () => (definition && answers ? labelledRows(definition, answers) : []),
-    [definition, answers],
+    () => (definition && answers ? labelledRows(definition, answers, files) : []),
+    [definition, answers, files],
   );
 
   const description = report.description?.trim();
@@ -96,23 +99,34 @@ export function FormAnswersSection({
                 )}
                 {row.label}
               </dt>
-              <dd className="flex-1 text-xs leading-6 text-slate-200">{row.text}</dd>
+              <dd className="flex-1 text-xs leading-6 text-slate-200">
+                {row.text}
+                {row.files && <AnswerFileList files={row.files} />}
+              </dd>
             </div>
           ))}
         </dl>
       ) : (
-        <FallbackAnswers answers={answers} hasDefinition={Boolean(definition)} />
+        <FallbackAnswers answers={answers} hasDefinition={Boolean(definition)} files={files} />
       )}
     </PanelCard>
   );
 }
 
-type AnswerRow = { path: string; label: string; groupLabel?: string; text: string };
+type AnswerRow = {
+  path: string;
+  label: string;
+  groupLabel?: string;
+  text: string;
+  /** The files this answer refers to, when it refers to any. */
+  files?: AttachmentDto[];
+};
 
 /** One labelled line per answered field, in the order the form asks them. */
 function labelledRows(
   definition: FormDefinition,
   answers: AnswerTree,
+  files: Map<string, AttachmentDto>,
 ): AnswerRow[] {
   const rows: AnswerRow[] = [];
   // `walkNodes` visits a field once per *instance*, so a two-row repeatable
@@ -123,11 +137,13 @@ function labelledRows(
     const value = resolvePath(answers, meta.instancePath)[0];
     if (value === undefined || isEmptyAnswer(value)) return;
 
+    const read = readAnswer(field, value, files);
     rows.push({
       path: meta.instancePath,
       label: field.label || field.key,
       groupLabel: groupLabel(meta.repeatable?.label, meta.rowIndex),
-      text: readValue(field, value),
+      text: read.text,
+      files: read.files,
     });
   });
   return rows;
@@ -138,6 +154,39 @@ const groupLabel = (
   rowIndex: number | undefined,
 ): string | undefined =>
   label && rowIndex !== undefined ? `${label} ${rowIndex + 1} —` : undefined;
+
+/**
+ * The joined names of a resolved file answer.
+ *
+ * An `incident_report` has no `answer_names` the way `accident.dynamic_answers`
+ * does, so the joined `attachments` record is the **only** source of a readable
+ * name here. `—` when none of the files carry one, which is the same
+ * show-something-honest rule the rest of the section follows.
+ */
+const fileNames = (files: AttachmentDto[]): string =>
+  files
+    .map((file) => file.name)
+    .filter((name): name is string => Boolean(name))
+    .join("، ") || "—";
+
+/**
+ * An answer, as text and — when it refers to any — as files.
+ *
+ * A `file` field stores the server ids of the files it holds, so resolving them
+ * against `attachments` supplies both the viewer and the text; printing the raw
+ * ids would put ObjectIds on the review screen, which is the one thing the join
+ * exists to avoid. Every other leaf is left to `readValue` untouched.
+ */
+function readAnswer(
+  field: FieldNode,
+  value: AnswerValue,
+  files: Map<string, AttachmentDto>,
+): { text: string; files?: AttachmentDto[] } {
+  const resolved = resolveFileAnswer(value, files);
+  return resolved
+    ? { text: fileNames(resolved), files: resolved }
+    : { text: readValue(field, value) };
+}
 
 /**
  * An answer as text.
@@ -187,13 +236,15 @@ function optionLabel(field: FieldNode, value: AnswerValue): string {
 function FallbackAnswers({
   answers,
   hasDefinition,
+  files,
 }: {
   answers?: AnswerTree;
   hasDefinition: boolean;
+  files: Map<string, AttachmentDto>;
 }) {
   const rows = useMemo(
-    () => (answers ? rawLeaves(answers) : []),
-    [answers],
+    () => (answers ? rawLeaves(answers, files) : []),
+    [answers, files],
   );
 
   if (!answers || rows.length === 0) {
@@ -220,7 +271,10 @@ function FallbackAnswers({
             <dt className="min-w-[9rem] text-xs text-slate-500" dir="ltr">
               {row.path}
             </dt>
-            <dd className="flex-1 text-xs leading-6 text-slate-200">{row.text}</dd>
+            <dd className="flex-1 text-xs leading-6 text-slate-200">
+              {row.text}
+              {row.files && <AnswerFileList files={row.files} />}
+            </dd>
           </div>
         ))}
       </dl>
@@ -228,7 +282,19 @@ function FallbackAnswers({
   );
 }
 
-function rawLeaves(tree: AnswerTree, prefix = ""): AnswerRow[] {
+/**
+ * The answer tree's own leaves, for a report with no usable definition.
+ *
+ * A `file` field is still recognised here, because recognising one is a
+ * resolution rather than a lookup of the field's declared type — which is the
+ * only reason a definition-less report can show its photos at all instead of
+ * listing their ObjectIds.
+ */
+function rawLeaves(
+  tree: AnswerTree,
+  files: Map<string, AttachmentDto>,
+  prefix = "",
+): AnswerRow[] {
   const rows: AnswerRow[] = [];
   for (const [key, value] of Object.entries(tree)) {
     const path = prefix ? `${prefix}.${key}` : key;
@@ -236,21 +302,32 @@ function rawLeaves(tree: AnswerTree, prefix = ""): AnswerRow[] {
       value.forEach((item, index) => {
         const rowPath = `${path}[${index}]`;
         if (item !== null && typeof item === "object" && !Array.isArray(item)) {
-          rows.push(...rawLeaves(item as AnswerTree, rowPath));
+          rows.push(...rawLeaves(item as AnswerTree, files, rowPath));
         } else if (item !== null && item !== undefined) {
-          rows.push({ path: rowPath, label: key, text: String(item) });
+          rows.push({ ...readLeaf(item, files), path: rowPath, label: key });
         }
       });
       continue;
     }
     if (value !== null && typeof value === "object") {
-      const nested = rawLeaves(value as AnswerTree, path);
+      const nested = rawLeaves(value as AnswerTree, files, path);
       // An object with no scalar leaves is a group node, not an answer.
       if (nested.length > 0) rows.push(...nested);
       continue;
     }
     if (value === null || value === undefined) continue;
-    rows.push({ path, label: key, text: String(value) });
+    rows.push({ ...readLeaf(value, files), path, label: key });
   }
   return rows;
+}
+
+/** A definition-less leaf: resolved files carry their own names, as above. */
+function readLeaf(
+  value: unknown,
+  files: Map<string, AttachmentDto>,
+): { text: string; files?: AttachmentDto[] } {
+  const resolved = resolveFileAnswer(value, files);
+  return resolved
+    ? { text: fileNames(resolved), files: resolved }
+    : { text: String(value) };
 }

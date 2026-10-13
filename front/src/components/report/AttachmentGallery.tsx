@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import type { AttachmentDto } from "@/types/report-detail";
-import { getLesanBaseUrl } from "@/services/api";
 import { SectionTitle } from "@/components/report/kit";
+import {
+  FileGlyph,
+  href,
+  mediaKind,
+  useAttachmentLightbox,
+} from "@/components/report/attachment-viewer";
 import { formatFileSize } from "@/utils/formatters";
 
 /**
- * The photos and documents filed with an accident.
+ * The photos and documents filed with a report.
  *
  * ## The URL is stored, with a legacy fallback
  *
@@ -17,33 +22,29 @@ import { formatFileSize } from "@/utils/formatters";
  * `file.uploadFile` picks `./uploads/{images,docs,videos,geo,json}` from the
  * declared type, while `file.uploadAccidentImages` always writes
  * `./uploads/accidents`. Both now record where they wrote, so the URL is read
- * from the document instead of guessed from its `type`.
+ * from the document instead of guessed from its `type` — by `href` in
+ * `attachment-viewer`, which owns it so this gallery and the answer rows cannot
+ * resolve a file two different ways.
  *
- * Documents inserted before `path` existed have none. Everything reached
- * through `accident.attachments` used to come from `file.uploadAccidentImages`,
- * so `accidents/<name>` is the fallback — the one place that assumption is
- * stated, and the only line that would have to change if a third tree ever
- * populated this relation.
+ * ## Applies to both kinds of report
  *
- * `incident_report` has no `attachments` field at all, so this section is
- * `accident`-only and renders nothing on a non-accident report.
+ * This used to be `accident`-only, because `incident_report` declared no
+ * relation to `file` at all: a photo attached to a road-damage report was
+ * uploaded, stored and then unreachable, so there was nothing to render. Both
+ * models declare `attachments` now, and the caller passes whichever the console
+ * merged into the row.
  */
 export function AttachmentGallery({
   attachments,
 }: {
   attachments?: AttachmentDto[];
 }) {
-  const [open, setOpen] = useState<AttachmentDto | null>(null);
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  const { show, lightbox } = useAttachmentLightbox();
 
-  const files = (attachments ?? []).filter((file) => file.name);
+  const files = useMemo(
+    () => (attachments ?? []).filter((file) => file.name),
+    [attachments],
+  );
   if (!files.length) return null;
 
   return (
@@ -51,36 +52,13 @@ export function AttachmentGallery({
       <SectionTitle count={files.length}>مستندات</SectionTitle>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
         {files.map((file) => (
-          <AttachmentTile key={file._id ?? file.name} file={file} onOpen={setOpen} />
+          <AttachmentTile key={file._id ?? file.name} file={file} onOpen={show} />
         ))}
       </div>
 
-      {open && <Lightbox file={open} onClose={() => setOpen(null)} />}
+      {lightbox}
     </section>
   );
-}
-
-function isImage(file: AttachmentDto): boolean {
-  return (file.type ?? "").startsWith("image/");
-}
-
-/**
- * The URL of an attachment's bytes.
- *
- * `path` is the directory the writing act recorded, so the URL is read rather
- * than inferred; `accidents/` is the fallback for rows written before the field
- * existed. Segments are encoded individually so a filename containing a space,
- * `#` or a Persian glyph cannot truncate the URL — while a plain ASCII name
- * (`asset-1791356903221-aqqdvv.jpg`) encodes to itself.
- */
-function href(file: AttachmentDto): string {
-  const relative = file.path ?? `accidents/${file.name}`;
-  const encoded = relative
-    .split("/")
-    .filter(Boolean)
-    .map(encodeURIComponent)
-    .join("/");
-  return `${getLesanBaseUrl()}/uploads/${encoded}`;
 }
 
 function AttachmentTile({
@@ -90,17 +68,15 @@ function AttachmentTile({
   file: AttachmentDto;
   onOpen: (file: AttachmentDto) => void;
 }) {
-  const image = isImage(file);
+  const image = mediaKind(file) === "image";
+
   return (
     <button
       type="button"
       onClick={() => onOpen(file)}
-      className="group overflow-hidden rounded-xl border border-white/10 bg-white/[.02] text-right transition hover:border-blue-400/40"
+      className="group cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/[.02] text-right transition hover:border-blue-400/40"
     >
       {image ? (
-        // A plain `<img>` rather than `next/image`: the source is an
-        // authenticated, runtime-assigned backend host that is not known at build
-        // time, so the optimizer's host allow-list would reject it.
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={href(file)}
@@ -122,61 +98,5 @@ function AttachmentTile({
         )}
       </div>
     </button>
-  );
-}
-
-function Lightbox({
-  file,
-  onClose,
-}: {
-  file: AttachmentDto;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-    >
-      <div className="max-h-full w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
-        {isImage(file) ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={href(file)}
-            alt={file.name}
-            className="mx-auto max-h-[80vh] w-auto rounded-xl"
-          />
-        ) : (
-          <iframe
-            src={href(file)}
-            title={file.name}
-            className="h-[70vh] w-full rounded-xl bg-white"
-          />
-        )}
-        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-slate-300">
-          <span className="truncate" dir="ltr">
-            {file.name}
-          </span>
-          <span className="shrink-0 text-slate-500">
-            {file.category ?? "—"}
-            {file.size != null && ` · ${formatFileSize(file.size)}`}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FileGlyph() {
-  return (
-    <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M14 3v5h5M7 3h7l5 5v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"
-      />
-    </svg>
   );
 }

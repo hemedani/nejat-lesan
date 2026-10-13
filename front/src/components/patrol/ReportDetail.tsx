@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import type {
+  AttachmentDto,
   DynamicAnswerRow,
   ReportDetailDoc,
   ReportSource,
@@ -16,7 +17,9 @@ import { PeopleSection } from "@/components/report/PeopleSection";
 import { FacilityDamageSection } from "@/components/report/FacilityDamageSection";
 import { FormAnswersSection } from "@/components/report/FormAnswersSection";
 import { AttachmentGallery } from "@/components/report/AttachmentGallery";
+import { AnswerFileList } from "@/components/report/attachment-viewer";
 import { ReviewTimeline } from "@/components/report/ReviewTimeline";
+import { attachmentIndex, resolveFileAnswer } from "@/services/answer-files";
 import { labelForQuestion, labelForStep } from "@/services/process-labels";
 import { Field } from "@/components/report/kit";
 import { reviewStatusMeta, syncStatusMeta } from "@/utils/patrol-status";
@@ -29,13 +32,17 @@ import { formatJalaliDateTime } from "@/utils/formatters";
  *
  * The console merges `accident` and `incident_report` into one table, so this page
  * renders both. The two models do **not** share a field list —
- * `incident_report` has no `attachments`, no `vehicle_dtos`, no `people_dtos`, no
+ * `incident_report` has no `vehicle_dtos`, no `people_dtos`, no
  * `facility_damage_dtos` and no casualty counts — so an adapter that normalised
  * one into the other would either invent fields the collection does not hold or
  * drop the ones it does. Instead each section declares the sources it applies to
  * and the absent half is simply never reached. A non-accident report therefore
  * shows an answer list where an accident shows vehicles, and neither renders a
  * block of zeroes that would read as "nothing happened".
+ *
+ * `attachments` is the one field both carry: a dynamic form's `file` fields are
+ * evidence whichever kind of report they were filed against, so the gallery sits
+ * outside the branch and renders for both.
  *
  * ## Layout — a sticky rail beside scrolling content
  *
@@ -112,7 +119,6 @@ export function ReportDetail({
                 pedestrians={report.pedestrian_dtos}
               />
               <FacilityDamageSection damages={report.facility_damage_dtos} />
-              <AttachmentGallery attachments={report.attachments} />
             </>
           ) : (
             <>
@@ -124,8 +130,16 @@ export function ReportDetail({
             </>
           )}
 
+          {/* Both kinds of report file evidence through the same relation, so the
+              gallery sits outside the branch rather than in the accident half. It
+              renders nothing on its own when a report has no attachments. */}
+          <AttachmentGallery attachments={report.attachments} />
+
           {report.dynamic_answers && report.dynamic_answers.length > 0 && (
-            <DynamicAnswers answers={report.dynamic_answers} />
+            <DynamicAnswers
+              answers={report.dynamic_answers}
+              attachments={report.attachments}
+            />
           )}
 
           <ReviewTimeline history={report.review_history} />
@@ -260,8 +274,15 @@ function ReportContext({ report }: { report: ReportDetailDoc }) {
  * rather than skipping the row — a skipped answer would read as "nothing was recorded",
  * which is false.
  */
-function DynamicAnswers({ answers }: { answers: DynamicAnswerRow[] }) {
-  const groups = useMemo(() => groupByStep(answers), [answers]);
+function DynamicAnswers({
+  answers,
+  attachments,
+}: {
+  answers: DynamicAnswerRow[];
+  attachments?: AttachmentDto[];
+}) {
+  const files = useMemo(() => attachmentIndex(attachments), [attachments]);
+  const groups = useMemo(() => groupByStep(answers, files), [answers, files]);
   const resolved = answers.filter(
     (answer) => labelForQuestion(answer.question_key) !== undefined,
   ).length;
@@ -295,6 +316,7 @@ function DynamicAnswers({ answers }: { answers: DynamicAnswerRow[] }) {
                 </dt>
                 <dd className="flex-1 text-xs leading-6 text-slate-100">
                   {row.text}
+                  {row.files && <AnswerFileList files={row.files} />}
                 </dd>
               </div>
             ))}
@@ -324,11 +346,16 @@ type AnswerLine = {
   label: string;
   group?: string;
   text: string;
+  /** The files this answer refers to, when it refers to any. */
+  files?: AttachmentDto[];
 };
 
 type AnswerGroup = { stepKey: string; title: string; rows: AnswerLine[] };
 
-function groupByStep(answers: DynamicAnswerRow[]): AnswerGroup[] {
+function groupByStep(
+  answers: DynamicAnswerRow[],
+  files: Map<string, AttachmentDto>,
+): AnswerGroup[] {
   const groups = new Map<string, AnswerGroup>();
 
   for (const answer of answers) {
@@ -349,6 +376,10 @@ function groupByStep(answers: DynamicAnswerRow[]): AnswerGroup[] {
       label: resolved?.label ?? answer.question_key,
       group: repeatLabel(resolved),
       text,
+      // A `file` question's ids, resolved against `attachments`. Undefined for
+      // every other question, and for a file whose bytes never reached the
+      // relation — the name still reads as text, which is honest about it.
+      files: resolveFileAnswer(answer.answer_ids ?? answer.answer_id, files),
     });
     groups.set(stepKey, group);
   }

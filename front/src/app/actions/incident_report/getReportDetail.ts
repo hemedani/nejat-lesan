@@ -196,6 +196,10 @@ const INCIDENT_REPORT_PROJECTION = {
   road_surface_conditions: { _id: 1, name: 1 },
   road_situation: { _id: 1, name: 1 },
   shoulder_status: { _id: 1, name: 1 },
+  // Evidence attached to a form's `file` fields. Only `accident.attachments` used to
+  // exist, which is why the gallery was accident-only; `incident_report` declares the
+  // same relation now, so both kinds project it identically.
+  attachments: { _id: 1, name: 1, type: 1, size: 1, path: 1, category: 1, sequence: 1 },
   submitted_from: 1,
 } as const satisfies IncidentReportGet;
 

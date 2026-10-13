@@ -108,7 +108,7 @@ export type FacilityDamageDto = {
   images?: string[];
 };
 
-/** A `file` document reached through `accident.attachments`. */
+/** A `file` document reached through a report's `attachments`. */
 export type AttachmentDto = {
   _id?: string;
   name?: string;
@@ -165,10 +165,11 @@ export type ReviewHistoryItem = {
  * The union a report detail page renders.
  *
  * Deliberately **not** a normalized shape. `incident_report` has no
- * `vehicle_dtos`, no `people_dtos`, no `attachments` and no `dead_count`; an
+ * `vehicle_dtos`, no `people_dtos` and no `dead_count`; an
  * adapter would either invent fields the collection does not have or drop the
  * ones it does. Each section instead declares which sources it renders for, and
- * the absent half is simply never reached.
+ * the absent half is simply never reached. `attachments` sits in the shared
+ * half: both models declare the relation, so both project it identically.
  */
 export type ReportDetailDoc = {
   _id: string;
@@ -220,6 +221,8 @@ export type ReportDetailDoc = {
   shoulder_status?: Ref;
   organization?: { _id?: string; name?: string; code?: string };
   submitted_from?: { app_version?: string; platform?: string };
+  /** A form's `file` fields, on either kind of report. */
+  attachments?: AttachmentDto[];
 
   // --- accident only --------------------------------------------------------
   dead_count?: number;
@@ -248,7 +251,6 @@ export type ReportDetailDoc = {
   pedestrian_dtos?: PedestrianDto[];
   people_dtos?: PeopleDto[];
   facility_damage_dtos?: FacilityDamageDto[];
-  attachments?: AttachmentDto[];
 
   // --- incident_report only -------------------------------------------------
   form_definition_id?: string;
