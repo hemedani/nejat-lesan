@@ -14,6 +14,12 @@ import {
   OFFICER_DISTANCE_WARNING_METERS,
 } from '@/domain/location-utils';
 import type { Coordinates, RoadSnap, ZoneCheckRecord } from '@/domain/types';
+import {
+  DEFAULT_INCIDENT_ZOOM,
+  formatCoordinates,
+  organizationPoint,
+  organizationZoom,
+} from '@/domain/organization';
 import { OsmWebMap, type OsmWebMapHandle } from '@/components/osm-web-map';
 import { GpsActionButton } from '@/components/gps-action-button';
 import { ThemedText } from '@/components/themed-text';
@@ -92,7 +98,24 @@ export default function IncidentLocationScreen() {
     return null;
   }, [params.lat, params.lng]);
 
-  const mapInitialCenter = useMemo<Coordinates>(() => initialSelected ?? FALLBACK_CENTER, [initialSelected]);
+  // سازمانِ مأمور، از نشستِ بازیابی‌شده. آفلاین هم در دسترس است چون هنگام
+  // ورود ذخیره شده و هیچ درخواستی اینجا زده نمی‌شود.
+  const organization = session?.primaryOrganization ?? null;
+  const organizationCenter = useMemo(() => organizationPoint(organization), [organization]);
+
+  // اولویت قابِ نقشه: واقعه‌ی در حال ویرایش ← مرکز سازمان ← تهران.
+  // تهران فقط آخرین fallback است؛ یک مأمورِ اهوازی نباید نقشه را در پایت ببیند.
+  const mapInitialCenter = useMemo<Coordinates>(
+    () => initialSelected ?? organizationCenter ?? FALLBACK_CENTER,
+    [initialSelected, organizationCenter],
+  );
+
+  // در حالت ویرایش، قابِ سازمان اشتباه است: مأمور دارد همان نقطه‌ای را که خودش
+  // ثبت کرده بازبینی می‌کند، نه کلِ قلمرو سازمان را.
+  const mapInitialZoom = useMemo(
+    () => (initialSelected ? DEFAULT_INCIDENT_ZOOM : organizationZoom(organization)),
+    [initialSelected, organization],
+  );
 
   const [userSelected, setUserSelected] = useState<Coordinates | null>(initialSelected);
   const selected = userSelected ?? deviceLocation.coords ?? null;
@@ -168,6 +191,16 @@ export default function IncidentLocationScreen() {
     }
   }
 
+  // مأمور لازم نیست برای دیدن قلمرو سازمانش دستی بزرگ‌نمایی کند؛ یک ضربه
+  // نقشه را با همان بزرگ‌نماییِ سازمان روی مرکزش می‌برد. پین وسط صفحه از
+  // مسیر `moveend` جابه‌جا نمی‌شود، پس این فقط دوربین است و نه انتخاب نقطه.
+  function moveToOrganizationCenter() {
+    if (!organizationCenter) {
+      return;
+    }
+    mapRef.current?.setCenter(organizationCenter, organizationZoom(organization));
+  }
+
   async function handleConfirm() {
     if (!selected || isSaving || !session) {
       return;
@@ -224,7 +257,7 @@ export default function IncidentLocationScreen() {
       <View style={styles.mapContainer}>
         <OsmWebMap
           initialCenter={mapInitialCenter}
-          initialZoom={17}
+          initialZoom={mapInitialZoom}
           officerMarker={deviceLocation.coords}
           onRegionChangeComplete={handleRegionChangeComplete}
           ref={mapRef}
@@ -279,6 +312,29 @@ export default function IncidentLocationScreen() {
           showsVerticalScrollIndicator
           style={styles.sheetScroll}
         >
+          {organization ? (
+            <View style={styles.organizationRow}>
+              <View style={styles.organizationText}>
+                <Text numberOfLines={1} style={styles.organizationName}>
+                  {organization.name}
+                </Text>
+                <Text style={styles.organizationMeta}>
+                  {organizationCenter
+                    ? `مرکز سازمان · ${formatCoordinates(organizationCenter)}`
+                    : 'سازمان · مرکز ثبت نشده'}
+                </Text>
+              </View>
+              {organizationCenter ? (
+                <Button
+                  icon={AppIcons.nav.refresh.name}
+                  iconFamily={AppIcons.nav.refresh.family}
+                  label="مرکز سازمان"
+                  onPress={moveToOrganizationCenter}
+                  variant="soft"
+                />
+              ) : null}
+            </View>
+          ) : null}
           {officerDistance != null ? (
             <SummaryRow
               icon={AppIcons.map.distance}
@@ -558,6 +614,28 @@ const styles = StyleSheet.create({
     fontFamily: Estedad.regular,
     fontSize: 12,
     lineHeight: 19,
+    textAlign: 'right',
+  },
+  organizationRow: {
+    alignItems: 'center',
+    backgroundColor: AppTheme.colors.surfaceMuted,
+    borderRadius: Radius.md,
+    flexDirection: 'row-reverse',
+    gap: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  organizationText: { flex: 1, gap: 2 },
+  organizationName: {
+    color: AppTheme.colors.textStrong,
+    fontFamily: Estedad.semiBold,
+    fontSize: 14,
+    textAlign: 'right',
+  },
+  organizationMeta: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.regular,
+    fontSize: 12,
     textAlign: 'right',
   },
 });

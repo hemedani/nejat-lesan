@@ -24,6 +24,24 @@ export type User = {
   level?: string;
 };
 
+/**
+ * سازمانِ تکیِ مأمور، همان‌طور که بک‌اند آن را در `user.login` و `user.getMe`
+ * به‌صورت `primaryOrganization` برمی‌گرداند.
+ *
+ * `null` یعنی «سازمانِ تکی قابل تشخیص نیست»: کاربر سراسری یا عضوِ چند
+ * سازمان. اپ نباید در آن حالت یکی را دلبخواه نشان دهد.
+ */
+export type PatrolOrganization = {
+  _id: string;
+  code: string;
+  name: string;
+  enName?: string;
+  /** GeoJSON Point — ترتیب مختصات [longitude, latitude] است، نه [lat, lng]. */
+  location?: { type: 'Point'; coordinates: [number, number] };
+  /** بزرگ‌نمایی پیش‌فرض نقشه؛ بک‌اند بازه‌اش را تضمین نمی‌کند. */
+  location_zoom?: number;
+};
+
 export type Session = {
   token: string;
   user: User;
@@ -32,6 +50,12 @@ export type Session = {
   modules?: string[];
   /** Effective org module keys when the caller resolves to exactly one org; else null. */
   orgModules?: string[] | null;
+  /**
+   * Resolved org, captured at login and read back offline. It lives on the
+   * session rather than behind a request so opening a draft with no network
+   * still shows who the officer works for and can frame the map on their area.
+   */
+  primaryOrganization?: PatrolOrganization | null;
 };
 
 export type PatrolUnit = {

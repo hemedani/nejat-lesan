@@ -1,7 +1,7 @@
 import { login, type LoginResponse } from '@/api/auth';
 import { ApiError } from '@/api/errors';
 import { getConnectivitySnapshot } from '@/services/connectivity';
-import type { Session, User } from '@/domain/types';
+import type { PatrolOrganization, Session, User } from '@/domain/types';
 import { createSecureSessionRepository, type SessionRepository } from '@/storage/session-repository';
 
 import { getDeviceMetadata } from './device-metadata';
@@ -34,6 +34,31 @@ function normalizeUser(value: unknown): User {
   };
 }
 
+/**
+ * سازمانِ برگشتی از بک‌اند، یا `null`.
+ *
+ * برخلاف `normalizeUser` اینجا **هرگز** خطا نمی‌دهیم. یک سازمانِ خراب یا
+ * ناشناخته نباید ورودِ مأمور را از کار بیندازد؛ نهایتش یعنی «نام سازمان و قابِ
+ * پیش‌فرض نقشه را نشان نده». `_id`/`code`/`name` هم اگر نباشند بی‌فایده‌اند.
+ */
+function normalizeOrganization(value: unknown): PatrolOrganization | null {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+  const candidate = value as Partial<PatrolOrganization>;
+  if (!candidate._id || !candidate.code || !candidate.name) {
+    return null;
+  }
+  return {
+    _id: candidate._id,
+    code: candidate.code,
+    name: candidate.name,
+    enName: typeof candidate.enName === 'string' ? candidate.enName : undefined,
+    location: candidate.location,
+    location_zoom: candidate.location_zoom,
+  };
+}
+
 function toSession(response: LoginResponse, deviceId: string): Session {
   if (!response.token) {
     throw new ApiError('Missing session token.', 'invalid_response');
@@ -44,6 +69,7 @@ function toSession(response: LoginResponse, deviceId: string): Session {
     device_id: deviceId,
     modules: response.modules,
     orgModules: response.orgModules ?? null,
+    primaryOrganization: normalizeOrganization(response.primaryOrganization),
   };
 }
 

@@ -11,6 +11,13 @@ export type LoginResponse = {
   modules?: string[];
   /** Effective org module keys when the caller resolves to exactly one org; else null. */
   orgModules?: string[] | null;
+  /**
+   * Server-resolved organization, a fixed response field rather than a client
+   * projection — `null` for global and multi-org callers. Validated by
+   * `normalizeOrganization`, which drops a malformed value instead of throwing,
+   * so a bad org can never block a login.
+   */
+  primaryOrganization?: unknown;
 };
 
 export function login(

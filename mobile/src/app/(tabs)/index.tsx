@@ -16,6 +16,8 @@ import type { IconFamily, IconName } from '@/constants/icon-map';
 import { AppIcons } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { formatBytes } from '@/domain/map-packs';
+import { formatCoordinates, organizationPoint } from '@/domain/organization';
+import type { PatrolOrganization } from '@/domain/types';
 import { listDrafts } from '@/storage/local-database';
 import { useActiveShift } from '@/hooks/use-active-shift';
 import { useDeviceLocation, type DeviceLocationState } from '@/hooks/use-device-location';
@@ -177,6 +179,8 @@ export default function HomeScreen() {
           </Pressable>
           <IconButton accessibilityLabel="خروج از حساب" icon="log-out" onPress={confirmLogout} tone="danger" />
         </View>
+
+        <OrganizationCard organization={session.primaryOrganization ?? null} />
 
         <View style={[styles.unitStrip, Shadow.card]}>
           <Icon color={AppTheme.colors.primaryStrong} family={AppIcons.home.unit.family} name={AppIcons.home.unit.name} size={20} />
@@ -340,6 +344,37 @@ function StatusCard({
   );
 }
 
+/**
+ * «کار کجایی» است، در حالی که نوارِ واحد/خودروی پایینش «الان کجایی» است.
+ *
+ * سازمان از نشست خوانده می‌شود نه از یک درخواست، پس کارت آفلاین هم هست.
+ * وقتی سازمانِ تکی قابل تشخیص نباشد (`null` برای کاربر سراسری یا عضو چند
+ * سازمان) یک سطر خاموش نشان داده می‌شود، نه اینکه سازمانی دلبخواهی جا زده شود.
+ */
+function OrganizationCard({ organization }: { organization: PatrolOrganization | null }) {
+  const center = organizationPoint(organization);
+
+  return (
+    <View style={[styles.orgCard, Shadow.card]}>
+      <View style={styles.orgIcon}>
+        <Icon color={AppTheme.colors.primaryStrong} family={AppIcons.home.unit.family} name={AppIcons.home.unit.name} size={18} />
+      </View>
+      <View style={styles.orgCopy}>
+        <Text numberOfLines={1} style={styles.orgName}>
+          {organization?.name ?? 'سازمانی ثبت نشده'}
+        </Text>
+        <Text numberOfLines={1} style={styles.orgMeta}>
+          {organization
+            ? center
+              ? `کد ${organization.code} · مرکز ${formatCoordinates(center)}`
+              : `کد ${organization.code} · مرکز ثبت نشده`
+            : 'برای مأموران گشت سازمان روی حساب تعریف شود'}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 function QuickTile({
   label,
   caption,
@@ -499,6 +534,40 @@ const styles = StyleSheet.create({
     fontFamily: Estedad.semiBold,
     fontSize: 13,
     lineHeight: 20,
+    textAlign: 'right',
+  },
+  orgCard: {
+    alignItems: 'center',
+    backgroundColor: AppTheme.colors.surface,
+    borderColor: AppTheme.colors.border,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    flexDirection: 'row-reverse',
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  orgIcon: {
+    alignItems: 'center',
+    backgroundColor: AppTheme.colors.primarySoft,
+    borderRadius: Radius.sm,
+    height: 34,
+    justifyContent: 'center',
+    width: 34,
+  },
+  orgCopy: { flex: 1, gap: 1 },
+  orgName: {
+    color: AppTheme.colors.textStrong,
+    fontFamily: Estedad.semiBold,
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: 'right',
+  },
+  orgMeta: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.regular,
+    fontSize: 11,
+    lineHeight: 17,
     textAlign: 'right',
   },
   statusRow: {

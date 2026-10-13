@@ -6,7 +6,13 @@ import type { Coordinates } from '@/domain/types';
 import { ensureMapHtmlFile } from '@/services/map-web-html';
 
 export type OsmWebMapHandle = {
-  setCenter: (coords: Coordinates) => void;
+  /**
+   * `zoom` is optional on purpose: omitting it keeps whatever zoom the officer
+   * is currently at, which is what "recentre on me" wants. Passing it jumps to
+   * that zoom — what "go back to the organisation's centre" wants. The generated
+   * HTML already honours `data.zoom` when it is a number, so no bridge change.
+   */
+  setCenter: (coords: Coordinates, zoom?: number) => void;
   zoomBy: (delta: number) => void;
 };
 
@@ -43,9 +49,16 @@ export const OsmWebMap = forwardRef<OsmWebMapHandle, OsmWebMapProps>(function Os
   }, []);
 
   useImperativeHandle(ref, () => ({
-    setCenter(coords) {
+    setCenter(coords, zoom) {
       webRef.current?.postMessage(
-        JSON.stringify({ type: 'setCenter', latitude: coords.latitude, longitude: coords.longitude }),
+        JSON.stringify({
+          type: 'setCenter',
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          // Omitted rather than sent as null: the HTML falls back to the live
+          // zoom when `data.zoom` is not a number.
+          ...(typeof zoom === 'number' ? { zoom } : {}),
+        }),
       );
     },
     zoomBy(delta) {
