@@ -24,6 +24,7 @@ import {
 import { type Document, jwt, MongoClient, ObjectId } from "@deps";
 // NOTE: back/mod.ts must be evaluated before @lib (circular-init ordering).
 import {
+	accident,
 	air_status,
 	coreApp,
 	device,
@@ -43,6 +44,7 @@ import {
 	DEMO_EMAIL_DOMAIN,
 	DEMO_PASSWORD,
 } from "../src/user/seedDemoOrganization/people.ts";
+import { DEMO_ORG_CODE } from "../src/user/seedDemoOrganization/org.ts";
 
 const TEST_DB = "nejat_patrol_ops_test";
 const RUN = `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
@@ -575,6 +577,214 @@ Deno.test("a demo an officer has actually used can still be cleaned", async () =
 	assertEquals(await count(device, { _id: owned!._id }), 0, "device removed");
 	assertEquals(await count(file, { _id: fileId }), 0, "file removed");
 	assertEquals(await count(user, { email }), 0, "and so is its owner");
+});
+
+/** The demo org and its road, as the seed wrote them. */
+const demoOrgWithRoad = async () =>
+	await organization.findOne({
+		filters: { code: DEMO_ORG_CODE },
+		projection: { _id: 1, road: 1 },
+	}) as unknown as { _id: ObjectId; road?: { _id?: ObjectId } } | null;
+
+/** A report filed from the app: officer + organization, as the console sees it. */
+const seedDemoAccident = async (officer: ObjectId, label: string) => {
+	seq++;
+	const org = await demoOrgWithRoad();
+	assert(org, "precondition: the demo org exists");
+	return (await accident.insertOne({
+		doc: {
+			seri: seq,
+			serial: seq,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			date_of_accident: new Date(),
+			dead_count: 0,
+			has_witness: false,
+			news_number: 0,
+			officer: label,
+			injured_count: 0,
+			completion_date: new Date(),
+			sync_status: "synced",
+			review_status: "submitted",
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		relations: {
+			organization: { _ids: org!._id },
+			officer: { _ids: officer },
+			...(org!.road?._id ? { road: { _ids: org!.road._id } } : {}),
+		},
+		projection: { _id: 1 },
+	}))!._id as ObjectId;
+};
+
+Deno.test("a photo attached to a demo report does not block the cleanup", async () => {
+	// The regression that made the act unusable against any demo an officer had
+	// actually *reported* with — which is every demo worth cleaning.
+	//
+	// A photo attached to a report is not just an orphan of the officer: it is
+	// embedded in the report's own `attachments`, a denormalised copy Lesan keeps
+	// in step. `file.uploader` is required, so the sweep reaches the file, but the
+	// sweep ran *before* the reports were deleted, so Lesan's delete guard found
+	// the file still listed under `accident.attachments` and refused:
+	// «please clear below relations status before deletion», naming an `accident`
+	// row the operator had every reason to expect to disappear in this same call.
+	const email = `patrol.nm01.1@${DEMO_EMAIL_DOMAIN}`;
+	await seed(managerId);
+
+	const login = await runAct("user", "login", {
+		set: {
+			email,
+			password: DEMO_PASSWORD,
+			device: {
+				device_id: `lesen-test-${RUN}-attached-device`,
+				fingerprint: `fingerprint-${RUN}-attached`,
+				platform: "android",
+				app_version: "1.0.0",
+				model: "Test Device",
+			},
+		},
+		get: { user: { _id: 1 } },
+	}) as { user?: { _id: string } };
+	assert(login.user?._id, "precondition: the officer can log in");
+	const officerId = new ObjectId(login.user!._id);
+
+	const accidentId = await seedDemoAccident(officerId, "گزارش با عکس");
+
+	// The shape `file.uploadAccidentImages` writes: uploader required, accident the
+	// optional relation the photo is attached through.
+	const uploaded = await file.insertOne({
+		doc: {
+			name: `attached-${RUN}.jpg`,
+			type: "image/jpeg",
+			size: 2048,
+			path: "images/attached.jpg",
+			category: "other",
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		relations: {
+			uploader: {
+				_ids: officerId,
+				relatedRelations: { uploadedAssets: true },
+			},
+			accident: {
+				_ids: accidentId,
+				relatedRelations: { attachments: true },
+			},
+		},
+		projection: { _id: 1 },
+	});
+	const fileId = uploaded!._id as ObjectId;
+
+	const attached = await accident.findOne({
+		filters: { _id: accidentId },
+		projection: { attachments: 1 },
+	}) as unknown as { attachments?: Array<{ _id?: ObjectId }> } | null;
+	assertEquals(
+		attached?.attachments?.some((row) =>
+			row._id?.toString() === fileId.toString()
+		),
+		true,
+		"precondition: the report holds the photo, the state the guard trips on",
+	);
+
+	const done = await cleanup({ scope: ["demo"], confirm: true }, managerId);
+	assertEquals(done.deleted, true, "the confirming call resolves");
+	assertEquals(
+		done.removed.detachedReferences["accident.attachments"],
+		1,
+		"and reports the link it cut on the report side",
+	);
+
+	assertEquals(await count(file, { _id: fileId }), 0, "the photo is gone");
+	assertEquals(
+		await count(accident, { _id: accidentId }),
+		0,
+		"and so is the report it was attached to",
+	);
+	assertEquals(await count(user, { email }), 0, "and the officer");
+});
+
+Deno.test("a demo report does not take a stranger's photo with it", async () => {
+	// The other direction, and the one that decides the design.
+	//
+	// A photo attached to a demo report is not necessarily the demo's: the console
+	// uploads and attaches too. The file is a required dependent of *its* uploader,
+	// so it is only scheduled for deletion when that uploader is ours. When it is
+	// not, the link is all that can be cut — and cutting it is the whole point,
+	// because `hardCascade: true` would have taken the stranger's photo with the
+	// report: Lesan's cascade deletes every document a relation *points at*, not
+	// the relation. Deleting the reference is the only reading of this act's
+	// promise ("only what the seeds own") that leaves their asset intact.
+	await seed(managerId);
+	const stranger = await insertUser("Manager");
+
+	const accidentId = await seedDemoAccident(managerId, "گزارش با عکس غریبه");
+	const uploaded = await file.insertOne({
+		doc: {
+			name: `stranger-${RUN}.jpg`,
+			type: "image/jpeg",
+			size: 4096,
+			path: "images/stranger.jpg",
+			category: "other",
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		},
+		relations: {
+			uploader: {
+				_ids: stranger,
+				relatedRelations: { uploadedAssets: true },
+			},
+			accident: {
+				_ids: accidentId,
+				relatedRelations: { attachments: true },
+			},
+		},
+		projection: { _id: 1 },
+	});
+	const fileId = uploaded!._id as ObjectId;
+
+	const done = await cleanup({ scope: ["demo"], confirm: true }, managerId);
+	assertEquals(done.deleted, true, "the confirming call resolves");
+	// On *this* side of the link, not the report's: the photo is not ours, so it is
+	// not in the delete set, and `accident.attachments` therefore points at nothing
+	// this act is removing. What does is the report, so the sweep cuts the link from
+	// the file — which is what leaves no dangling reference behind on the asset we
+	// must not delete.
+	assertEquals(
+		done.removed.detachedReferences["file.accident"],
+		1,
+		"and reports the link it cut",
+	);
+
+	assertEquals(
+		await count(accident, { _id: accidentId }),
+		0,
+		"the demo report is gone",
+	);
+	assertEquals(
+		await count(file, { _id: fileId }),
+		1,
+		"but the stranger's photo survives — only the reference was ours",
+	);
+	assertEquals(
+		await count(user, { _id: stranger }),
+		1,
+		"and so does its owner",
+	);
+	// A link left pointing at a deleted report would be a dangling reference on
+	// somebody else's document, so the sweep cuts this side too. Lesan represents a
+	// cleared `single` relation as `{}` rather than removing the field, so the id is
+	// what is asked about.
+	const survivor = await file.findOne({
+		filters: { _id: fileId },
+		projection: { accident: 1 },
+	}) as unknown as { accident?: { _id?: ObjectId } } | null;
+	assertEquals(
+		survivor?.accident?._id ?? null,
+		null,
+		"and it no longer points at the report that is gone",
+	);
 });
 
 Deno.test("cleanup test database", async () => {

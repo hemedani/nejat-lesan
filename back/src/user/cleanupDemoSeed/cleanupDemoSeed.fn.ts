@@ -70,6 +70,12 @@ import { DEMO_EMAIL_DOMAIN } from "../seedDemoOrganization/people.ts";
  *    "models the seeds write" can never contain them, so this act asks the
  *    schema registry instead — see `findRequiredDependents`.
  *
+ *    An *optional* relation is the mirror image: the holder can stay, so the link
+ *    is cut instead. Lesan's delete guard checks those too — `optional` decides
+ *    whether `removeRelation` will do it, not whether the guard will object — so a
+ *    demo report's `attachments` refused the deletion of the photo embedded in it,
+ *    and the same sweep removes it. See `findOptionalReferences`.
+ *
  * 4. **Only what the seeds own.** `demo` matches on the same stable keys the
  *    seed uses (`organization.code`, the email domain), never on "everything".
  *    `reference` deletes only rows carrying `SEED_SHARED_MARKER`, because the
@@ -89,6 +95,7 @@ type Row = { _id?: ObjectId; name?: string };
  */
 type Finder = {
 	find: (q: unknown) => { toArray: () => Promise<unknown> };
+	findOne?: (q: unknown) => Promise<unknown>;
 };
 const collect = async (
 	model: unknown,
@@ -146,7 +153,7 @@ const isModel = (candidate: unknown): boolean =>
 	typeof (candidate as { find?: unknown }).find === "function" &&
 	typeof (candidate as { deleteOne?: unknown }).deleteOne === "function";
 
-type RelationMeta = { schemaName?: string; optional?: boolean };
+type RelationMeta = { schemaName?: string; optional?: boolean; type?: string };
 type SchemaEntry = { mainRelations?: Record<string, RelationMeta> };
 
 /**
@@ -272,6 +279,182 @@ const findRequiredDependents = async (
 	return rounds;
 };
 
+/** One document's reference to something this act is about to delete. */
+type Reference = {
+	model: string;
+	modelRef: unknown;
+	field: string;
+	type: string;
+	docId: ObjectId;
+	ids: ObjectId[];
+};
+
+/**
+ * References that point *into* the delete set through an **optional** relation,
+ * to be cut rather than followed.
+ *
+ * The counterpart to `findRequiredDependents`, and it exists because of what
+ * Lesan's delete guard actually does: before removing a document it walks every
+ * schema's `mainRelations` for one whose `schemaName` is the collection being
+ * deleted, and refuses if one document still points at it — `optional` decides
+ * whether `removeRelation` will cut the link, not whether the guard will accept
+ * it. So an officer's photo, which the sweep reaches through its required
+ * `file.uploader`, was also listed in the `attachments` of the report it was
+ * attached to, and the cleanup died with «please clear below relations status
+ * before deletion» naming an `accident` row it was about to delete anyway a few
+ * lines later. A demo anyone had ever filed a report with could not be cleaned.
+ *
+ * Order alone does not fix that, in either direction: the file and its report can
+ * both be scheduled for deletion, and whichever runs first is refused because of
+ * the other. The link has to be cut before *any* of them goes, which is what this
+ * sweep does — and it is the mirror of the guard's own walk, so a relation the
+ * guard will check cannot be missed here.
+ *
+ * A required relation is skipped on purpose: `removeRelation` refuses one, and its
+ * holder is deleted by `findRequiredDependents` instead.
+ */
+const findOptionalReferences = async (
+	targets: Array<{ collection: string; ids: ObjectId[] }>,
+): Promise<Reference[]> => {
+	const registry = schemaRegistry();
+	const models = allModels as unknown as Record<string, unknown>;
+	const found: Reference[] = [];
+
+	for (const [model, entry] of Object.entries(registry)) {
+		for (
+			const [field, meta] of Object.entries(entry?.mainRelations ?? {})
+		) {
+			if (meta.optional === false || !meta.schemaName) continue;
+			const target = targets.find((row) =>
+				row.collection === meta.schemaName
+			);
+			if (!target?.ids.length) continue;
+
+			const modelRef = models[model];
+			if (!isModel(modelRef)) {
+				throw new Error(
+					`مدل «${model}» با رابطهٔ «${field}» به دمو در دسترس نیست.`,
+				);
+			}
+
+			const rows = await (modelRef as Finder).find({
+				filters: { [`${field}._id`]: { $in: target.ids } },
+				projection: { _id: 1, [field]: 1 },
+			}).toArray() as Array<Record<string, unknown>>;
+
+			for (const row of rows) {
+				const docId = row._id as ObjectId | undefined;
+				if (!docId) continue;
+				// A `single` relation is one embedded document rather than a list,
+				// and `idsIn` wants a list either way.
+				const heldValue = row[field];
+				const held = idsIn(
+					(Array.isArray(heldValue) ? heldValue : [heldValue]) as
+						| Array<{ _id?: ObjectId }>
+						| undefined,
+					target.ids,
+				);
+				if (!held.length) continue;
+				found.push({
+					model,
+					modelRef,
+					field,
+					type: meta.type ?? "single",
+					docId,
+					ids: held,
+				});
+			}
+		}
+	}
+
+	return found;
+};
+
+/**
+ * Cut every reference in `references`, one `removeRelation` per document and
+ * field, and report how many links each one ended.
+ *
+ * Two references can name the same document and field only if two delete targets
+ * share a collection, which the two discovery passes do not produce — but the ids
+ * are merged anyway, because a second `removeRelation` for ids the first already
+ * removed throws.
+ */
+const cutReferences = async (
+	references: Reference[],
+): Promise<Record<string, number>> => {
+	const grouped = new Map<
+		string,
+		Reference & { seen: Map<string, ObjectId> }
+	>();
+	for (const reference of references) {
+		const key =
+			`${reference.model}.${reference.field}.${reference.docId.toString()}`;
+		const at = grouped.get(key);
+		if (at) {
+			for (const id of reference.ids) at.seen.set(id.toString(), id);
+			continue;
+		}
+		grouped.set(key, {
+			...reference,
+			seen: new Map(reference.ids.map((id) => [id.toString(), id])),
+		});
+	}
+
+	const counts: Record<string, number> = {};
+	for (const reference of grouped.values()) {
+		// `removeRelation` checks presence against the document's own array, so
+		// re-read what survived any earlier cut on the same document.
+		const ids = idsIn(
+			await readRelation(reference),
+			[...reference.seen.values()],
+		);
+		if (!ids.length) continue;
+
+		await detach(reference.modelRef, { _id: reference.docId }, {
+			[reference.field]: {
+				_ids: reference.type === "multiple" ? ids : ids[0],
+				relatedRelations: {},
+			},
+		});
+		const label = `${reference.model}.${reference.field}`;
+		counts[label] = (counts[label] ?? 0) + ids.length;
+	}
+	return counts;
+};
+
+/** What a document currently holds on one relation field, as a list. */
+const readRelation = async (
+	reference: Reference,
+): Promise<Array<{ _id?: ObjectId }> | undefined> => {
+	const row = await (reference.modelRef as Finder).findOne?.({
+		filters: { _id: reference.docId },
+		projection: { [reference.field]: 1 },
+	}) as Record<string, unknown> | null | undefined;
+	const held = row?.[reference.field];
+	if (held === undefined || held === null) return undefined;
+	return (Array.isArray(held) ? held : [held]) as Array<{ _id?: ObjectId }>;
+};
+
+/**
+ * Which of `wanted` the given documents actually hold.
+ *
+ * `removeRelation` checks every id it is handed against the document's own array
+ * and throws when one is absent, so a caller must hand over ids it has read rather
+ * than the whole wanted set. A `single` relation is the same question asked of one
+ * embedded document, which the caller wraps in a list.
+ */
+const idsIn = (
+	rows: Array<{ _id?: ObjectId }> | undefined,
+	wanted: ObjectId[],
+): ObjectId[] => {
+	const present = new Set(
+		(rows ?? []).map((row) => row._id?.toString()).filter(
+			Boolean,
+		) as string[],
+	);
+	return wanted.filter((id) => present.has(id.toString()));
+};
+
 /** Everything a scope matched, discovered before anything is written. */
 type Found = {
 	organizations: ObjectId[];
@@ -291,6 +474,11 @@ type Found = {
 	 * per discovery round. See `findRequiredDependents`.
 	 */
 	dependents: Satellite[][];
+	/**
+	 * Links that point into the delete set through an *optional* relation and are
+	 * cut rather than followed. See `findOptionalReferences`.
+	 */
+	references: Reference[];
 };
 
 /** Clear `relations` on every document matched by `filters`. */
@@ -318,6 +506,7 @@ const empty = (): Found => ({
 	preservedNames: [],
 	moduleConfig: false,
 	dependents: [],
+	references: [],
 });
 
 /**
@@ -340,6 +529,36 @@ const ownedCollections = (
 	{ collection: "accident", ids: found.accidents },
 	{ collection: "incident_report", ids: found.incidentReports },
 ];
+
+/**
+ * Everything this act will delete, the seed set plus whatever
+ * `findRequiredDependents` pulled in — the collections both sweeps reason about.
+ *
+ * Empty entries are dropped rather than left in: `findOptionalReferences` runs one
+ * query per relation that can reach a target, and an empty id list would be a
+ * query that cannot match anything.
+ */
+const deleteTargets = (
+	found: Found,
+): Array<{ collection: string; ids: ObjectId[] }> => {
+	const targets = ownedCollections(found);
+	for (const round of found.dependents) {
+		for (const { model, ids } of round) {
+			targets.push({ collection: model, ids });
+		}
+	}
+	return targets.filter(({ ids }) => ids.length > 0);
+};
+
+/** References cut, counted per `model.field` for the response. */
+const countReferences = (references: Reference[]): Record<string, number> => {
+	const out: Record<string, number> = {};
+	for (const { model, field, ids } of references) {
+		const label = `${model}.${field}`;
+		out[label] = (out[label] ?? 0) + ids.length;
+	}
+	return out;
+};
 
 /** Dependent rounds, flattened to a count per model for the response. */
 const countByModel = (rounds: Satellite[][]): Record<string, number> => {
@@ -414,6 +633,7 @@ const findDemo = async (): Promise<Found> => {
 	// exist only because they used the demo. Derived from the registry, last, so
 	// it sees the full set of owned ids.
 	found.dependents = await findRequiredDependents(ownedCollections(found));
+	found.references = await findOptionalReferences(deleteTargets(found));
 
 	return found;
 };
@@ -525,6 +745,10 @@ export const cleanupDemoSeedFn: ActFn = async (body) => {
 	// that the operator has never seen these collections in the seed's own list,
 	// and "device: 1" is what makes the officer's login legible.
 	const dependents = countByModel(found.dependents);
+	// Links that will be cut rather than deleted with their holder. Named for the
+	// same reason: `accident.attachments: 4` is what tells an operator that four
+	// photos leave with the reports, not four reports.
+	const references = countReferences(found.references);
 	const total = Object.values(counts).reduce((sum, n) => sum + n, 0) +
 		totalOf(dependents);
 
@@ -535,7 +759,11 @@ export const cleanupDemoSeedFn: ActFn = async (body) => {
 			dryRun: true,
 			deleted: false,
 			scope: [...scopes],
-			wouldDelete: { ...counts, requiredDependents: dependents },
+			wouldDelete: {
+				...counts,
+				requiredDependents: dependents,
+				detachedReferences: references,
+			},
 			total,
 			preserved: {
 				referenceRows: found.preservedNames.length,
@@ -561,6 +789,13 @@ export const cleanupDemoSeedFn: ActFn = async (body) => {
 		moduleConfig: 0,
 	};
 
+	// Before anything is deleted, because Lesan's guard reads the *current* state
+	// of every document: a reference cut afterwards comes too late for the delete
+	// that was refused because of it. `hardCascade` cannot stand in for this — it
+	// deletes the document holding the reference rather than the reference, so
+	// cascading a photo would take the accident it is attached to with it.
+	const deletedReferences = await cutReferences(found.references);
+
 	// First, because every one of these points at a user or a unit through a
 	// *required* relation — exactly the link `removeRelation` cannot cut and
 	// Lesan's guard will not overlook. Deepest round first: a round-N dependent
@@ -584,17 +819,6 @@ export const cleanupDemoSeedFn: ActFn = async (body) => {
 	// throws `foundedSchema.relations[rel]` undefined for them. So every reverse is
 	// cleared by removing the owning relation instead — `user.organizations` for
 	// `organization.members`, `unit.road` for `road.units`, and so on.
-	const idsIn = (
-		rows: Array<{ _id?: ObjectId }> | undefined,
-		wanted: ObjectId[],
-	): ObjectId[] => {
-		const present = new Set(
-			(rows ?? []).map((row) => row._id?.toString()).filter(
-				Boolean,
-			) as string[],
-		);
-		return wanted.filter((id) => present.has(id.toString()));
-	};
 	const multi = (ids: ObjectId[]) => ({ _ids: ids, relatedRelations: {} });
 	// A `single` relation takes a bare ObjectId, not a one-element array —
 	// `handleSingleRelation` looks the target up with `findOne({_id: _ids})`, and
@@ -729,7 +953,11 @@ export const cleanupDemoSeedFn: ActFn = async (body) => {
 		dryRun: false,
 		deleted: true,
 		scope: [...scopes],
-		removed: { ...deleted, requiredDependents: deletedDependents },
+		removed: {
+			...deleted,
+			requiredDependents: deletedDependents,
+			detachedReferences: deletedReferences,
+		},
 		total: Object.values(deleted).reduce((sum, n) => sum + n, 0) +
 			totalOf(deletedDependents),
 		preserved: {

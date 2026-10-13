@@ -302,6 +302,8 @@ unique. `no` is the sequence number the other fields derive from.
 | **English name**        | Ahvaz – Bandar Imam (RAH) Freeway Construction, Maintenance, and Operation Company          |
 | **Road**                | آزادراه اهواز – بندر امام — origin اهواز, destination بندر امام, 116,342 m                  |
 | **Geometry**            | 91-vertex GeoJSON `MultiLineString`, `[longitude, latitude]`, Ahvaz (NW) → Bandar Imam (SE) |
+| **Centre `location`**   | `Point [48.67056, 31.31823]` — the corridor's own first vertex, i.e. the Ahvaz end        |
+| **Centre `location_zoom`** | `13` — frames roughly the eastern two-thirds of a 116 km corridor                      |
 
 The geometry traces the real corridor — بزرگراه/آزادراه خلیج فارس (`ref=5` on OSM) out of Ahvaz  
 and the Bandar Imam approach — rather than a straight line between the endpoints. It is the OSM  
@@ -313,6 +315,18 @@ line it snapped to.
 `ensureDemoRoad` also **repairs** an existing demo road whose `area` or `total_length_meters` no  
 longer match the constants — re-running the seed converges a database seeded with the older 7-vertex  
 line instead of leaving the deviation on the map forever.
+
+`organization.location` is **derived** from `DEMO_ROAD_AREA.coordinates[0][0]`, not written as its own  
+literal, so regenerating the corridor geometry cannot leave the organization centre stranded on the  
+old motorway. `ensureDemoOrganization` repairs a **missing** centre the same way it repairs a missing  
+road link, but only when `location` is absent — an organization whose point an operator has since  
+set by hand is left alone, because a seeder that reverts builder edits is worse than one that does  
+nothing.
+
+`user.login` / `user.getMe` return this organization as `primaryOrganization` for any caller whose  
+scope resolves to exactly one org, which is what the mobile app caches on the session. It is `null`  
+for a global (Ghost/Manager) or multi-org caller, which is the correct answer rather than a gap to  
+paper over with the first org.
 
 `organization.road` also creates the reverse `road.organization`. An org is road-bound in this  
 schema, and the oversight console reaches legacy records through `road._id`, so a roadless demo org  
@@ -548,6 +562,29 @@ response — `"requiredDependents": {"device": 1, "file": 2}` — and counted in
 also covers `inventory`, `stock_movement`, `consumption`, `goods_receipt` and `goods_request` against  
 a unit, which is why a demo organization that has used the warehouse module can be rebuilt as well.
 
+### Links that are cut rather than deleted
+
+`optional` decides whether `removeRelation` will cut a relation — **not** whether Lesan's delete guard  
+will accept a deletion. The guard walks `mainRelations` for any document still pointing at the target and  
+refuses, optional or not. So a photo attached to a demo report was listed in that report's `attachments`  
+when the act tried to remove it, and the cleanup died with «please clear below relations status before  
+deletion» naming an `accident` row it was going to delete a few lines later. A demo anyone had ever filed  
+a report with could not be cleaned.
+
+Reordering cannot fix that: when both ends are scheduled for deletion, whichever runs first is refused  
+because of the other. So the act runs the mirror of the guard's own walk — for every **optional** relation  
+whose target is in the delete set, the link is removed before anything is deleted. Required relations are  
+skipped, because `removeRelation` refuses one and their holders are deleted by the sweep above.
+
+This cuts only the link. A photo uploaded by someone outside the demo survives, because it is not ours —  
+which is also why `hardCascade: true` is not an alternative here: Lesan's cascade **deletes every document  
+a relation points at**, so cascading a report would take that person's file with it, and cascading a file  
+would delete the accident, the incident report, the announcement and any user whose avatar it is. It  
+deletes the holder, never the reference.
+
+Cuts are reported per field as `detachedReferences` — `"detachedReferences": {"accident.attachments": 4}`  
+— in both the dry run and the confirmed response.
+
 ### What `reference` will *not* delete
 
 `user.seedShared` skips any name that already exists, so a row that shares a seeded name is  
@@ -607,6 +644,7 @@ document — that is the one seam the whole feature rests on, and the test asser
 | فرم از قبل فعال است                                             | Something tried to activate an active form                                                        | Nothing to do — the seed skips these; only appears if you call `activate` by hand                                            |
 | `can not update this doc` (English, from Lesan)                 | `setModules` ran while the module-config singleton was missing — `cleanupDemoSeed` had removed it | Fixed: `setModuleConfig` now recreates it. On a build without the fix, restart the server once, which recreates it as all-on |
 | `please clear below relations status before deletion` (English)  | `cleanupDemoSeed` hit a document the seed does not write — an officer's `device` or an uploaded `file` | Fixed: the act derives these from the schema registry (see §8). On a build without the fix, delete the named `device`/`file` rows by hand, then re-run |
+| `please clear below relations status before deletion` naming a `collection: accident` / `incident_report` row | The demo report still lists a photo in `attachments` — the guard checks optional relations too | Fixed: the act cuts such links before deleting (see §8, "Links that are cut rather than deleted"). On a build without the fix, clear the named report's `attachments` (or delete the report) and re-run |
 
 **Not an error, but a stale form.** If the app still shows an option you removed from `forms.ts`, no  
 act has failed — the seeded definition simply predates your change, and re-running the seed will never  
