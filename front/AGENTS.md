@@ -693,8 +693,9 @@ Two static audits that catch failures TypeScript cannot see. Run them with the m
 | Script | Checks | Last result |
 | --- | --- | --- |
 | `audit-module-acts.py` | every act pattern in `back/src/app_modules/moduleConfig.ts` resolves to a registered act | 369 acts / 38 patterns / 0 unresolved |
-| `audit-frontend-actions.py` | every `model:`/`act:` pair in `front/src/app/actions/**` resolves to a registered act | 417 acts / 330 calls / 0 unresolved |
-| `panel-routing-test.py` | panel access + default-landing + nav-filtering logic in `utils/panels.ts` / `utils/panel-nav.ts` | 48 assertions pass |
+| `audit-frontend-actions.py` | every `model`/`act` pair in `front/src/app/actions/**` resolves to a registered act | 450 acts / 356 calls / 0 unresolved |
+| `map-surface-test.py` | `LeafletSurface` keeps the map's height on a wrapper, never on the `MapContainer` (see the `.leaflet-container { height: 100% !important }` trap above) | 15 call-sites scanned |
+| `panel-routing-test.py` | panel access + default-landing + nav-filtering logic in `utils/panels.ts` / `utils/panel-nav.ts` | 121 assertions pass |
 | `probe-empty-get.py` | live probe: does `get: {}` get rejected by an aggregation act? | reference |
 
 `panel-routing-test.py` transpiles `panels.ts` + `panel-nav.ts` with `tsc` and runs assertions in
@@ -938,8 +939,75 @@ the declarations, which is what `audit-projection-shapes.py` does for the projec
 are dynamic (`Record<string, unknown>`, built per column) and so cannot use `satisfies`.
 Run it after editing `utils/accidentProjection.ts` or `services/patrol-projections.ts`.
 
-### Map tiles must work without international internet
+### Never put a fixed height on a `<MapContainer>` — put it on a wrapper
 
+`globals.css` declares, twice:
+
+```css
+.leaflet-container { width: 100% !important; height: 100% !important; }
+```
+
+`MapContainer` puts `leaflet-container` on **its own** root div, so that rule
+targets the map element. `!important` beats any non-important declaration
+regardless of order, so a fixed height on the map — `className="h-[420px]"`,
+`h-96`, or `style={{height:'500px'}}` — is **silently inert**. The element falls
+back to `100%` of its parent; if that parent is `height: auto` the map collapses
+to a few pixels. Tiles still load and the DOM still shows the class, so it looks
+correct in devtools.
+
+The working shape, used by every map in this repo that renders:
+
+```tsx
+<div className="h-[420px] overflow-hidden rounded-lg">   {/* height lives HERE */}
+  <MapContainer className="h-full w-full" … />          {/* always h-full */}
+</div>
+```
+
+`GeoPointPicker` / `GeoLineDrawer` / `GeoPolygonDrawer` route their `className`
+to a wrapper inside `LeafletSurface`, so callers never have to remember this.
+**`.workbuddy-ai/tools/map-surface-test.py` asserts that shape** — it fails the
+build if `LeafletSurface` puts the caller's class on the map itself, and reports
+the repo's other `<MapContainer>` call-sites as advisory (a fixed height there is
+fine when a sized ancestor wraps it, which is not statically decidable).
+
+### GeoJSON editing — four components, and the two order rules
+
+Every map-geometry input in the app goes through one of these. Do not add a fifth
+inline `<MapContainer>`; the duplication this replaced was ~90 lines copied across
+six province/township/city forms.
+
+| Component | Emits | Used by |
+| --- | --- | --- |
+| `LeafletSurface` | — | all of them: the `MapContainer` + `BasemapLayer` + the `L.Icon.Default` sprite fix |
+| `GeoPointPicker` | `{type:"Point", coordinates:[lng, lat]}` | `organization.location`, `province/city/township.center_location` |
+| `GeoPolygonDrawer` | `{type:"MultiPolygon", coordinates:[[ring]]}` | `province/city/township.area` |
+| `GeoLineDrawer` | `{type:"MultiLineString", coordinates:[line]}` | `road.area` |
+
+**Rule 1 — GeoJSON is `[longitude, latitude]`; leaflet is `[latitude, longitude]`.**
+Each component owns the swap, in exactly one helper, and nothing else may re-derive
+it. A missed swap puts the Ahvaz centre in the Indian Ocean. `MultiPolygon` closes
+its ring; `MultiLineString` must **not** — that closing step is the `MultiPolygon`
+convention and applying it to a road centreline joins Bandar Imam to Ahvaz with a
+false edge.
+
+**Rule 2 — a single relation's `_ids` is a bare `ObjectId`.** `lanes` is an
+embedded array of `{_id, name}` and `common_relation_struct` **requires** `name`,
+so sending ids alone is rejected. The `position` catalogue is the source: select
+ids, map them back to `{_id, name}`, and drop any id that is no longer in the
+catalogue rather than posting an empty `name`.
+
+### Derived fields are read-only in the UI
+
+`road.total_length_meters` is computed server-side from `road.area`; neither
+`road.add` nor `road.update` accepts it. It renders as «طول محور (محاسبه‌شده)»
+and nothing else. A hand-typed length that disagrees with the geometry flows
+silently into `road.snapPointToRoad`'s kilometre/meter output. The same applies to
+`accident.serial` and any other field the backend derives — if a form exposes it as
+editable, that is a backend contract change, not a UI one.
+
+`GeoPolygonDrawer` / `GeoPointPicker` take `tone="light"` because the legacy
+province/city/township forms are a light theme while every newer surface is dark.
+That prop exists for those six files, not as a general theming hook.
 `osm` is served from `tile.openstreetmap.org` and is unreliable from inside Iran;
 `mapir` (Map.ir) and `neshan` are reachable. `DEFAULT_BASEMAP` stays `osm` deliberately
 (changing it would alter every map in the app), so **every `MapContainer` map needs a way
