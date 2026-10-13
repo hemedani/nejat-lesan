@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -267,94 +267,107 @@ export default function IncidentLocationScreen() {
           would lift the map off the bottom edge for no reason. */}
       <View style={[styles.sheet, { paddingBottom: sheetBottomPadding }]}>
         <View style={styles.grabber} />
-        {officerDistance != null ? (
-          <SummaryRow
-            icon={AppIcons.map.distance}
-            label="فاصله تا شما"
-            value={formatDistance(officerDistance)}
-            warn={officerDistance > OFFICER_DISTANCE_WARNING_METERS}
-          />
-        ) : null}
-        <SummaryRow
-          icon={AppIcons.map.accuracy}
-          label="دقت GPS"
-          value={
-            deviceLocation.accuracyMeters == null
-              ? deviceLocation.coords
-                ? '—'
-                : 'موقعیت مأمور در دسترس نیست'
-              : `${formatDistance(deviceLocation.accuracyMeters)}${deviceLocation.accuracyMeters > ACCURACY_WARNING_METERS ? ' · دقت پایین' : ''}`
-          }
-          warn={
-            deviceLocation.status === 'denied' ||
-            deviceLocation.status === 'service_disabled' ||
-            (deviceLocation.accuracyMeters ?? 0) > ACCURACY_WARNING_METERS
-          }
-        />
-        {snapState === 'loading' ? (
-          <SummaryRow icon={AppIcons.map.route} label="راه نزدیک" value="در حال محاسبه…" />
-        ) : null}
-        {snapState === 'done' && roadSnap ? (
-          <>
-            <SummaryRow icon={AppIcons.map.route} label="راه نزدیک" value={roadSnap.road_name ?? '—'} />
-            <SummaryRow icon={AppIcons.map.direction} label="جهت" value={roadSnap.direction ?? '—'} />
-            <SummaryRow
-              icon={AppIcons.map.kilometer}
-              label="کیلومتر/متر"
-              value={`${(roadSnap.kilometer ?? 0).toLocaleString('fa-IR')}+${(roadSnap.meter ?? 0).toLocaleString('fa-IR')}`}
-            />
+
+        {/* Everything here is context the officer reads; the CTA below is the one
+            thing they must be able to reach. The sheet is capped with `maxHeight`
+            rather than sized to its content, so the scroll area is the single
+            element allowed to give way — otherwise the extra rows a road snap adds,
+            plus the snap suggestion banner, push the button off the bottom of the
+            screen with no way to scroll to it. */}
+        <ScrollView
+          contentContainerStyle={styles.sheetScrollContent}
+          showsVerticalScrollIndicator
+          style={styles.sheetScroll}
+        >
+          {officerDistance != null ? (
             <SummaryRow
               icon={AppIcons.map.distance}
-              label="فاصله از راه"
-              value={formatDistance(roadSnap.distance_to_road_meters)}
+              label="فاصله تا شما"
+              value={formatDistance(officerDistance)}
+              warn={officerDistance > OFFICER_DISTANCE_WARNING_METERS}
             />
-          </>
-        ) : null}
-        {(snapState === 'failed' || snapState === 'no_road' || snapState === 'offline') && (
-          <Banner
-            message={
-              snapState === 'offline'
-                ? 'بدون اینترنت؛ اطلاعات راه پس از اتصال تکمیل می‌شود.'
-                : snapState === 'no_road'
-                  ? 'راهی در شعاع پوشش این نقطه ثبت نشده است؛ می‌توانید بدون آن ادامه دهید.'
-                  : 'تطبیق با راه انجام نشد؛ می‌توانید بدون آن ادامه دهید.'
+          ) : null}
+          <SummaryRow
+            icon={AppIcons.map.accuracy}
+            label="دقت GPS"
+            value={
+              deviceLocation.accuracyMeters == null
+                ? deviceLocation.coords
+                  ? '—'
+                  : 'موقعیت مأمور در دسترس نیست'
+                : `${formatDistance(deviceLocation.accuracyMeters)}${deviceLocation.accuracyMeters > ACCURACY_WARNING_METERS ? ' · دقت پایین' : ''}`
             }
-            tone="neutral"
+            warn={
+              deviceLocation.status === 'denied' ||
+              deviceLocation.status === 'service_disabled' ||
+              (deviceLocation.accuracyMeters ?? 0) > ACCURACY_WARNING_METERS
+            }
           />
-        )}
+          {snapState === 'loading' ? (
+            <SummaryRow icon={AppIcons.map.route} label="راه نزدیک" value="در حال محاسبه…" />
+          ) : null}
+          {snapState === 'done' && roadSnap ? (
+            <>
+              <SummaryRow icon={AppIcons.map.route} label="راه نزدیک" value={roadSnap.road_name ?? '—'} />
+              <SummaryRow icon={AppIcons.map.direction} label="جهت" value={roadSnap.direction ?? '—'} />
+              <SummaryRow
+                icon={AppIcons.map.kilometer}
+                label="کیلومتر/متر"
+                value={`${(roadSnap.kilometer ?? 0).toLocaleString('fa-IR')}+${(roadSnap.meter ?? 0).toLocaleString('fa-IR')}`}
+              />
+              <SummaryRow
+                icon={AppIcons.map.distance}
+                label="فاصله از راه"
+                value={formatDistance(roadSnap.distance_to_road_meters)}
+              />
+            </>
+          ) : null}
+          {(snapState === 'failed' || snapState === 'no_road' || snapState === 'offline') && (
+            <Banner
+              message={
+                snapState === 'offline'
+                  ? 'بدون اینترنت؛ اطلاعات راه پس از اتصال تکمیل می‌شود.'
+                  : snapState === 'no_road'
+                    ? 'راهی در شعاع پوشش این نقطه ثبت نشده است؛ می‌توانید بدون آن ادامه دهید.'
+                    : 'تطبیق با راه انجام نشد؛ می‌توانید بدون آن ادامه دهید.'
+              }
+              tone="neutral"
+            />
+          )}
 
-        {/* A suggestion, never a rule. Incidents legitimately happen off the
-            carriageway — on a ramp, in a service area, or on the road boundary —
-            so the officer keeps whatever point they chose and only moves it if
-            they want to. This is why the banner is `info` and not `warning`: a
-            warning tone reads as "something is wrong and must be fixed", and the
-            confirm CTA below stays enabled either way. */}
-        {suggestSnap && roadSnap?.nearest_point ? (
-          <Banner
-            actionLabel="انتقال به مسیر"
-            icon={AppIcons.map.route.name}
-            message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با محور راه فاصله دارد. اگر واقعه روی سطح سواره‌رو رخ داده، آن را به نزدیک‌ترین موقعیت روی محور منتقل کنید؛ در غیر این صورت همین نقطه ثبت می‌شود.`}
-            tone="info"
-            title="پیشنهاد تطبیق با راه"
-            onAction={moveToNearestPoint}
-          />
-        ) : null}
+          {/* A suggestion, never a rule. Incidents legitimately happen off the
+              carriageway — on a ramp, in a service area, or on the road boundary —
+              so the officer keeps whatever point they chose and only moves it if
+              they want to. This is why the banner is `info` and not `warning`: a
+              warning tone reads as "something is wrong and must be fixed", and the
+              confirm CTA below stays enabled either way. */}
+          {suggestSnap && roadSnap?.nearest_point ? (
+            <Banner
+              actionLabel="انتقال به مسیر"
+              icon={AppIcons.map.route.name}
+              message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با محور راه فاصله دارد. اگر واقعه روی سطح سواره‌رو رخ داده، آن را به نزدیک‌ترین موقعیت روی محور منتقل کنید؛ در غیر این صورت همین نقطه ثبت می‌شود.`}
+              tone="info"
+              title="پیشنهاد تطبیق با راه"
+              onAction={moveToNearestPoint}
+            />
+          ) : null}
 
-        {!deviceLocation.coords ? (
-          <>
-            <Banner message="موقعیت GPS مأمور ثبت نمی‌شود؛ می‌توانید محل حادثه را دستی انتخاب کنید." tone="warning" />
-            <GpsActionButton device={deviceLocation} variant="outline" />
-          </>
-        ) : null}
+          {!deviceLocation.coords ? (
+            <>
+              <Banner message="موقعیت GPS مأمور ثبت نمی‌شود؛ می‌توانید محل حادثه را دستی انتخاب کنید." tone="warning" />
+              <GpsActionButton device={deviceLocation} variant="outline" />
+            </>
+          ) : null}
 
-        {selected ? (
-          <View style={styles.coordFooter}>
-            <Icon color={AppTheme.colors.textFaint} name="navigate" size={13} />
-            <Text style={styles.coordFooterText}>
-              {formatCoordinate(selected.latitude)} ، {formatCoordinate(selected.longitude)}
-            </Text>
-          </View>
-        ) : null}
+          {selected ? (
+            <View style={styles.coordFooter}>
+              <Icon color={AppTheme.colors.textFaint} name="navigate" size={13} />
+              <Text style={styles.coordFooterText}>
+                {formatCoordinate(selected.latitude)} ، {formatCoordinate(selected.longitude)}
+              </Text>
+            </View>
+          ) : null}
+        </ScrollView>
 
         <Button
           accessibilityLabel="تأیید محل حادثه"
@@ -488,10 +501,28 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     gap: 9,
+    // The sheet is capped, not sized, so the map keeps the top of the screen and
+    // the officer can still see the pin they are placing. Everything past this
+    // height is the scroll area's to absorb.
     maxHeight: '48%',
+    // The scroll area clips to the rounded corners; without this its content
+    // paints square over them on Android.
+    overflow: 'hidden',
     paddingHorizontal: 18,
     paddingTop: 10,
     // `paddingBottom` is set inline from the safe-area inset — see the sheet.
+  },
+  sheetScroll: {
+    // The one element allowed to shrink inside a `maxHeight` sheet. Without it
+    // the ScrollView keeps its full content height, the sheet overflows, and the
+    // CTA pinned below falls off the bottom of the screen.
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  sheetScrollContent: {
+    // The sheet's own `gap` now only separates grabber / scroll area / CTA, so
+    // the spacing between rows and banners has to live here.
+    gap: 9,
   },
   grabber: {
     alignSelf: 'center',
