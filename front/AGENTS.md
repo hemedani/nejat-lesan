@@ -215,6 +215,41 @@ The Dockerfile includes three stages:
 
 - `3000` - Next.js application port
 
+### CRITICAL: `NEXT_PUBLIC_*` is inlined at **build** time, so it is not a runtime env var
+
+Next.js replaces `process.env.NEXT_PUBLIC_*` with a literal while bundling, so a
+value supplied under `environment:` in compose affects the **server** only. The
+browser keeps whatever was baked in during `pnpm build`.
+
+This matters because `getLesanBaseUrl` (`src/services/api.ts`) reads
+`NEXT_PUBLIC_LESAN_URL` on the client to build backend asset URLs, and the
+builder stage currently picks it up from the wrong place:
+
+| File | Contains | Reaches the client bundle? |
+| --- | --- | --- |
+| `front/.dockerignore` | excludes `.env.local` but **not** `.env` | yes — `Dockerfile` does `COPY . .` |
+| `docker-compose.yml` | `NEXT_PUBLIC_LESAN_URL=http://46.245.98.10:1404` | **no** — runtime only, too late |
+
+So the production image currently bakes `NEXT_PUBLIC_LESAN_URL=http://localhost:1404`
+(from `front/.env`) into the client bundle, and the compose override is ignored.
+Locally this is invisible, which is what let it ship.
+
+To fix, pass it as a build arg and declare it before `pnpm build` in the builder
+stage, then keep the compose `environment:` entry for the server side:
+
+```dockerfile
+ARG NEXT_PUBLIC_LESAN_URL
+ENV NEXT_PUBLIC_LESAN_URL=$NEXT_PUBLIC_LESAN_URL
+RUN pnpm build
+```
+
+**Do not "simplify" this by dropping `NEXT_PUBLIC_LESAN_URL` back to the current
+origin** — that is the bug documented on `getLesanBaseUrl`, and it 404s every
+attachment and upload preview. `POST /api/proxy` covers only `${LESAN_URL}/lesan`;
+static uploads exist solely on the backend (`back/mod.ts` declares
+`staticPath: ["/uploads"]`) and are never proxied. Verify with
+`.workbuddy-ai/tools/uploads-base-url-test.py`.
+
 ## 🧱 Customization & Extensibility
 
 ### UI Customization

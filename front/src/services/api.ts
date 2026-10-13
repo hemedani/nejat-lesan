@@ -20,28 +20,34 @@ const getLesanUrl = (): string => {
   return url;
 };
 
-// Helper function to get base URL without /lesan suffix
+/**
+ * The origin that backend **assets** are served from, e.g. `${base}/uploads/…`.
+ *
+ * This is not the API origin. API calls go through `POST /api/proxy`, but static
+ * uploads are not proxied — only `back/mod.ts` declares `staticPath: ["/uploads"]`
+ * — so an asset URL must be built against the backend itself. Two tiers, because
+ * `docker-compose.yml` sets both and only one of them is reachable from a given
+ * side of the wire:
+ *
+ * - server → `LESAN_URL` (`http://backend:1404`), a Docker-internal name that a
+ *   browser could not resolve even if it were handed one
+ * - browser → `NEXT_PUBLIC_LESAN_URL` (`http://46.245.98.10:1404`), the public host
+ *
+ * The browser tier used to return `window.location.origin`, which built every
+ * attachment URL against the Next.js origin and 404'd: `getLesanBaseUrl` was
+ * repointed at the current origin for the API proxy, but the proxy covers only
+ * `${LESAN_URL}/lesan`. Both `report/AttachmentGallery` and `molecules/UploadFile`
+ * render backend images, so both were affected. See
+ * `.workbuddy-ai/tools/uploads-base-url-test.py`.
+ */
 export const getLesanBaseUrl = (): string => {
-  // Check if we're on the server side
-  const isServerSide = typeof window === "undefined";
-
-  let baseUrl: string;
-
-  try {
-    if (isServerSide) {
-      // Server-side: use internal Docker network or env variable
-      const envLesanUrl = process.env.LESAN_URL as string;
-      baseUrl = envLesanUrl || "http://localhost:1404";
-    } else {
-      // Client-side: return the base URL of the current origin
-      baseUrl = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-    }
-
-    return baseUrl;
-  } catch {
-    // Fallback to localhost on error
-    return "http://localhost:1404";
+  if (typeof window === "undefined") {
+    return process.env.LESAN_URL || "http://localhost:1404";
   }
+
+  // Same-origin fallback: correct when one host fronts both tiers (nginx), which
+  // is why the branch order is load-bearing rather than the fallback being absent.
+  return process.env.NEXT_PUBLIC_LESAN_URL || window.location.origin;
 };
 
 // Export the main function for external use
