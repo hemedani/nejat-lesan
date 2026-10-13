@@ -560,6 +560,10 @@ Organization   ← each highway (`road`) is one org; municipalities (whole-city)
   ├── head (User) [single, opt] → reverse: (none)
   ├── logo (File) [single, opt]
   ├── registrer (User) [single, opt]
+  ├── pure: `location` (geoJSONStruct("Point"), 2dsphere-indexed, opt) + `location_zoom`
+  │      (number, opt) — the org's operating centre; the mobile app opens its map
+  │      there when GPS is unavailable and offers "مرکز سازمان" as a recentre.
+  │      Neither is range-validated server-side; both consumers clamp to 3..19.
   └── (reverse: organization.members via user.organizations; organization.units via unit.organization)
 
 Unit           ← hierarchical org node (replaces flat patrol_unit/police_station)
@@ -639,8 +643,23 @@ AccidentProcess  ← org-scoped wizard (steps/questions embedded on the doc)
 
 Road
   ├── registrer (User) [single, opt]
-  ├── province (Province) [single, opt] → reverse: province.roads
+  ├── province (Province) [single, req] → reverse: province.roads
+  ├── pure: `area` (geoJSONStruct("MultiLineString"), 2dsphere) — ordered
+  │      centreline for linear referencing; `origin`/`destination` endpoints;
+  │      `lanes` (array of {_id, name} → position docs, validated in the act);
+  │      `total_length_meters` — **derived, never client input**. add/update
+  │      recompute it from `area` via `multiLineLengthMeters` (`utils/geo.ts`),
+  │      the same method `projectPointToMultiLine` uses, so the cached length
+  │      and the line `snapPointToRoad` projects onto cannot disagree. Neither
+  │      act's validator accepts the field.
   └── (reverses: road.organization (single, via organization.road), road.units (via unit.road))
+
+**`addRelation` needs a bare `ObjectId` for a `single` relation, not an array.**
+`handleSingleRelation` filters `{_id: relations[rel]._ids}` directly, so
+`_ids: [new ObjectId(x)]` matches nothing and throws «can not find this relation».
+This silently broke `organization.update`'s `head`/`logo` until `organization-test.ts`
+covered it. An empty value means "clear": omit the relation key entirely and
+let `replace: true` drop the existing one.
 
 City → registrer + province → reverse: province.cities
 Township → registrer + province → reverse: province.townships
@@ -1033,3 +1052,19 @@ The same module set can be narrowed **per organization** on multi-tenant servers
 - **Org-layer gate** (`assertOrgModuleOpen` in `src/app_modules/moduleConfig.ts`, inside the same fn wrapper): when an explicit org target is present (`organizationId`/`orgId`/`unitId`/`fromUnitId`/`receivingUnitId`/`warehouseUnitId` → its org), a module-off org blocks **everyone incl. Manager** (only Ghost exempt). Without an explicit target, role-scoped/Patrol actors are blocked when the module is off for every org they belong to (`getScopedOrgIds` in `src/app_modules/orgScope.ts`); a global Manager with no org scope only sees the installation gate. Persian error «این ماژول برای این سازمان فعال نیست».
 - `user.login`/`getMe` return `orgModules` (effective keys) when the caller resolves to a single org (via `resolvePrimaryOrgId`).
 - Do not org-gate core acts (auth/geo/org/unit/admin-accident-CRUD/files/operation_log) — they are never in a module map.
+
+### The caller's organization on login / getMe
+
+`user.login` and `user.getMe` also return **`primaryOrganization`**
+(`{_id, code, name, enName?, location?, location_zoom?}`), or `null`. It is a
+**fixed response field, not a client projection** — same as `orgModules` — so it
+comes back even when the caller requests no `get`, and the patrol app does not
+need a second request just to name the organization.
+
+- Resolved by `getPrimaryOrganization` in `src/user/primaryOrganization.ts`, which
+  reuses `resolvePrimaryOrgId` rather than re-deriving scope, so "the caller's
+  org" means exactly one thing across `orgModules` and `primaryOrganization`.
+- `null` means *not determinable*: a global caller (Ghost/Manager) or a member of
+  several organizations. Never substitute the first of several.
+- Adding a second org-resolution path is the trap to avoid: it would let
+  `orgModules` and `primaryOrganization` disagree about the active organization.

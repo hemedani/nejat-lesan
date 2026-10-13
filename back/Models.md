@@ -28,11 +28,15 @@ Handles user authentication and authorization, including police officers, admini
 
 Each road/highway/freeway — or whole-city municipality — is an organization owning its own unit tree, head and members. Optional 1:1 `road` relation: road-bound orgs scope `accident`/`nearbyAccidents` to "this road's org" via `road.organization`; municipality orgs stay roadless (road-scoped reports/analytics don't apply).
 
-**Fields:** `code` (unique), `name`, `enName`, `description`, `is_active`, `createdAt`, `updatedAt`
+**Fields:** `code` (unique), `name`, `enName`, `description`, `is_active`, `location` (optional GeoJSON Point, `[longitude, latitude]`, 2dsphere-indexed), `location_zoom` (optional number), `module_flags`, `createdAt`, `updatedAt`
+
+`location`/`location_zoom` are the organization's operating centre — the point the patrol app frames its map on when officer GPS is unavailable, plus a "مرکز سازمان" recentre control. Neither is range-validated here: `organization_pure` also backs projection validation via `selectStruct`, and `@deps` exports no `range`, so both consumers clamp the zoom to the map's own 3..19 instead.
 
 **Relations:** `road` → Road (1:1 optional, reverse: `road.organization`), `head` → User, `logo` → File, `registrer` → User
 
-**Acts:** `add`/`update`/`remove`/`count` (Manager), `get`/`gets` (Manager; filters: `search`, `is_active`). Deleting an org is blocked while its `units` exist (children first).
+**Acts:** `add`/`update`/`remove`/`count` (Manager), `get`/`gets` (Manager; filters: `search`, `is_active`), `getModules`/`setModules` (Ghost writes org flags). Deleting an org is blocked while its `units` exist (children first).
+
+**On login/getMe:** both return `primaryOrganization` — the caller's single org (`{_id, code, name, enName, location, location_zoom}`), or `null` for a global/multi-org caller — resolved by the same rule as `orgModules`.
 
 ### Unit
 
@@ -167,7 +171,17 @@ Manages traffic control zones and areas with specific traffic regulations.
 
 Contains information about roads, streets, and highways where accidents occur.
 
-**Fields:** `origin`, `destination`, `total_length_meters`, `lanes` (array of common_relation_struct), `area` (MultiLineString), `createdAt`, `updatedAt`
+**Fields:** `name`, `origin`, `destination`, `total_length_meters`, `lanes` (array of `{_id, name}` referencing `position`), `area` (`MultiLineString` — the ordered centreline used for linear referencing), `createdAt`, `updatedAt`
+
+**Relations:** `province` → Province (required, reverse: `province.roads`), `registrer` → User
+
+**Index:** `{ area: "2dsphere" }`
+
+**`total_length_meters` is derived, never client input.** Both `add` and `update` recompute it from `area` via `multiLineLengthMeters` (`utils/geo.ts`) — the same equirectangular method `projectPointToMultiLine` uses, so the cached length and the line that `snapPointToRoad` projects onto cannot disagree. Neither act's validator accepts the field; a hand-typed value would be silently wrong and would flow straight into kilometre/meter reports. `road-test.ts` pins the method against the demo corridor's `DEMO_ROAD_LENGTH_METERS = 116342`.
+
+**`update` writes `origin`, `destination`, `lanes` and `provinceId` in addition to `name`/`area`.** It used to accept only the latter two, so any correct client form silently discarded the rest. Every field is an explicit `!== undefined` check, so clearing a field with `""` works instead of being dropped. `provinceId` goes through `addRelation` with `relatedRelations.roads`, never a `$set`.
+
+**`lanes` entries are validated against the `position` collection** in both acts. `common_relation_struct` only guarantees a `name` is present, so a stale `_id` would pass and leave the road holding a lane that `snapPointToRoad` can no longer return. A missing one throws «موقعیت‌های انتخاب‌شده معتبر نیستند».
 
 ### Road Defect
 

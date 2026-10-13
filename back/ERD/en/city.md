@@ -18,7 +18,6 @@
 │ REVERSE RELATIONS (auto from Lesan):         │
 │  ◄── accident.city (accidents, multiple, 20) │
 │  ◄── city_zone.city (city_zones, mult, 50)  │
-│  ◄── location_area.city (areas, multiple,50) │
 └──────────────────────────────────────────────┘
 ```
 
@@ -48,7 +47,6 @@
 |-------------|---------------|------|-------|
 | accident | city | multiple | 20 |
 | city_zone | city | multiple | 50 |
-| location_area | city | multiple | 50 |
 
 ## Indexes
 

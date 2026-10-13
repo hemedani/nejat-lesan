@@ -19,7 +19,6 @@
 │  ◄── township.province (cities, multiple,50) │
 │  ◄── road.province (axeses, multiple, 50)    │
 │  ◄── accident.province (accidents, mult,20)  │
-│  ◄── location_area.province (areas, mult,50) │
 └──────────────────────────────────────────────┘
 ```
 
@@ -50,7 +49,6 @@
 | township | province | multiple | 50 |
 | road | province | multiple | 50 |
 | accident | province | multiple | 20 |
-| location_area | province | multiple | 50 |
 
 ## Indexes
 
