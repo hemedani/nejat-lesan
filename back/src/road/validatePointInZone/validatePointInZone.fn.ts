@@ -1,6 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
 import { coreApp, patrol_unit, police_station, shift } from "../../../mod.ts";
-import { throwError, type MyContext } from "@lib";
+import { type MyContext, throwError } from "@lib";
 
 export const validatePointInZoneFn: ActFn = async (body) => {
 	const {
