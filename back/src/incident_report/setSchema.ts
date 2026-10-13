@@ -99,6 +99,10 @@ const multiRelationSchema = {
 	equipmentDamagesIds: optional(array(objectIdValidation)),
 	airStatusesIds: optional(array(objectIdValidation)),
 	roadSurfaceConditionsIds: optional(array(objectIdValidation)),
+	// Evidence attached to a form's `file` fields, uploaded through `file.uploadFile`
+	// before the report was filed. See `MULTI_RELATION_KEYS` for why this one key
+	// breaks the mechanical naming rule.
+	attachmentsIds: optional(array(objectIdValidation)),
 };
 
 export const incident_report_set_schema = {

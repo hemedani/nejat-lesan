@@ -7,7 +7,11 @@ import {
 } from "@deps";
 import { coreApp } from "../mod.ts";
 import { createUpdateAt } from "@lib";
-import { accident_excludes, user_excludes } from "@model";
+import {
+	accident_excludes,
+	incident_report_excludes,
+	user_excludes,
+} from "@model";
 
 export const file_category_array = [
 	"plate",
@@ -64,6 +68,30 @@ export const file_relations = {
 		type: "single" as RelationDataType,
 		optional: true,
 		excludes: accident_excludes,
+		relatedRelations: {
+			attachments: {
+				type: "multiple" as RelationDataType,
+				limit: 100,
+				excludes: file_excludes,
+				sort: {
+					field: "_id",
+					order: "asc" as RelationSortOrderType,
+				},
+			},
+		},
+	},
+	// The same relation a second kind of report owns.
+	//
+	// The key is `attachments` on both sides rather than the `incident_reports`
+	// convention the rest of `incident_report` uses: that convention exists only
+	// because `accidents` is already claimed by `accident` on `user`, `vehicle` and
+	// friends, and Lesan forbids two models claiming the same reverse. `file` claims
+	// nothing, so there is no collision to route around.
+	incident_report: {
+		schemaName: "incident_report",
+		type: "single" as RelationDataType,
+		optional: true,
+		excludes: incident_report_excludes,
 		relatedRelations: {
 			attachments: {
 				type: "multiple" as RelationDataType,

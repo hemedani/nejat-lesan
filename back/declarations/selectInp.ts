@@ -9508,9 +9508,329 @@ sequence?: number;
 ;
 
 
+    export type incident_reportInp = {
+      organization?: number | organizationInp
+officer?: number | userInp
+patrol_unit?: number | patrol_unitInp
+vehicle?: number | vehicleInp
+police_station?: number | police_stationInp
+province?: number | provinceInp
+city?: number | cityInp
+road?: number | roadInp
+traffic_zone?: number | traffic_zoneInp
+city_zone?: number | city_zoneInp
+position?: number | positionInp
+incident_severity?: number | incident_severityInp
+road_defects?: number | road_defectInp
+equipment_damages?: number | equipment_damageInp
+light_status?: number | light_statusInp
+air_statuses?: number | air_statusInp
+road_surface_conditions?: number | road_surface_conditionInp
+road_situation?: number | road_situationInp
+shoulder_status?: number | shoulder_statusInp
+reviewer?: number | userInp
+attachments?: number | fileInp
+      
+    }
+
+
+    export type incident_reportSchema = {
+_id?: string;
+form_definition_id: string;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
+form_title: string;
+form_icon?: string;
+form_version?: number;
+client_report_uuid?: string;
+serial?: number;
+report_id?: string;
+reported_at?: Date;
+occurred_at?: Date;
+sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
+rejection_reason?: string;
+synced_at?: Date;
+review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
+review_reason?: string;
+reviewed_at?: Date;
+completed_at?: Date;
+review_history?: {
+action: ("submitted" | "started_review" | "returned" | "resubmitted" | "approved" | "completed" | "reopened" );
+reason?: string;
+action_at: Date;
+reviewer: {
+_id: string;
+first_name: string;
+last_name: string;
+};
+}[];
+description?: string;
+is_hazard?: boolean;
+needs_repair?: boolean;
+follow_up_required?: boolean;
+temporary_action?: string;
+form_answers?: {
+};
+dynamic_answers?: {
+step_key?: string;
+question_key?: string;
+model_name: string;
+answer_id?: string;
+answer_ids?: string[];
+answer_name?: string;
+answer_names?: string[];
+value?: string;
+}[];
+location?: {
+type: "Point";
+coordinates: any[];
+};
+gps_coords?: {
+type: "Point";
+coordinates: any[];
+};
+gps_accuracy?: number;
+travel_direction?: string;
+kilometer?: number;
+meter?: number;
+createdAt: Date;
+updatedAt: Date;
+organization?: {
+_id?: string;
+code: string;
+name: string;
+enName?: string;
+description?: string;
+is_active: boolean;
+module_flags?: {
+key: string;
+enabled: boolean;
+}[];
+createdAt: Date;
+updatedAt: Date;
+};
+officer?: {
+_id?: string;
+first_name: string;
+last_name: string;
+father_name: string;
+mobile: string;
+gender: ("Male" | "Female" );
+email: string;
+national_number?: string;
+address: string;
+level: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" );
+is_verified: boolean;
+personnel_code?: string;
+is_active: boolean;
+patrol_permissions?: {
+can_submit_accident?: boolean;
+can_view_map?: boolean;
+can_receive_announcements?: boolean;
+can_register_emergency?: boolean;
+can_view_reports?: boolean;
+};
+roles: {
+roleId: string;
+name: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol" );
+scopeType?: ("organization" | "unit" );
+scopeId?: string;
+}[];
+failed_login_attempts: number;
+locked_until?: Date;
+};
+patrol_unit?: {
+_id?: string;
+code: string;
+name: string;
+is_active: boolean;
+createdAt: Date;
+updatedAt: Date;
+};
+vehicle?: {
+_id?: string;
+plaque_no: any[];
+title: string;
+is_active: boolean;
+createdAt: Date;
+updatedAt: Date;
+};
+police_station?: {
+_id?: string;
+name: string;
+location: {
+type: "Polygon";
+coordinates: any[];
+};
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+code: number;
+is_active: boolean;
+military_rank: number;
+createdAt: Date;
+updatedAt: Date;
+};
+province?: {
+_id?: string;
+name: string;
+english_name: string;
+population: number;
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+center_location: {
+type: "Point";
+coordinates: any[];
+};
+createdAt: Date;
+updatedAt: Date;
+};
+city?: {
+_id?: string;
+name: string;
+english_name: string;
+population: number;
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+center_location: {
+type: "Point";
+coordinates: any[];
+};
+createdAt: Date;
+updatedAt: Date;
+};
+road?: {
+_id?: string;
+name: string;
+origin?: string;
+destination?: string;
+total_length_meters?: number;
+lanes?: {
+_id: string;
+name: string;
+}[];
+};
+traffic_zone?: {
+_id?: string;
+name: string;
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+population: number;
+createdAt: Date;
+updatedAt: Date;
+};
+city_zone?: {
+_id?: string;
+name: string;
+area: {
+type: "MultiPolygon";
+coordinates: any[];
+};
+population: number;
+createdAt: Date;
+updatedAt: Date;
+};
+position?: {
+_id?: string;
+name: string;
+seed?: string;
+};
+incident_severity?: {
+_id?: string;
+name: string;
+seed?: string;
+};
+road_defects?: {
+_id?: string;
+name: string;
+seed?: string;
+}[];
+equipment_damages?: {
+_id?: string;
+name: string;
+seed?: string;
+}[];
+light_status?: {
+_id?: string;
+name: string;
+seed?: string;
+};
+air_statuses?: {
+_id?: string;
+name: string;
+seed?: string;
+}[];
+road_surface_conditions?: {
+_id?: string;
+name: string;
+seed?: string;
+}[];
+road_situation?: {
+_id?: string;
+name: string;
+seed?: string;
+};
+shoulder_status?: {
+_id?: string;
+name: string;
+seed?: string;
+};
+reviewer?: {
+_id?: string;
+first_name: string;
+last_name: string;
+father_name: string;
+mobile: string;
+gender: ("Male" | "Female" );
+email: string;
+national_number?: string;
+address: string;
+level: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" );
+is_verified: boolean;
+personnel_code?: string;
+is_active: boolean;
+patrol_permissions?: {
+can_submit_accident?: boolean;
+can_view_map?: boolean;
+can_receive_announcements?: boolean;
+can_register_emergency?: boolean;
+can_view_reports?: boolean;
+};
+roles: {
+roleId: string;
+name: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol" );
+scopeType?: ("organization" | "unit" );
+scopeId?: string;
+}[];
+failed_login_attempts: number;
+locked_until?: Date;
+};
+attachments?: {
+_id?: string;
+name: string;
+type: string;
+size: number;
+path?: string;
+category?: string;
+sequence?: number;
+}[];
+};
+;
+
+
     export type fileInp = {
       uploader?: number | userInp
 accident?: number | accidentInp
+incident_report?: number | incident_reportInp
       
     }
 
@@ -9782,6 +10102,68 @@ submitted_from?: {
 app_version: string;
 platform: ("ios" | "android" );
 };
+};
+incident_report?: {
+_id?: string;
+form_definition_id: string;
+submitted_from?: {
+app_version: string;
+platform: ("ios" | "android" );
+};
+form_title: string;
+form_icon?: string;
+form_version?: number;
+client_report_uuid?: string;
+serial?: number;
+report_id?: string;
+reported_at?: Date;
+occurred_at?: Date;
+sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
+rejection_reason?: string;
+synced_at?: Date;
+review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
+review_reason?: string;
+reviewed_at?: Date;
+completed_at?: Date;
+review_history?: {
+action: ("submitted" | "started_review" | "returned" | "resubmitted" | "approved" | "completed" | "reopened" );
+reason?: string;
+action_at: Date;
+reviewer: {
+_id: string;
+first_name: string;
+last_name: string;
+};
+}[];
+description?: string;
+is_hazard?: boolean;
+needs_repair?: boolean;
+follow_up_required?: boolean;
+temporary_action?: string;
+form_answers?: {
+};
+dynamic_answers?: {
+step_key?: string;
+question_key?: string;
+model_name: string;
+answer_id?: string;
+answer_ids?: string[];
+answer_name?: string;
+answer_names?: string[];
+value?: string;
+}[];
+location?: {
+type: "Point";
+coordinates: any[];
+};
+gps_coords?: {
+type: "Point";
+coordinates: any[];
+};
+gps_accuracy?: number;
+travel_direction?: string;
+kilometer?: number;
+meter?: number;
 };
 };
 ;
@@ -26970,315 +27352,6 @@ updatedAt: Date;
 ;
 
 
-    export type incident_reportInp = {
-      organization?: number | organizationInp
-officer?: number | userInp
-patrol_unit?: number | patrol_unitInp
-vehicle?: number | vehicleInp
-police_station?: number | police_stationInp
-province?: number | provinceInp
-city?: number | cityInp
-road?: number | roadInp
-traffic_zone?: number | traffic_zoneInp
-city_zone?: number | city_zoneInp
-position?: number | positionInp
-incident_severity?: number | incident_severityInp
-road_defects?: number | road_defectInp
-equipment_damages?: number | equipment_damageInp
-light_status?: number | light_statusInp
-air_statuses?: number | air_statusInp
-road_surface_conditions?: number | road_surface_conditionInp
-road_situation?: number | road_situationInp
-shoulder_status?: number | shoulder_statusInp
-reviewer?: number | userInp
-      
-    }
-
-
-    export type incident_reportSchema = {
-_id?: string;
-form_definition_id: string;
-submitted_from?: {
-app_version: string;
-platform: ("ios" | "android" );
-};
-form_title: string;
-form_icon?: string;
-form_version?: number;
-client_report_uuid?: string;
-serial?: number;
-report_id?: string;
-reported_at?: Date;
-occurred_at?: Date;
-sync_status?: ("draft" | "queued" | "syncing" | "synced" | "rejected" );
-rejection_reason?: string;
-synced_at?: Date;
-review_status?: ("submitted" | "under_review" | "returned" | "approved" | "completed" );
-review_reason?: string;
-reviewed_at?: Date;
-completed_at?: Date;
-review_history?: {
-action: ("submitted" | "started_review" | "returned" | "resubmitted" | "approved" | "completed" | "reopened" );
-reason?: string;
-action_at: Date;
-reviewer: {
-_id: string;
-first_name: string;
-last_name: string;
-};
-}[];
-description?: string;
-is_hazard?: boolean;
-needs_repair?: boolean;
-follow_up_required?: boolean;
-temporary_action?: string;
-form_answers?: {
-};
-dynamic_answers?: {
-step_key?: string;
-question_key?: string;
-model_name: string;
-answer_id?: string;
-answer_ids?: string[];
-answer_name?: string;
-answer_names?: string[];
-value?: string;
-}[];
-location?: {
-type: "Point";
-coordinates: any[];
-};
-gps_coords?: {
-type: "Point";
-coordinates: any[];
-};
-gps_accuracy?: number;
-travel_direction?: string;
-kilometer?: number;
-meter?: number;
-createdAt: Date;
-updatedAt: Date;
-organization?: {
-_id?: string;
-code: string;
-name: string;
-enName?: string;
-description?: string;
-is_active: boolean;
-module_flags?: {
-key: string;
-enabled: boolean;
-}[];
-createdAt: Date;
-updatedAt: Date;
-};
-officer?: {
-_id?: string;
-first_name: string;
-last_name: string;
-father_name: string;
-mobile: string;
-gender: ("Male" | "Female" );
-email: string;
-national_number?: string;
-address: string;
-level: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" );
-is_verified: boolean;
-personnel_code?: string;
-is_active: boolean;
-patrol_permissions?: {
-can_submit_accident?: boolean;
-can_view_map?: boolean;
-can_receive_announcements?: boolean;
-can_register_emergency?: boolean;
-can_view_reports?: boolean;
-};
-roles: {
-roleId: string;
-name: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol" );
-scopeType?: ("organization" | "unit" );
-scopeId?: string;
-}[];
-failed_login_attempts: number;
-locked_until?: Date;
-};
-patrol_unit?: {
-_id?: string;
-code: string;
-name: string;
-is_active: boolean;
-createdAt: Date;
-updatedAt: Date;
-};
-vehicle?: {
-_id?: string;
-plaque_no: any[];
-title: string;
-is_active: boolean;
-createdAt: Date;
-updatedAt: Date;
-};
-police_station?: {
-_id?: string;
-name: string;
-location: {
-type: "Polygon";
-coordinates: any[];
-};
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
-code: number;
-is_active: boolean;
-military_rank: number;
-createdAt: Date;
-updatedAt: Date;
-};
-province?: {
-_id?: string;
-name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
-center_location: {
-type: "Point";
-coordinates: any[];
-};
-createdAt: Date;
-updatedAt: Date;
-};
-city?: {
-_id?: string;
-name: string;
-english_name: string;
-population: number;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
-center_location: {
-type: "Point";
-coordinates: any[];
-};
-createdAt: Date;
-updatedAt: Date;
-};
-road?: {
-_id?: string;
-name: string;
-origin?: string;
-destination?: string;
-total_length_meters?: number;
-lanes?: {
-_id: string;
-name: string;
-}[];
-};
-traffic_zone?: {
-_id?: string;
-name: string;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
-population: number;
-createdAt: Date;
-updatedAt: Date;
-};
-city_zone?: {
-_id?: string;
-name: string;
-area: {
-type: "MultiPolygon";
-coordinates: any[];
-};
-population: number;
-createdAt: Date;
-updatedAt: Date;
-};
-position?: {
-_id?: string;
-name: string;
-seed?: string;
-};
-incident_severity?: {
-_id?: string;
-name: string;
-seed?: string;
-};
-road_defects?: {
-_id?: string;
-name: string;
-seed?: string;
-}[];
-equipment_damages?: {
-_id?: string;
-name: string;
-seed?: string;
-}[];
-light_status?: {
-_id?: string;
-name: string;
-seed?: string;
-};
-air_statuses?: {
-_id?: string;
-name: string;
-seed?: string;
-}[];
-road_surface_conditions?: {
-_id?: string;
-name: string;
-seed?: string;
-}[];
-road_situation?: {
-_id?: string;
-name: string;
-seed?: string;
-};
-shoulder_status?: {
-_id?: string;
-name: string;
-seed?: string;
-};
-reviewer?: {
-_id?: string;
-first_name: string;
-last_name: string;
-father_name: string;
-mobile: string;
-gender: ("Male" | "Female" );
-email: string;
-national_number?: string;
-address: string;
-level: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Editor" | "Enterprise" | "Patrol" );
-is_verified: boolean;
-personnel_code?: string;
-is_active: boolean;
-patrol_permissions?: {
-can_submit_accident?: boolean;
-can_view_map?: boolean;
-can_receive_announcements?: boolean;
-can_register_emergency?: boolean;
-can_view_reports?: boolean;
-};
-roles: {
-roleId: string;
-name: ("Ghost" | "Manager" | "OrgHead" | "UnitHead" | "Officer" | "Editor" | "Enterprise" | "Patrol" );
-scopeType?: ("organization" | "unit" );
-scopeId?: string;
-}[];
-failed_login_attempts: number;
-locked_until?: Date;
-};
-};
-;
-
-
     export type module_configInp = {
       
       
@@ -41236,6 +41309,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 };
 };
@@ -42018,6 +42100,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -44567,6 +44658,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 national_card?: {
 _id?: (0 | 1 );
@@ -44638,6 +44763,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 organizations?: {
@@ -45049,6 +45208,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 police_station?: {
@@ -45670,6 +45863,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 headedUnits?: {
@@ -46773,6 +46975,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 national_card?: {
 _id?: (0 | 1 );
@@ -46844,6 +47080,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 organizations?: {
@@ -47255,6 +47525,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 police_station?: {
@@ -47876,6 +48180,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 headedUnits?: {
@@ -52911,6 +53224,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 national_card?: {
 _id?: (0 | 1 );
@@ -52982,6 +53329,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 organizations?: {
@@ -53393,6 +53774,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 police_station?: {
@@ -54014,6 +54429,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 headedUnits?: {
@@ -56534,6 +56958,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 registrer?: {
@@ -75463,6 +75921,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 };
 };
@@ -76673,6 +77140,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -79543,6 +80019,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 };
 };
@@ -80455,6 +80940,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -84106,6 +84600,214 @@ category?: (0 | 1 );
 sequence?: (0 | 1 );
 };
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+organization?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+enName?: (0 | 1 );
+description?: (0 | 1 );
+is_active?: (0 | 1 );
+module_flags?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+officer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+patrol_unit?: {
+_id?: (0 | 1 );
+code?: (0 | 1 );
+name?: (0 | 1 );
+is_active?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+vehicle?: {
+_id?: (0 | 1 );
+plaque_no?: (0 | 1 );
+title?: (0 | 1 );
+is_active?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+police_station?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+location?: (0 | 1 );
+area?: (0 | 1 );
+code?: (0 | 1 );
+is_active?: (0 | 1 );
+military_rank?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+province?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+area?: (0 | 1 );
+center_location?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+city?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+english_name?: (0 | 1 );
+population?: (0 | 1 );
+area?: (0 | 1 );
+center_location?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+road?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+origin?: (0 | 1 );
+destination?: (0 | 1 );
+total_length_meters?: (0 | 1 );
+lanes?: (0 | 1 );
+};
+traffic_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+population?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+city_zone?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+area?: (0 | 1 );
+population?: (0 | 1 );
+createdAt?: (0 | 1 );
+updatedAt?: (0 | 1 );
+};
+position?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+incident_severity?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+road_defects?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+equipment_damages?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+light_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+air_statuses?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+road_surface_conditions?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+road_situation?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+shoulder_status?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+seed?: (0 | 1 );
+};
+reviewer?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
+};
 };
 };
 
@@ -84186,6 +84888,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -84273,6 +85009,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 };
 
@@ -84351,6 +85121,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -92073,6 +92877,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 roads?: {
 _id?: (0 | 1 );
@@ -93127,6 +93940,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 roads?: {
@@ -101809,6 +102631,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 };
 };
@@ -102718,6 +103549,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -107578,6 +108418,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 };
 };
@@ -110054,6 +110928,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -113139,6 +114047,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 };
 };
@@ -115531,6 +116473,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -117925,6 +118901,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 };
 };
@@ -120317,6 +121327,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -122988,6 +124032,40 @@ review_history?: (0 | 1 );
 dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -127581,6 +128659,40 @@ dynamic_answers?: (0 | 1 );
 process_version?: (0 | 1 );
 submitted_from?: (0 | 1 );
 };
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
 };
 };
 total: (1 );
@@ -129079,6 +130191,7 @@ roadDefectsIds?: string[];
 equipmentDamagesIds?: string[];
 airStatusesIds?: string[];
 roadSurfaceConditionsIds?: string[];
+attachmentsIds?: string[];
 submitted_from: {
 app_version: string;
 platform: ("ios" | "android" );
@@ -129284,6 +130397,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 };
 
@@ -129351,6 +130473,7 @@ roadDefectsIds?: string[];
 equipmentDamagesIds?: string[];
 airStatusesIds?: string[];
 roadSurfaceConditionsIds?: string[];
+attachmentsIds?: string[];
 };
 get: {
 _id?: (0 | 1 );
@@ -129551,6 +130674,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -129759,6 +130891,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -129973,6 +131114,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -130209,6 +131359,15 @@ roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+};
 };
 };
 
@@ -130416,6 +131575,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -132317,6 +133485,110 @@ createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+uploader?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+accident?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+report_id?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+reported_at?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+police_present?: (0 | 1 );
+police_expert_name?: (0 | 1 );
+police_arrival_time?: (0 | 1 );
+officer_cause_description?: (0 | 1 );
+incident_type?: (0 | 1 );
+incident_payload?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+people_dtos?: (0 | 1 );
+facility_damage_dtos?: (0 | 1 );
+review_history?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
+};
 };
 };
 
@@ -132526,6 +133798,15 @@ patrol_permissions?: (0 | 1 );
 roles?: (0 | 1 );
 failed_login_attempts?: (0 | 1 );
 locked_until?: (0 | 1 );
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
 };
 };
 };
@@ -134423,6 +135704,110 @@ recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
+};
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+uploader?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+accident?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+report_id?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+reported_at?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+police_present?: (0 | 1 );
+police_expert_name?: (0 | 1 );
+police_arrival_time?: (0 | 1 );
+officer_cause_description?: (0 | 1 );
+incident_type?: (0 | 1 );
+incident_payload?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+people_dtos?: (0 | 1 );
+facility_damage_dtos?: (0 | 1 );
+review_history?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };
@@ -136328,6 +137713,110 @@ createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+uploader?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+accident?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+report_id?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+reported_at?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+police_present?: (0 | 1 );
+police_expert_name?: (0 | 1 );
+police_arrival_time?: (0 | 1 );
+officer_cause_description?: (0 | 1 );
+incident_type?: (0 | 1 );
+incident_payload?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+people_dtos?: (0 | 1 );
+facility_damage_dtos?: (0 | 1 );
+review_history?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
+};
 };
 };
 
@@ -138231,6 +139720,110 @@ createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
 };
 };
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+uploader?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+accident?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+report_id?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+reported_at?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+police_present?: (0 | 1 );
+police_expert_name?: (0 | 1 );
+police_arrival_time?: (0 | 1 );
+officer_cause_description?: (0 | 1 );
+incident_type?: (0 | 1 );
+incident_payload?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+people_dtos?: (0 | 1 );
+facility_damage_dtos?: (0 | 1 );
+review_history?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+};
+};
 };
 };
 
@@ -140132,6 +141725,110 @@ recorded_at?: (0 | 1 );
 resolved_at?: (0 | 1 );
 createdAt?: (0 | 1 );
 updatedAt?: (0 | 1 );
+};
+};
+attachments?: {
+_id?: (0 | 1 );
+name?: (0 | 1 );
+type?: (0 | 1 );
+size?: (0 | 1 );
+path?: (0 | 1 );
+category?: (0 | 1 );
+sequence?: (0 | 1 );
+uploader?: {
+_id?: (0 | 1 );
+first_name?: (0 | 1 );
+last_name?: (0 | 1 );
+father_name?: (0 | 1 );
+mobile?: (0 | 1 );
+gender?: (0 | 1 );
+email?: (0 | 1 );
+national_number?: (0 | 1 );
+address?: (0 | 1 );
+level?: (0 | 1 );
+is_verified?: (0 | 1 );
+personnel_code?: (0 | 1 );
+is_active?: (0 | 1 );
+patrol_permissions?: (0 | 1 );
+roles?: (0 | 1 );
+failed_login_attempts?: (0 | 1 );
+locked_until?: (0 | 1 );
+};
+accident?: {
+_id?: (0 | 1 );
+seri?: (0 | 1 );
+serial?: (0 | 1 );
+location?: (0 | 1 );
+date_of_accident?: (0 | 1 );
+dead_count?: (0 | 1 );
+has_witness?: (0 | 1 );
+news_number?: (0 | 1 );
+officer?: (0 | 1 );
+injured_count?: (0 | 1 );
+completion_date?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+report_id?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+reported_at?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
+police_present?: (0 | 1 );
+police_expert_name?: (0 | 1 );
+police_arrival_time?: (0 | 1 );
+officer_cause_description?: (0 | 1 );
+incident_type?: (0 | 1 );
+incident_payload?: (0 | 1 );
+vehicle_dtos?: (0 | 1 );
+pedestrian_dtos?: (0 | 1 );
+people_dtos?: (0 | 1 );
+facility_damage_dtos?: (0 | 1 );
+review_history?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+process_version?: (0 | 1 );
+submitted_from?: (0 | 1 );
+};
+incident_report?: {
+_id?: (0 | 1 );
+form_definition_id?: (0 | 1 );
+submitted_from?: (0 | 1 );
+form_title?: (0 | 1 );
+form_icon?: (0 | 1 );
+form_version?: (0 | 1 );
+client_report_uuid?: (0 | 1 );
+serial?: (0 | 1 );
+report_id?: (0 | 1 );
+reported_at?: (0 | 1 );
+occurred_at?: (0 | 1 );
+sync_status?: (0 | 1 );
+rejection_reason?: (0 | 1 );
+synced_at?: (0 | 1 );
+review_status?: (0 | 1 );
+review_reason?: (0 | 1 );
+reviewed_at?: (0 | 1 );
+completed_at?: (0 | 1 );
+review_history?: (0 | 1 );
+description?: (0 | 1 );
+is_hazard?: (0 | 1 );
+needs_repair?: (0 | 1 );
+follow_up_required?: (0 | 1 );
+temporary_action?: (0 | 1 );
+form_answers?: (0 | 1 );
+dynamic_answers?: (0 | 1 );
+location?: (0 | 1 );
+gps_coords?: (0 | 1 );
+gps_accuracy?: (0 | 1 );
+travel_direction?: (0 | 1 );
+kilometer?: (0 | 1 );
+meter?: (0 | 1 );
 };
 };
 };

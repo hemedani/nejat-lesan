@@ -10,6 +10,13 @@ import { ObjectId } from "@deps";
  *
  * The key naming follows the engine's `relationSetKey`, so a form question bound to
  * `road_defects` with `multi: true` produces exactly `roadDefectsIds`.
+ *
+ * `attachmentsIds` is the one deliberate exception. `attachments` is already plural,
+ * so the mechanical derivation would be `attachmentIds` — but `accident` has always
+ * spelled it `attachmentsIds`, and both write acts consume one draft's payload. Two
+ * spellings would mean a client has to know which model it is filing against to
+ * name the same key correctly, so the plural-of-the-plural wins and the mechanical
+ * rule bends around it. Only the form-bound relations above need to match the engine.
  */
 
 /** `set` key → single relation name. */
@@ -36,6 +43,13 @@ export const MULTI_RELATION_KEYS = {
 	equipmentDamagesIds: "equipment_damages",
 	airStatusesIds: "air_statuses",
 	roadSurfaceConditionsIds: "road_surface_conditions",
+	/**
+	 * Not form-bindable, unlike the four above — the app fills it from the files a
+	 * form's `file` fields uploaded, so there is no question for it to answer.
+	 * `backend_owned_relations` in the model keeps it out of
+	 * `incident_report_bindable_paths`.
+	 */
+	attachmentsIds: "attachments",
 } as const;
 
 export const RELATION_SET_KEYS = [

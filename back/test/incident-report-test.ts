@@ -23,6 +23,7 @@ import { assert as structAssert } from "@deps";
 // NOTE: back/mod.ts must be evaluated before @lib (circular-init ordering).
 import {
 	coreApp,
+	file,
 	form_definition,
 	getAtcsWithServices,
 	incident_report,
@@ -1166,6 +1167,297 @@ Deno.test("provenance — a correction does not restamp the original build", asy
 		rejection.includes("submitted_from"),
 		`expected update to refuse provenance, got: ${rejection}`,
 	);
+});
+
+// ---------------------------------------------------------------------------
+// Evidence: files attached to a non-accident report
+// ---------------------------------------------------------------------------
+
+const FILE_GET: Document = { _id: 1, name: 1, type: 1, size: 1, path: 1 };
+
+const ATTACHMENT_PROJECTION: Document = {
+	_id: 1,
+	attachments: { _id: 1, name: 1, type: 1, size: 1, path: 1 },
+};
+
+type AttachmentDoc = {
+	_id: ObjectId;
+	name?: string;
+	type?: string;
+	size?: number;
+	path?: string;
+};
+
+/** Upload through the multipart act, the way a form's `file` field does. */
+const uploadAsset = async (
+	as: ObjectId,
+	name: string,
+) => await runAct("file", "uploadFile", {
+	set: {
+		formData: (() => {
+			const data = new FormData();
+			data.set(
+				"file",
+				new File([new Uint8Array([1, 2, 3, 4])], name, {
+					type: "image/png",
+				}),
+			);
+			return data;
+		})(),
+		type: "image",
+	},
+	get: FILE_GET,
+}, as) as AttachmentDoc;
+
+const attachmentsOf = async (reportId: ObjectId) =>
+	await incident_report.findOne({
+		filters: { _id: reportId },
+		projection: ATTACHMENT_PROJECTION,
+	}) as unknown as { _id: ObjectId; attachments?: AttachmentDoc[] };
+
+/**
+ * Hand the report back, so the officer is allowed to correct it.
+ *
+ * Not a formality: `add` records the arrival as `synced`, and `update` freezes a
+ * delivered report for its filer. A correction is only ever the second half of a
+ * `return`, so the tests have to walk the same path a real one does — and the
+ * review state machine only reaches `returned` through `under_review`.
+ */
+const returnReport = async (reportId: ObjectId) => {
+	const id = reportId.toString();
+	await runAct("incident_report", "reviewReport", {
+		set: { reportId: id, action: "start_review" },
+		get: { _id: 1 },
+	}, managerId);
+	return await runAct("incident_report", "reviewReport", {
+		set: {
+			reportId: id,
+			action: "return",
+			reason: "نیاز به افزودن تصویر",
+		},
+		get: { _id: 1, review_status: 1 },
+	}, managerId);
+};
+
+Deno.test("attachments — a photo uploaded then attached lands on the report", async () => {
+	const { officer, form } = await provisionFiler("پیوست");
+
+	const photo = await uploadAsset(officer, "breakdown.png");
+	assertExists(
+		photo?._id,
+		"file.uploadFile should return the stored document",
+	);
+	assertEquals(photo.type, "image/png");
+	// Recorded by the writing act, not inferred by the reader.
+	assert(
+		typeof photo.path === "string" && photo.path.endsWith("breakdown.png"),
+		`expected a recorded uploads-relative path, got: ${photo.path}`,
+	);
+
+	const created = await runAct("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-att-1`,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentsIds: [photo._id.toString()],
+		},
+		get: { _id: 1 },
+	}, officer) as { _id: ObjectId };
+
+	const stored = await attachmentsOf(created._id);
+	const linked = (stored.attachments ?? []).find(
+		(a) => a._id.toString() === photo._id.toString(),
+	);
+	assertExists(
+		linked,
+		"the uploaded file should be linked in incident_report.attachments",
+	);
+	assertEquals(linked.name, photo.name);
+	assertEquals(linked.type, photo.type);
+	assertEquals(linked.size, photo.size);
+	assertEquals(
+		linked.path,
+		photo.path,
+		"the gallery needs path to fetch the bytes",
+	);
+});
+
+Deno.test("attachments — a correction appends instead of replacing", async () => {
+	const { officer, form } = await provisionFiler("اصلاح پیوست");
+	const first = await uploadAsset(officer, "first.png");
+	const second = await uploadAsset(officer, "second.png");
+
+	const created = await runAct("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-att-2`,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentsIds: [first._id.toString()],
+		},
+		get: { _id: 1 },
+	}, officer) as { _id: ObjectId };
+
+	await returnReport(created._id);
+
+	await runAct("incident_report", "update", {
+		set: {
+			_id: created._id.toString(),
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-att-2`,
+			attachmentsIds: [second._id.toString()],
+		},
+		get: { _id: 1 },
+	}, officer);
+
+	const stored = await attachmentsOf(created._id);
+	const ids = (stored.attachments ?? []).map((a) => a._id.toString());
+	assert(
+		ids.includes(second._id.toString()),
+		"the newly attached photo should be linked",
+	);
+	assert(
+		ids.includes(first._id.toString()),
+		"adding a photo must not drop what the original submission linked",
+	);
+});
+
+Deno.test("attachments — an empty list is omitted rather than nulling the relation", async () => {
+	const { officer, form } = await provisionFiler("خالی");
+	const photo = await uploadAsset(officer, "kept.png");
+
+	const created = await runAct("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-att-3`,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentsIds: [photo._id.toString()],
+		},
+		get: { _id: 1 },
+	}, officer) as { _id: ObjectId };
+
+	await returnReport(created._id);
+
+	await runAct("incident_report", "update", {
+		set: {
+			_id: created._id.toString(),
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-att-3`,
+			description: "توضیح تازه",
+			attachmentsIds: [],
+		},
+		get: { _id: 1 },
+	}, officer);
+
+	const stored = await attachmentsOf(created._id);
+	assertEquals(
+		(stored.attachments ?? []).length,
+		1,
+		"an empty array must not wipe the existing attachment",
+	);
+});
+
+Deno.test("attachments — the set schema is strict about the key", async () => {
+	const { officer, form } = await provisionFiler("اعتبارسنجی");
+	const photo = await uploadAsset(officer, "strict.png");
+
+	const accepted = validateRejection("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentsIds: [photo._id.toString()],
+			submitted_from: { app_version: "1.4.2", platform: "ios" },
+		},
+		get: { _id: 1 },
+	});
+	assertEquals(
+		accepted,
+		"",
+		`attachmentsIds should validate on add, got: ${accepted}`,
+	);
+
+	// The same strictness that made the key unsendable before it was declared: an
+	// undeclared key is a `{ type: "never" }` failure, not a silently dropped field.
+	const rejected = validateRejection("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentIds: [photo._id.toString()],
+			submitted_from: { app_version: "1.4.2", platform: "ios" },
+		},
+		get: { _id: 1 },
+	});
+	assert(
+		rejected.includes("attachmentIds"),
+		`expected the misspelled key to be refused, got: ${rejected}`,
+	);
+
+	// `update` shares the same set schema, so the line added there covers both acts.
+	const acceptedOnUpdate = validateRejection("incident_report", "update", {
+		set: {
+			_id: "507f1f77bcf86cd799439011",
+			form_definition_id: form._id.toString(),
+			attachmentsIds: [photo._id.toString()],
+		},
+		get: { _id: 1 },
+	});
+	assertEquals(
+		acceptedOnUpdate,
+		"",
+		`attachmentsIds should validate on update, got: ${acceptedOnUpdate}`,
+	);
+});
+
+Deno.test("attachments — a file already on a report is not reaped as an orphan", async () => {
+	const { officer, form } = await provisionFiler("یتیم");
+	const photo = await uploadAsset(officer, "kept-alive.png");
+	// The sweep's own clock, so the test does not have to wait seven days.
+	const longAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+	await file.findOneAndUpdate({
+		filter: { _id: photo._id },
+		update: { $set: { createdAt: longAgo } },
+		projection: { _id: 1 },
+	});
+
+	const created = await runAct("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-att-4`,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentsIds: [photo._id.toString()],
+		},
+		get: { _id: 1 },
+	}, officer) as { _id: ObjectId };
+
+	const swept = await runAct("file", "removeOrphans", {
+		set: { olderThanDays: 7 },
+		get: {},
+	}, managerId) as { removed: number };
+
+	assertEquals(
+		await file.countDocument({ filter: { _id: photo._id } }),
+		1,
+		"an attached file must survive the sweep however old it is",
+	);
+
+	// And the one it is compared against: a genuinely unreferenced upload does go.
+	const loose = await uploadAsset(officer, "loose.png");
+	await file.findOneAndUpdate({
+		filter: { _id: loose._id },
+		update: { $set: { createdAt: longAgo } },
+		projection: { _id: 1 },
+	});
+	const afterSweep = await runAct("file", "removeOrphans", {
+		set: { olderThanDays: 7 },
+		get: {},
+	}, managerId) as { removed: number };
+
+	assertEquals(
+		await file.countDocument({ filter: { _id: loose._id } }),
+		0,
+		"an unreferenced upload should still be reaped",
+	);
+	assert(afterSweep.removed >= 1, "the sweep should report what it removed");
+	assertExists(created, "the report itself must survive");
 });
 
 Deno.test("cleanup test database", async () => {

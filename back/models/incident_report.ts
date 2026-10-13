@@ -207,8 +207,11 @@ export const incident_report_pure = {
 /**
  * Relations the backend fills in itself, so a form question may not bind to them:
  * the officer has no way to answer them and a bound value would be overwritten.
+ *
+ * `attachments` is here for the same reason, from the other direction: the app fills
+ * it from the files a form's `file` fields uploaded, so no question may write to it.
  */
-const backend_owned_relations = new Set(["reviewer"]);
+const backend_owned_relations = new Set(["reviewer", "attachments"]);
 
 /**
  * Reverse key on the target model.
@@ -369,7 +372,33 @@ export const incident_report_relations = {
 		excludes: user_excludes,
 		relatedRelations: {},
 	},
+
+	// --- Evidence --------------------------------------------------------------
+	// Mirrors `accident.attachments` exactly, including the empty
+	// `relatedRelations`: `file.incident_report` owns the back-reference, the same
+	// way `file.accident` owns `accident.attachments`.
+	//
+	// The bytes upload fine either way — `file.uploadFile` creates a valid `file`
+	// document — so without this relation an officer's photo on a non-accident
+	// report was an orphan: in no relation, in no gallery, and unreachable from the
+	// report it was evidence for. `file.removeOrphans` then reaped the row.
+	//
+	// Known gap, shared with `accident` and deliberate: neither write act checks that
+	// a submitted id was uploaded by the caller, so any officer who learns another
+	// officer's file id could attach it. `file.uploadFile` itself has no ownership,
+	// size or MIME validation either. Closed here would mean the two models behave
+	// differently for identical payloads, so both stay as they are.
+	attachments: {
+		schemaName: "file",
+		type: "multiple" as RelationDataType,
+		optional: true,
+		excludes: ["createdAt", "updatedAt"],
+		relatedRelations: {},
+	},
 };
+
+/** Kept in step with `accident_excludes`, which `file.incident_report` builds on. */
+export const incident_report_excludes = ["createdAt", "updatedAt"];
 
 export const incident_report_bindable_paths = Object.keys(
 	incident_report_relations,
