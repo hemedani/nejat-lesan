@@ -1,3 +1,5 @@
+import { File } from 'expo-file-system';
+
 import type { BackendRequest } from './backend-types';
 import type { ApiRequestOptions } from './client';
 import { ApiError } from './errors';
@@ -26,6 +28,52 @@ import type { Session } from '@/domain/types';
  * the transport for the accident wizard's fixed media slots; a dynamic form's
  * `file` field can carry photos, videos and documents, so it needs this one.
  */
+
+/**
+ * The shape Expo's multipart encoder will accept for the file part.
+ *
+ * Expo SDK 57 replaces `fetch` with the winter runtime, whose
+ * `convertFormDataAsync` reads each part as one of exactly three things: a
+ * string, a real `Blob`, or an object exposing a `bytes()` method. Anything else
+ * is rejected with `Unsupported FormDataPart implementation`.
+ *
+ * The long-standing React Native idiom — `formData.append('file', { uri, name,
+ * type })` — is none of them. A plain object is not `instanceof Blob` and has no
+ * `bytes()`, so the encoder throws *before any byte leaves the device*. Because
+ * `fetch` throws synchronously, the error reaches the officer as the generic
+ * transport failure rather than as anything about the file.
+ *
+ * `expo-file-system`'s `File` does carry `bytes()`, but it exposes neither `name`
+ * nor `type`, and the encoder reads those two properties off the part to write
+ * the `filename=` and `Content-Type` headers. A bare `File` therefore uploads
+ * anonymously, and the server stores whatever it was given — an `<ObjectId>-`
+ * prefix with no extension and an `application/octet-stream` type.
+ *
+ * So the part is a thin adapter: the two header fields plus a `bytes()` that reads
+ * the local file at send time. Reading lazily rather than up front is what keeps a
+ * captured video off the heap while the officer is still filling in the form.
+ */
+type MultipartFilePart = {
+  name: string;
+  type: string;
+  bytes: () => Promise<Uint8Array>;
+};
+
+function filePartFor(candidate: UploadCandidate): MultipartFilePart {
+  const file = new File(candidate.uri);
+  if (!file.exists) {
+    // Checked here rather than left to the encoder: the read happens deep inside
+    // `fetch`, where a missing file is indistinguishable from a network fault.
+    // The media row can outlive its bytes when the file is cleared from outside
+    // the app, and retrying that one is pointless — it has to be re-picked.
+    throw new ApiError('Local file is missing.', 'missing_file');
+  }
+  return {
+    name: candidate.name,
+    type: candidate.mimeType || 'application/octet-stream',
+    bytes: () => file.bytes(),
+  };
+}
 
 /**
  * A local file ready to upload, addressed by a `file://` URI.
@@ -106,14 +154,11 @@ export async function uploadFile(
     };
 
     const formData = new FormData();
-    // React Native's FormData accepts a `{ uri, name, type }` descriptor and
-    // streams the bytes from disk; the DOM `Blob` type does not describe it, so
-    // the cast is the documented RN idiom.
-    formData.append('file', {
-      uri: candidate.uri,
-      name: candidate.name,
-      type: candidate.mimeType || 'application/octet-stream',
-    } as unknown as Blob);
+    // The framework reads the act envelope from this part and merges the parsed
+    // FormData into `details.set`. Neither part may be appended as a bare
+    // `{ uri, name, type }` — see `filePartFor` for why, and for what Expo's
+    // encoder does with anything else.
+    formData.append('file', filePartFor(candidate) as unknown as Blob);
     formData.append('lesan-body', JSON.stringify(lesanBody));
 
     let response: Response;
@@ -136,7 +181,14 @@ export async function uploadFile(
     try {
       payload = await response.json();
     } catch (error) {
-      throw new ApiError('API response was incomplete.', 'invalid_response', response.status, error);
+      // The address answered with something that is not the Lesan backend — an
+      // HTML error page from the web client or a proxy is the usual cause. That
+      // is a server-address mistake, not a bad file, so it gets its own code
+      // instead of being filed as an unrecognizable response.
+      throw new ApiError('API response was not JSON.', 'wrong_server', response.status, {
+        status: response.status,
+        reason: error instanceof Error ? `${error.name}: ${error.message}` : String(error),
+      });
     }
 
     if (!payload || typeof payload !== 'object' || !('success' in payload)) {
@@ -156,9 +208,47 @@ export async function uploadFile(
       throw new ApiError('Upload acknowledgement had no file id.', 'invalid_response', response.status);
     }
     return envelope.body;
+  } catch (error) {
+    logDevelopmentFailure(error);
+    throw error;
   } finally {
     clearTimeout(timeout);
   }
+}
+
+/**
+ * Upload failures are invisible without this.
+ *
+ * The JSON client logs its failures through `client.ts`; this transport is a
+ * separate `fetch` and had no equivalent, so a rejected upload reached the
+ * officer as a bare "unexpected error" with nothing in the Metro terminal to
+ * explain it. Status, code and the captured reason are enough to tell a wrong
+ * server address from a dead network from a rejected file — and no request body,
+ * token or file content is printed.
+ */
+let lastDevWarning: string | null = null;
+
+function logDevelopmentFailure(error: unknown): void {
+  // `__DEV__` only exists under React Native. Reading it unguarded would throw a
+  // ReferenceError from inside the catch and replace the real upload error with
+  // something meaningless — an error reporter must never mask what it reports.
+  if (typeof __DEV__ === 'undefined' || !__DEV__) {
+    return;
+  }
+  const fingerprint = error instanceof Error ? `${error.name}:${error.message}` : String(error);
+  if (fingerprint === lastDevWarning) {
+    return;
+  }
+  lastDevWarning = fingerprint;
+  if (error instanceof ApiError) {
+    console.warn('[LESAN UPLOAD]', {
+      code: error.code,
+      status: error.status,
+      details: error.details,
+    });
+    return;
+  }
+  console.warn('[LESAN UPLOAD] unexpected failure', error);
 }
 
 function classifyTransportFailure(error: unknown, timedOut: boolean): ApiError {

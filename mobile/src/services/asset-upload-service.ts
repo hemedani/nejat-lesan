@@ -87,7 +87,7 @@ function serverFileId(record: MediaRecord): string | undefined {
  * server writes exactly what it is given — an extensionless upload cannot be
  * rendered by the front panel.
  */
-function fileNameOf(record: MediaRecord): string {
+export function fileNameOf(record: MediaRecord): string {
   const stored = (record.metadata as Record<string, unknown> | undefined)?.['file_name'];
   const base = typeof stored === 'string' && stored.length > 0 ? stored : record.id;
   return ensureExtension(base, record.mime_type);

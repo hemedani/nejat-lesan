@@ -2,7 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { AnswerValue } from '@forms';
+import { useRequiredSession } from '@/auth/use-required-session';
+import {
+  ASSET_UPLOAD_LABEL,
+  uploadErrorOf,
+  uploadStateOf,
+} from '@/domain/asset-upload-state';
 import { attachAsset, listAssetsFor, removeAsset, type AssetSource } from '@/services/asset-service';
+import { uploadAssetNow } from '@/services/asset-upload-now';
 import type { MediaRecord } from '@/storage/local-database';
 import { Icon } from '@/components/ui/icon';
 import { IconButton } from '@/components/ui/icon-button';
@@ -23,6 +30,11 @@ import { AppTheme, Estedad, Radius } from '@/constants/theme';
  * before the answer is updated, so a kill in between leaves an asset the answer
  * does not mention — reconciling from the table recovers it instead of losing
  * the officer's evidence.
+ *
+ * Each row also carries its own upload state, so the officer can see whether the
+ * bytes reached the centre and retry the ones that did not, without submitting
+ * the whole report again. Uploading here is a convenience over the sync worker,
+ * never a requirement: the bytes are already safe on the device either way.
  */
 
 export type FileFieldProps = {
@@ -89,7 +101,10 @@ export function FileField({ clientReportUuid, owner, value, onChange, hasError }
   const [items, setItems] = useState<MediaRecord[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [previewUri, setPreviewUri] = useState<string | null>(null);
+  const session = useRequiredSession();
 
   const reload = useCallback(
     () =>
@@ -142,6 +157,28 @@ export function FileField({ clientReportUuid, owner, value, onChange, hasError }
     [clientReportUuid, owner, onChange],
   );
 
+  /**
+   * Upload one row and report the outcome where the officer is looking.
+   *
+   * The reload after the attempt is what makes the result visible: the state is
+   * persisted in the media table, and the row is re-read from there rather than
+   * patched in local state, so a status shown here is the same one the sync
+   * worker will act on.
+   */
+  const handleUpload = useCallback(
+    async (record: MediaRecord) => {
+      if (!session) return;
+      setUploadingId(record.id);
+      setNotice(null);
+      const result = await uploadAssetNow(session, record);
+      const records = await listAssetsFor(clientReportUuid, owner).catch(() => null);
+      if (records) setItems(records);
+      setUploadingId(null);
+      setNotice(result.message);
+    },
+    [session, clientReportUuid, owner],
+  );
+
   const handleRemove = useCallback(
     (record: MediaRecord) => {
       Alert.alert('حذف فایل', 'این فایل از پیش‌نویس حذف می‌شود.', [
@@ -185,6 +222,7 @@ export function FileField({ clientReportUuid, owner, value, onChange, hasError }
 
       {busy ? <ActivityIndicator color={AppTheme.colors.primary} size="small" /> : null}
       {error ? <Text style={styles.error}>{error}</Text> : null}
+      {notice ? <Text style={styles.notice}>{notice}</Text> : null}
 
       {items === null ? null : !hasItems ? (
         <Text style={styles.hint}>فایلی پیوست نشده است. عکس، فیلم یا سند (PDF) را می‌توانید اضافه کنید.</Text>
@@ -193,6 +231,8 @@ export function FileField({ clientReportUuid, owner, value, onChange, hasError }
           {items.map((record) => {
             const kind = kindOf(record);
             const size = formatSize(record.size_bytes);
+            const state = uploadStateOf(record);
+            const uploading = uploadingId === record.id;
             return (
               <View key={record.id} style={styles.item}>
                 {kind === 'image' ? (
@@ -222,16 +262,45 @@ export function FileField({ clientReportUuid, owner, value, onChange, hasError }
                     {KIND_LABEL[kind]}
                     {size ? ` • ${size}` : ''}
                   </Text>
+                  <View style={styles.statusRow}>
+                    {uploading ? (
+                      <ActivityIndicator color={AppTheme.colors.primary} size="small" />
+                    ) : null}
+                    <Text
+                      style={[
+                        styles.statusText,
+                        state === 'uploaded' && styles.statusOk,
+                        state === 'failed' && styles.statusBad,
+                      ]}
+                    >
+                      {uploading ? ASSET_UPLOAD_LABEL.uploading : ASSET_UPLOAD_LABEL[state]}
+                    </Text>
+                  </View>
+                  {state === 'failed' ? <Text style={styles.itemError}>{uploadErrorOf(record)}</Text> : null}
                 </View>
 
-                <IconButton
-                  accessibilityLabel="حذف فایل"
-                  disabled={busy}
-                  icon="trash"
-                  onPress={() => handleRemove(record)}
-                  size={38}
-                  tone="danger"
-                />
+                <View style={styles.itemActions}>
+                  {/* Once the server holds the bytes there is nothing to press;
+                      the button is the retry, not a decoration. */}
+                  {state !== 'uploaded' ? (
+                    <IconButton
+                      accessibilityLabel="ارسال فایل"
+                      disabled={!session || uploading}
+                      icon="cloud-upload-outline"
+                      onPress={() => void handleUpload(record)}
+                      size={38}
+                      tone="primary"
+                    />
+                  ) : null}
+                  <IconButton
+                    accessibilityLabel="حذف فایل"
+                    disabled={busy || uploading}
+                    icon="trash"
+                    onPress={() => handleRemove(record)}
+                    size={38}
+                    tone="danger"
+                  />
+                </View>
               </View>
             );
           })}
@@ -294,6 +363,13 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: 'right',
   },
+  notice: {
+    color: AppTheme.colors.primaryStrong,
+    fontFamily: Estedad.regular,
+    fontSize: 12,
+    lineHeight: 19,
+    textAlign: 'right',
+  },
   itemList: { gap: 8 },
   item: {
     alignItems: 'center',
@@ -333,6 +409,33 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 17,
     textAlign: 'right',
+  },
+  statusRow: {
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    gap: 5,
+    marginTop: 1,
+  },
+  statusText: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.regular,
+    fontSize: 11,
+    lineHeight: 17,
+    textAlign: 'right',
+  },
+  statusOk: { color: AppTheme.status.success.text },
+  statusBad: { color: AppTheme.status.danger.text },
+  itemError: {
+    color: AppTheme.status.danger.text,
+    fontFamily: Estedad.regular,
+    fontSize: 11,
+    lineHeight: 17,
+    textAlign: 'right',
+  },
+  itemActions: {
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    gap: 6,
   },
   previewBackdrop: {
     alignItems: 'center',
