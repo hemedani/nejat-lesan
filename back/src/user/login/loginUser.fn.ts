@@ -5,6 +5,7 @@ import {
 	getEnabledModuleKeys,
 	getPrimaryOrgModules,
 } from "../../app_modules/moduleConfig.ts";
+import { getPrimaryOrganization } from "../primaryOrganization.ts";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_MS = 5 * 60 * 1000;
@@ -213,6 +214,7 @@ export const loginUserFn: ActFn = async (body) => {
 			permissions: authUser.patrol_permissions || {},
 			modules: getEnabledModuleKeys(),
 			orgModules: await getPrimaryOrgModules(authUser),
+			primaryOrganization: await getPrimaryOrganization(authUser),
 		};
 	}
 
@@ -224,6 +226,7 @@ export const loginUserFn: ActFn = async (body) => {
 		user: await clientProjectedUser(email, get),
 		modules: getEnabledModuleKeys(),
 		orgModules: await getPrimaryOrgModules(authUser),
+		primaryOrganization: await getPrimaryOrganization(authUser),
 	};
 };
 

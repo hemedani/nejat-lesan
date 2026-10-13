@@ -5,6 +5,7 @@ import {
 	getEnabledModuleKeys,
 	getPrimaryOrgModules,
 } from "../../app_modules/moduleConfig.ts";
+import { getPrimaryOrganization } from "../primaryOrganization.ts";
 
 export const getMeFn: ActFn = async (body) => {
 	const context: MyContext = coreApp.contextFns
@@ -60,5 +61,6 @@ export const getMeFn: ActFn = async (body) => {
 		activeDevicesCount,
 		modules: getEnabledModuleKeys(),
 		orgModules: await getPrimaryOrgModules(context.user),
+		primaryOrganization: await getPrimaryOrganization(context.user),
 	};
 };
