@@ -23,27 +23,21 @@ export const updateFn: ActFn = async (body) => {
 		projection: { _id: 1 },
 	});
 
-	if (headId !== undefined) {
+	// رابطه‌ی تکی: مقدار باید یک ObjectId تنها باشد، نه آرایه.
+	// `handleSingleRelation` با `{_id: _ids}` فیلتر می‌کند، پس آرایه هرگز
+	// نمی‌خواند و «can not find this relation» می‌دهد — یعنی `head` و `logo`
+	// از هیچ کلاینتی قابل تعیین نبودند. راه‌حل: مقدارِ خالی یعنی «رابطه را
+	// پاک کن» و در آن حالت کلید `head` اصلاً در `relations` نمی‌آید تا
+	// `replace: true` تنها رابطه‌ی موجود را بردارد.
+	for (const [rel, value] of [["head", headId], ["logo", logoId]] as const) {
+		if (value === undefined) {
+			continue;
+		}
 		await organization.addRelation({
 			filters: { _id: new ObjectId(_id as string) },
-			relations: {
-				head: {
-					_ids: headId ? [new ObjectId(headId as string)] : [],
-				},
-			},
-			replace: true,
-			projection: { _id: 1 },
-		});
-	}
-
-	if (logoId !== undefined) {
-		await organization.addRelation({
-			filters: { _id: new ObjectId(_id as string) },
-			relations: {
-				logo: {
-					_ids: logoId ? [new ObjectId(logoId as string)] : [],
-				},
-			},
+			relations: value
+				? { [rel]: { _ids: new ObjectId(value as string) } }
+				: {},
 			replace: true,
 			projection: { _id: 1 },
 		});

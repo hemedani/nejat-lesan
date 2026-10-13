@@ -561,6 +561,44 @@ Deno.test("getOrgChart as Manager without orgId is rejected", async () => {
 	);
 });
 
+Deno.test("organization.update sets and replaces the head relation", async () => {
+	// Regression: `_ids` for a *single* relation must be a bare ObjectId.
+	// `handleSingleRelation` filters `{_id: _ids}` directly, so the old
+	// `[new ObjectId(...)]` array matched nothing and threw
+	// "can not find this relation : head" — meaning the head could never be
+	// assigned or changed from any client.
+	const head1 = await insertUser("Enterprise");
+	const head2 = await insertUser("Enterprise");
+
+	const assigned = await runAct(
+		"organization",
+		"update",
+		{
+			set: { _id: orgA.toString(), headId: head1.toString() },
+			get: ORG_GET,
+		},
+		managerId,
+	);
+	assertEquals(
+		(assigned.head as { _id: ObjectId })._id.toString(),
+		head1.toString(),
+	);
+
+	const replaced = await runAct(
+		"organization",
+		"update",
+		{
+			set: { _id: orgA.toString(), headId: head2.toString() },
+			get: ORG_GET,
+		},
+		managerId,
+	);
+	assertEquals(
+		(replaced.head as { _id: ObjectId })._id.toString(),
+		head2.toString(),
+	);
+});
+
 // ---------------------------------------------------------------------------
 // 4. Deletion guards
 // ---------------------------------------------------------------------------
