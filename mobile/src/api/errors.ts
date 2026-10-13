@@ -6,6 +6,8 @@ export type ApiErrorCode =
   | 'forbidden'
   | 'validation'
   | 'server'
+  | 'wrong_server'
+  | 'missing_file'
   | 'invalid_response'
   | 'unknown';
 
@@ -32,11 +34,25 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * A message the *backend* sent, as opposed to a message a JavaScript error
+ * carries.
+ *
+ * `ApiError.details` is two different things depending on where the error came
+ * from: the failed act's `body` (a plain `{ message }` payload the backend wrote,
+ * already Persian) or the caught transport error that triggered the throw (a
+ * `TypeError`/`SyntaxError`, English, and never intended for the officer). Both
+ * have a `.message`, so the shape is what tells them apart — an `Error` is never
+ * a backend payload, and surfacing one puts raw English in a Persian UI.
+ */
 function getBackendMessage(details: unknown): string | null {
-  if (!details || typeof details !== 'object' || !('message' in details)) {
+  if (details === null || typeof details !== 'object' || details instanceof Error) {
     return null;
   }
-  const message = details.message;
+  if (!('message' in details)) {
+    return null;
+  }
+  const message = (details as { message: unknown }).message;
   return typeof message === 'string' && message.length > 0 ? message : null;
 }
 
@@ -78,6 +94,15 @@ export function translateApiError(error: unknown): string {
       forbidden: 'شما مجوز انجام این عملیات را ندارید.',
       validation: 'اطلاعات واردشده را بررسی کنید.',
       server: 'ارتباط با سرور با مشکل روبه‌رو شد.',
+      // The address answered, but with something that is not the Lesan backend —
+      // a web page, a proxy error, a captive portal. Naming it as a server
+      // configuration problem is the difference between an officer retrying and
+      // an officer reporting a useless "unexpected error" forever.
+      wrong_server:
+        'آدرس سرور به سرویس لسن اشاره نمی‌کند. نشانی سرور را در تنظیمات بررسی کنید.',
+      // The media row outlives the bytes when the file is cleared from outside
+      // the app. Retrying cannot help, so say so instead of blaming the network.
+      missing_file: 'فایل روی دستگاه یافت نشد؛ آن را دوباره انتخاب کنید.',
       invalid_response: 'پاسخ سرور قابل شناسایی نیست.',
       unknown: 'خطای پیش‌بینی‌نشده‌ای رخ داد.',
     };

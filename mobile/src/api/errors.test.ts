@@ -12,6 +12,8 @@ describe('translateApiError', () => {
       'forbidden',
       'validation',
       'server',
+      'wrong_server',
+      'missing_file',
       'invalid_response',
       'unknown',
     ] as const;
@@ -59,5 +61,21 @@ describe('translateApiError', () => {
   it('falls back to a category message when no backend message exists', () => {
     expect(translateApiError(new ApiError('raw', 'timeout'))).not.toContain('raw');
     expect(translateApiError(new Error('socket hang up'))).toBeTruthy();
+  });
+
+  // The bug this guards: a caught `SyntaxError` carries `.message` just like the
+  // backend's `{ message }` payload does, so a shape-only check put the raw
+  // English parse error in front of the officer.
+  it('never surfaces a caught transport error as if it were a backend message', () => {
+    const caught = new SyntaxError('Unexpected token \'I\', "Internal S"... is not valid JSON');
+    for (const code of ['invalid_response', 'wrong_server', 'validation'] as const) {
+      const message = translateApiError(new ApiError('raw', code, 500, caught));
+      expect(message).not.toContain('Unexpected token');
+      expect(message).not.toContain('not valid JSON');
+    }
+  });
+
+  it('names a wrong server address as a configuration problem', () => {
+    expect(translateApiError(new ApiError('raw', 'wrong_server', 500))).toContain('آدرس سرور');
   });
 });
