@@ -260,6 +260,12 @@ const REPORT_ARRAY_RELATION_KEYS = [
   'equipmentDamagesIds',
   'airStatusesIds',
   'roadSurfaceConditionsIds',
+  // The files a dynamic form's `file` fields attached, written by `syncFormAssets`
+  // once each one has a server `_id`. A road-damage or obstruction form carries
+  // photos too, so this is deliberately NOT in `ACCIDENT_ONLY_DATA_KEYS`: the
+  // server declares the same `attachments` relation on `incident_report`, and
+  // forwarding it here is what makes the evidence visible in the console.
+  'attachmentsIds',
 ] as const;
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {

@@ -122,6 +122,21 @@ describe('buildIncidentReportAddSet', () => {
     expect(set['incidentSeverityId']).toBe('s1');
   });
 
+  it('links the files a dynamic form attached', () => {
+    // A road-damage or obstruction form has `file` fields too, and the gallery in
+    // the console is built from the report's `attachments` relation. This key used
+    // to be stripped for non-accident drafts, which left the bytes uploaded and
+    // unreachable — the exact bug that made the evidence invisible.
+    const result = buildIncidentReportAddSet(
+      makeDraft({
+        form_definition_id: 'fd-1',
+        attachmentsIds: ['f1', 'f2', ''],
+      }),
+    );
+    const set = (result.ok ? result.set : {}) as Record<string, unknown>;
+    expect(set['attachmentsIds']).toEqual(['f1', 'f2']);
+  });
+
   it('never asserts a sync state — arrival is the server’s to record', () => {
     // The device's queue state belongs to the device. Sending it made the payload
     // claim `draft` for a report the server had already accepted whenever a

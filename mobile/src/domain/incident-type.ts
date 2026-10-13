@@ -42,11 +42,12 @@ export const INCIDENT_TYPE_REPORT_PREFIX: Record<IncidentType, string> = {
  * the vehicle/people/facility DTO arrays nor the accident severity/collision
  * relations (`typeId`/`collisionTypeId`).
  *
- * `attachmentsIds` belongs here for the same reason: it is a relation on
- * `accident` alone, `incident_report` declares none, and the report's `set`
- * validator is strict — an extra key is a validation error, not an ignored
- * field. The mobile only ever builds it for an accident, so this is the guard
- * that keeps that true if the two mappers are ever unified.
+ * `attachmentsIds` used to belong here: it was a relation on `accident` alone,
+ * and the report's `set` validator is strict — an extra key is a validation
+ * error, not an ignored field — so listing it kept the mobile from sending a
+ * key the server would refuse. Both models declare `attachments` now, so the
+ * key travels on both paths and this guard would invert, failing every
+ * non-accident submission that carried a photo.
  */
 export const ACCIDENT_ONLY_DATA_KEYS: readonly string[] = [
   'vehicle_dtos',
@@ -56,7 +57,6 @@ export const ACCIDENT_ONLY_DATA_KEYS: readonly string[] = [
   'facility_damage_dtos',
   'collisionTypeId',
   'typeId',
-  'attachmentsIds',
 ];
 
 export function isIncidentType(value: unknown): value is IncidentType {

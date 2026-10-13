@@ -118,10 +118,12 @@ describe('buildAccidentAddSet', () => {
     }
   });
 
-  it('never emits attachmentsIds for a non-accident report', () => {
-    // `incident_report` declares no attachments relation and its `set` validator
-    // is strict, so an extra key is a validation error rather than an ignored
-    // field — it would take the whole submission down.
+  it('no longer treats attachmentsIds as accident-only', () => {
+    // It used to: `incident_report` declared no `attachments` relation and its `set`
+    // validator is strict, so sending the key would fail the whole submission.
+    // Both models declare it now, so the guard would have inverted — every
+    // non-accident report carrying a photo would be rejected. The real
+    // non-accident mapper has its own test for forwarding it.
     const result = buildAccidentAddSet(
       makeDraft({
         incident_type: 'road_breakdown',
@@ -129,7 +131,19 @@ describe('buildAccidentAddSet', () => {
       }),
     );
     if (result.ok) {
-      expect(result.set).not.toHaveProperty('attachmentsIds');
+      expect(result.set['attachmentsIds']).toEqual(['507f1f77bcf86cd799439011']);
+    }
+  });
+
+  it('still drops vehicle-only keys for a non-accident draft', () => {
+    const result = buildAccidentAddSet(
+      makeDraft({
+        incident_type: 'road_breakdown',
+        data: { vehicle_dtos: [{ plaque_no: ['22', '111', ' ایران 55'] }] },
+      }),
+    );
+    if (result.ok) {
+      expect(result.set).not.toHaveProperty('vehicle_dtos');
     }
   });
 
