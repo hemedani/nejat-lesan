@@ -14,6 +14,8 @@ export const organizationListItemProjection = {
   description: 1,
   is_active: 1,
   module_flags: 1,
+  location: 1,
+  location_zoom: 1,
   road: {
     _id: 1,
     name: 1,
@@ -39,6 +41,10 @@ export const organizationDetailProjection = {
     personnel_code: 1,
     mobile: 1,
     email: 1,
+  },
+  logo: {
+    _id: 1,
+    name: 1,
   },
   registrer: {
     _id: 1,
@@ -125,6 +131,9 @@ export type OrganizationListItem = {
   description?: string;
   is_active: boolean;
   module_flags?: { key: string; enabled: boolean }[];
+  /** GeoJSON Point — ترتیب سیم [longitude, latitude] است. */
+  location?: { type: string; coordinates: number[] };
+  location_zoom?: number;
   road?: {
     _id?: string;
     name: string;
@@ -136,7 +145,12 @@ export type OrganizationListItem = {
     first_name?: string;
     last_name?: string;
     personnel_code?: string;
+    mobile?: string;
+    email?: string;
   };
+  logo?: { _id?: string; name?: string };
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type UnitType = "Patrol" | "Station" | "Ops" | "Maintenance" | "Logistics" | "Administration" | "Warehouse" | "General";

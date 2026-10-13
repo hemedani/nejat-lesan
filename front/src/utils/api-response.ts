@@ -20,6 +20,10 @@ export function asSingleItemResponse(response: unknown): unknown {
 
 export function getPatrolErrorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : "";
+  // `grantAccess` در بک‌اند رشته‌ی انگلیسی می‌دهد، و بدون این شاخه هر
+  // اکشنِ سطح‌بسته با پیامِ بی‌معنای «خطایی رخ داد» به کاربر می‌رسد — طوری که
+  // اصلاً معلوم نمی‌شود مشکل سطحِ دسترسی بوده نه داده.
+  if (message.includes("You cant do this")) return "شما اجازه این عملیات را ندارید.";
   if (message.includes("ماژول")) return "این بخش برای این نصب/سازمان فعال نیست.";
   if (message.includes("اجازه") || message.includes("داشبورد")) return "شما به این بخش دسترسی ندارید.";
   if (message.includes("یافت نشد")) return "گزارش یافت نشد یا دسترسی ندارید.";

@@ -48,6 +48,7 @@ try:
             "src/utils/panels.ts",
             "src/utils/panel-nav.ts",
             "src/utils/org-routes.ts",
+        "src/utils/admin-record-routes.ts",
             "src/utils/unit-head-routes.ts",
             "src/utils/employee-routes.ts",
             "src/utils/form-access.ts",

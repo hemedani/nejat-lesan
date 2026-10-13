@@ -5,37 +5,17 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { getOrganizations } from "@/app/actions/organization/getOrganizations";
 import { countOrganizations } from "@/app/actions/organization/countOrganizations";
-import { addOrganization } from "@/app/actions/organization/addOrganization";
 import { updateOrganization } from "@/app/actions/organization/updateOrganization";
 import { removeOrganization } from "@/app/actions/organization/removeOrganization";
-import { gets as getRoads } from "@/app/actions/road/gets";
-import { getUsers } from "@/app/actions/user/getUsers";
 import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
 import { orgRoutes } from "@/utils/org-routes";
+import { adminRecordRoutes } from "@/utils/admin-record-routes";
 import { usePanelScope } from "@/components/system/PanelScopeProvider";
 import type { OrganizationListItem } from "@/services/org-projections";
 import { Button } from "@/components/atoms/Button";
-import MyInput from "@/components/atoms/MyInput";
 import ToggleSwitch from "@/components/atoms/ToggleSwitch";
 import { EmptyState, PageSkeleton, RetryErrorBox } from "@/components/patrol/ui";
-import { ModalShell, OrgFilterSelect, OrgSelect } from "@/components/org/OrgSelect";
-
-interface RoadOption {
-  _id: string;
-  name: string;
-  origin?: string;
-  destination?: string;
-}
-
-interface ManagerUser {
-  _id: string;
-  first_name?: string;
-  last_name?: string;
-  personnel_code?: string;
-  is_active?: boolean;
-}
-
-const toErrorMessage = (cause: unknown) => getPatrolErrorMessage(cause instanceof Error ? cause : new Error(String(cause)));
+import { OrgFilterSelect } from "@/components/org/OrgSelect";
 
 export function OrgIndexView() {
   const router = useRouter();
@@ -46,7 +26,6 @@ export function OrgIndexView() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
-  const [showCreate, setShowCreate] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -111,7 +90,7 @@ export function OrgIndexView() {
           <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs text-slate-400">
             {totalCount.toLocaleString("fa-IR")} سازمان
           </span>
-          <Button onClick={() => setShowCreate(true)}>+ افزودن سازمان</Button>
+          <Button onClick={() => router.push("/admin/org/new")}>+ افزودن سازمان</Button>
         </div>
       </div>
 
@@ -147,15 +126,7 @@ export function OrgIndexView() {
           {filtered.map((org) => (
             <div key={org._id} className="group flex flex-col rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-xl transition hover:border-blue-400/25 hover:bg-slate-900">
               <button
-                onClick={() => {
-                  // Set the panel scope, then enter the panel. This is how
-                  // Ghost/Manager browse across organizations: the org lives in
-                  // `PanelScopeProvider`'s sessionStorage, not in the URL. It
-                  // replaces the old `/org/${org._id}` workspace, which was a
-                  // second org UI rather than a scope.
-                  selectOrg(org._id);
-                  router.push(orgRoutes.dashboard());
-                }}
+                onClick={() => router.push(adminRecordRoutes.org(org._id))}
                 className="flex flex-1 flex-col text-right"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -179,135 +150,46 @@ export function OrgIndexView() {
                   <span>سرپرست</span>
                   <span className="text-slate-200">{org.head ? `${org.head.first_name || ""} ${org.head.last_name || ""}`.trim() || "—" : "—"}</span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span>مرکز عملیاتی</span>
+                  <span className="text-slate-200">
+                    {org.location?.coordinates?.length === 2
+                      ? `${Number(org.location.coordinates[1]).toLocaleString("fa-IR", { maximumFractionDigits: 3 })}، ${Number(org.location.coordinates[0]).toLocaleString("fa-IR", { maximumFractionDigits: 3 })}`
+                      : "ثبت نشده"}
+                  </span>
+                </div>
               </div>
               <div className="mt-4 flex items-center justify-between gap-2 border-t border-white/10 pt-3">
                 <div className="flex items-center gap-2">
                   <ToggleSwitch checked={!!org.is_active} onChange={() => void toggleActive(org)} />
                   <span className="text-[11px] text-slate-500">فعال بودن</span>
                 </div>
-                <button onClick={() => void handleRemove(org)} className="text-xs text-rose-300/80 transition hover:text-rose-200">
-                  حذف
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      // Set the panel scope, then enter the panel. This is how
+                      // Ghost/Manager browse across organizations: the org lives
+                      // in `PanelScopeProvider`'s sessionStorage, not in the URL.
+                      // The card itself now opens the detail page instead, so
+                      // entering the panel is its own explicit action.
+                      selectOrg(org._id);
+                      router.push(orgRoutes.dashboard());
+                    }}
+                    className="text-xs text-blue-300/80 transition hover:text-blue-200"
+                  >
+                    ورود به پنل
+                  </button>
+                  <button onClick={() => void handleRemove(org)} className="text-xs text-rose-300/80 transition hover:text-rose-200">
+                    حذف
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {showCreate && (
-        <CreateOrgModal
-          onClose={() => setShowCreate(false)}
-          onCreated={() => {
-            setShowCreate(false);
-            void load();
-          }}
-        />
-      )}
     </div>
   );
 }
 
-function CreateOrgModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
-  const [code, setCode] = useState("");
-  const [name, setName] = useState("");
-  const [enName, setEnName] = useState("");
-  const [description, setDescription] = useState("");
-  const [roadId, setRoadId] = useState("");
-  const [headId, setHeadId] = useState("");
-  const [isActive, setIsActive] = useState(true);
-  const [roads, setRoads] = useState<RoadOption[]>([]);
-  const [managers, setManagers] = useState<ManagerUser[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const roadRes = unwrapApiResponse<RoadOption[]>(await getRoads({ set: { page: 1, limit: 200 }, get: { _id: 1, name: 1, origin: 1, destination: 1 } }));
-        if (alive && Array.isArray(roadRes)) setRoads(roadRes);
-      } catch {
-        if (alive) setRoads([]);
-      }
-      try {
-        const users = await getUsers({
-          set: { levels: "Manager", page: 1, limit: 200 },
-          get: { _id: 1, first_name: 1, last_name: 1, personnel_code: 1, is_active: 1 },
-        });
-        if (alive && Array.isArray(users)) setManagers(users as ManagerUser[]);
-      } catch {
-        if (alive) setManagers([]);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  const roadOptions = roads.map((road) => ({
-    value: road._id,
-    label: [road.name, road.origin, road.destination].filter(Boolean).join(" — "),
-  }));
-  const managerOptions = managers
-    .filter((u) => u.is_active !== false)
-    .map((user) => ({
-      value: user._id,
-      label: [`${user.first_name || ""} ${user.last_name || ""}`.trim(), user.personnel_code].filter(Boolean).join(" · "),
-    }));
-
-  const handleSubmit = async () => {
-    setFormError(null);
-    if (!code.trim() || !name.trim()) {
-      setFormError("کد و نام سازمان الزامی است.");
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const response = await addOrganization({
-        set: {
-          code: code.trim(),
-          name: name.trim(),
-          enName: enName.trim() || undefined,
-          description: description.trim() || undefined,
-          is_active: isActive,
-          ...(roadId ? { roadId } : {}),
-          headId: headId || undefined,
-        },
-      });
-      if (response.success) {
-        toast.success("سازمان با موفقیت ایجاد شد.");
-        onCreated();
-      } else {
-        setFormError((response.body as { message?: string } | undefined)?.message || "خطا در ایجاد سازمان.");
-      }
-    } catch (cause) {
-      setFormError(toErrorMessage(cause));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <ModalShell title="افزودن سازمان" onClose={onClose}>
-      <div className="space-y-4">
-        <MyInput label="کد سازمان" value={code} onValueChange={setCode} placeholder="مثلاً ORG-001" />
-        <MyInput label="نام سازمان" value={name} onValueChange={setName} placeholder="نام فارسی جاده/آزادراه یا شهرداری" />
-        <MyInput label="نام انگلیسی" value={enName} onValueChange={setEnName} placeholder="(اختیاری)" />
-        <OrgSelect label="جاده/آزادراه" value={roadId} onChange={setRoadId} options={roadOptions} placeholder="(اختیاری — برای شهرداری‌ها خالی بگذارید)" />
-        <OrgSelect label="سرپرست سازمان" value={headId} onChange={setHeadId} options={managerOptions} placeholder="(اختیاری)" />
-        <MyInput label="توضیحات" type="textarea" value={description} onValueChange={setDescription} />
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
-          <span className="text-sm text-slate-300">سازمان فعال باشد</span>
-          <ToggleSwitch checked={isActive} onChange={setIsActive} />
-        </div>
-        {formError && <p className="rounded-xl border border-rose-400/25 bg-rose-400/10 px-3 py-2 text-xs text-rose-200">{formError}</p>}
-        <div className="flex justify-end gap-2 pt-1">
-          <Button variant="neutral" onClick={onClose}>انصراف</Button>
-          <Button onClick={() => void handleSubmit()} loading={submitting} disabled={submitting}>
-            {submitting ? "در حال ثبت..." : "ثبت سازمان"}
-          </Button>
-        </div>
-      </div>
-    </ModalShell>
-  );
-}
