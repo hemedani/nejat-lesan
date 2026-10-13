@@ -67,6 +67,7 @@ Confirm that every package supports the versions in `package.json` before instal
 3. Accident severity stays the `type` model (`typeId`, خسارتی/جرحی/فوتی); non-accident severity uses `incident_severity` (کم/متوسط/زیاد/بحرانی). The local seven-phase accident wizard is the fallback for تصادف; non-accident types and process-driven wizards are separate surfaces.
 4. The patrol wizard is `accident_process.getForPatrol` (steps/questions + resolved answers). It requires the officer to resolve to an org (`roles` → `unit` → `organizations`), otherwise «سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید». `{process:null}` = no active process. Submissions still flow through `accident.add`/`accident.update`; relation answers → typed ids, dynamic answers → `dynamic_answers`, and always snapshot `process_version`.
 5. Legacy `police_station`/`patrol_unit`/`shift` (shift → `patrol_unit`) stay registered for one release; the app may keep using them but must not add new dependencies on them beyond what exists.
+6. `user.login`/`user.getMe` return **`primaryOrganization`** (`{_id, code, name, enName, location, location_zoom}` or `null`) as a *fixed response field*, not a client projection — the same shape as `orgModules`. Persist it beside the session; it must stay readable with no network, so the Home org card and the location picker's map frame cost zero requests. `null` means *not determinable* (a global Ghost/Manager, or a member of several orgs) — render the muted «سازمانی ثبت نشده», never the first of several. Normalize defensively: drop a malformed org rather than failing the login.
 
 ## Authentication and security
 
@@ -107,6 +108,8 @@ Confirm that every package supports the versions in `package.json` before instal
 - Keep `gps_coords` (officer position) separate from the selected incident `location` / `incident_coords`.
 - Categorize evidence as plate, insurance, croquis, facility damage (`damage` alias), or `incident` (non-accident evidence). Preserve local media until the server confirms upload.
 - Never assume production road snapping works until the backend road `area` geometry has been populated.
+- `organization.location` is a GeoJSON **Point**, so its coordinates arrive as `[longitude, latitude]` — the opposite order from `Coordinates`. Swap at the boundary, in `domain/organization.ts`, never in a screen: a missed swap puts an Ahvaz centre in the Indian Ocean. Validate the range there too, and clamp `location_zoom` to the map's own `MIN_ZOOM`/`MAX_ZOOM` (3..19); the backend stores the number but does not range-validate it.
+- The officer's organisation is the map's **fallback**, not its authority: officer GPS still centres the picker on mount, and the org point is what remains when GPS is unavailable plus a «مرکز سازمان» recentre. In edit mode (`lat`/`lng` route params present) keep the incident zoom rather than the org zoom — reopening a filed incident should not jump the camera to the org's whole territory.
 
 ## Forms and drafts
 

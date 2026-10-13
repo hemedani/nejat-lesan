@@ -83,7 +83,7 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 
 - [-] Create authenticated routing that opens Home after login and bypasses Login when a valid local session exists. Restore/redirect wiring exists; full guard coverage remains.
 - [x] Implement RTL navigation with five tabs: Reports, Announcements, Home, Map, More; Home central. Custom RTL floating-dock tab bar with raised Home FAB, active pill, unread-count badge.
-- [-] Build the Home dashboard using cached data first, then background refresh. Redesigned per `docs/Design.md` §9.2 (identity header, unit/vehicle strip, status trio, sync row, offline banner, hero CTA, quick grid, offline-map card, pull-to-refresh). Cache-first rendering beyond session identity remains pending.
+- [-] Build the Home dashboard using cached data first, then background refresh. Redesigned per `docs/Design.md` §9.2 (identity header, organization card, unit/vehicle strip, status trio, sync row, offline banner, hero CTA, quick grid, offline-map card, pull-to-refresh). Cache-first rendering beyond session identity remains pending.
 - [ ] Show officer identity from the user profile as read-only.
 - [-] Fetch live operational context from `shift.getActiveShift`, not static user fields. Adapter + initial rendering implemented; deduplicated via in-flight guard + cooldown + one-time restore.
 - [-] Show active patrol unit, active vehicle, shift type/time, server-derived shift status, internet status, GPS status, and last sync time. Unit/vehicle strip + status trio + last-sync live.
@@ -120,6 +120,8 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 - [x] Choose and integrate an SDK 57-compatible map implementation with a bounded offline OSM strategy — extended to a national Iran download: custom `OsmWebMap` over disk-hosted HTML, XYZ mirror under `Documents/mapcache/`, base z4–10 + opt-in z4–12 tiers. Android-only. Device E2E pending.
 - [-] Define offline map package versioning, storage limits, expiration/invalidation, progress, cancellation, resume, and low-storage behavior. Progress/pause/resume/cancel/delete + upgrade path implemented; staleness refresh and a storage-cap setting pending.
 - [-] Build the location picker shown in the PDF. Redesigned per `docs/Design.md` §9.3 (pulsing pin, legend chips, accuracy pill, snap banner, grabber sheet, confirm CTA).
+- [x] Frame the picker on the officer's organization (`organization.location` + `location_zoom`, cached on the session) when GPS is unavailable, and offer a «مرکز سازمان» recentre in the sheet. Officer GPS still wins on mount; edit mode keeps zoom 17 so re-opening a filed incident doesn't jump to the org's whole territory.
+- [x] Show the officer's organization on Home (name, code, centre) and in the location sheet, read from the session so both render offline. Renders «سازمانی ثبت نشده» when `primaryOrganization` is `null` (global/multi-org caller) rather than picking one org arbitrarily.
 - [x] Capture both `gps_coords` (device position) and incident `location` / `incident_coords` (selected point).
 - [-] Show GPS accuracy and permit manual selection when GPS is unavailable, with an explicit warning. Accuracy/warning hints + shared `GpsActionButton` recovery present; threshold tuning and device verification pending.
 - [-] Call `road.snapPointToRoad` and display route, direction, kilometer, meter, nearest point, distance, and lanes. Debounced snapping implemented; production `area` geometry still missing.
@@ -188,6 +190,7 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 
 - **Deployment prerequisite (new):** a Patrol officer must be assigned to a `unit(type:"Patrol")` with `roles`/`organizations` before `accident_process.getForPatrol` resolves an org — otherwise «سازمان مأمور یافت نشد؛ ابتدا در واحد گشت عضو شوید». `shift`/`patrol_unit`/`police_station` still work as today for the one-release overlap.
 - **Module licensing (new):** the whole patrol surface requires `incident_patrol` enabled at the installation and for the officer's org (Ghost exempt; defaults are enabled). The web module-config page (`front` doc 50) drives this.
+- **Organization centre (new):** `user.login`/`user.getMe` return `primaryOrganization` (`{_id, code, name, enName, location, location_zoom}`, or `null`). Mobile caches it on the session — no extra request, so it survives offline unlock. It is `null` for a global (Ghost/Manager) or multi-org caller; that is the answer, not a gap. Seeded for the Ahvaz–Bandar Imam demo org at `Point [48.67056, 31.31823]` / zoom `13`, and `ensureDemoOrganization` backfills an org that predates the field.
 - Road `area` geometry backfill for production roads (~1490) — blocks snapping, zone validation, and offline road caching.
 - `police_station` seed data with real station polygons.
 - Patrol email distribution (login is email-based).
