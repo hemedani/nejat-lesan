@@ -11,30 +11,13 @@ import { add } from "@/app/actions/township/add";
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
 import { get as getProvinceAction } from "@/app/actions/province/get";
 import { SelectOption } from "../atoms/MyAsyncMultiSelect";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import MapClickHandler from "@/components/MapClickHandler";
+import GeoPointPicker, { type GeoPoint } from "@/components/maps/GeoPointPicker";
+import GeoPolygonDrawer, { type GeoPolygon } from "@/components/maps/GeoPolygonDrawer";
 
-// Dynamically import map components
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false },
-);
-const BasemapLayer = dynamic(
-  () => import("@/components/maps/BasemapLayer"),
-  { ssr: false },
-);
-const Polygon = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Polygon),
-  { ssr: false },
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false },
-);
-const SimpleDrawing = dynamic(() => import("@/components/SimpleDrawing"), {
-  ssr: false,
-});
+// نقشه از کامپوننت‌های مشترک می‌آید؛ فقط `AsyncSelect` هنوز جدا لازم است
+// چون به `react-hook-form` وصل است.
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
 export const TownshipCreateSchema = z.object({
@@ -69,11 +52,6 @@ export const TownshipCreateSchema = z.object({
 
 export type TownshipFormCreateSchemaType = z.infer<typeof TownshipCreateSchema>;
 
-interface LatLng {
-  lat: number;
-  lng: number;
-}
-
 const FormCreateTownship = ({
   token, // eslint-disable-line @typescript-eslint/no-unused-vars
   lesanUrl, // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -82,18 +60,15 @@ const FormCreateTownship = ({
   lesanUrl: string;
 }) => {
   const router = useRouter();
-  const [drawnPolygon, setDrawnPolygon] = useState<LatLng[] | null>(null);
-  const [centerPoint, setCenterPoint] = useState<LatLng | null>(null);
-  const [isDrawingMode, setIsDrawingMode] = useState(false);
-  const [isCenterMode, setIsCenterMode] = useState(false);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([
-    32.4279, 53.688,
-  ]);
+  // نقشه مستقیماً از این دو مقدار می‌خواند؛ حالتِ «کلیک‌گیری فعال است؟» و
+  // «مرکز نقشه کجاست» داخل خودِ کامپوننت‌های مشترک است.
+  const [area, setArea] = useState<GeoPolygon | null>(null);
+  const [centerPoint, setCenterPoint] = useState<GeoPoint | null>(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 32.4279, lng: 53.688 });
   const [mapZoom, setMapZoom] = useState(6);
   const [selectedProvince, setSelectedProvince] = useState<SelectOption | null>(
     null,
   );
-  const [mapKey, setMapKey] = useState(0);
 
   const {
     register,
@@ -166,67 +141,51 @@ const FormCreateTownship = ({
             const coordinates =
               provinceDetails.body.center_location.coordinates;
             if (coordinates && coordinates.length >= 2) {
-              setMapCenter([coordinates[1], coordinates[0]]);
+              setMapCenter({ lat: coordinates[1], lng: coordinates[0] });
               setMapZoom(8);
-              setMapKey((prev) => prev + 1);
             }
           }
-        } catch (error) {
-          console.error("Error getting province details:", error);
+        } catch {
+          // استان خوانده نشد؛ قاب پیش‌فرض ایران می‌ماند.
         }
       } else {
         setValue("provinceId", "", { shouldValidate: true });
-        setMapCenter([32.4279, 53.688]);
+        setMapCenter({ lat: 32.4279, lng: 53.688 });
         setMapZoom(6);
-        setMapKey((prev) => prev + 1);
       }
     },
     [setValue],
   );
 
-  // Handle polygon creation
-  const handlePolygonCreated = useCallback(
-    (polygon: LatLng[]) => {
-      setDrawnPolygon(polygon);
-      const coordinates = polygon.map((point) => [point.lng, point.lat]);
-      coordinates.push(coordinates[0]);
-
-      const multiPolygon = {
-        type: "MultiPolygon" as const,
-        coordinates: [[coordinates]],
-      };
-
-      setValue("area", multiPolygon, { shouldValidate: true });
+  const handleAreaChange = useCallback(
+    (next: GeoPolygon) => {
+      setArea(next);
+      setValue("area", next, { shouldValidate: true });
       trigger("area");
     },
     [setValue, trigger],
   );
 
-  // Handle center point selection
-  const handleCenterPointSelected = useCallback(
-    (point: LatLng) => {
-      setCenterPoint(point);
-      const pointGeometry = {
-        type: "Point" as const,
-        coordinates: [point.lng, point.lat],
-      };
-
-      setValue("center_location", pointGeometry, { shouldValidate: true });
+  const handleCenterChange = useCallback(
+    (next: GeoPoint) => {
+      setCenterPoint(next);
+      setValue("center_location", next, { shouldValidate: true });
       trigger("center_location");
     },
     [setValue, trigger],
   );
 
-  // Handle map click based on mode
-  const handleMapClick = useCallback(
-    (latlng: LatLng) => {
-      if (isCenterMode) {
-        handleCenterPointSelected(latlng);
-        setIsCenterMode(false);
-      }
-    },
-    [isCenterMode, handleCenterPointSelected],
-  );
+  const clearArea = useCallback(() => {
+    setArea(null);
+    setValue("area", { type: "MultiPolygon", coordinates: [] });
+    trigger("area");
+  }, [setValue, trigger]);
+
+  const clearCenterPoint = useCallback(() => {
+    setCenterPoint(null);
+    setValue("center_location", { type: "Point", coordinates: [] });
+    trigger("center_location");
+  }, [setValue, trigger]);
 
   // Submit form
   const onSubmit: SubmitHandler<TownshipFormCreateSchemaType> = async (
@@ -241,29 +200,10 @@ const FormCreateTownship = ({
       } else {
         ToastNotify("error", response?.body?.message || "خطا در ایجاد شهرستان");
       }
-    } catch (error) {
-      console.error("Error creating township:", error);
+    } catch {
       ToastNotify("error", "خطای غیرمنتظره در ایجاد شهرستان");
     }
   };
-
-  // Clear polygon
-  const clearPolygon = () => {
-    setDrawnPolygon(null);
-    setValue("area", { type: "MultiPolygon", coordinates: [] });
-    trigger("area");
-  };
-
-  // Clear center point
-  const clearCenterPoint = () => {
-    setCenterPoint(null);
-    setValue("center_location", { type: "Point", coordinates: [] });
-    trigger("center_location");
-  };
-
-  useEffect(() => {
-    // Set default Iran center - no need to import CSS here as it should be imported at app level
-  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -343,59 +283,6 @@ const FormCreateTownship = ({
             تعیین منطقه و مرکز شهرستان بر روی نقشه
           </h3>
 
-          {/* Map Controls */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            <button
-              type="button"
-              onClick={() => {
-                setIsDrawingMode(!isDrawingMode);
-                setIsCenterMode(false);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${isDrawingMode
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-            >
-              {isDrawingMode ? "خروج از حالت ترسیم" : "ترسیم منطقه"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsCenterMode(!isCenterMode);
-                setIsDrawingMode(false);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${isCenterMode
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-            >
-              {isCenterMode
-                ? "خروج از حالت انتخاب مرکز"
-                : "انتخاب مرکز شهرستان"}
-            </button>
-
-            {drawnPolygon && (
-              <button
-                type="button"
-                onClick={clearPolygon}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                پاک کردن منطقه
-              </button>
-            )}
-
-            {centerPoint && (
-              <button
-                type="button"
-                onClick={clearCenterPoint}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                پاک کردن مرکز
-              </button>
-            )}
-          </div>
-
           {/* Instructions */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
             <h4 className="font-medium text-blue-800 mb-2">راهنمای استفاده:</h4>
@@ -428,49 +315,29 @@ const FormCreateTownship = ({
             </div>
           )}
 
-          {/* Map Container */}
-          <div className="h-96 border border-gray-300 rounded-lg overflow-hidden">
-            <MapContainer
-              key={mapKey}
-              center={mapCenter}
-              zoom={mapZoom}
-              className="h-full w-full"
-            >
-              <BasemapLayer />
+          <GeoPolygonDrawer
+            className="h-96 border border-gray-300 rounded-lg"
+            errorMessage={errors.area?.message}
+            fallbackCenter={mapCenter}
+            fallbackZoom={mapZoom}
+            label="محدودهٔ شهرستان"
+            onChange={handleAreaChange}
+            onClear={clearArea}
+            tone="light"
+            value={area}
+          />
 
-              <MapClickHandler
-                isActive={isCenterMode}
-                onMapClick={(e: any) => handleMapClick(e.latlng)}
-              />
-
-              {isDrawingMode && (
-                <SimpleDrawing
-                  isActive={isDrawingMode}
-                  onPolygonCreated={handlePolygonCreated}
-                  onPolygonDeleted={() => clearPolygon()}
-                />
-              )}
-
-              {drawnPolygon && (
-                <Polygon
-                  positions={drawnPolygon.map((point) => [
-                    point.lat,
-                    point.lng,
-                  ])}
-                  pathOptions={{
-                    color: "blue",
-                    fillColor: "lightblue",
-                    fillOpacity: 0.3,
-                    weight: 2,
-                  }}
-                />
-              )}
-
-              {centerPoint && (
-                <Marker position={[centerPoint.lat, centerPoint.lng]} />
-              )}
-            </MapContainer>
-          </div>
+          <GeoPointPicker
+            className="h-96 border border-gray-300 rounded-lg"
+            errorMessage={errors.center_location?.message}
+            fallbackCenter={mapCenter}
+            fallbackZoom={mapZoom}
+            label="مرکز شهرستان"
+            onChange={handleCenterChange}
+            onClear={clearCenterPoint}
+            tone="light"
+            value={centerPoint}
+          />
         </div>
 
         {/* Submit Button */}
