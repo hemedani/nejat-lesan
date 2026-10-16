@@ -60,11 +60,14 @@ reaped by `file.removeOrphans`, which also leaks their bytes because it only cle
 (`back/src/accident/accidentRelationSchema.ts`). The key simply never receives these ids.
 
 **Fix:** fold *every* successfully uploaded file id into `attachmentsIds`, whatever its
-category. The gallery is built from that relation, so anything not in it is invisible.
+category, for **both** models. The gallery is built from that relation, so anything not in it
+is invisible.
 
-Non-accident reports are excluded: `incident_report` declares no `attachments` relation and its
-validator is strict, so the key stays in `ACCIDENT_ONLY_DATA_KEYS` until
-`back/prompt/04-give-incident-report-file-attachments.md` lands.
+`incident_report` is included: it declares `attachments` as of
+`back/models/incident_report.ts:391` and accepts `attachmentsIds` in both write acts
+(`back/src/incident_report/relations.ts:52`, `setSchema.ts:105`), which is what made the
+dynamic form's evidence visible for non-accident reports in the first place. A road-damage
+photo is orphaned exactly like a croquis sketch, and the same fold fixes it.
 
 ## Architecture: one path, observed
 
@@ -171,12 +174,12 @@ keeps reporting the real state from `sync_status`, so nothing is hidden by the d
 - `upload-events.test.ts` — reducer across every phase and failure transition.
 - `media-upload-service` / `asset-upload-service` — per-file progress emission, failure
   isolation, `skip` honoured, resume skips already-uploaded records.
-- `accident-mapper.test.ts` — `attachmentsIds` carries `croquis` and `incident` ids; still
-  absent for non-accident reports.
+- `sync-worker.test.ts` — `attachmentsIds` carries `croquis` and `incident` ids, both passes
+  land in one list, nothing is sent when nothing uploaded, and a non-accident report gets it
+  too.
 - `sync-worker.test.ts` — `onlyDraft` scoping, `observe` event order, skipped files recorded.
 
 ## Not in scope
 
-- The `incident_report.attachments` backend relation (`back/prompt/04-…`) — a separate release.
 - Real-device airplane-mode and force-close testing, called out as a gap in
   `mobile/docs/TODO.md:113`.
