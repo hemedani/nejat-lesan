@@ -16,3 +16,5 @@ mobile/pnpm-debug.log
 # The audit/test scripts under .workbuddy-ai/tools/ ARE tracked.
 .workbuddy-ai/memory/
 **/.workbuddy-ai/memory/
+
+.superpowers/
