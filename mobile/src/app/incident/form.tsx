@@ -38,7 +38,7 @@ import {
   validateAll,
   validatePage,
 } from '@/domain/form-state';
-import { saveDraftFormData, requeueDraft } from '@/domain/draft-actions';
+import { saveDraftFormData } from '@/domain/draft-actions';
 import { formAnswersToDraftData } from '@/domain/form-submission';
 import {
   DEFAULT_ACCIDENT_FORM_ID,
@@ -49,7 +49,6 @@ import { standardRouteFor } from '@/domain/form-routing';
 import { incidentTypeOf } from '@/domain/incident-type';
 import type { AccidentDraft } from '@/domain/types';
 import { getDraft } from '@/storage/local-database';
-import { getSyncWorker } from '@/services/sync-worker';
 import { getConnectivitySnapshot } from '@/services/connectivity';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -59,6 +58,8 @@ import { ErrorText, FieldLabel, FormInput, ChipsRow } from '@/components/form-fi
 import { FormNode } from '@/components/form/form-node';
 import { AppTheme } from '@/constants/theme';
 import { useRequiredSession } from '@/auth/use-required-session';
+import { UploadModal } from '@/components/upload-modal';
+import { useReportUpload } from '@/hooks/use-report-upload';
 
 const AUTOSAVE_DEBOUNCE_MS = 500;
 
@@ -89,6 +90,8 @@ export default function IncidentFormScreen() {
   const session = useRequiredSession();
   const params = useLocalSearchParams<{ uuid?: string; definitionId?: string }>();
   const draftId = params.uuid ?? '';
+
+  const upload = useReportUpload();
   const definitionId = params.definitionId ?? '';
 
   const [load, setLoad] = useState<LoadState>({ phase: 'loading' });
@@ -100,6 +103,7 @@ export default function IncidentFormScreen() {
   const [draft, setDraft] = useState<AccidentDraft | null>(null);
   const [pageIndex, setPageIndex] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   const dirty = useRef(false);
@@ -460,13 +464,20 @@ export default function IncidentFormScreen() {
           version: formVersion,
         }),
       );
-      await requeueDraft(draftId);
-      await getSyncWorker().run();
-      router.replace('/drafts');
-    } catch (cause) {
+    } catch {
+      // The answers never reached SQLite, so there is nothing to send and no
+      // honest way to describe why. Say so instead of navigating as if it worked.
       setLoad({ phase: 'ready' });
       setSubmitting(false);
+      setSubmitError('ذخیره پاسخ‌ها انجام نشد؛ دوباره تلاش کنید.');
+      return;
     }
+
+    // The upload modal takes over from here and the screen stays put until it
+    // settles — navigating now would unmount the very thing the officer is
+    // watching, and leave a half-sent report with nothing to look at.
+    setSubmitting(false);
+    await upload.send([draftId]);
   };
 
   return (
@@ -547,6 +558,23 @@ export default function IncidentFormScreen() {
           />
         </View>
       </KeyboardAvoidingView>
+
+      {submitError ? <Banner message={submitError} tone="danger" /> : null}
+
+      <UploadModal
+        onCancel={upload.cancel}
+        // No «ادامه در پس‌زمینه» here: the officer pressed submit, so leaving the form
+        // half-sent behind a dismissed dialog is exactly the confusion to avoid. The
+        // drafts board is where a queue belongs.
+        onClose={() => {
+          upload.close();
+          router.replace('/drafts');
+        }}
+        onRetry={upload.retry}
+        onSkipFailed={upload.skipFailed}
+        progress={upload.progress}
+        visible={upload.visible}
+      />
     </SafeAreaView>
   );
 }

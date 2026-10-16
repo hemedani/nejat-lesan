@@ -46,6 +46,8 @@ import {
 } from '@/components/form-fields';
 import { AppTheme, Estedad } from '@/constants/theme';
 import { useRequiredSession } from '@/auth/use-required-session';
+import { UploadModal } from '@/components/upload-modal';
+import { useReportUpload } from '@/hooks/use-report-upload';
 
 const AUTOSAVE_DEBOUNCE_MS = 500;
 
@@ -71,6 +73,8 @@ export default function ProcessWizardScreen() {
   const session = useRequiredSession();
   const params = useLocalSearchParams<{ uuid?: string }>();
   const uuid = typeof params.uuid === 'string' ? params.uuid : '';
+
+  const upload = useReportUpload();
 
   const [draft, setDraft] = useState<AccidentDraft | null>(null);
   const [loadState, setLoadState] = useState<LoadState>({ phase: 'loading' });
@@ -219,16 +223,36 @@ export default function ProcessWizardScreen() {
       .catch(() => setSaveState('idle'));
   }
 
-  function finishEditing(): Promise<void> {
-    return flushSave()
-      .catch(() => undefined)
-      .then(() => {
-        dirtyRef.current = false;
-        if (wasSyncedRef.current) {
-          return requeueDraft(uuid).catch(() => undefined);
-        }
-        return undefined;
-      });
+  /**
+   * Flush the wizard and leave without sending.
+   *
+   * A correction is still requeued here, so edits the officer made to a report that
+   * already reached the server are not lost just because they backed out of the editor.
+   * A report the server has never seen is left as a draft — abandoning is not filing.
+   */
+  async function finishEditing(): Promise<void> {
+    await flushSave().catch(() => undefined);
+    dirtyRef.current = false;
+    if (wasSyncedRef.current) {
+      await requeueDraft(uuid).catch(() => undefined);
+    }
+  }
+
+  /**
+   * The officer pressed submit: flush, then hand the report to the upload flow, which
+   * queues it and puts the upload modal in front of them.
+   *
+   * This used to requeue only when the report had already reached the server — a
+   * correction, so that `accident.update` would carry the edits. But a *new* report starts
+   * its queue record at `draft`, and the worker only ever processes `queued`, so finishing
+   * a brand-new report left it in the drafts list with nothing that would ever send it.
+   * The dynamic form was the only surface that requeued, which is why the gap went
+   * unnoticed: it read as a deliberate difference between the wizards.
+   */
+  async function submitReport(): Promise<void> {
+    await flushSave().catch(() => undefined);
+    dirtyRef.current = false;
+    await upload.send([uuid]);
   }
 
   function goNext() {
@@ -244,14 +268,16 @@ export default function ProcessWizardScreen() {
     if (Object.keys(stepErrors).length > 0) {
       return;
     }
-    void flushSave().then(() => {
-      if (stepIndex < orderedSteps.length - 1) {
+    // The last step hands over to `submitReport`, which flushes on its own — flushing
+    // here first would save the same rows twice on the one path that matters most.
+    if (stepIndex < orderedSteps.length - 1) {
+      void flushSave().then(() => {
         setErrors({});
         setStepIndex(stepIndex + 1);
-      } else {
-        void finishEditing().then(() => router.back());
-      }
-    });
+      });
+    } else {
+      void submitReport();
+    }
   }
 
   function goBack() {
@@ -260,8 +286,7 @@ export default function ProcessWizardScreen() {
       if (stepIndex > 0) {
         setStepIndex(stepIndex - 1);
       } else {
-        dirtyRef.current = false;
-        router.back();
+        void finishEditing().then(() => router.back());
       }
     });
   }
@@ -426,6 +451,21 @@ export default function ProcessWizardScreen() {
           />
         </View>
       </KeyboardAvoidingView>
+
+      <UploadModal
+        onCancel={upload.cancel}
+        // No «ادامه در پس‌زمینه» here: the officer pressed submit, so leaving a half-sent
+        // report behind a dismissed dialog is exactly the confusion to avoid. The drafts
+        // board is where a queue belongs.
+        onClose={() => {
+          upload.close();
+          router.back();
+        }}
+        onRetry={upload.retry}
+        onSkipFailed={upload.skipFailed}
+        progress={upload.progress}
+        visible={upload.visible}
+      />
     </SafeAreaView>
   );
 }

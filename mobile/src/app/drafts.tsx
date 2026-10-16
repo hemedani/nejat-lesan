@@ -7,13 +7,12 @@ import type { SyncStatus } from '@/domain/types';
 import {
   canManuallyRetry,
   loadDraftBoard,
-  requeueDraft,
   type DraftBoardItem,
 } from '@/domain/draft-actions';
 import { resumeRouteFor } from '@/domain/form-routing';
 import { INCIDENT_TYPE_SHORT_LABEL, incidentTypeOf } from '@/domain/incident-type';
-import { getSyncWorker, type SyncRunSummary } from '@/services/sync-worker';
-import { Banner } from '@/components/ui/banner';
+import { useReportUpload } from '@/hooks/use-report-upload';
+import { UploadModal } from '@/components/upload-modal';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -34,60 +33,25 @@ const STATUS_TONES: Record<SyncStatus, PillTone> = {
   rejected: 'danger',
 };
 
-const count = (value: number): string => value.toLocaleString('fa-IR');
-
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString('fa-IR');
-}
-
-/**
- * What a sync run did, in words.
- *
- * The button used to discard this. A run with nothing to do looked exactly like a
- * run that had failed — which is how a report the server had already accepted sat in
- * the list looking like it still needed sending, and the officer pressed
- * «همگام‌سازی همه» over and over with no way to tell that there was nothing left to
- * send. The counts come from the worker itself, so the notice describes the run
- * rather than guessing at it.
- */
-function describeRun(summary: SyncRunSummary): { message: string; tone: StatusTone } {
-  if (!summary.started) {
-    return {
-      message: 'یک همگام‌سازی دیگر در جریان است؛ نتیجه پس از پایان آن نمایش داده می‌شود.',
-      tone: 'neutral',
-    };
-  }
-  if (summary.processed === 0) {
-    return {
-      message: 'چیزی برای همگام‌سازی نبود؛ گزارش‌های این فهرست پیش‌تر به مرکز رسیده‌اند.',
-      tone: 'neutral',
-    };
-  }
-
-  const parts: string[] = [];
-  if (summary.synced > 0) parts.push(`${count(summary.synced)} گزارش ارسال شد`);
-  if (summary.retried > 0) {
-    parts.push(`${count(summary.retried)} گزارش در انتظار تلاش دوباره است`);
-  }
-  if (summary.rejected > 0) parts.push(`${count(summary.rejected)} گزارش رد شد`);
-
-  return {
-    message: `${parts.join('؛ ')}.`,
-    tone: summary.rejected > 0 ? 'warning' : 'success',
-  };
 }
 
 export default function DraftsScreen() {
   const router = useRouter();
   const [items, setItems] = useState<DraftBoardItem[] | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [runNotice, setRunNotice] = useState<{ message: string; tone: StatusTone } | null>(null);
 
   const reload = useCallback(async () => {
     const board = await loadDraftBoard();
     setItems(board);
   }, []);
+
+  const upload = useReportUpload({
+    // The board re-reads `sync_status`, so whatever the run did is on screen the moment
+    // it finishes — or the moment the officer lets it finish in the background.
+    onSettled: () => void reload(),
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -104,30 +68,25 @@ export default function DraftsScreen() {
   );
 
   async function handleRetry(item: DraftBoardItem) {
-    await requeueDraft(item.draft.client_report_uuid);
-    await reload();
-    setIsSyncing(true);
-    setRunNotice(null);
-    try {
-      setRunNotice(describeRun(await getSyncWorker().run(true)));
-    } finally {
-      setIsSyncing(false);
-      await reload();
-    }
+    await upload.send([item.draft.client_report_uuid]);
   }
 
-  async function handleSyncAll() {
-    if (isSyncing) {
+  /**
+   * The officer's way back from the station: everything captured offline, one report at a
+   * time, each with a modal that names the file in flight.
+   *
+   * It deliberately walks the queue itself rather than asking the worker for every record
+   * at once. The worker holds one report's progress in the modal at a time, so a bulk run
+   * that narrated five reports at once would have the bar jumping between five file lists.
+   */
+  async function handleSendAll() {
+    if (!items) {
       return;
     }
-    setIsSyncing(true);
-    setRunNotice(null);
-    try {
-      setRunNotice(describeRun(await getSyncWorker().run(true)));
-      await reload();
-    } finally {
-      setIsSyncing(false);
-    }
+    const pending = items
+      .filter(item => item.draft.sync_status !== 'synced')
+      .map(item => item.draft.client_report_uuid);
+    await upload.send(pending);
   }
 
   async function handlePullRefresh() {
@@ -163,9 +122,9 @@ export default function DraftsScreen() {
         action={
           <Button
             icon={AppIcons.status.syncing.name}
-            label={isSyncing ? 'در حال همگام‌سازی' : 'همگام‌سازی همه'}
-            loading={isSyncing}
-            onPress={() => void handleSyncAll()}
+            label="ارسال همه"
+            loading={upload.running}
+            onPress={() => void handleSendAll()}
             size="md"
             variant="ghost"
           />
@@ -188,10 +147,6 @@ export default function DraftsScreen() {
           پیش‌نویس‌ها روی همین دستگاه ذخیره می‌شوند و با برقراری اینترنت به‌صورت خودکار ارسال می‌شوند.
           برای تکمیل یا ویرایش، روی هر پیش‌نویس بزنید.
         </Text>
-
-        {runNotice ? (
-          <Banner message={runNotice.message} tone={runNotice.tone} />
-        ) : null}
 
         {items === null ? (
           <SkeletonList rows={3} rowHeight={120} />
@@ -275,7 +230,7 @@ export default function DraftsScreen() {
                   <Button
                     fullWidth
                     icon={AppIcons.status.queued.name}
-                    label="ارسال دوباره"
+                    label="ارسال"
                     onPress={() => void handleRetry(item)}
                     size="md"
                     variant="soft"
@@ -295,6 +250,16 @@ export default function DraftsScreen() {
           size="lg"
         />
       </ScrollView>
+
+      <UploadModal
+        onCancel={upload.cancel}
+        onClose={upload.close}
+        onDismiss={upload.dismiss}
+        onRetry={upload.retry}
+        onSkipFailed={upload.skipFailed}
+        progress={upload.progress}
+        visible={upload.visible}
+      />
     </SafeAreaView>
   );
 }
