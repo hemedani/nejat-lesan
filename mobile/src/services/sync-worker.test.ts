@@ -3,6 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { submitAccidentReport, updateAccidentReportByUuid } from '@/api/accident';
 import { snapPointToRoad, type SnapPointResponse } from '@/api/road';
 import type { AccidentDraft, QueueRecord, Session } from '@/domain/types';
+import type { UploadEvent } from '@/domain/upload-events';
+import { submitIncidentReport } from '@/api/incident-report';
+import { syncFormAssets } from '@/services/asset-upload-service';
+import { syncReportMedia } from '@/services/media-upload-service';
 
 import { createSyncWorker } from './sync-worker';
 
@@ -32,9 +36,13 @@ vi.mock('@/storage/local-database', () => ({
 // imports and can assert on the exact version that would be sent.
 let stubbedAppVersion = '1.4.2';
 
+let uploadsEnabled = false;
+
 vi.mock('@/config/env', () => ({
   getAppConfig: () => ({
-    uploadsEnabled: false,
+    get uploadsEnabled() {
+      return uploadsEnabled;
+    },
     appVersion: stubbedAppVersion,
     platform: 'ios' as const,
   }),
@@ -47,14 +55,27 @@ vi.mock('@/services/connectivity', () => ({
   subscribeToConnectivity: vi.fn(() => () => {}),
 }));
 
+// The upload passes report what they sent and what failed, not just the rewritten
+// payload, because the worker folds their file ids into `attachmentsIds` and the modal
+// needs the failures. Stubbed with the full shape so a change to the contract fails here.
 vi.mock('@/services/media-upload-service', () => ({
-  syncReportMedia: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({ data: draft.data })),
+  syncReportMedia: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({
+    data: draft.data,
+    uploaded: 0,
+    failed: [],
+    fileIds: [] as string[],
+  })),
 }));
 
 // Form-asset uploads ride the same gate as the accident media pipeline; mocked
 // so the worker's tests stay free of `expo-file-system`.
 vi.mock('@/services/asset-upload-service', () => ({
-  syncFormAssets: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({ data: draft.data })),
+  syncFormAssets: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({
+    data: draft.data,
+    uploaded: 0,
+    failed: [],
+    fileIds: [] as string[],
+  })),
 }));
 
 vi.mock('@/api/accident-process', () => ({
@@ -138,7 +159,23 @@ beforeEach(() => {
   drafts.clear();
   queueRecords.clear();
   stubbedAppVersion = '1.4.2';
+  uploadsEnabled = false;
   session = SESSION;
+  // Each pass echoes the payload it was handed, the way the real one does after its
+  // write-back — a stub that returned `{}` would erase the draft and hide the very
+  // mapper behaviour these tests exist to check.
+  vi.mocked(syncReportMedia).mockImplementation(async (_session, draft) => ({
+    data: draft.data,
+    uploaded: 0,
+    failed: [],
+    fileIds: [],
+  }));
+  vi.mocked(syncFormAssets).mockImplementation(async (_session, draft) => ({
+    data: draft.data,
+    uploaded: 0,
+    failed: [],
+    fileIds: [],
+  }));
   connectivityStatus = 'online';
   vi.mocked(snapPointToRoad).mockReset();
   vi.mocked(submitAccidentReport).mockReset().mockResolvedValue({ _id: 'server-1', report_id: 'REP-1' });
@@ -342,5 +379,176 @@ describe('submission outcome bookkeeping', () => {
 
     expect(queueRecords.get('queue-uuid-1')).toMatchObject({ status: 'rejected' });
     expect(drafts.get('uuid-1')?.['rejection_reason']).toContain('موقعیت');
+  });
+});
+
+describe('attachment linking', () => {
+  it('puts a croquis sketch in attachmentsIds so the console can show it', async () => {
+    uploadsEnabled = true;
+    vi.mocked(syncReportMedia).mockImplementation(async (_session, draft) => ({
+      data: draft.data,
+      uploaded: 1,
+      failed: [],
+      // A croquis has no card field to ride in, and `uploadAccidentImages` links
+      // nothing without an `accidentId` — which a report not yet filed never has.
+      fileIds: ['file-croquis'],
+    }));
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    const sent = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(sent?.['attachmentsIds']).toEqual(['file-croquis']);
+  });
+
+  it('puts a non-accident incident photo there too', async () => {
+    uploadsEnabled = true;
+    vi.mocked(syncReportMedia).mockImplementation(async (_session, draft) => ({
+      data: draft.data,
+      uploaded: 1,
+      failed: [],
+      fileIds: ['file-incident-photo'],
+    }));
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    const sent = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(sent?.['attachmentsIds']).toContain('file-incident-photo');
+  });
+
+  it('keeps both passes in one list rather than letting the second overwrite the first', async () => {
+    uploadsEnabled = true;
+    vi.mocked(syncReportMedia).mockImplementation(async (_session, draft) => ({
+      data: draft.data,
+      uploaded: 1,
+      failed: [],
+      fileIds: ['file-croquis'],
+    }));
+    vi.mocked(syncFormAssets).mockImplementation(async (_session, draft) => ({
+      data: draft.data,
+      uploaded: 1,
+      failed: [],
+      fileIds: ['file-form-doc'],
+    }));
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    const sent = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(sent?.['attachmentsIds']).toEqual(['file-croquis', 'file-form-doc']);
+  });
+
+  it('sends no list at all when nothing was uploaded', async () => {
+    uploadsEnabled = true;
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    // An empty array would clear the relation on an update rather than leaving it be.
+    const sent = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(sent).not.toHaveProperty('attachmentsIds');
+  });
+
+  it('sends it for a non-accident report too — its model has the relation now', async () => {
+    uploadsEnabled = true;
+    vi.mocked(syncReportMedia).mockImplementation(async (_session, draft) => ({
+      data: draft.data,
+      uploaded: 1,
+      failed: [],
+      fileIds: ['file-obstruction'],
+    }));
+    enqueue(
+      makeDraft({
+        incident_type: 'road_obstacle',
+        data: { form_definition_id: 'form-1' },
+      }),
+    );
+
+    await createSyncWorker().run(true);
+
+    // `incident_report` declares `attachments` and both write acts consume one draft's
+    // payload, so a road-damage photo reaches the console the same way a croquis does.
+    const sent = vi.mocked(submitIncidentReport).mock.calls.at(-1)?.[1];
+    expect(sent).toMatchObject({ attachmentsIds: ['file-obstruction'] });
+  });
+});
+
+describe('narrating a run', () => {
+  function collector(): { events: UploadEvent[]; observe: (event: UploadEvent) => void } {
+    const events: UploadEvent[] = [];
+    return { events, observe: event => void events.push(event) };
+  }
+
+  it('forwards the pass\'s own per-file events to the observer', async () => {
+    uploadsEnabled = true;
+    vi.mocked(syncReportMedia).mockImplementation(async (_session, draft, options) => {
+      options?.onProgress?.({
+        type: 'file-start',
+        mediaId: 'm1',
+        name: 'کروکی.jpg',
+        index: 0,
+        total: 1,
+      });
+      options?.onProgress?.({ type: 'file-done', mediaId: 'm1', ok: true });
+      return { data: draft.data, uploaded: 1, failed: [], fileIds: ['file-croquis'] };
+    });
+    const { events, observe } = collector();
+    enqueue(makeDraft());
+
+    await createSyncWorker().run({ manual: true, observe });
+
+    // The pass owns the per-file events and the worker only passes them on, so the
+    // modal is told the same thing the worker knows rather than a summary of it.
+    expect(events).toContainEqual({
+      type: 'file-start',
+      mediaId: 'm1',
+      name: 'کروکی.jpg',
+      index: 0,
+      total: 1,
+    });
+    expect(events).toContainEqual({ type: 'file-done', mediaId: 'm1', ok: true });
+  });
+
+  it('walks the phases in the order the officer sees them', async () => {
+    uploadsEnabled = true;
+    const { events, observe } = collector();
+    enqueue(makeDraft());
+
+    await createSyncWorker().run({ manual: true, observe });
+
+    const phases = events.filter(e => e.type === 'phase').map(e => (e as { phase: string }).phase);
+    expect(phases).toEqual(['uploading', 'linking', 'submitting']);
+  });
+
+  it('says the report was refused, and why', async () => {
+    const { events, observe } = collector();
+    // A draft the mapper cannot build is the cleanest refusal to provoke.
+    enqueue(makeDraft({ gps_coords: undefined, incident_coords: undefined }));
+
+    await createSyncWorker().run({ manual: true, observe });
+
+    expect(events.find(e => e.type === 'report-done')).toMatchObject({ status: 'rejected' });
+  });
+
+  it('works one report at a time when the officer is watching a queue', async () => {
+    uploadsEnabled = true;
+    const { events, observe } = collector();
+    enqueue(makeDraft());
+    enqueue(makeDraft({ client_report_uuid: 'uuid-2' }));
+
+    const summary = await createSyncWorker().run({ manual: true, onlyDraft: 'uuid-2', observe });
+
+    // The modal holds one report's file list; a second report's events reaching it
+    // would have the bar jumping between two different sweeps.
+    expect(summary.processed).toBe(1);
+    expect(queueRecords.get('queue-uuid-1')).toMatchObject({ status: 'queued' });
+    expect(queueRecords.get('queue-uuid-2')).toMatchObject({ status: 'synced' });
+  });
+
+  it('runs silently when nobody is watching, exactly as before', async () => {
+    enqueue(makeDraft());
+    const summary = await createSyncWorker().run(true);
+    expect(summary.synced).toBe(1);
   });
 });

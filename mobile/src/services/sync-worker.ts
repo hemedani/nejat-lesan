@@ -20,6 +20,8 @@ import {
 } from '@/domain/accident-mapper';
 import { incidentTypeOf } from '@/domain/incident-type';
 import { toRoadSnap } from '@/domain/road-snap';
+import { withAttachmentIds } from '@/domain/attachment-ids';
+import type { UploadEvent } from '@/domain/upload-events';
 import {
   hasIncompleteRequiredVehicleCards,
   readFormState,
@@ -68,9 +70,29 @@ export type SyncRunSummary = {
   started: boolean;
 };
 
+/**
+ * How a caller asks for a run.
+ *
+ * The background worker passes nothing and sees nothing. A caller that has put an
+ * officer in front of a progress modal passes an observer and gets told what is
+ * happening — which is the only reason the modal exists, and the reason this stays an
+ * observer rather than a second submit path. There is one sequence; it is simply
+ * sometimes narrated.
+ */
+export type SyncRunOptions = {
+  /** Ignore `next_retry_at` and work every queued record now. */
+  manual?: boolean;
+  /** Work only this draft. A queue walk asks for one report at a time. */
+  onlyDraft?: string;
+  /** Receives the file-by-file story of the run, for the upload modal. */
+  observe?: (event: UploadEvent) => void;
+  /** Media ids to leave behind — the officer's «ادامه بدون این فایل». */
+  skipUploads?: ReadonlySet<string>;
+};
+
 export type SyncWorker = {
   start(): () => void;
-  run(manual?: boolean): Promise<SyncRunSummary>;
+  run(options?: SyncRunOptions | boolean): Promise<SyncRunSummary>;
 };
 
 function nowIso(): string {
@@ -253,7 +275,9 @@ async function checkProcessVersionFreshness(
 async function processRecord(
   session: Session,
   record: QueueRecord,
+  options: SyncRunOptions,
 ): Promise<'synced' | 'rejected' | 'retry'> {
+  const emit = options.observe;
   const draft = await getDraft(record.client_report_uuid);
   if (!draft || draft.sync_status === 'synced') {
     await persistQueueAndDraft(draft, record, { status: 'synced', attempts: record.attempts });
@@ -298,17 +322,30 @@ async function processRecord(
   // wizard's fixed media slots go through the base64 image act; a dynamic form's
   // `file` fields go through the general multipart act, because they can carry
   // videos and documents as well as photos.
+  //
+  // Neither pass throws on a bad file any more: each collects its failures and
+  // reports them, and the officer decides below. What used to be a thrown error
+  // here threw away a whole report because one photo would not upload.
   let workingDraft = draft;
   if (getAppConfig().uploadsEnabled) {
+    emit?.({ type: 'phase', phase: 'uploading' });
+    const uploadOptions = { onProgress: emit, skip: options.skipUploads };
     try {
-      const mediaSync = await syncReportMedia(session, workingDraft);
+      const mediaSync = await syncReportMedia(session, workingDraft, uploadOptions);
       workingDraft = { ...workingDraft, data: mediaSync.data };
-      const assetSync = await syncFormAssets(session, workingDraft);
-      workingDraft = { ...workingDraft, data: assetSync.data };
+      const assetSync = await syncFormAssets(session, workingDraft, uploadOptions);
+      workingDraft = {
+        ...workingDraft,
+        data: withAttachmentIds(workingDraft.data, [...mediaSync.fileIds, ...assetSync.fileIds]),
+      };
     } catch (error) {
+      // The passes collect per-file failures themselves, so reaching here means
+      // something below the file loop broke — the media table, a write-back. That
+      // is still the worker's problem to own, not the officer's.
       const code = error instanceof ApiError ? error.code : 'unknown';
       const outcome = decideOutcome(code, record.attempts, Date.now());
       const reason = translateApiError(error);
+      emit?.({ type: 'report-done', status: outcome.type === 'retry' ? 'retry' : 'rejected', reason });
       if (outcome.type === 'retry') {
         await persistQueueAndDraft(draft, record, {
           status: 'queued',
@@ -333,6 +370,7 @@ async function processRecord(
     ? buildIncidentReportAddSet(workingDraft, provenance)
     : buildAccidentAddSet(workingDraft);
   if (!mapped.ok) {
+    emit?.({ type: 'report-done', status: 'rejected', reason: mapped.reason });
     await persistQueueAndDraft(draft, record, {
       status: 'rejected',
       attempts: record.attempts,
@@ -344,6 +382,7 @@ async function processRecord(
 
   // The deferred half of the road snap. Run only after the mapper accepts, so a
   // draft with no coordinates at all is rejected without a pointless lookup.
+  emit?.({ type: 'phase', phase: 'linking' });
   const roadSnap = await resolveRoadSnap(workingDraft);
   const submissionDraft: AccidentDraft =
     roadSnap && !workingDraft.road_snap
@@ -361,6 +400,7 @@ async function processRecord(
   }
 
   try {
+    emit?.({ type: 'phase', phase: 'submitting' });
     const submission = pickSubmissionAction(submissionDraft);
     const ack = isReport
       ? submission.act === 'update'
@@ -394,8 +434,14 @@ async function processRecord(
     });
 
     if (needsResubmit(syncedDraft)) {
-      return await handleResubmitAfterSync(session, syncedDraft, record, isReport);
+      const result = await handleResubmitAfterSync(session, syncedDraft, record, isReport);
+      emit?.({
+        type: 'report-done',
+        status: result === 'synced' ? 'synced' : result === 'rejected' ? 'rejected' : 'retry',
+      });
+      return result;
     }
+    emit?.({ type: 'report-done', status: 'synced' });
     return 'synced';
   } catch (error) {
     const code = error instanceof ApiError ? error.code : 'unknown';
@@ -406,6 +452,7 @@ async function processRecord(
         : translateApiError(error);
 
     if (outcome.type === 'retry') {
+      emit?.({ type: 'report-done', status: 'retry', reason });
       await persistQueueAndDraft(draft, record, {
         status: 'queued',
         attempts: record.attempts + 1,
@@ -414,6 +461,7 @@ async function processRecord(
       });
       return 'retry';
     }
+    emit?.({ type: 'report-done', status: 'rejected', reason });
     await persistQueueAndDraft(draft, record, {
       status: 'rejected',
       attempts: record.attempts + 1,
@@ -428,7 +476,11 @@ export function createSyncWorker(sessionService = createSessionService()): SyncW
   let running = false;
   let unsubscribe: (() => void) | undefined;
 
-  async function run(manual = false): Promise<SyncRunSummary> {
+  async function run(input: SyncRunOptions | boolean = {}): Promise<SyncRunSummary> {
+    // `run(true)` is how the background paths and the older screens ask for a manual
+    // pass; the options form is what the upload modal drives.
+    const options: SyncRunOptions = typeof input === 'boolean' ? { manual: input } : input;
+    const manual = options.manual ?? false;
     const summary: SyncRunSummary = {
       processed: 0,
       synced: 0,
@@ -468,9 +520,14 @@ export function createSyncWorker(sessionService = createSessionService()): SyncW
         }
       }
 
-      const due = reconciled.filter(record => isProcessable(record, manual, nowMs));
+      const due = reconciled
+        .filter(record => isProcessable(record, manual, nowMs))
+        // A queue walk shows the officer one report at a time. Letting a second
+        // report's events reach the same modal would have the bar jumping between
+        // two different file lists.
+        .filter(record => !options.onlyDraft || record.client_report_uuid === options.onlyDraft);
       for (const record of due) {
-        const result = await processRecord(session, record);
+        const result = await processRecord(session, record, options);
         summary.processed += 1;
         if (result === 'synced') {
           summary.synced += 1;
