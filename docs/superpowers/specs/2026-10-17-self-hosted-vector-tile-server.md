@@ -1081,7 +1081,7 @@ git commit -m "✨ feat(tiles): add tile archive + web services to compose"
 - Consumes: a running origin at `$BASE` (default `http://localhost:8790`) — native `run-local.sh` by default, or the compose stack; `@mapbox/vector-tile`, `pbf`.
 - Produces: exit 0 iff acceptance criteria 1–9 pass; prints a line per criterion. Criterion 9 auto-detects native vs Docker: native asserts the archive + idempotent stamp; Docker (when `lesan_tiles` exists) additionally restarts `tiles-archive`.
 
-- [ ] **Step 1: Write `tiles/build/verify-decode.mjs`**
+- [x] **Step 1: Write `tiles/build/verify-decode.mjs`**
 
 ```js
 import { VectorTile } from "@mapbox/vector-tile";
@@ -1106,7 +1106,7 @@ if (layers.length === 0) {
 console.log(layers.join(","));
 ```
 
-- [ ] **Step 2: Write `tiles/verify.sh`**
+- [x] **Step 2: Write `tiles/verify.sh`**
 
 ```bash
 #!/usr/bin/env bash
@@ -1217,7 +1217,7 @@ rm -rf "$TMP"
 
 Make it executable: `chmod +x tiles/verify.sh`.
 
-- [ ] **Step 3: Run the harness against the native stack**
+- [x] **Step 3: Run the harness against the native stack**
 
 Run:
 ```bash
@@ -1234,7 +1234,7 @@ exit "$RC"
 ```
 Expected: every line `PASS`, final `PASS=<n> FAIL=0`, exit 0. (Criterion 9 prints the native archive check plus a Docker-skip line when no named volume exists.)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add tiles/verify.sh tiles/build/verify-decode.mjs
@@ -1251,7 +1251,7 @@ git commit -m "✅ test(tiles): acceptance harness for MVT, style, glyphs, burst
 **Interfaces:**
 - Produces: the operational documentation the task's Deliverable 4 requires.
 
-- [ ] **Step 1: Write `tiles/README.md`**
+- [x] **Step 1: Write `tiles/README.md`**
 
 It must cover, concretely (use the real measured archive size from Task 2):
 
@@ -1272,7 +1272,7 @@ It must cover, concretely (use the real measured archive size from Task 2):
 9. **Iranian-network caveat:** validate reachability from a real SIM before calling it done; HTTPS required before public deploy.
 10. **Mobile hand-off:** configure the app with **`EXPO_PUBLIC_MAP_STYLE_URL=<origin>/style.json`**; `EXPO_PUBLIC_MAP_TILE_URL` is retired. The client caches the style document, so cache-busting is the mobile task's concern.
 
-- [ ] **Step 2: Test — README exists and names the hand-off**
+- [x] **Step 2: Test — README exists and names the hand-off**
 
 Run:
 ```bash
@@ -1282,7 +1282,7 @@ grep -q 'PROTOMAPS_BUILD_DATE' tiles/README.md && echo "readme ok"
 ```
 Expected: `readme ok`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add tiles/README.md
