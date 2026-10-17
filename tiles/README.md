@@ -76,6 +76,10 @@ shell:
 ./verify.sh        # acceptance harness; BASE defaults to http://localhost:8790
 ```
 
+It refuses to start if `:8080` or `:8790` is already taken, and names the port — a second
+instance used to leave `caddy` running against a dead upstream, which looks like a healthy
+origin (`/healthz` 200) while every tile is a 502.
+
 > **Rebuild `dist/` when the origin changes.** `gen-artifacts.sh` bakes `TILES_PUBLIC_ORIGIN`
 > into `dist/style.json` and `dist/tiles.json`, so a `dist/` built for `localhost:8790`
 > advertises `localhost:8790` tiles. To serve the LAN from a phone, rebuild with
