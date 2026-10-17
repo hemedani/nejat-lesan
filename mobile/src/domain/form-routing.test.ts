@@ -10,7 +10,6 @@ import {
 
 const base = {
 	incidentType: 'accident' as const,
-	online: true,
 	hasChosenForm: false,
 	hasRenderableProcess: false,
 };
@@ -50,10 +49,12 @@ describe('resolveIncidentRoute', () => {
 		).toBe('/incident/simple');
 	});
 
-	it('never reaches for the process wizard while offline', () => {
-		expect(
-			resolveIncidentRoute({ ...base, online: false, hasRenderableProcess: true }),
-		).toBe('/incident/details');
+	it('reaches the process wizard from local storage, with or without a connection', () => {
+		// The wizard's definition now lives in the device's own cache, so its presence
+		// — not the network — is what decides. An officer on the road with a downloaded
+		// process is exactly who this change exists for, and gating on connectivity
+		// was what sent them to the standard form instead.
+		expect(resolveIncidentRoute({ ...base, hasRenderableProcess: true })).toBe('/incident/process');
 	});
 
 	it('prefers a chosen form over the process wizard', () => {

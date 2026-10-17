@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { AccidentDraft, QueueRecord } from '@/domain/types';
 import {
   computeNextRetryAt,
+  decideDefinitionFreshness,
   decideOutcome,
   isDefinitiveResubmitRejection,
   MAX_SYNC_ATTEMPTS,
@@ -143,5 +144,38 @@ describe('submission act selection (correction loop)', () => {
     expect(isDefinitiveResubmitRejection('timeout')).toBe(false);
     expect(isDefinitiveResubmitRejection('offline')).toBe(false);
     expect(isDefinitiveResubmitRejection('unknown')).toBe(false);
+  });
+});
+
+describe('decideDefinitionFreshness', () => {
+  it('lets a draft through when it names no definition', () => {
+    // The built-in wizards snapshot no version. Gating them on a number they never
+    // captured would stop every standard report from ever sending.
+    expect(decideDefinitionFreshness(undefined, 4)).toBe('ok');
+    expect(decideDefinitionFreshness(null, 4)).toBe('ok');
+    expect(decideDefinitionFreshness('not a number', 4)).toBe('ok');
+  });
+
+  it('lets a draft through when the active version cannot be determined', () => {
+    // A transport hiccup or an org that publishes nothing must not strand a report
+    // the officer has already finished.
+    expect(decideDefinitionFreshness(2, null)).toBe('ok');
+    expect(decideDefinitionFreshness(2, undefined)).toBe('ok');
+  });
+
+  it('holds a draft whose captured version the organization has moved on from', () => {
+    // The answers were typed against the older questions. Sending them would file a
+    // report shaped by a definition the org has replaced.
+    expect(decideDefinitionFreshness(2, 3)).toBe('stale');
+  });
+
+  it('passes when the captured version is still the active one', () => {
+    expect(decideDefinitionFreshness(3, 3)).toBe('ok');
+  });
+
+  it('compares a version that reached the draft as a string', () => {
+    // The draft is persisted JSON, so an older row can carry the number as text.
+    expect(decideDefinitionFreshness('3', 3)).toBe('ok');
+    expect(decideDefinitionFreshness('3', 4)).toBe('stale');
   });
 });

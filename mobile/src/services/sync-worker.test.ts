@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { submitAccidentReport, updateAccidentReportByUuid } from '@/api/accident';
 import { snapPointToRoad, type SnapPointResponse } from '@/api/road';
+import { fetchPatrolFormById } from '@/api/form-definition';
 import type { AccidentDraft, QueueRecord, Session } from '@/domain/types';
 import type { UploadEvent } from '@/domain/upload-events';
 import { submitIncidentReport } from '@/api/incident-report';
@@ -80,6 +81,10 @@ vi.mock('@/services/asset-upload-service', () => ({
 
 vi.mock('@/api/accident-process', () => ({
   fetchPatrolProcess: vi.fn(async () => ({ process: null })),
+}));
+
+vi.mock('@/api/form-definition', () => ({
+  fetchPatrolFormById: vi.fn(async () => ({ form: null, options: {}, version: { version: 4 } })),
 }));
 
 vi.mock('@/api/road', () => ({
@@ -177,6 +182,7 @@ beforeEach(() => {
     fileIds: [],
   }));
   connectivityStatus = 'online';
+  vi.mocked(fetchPatrolFormById).mockReset().mockResolvedValue({ form: null, options: {}, version: { version: 4 } });
   vi.mocked(snapPointToRoad).mockReset();
   vi.mocked(submitAccidentReport).mockReset().mockResolvedValue({ _id: 'server-1', report_id: 'REP-1' });
   vi.mocked(updateAccidentReportByUuid)
@@ -552,3 +558,61 @@ describe('narrating a run', () => {
     expect(summary.synced).toBe(1);
   });
 });
+describe('a form the organization has replaced', () => {
+  it('holds a draft whose captured version the organization moved on from', async () => {
+    // The device keeps one copy of each form — the newest — so an officer who
+    // answered offline can reach submit holding answers shaped by questions the org
+    // no longer publishes. Filing them would submit against a dead workflow.
+    vi.mocked(fetchPatrolFormById).mockResolvedValue({
+      form: null,
+      options: {},
+      version: { version: 9 },
+    });
+    enqueue(makeDraft({ data: { form_definition_id: 'fd-1', form_version: 4, form_answers: {} } }));
+
+    const summary = await createSyncWorker().run(true);
+
+    expect(summary.synced).toBe(0);
+    expect(queueRecords.get('queue-uuid-1')).toMatchObject({ status: 'queued' });
+    expect(submitAccidentReport).not.toHaveBeenCalled();
+    expect(queueRecords.get('queue-uuid-1')?.['last_error']).toContain('فرم ثبت سازمان به‌روزرسانی شده است');
+  });
+
+  it('sends the draft when the captured version is still the active one', async () => {
+    enqueue(makeDraft({ data: { form_definition_id: 'fd-1', form_version: 4, form_answers: {} } }));
+
+    const summary = await createSyncWorker().run(true);
+
+    expect(summary.synced).toBe(1);
+  });
+
+  it('never asks about a draft the built-in wizards filed', async () => {
+    // Those snapshot no `form_version`, so gating them would hold every standard
+    // report forever.
+    enqueue(makeDraft({ data: { location: 'بزرگراه' } }));
+
+    await createSyncWorker().run(true);
+
+    expect(fetchPatrolFormById).not.toHaveBeenCalled();
+  });
+
+  it('does not hold the report while offline', async () => {
+    // The officer cannot reopen anything out of coverage, so a hold would strand a
+    // finished report with no way to clear it.
+    connectivityStatus = 'offline';
+    vi.mocked(fetchPatrolFormById).mockResolvedValue({
+      form: null,
+      options: {},
+      version: { version: 9 },
+    });
+    enqueue(makeDraft({ data: { form_definition_id: 'fd-1', form_version: 4, form_answers: {} } }));
+
+    // Offline the whole run is skipped, which is itself the guarantee: nothing is
+    // held, and nothing is attempted.
+    const summary = await createSyncWorker().run(true);
+
+    expect(summary.processed).toBe(0);
+    expect(queueRecords.get('queue-uuid-1')).toMatchObject({ status: 'queued' });
+  });
+});
+

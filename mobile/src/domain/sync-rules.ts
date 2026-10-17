@@ -86,6 +86,37 @@ export function needsResubmit(draft: AccidentDraft): boolean {
   );
 }
 
+/**
+ * Whether a draft's answers still match the definition the organization publishes.
+ *
+ * A dynamic-form draft snapshots `form_version` when the officer answers it. If the
+ * org has since published a newer definition, the questions under those answers have
+ * moved, so the report is held for the officer to reopen rather than filed against a
+ * workflow that no longer exists — the same rule `accident_process` drafts follow
+ * through `process_version`.
+ *
+ * Two things deliberately read as fresh: a draft that named no definition (the
+ * built-in wizards never do, and gating them would stop every standard report from
+ * sending), and an active version that could not be determined (a transport failure
+ * or an org that publishes nothing must not strand a finished report).
+ */
+export function decideDefinitionFreshness(
+  capturedVersion: unknown,
+  activeVersion: number | null | undefined,
+): 'ok' | 'stale' {
+  // `Number(null)` and `Number('')` are both 0, not NaN — so an absent snapshot has
+  // to be rejected before the coercion, or every draft that captured no version
+  // would read as version 0 and be held forever against any real definition.
+  if (capturedVersion == null || capturedVersion === '') {
+    return 'ok';
+  }
+  const captured = Number(capturedVersion);
+  if (!Number.isFinite(captured) || activeVersion == null) {
+    return 'ok';
+  }
+  return Number(activeVersion) === captured ? 'ok' : 'stale';
+}
+
 const REJECTED_CODES: ReadonlySet<ApiErrorCode> = new Set<ApiErrorCode>([
   'validation',
   'unauthorized',

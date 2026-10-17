@@ -17,10 +17,13 @@ import { AppIcons } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { formatBytes } from '@/domain/map-packs';
 import { formatCoordinates, organizationPoint } from '@/domain/organization';
+import type { OfflineFormCacheStatus, OrgFormsAvailability } from '@/domain/offline-forms';
+import { isIncidentPatrolEnabled } from '@/domain/modules';
 import type { PatrolOrganization } from '@/domain/types';
 import { listDrafts } from '@/storage/local-database';
 import { useActiveShift } from '@/hooks/use-active-shift';
 import { useDeviceLocation, type DeviceLocationState } from '@/hooks/use-device-location';
+import { useOfflineForms } from '@/hooks/use-offline-forms';
 import { useNationalMapPack } from '@/hooks/use-national-map-pack';
 import { pauseNationalDownload, startNationalDownload } from '@/services/map-download';
 
@@ -76,6 +79,12 @@ export default function HomeScreen() {
   const deviceLocation = useDeviceLocation();
   const mapPack = useNationalMapPack();
   const [draftCount, setDraftCount] = useState(0);
+  const orgForms = useOfflineForms({
+    session,
+    hasOrganization: Boolean(session?.primaryOrganization),
+    moduleEnabled: session ? isIncidentPatrolEnabled(session) : false,
+    offline: connectivity?.status === 'offline',
+  });
 
   useEffect(() => {
     if (!isLoading && !session) {

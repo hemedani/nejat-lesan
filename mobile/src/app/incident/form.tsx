@@ -50,6 +50,7 @@ import { incidentTypeOf } from '@/domain/incident-type';
 import type { AccidentDraft } from '@/domain/types';
 import { getDraft } from '@/storage/local-database';
 import { getConnectivitySnapshot } from '@/services/connectivity';
+import { loadCachedForm, loadCachedFormOfKind } from '@/services/offline-forms-service';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { StepperHeader, type StepperStep } from '@/components/ui/stepper-header';
@@ -135,10 +136,20 @@ export default function IncidentFormScreen() {
         if (definitionId === DEFAULT_ACCIDENT_FORM_ID) {
           // The bundled form has no backend document, so there is nothing to fetch.
           payload = defaultAccidentFormPayload();
-        } else if (definitionId) {
-          payload = await fetchPatrolFormById(session, definitionId);
         } else {
-          payload = await fetchPatrolForm(session, kind);
+          // The device first, always. An officer who downloaded their organization's
+          // forms must reach them with no signal — fetching here is what used to
+          // swap in the bundled default instead.
+          const cached = definitionId
+            ? await loadCachedForm(definitionId)
+            : await loadCachedFormOfKind(kind);
+          if (cached?.form) {
+            payload = cached;
+          } else if (definitionId) {
+            payload = await fetchPatrolFormById(session, definitionId);
+          } else {
+            payload = await fetchPatrolForm(session, kind);
+          }
         }
 
         if (cancelled) return;
@@ -174,7 +185,9 @@ export default function IncidentFormScreen() {
         if (cancelled) return;
         // Offline must never disable incident creation, so a transport failure
         // falls through to the built-in standard flow instead of dead-ending the
-        // officer on a retry button.
+        // officer on a retry button. This is only reachable when the form was not
+        // in the local cache; a cached one resolved above without touching the
+        // network at all.
         const connectivity = await getConnectivitySnapshot().catch(() => undefined);
         if (connectivity?.status === 'offline') {
           setLoad({ phase: 'empty' });

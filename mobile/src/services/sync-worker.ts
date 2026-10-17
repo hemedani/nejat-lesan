@@ -1,5 +1,6 @@
 import { ApiError, translateApiError } from '@/api/errors';
 import { fetchPatrolProcess } from '@/api/accident-process';
+import { fetchPatrolFormById } from '@/api/form-definition';
 import {
   resubmitReturnedReport,
   submitAccidentReport,
@@ -27,6 +28,7 @@ import {
   readFormState,
 } from '@/domain/accident-form';
 import {
+  decideDefinitionFreshness,
   decideOutcome,
   isDefinitiveResubmitRejection,
   needsResubmit,
@@ -272,6 +274,37 @@ async function checkProcessVersionFreshness(
   return 'ok';
 }
 
+/**
+ * Dynamic-form drafts snapshot `form_version` at capture time, exactly as
+ * org-process drafts snapshot `process_version`. The device now holds one copy of each
+ * authored form — the newest — so a draft can be answered against a definition the
+ * organization has since replaced. Hold it for the officer to reopen rather than file
+ * answers shaped by questions that no longer exist.
+ *
+ * Offline and module/org errors keep the current behaviour (best-effort submit): the
+ * officer has no way to act on a hold they cannot see resolved.
+ */
+async function checkFormVersionFreshness(
+  session: Session,
+  draft: AccidentDraft,
+): Promise<'ok' | 'stale'> {
+  const definitionId = draft.data?.['form_definition_id'];
+  if (typeof definitionId !== 'string' || definitionId.length === 0) {
+    return 'ok';
+  }
+  try {
+    const connectivity = await getConnectivitySnapshot();
+    if (connectivity.status === 'offline') {
+      return 'ok';
+    }
+    const result = await fetchPatrolFormById(session, definitionId);
+    return decideDefinitionFreshness(draft.data?.['form_version'], result?.version?.version);
+  } catch {
+    // Module off, org membership missing, transport — do not block the report.
+  }
+  return 'ok';
+}
+
 async function processRecord(
   session: Session,
   record: QueueRecord,
@@ -301,6 +334,18 @@ async function processRecord(
       attempts: record.attempts,
       nextRetryAt: new Date(Date.now() + 15 * 60_000).toISOString(),
       lastError: 'کارت وسیله نقلیه کامل نیست؛ ارسال تا تکمیل آن متوقف می‌ماند.',
+    });
+    return 'retry';
+  }
+
+  const formFreshness = await checkFormVersionFreshness(session, draft);
+  if (formFreshness === 'stale') {
+    await persistQueueAndDraft(draft, record, {
+      status: 'queued',
+      attempts: record.attempts,
+      nextRetryAt: new Date(Date.now() + 30 * 60_000).toISOString(),
+      lastError:
+        'فرم ثبت سازمان به‌روزرسانی شده است؛ گزارش را باز کنید تا با فرم جدید تکمیل و دوباره ارسال شود.',
     });
     return 'retry';
   }

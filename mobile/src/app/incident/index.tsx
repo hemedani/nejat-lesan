@@ -11,8 +11,6 @@ import {
 } from '@/domain/incident-type';
 import { isProcessRenderable } from '@/domain/process-form';
 import { resolveIncidentRoute } from '@/domain/form-routing';
-import { fetchPatrolProcess } from '@/api/accident-process';
-import { fetchPatrolForms } from '@/api/form-definition';
 import {
   buildFormPicker,
   defaultAccidentPickerForm,
@@ -24,11 +22,11 @@ import {
   DEFAULT_ACCIDENT_FORM_TITLE,
 } from '@/domain/default-accident-form';
 import { translateApiError } from '@/api/errors';
-import { getConnectivitySnapshot } from '@/services/connectivity';
 import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
 import type { AccidentDraft, IncidentType } from '@/domain/types';
 import { formatCoordinate, formatDistance } from '@/domain/location-utils';
 import { getDraft } from '@/storage/local-database';
+import { loadCachedFormIndex, loadCachedProcess } from '@/services/offline-forms-service';
 import { Button } from '@/components/ui/button';
 import { Banner } from '@/components/ui/banner';
 import { Card, CardHeader } from '@/components/ui/card';
@@ -141,10 +139,11 @@ export default function IncidentDraftScreen() {
   );
 
   // --- the organization's own forms ---------------------------------------
-  // Fetched once per screen visit and deliberately best-effort. Product invariant
-  // 2 says offline must never disable incident creation, so a failed or skipped
-  // fetch leaves the standard flow and the bundled accident form fully usable
-  // rather than blocking the officer behind an error.
+  // Read from the device, not the network. An officer who downloaded their
+  // organization's forms must reach them with no signal at all — fetching on open is
+  // what used to replace them with the app's own forms. An empty cache leaves the
+  // built-in type tiles in place, so incident creation is never blocked; the Home
+  // org card is where the download is offered.
   useEffect(() => {
     let cancelled = false;
     if (!session) {
@@ -152,16 +151,12 @@ export default function IncidentDraftScreen() {
     }
     (async () => {
       try {
-        const connectivity = await getConnectivitySnapshot();
-        if (connectivity.status === 'offline') {
-          return;
-        }
-        const rows = await fetchPatrolForms(session);
+        const rows = await loadCachedFormIndex();
         if (!cancelled) {
           setForms(rows);
         }
       } catch {
-        // Module off, org membership missing, transport — the fallbacks cover it.
+        // A corrupt row reads as "not cached"; the standard flow still works.
       } finally {
         if (!cancelled) {
           setFormsLoaded(true);
@@ -217,21 +212,19 @@ export default function IncidentDraftScreen() {
     // authors non-accident forms, and its answers would be rejected by
     // `incident_report`), then the built-in standard flow. Keeping it in one
     // tested place is what stops the screen drifting from the product decision.
-    let online = false;
+    //
+    // The process wizard is read from the device, not fetched: an officer out of
+    // coverage with it downloaded is exactly who must still reach it.
     let hasRenderableProcess = false;
     if (session && effective === type) {
       if (!isIncidentPatrolEnabled(session)) {
         setProcessNotice(moduleDisabledMessage(session));
       } else {
         try {
-          const connectivity = await getConnectivitySnapshot();
-          if (connectivity.status === 'online') {
-            online = true;
-            const result = await fetchPatrolProcess(session, effective);
-            hasRenderableProcess = Boolean(
-              result.process && isProcessRenderable(result.process),
-            );
-          }
+          const cached = await loadCachedProcess(effective);
+          hasRenderableProcess = Boolean(
+            cached?.process && isProcessRenderable(cached.process),
+          );
         } catch (error) {
           const message = translateApiError(error);
           if (message.includes('ماژول') || message.includes('سازمان')) {
@@ -244,7 +237,6 @@ export default function IncidentDraftScreen() {
     router.push({
       pathname: resolveIncidentRoute({
         incidentType: effective,
-        online,
         hasChosenForm: false,
         hasRenderableProcess,
       }),

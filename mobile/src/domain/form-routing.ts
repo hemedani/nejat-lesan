@@ -20,8 +20,10 @@ import { hasFormAnswers, isFormDraftData } from './form-submission';
  *    lightweight per-type form otherwise. This is also the fallback for a
  *    non-accident report when an organization has authored no form.
  *
- * A form needs the network to fetch, so an offline device takes the standard
- * flow: incident creation must never be blocked.
+ * Connectivity is deliberately not an input: both org-authored surfaces are stored on
+ * the device (`offline_forms`), so the officer's organization decides which form they
+ * get whether or not there is signal. Gating on the network is what used to send an
+ * officer with a downloaded definition to the built-in form instead.
  */
 export type IncidentRoute =
 	| '/incident/form'
@@ -45,11 +47,13 @@ export function targetModelFor(type: IncidentType): 'accident' | 'incident_repor
 export interface RouteInputs {
 	/** Incident type the officer picked. */
 	incidentType: IncidentType;
-	/** Whether the device can reach the backend right now. */
-	online: boolean;
 	/** The officer chose a form on the entry screen. */
 	hasChosenForm: boolean;
-	/** An active org process wizard exists and this build can render it. */
+	/**
+	 * An active org process wizard exists, on the device or on the server, and this
+	 * build can render it. Presence is the whole test: the wizard no longer needs a
+	 * network to be reachable.
+	 */
 	hasRenderableProcess: boolean;
 }
 
@@ -60,10 +64,10 @@ export interface RouteInputs {
  * the officer has already seen the questions they are about to answer.
  */
 export function resolveIncidentRoute(inputs: RouteInputs): IncidentRoute {
-	const { incidentType, online, hasChosenForm, hasRenderableProcess } = inputs;
+	const { incidentType, hasChosenForm, hasRenderableProcess } = inputs;
 
 	if (hasChosenForm) return '/incident/form';
-	if (online && hasRenderableProcess && incidentType === 'accident') {
+	if (hasRenderableProcess && incidentType === 'accident') {
 		return '/incident/process';
 	}
 	return standardRouteFor(incidentType);
@@ -98,12 +102,12 @@ export type DraftResumeTarget =
  * 4. the built-in standard flow for the type — the fallback for a legacy draft,
  *    which carries no provenance at all.
  *
- * Unlike `resolveIncidentRoute` there is deliberately **no offline fallback**. A
- * draft is usually reopened precisely because it is unfinished, and the dynamic form
- * needs the network to fetch its questions — but sending it to the standard wizard
- * instead would show it the wrong questions and overwrite the stored answers with a
- * different shape. Waiting for a connection costs the officer a retry; guessing
- * costs them the report.
+ * A draft reopens in the editor that produced it whether or not there is signal: a
+ * form-filed draft resolves its definition out of `offline_forms`, and a process draft
+ * out of the same store. The one case that genuinely cannot reopen is a form the device
+ * never downloaded — and that degrades to the built-in form with a visible message
+ * rather than to a silent guess, because reopening a draft in a differently-shaped
+ * form would overwrite the officer's answers on the next save.
  */
 export function resumeRouteFor(
 	draft: { incident_type?: string; data?: Record<string, unknown> } | null | undefined,

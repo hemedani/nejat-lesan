@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchPatrolProcess, type PatrolProcess } from '@/api/accident-process';
 import { translateApiError } from '@/api/errors';
 import { getConnectivitySnapshot } from '@/services/connectivity';
+import { loadCachedProcess } from '@/services/offline-forms-service';
 import {
   emptyProcessState,
   isProcessRenderable,
@@ -94,14 +95,19 @@ export default function ProcessWizardScreen() {
     }
     setLoadState({ phase: 'loading' });
     try {
-      const connectivity = await getConnectivitySnapshot();
-      if (connectivity.status === 'offline') {
-        setLoadState({ phase: 'error', message: 'بدون اینترنت؛ فرآیند ثبت سازمان بارگیری نشد.' });
-        return;
-      }
       const incidentType = incidentTypeOf(draft);
-      const result = await fetchPatrolProcess(session, incidentType);
-      const nextProcess = result.process;
+      // The device first. This screen used to refuse outright without a connection,
+      // which is what left an officer holding a downloaded wizard unable to use it on
+      // the road. The network is consulted only for a wizard this device never
+      // stored, so a fresh install still picks up one the org has just published.
+      let result = await loadCachedProcess(incidentType);
+      if (!result?.process) {
+        const connectivity = await getConnectivitySnapshot();
+        if (connectivity.status !== 'offline') {
+          result = await fetchPatrolProcess(session, incidentType);
+        }
+      }
+      const nextProcess = result?.process ?? null;
       if (!nextProcess) {
         setLoadState({ phase: 'empty' });
         return;
