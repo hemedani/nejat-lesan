@@ -28,7 +28,12 @@ The MVT content-type is `application/x-protobuf` (clients also accept
 **npm deps** (`tiles/package.json`): `@protomaps/basemaps@5.7.2`, `fontnik@0.7.7`,
 `@maplibre/maplibre-gl-style-spec@26.4.4`, `@mapbox/vector-tile@3.0.0`, `pbf@5.1.2`.
 
-## 2. Bring-up
+## 2. Run it locally (native — no Docker)
+
+**This is the supported path.** The service is two ordinary host processes — `pmtiles serve`
+and `caddy` — both fetched into the gitignored `bin/`. No container, no daemon, no compose.
+The Docker artifacts still sitting in the repo are **deferred and not in use**; see
+[Appendix A](#appendix-a--docker-deployment-deferred-not-in-use).
 
 ### Prerequisites (runner machine)
 
@@ -43,35 +48,39 @@ export PATH="/usr/local/bin:$PATH"
 cd tiles && npm ci        # install generator deps (once)
 ```
 
-### Native (no Docker)
+### First run (one-time, ~15 min — the archive download dominates)
 
 ```bash
 ./build/setup-tools.sh                                   # download pinned pmtiles + caddy → bin/
 PROTOMAPS_BUILD_DATE=20261015 ./build/extract.sh         # clip Protomaps archive → data/tiles.pmtiles
 TILES_PUBLIC_ORIGIN=http://localhost:8790 ./build/gen-artifacts.sh   # → dist/ (style, tilejson, glyphs, sprites, areas)
-TILES_PUBLIC_ORIGIN=http://localhost:8790 ./run-local.sh # serve on :8790
 ```
 
-Then check it: `./verify.sh` (acceptance harness, `BASE` defaults to `http://localhost:8790`).
+These are idempotent and safe to re-run: `setup-tools.sh` skips existing binaries,
+`extract.sh` re-extracts only when `data/.source-stamp` changes, and `gen-artifacts.sh`
+rebuilds `dist/` from scratch each time.
 
-### Production (Docker)
+### Every run afterwards
 
 ```bash
-TILES_PUBLIC_ORIGIN=http://<host>:8790 ./build/gen-artifacts.sh
-./build/seed-volume.sh                                   # copy native archive into the lesan_tiles volume
-docker build -t lesan-tiles-web:latest tiles
-docker compose up -d tiles-archive tiles-web             # from the repo root
+./run-local.sh
 ```
 
-`tiles-web` maps `8790:8080`; `tiles-archive` is internal-only and reads
-`/data/tiles.pmtiles` from the `lesan_tiles` volume.
+That is the whole thing. It runs in the **foreground**: `pmtiles serve` on `:8080` (internal)
+and `caddy` on `:8790` (the public origin), and **Ctrl-C stops both**. It defaults
+`TILES_PUBLIC_ORIGIN` to `http://localhost:8790`; pass it explicitly only to serve a
+different origin. Open <http://localhost:8790/healthz> to confirm, or check it from another
+shell:
 
-> **Origin is baked in twice.** `gen-artifacts.sh` writes `TILES_PUBLIC_ORIGIN` into
-> `dist/style.json` and `dist/tiles.json`, and `docker-compose.yml` passes a literal
-> `--public-url=http://46.245.98.10:8790` to `tiles-archive`. Changing the host or port
-> means re-running `gen-artifacts.sh` **and** updating that compose flag, otherwise the
-> style and TileJSON advertise URLs that do not resolve. The dev compose uses
-> `http://localhost:8790`.
+```bash
+./verify.sh        # acceptance harness; BASE defaults to http://localhost:8790
+```
+
+> **Rebuild `dist/` when the origin changes.** `gen-artifacts.sh` bakes `TILES_PUBLIC_ORIGIN`
+> into `dist/style.json` and `dist/tiles.json`, so a `dist/` built for `localhost:8790`
+> advertises `localhost:8790` tiles. To serve the LAN from a phone, rebuild with
+> `TILES_PUBLIC_ORIGIN=http://<host-lan-ip>:8790` before starting — otherwise the style
+> loads but every tile URL in it points at the device itself.
 
 ## 3. Area config
 
@@ -85,28 +94,20 @@ Edit `config/areas.json`:
 re-run `extract.sh` (the source stamp changes ⇒ it re-extracts) and then
 `gen-artifacts.sh`. The Iran area currently spans `44.0,25.0,63.4,39.9` at maxzoom 14.
 
-## 4. Archive size & volume sizing
+## 4. Archive size & disk usage
 
 The current archive is `tiles/data/tiles.pmtiles` — **590,627,724 bytes (563 MiB)**,
 `sha256 d15e357b1aaa1d50fafcd89124438dacfafb58353489c43a45b705612c76677f`
 (recorded in `data/tiles.pmtiles.sha256`).
 
-Production loopback volume (sized with headroom over the ~563 MiB archive):
-
-```bash
-truncate -s 8G /srv/lesan/tiles.img
-docker volume create --driver local \
-  --opt type=ext4 --opt device=/srv/lesan/tiles.img --opt o=loop,rw,size=8G lesan_tiles
-```
-
-Then `./build/seed-volume.sh` copies the native archive into `lesan_tiles`. For dev you
-can instead use a plain `docker volume create lesan_tiles`.
+Natively the archive is just that one file on the host disk — no volume to size. Budget
+~600 MiB for it plus ~3 MB for `dist/` and ~80 MB for `bin/`.
 
 ## 5. Cache sizing / wipe
 
 `pmtiles serve` runs with `--cache-size=256` (**MB**), an in-memory LRU over the archive
-header/directory. There is **no on-disk cache**: to wipe it, restart the archive service —
-`docker compose restart tiles-archive` (or restart the native `run-local.sh` stack).
+header/directory. There is **no on-disk cache**, so wiping is a restart: Ctrl-C
+`run-local.sh` and start it again.
 
 ## 6. Update the archive
 
@@ -114,7 +115,7 @@ Bump the Protomaps daily build date and re-extract:
 
 ```bash
 PROTOMAPS_BUILD_DATE=YYYYMMDD ./build/extract.sh
-TILES_PUBLIC_ORIGIN=http://<host>:8790 ./build/gen-artifacts.sh
+TILES_PUBLIC_ORIGIN=http://localhost:8790 ./build/gen-artifacts.sh
 ```
 
 `extract.sh` is idempotent: it re-extracts only when the stamp
@@ -178,3 +179,45 @@ EXPO_PUBLIC_MAP_STYLE_URL=http://<host>:8790/style.json
 `EXPO_PUBLIC_MAP_TILE_URL` is **retired** — do not use it. The client caches the style
 document, so cache-busting (e.g. appending a version query string) is the mobile task's
 concern.
+
+---
+
+## Appendix A — Docker deployment (deferred, not in use)
+
+**Do not use this path for now.** The decision is to run the tile server natively (section 2)
+and leave Docker out of it. The artifacts below are kept only so the production option is not
+lost; they are untested against a live daemon (no Docker was used while building this), and
+the `tiles-archive` / `tiles-web` healthchecks and the compose branch of the acceptance
+harness have never actually run.
+
+What exists, unchanged and unused:
+
+- `tiles/Dockerfile` — `caddy:2.11-alpine`, `COPY dist /srv`, `ENV PORT=8080 TILES_UPSTREAM=tiles-archive:8080`.
+- `tiles/Caddyfile` — the *same* file the native path uses; the two paths differ only in how
+  `PORT`, `SRV_ROOT` and `TILES_UPSTREAM` are supplied (shell env vs image `ENV`).
+- `docker-compose.yml` — `tiles-archive` (internal `:8080`, `protomaps/go-pmtiles:v1.31.2`)
+  and `tiles-web` (`8790:8080`), plus the external `lesan_tiles` volume.
+- `docker-compose.dev.yml` — the same two services.
+- `tiles/build/seed-volume.sh` — copies the native archive into `lesan_tiles`.
+
+If it is ever revived, this is the sequence, and the origin must be fixed in **two** places:
+
+```bash
+TILES_PUBLIC_ORIGIN=http://<host>:8790 ./build/gen-artifacts.sh
+./build/seed-volume.sh
+docker build -t lesan-tiles-web:latest tiles
+docker compose up -d tiles-archive tiles-web     # from the repo root
+```
+
+- `gen-artifacts.sh` bakes `TILES_PUBLIC_ORIGIN` into `dist/style.json` / `dist/tiles.json`.
+- `docker-compose.yml` hardcodes `--public-url=http://46.245.98.10:8790` on `tiles-archive`.
+
+Change the host or port and both must be updated, or the style and TileJSON will advertise
+URLs that do not resolve. The volume also needs explicit sizing (the archive is ~563 MiB;
+the compose default volume is unbounded):
+
+```bash
+truncate -s 8G /srv/lesan/tiles.img
+docker volume create --driver local \
+  --opt type=ext4 --opt device=/srv/lesan/tiles.img --opt o=loop,rw,size=8G lesan_tiles
+```
