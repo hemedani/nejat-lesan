@@ -11,6 +11,20 @@ export type IconSpec = { family: IconFamily; name: IconName };
 const ion = (name: IonName): IconSpec => ({ family: 'ion', name });
 const md = (name: MdName): IconSpec => ({ family: 'md', name });
 
+/**
+ * Spreads an `IconSpec` into components that take `icon` and `iconFamily` as
+ * separate props.
+ *
+ * Passing `AppIcons.map.route.name` alone is the trap this exists to close: it
+ * drops the family, the component falls back to Ionicons, and a
+ * MaterialCommunityIcons name renders as a blank box with a
+ * `"directions-fork" is not a valid icon name for family "ionicons"` warning —
+ * which is exactly what the location picker was doing.
+ */
+export function iconProps(spec: IconSpec): { icon: IconName; iconFamily: IconFamily } {
+  return { icon: spec.name, iconFamily: spec.family };
+}
+
 export const AppIcons = {
   nav: {
     back: ion('arrow-forward'),
