@@ -592,6 +592,7 @@ describe('narrating a run', () => {
     expect(summary.synced).toBe(1);
   });
 });
+
 describe('a form the organization has replaced', () => {
   it('holds a draft whose captured version the organization moved on from', async () => {
     // The device keeps one copy of each form — the newest — so an officer who
