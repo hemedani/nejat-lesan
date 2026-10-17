@@ -416,9 +416,19 @@ async function processRecord(
       const mediaSync = await syncReportMedia(session, workingDraft, uploadOptions);
       workingDraft = { ...workingDraft, data: mediaSync.data };
       const assetSync = await syncFormAssets(session, workingDraft, uploadOptions);
+      // `assetSync.data` is the write-back: every local asset id swapped for the
+      // server's, each `file` row split into `answer_ids` / `answer_names`, and the
+      // assets the answers reference already merged into `attachmentsIds`. Taking
+      // only `fileIds` from it kept the gallery working while the answers the officer
+      // reads on the review screen still showed `asset-1792226098313-i9oxxj`.
+      //
+      // Both passes' ids are named explicitly rather than trusting the service to have
+      // merged its own: `withAttachmentIds` de-duplicates, so listing them costs nothing
+      // and keeps the gallery the union of the two passes no matter which one of them
+      // did the merging.
       workingDraft = {
         ...workingDraft,
-        data: withAttachmentIds(workingDraft.data, [...mediaSync.fileIds, ...assetSync.fileIds]),
+        data: withAttachmentIds(assetSync.data, [...mediaSync.fileIds, ...assetSync.fileIds]),
       };
     } catch (error) {
       // The passes collect per-file failures themselves, so reaching here means

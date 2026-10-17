@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { submitAccidentReport, updateAccidentReportByUuid } from '@/api/accident';
 import { snapPointToRoad, type SnapPointResponse } from '@/api/road';
 import { fetchPatrolFormById } from '@/api/form-definition';
+import { applyUploadEvent, initialUploadProgress, resolveSendOutcome } from '@/domain/upload-events';
+import { resolveAssetIdsInData, splitAssetAnswerRows } from '@/domain/asset-writeback';
 import type { AccidentDraft, QueueRecord, Session } from '@/domain/types';
 import type { UploadEvent } from '@/domain/upload-events';
 import { submitIncidentReport, updateIncidentReportByUuid } from '@/api/incident-report';
@@ -72,7 +74,7 @@ vi.mock('@/services/media-upload-service', () => ({
 // so the worker's tests stay free of `expo-file-system`.
 vi.mock('@/services/asset-upload-service', () => ({
   syncFormAssets: vi.fn(async (_session: unknown, draft: AccidentDraft) => ({
-    data: draft.data,
+    data: assetWriteBack(draft.data),
     uploaded: 0,
     failed: [],
     fileIds: [] as string[],
@@ -110,6 +112,33 @@ vi.mock('@/auth/session-service', () => ({
 vi.mock('@/domain/draft-actions', () => ({
   clearDraftReturnedFlag: vi.fn(async () => undefined),
 }));
+
+/**
+ * Stand-in for the real write-back: swap every local asset id for a server one and give
+ * each `file` row the split `answer_ids` / `answer_names` shape.
+ *
+ * The old stub echoed `draft.data` back unchanged, which made "the worker used
+ * `assetSync.data`" and "the worker used `workingDraft.data`" produce an identical
+ * payload — so the worker could discard the entire write-back and every test still
+ * passed. A stub that cannot distinguish the two is what hid this.
+ */
+function assetWriteBack(data: Record<string, unknown>): Record<string, unknown> {
+  const resolved = resolveAssetIdsInData(data, {
+    'asset-1': '6ad33386849ab652432b9caf',
+    'asset-2': '6ad33386849ab652432b9cb3',
+  });
+  return {
+    ...resolved,
+    dynamic_answers: splitAssetAnswerRows(
+      data['dynamic_answers'],
+      { 'asset-1': '6ad33386849ab652432b9caf', 'asset-2': '6ad33386849ab652432b9cb3' },
+      {
+        '6ad33386849ab652432b9caf': 'کروکی.jpg',
+        '6ad33386849ab652432b9cb3': 'تصویر مدرک.jpg',
+      },
+    ).rows,
+  };
+}
 
 const SESSION: Session = {
   device_id: 'device-1',
@@ -176,7 +205,7 @@ beforeEach(() => {
     fileIds: [],
   }));
   vi.mocked(syncFormAssets).mockImplementation(async (_session, draft) => ({
-    data: draft.data,
+    data: assetWriteBack(draft.data),
     uploaded: 0,
     failed: [],
     fileIds: [],
@@ -729,3 +758,133 @@ describe('the offline submit, end to end through the modal\'s own state machine'
   });
 });
 
+describe('a correction must not restamp the build that filed the report', () => {
+  it('omits submitted_from from an accident update', async () => {
+    const worker = createSyncWorker();
+    enqueue(makeDraft());
+    await worker.run(true);
+    drafts.set('uuid-1', { ...drafts.get('uuid-1'), sync_status: 'draft' });
+
+    await worker.run(true);
+
+    // `submitted_from` is declared on `accident.add` only — see the comment in
+    // back/src/accident/add/add.val.ts. Sending it to `accident.update` is refused by
+    // the server as an unknown key, so a correction could never be filed at all.
+    const set = vi.mocked(updateAccidentReportByUuid).mock.calls.at(-1)?.[2];
+    expect(set).not.toHaveProperty('submitted_from');
+  });
+
+  it('omits it from an incident_report update too, which the report mapper stamps itself', async () => {
+    // `buildIncidentReportAddSet` writes the key on its own, so the worker's
+    // `=== undefined` guard never sees it — this path leaks independently of the fix
+    // that covers the accident one.
+    vi.mocked(submitIncidentReport).mockResolvedValue({ _id: 'server-2', report_id: 'INC-1' });
+    vi.mocked(updateIncidentReportByUuid).mockResolvedValue({ _id: 'server-2', report_id: 'INC-1' });
+    const worker = createSyncWorker();
+    enqueue(makeDraft({ incident_type: 'road_breakdown', data: { form_definition_id: 'fd-1' } }));
+    await worker.run(true);
+    drafts.set('uuid-1', { ...drafts.get('uuid-1'), sync_status: 'draft' });
+
+    await worker.run(true);
+
+    const set = vi.mocked(updateIncidentReportByUuid).mock.calls.at(-1)?.[2];
+    expect(set).not.toHaveProperty('submitted_from');
+  });
+
+  it('still stamps the first send, because that stamp is what counts app-filed reports', async () => {
+    // The server attributes the oversight statistics through
+    // `submitted_from.app_version`, so a report that loses its stamp on the *first*
+    // send silently drops out of those numbers. Losing it on update is a bug; losing
+    // it here would be a different and quieter one.
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    const sent = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(sent).toMatchObject({ submitted_from: { app_version: '1.4.2', platform: 'ios' } });
+  });
+
+  it('leaves every other field of the correction intact', async () => {
+    // The key is wrong on its own; the rest of the payload is what the officer edited
+    // and must still arrive.
+    const worker = createSyncWorker();
+    enqueue(makeDraft());
+    await worker.run(true);
+    drafts.set('uuid-1', {
+      ...drafts.get('uuid-1'),
+      data: { ...(drafts.get('uuid-1')?.['data'] as object), dead_count: 1 },
+      sync_status: 'draft',
+    });
+
+    await worker.run(true);
+
+    const set = vi.mocked(updateAccidentReportByUuid).mock.calls.at(-1)?.[2];
+    expect(set).toMatchObject({ client_report_uuid: 'uuid-1', dead_count: 1 });
+  });
+});
+
+describe('the asset write-back must reach the submitted payload', () => {
+  const DYNAMIC_ROWS = [
+    {
+      step_key: 'review',
+      question_key: 'attachments',
+      model_name: 'dynamic',
+      answer_names: ['asset-1'],
+    },
+  ];
+
+  it('sends the rewritten file rows, not the local ids the officer captured', async () => {
+    uploadsEnabled = true;
+    enqueue(makeDraft({ data: { dynamic_answers: DYNAMIC_ROWS } }));
+
+    await createSyncWorker().run(true);
+
+    // This is the whole bug: `syncFormAssets` resolves every local asset id and splits
+    // each file row into `answer_ids` (joinable) and `answer_names` (readable), and the
+    // worker kept only its `fileIds`. So the gallery filled in — `attachmentsIds` came
+    // from those — while the answers the officer sees on the review screen still read
+    // `asset-1792226098313-i9oxxj`.
+    const set = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(set?.['dynamic_answers']).toEqual([
+      {
+        step_key: 'review',
+        question_key: 'attachments',
+        model_name: 'dynamic',
+        answer_ids: ['6ad33386849ab652432b9caf'],
+        answer_names: ['کروکی.jpg'],
+      },
+    ]);
+  });
+
+  it('strips the local ids out of the answer tree too', async () => {
+    uploadsEnabled = true;
+    enqueue(
+      makeDraft({
+        data: { dynamic_answers: DYNAMIC_ROWS, form_answers: { review: { files: ['asset-1'] } } },
+      }),
+    );
+
+    await createSyncWorker().run(true);
+
+    const set = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(JSON.stringify(set)).not.toContain('asset-1');
+  });
+
+  it('still links the accident wizard photos the asset pass knows nothing about', async () => {
+    uploadsEnabled = true;
+    vi.mocked(syncReportMedia).mockImplementation(async (_session, draft) => ({
+      data: draft.data,
+      uploaded: 1,
+      failed: [],
+      fileIds: ['file-croquis'],
+    }));
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    // `syncFormAssets` merges its own ids into the data it returns, so adopting that
+    // data must not cost the media pass's ids — the gallery needs the union.
+    const sent = vi.mocked(submitAccidentReport).mock.calls.at(-1)?.[1];
+    expect(sent?.['attachmentsIds']).toEqual(['file-croquis']);
+  });
+});
