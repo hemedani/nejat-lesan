@@ -17,8 +17,9 @@ export type MapPacksState = {
 };
 
 /**
- * Polls the (tiny) pack records so progress bars stay live even though the
- * download engine writes throttled updates to SQLite.
+ * Reads the packs `OfflineManager` owns and re-reads on its progress events.
+ * The poll is a safety net for packs that change state without an event of ours
+ * (and for the first tick before any event has fired).
  */
 export function useMapPacks(pollMs = 800): MapPacksState & { reload: () => void } {
   const [state, setState] = useState<MapPacksState>({ coverage: null, packs: [], wifiOnly: true });

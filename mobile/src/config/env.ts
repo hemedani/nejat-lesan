@@ -22,17 +22,31 @@ export type AppConfig = {
    * broken by an untested payload path; flip with EXPO_PUBLIC_ACCIDENT_UPLOADS=on.
    */
   uploadsEnabled: boolean;
-  /** Base URL of the XYZ slippy-map tile server (production should self-host). */
-  mapTileUrl: string;
+  /**
+   * URL of the self-hosted MapLibre style document for the vector tile server.
+   *
+   * There is no public fallback. The previous raster build defaulted to the
+   * public OSM tile host, which violates the OSM tile usage policy and puts a
+   * third party on the officer's critical path; an unset variable now fails
+   * loudly instead of silently pointing at it.
+   */
+  mapStyleUrl: string;
 };
 
 function readUploadsEnabled(value: string | undefined): boolean {
   return value?.trim().toLowerCase() === 'on';
 }
 
-function readMapTileUrl(value: string | undefined): string {
-  const trimmed = value?.trim().replace(/\/+$/, '');
-  return trimmed && trimmed.length > 0 ? trimmed : 'https://tile.openstreetmap.org';
+function readMapStyleUrl(value: string | undefined): string {
+  const trimmed = value?.trim();
+  if (!trimmed) {
+    // Deliberately not a fallback: a default public host is the defect this
+    // replaced. Name the variable so a misconfigured build is obvious.
+    throw new Error(
+      'EXPO_PUBLIC_MAP_STYLE_URL is required: point it at the self-hosted vector tile style document.',
+    );
+  }
+  return trimmed;
 }
 
 function readEnvironment(value: string | undefined): AppEnvironment {
@@ -62,6 +76,6 @@ export function getAppConfig(): AppConfig {
     // platform is not one this app ships.
     platform: Platform.OS === 'android' ? 'android' : 'ios',
     uploadsEnabled: readUploadsEnabled(process.env.EXPO_PUBLIC_ACCIDENT_UPLOADS),
-    mapTileUrl: readMapTileUrl(process.env.EXPO_PUBLIC_MAP_TILE_URL),
+    mapStyleUrl: readMapStyleUrl(process.env.EXPO_PUBLIC_MAP_STYLE_URL),
   };
 }

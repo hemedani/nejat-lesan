@@ -58,6 +58,19 @@ describe('database migration planning', () => {
     expect(planMigration(0).join('\n')).toContain('CREATE TABLE IF NOT EXISTS offline_forms');
   });
 
+  it('gives the officer somewhere to keep their own road for the offline map', () => {
+    // The location picker draws the organization's road from local storage. Without
+    // this table the first press of the prepare button writes to a table that does not
+    // exist, and the officer finds out on the road with a blank overlay.
+    const sql = planMigration(4).join('\n');
+    expect(sql).toContain('CREATE TABLE IF NOT EXISTS org_road_geometry');
+    expect(sql).toContain('organization_id TEXT PRIMARY KEY NOT NULL');
+  });
+
+  it('creates the road geometry table on a fresh install too', () => {
+    expect(planMigration(0).join('\n')).toContain('CREATE TABLE IF NOT EXISTS org_road_geometry');
+  });
+
   it('yields a plan that survives being replayed on a fresh database file', () => {
     const sql = planMigration(0).join('\n');
     expect(sql).not.toContain('DROP TABLE');

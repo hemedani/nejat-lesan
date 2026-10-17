@@ -20,24 +20,22 @@ import {
   organizationPoint,
   organizationZoom,
 } from '@/domain/organization';
-import { OsmWebMap, type OsmWebMapHandle } from '@/components/osm-web-map';
+import { NativeMap, type NativeMapHandle } from '@/components/native-map';
 import { GpsActionButton } from '@/components/gps-action-button';
 import { ThemedText } from '@/components/themed-text';
 import { Banner } from '@/components/ui/banner';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { MapControls } from '@/components/ui/map-controls';
-import { MapCoverageBadge } from '@/components/ui/map-coverage-badge';
 import { ScreenHeader } from '@/components/ui/screen-header';
 import { StatusPill } from '@/components/ui/status-pill';
 import { AppIcons, iconProps, type IconFamily, type IconName } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { useBottomInset } from '@/hooks/use-bottom-inset';
 import { useDeviceLocation } from '@/hooks/use-device-location';
-import { useConnectivity } from '@/hooks/use-connectivity';
-import { useMapPacks } from '@/hooks/use-map-packs';
 import { getConnectivitySnapshot } from '@/services/connectivity';
 import { useRequiredSession } from '@/auth/use-required-session';
+import { useOrgRoadLines } from '@/hooks/use-org-road-lines';
 
 const FALLBACK_CENTER: Coordinates = { latitude: 35.6892, longitude: 51.389 };
 
@@ -87,10 +85,7 @@ export default function IncidentLocationScreen() {
   const params = useLocalSearchParams<{ uuid?: string; lat?: string; lng?: string }>();
   const deviceLocation = useDeviceLocation();
   const { locate } = deviceLocation;
-  const { coverage } = useMapPacks();
-  const connectivity = useConnectivity();
-  const [covered, setCovered] = useState(true);
-  const mapRef = useRef<OsmWebMapHandle | null>(null);
+  const mapRef = useRef<NativeMapHandle | null>(null);
   const snapAbortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pulse = usePinPulse();
@@ -108,6 +103,10 @@ export default function IncidentLocationScreen() {
   // ورود ذخیره شده و هیچ درخواستی اینجا زده نمی‌شود.
   const organization = session?.primaryOrganization ?? null;
   const organizationCenter = useMemo(() => organizationPoint(organization), [organization]);
+
+  // راهِ خودِ سازمان، از حافظهٔ دستگاه. هیچ درخواستی اینجا زده نمی‌شود تا
+  // مأمور بی‌اینترنت هم آن را روی نقشه ببیند.
+  const road = useOrgRoadLines(organization?._id);
 
   // اولویت قابِ نقشه: واقعه‌ی در حال ویرایش ← مرکز سازمان ← تهران.
   // تهران فقط آخرین fallback است؛ یک مأمورِ اهوازی نباید نقشه را در پایت ببیند.
@@ -261,15 +260,14 @@ export default function IncidentLocationScreen() {
       <ScreenHeader onBack={() => router.back()} title="انتخاب محل حادثه" />
 
       <View style={styles.mapContainer}>
-        <OsmWebMap
-          coverage={coverage}
+        <NativeMap
           initialCenter={mapInitialCenter}
           initialZoom={mapInitialZoom}
-          offline={connectivity?.status === 'offline'}
           officerMarker={deviceLocation.coords}
-          onCoverageChange={setCovered}
           onRegionChangeComplete={handleRegionChangeComplete}
           ref={mapRef}
+          roadLabel={road?.label ?? null}
+          roadLines={road?.lines ?? null}
           style={StyleSheet.absoluteFill}
         />
 
@@ -278,14 +276,6 @@ export default function IncidentLocationScreen() {
             style={[styles.pinHalo, { opacity: haloOpacity, transform: [{ scale: haloScale }] }]}
           />
           <Icon color={AppTheme.colors.primary} name="location" size={46} />
-        </View>
-
-        <View pointerEvents="box-none" style={styles.coverageRow}>
-          <MapCoverageBadge
-            covered={covered}
-            coverage={coverage}
-            offline={connectivity?.status === 'offline'}
-          />
         </View>
 
         <View pointerEvents="none" style={styles.legendColumn}>
@@ -529,16 +519,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 44,
   },
-  coverageRow: {
-    left: 12,
-    position: 'absolute',
-    top: 12,
-  },
   legendColumn: {
     gap: 8,
     left: 12,
     position: 'absolute',
-    top: 50,
+    top: 12,
   },
   legendChip: {
     alignItems: 'center',

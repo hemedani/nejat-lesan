@@ -1,26 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { Coordinates } from '@/domain/types';
 import { GpsActionButton } from '@/components/gps-action-button';
-import { OsmWebMap, type OsmWebMapHandle } from '@/components/osm-web-map';
+import { NativeMap, type NativeMapHandle } from '@/components/native-map';
 import { ThemedText } from '@/components/themed-text';
 import { MapControls } from '@/components/ui/map-controls';
-import { MapCoverageBadge } from '@/components/ui/map-coverage-badge';
 import { AppTheme } from '@/constants/theme';
 import { useDeviceLocation } from '@/hooks/use-device-location';
-import { useMapPacks } from '@/hooks/use-map-packs';
-import { useConnectivity } from '@/hooks/use-connectivity';
+import { useOrgRoadLines } from '@/hooks/use-org-road-lines';
+import { useRequiredSession } from '@/auth/use-required-session';
 
 const FALLBACK_CENTER: Coordinates = { latitude: 35.6892, longitude: 51.389 };
 
 export default function MapScreen() {
+  const session = useRequiredSession();
   const deviceLocation = useDeviceLocation();
-  const mapRef = useRef<OsmWebMapHandle | null>(null);
-  const { coverage } = useMapPacks();
-  const connectivity = useConnectivity();
-  const [covered, setCovered] = useState(true);
+  const mapRef = useRef<NativeMapHandle | null>(null);
 
   // The map tab needs the officer position for the marker; fetch it on mount
   // and recover automatically when services/permissions come back.
@@ -29,9 +26,12 @@ export default function MapScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The same overlay the location picker draws, from the same local store.
+  const road = useOrgRoadLines(session?.primaryOrganization?._id);
+
   const initialCenter = useMemo<Coordinates>(
     () => deviceLocation.coords ?? FALLBACK_CENTER,
-    // Intentionally computed once at mount so the WebView does not reload.
+    // Intentionally computed once at mount so the camera does not reload.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
@@ -39,14 +39,13 @@ export default function MapScreen() {
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
       <View style={styles.mapContainer}>
-        <OsmWebMap
-          coverage={coverage}
+        <NativeMap
           initialCenter={initialCenter}
           initialZoom={15}
-          offline={connectivity?.status === 'offline'}
           officerMarker={deviceLocation.coords}
-          onCoverageChange={setCovered}
           ref={mapRef}
+          roadLabel={road?.label ?? null}
+          roadLines={road?.lines ?? null}
           style={StyleSheet.absoluteFill}
         />
 
@@ -57,13 +56,6 @@ export default function MapScreen() {
             <GpsActionButton device={deviceLocation} variant="outline" />
           )}
         </View>
-
-        <MapCoverageBadge
-          covered={covered}
-          coverage={coverage}
-          offline={connectivity?.status === 'offline'}
-          style={styles.badge}
-        />
 
         <MapControls
           locateDisabled={!deviceLocation.coords}
@@ -116,11 +108,6 @@ const styles = StyleSheet.create({
   cardElevation: { elevation: 3 },
   gpsTitle: { color: AppTheme.colors.textSecondary, fontSize: 13 },
   gpsBody: { color: AppTheme.colors.textStrong, fontSize: 15, fontWeight: '700' },
-  badge: {
-    left: 16,
-    position: 'absolute',
-    top: 92,
-  },
   mapControls: {
     bottom: 24,
     left: 16,

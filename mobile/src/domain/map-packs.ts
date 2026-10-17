@@ -31,7 +31,14 @@ export const MAP_TIERS: Record<MapTierId, MapTier> = {
   deep: { id: 'deep', zoomMin: 4, zoomMax: 12 },
 };
 
-/** Rough average OSM raster tile size in bytes, used for pre-download estimates. */
+/**
+ * Rough average vector tile size in bytes, used for pre-download estimates.
+ *
+ * Country-scale tiles (z4–z10) are mostly sparse land and compress to a few
+ * KB; the detail end of a national pack (z11–z12) is heavier. This is a flat
+ * middle figure — it exists to keep the officer's "about this much" copy in
+ * the right band, not to predict the download to the byte.
+ */
 const AVG_TILE_BYTES = 18_000;
 
 export function lngToTileX(lng: number, zoom: number): number {
@@ -69,33 +76,6 @@ export function estimatePack(tier: MapTier, bounds: GeoBounds = IRAN_BOUNDS): Pa
     tilesTotal += tiles;
   }
   return { estimatedBytes: tilesTotal * AVG_TILE_BYTES, perZoom, tilesTotal };
-}
-
-export type TileCoord = { z: number; x: number; y: number };
-
-/**
- * Iterates every tile of a pack, zoom-ascending so the country outline
- * appears early during download. `visit` returning false stops iteration.
- */
-export function iterTiles(
-  tier: MapTier,
-  visit: (tile: TileCoord) => false | void,
-  bounds: GeoBounds = IRAN_BOUNDS,
-): void {
-  for (let z = tier.zoomMin; z <= tier.zoomMax; z += 1) {
-    const n = Math.pow(2, z);
-    const x0 = Math.min(n - 1, Math.max(0, Math.floor(lngToTileX(bounds.minLng, z))));
-    const x1 = Math.min(n - 1, Math.max(0, Math.floor(lngToTileX(bounds.maxLng, z))));
-    const yTop = Math.min(n - 1, Math.max(0, Math.floor(latToTileY(bounds.maxLat, z))));
-    const yBottom = Math.min(n - 1, Math.max(0, Math.floor(latToTileY(bounds.minLat, z))));
-    for (let y = yTop; y <= yBottom; y += 1) {
-      for (let x = x0; x <= x1; x += 1) {
-        if (visit({ x, y, z }) === false) {
-          return;
-        }
-      }
-    }
-  }
 }
 
 /** Persian-friendly byte formatter shared by all map UI surfaces. */

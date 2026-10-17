@@ -18,8 +18,7 @@ import { AppIcons } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { formatBytes } from '@/domain/map-packs';
 import { formatCoordinates, organizationPoint , organizationPoint as organizationPointOf } from '@/domain/organization';
-import type { OfflineFormCacheStatus, OrgFormsAvailability } from '@/domain/offline-forms';
-import { isIncidentPatrolEnabled } from '@/domain/modules';
+import type { OrgFormsAvailability } from '@/domain/offline-forms';
 import type { MapCoverage } from '@/domain/map-coverage';
 import type { PatrolOrganization } from '@/domain/types';
 import type { MapPackView } from '@/services/map-download';
@@ -27,7 +26,7 @@ import { listDrafts } from '@/storage/local-database';
 import { useActiveShift } from '@/hooks/use-active-shift';
 import { useDeviceLocation, type DeviceLocationState } from '@/hooks/use-device-location';
 import { useMapPacks } from '@/hooks/use-map-packs';
-import { useOfflineForms } from '@/hooks/use-offline-forms';
+import { usePrepareOffline } from '@/hooks/use-prepare-offline';
 import { pauseDownload, startAreaDownload, startNationalDownload } from '@/services/map-download';
 
 const GPS_GOOD_METERS = 10;
@@ -82,10 +81,9 @@ export default function HomeScreen() {
   const deviceLocation = useDeviceLocation();
   const mapPacks = useMapPacks();
   const [draftCount, setDraftCount] = useState(0);
-  const orgForms = useOfflineForms({
+  const offline = usePrepareOffline({
     session,
-    hasOrganization: Boolean(session?.primaryOrganization),
-    moduleEnabled: session ? isIncidentPatrolEnabled(session) : false,
+    organization: session?.primaryOrganization ?? null,
     offline: connectivity?.status === 'offline',
   });
 
@@ -134,18 +132,24 @@ export default function HomeScreen() {
   // base on the strength of it. A silent success leaves them unsure whether to press
   // again before every patrol.
   const toast = useToast();
-  const lastDownload = orgForms.lastDownload;
+  const lastPrepare = offline.lastPrepare;
   useEffect(() => {
-    if (!lastDownload) {
+    if (!lastPrepare) {
       return;
     }
-    toast.show(
-      lastDownload.changed.length > 0
-        ? `فرم‌های سازمان به‌روزرسانی شد: ${lastDownload.changed.join('، ')}`
-        : 'فرم‌های سازمان روی دستگاه ذخیره شد.',
-      'success',
-    );
-  }, [lastDownload, toast]);
+    // The road is reported on its own: an organization that has none is not a failure,
+    // and saying so is what stops the officer checking the map for a road that is not
+    // meant to be there.
+    if (lastPrepare.road === 'failed') {
+      toast.show('فرم‌ها ذخیره شد؛ دریافت راه سازمان انجام نشد.', 'info');
+      return;
+    }
+    if (lastPrepare.road === 'stored') {
+      toast.show(`فرم‌ها و راه «${lastPrepare.roadName}» روی دستگاه ذخیره شد.`, 'success');
+      return;
+    }
+    toast.show('فرم‌های سازمان روی دستگاه ذخیره شد.', 'success');
+  }, [lastPrepare, toast]);
 
   if (isLoading || !session) {
     return (
@@ -210,24 +214,28 @@ export default function HomeScreen() {
         </View>
 
         <OrganizationCard
-          availability={orgForms.availability}
-          busy={orgForms.busy}
-          onDownload={orgForms.download}
+          availability={offline.availability}
+          busy={offline.busy}
+          formsLabel={offline.formsLabel}
+          onPrepare={offline.prepare}
           organization={session.primaryOrganization ?? null}
-          status={orgForms.status}
-          statusLabel={orgForms.statusLabel}
+          prepared={offline.status.formCount > 0 || offline.status.hasProcess}
+          roadLabel={offline.roadLabel}
         />
 
-        {orgForms.error ? <Banner tone="danger" message={orgForms.error} /> : null}
+        {offline.error ? <Banner tone="danger" message={offline.error} /> : null}
 
         {/* Without this the officer finds out on the road, when the app quietly
             falls back to its own forms. Only offered with signal, because offline
             the control in the card above already says what is needed. */}
-        {orgForms.availability.enabled && !orgForms.busy && orgForms.status.formCount === 0 && !orgForms.status.hasProcess ? (
+        {offline.availability.enabled &&
+        !offline.busy &&
+        offline.status.formCount === 0 &&
+        !offline.status.hasProcess ? (
           <Banner
-            actionLabel="دریافت فرم‌ها"
-            message="فرم‌های سازمان روی دستگاه ذخیره نشده است؛ بدون اینترنت گزارش با فرم پیش‌فرض ثبت می‌شود."
-            onAction={orgForms.download}
+            actionLabel="آماده‌سازی"
+            message="فرم‌ها و راه سازمان روی دستگاه ذخیره نشده است؛ بدون اینترنت گزارش با فرم پیش‌فرض ثبت می‌شود."
+            onAction={offline.prepare}
             tone="warning"
           />
         ) : null}
@@ -411,21 +419,23 @@ function StatusCard({
  */
 function OrganizationCard({
   organization,
-  status,
-  statusLabel,
+  prepared,
+  formsLabel,
+  roadLabel,
   availability,
   busy,
-  onDownload,
+  onPrepare,
 }: {
   organization: PatrolOrganization | null;
-  status: OfflineFormCacheStatus;
-  statusLabel: string;
+  /** Whether anything is stored yet — it decides the button's wording. */
+  prepared: boolean;
+  formsLabel: string;
+  roadLabel: string;
   availability: OrgFormsAvailability;
   busy: boolean;
-  onDownload: () => void;
+  onPrepare: () => void;
 }) {
   const center = organizationPoint(organization);
-  const cached = status.formCount > 0 || status.hasProcess;
 
   return (
     <View style={[styles.orgCard, Shadow.card]}>
@@ -449,19 +459,27 @@ function OrganizationCard({
 
       {availability.visible ? (
         <View style={styles.orgForms}>
-          <Text numberOfLines={2} style={styles.orgFormsStatus}>
-            {statusLabel}
+          {/* Two lines, because they answer two different questions: whether the form
+              they file on is theirs, and whether the map will show their road. A road
+              with no geometry reads as "not stored" on purpose — that is the state
+              every organization is in until the geometry is backfilled, and claiming
+              otherwise would send an officer looking for a line that cannot be drawn. */}
+          <Text numberOfLines={1} style={styles.orgFormsStatus}>
+            {formsLabel}
+          </Text>
+          <Text numberOfLines={1} style={styles.orgFormsStatus}>
+            {roadLabel}
           </Text>
           <Button
             disabled={!availability.enabled}
             fullWidth
-            icon={cached ? AppIcons.nav.refresh.name : AppIcons.home.offlinePack.name}
-            iconFamily={cached ? AppIcons.nav.refresh.family : AppIcons.home.offlinePack.family}
-            label={cached ? 'به‌روزرسانی فرم‌ها' : 'دریافت فرم‌های سازمان'}
+            icon={prepared ? AppIcons.nav.refresh.name : AppIcons.home.offlinePack.name}
+            iconFamily={prepared ? AppIcons.nav.refresh.family : AppIcons.home.offlinePack.family}
+            label={prepared ? 'به‌روزرسانی داده‌های آفلاین' : 'آماده‌سازی برای کار آفلاین'}
             loading={busy}
-            onPress={onDownload}
+            onPress={onPrepare}
             size="md"
-            variant={cached ? 'ghost' : 'soft'}
+            variant={prepared ? 'ghost' : 'soft'}
           />
           {availability.reason ? <Text style={styles.orgFormsHint}>{availability.reason}</Text> : null}
         </View>

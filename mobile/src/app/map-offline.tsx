@@ -50,7 +50,7 @@ export default function MapOfflineScreen() {
           body={
             <>
               <Text style={styles.body}>
-                محدوده فعالیت سازمان شما تا بزرگ‌نمایی ۱۷ ذخیره می‌شود؛ دقیقاً همان سطحی که
+                محدوده فعالیت سازمان شما تا بزرگ‌نمایی ۱۴ ذخیره می‌شود؛ دقیقاً همان سطحی که
                 انتخاب محل حادثه به آن نیاز دارد.
               </Text>
               <RadiusPicker center={center} onDone={reload} />
@@ -246,6 +246,19 @@ function PackCard({
             label="توقف دانلود"
             onPress={() => void pauseDownload(pack.id)}
             variant="soft"
+          />
+        </>
+      ) : null}
+
+      {pack?.status === 'idle' ? (
+        <>
+          <Text style={styles.body}>دانلود این بخش هنوز شروع نشده است.</Text>
+          <Button
+            fullWidth
+            icon="cloud-download"
+            label="شروع دانلود"
+            onPress={() => void resumeDownload(pack.id)}
+            size="lg"
           />
         </>
       ) : null}

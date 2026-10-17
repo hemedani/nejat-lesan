@@ -54,29 +54,30 @@ describe('area pack bounds', () => {
 
 describe('area pack sizing', () => {
   it('grows with the radius', () => {
-    const near = estimateAreaPack(AHVAZ, 5, 13, 17);
-    const far = estimateAreaPack(AHVAZ, 25, 13, 17);
+    const near = estimateAreaPack(AHVAZ, 5, 13, 14);
+    const far = estimateAreaPack(AHVAZ, 25, 13, 14);
     expect(far.tilesTotal).toBeGreaterThan(near.tilesTotal);
     expect(far.estimatedBytes).toBeGreaterThan(near.estimatedBytes);
   });
 
   it('is dominated by the deepest zoom', () => {
-    // z17 is what incident picking needs, so the estimate must reflect that
-    // rather than averaging the range and understating the download.
-    const estimate = estimateAreaPack(AHVAZ, 10, 13, 17);
+    // z14 is the deepest level the vector server renders, so the estimate
+    // must reflect it rather than averaging the range and understating the
+    // download.
+    const estimate = estimateAreaPack(AHVAZ, 10, 13, 14);
     const deepest = estimate.perZoom.at(-1)!;
-    expect(deepest.zoom).toBe(17);
+    expect(deepest.zoom).toBe(14);
     expect(deepest.tiles).toBeGreaterThan(estimate.tilesTotal / 2);
   });
 
   it('returns an empty estimate when there is no usable centre', () => {
-    const estimate = estimateAreaPack(null, 25, 13, 17);
+    const estimate = estimateAreaPack(null, 25, 13, 14);
     expect(estimate.tilesTotal).toBe(0);
     expect(estimate.estimatedBytes).toBe(0);
   });
 
   it('reports a Persian-formatted size for the download screen', () => {
-    const estimate = estimateAreaPack(AHVAZ, 10, 13, 17);
+    const estimate = estimateAreaPack(AHVAZ, 10, 13, 14);
     expect(formatBytes(estimate.estimatedBytes)).toMatch(/(مگابایت|گیگابایت)/);
   });
 });
@@ -94,16 +95,16 @@ describe('area pack radius presets', () => {
   });
 
   it('keeps the largest preset within what a field device can realistically store', () => {
-    // A 50 km radius is ~230k tiles / ~4.6 GB at z13-z17, which is not a
-    // shippable offer on a phone; the ladder stops where storage still is.
+    // At z13-z14 the server's deepest real level, even the ۲۵ km box is under
+    // 1k tiles; the old z13-z17 ladder ran to ~60k tiles here.
     const largest = AREA_RADII_KM.at(-1)!;
-    const estimate = estimateAreaPack(AHVAZ, largest.km, 13, 17);
-    expect(estimate.tilesTotal).toBeLessThan(60_000);
+    const estimate = estimateAreaPack(AHVAZ, largest.km, 13, 14);
+    expect(estimate.tilesTotal).toBeLessThan(2_000);
   });
 
   it('keeps the smallest preset cheap enough for a quick grab', () => {
     const smallest = AREA_RADII_KM[0];
-    const estimate = estimateAreaPack(AHVAZ, smallest.km, 13, 17);
-    expect(estimate.tilesTotal).toBeLessThan(5_000);
+    const estimate = estimateAreaPack(AHVAZ, smallest.km, 13, 14);
+    expect(estimate.tilesTotal).toBeLessThan(200);
   });
 });

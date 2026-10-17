@@ -10,7 +10,7 @@
 
 import type { GeoBounds } from '@/domain/map-packs';
 
-export const CURRENT_DATABASE_VERSION = 4;
+export const CURRENT_DATABASE_VERSION = 5;
 
 /**
  * The organization's own forms, as stored on the device.
@@ -28,6 +28,24 @@ const OFFLINE_FORMS_TABLE = `
       payload_json TEXT NOT NULL,
       fetched_at TEXT NOT NULL,
       PRIMARY KEY (scope, form_key)
+    );
+`;
+
+/**
+ * The organization's own road, kept so the location picker can draw it without signal.
+ *
+ * One row per organization, because `organization.road` is a 1:1 relation — a freeway
+ * org binds to exactly one road and a municipality org has none. A table keyed by road
+ * id would imply an org can have several, and would leave the "which road is this
+ * officer's" question open on a device that has to answer it offline.
+ */
+const ORG_ROAD_GEOMETRY_TABLE = `
+    CREATE TABLE IF NOT EXISTS org_road_geometry (
+      organization_id TEXT PRIMARY KEY NOT NULL,
+      road_id TEXT NOT NULL,
+      name TEXT NOT NULL,
+      payload_json TEXT NOT NULL,
+      fetched_at TEXT NOT NULL
     );
 `;
 
@@ -95,7 +113,8 @@ const BASE_SCHEMA = `
       value TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
-` + OFFLINE_FORMS_TABLE;
+` + OFFLINE_FORMS_TABLE
+  + ORG_ROAD_GEOMETRY_TABLE;
 
 /** v3 added the area pack's bounding box, stored as JSON. */
 const V3_ADD_AREA_BOUNDS = 'ALTER TABLE map_packs ADD COLUMN bounds_json TEXT;';
@@ -103,10 +122,14 @@ const V3_ADD_AREA_BOUNDS = 'ALTER TABLE map_packs ADD COLUMN bounds_json TEXT;';
 /** v4 gave the device somewhere to keep the organization's own forms offline. */
 const V4_ADD_OFFLINE_FORMS = OFFLINE_FORMS_TABLE;
 
+/** v5 did the same for the organization's road, which the offline map draws. */
+const V5_ADD_ORG_ROAD_GEOMETRY = ORG_ROAD_GEOMETRY_TABLE;
+
 /** Ordered per-version upgrades; each runs only when the device is below it. */
 const STEP_MIGRATIONS: Record<number, string[]> = {
   3: [V3_ADD_AREA_BOUNDS],
   4: [V4_ADD_OFFLINE_FORMS],
+  5: [V5_ADD_ORG_ROAD_GEOMETRY],
 };
 
 export function planMigration(currentVersion: number): string[] {

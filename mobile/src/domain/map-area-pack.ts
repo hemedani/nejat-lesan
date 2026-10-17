@@ -11,10 +11,6 @@
  */
 
 import {
-  AREA_ZOOM_MAX,
-  AREA_ZOOM_MIN,
-} from './map-coverage';
-import {
   tileCountForBounds,
   type GeoBounds,
   type MapTier,
@@ -29,17 +25,28 @@ export const MAX_MERCATOR_LATITUDE = 85.05112878;
 
 /** Radius presets the officer picks from, smallest first.
  *
- *  A radius is a half-width, so the box is twice this across. At z13..z17 over
- *  Ahvaz that is ۵ km → 2.4k tiles (~48 MB), ۱۰ km → 9.4k (~190 MB),
- *  ۲۵ km → 58k (~1.16 GB). A ۵۰ km radius is ~230k tiles / ~4.6 GB, which is
- *  not an offer a field phone should be asked to accept, so the ladder stops
- *  here rather than advertising a download that fails on a 32 GB device.
+ *  A radius is a half-width, so the box is twice this across. At z13..z14 over
+ *  Ahvaz that is ۵ km → 48 tiles (~2.5 MB), ۱۰ km → 150 tiles (~7.8 MB),
+ *  ۲۵ km → 891 tiles (~46 MB). The ladder stops at ۲۵ km because a wider box
+ *  buys nothing: the vector server caps detail at z14, so beyond that the
+ *  officer is only paying for a bigger low-detail overview.
  */
 export const AREA_RADII_KM: readonly { km: number; label: string }[] = [
   { km: 5, label: '۵ کیلومتر' },
   { km: 10, label: '۱۰ کیلومتر' },
   { km: 25, label: '۲۵ کیلومتر' },
 ];
+
+/**
+ * The zoom range the area pack fills.
+ *
+ * 13..14, not 13..17: the tile server renders vector data to maxzoom 14 and
+ * overzooms from there, so a pack that asked for z15–z17 would spend its
+ * budget re-fetching tiles the server returns 404 for. 14 is the deepest real
+ * level; MapLibre's overzoom gives the incident-scale detail above it.
+ */
+export const AREA_ZOOM_MIN = 13;
+export const AREA_ZOOM_MAX = 14;
 
 /** The zoom range the area pack fills: above the national overview, at incident scale. */
 export const AREA_TIER: MapTier = {
@@ -121,8 +128,11 @@ export function estimateAreaPack(
 }
 
 /**
- * Detail zooms cost more per tile in practice than the flat national average,
- * so the area estimate uses a slightly higher figure rather than understating
- * what the officer is about to download.
+ * Per-tile decoded size for the area estimate.
+ *
+ * Measured against the vector server's own reference ۱۰ km pack (۹.۷۵ MB
+ * decoded over ۱۷۹ tiles), i.e. ~54 KB/tile at z13–z14. Detail tiles carry
+ * more than the flat country average, so this is deliberately the higher
+ * figure rather than one that understates the download.
  */
-const AREA_TILE_BYTES = 20_000;
+const AREA_TILE_BYTES = 54_500;

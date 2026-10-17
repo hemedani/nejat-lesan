@@ -1,9 +1,9 @@
 import * as SQLite from 'expo-sqlite';
 
-import type { GeoBounds } from '@/domain/map-packs';
 import type { AccidentDraft, QueueRecord, SyncStatus } from '@/domain/types';
-import { boundsFromPackRow, boundsToPackRow, CURRENT_DATABASE_VERSION, planMigration } from './migrations';
+import { CURRENT_DATABASE_VERSION, planMigration } from './migrations';
 import { parseOfflineFormRow, type OfflineFormEntry, type OfflineFormRow, type OfflineFormScope } from '@/domain/offline-forms';
+import { parseOrgRoadRow, type OrgRoad, type OrgRoadRow } from '@/domain/org-road';
 
 const DATABASE_NAME = 'lesen-mobile.db';
 
@@ -26,28 +26,6 @@ export type MediaRecord = {
   size_bytes?: number;
   metadata: Record<string, unknown>;
   created_at: string;
-};
-
-/**
- * `idle` is a pack that was planned but never started. It matters because a
- * pack that has downloaded nothing must not contribute to the map's coverage —
- * honouring it would clamp the map to tiles that are not on disk.
- */
-export type MapPackStatus = 'idle' | 'queued' | 'downloading' | 'paused' | 'done' | 'failed';
-
-export type MapPackRecord = {
-  id: string; // 'national' (whole of Iran) or 'area' (the officer's org box)
-  status: MapPackStatus;
-  zoom_min: number;
-  zoom_max: number;
-  tiles_total: number;
-  tiles_done: number;
-  bytes_done: number;
-  /** `null` for the national pack, which has no box. */
-  bounds?: GeoBounds;
-  error?: string;
-  created_at: string;
-  updated_at: string;
 };
 
 export type { QueueRecord };
@@ -356,96 +334,50 @@ export async function deleteOfflineForms(scope: OfflineFormScope, keys: readonly
 }
 
 // ---------------------------------------------------------------------------
-// Offline map packs
+// The organization's own road, for the offline map
 // ---------------------------------------------------------------------------
+//
+// Keyed by organization, not by road: `organization.road` is a 1:1 relation, and a
+// device that is out of coverage has to answer "which road is this officer's" without
+// a request.
 
-type MapPackRow = MapPackRecord & { bounds_json?: string | null };
-
-function toMapPack(row: MapPackRow): MapPackRecord {
-  const bounds = boundsFromPackRow(row.bounds_json);
-  return { ...row, bounds: bounds ?? undefined, error: row.error ?? undefined };
-}
-
-export async function listMapPacks(): Promise<MapPackRecord[]> {
-  const database = await getLocalDatabase();
-  const rows = await database.getAllAsync<MapPackRow>('SELECT * FROM map_packs ORDER BY zoom_max');
-  return rows.map(toMapPack);
-}
-
-export async function getMapPack(id: string): Promise<MapPackRecord | null> {
-  const database = await getLocalDatabase();
-  const row = await database.getFirstAsync<MapPackRow>('SELECT * FROM map_packs WHERE id = ?', id);
-  return row ? toMapPack(row) : null;
-}
-
-export async function saveMapPack(pack: MapPackRecord): Promise<void> {
+/**
+ * Replace the stored road for one organization.
+ *
+ * A rebind (an organization pointed at a different road) overwrites the row rather than
+ * accumulating: two rows would leave the map guessing which one to draw.
+ */
+export async function saveOrgRoadGeometry(entry: OrgRoad): Promise<void> {
   const database = await getLocalDatabase();
   await database.runAsync(
-    `INSERT INTO map_packs (id, status, zoom_min, zoom_max, tiles_total, tiles_done, bytes_done, bounds_json, error, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(id) DO UPDATE SET
-       status = excluded.status,
-       zoom_min = excluded.zoom_min,
-       zoom_max = excluded.zoom_max,
-       tiles_total = excluded.tiles_total,
-       tiles_done = excluded.tiles_done,
-       bytes_done = excluded.bytes_done,
-       bounds_json = excluded.bounds_json,
-       error = excluded.error,
-       updated_at = excluded.updated_at`,
-    pack.id,
-    pack.status,
-    pack.zoom_min,
-    pack.zoom_max,
-    pack.tiles_total,
-    pack.tiles_done,
-    pack.bytes_done,
-    boundsToPackRow(pack.bounds ?? null),
-    pack.error ?? null,
-    pack.created_at,
-    pack.updated_at,
+    `INSERT INTO org_road_geometry (organization_id, road_id, name, payload_json, fetched_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(organization_id) DO UPDATE SET
+       road_id = excluded.road_id,
+       name = excluded.name,
+       payload_json = excluded.payload_json,
+       fetched_at = excluded.fetched_at`,
+    entry.organizationId,
+    entry.roadId,
+    entry.name,
+    JSON.stringify(entry.payload),
+    entry.fetchedAt,
   );
 }
 
-export async function deleteMapPack(id: string): Promise<void> {
+/** The stored road for an organization, or `null` when it is absent or unreadable. */
+export async function getOrgRoadGeometry(organizationId: string): Promise<OrgRoad | null> {
   const database = await getLocalDatabase();
-  await database.runAsync('DELETE FROM map_tiles WHERE pack_id = ?', id);
-  await database.runAsync('DELETE FROM map_packs WHERE id = ?', id);
-}
-
-/** Negative cache for tiles that legitimately have no raster (sea, Caspian…). */
-export async function isEmptyTileCached(
-  packId: string,
-  z: number,
-  x: number,
-  y: number,
-): Promise<boolean> {
-  const database = await getLocalDatabase();
-  const row = await database.getFirstAsync<{ status: string }>(
-    'SELECT status FROM map_tiles WHERE pack_id = ? AND z = ? AND x = ? AND y = ?',
-    packId,
-    z,
-    x,
-    y,
+  const row = await database.getFirstAsync<OrgRoadRow>(
+    'SELECT organization_id, road_id, name, payload_json, fetched_at FROM org_road_geometry WHERE organization_id = ?',
+    organizationId,
   );
-  return row?.status === 'empty';
+  return row ? parseOrgRoadRow(row) : null;
 }
 
-export async function cacheEmptyTile(packId: string, z: number, x: number, y: number): Promise<void> {
+export async function deleteOrgRoadGeometry(organizationId: string): Promise<void> {
   const database = await getLocalDatabase();
-  await database.runAsync(
-    `INSERT INTO map_tiles (pack_id, z, x, y, status) VALUES (?, ?, ?, ?, 'empty')
-     ON CONFLICT(pack_id, z, x, y) DO UPDATE SET status = 'empty'`,
-    packId,
-    z,
-    x,
-    y,
-  );
-}
-
-export async function clearEmptyTileCache(packId: string): Promise<void> {
-  const database = await getLocalDatabase();
-  await database.runAsync("DELETE FROM map_tiles WHERE pack_id = ? AND status = 'empty'", packId);
+  await database.runAsync('DELETE FROM org_road_geometry WHERE organization_id = ?', organizationId);
 }
 
 // ---------------------------------------------------------------------------
