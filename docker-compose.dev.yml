@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Backend service (development)
   backend:
@@ -15,11 +13,6 @@ services:
       - ENV=development
       - MONGO_URI=mongodb://mongo:27017/mydatabase
       - REDIS_URI=redis://redis:6379
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`api.localhost`)"
-      - "traefik.http.routers.backend.entrypoints=web"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
 
   # Frontend service (development)
   frontend:
@@ -33,22 +26,38 @@ services:
     environment:
       - APP_PORT=3000
       - NODE_ENV=development
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`frontend.localhost`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
-  # Traefik service (development)
-  traefik:
+  # Vector tile archive server (PMTiles → ZXY MVT). Internal only.
+  tiles-archive:
+    image: protomaps/go-pmtiles:v1.31.2
+    restart: unless-stopped
+    command:
+      [
+        "serve",
+        "/data",
+        "--port=8080",
+        "--public-url=http://localhost:8790",
+        "--cors=*",
+        "--cache-size=256",
+      ]
     volumes:
-      - ./traefik/traefik.dev.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/dynamic_conf.dev.yml:/etc/traefik/dynamic_conf.yml:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.entrypoints=web"
+      - tiles_data:/data
+
+  # Vector tile web front (style, TileJSON, glyphs, sprites, areas, MVT proxy). Public.
+  tiles-web:
+    build:
+      context: ./tiles
+    image: lesan-tiles-web:latest
+    restart: unless-stopped
+    environment:
+      - TILES_UPSTREAM=tiles-archive:8080
+    ports:
+      - "8790:8080"
+    depends_on:
+      - tiles-archive
 
 volumes:
   frontend_node_modules:
+  tiles_data:
+    external: true
+    name: lesan_tiles
