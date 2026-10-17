@@ -243,12 +243,37 @@ ENV NEXT_PUBLIC_LESAN_URL=$NEXT_PUBLIC_LESAN_URL
 RUN pnpm build
 ```
 
+The same applies to any non-Docker deploy — `pm2 start "pnpm start"` exporting
+`NEXT_PUBLIC_LESAN_URL=…` does **nothing** for the browser, because `pnpm start`
+only *serves* a `.next` that was already built. Export it on the **build**:
+
+```bash
+NEXT_PUBLIC_LESAN_URL=http://<public-backend-host>:<port> pnpm build
+APP_PORT=3044 LESAN_URL=… pm2 restart nejat-fr
+```
+
+`next.config.ts` now **throws** when `NEXT_PUBLIC_LESAN_URL` is absent at
+`next build` time, so this fails the deploy instead of shipping a silently
+404-ing report page. Three details that make the guard easy to get wrong:
+
+- It keys off the config's **phase argument**, because `next build` and
+  `next start` are both `NODE_ENV=production`. `process.env.NEXT_PHASE` looks
+  equivalent and is **not**: Next assigns it late in `build/index.js`, after the
+  config is evaluated, so a guard reading it would never fire.
+- It does **not** block `next start` or `next dev` — the bundle is compiled by
+  then, so re-supplying the value would block a working deploy for nothing.
+- A repo copy of `.env` / `.env.local` **masks the guard entirely**, because
+  `loadConfig` loads them before evaluating the config. Locally that makes it
+  look like the variable is always set; only a deploy without those files
+  exercises it.
+
 **Do not "simplify" this by dropping `NEXT_PUBLIC_LESAN_URL` back to the current
 origin** — that is the bug documented on `getLesanBaseUrl`, and it 404s every
 attachment and upload preview. `POST /api/proxy` covers only `${LESAN_URL}/lesan`;
 static uploads exist solely on the backend (`back/mod.ts` declares
 `staticPath: ["/uploads"]`) and are never proxied. Verify with
-`.workbuddy-ai/tools/uploads-base-url-test.py`.
+`.workbuddy-ai/tools/uploads-base-url-test.py` (the URL builder) and
+`.workbuddy-ai/tools/next-config-env-test.py` (the guard).
 
 ## 🧱 Customization & Extensibility
 
