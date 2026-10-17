@@ -1,9 +1,11 @@
 import * as SQLite from 'expo-sqlite';
 
+import type { GeoBounds } from '@/domain/map-packs';
 import type { AccidentDraft, QueueRecord, SyncStatus } from '@/domain/types';
+import { boundsFromPackRow, boundsToPackRow, CURRENT_DATABASE_VERSION, planMigration } from './migrations';
+import { parseOfflineFormRow, type OfflineFormEntry, type OfflineFormRow, type OfflineFormScope } from '@/domain/offline-forms';
 
 const DATABASE_NAME = 'lesen-mobile.db';
-const DATABASE_VERSION = 2;
 
 export type DraftRecord = AccidentDraft;
 
@@ -26,16 +28,23 @@ export type MediaRecord = {
   created_at: string;
 };
 
-export type MapPackStatus = 'queued' | 'downloading' | 'paused' | 'done' | 'failed';
+/**
+ * `idle` is a pack that was planned but never started. It matters because a
+ * pack that has downloaded nothing must not contribute to the map's coverage —
+ * honouring it would clamp the map to tiles that are not on disk.
+ */
+export type MapPackStatus = 'idle' | 'queued' | 'downloading' | 'paused' | 'done' | 'failed';
 
 export type MapPackRecord = {
-  id: string; // tier id ('base' | 'deep')
+  id: string; // 'national' (whole of Iran) or 'area' (the officer's org box)
   status: MapPackStatus;
   zoom_min: number;
   zoom_max: number;
   tiles_total: number;
   tiles_done: number;
   bytes_done: number;
+  /** `null` for the national pack, which has no box. */
+  bounds?: GeoBounds;
   error?: string;
   created_at: string;
   updated_at: string;
@@ -59,75 +68,17 @@ let databasePromise: Promise<SQLite.SQLiteDatabase> | undefined;
 async function migrateDatabase(database: SQLite.SQLiteDatabase): Promise<void> {
   const versionRow = await database.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   const currentVersion = versionRow?.user_version ?? 0;
-  if (currentVersion >= DATABASE_VERSION) {
+  const steps = planMigration(currentVersion);
+  if (steps.length === 0) {
     return;
   }
-
-  await database.execAsync(`
-    PRAGMA journal_mode = WAL;
-    PRAGMA foreign_keys = ON;
-    CREATE TABLE IF NOT EXISTS drafts (
-      client_report_uuid TEXT PRIMARY KEY NOT NULL,
-      sync_status TEXT NOT NULL,
-      payload_json TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS media (
-      id TEXT PRIMARY KEY NOT NULL,
-      client_report_uuid TEXT NOT NULL,
-      category TEXT NOT NULL,
-      local_uri TEXT NOT NULL,
-      mime_type TEXT,
-      size_bytes INTEGER,
-      metadata_json TEXT NOT NULL,
-      created_at TEXT NOT NULL,
-      FOREIGN KEY (client_report_uuid) REFERENCES drafts(client_report_uuid) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS sync_queue (
-      id TEXT PRIMARY KEY NOT NULL,
-      client_report_uuid TEXT NOT NULL,
-      status TEXT NOT NULL,
-      attempts INTEGER NOT NULL DEFAULT 0,
-      next_retry_at TEXT,
-      last_error TEXT,
-      updated_at TEXT NOT NULL,
-      FOREIGN KEY (client_report_uuid) REFERENCES drafts(client_report_uuid) ON DELETE CASCADE
-    );
-    CREATE TABLE IF NOT EXISTS references_cache (
-      cache_key TEXT PRIMARY KEY NOT NULL,
-      payload_json TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS map_packs (
-      id TEXT PRIMARY KEY NOT NULL,
-      status TEXT NOT NULL,
-      zoom_min INTEGER NOT NULL,
-      zoom_max INTEGER NOT NULL,
-      tiles_total INTEGER NOT NULL DEFAULT 0,
-      tiles_done INTEGER NOT NULL DEFAULT 0,
-      bytes_done INTEGER NOT NULL DEFAULT 0,
-      error TEXT,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS map_tiles (
-      pack_id TEXT NOT NULL,
-      z INTEGER NOT NULL,
-      x INTEGER NOT NULL,
-      y INTEGER NOT NULL,
-      status TEXT NOT NULL,
-      size_bytes INTEGER,
-      PRIMARY KEY (pack_id, z, x, y),
-      FOREIGN KEY (pack_id) REFERENCES map_packs(id) ON DELETE CASCADE
-    );
-    CREATE INDEX IF NOT EXISTS map_tiles_status ON map_tiles(pack_id, status);
-    CREATE TABLE IF NOT EXISTS app_settings (
-      key TEXT PRIMARY KEY NOT NULL,
-      value TEXT NOT NULL,
-      updated_at TEXT NOT NULL
-    );
-  `);
-  await database.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
+  for (const step of steps) {
+    await database.execAsync(step);
+  }
+  // `CURRENT_DATABASE_VERSION` rather than a local constant: a plan that does
+  // not advance the version replays itself on every launch, which is exactly
+  // the "duplicate column" crash the migration planner exists to avoid.
+  await database.execAsync(`PRAGMA user_version = ${CURRENT_DATABASE_VERSION}`);
 }
 
 export async function getLocalDatabase(): Promise<SQLite.SQLiteDatabase> {
@@ -315,13 +266,104 @@ export async function getReferenceCache<T>(cacheKey: string): Promise<{ payload:
 }
 
 // ---------------------------------------------------------------------------
+// The organization's own forms, kept for offline use
+// ---------------------------------------------------------------------------
+//
+// The SQL lives here with the rest of it; `domain/offline-forms` owns the row mapping
+// and every decision about those rows, because expo-sqlite cannot run under vitest.
+
+function toOfflineForm(row: OfflineFormRow): OfflineFormEntry | null {
+  return parseOfflineFormRow(row);
+}
+
+/**
+ * Replace the stored copy of each given form.
+ *
+ * One transaction for the whole set: a download that wrote half its forms before
+ * failing would leave the officer with a cache that claims a form is present and then
+ * renders it empty.
+ */
+export async function saveOfflineForms(entries: readonly OfflineFormEntry[]): Promise<void> {
+  if (entries.length === 0) {
+    return;
+  }
+  const database = await getLocalDatabase();
+  await database.withTransactionAsync(async () => {
+    for (const entry of entries) {
+      await database.runAsync(
+        `INSERT INTO offline_forms (scope, form_key, name, form_kind, version, payload_json, fetched_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(scope, form_key) DO UPDATE SET
+           name = excluded.name,
+           form_kind = excluded.form_kind,
+           version = excluded.version,
+           payload_json = excluded.payload_json,
+           fetched_at = excluded.fetched_at`,
+        entry.scope,
+        entry.form_key,
+        entry.name,
+        entry.form_kind ?? null,
+        entry.version,
+        JSON.stringify(entry.payload),
+        entry.fetched_at,
+      );
+    }
+  });
+}
+
+/** Every stored form of one kind. A row that cannot be read is left out, not fatal. */
+export async function listOfflineForms(scope: OfflineFormScope): Promise<OfflineFormEntry[]> {
+  const database = await getLocalDatabase();
+  const rows = await database.getAllAsync<OfflineFormRow>(
+    'SELECT scope, form_key, name, form_kind, version, payload_json, fetched_at FROM offline_forms WHERE scope = ?',
+    scope,
+  );
+  return rows
+    .map(toOfflineForm)
+    .filter((entry): entry is OfflineFormEntry => entry !== null);
+}
+
+/** One stored form, or `null` when it was never downloaded or cannot be read. */
+export async function getOfflineForm(
+  scope: OfflineFormScope,
+  formKey: string,
+): Promise<OfflineFormEntry | null> {
+  const database = await getLocalDatabase();
+  const row = await database.getFirstAsync<OfflineFormRow>(
+    'SELECT scope, form_key, name, form_kind, version, payload_json, fetched_at FROM offline_forms WHERE scope = ? AND form_key = ?',
+    scope,
+    formKey,
+  );
+  return row ? toOfflineForm(row) : null;
+}
+
+/**
+ * Drop forms the organization no longer publishes.
+ *
+ * Only ever called with the full set a completed download returned, so an
+ * interrupted download can never prune forms it merely failed to ask about.
+ */
+export async function deleteOfflineForms(scope: OfflineFormScope, keys: readonly string[]): Promise<void> {
+  if (keys.length === 0) {
+    return;
+  }
+  const database = await getLocalDatabase();
+  await database.withTransactionAsync(async () => {
+    for (const key of keys) {
+      await database.runAsync('DELETE FROM offline_forms WHERE scope = ? AND form_key = ?', scope, key);
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Offline map packs
 // ---------------------------------------------------------------------------
 
-type MapPackRow = MapPackRecord;
+type MapPackRow = MapPackRecord & { bounds_json?: string | null };
 
 function toMapPack(row: MapPackRow): MapPackRecord {
-  return { ...row, error: row.error ?? undefined };
+  const bounds = boundsFromPackRow(row.bounds_json);
+  return { ...row, bounds: bounds ?? undefined, error: row.error ?? undefined };
 }
 
 export async function listMapPacks(): Promise<MapPackRecord[]> {
@@ -339,8 +381,8 @@ export async function getMapPack(id: string): Promise<MapPackRecord | null> {
 export async function saveMapPack(pack: MapPackRecord): Promise<void> {
   const database = await getLocalDatabase();
   await database.runAsync(
-    `INSERT INTO map_packs (id, status, zoom_min, zoom_max, tiles_total, tiles_done, bytes_done, error, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO map_packs (id, status, zoom_min, zoom_max, tiles_total, tiles_done, bytes_done, bounds_json, error, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET
        status = excluded.status,
        zoom_min = excluded.zoom_min,
@@ -348,6 +390,7 @@ export async function saveMapPack(pack: MapPackRecord): Promise<void> {
        tiles_total = excluded.tiles_total,
        tiles_done = excluded.tiles_done,
        bytes_done = excluded.bytes_done,
+       bounds_json = excluded.bounds_json,
        error = excluded.error,
        updated_at = excluded.updated_at`,
     pack.id,
@@ -357,6 +400,7 @@ export async function saveMapPack(pack: MapPackRecord): Promise<void> {
     pack.tiles_total,
     pack.tiles_done,
     pack.bytes_done,
+    boundsToPackRow(pack.bounds ?? null),
     pack.error ?? null,
     pack.created_at,
     pack.updated_at,
