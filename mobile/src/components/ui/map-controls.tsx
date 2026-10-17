@@ -14,6 +14,14 @@ export type MapControlsProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+/**
+ * Zoom / locate cluster.
+ *
+ * One connected rounded pill rather than three floating circles: a detached
+ * control per action is three shadowed shapes competing with the map for
+ * attention, and it reads as three unrelated buttons. Joined, they read as one
+ * instrument, and the divider keeps each target unambiguously 48dp.
+ */
 export function MapControls({
   onZoomIn,
   onZoomOut,
@@ -23,37 +31,47 @@ export function MapControls({
   locateDisabled = false,
   style,
 }: MapControlsProps) {
+  const items = [
+    onZoomIn ? (
+      <MapControlButton key="in" accessibilityLabel="بزرگ‌نمایی" icon="add" onPress={onZoomIn} />
+    ) : null,
+    onZoomOut ? (
+      <MapControlButton key="out" accessibilityLabel="کوچک‌نمایی" icon="remove" onPress={onZoomOut} />
+    ) : null,
+    onLocate ? (
+      <Pressable
+        key="locate"
+        accessibilityLabel="موقعیت فعلی من"
+        accessibilityRole="button"
+        disabled={locateDisabled || locateLoading}
+        onPress={onLocate}
+        style={({ pressed }) => [
+          styles.cell,
+          styles.lastCell,
+          (locateActive || pressed) && !locateDisabled && styles.cellActive,
+          locateDisabled && styles.disabled,
+        ]}
+      >
+        {locateLoading ? (
+          <ActivityIndicator color={AppTheme.colors.primaryStrong} size="small" />
+        ) : (
+          <Icon
+            color={locateActive ? AppTheme.colors.primaryStrong : AppTheme.colors.textSecondary}
+            name="locate"
+            size={22}
+          />
+        )}
+      </Pressable>
+    ) : null,
+  ].filter(Boolean);
+
+  if (items.length === 0) {
+    return null;
+  }
+
   return (
     <View pointerEvents="box-none" style={[styles.container, style]}>
-      {onZoomIn ? (
-        <MapControlButton accessibilityLabel="بزرگ‌نمایی" icon="add" onPress={onZoomIn} />
-      ) : null}
-      {onZoomOut ? (
-        <MapControlButton accessibilityLabel="کوچک‌نمایی" icon="remove" onPress={onZoomOut} />
-      ) : null}
-      {onLocate ? (
-        <Pressable
-          accessibilityLabel="موقعیت فعلی من"
-          accessibilityRole="button"
-          disabled={locateDisabled || locateLoading}
-          onPress={onLocate}
-          style={({ pressed }) => [
-            styles.button,
-            (locateActive || pressed) && !locateDisabled && styles.buttonActive,
-            locateDisabled && styles.disabled,
-          ]}
-        >
-          {locateLoading ? (
-            <ActivityIndicator color={AppTheme.colors.primaryStrong} size="small" />
-          ) : (
-            <Icon
-              color={locateActive ? AppTheme.colors.primaryStrong : AppTheme.colors.textSecondary}
-              name="locate"
-              size={22}
-            />
-          )}
-        </Pressable>
-      ) : null}
+      <View style={[styles.cluster, Shadow.floating]}>{items}</View>
     </View>
   );
 }
@@ -72,7 +90,7 @@ function MapControlButton({
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       onPress={onPress}
-      style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.cell, styles.divider, pressed && styles.cellPressed]}
     >
       <Icon color={AppTheme.colors.textSecondary} name={icon} size={22} />
     </Pressable>
@@ -81,25 +99,34 @@ function MapControlButton({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    gap: 10,
+    alignItems: 'flex-start',
   },
-  button: {
-    alignItems: 'center',
+  cluster: {
     backgroundColor: AppTheme.colors.surface,
     borderColor: AppTheme.colors.border,
-    borderRadius: Radius.pill,
+    borderRadius: Radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  cell: {
+    alignItems: 'center',
     height: 48,
     justifyContent: 'center',
     width: 48,
-    ...Shadow.floating,
   },
-  buttonActive: {
+  // Hairline between stacked cells: separates targets without adding a second
+  // border, which a per-cell one would render doubled against the clip.
+  divider: {
+    borderBottomColor: AppTheme.colors.hairline,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  lastCell: {
+    borderBottomWidth: 0,
+  },
+  cellActive: {
     backgroundColor: AppTheme.colors.primarySoft,
-    borderColor: AppTheme.colors.primaryBorder,
   },
-  pressed: {
+  cellPressed: {
     backgroundColor: AppTheme.colors.surfaceMuted,
   },
   disabled: {
