@@ -22,7 +22,7 @@ import {
 import { incidentTypeOf } from '@/domain/incident-type';
 import { toRoadSnap } from '@/domain/road-snap';
 import { withAttachmentIds } from '@/domain/attachment-ids';
-import type { UploadEvent } from '@/domain/upload-events';
+import type { RunBlocked, UploadEvent } from '@/domain/upload-events';
 import {
   hasIncompleteRequiredVehicleCards,
   readFormState,
@@ -70,6 +70,27 @@ export type SyncRunSummary = {
    * "nothing to do" about a queue that is being worked right now.
    */
   started: boolean;
+  /**
+   * Why a run produced nothing, when nothing was its fault to produce.
+   *
+   * `null` for a run that worked, or one that lost the lock — the counts cannot say
+   * "the device was offline" or "the queue was empty", and they look identical from
+   * the outside. A caller watching a modal has no other way to learn that its run never
+   * began, which is how an offline submit used to sit at 0% with no way out.
+   */
+  blocked: RunBlocked;
+};
+
+/**
+ * What the officer is told when the run cannot start, in their own words.
+ *
+ * The copy has to promise only what is true: the report *is* saved and queued, and the
+ * background worker will pick it up on the next connection. Saying «saved» is honest;
+ * saying «sent» would not be.
+ */
+const BLOCKED_REASONS: Record<Exclude<RunBlocked, null>, string> = {
+  no_session: 'نشست شما معتبر نیست؛ دوباره وارد شوید و گزارش از پیش‌نویس‌ها ارسال می‌شود.',
+  offline: 'گزارش و فایل‌های آن روی دستگاه ذخیره شد و پس از اتصال به اینترنت ارسال می‌شود.',
 };
 
 /**
@@ -96,6 +117,22 @@ export type SyncWorker = {
   start(): () => void;
   run(options?: SyncRunOptions | boolean): Promise<SyncRunSummary>;
 };
+
+/**
+ * Close out a run that could not begin, telling the observer why.
+ *
+ * The draft is untouched: `requeueDraft` already saved and queued it before the worker
+ * was ever called, so this is a report on *this run*, not a verdict on the report.
+ */
+function block(
+  summary: SyncRunSummary,
+  reason: Exclude<RunBlocked, null>,
+  observe?: (event: UploadEvent) => void,
+): SyncRunSummary {
+  summary.blocked = reason;
+  observe?.({ type: 'deferred', reason: BLOCKED_REASONS[reason] });
+  return summary;
+}
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -532,6 +569,7 @@ export function createSyncWorker(sessionService = createSessionService()): SyncW
       rejected: 0,
       retried: 0,
       started: false,
+      blocked: null,
     };
     if (running) {
       return summary;
@@ -541,11 +579,13 @@ export function createSyncWorker(sessionService = createSessionService()): SyncW
     try {
       const session = await sessionService.restore();
       if (!session) {
-        return summary;
+        return block(summary, 'no_session', options.observe);
       }
       const connectivity = await getConnectivitySnapshot();
       if (connectivity.status === 'offline') {
-        return summary;
+        // Reported rather than silently returned: the officer pressed submit and is
+        // watching. Silence here is what left them on a modal that never moved.
+        return block(summary, 'offline', options.observe);
       }
 
       const nowMs = Date.now();

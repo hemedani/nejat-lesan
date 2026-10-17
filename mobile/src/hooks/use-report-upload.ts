@@ -4,6 +4,7 @@ import { requeueDraft } from '@/domain/draft-actions';
 import {
   applyUploadEvent,
   initialUploadProgress,
+  resolveSendOutcome,
   skipSetOf,
   skippedFilesField,
   type UploadEvent,
@@ -26,7 +27,11 @@ import { getDraft, saveDraft } from '@/storage/local-database';
  * behalf and nothing is dropped without being recorded.
  */
 
-export type SendResult = 'synced' | 'failed' | 'cancelled' | 'busy' | 'attention';
+/**
+ * `queued` is not a failure: the report was saved and is waiting for a connection, so
+ * the modal ends in a settled «ذخیره شد» state and the queue picks it up on its own.
+ */
+export type SendResult = 'synced' | 'queued' | 'failed' | 'cancelled' | 'busy' | 'attention';
 
 export type UseReportUpload = {
   visible: boolean;
@@ -99,14 +104,21 @@ export function useReportUpload(
       return 'busy';
     }
 
-    // The officer is being asked about a file, so the queue must not advance past this
-    // report — the next one would open its own modal over an unresolved question.
-    if (progressRef.current.phase === 'attention') {
-      return 'attention';
+    const outcome = resolveSendOutcome({
+      blocked: summary.blocked,
+      phase: progressRef.current.phase,
+      synced: summary.synced,
+    });
+
+    // The officer is being asked about a file, or the report is parked, so the queue
+    // must not advance past it — the next one would open its own modal on top of an
+    // unresolved question or an unsent report.
+    if (outcome === 'attention' || outcome === 'queued') {
+      return outcome;
     }
 
     queueRef.current = queueRef.current.slice(1);
-    return summary.synced > 0 ? 'synced' : 'failed';
+    return outcome;
   }, [emit]);
 
   const drive = useCallback(async (): Promise<SendResult> => {
@@ -119,7 +131,12 @@ export function useReportUpload(
           break;
         }
       }
-      if (last === 'busy') {
+      if (last === 'queued') {
+        // The report is safe and pending. The drafts board re-reads `sync_status`, so
+        // calling `onSettled` here is what makes it show up as waiting rather than
+        // stuck at whatever it last rendered.
+        options.onSettled?.();
+      } else if (last === 'busy') {
         setProgress(current => {
           const next: UploadProgress = {
             ...current,

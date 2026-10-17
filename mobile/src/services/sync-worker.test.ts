@@ -616,3 +616,71 @@ describe('a form the organization has replaced', () => {
   });
 });
 
+describe('a run that never started', () => {
+  it('says the device is offline instead of returning a run that did nothing', async () => {
+    connectivityStatus = 'offline';
+    enqueue(makeDraft());
+
+    const summary = await createSyncWorker().run(true);
+
+    // The counts alone cannot say why: a run that found an empty queue looks identical.
+    // This is what lets the modal end instead of spinning at 0% forever.
+    expect(summary.blocked).toBe('offline');
+  });
+
+  it('tells the observer the report is saved and waiting', async () => {
+    connectivityStatus = 'offline';
+    enqueue(makeDraft());
+    const events: UploadEvent[] = [];
+
+    await createSyncWorker().run({ manual: true, observe: event => void events.push(event) });
+
+    // Without this event the modal stayed in `planning`, which renders as a busy
+    // spinner with no error and no buttons.
+    expect(events).toContainEqual({ type: 'deferred', reason: expect.any(String) });
+  });
+
+  it('says so when there is no session to send with', async () => {
+    // Same dead end, different cause: the modal would hang exactly the same way.
+    connectivityStatus = 'online';
+    session = null;
+    enqueue(makeDraft());
+
+    const summary = await createSyncWorker().run(true);
+
+    expect(summary.blocked).toBe('no_session');
+  });
+
+  it('reports no block at all on an ordinary run', async () => {
+    enqueue(makeDraft());
+
+    const summary = await createSyncWorker().run(true);
+
+    expect(summary.blocked).toBeNull();
+    expect(summary.synced).toBe(1);
+  });
+
+  it('says another run holds the lock rather than calling that a block', async () => {
+    // `started: false` is a different answer — the queue is being worked right now, by
+    // somebody else. Collapsing it into `blocked` would tell the officer their report
+    // was parked.
+    let release = () => {};
+    vi.mocked(submitAccidentReport).mockImplementation(
+      () =>
+        new Promise(resolve => {
+          release = () => resolve({ _id: 'server-1', report_id: 'REP-1' });
+        }),
+    );
+    enqueue(makeDraft());
+
+    const worker = createSyncWorker();
+    const first = worker.run(true);
+    await vi.waitFor(() => expect(submitAccidentReport).toHaveBeenCalledTimes(1));
+    const second = await worker.run(true);
+
+    expect(second).toMatchObject({ started: false, blocked: null });
+    release();
+    await first;
+  });
+});
+

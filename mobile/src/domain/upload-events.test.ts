@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyUploadEvent,
   initialUploadProgress,
+  resolveSendOutcome,
   skippedFilesField,
   skipSetOf,
   type UploadEvent,
@@ -202,5 +203,67 @@ describe('upload progress', () => {
     const state = reduce([{ type: 'report-done', status: 'retry' }]);
     expect(state.phase).toBe('failed');
     expect(state.reason).toBeNull();
+  });
+});
+
+describe('a run that could not start', () => {
+  it('lands on a settled saved state rather than an endless preparing spinner', () => {
+    // Offline, the worker emits nothing at all. The modal was therefore frozen in
+    // `planning` with no error, no buttons and no way out — on the incident screens
+    // nothing passes `onDismiss`, so it was a dead end the officer could not leave.
+    const state = reduce([{ type: 'deferred', reason: 'بدون اینترنت' }]);
+
+    expect(state).toMatchObject({ phase: 'queued', reason: 'بدون اینترنت' });
+  });
+
+  it('calls the report saved, not sent — it never reached the server', () => {
+    expect(reduce([{ type: 'deferred', reason: 'بدون اینترنت' }]).phase).not.toBe('done');
+  });
+
+  it('holds there, so a stray event cannot talk the modal out of its own ending', () => {
+    // Only a genuine new attempt (`phase: 'uploading'`) resets a held modal; anything
+    // else arriving afterwards is noise and must not repaint a saved report as sent.
+    const state = reduce([
+      { type: 'deferred', reason: 'بدون اینترنت' },
+      { type: 'report-done', status: 'synced' },
+      { type: 'phase', phase: 'submitting' },
+    ]);
+
+    expect(state.phase).toBe('queued');
+  });
+
+  it('lets a deliberate retry start over from the saved state', () => {
+    const held = reduce([{ type: 'deferred', reason: 'بدون اینترنت' }]);
+    const retried = applyUploadEvent(held, { type: 'phase', phase: 'uploading' });
+
+    expect(retried).toMatchObject({ phase: 'uploading', reason: null });
+  });
+});
+
+describe('what one send attempt amounts to', () => {
+  it('reports a report the server accepted as sent', () => {
+    expect(resolveSendOutcome({ blocked: null, phase: 'done', synced: 1 })).toBe('synced');
+  });
+
+  it('reports a run that never started as saved-and-waiting, not as a failure', () => {
+    // The distinction is the whole fix. Calling this `failed` would show an officer a
+    // red error for a report that was saved perfectly, and would tell the drafts board
+    // the send is over rather than pending.
+    expect(resolveSendOutcome({ blocked: 'offline', phase: 'queued', synced: 0 })).toBe('queued');
+  });
+
+  it('holds at the question while a failed file is waiting on an answer', () => {
+    expect(resolveSendOutcome({ blocked: null, phase: 'attention', synced: 0 })).toBe('attention');
+  });
+
+  it('reports a refusal as failed', () => {
+    expect(resolveSendOutcome({ blocked: null, phase: 'failed', synced: 0 })).toBe('failed');
+  });
+
+  it('trusts a blocked run even if a stale counter says something went through', () => {
+    // `synced` is a count from the run; `blocked` is a statement that the run did not
+    // happen. Believing the count would claim a report reached the server on a device
+    // that never reached one.
+    expect(resolveSendOutcome({ blocked: 'no_session', phase: 'done', synced: 1 })).toBe('queued');
   });
 });

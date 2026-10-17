@@ -111,6 +111,7 @@ The app is an offline-first, Persian RTL field tool for reliable incident report
 - [-] Make sync observable: attempt time, next retry, error category, server report ID, and rejection reason. Drafts screen shows attempts/retry/errors/report id.
 - [ ] Define conflict handling for a locally edited report that was already updated on the server. [?]
 - [ ] Test interrupted uploads, duplicate requests, airplane mode, app kill, clock changes, and partial failures.
+- [x] End an offline submit in a settled «ذخیره شد» state instead of a dead end. The worker returned early when offline **without emitting an event**, so `progress.phase` stayed `planning` and `UploadModal` — which has no terminal state for "the run never began" and receives no `onDismiss` on the four incident screens — rendered a full-screen 0% spinner with no error and **no buttons at all** (on iOS, unescapable). `SyncRunSummary.blocked` now reports `'offline' | 'no_session' | null` and the worker emits a `deferred` event; the reducer folds it into a new `queued` phase (neither `done`, which would claim a report the server never saw, nor `failed`, which would blame the officer for a save that worked), the modal settles it with a neutral badge and the existing «بستن» → drafts board, and `resolveSendOutcome` keeps the queue from advancing past a parked report. Also closes the identical hang when the session cannot be restored and when signal drops mid-run. Verified `pnpm test` 613/613 (+16); on-device airplane-mode submit still pending above.
 
 ## 5. Offline maps and incident location
 

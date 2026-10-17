@@ -42,6 +42,7 @@ const PHASE_TITLES: Record<UploadProgress['phase'], string> = {
   submitting: 'در حال ثبت گزارش',
   attention: 'ارسال بعضی فایل‌ها انجام نشد',
   done: 'گزارش ثبت شد',
+  queued: 'گزارش ذخیره شد',
   failed: 'ارسال گزارش انجام نشد',
 };
 
@@ -56,7 +57,11 @@ export function UploadModal({
 }: UploadModalProps) {
   const busy = progress.phase === 'planning' || progress.phase === 'uploading' ||
     progress.phase === 'linking' || progress.phase === 'submitting';
-  const settled = progress.phase === 'done' || progress.phase === 'failed';
+  // `queued` settles the modal rather than spinning it: the run could not start, the
+  // report is saved, and nothing further is going to happen on this screen. Without it
+  // the officer sat on a 0% spinner with no buttons — and the four incident screens
+  // pass no `onDismiss`, so nothing could close it.
+  const settled = progress.phase === 'done' || progress.phase === 'queued' || progress.phase === 'failed';
 
   return (
     <RNModal animationType="fade" onRequestClose={onClose} transparent visible={visible}>
@@ -165,27 +170,33 @@ function AttentionBody({ progress }: { progress: UploadProgress }) {
 
 function SettledBody({ progress }: { progress: UploadProgress }) {
   const ok = progress.phase === 'done';
+  // Saved is neither good nor bad: nothing failed, and nothing reached the server. A
+  // green tick would claim the report is registered; a red badge would blame the
+  // officer for a save that worked.
+  const tone = ok ? AppTheme.status.success : progress.phase === 'queued' ? AppTheme.status.info : AppTheme.status.danger;
+  const icon = ok
+    ? AppIcons.status.synced.name
+    : progress.phase === 'queued'
+      ? AppIcons.status.queued.name
+      : AppIcons.status.failed.name;
+
   return (
     <View style={styles.settledBody}>
       <View
         style={[
           styles.settledBadge,
-          {
-            backgroundColor: ok ? AppTheme.status.success.bg : AppTheme.status.danger.bg,
-            borderColor: ok ? AppTheme.status.success.border : AppTheme.status.danger.border,
-          },
+          { backgroundColor: tone.bg, borderColor: tone.border },
         ]}
       >
-        <Icon
-          color={ok ? AppTheme.status.success.text : AppTheme.status.danger.text}
-          name={ok ? AppIcons.status.synced.name : AppIcons.status.failed.name}
-          size={28}
-        />
+        <Icon color={tone.text} name={icon} size={28} />
       </View>
       <Text style={styles.body}>
         {ok
           ? 'گزارش و فایل‌های آن با موفقیت ثبت شد.'
-          : (progress.reason ?? 'ارسال انجام نشد. گزارش در پیش‌نویس‌ها باقی ماند.')}
+          : (progress.reason ??
+            (progress.phase === 'queued'
+              ? 'گزارش و فایل‌های آن روی دستگاه ذخیره شد و پس از اتصال به اینترنت ارسال می‌شود.'
+              : 'ارسال انجام نشد. گزارش در پیش‌نویس‌ها باقی ماند.'))}
       </Text>
     </View>
   );

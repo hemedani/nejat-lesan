@@ -14,7 +14,15 @@
  * backend.
  */
 
-/** The stages between "officer pressed submit" and "the server has it". */
+/**
+ * The stages between "officer pressed submit" and "the server has it".
+ *
+ * `queued` is the ending for a run that never began — the device could not reach
+ * anything, so the report was saved and is waiting. It is deliberately neither `done`
+ * nor `failed`: the server has never seen the report, and nothing the officer did went
+ * wrong. Naming it `done` would show a green «با موفقیت ثبت شد» for a report that is
+ * not registered; naming it `failed` would show an error for a save that worked.
+ */
 export type UploadPhase =
   | 'planning'
   | 'uploading'
@@ -22,6 +30,7 @@ export type UploadPhase =
   | 'submitting'
   | 'attention'
   | 'done'
+  | 'queued'
   | 'failed';
 
 export type FailedUpload = {
@@ -55,7 +64,15 @@ export type UploadEvent =
   | { type: 'file-done'; mediaId: string; ok: boolean }
   | { type: 'file-failed'; mediaId: string; name: string; reason: string }
   | { type: 'failures-resolved'; skip: string[] }
-  | { type: 'report-done'; status: 'synced' | 'rejected' | 'retry'; reason?: string };
+  | { type: 'report-done'; status: 'synced' | 'rejected' | 'retry'; reason?: string }
+  /**
+   * The run could not begin at all — no connection, or no session.
+   *
+   * Its own event because no other one describes it: `report-done` would claim an
+   * outcome for a report the server was never asked about. Emitting nothing left the
+   * modal frozen in `planning` forever.
+   */
+  | { type: 'deferred'; reason: string };
 
 export function initialUploadProgress(): UploadProgress {
   return {
@@ -75,7 +92,12 @@ export function initialUploadProgress(): UploadProgress {
  * `attention` is the important one: the officer has to choose between retry, skip and
  * cancel, and nothing may drag the modal forward until they do.
  */
-const HELD_PHASES: ReadonlySet<UploadPhase> = new Set<UploadPhase>(['attention', 'done', 'failed']);
+const HELD_PHASES: ReadonlySet<UploadPhase> = new Set<UploadPhase>([
+  'attention',
+  'done',
+  'queued',
+  'failed',
+]);
 
 function percentOf(done: number, total: number): number {
   if (total <= 0) {
@@ -147,6 +169,9 @@ export function applyUploadEvent(state: UploadProgress, event: UploadEvent): Upl
     case 'failures-resolved':
       return withPercent({ ...state, failed: [], phase: 'uploading' });
 
+    case 'deferred':
+      return { ...state, phase: 'queued', current: null, reason: event.reason };
+
     case 'report-done':
       if (event.status === 'synced') {
         return withPercent({ ...state, phase: 'done', current: null, reason: null });
@@ -185,4 +210,37 @@ export function skippedFilesField(state: UploadProgress): Record<string, unknown
   return {
     skipped_files: state.failed.map(entry => ({ name: entry.name, reason: entry.reason })),
   };
+}
+
+/** Why a run produced nothing, when nothing was its fault to produce. */
+export type RunBlocked = 'offline' | 'no_session' | null;
+
+/** What one press of submit amounted to, as the caller has to act on it. */
+export type SendOutcome = 'synced' | 'queued' | 'attention' | 'failed';
+
+/**
+ * Read one completed run.
+ *
+ * `blocked` outranks everything else. It is a statement that the run never happened,
+ * while `synced` is only a count it produced — so a device that never reached the
+ * server cannot report a report as sent, whatever the counter says.
+ *
+ * `phase` then answers the rest, because the modal is the only thing that knows whether
+ * a failed file is still waiting on the officer's decision.
+ */
+export function resolveSendOutcome(run: {
+  blocked: RunBlocked;
+  phase: UploadPhase;
+  synced: number;
+}): SendOutcome {
+  if (run.blocked) {
+    return 'queued';
+  }
+  if (run.phase === 'attention') {
+    return 'attention';
+  }
+  if (run.synced > 0) {
+    return 'synced';
+  }
+  return 'failed';
 }
