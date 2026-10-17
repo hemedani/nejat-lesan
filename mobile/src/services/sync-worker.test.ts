@@ -5,7 +5,7 @@ import { snapPointToRoad, type SnapPointResponse } from '@/api/road';
 import { fetchPatrolFormById } from '@/api/form-definition';
 import type { AccidentDraft, QueueRecord, Session } from '@/domain/types';
 import type { UploadEvent } from '@/domain/upload-events';
-import { submitIncidentReport } from '@/api/incident-report';
+import { submitIncidentReport, updateIncidentReportByUuid } from '@/api/incident-report';
 import { syncFormAssets } from '@/services/asset-upload-service';
 import { syncReportMedia } from '@/services/media-upload-service';
 
@@ -264,6 +264,11 @@ describe('deferred road snap', () => {
 
     expect(snapPointToRoad).toHaveBeenCalledTimes(1);
     expect(updateAccidentReportByUuid).toHaveBeenCalledTimes(1);
+    // Assert what it was called *with*, not just that it was called. Counting the
+    // calls is what let a payload the server refuses pass through unnoticed: the key
+    // `submitted_from` is `add`-only, so every correction carried one.
+    expect(vi.mocked(updateAccidentReportByUuid).mock.calls.at(-1)?.[2])
+      .not.toHaveProperty('submitted_from');
   });
 
   it('falls back to the officer GPS when no incident pin was chosen', async () => {
@@ -681,6 +686,46 @@ describe('a run that never started', () => {
     expect(second).toMatchObject({ started: false, blocked: null });
     release();
     await first;
+  });
+});
+
+describe('the offline submit, end to end through the modal\'s own state machine', () => {
+  it('ends in a saved, closable state instead of a 0% spinner with no buttons', async () => {
+    // Each link is unit-tested on its own; this one exists because the event name is a
+    // string literal on both sides. Nothing checks that the worker *speaks* a name the
+    // reducer *hears* — they drifted silently once already, and the symptom was an
+    // officer trapped on a modal.
+    connectivityStatus = 'offline';
+    enqueue(makeDraft());
+    const events: UploadEvent[] = [];
+
+    const summary = await createSyncWorker().run({ manual: true, observe: event => void events.push(event) });
+
+    // What `useReportUpload` does with them, run through the real reducer.
+    const progress = events.reduce(applyUploadEvent, initialUploadProgress());
+    const outcome = resolveSendOutcome({
+      blocked: summary.blocked,
+      phase: progress.phase,
+      synced: summary.synced,
+    });
+
+    expect(progress.phase).toBe('queued');
+    expect(progress.reason).toContain('ذخیره شد');
+    expect(outcome).toBe('queued');
+    // `queued` settles the modal, which is what puts a «بستن» button on screen.
+    expect(['done', 'queued', 'failed']).toContain(progress.phase);
+  });
+
+  it('never leaves the officer believing an unsent report was filed', async () => {
+    connectivityStatus = 'offline';
+    enqueue(makeDraft());
+    const events: UploadEvent[] = [];
+
+    await createSyncWorker().run({ manual: true, observe: event => void events.push(event) });
+
+    const progress = events.reduce(applyUploadEvent, initialUploadProgress());
+    // `done` renders a green «با موفقیت ثبت شد» for a report the server never received.
+    expect(progress.phase).not.toBe('done');
   });
 });
 

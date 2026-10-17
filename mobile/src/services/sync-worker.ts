@@ -471,10 +471,22 @@ async function processRecord(
       ? { ...workingDraft, road_snap: roadSnap }
       : workingDraft;
 
+  // Which act this is has to be known *before* the payload is assembled, because the
+  // two acts do not accept the same keys.
+  const submission = pickSubmissionAction(submissionDraft);
+
   const set: Record<string, unknown> = { ...mapped.set, ...roadFields(roadSnap) };
-  // The report mapper already stamps provenance; the accident mapper does not, so
-  // this fills it in once for both rather than teaching each mapper the same rule.
-  if (provenance && set['submitted_from'] === undefined) {
+  if (submission.act === 'update') {
+    // `submitted_from` is declared on the `add` validators only — see the comment in
+    // back/src/accident/add/add.val.ts. A correction must not restamp the build that
+    // originally filed the report, and the server refuses the key outright on update:
+    // it is not in that validator, so it arrives as an unknown key and the whole
+    // correction is turned away. The report mapper writes this key itself, which is
+    // why the removal has to happen here rather than inside either mapper.
+    delete set['submitted_from'];
+  } else if (provenance && set['submitted_from'] === undefined) {
+    // The report mapper already stamps provenance; the accident mapper does not, so
+    // this fills it in once for both rather than teaching each mapper the same rule.
     set['submitted_from'] = {
       app_version: provenance.app_version,
       platform: provenance.platform,
@@ -483,7 +495,6 @@ async function processRecord(
 
   try {
     emit?.({ type: 'phase', phase: 'submitting' });
-    const submission = pickSubmissionAction(submissionDraft);
     const ack = isReport
       ? submission.act === 'update'
         ? await updateIncidentReportByUuid(
