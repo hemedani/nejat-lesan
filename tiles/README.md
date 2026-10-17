@@ -172,6 +172,35 @@ bytes, a `fetch`/`arrayBuffer` read gives decoded bytes (HTTP clients auto-decom
 Reachability from an Iranian mobile network is **unverified** — validate from a real
 SIM before calling the deployment done. HTTPS is required before any public deploy.
 
+**Building on an Iranian host:** `extract.sh` pulls the source archive from
+`build.protomaps.com` (Cloudflare), which an Iranian VPS typically **cannot reach** —
+`pmtiles` fails with `Failed to create range reader … read: connection timed out`.
+The script now probes reachability first and fails in seconds with this guidance instead
+of hanging. Two ways through:
+
+**A. Copy a prebuilt archive (no VPN).** Build or obtain `tiles.pmtiles` (same
+`PROTOMAPS_BUILD_DATE` + bbox/maxzoom) on any machine that *can* reach the build host,
+then ship it with its stamp:
+
+```bash
+# on the machine that has the archive
+scp tiles/data/tiles.pmtiles tiles/data/.source-stamp \
+    <user>@<vps>:/home/suser/work/nejat-lesan/tiles/data/
+```
+
+With both files present, `data/.source-stamp` matches and `extract.sh` skips the
+download entirely. Everything else (glyphs, style, sprites, serving) is fully offline.
+
+**B. Proxy/VPN.** `pmtiles` is a Go binary and honors `HTTPS_PROXY`, so:
+
+```bash
+HTTPS_PROXY=http://<proxy-host>:<port> \
+  PROTOMAPS_BUILD_DATE=20261015 ./build/extract.sh
+```
+
+`TILES_CONNECT_TIMEOUT` (default 20s) tunes the reachability probe.
+
+
 ## 10. Mobile hand-off
 
 Point the app at the style document — one variable, one origin:
