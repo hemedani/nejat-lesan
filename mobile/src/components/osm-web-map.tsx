@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
+import type { MapCoverage } from '@/domain/map-coverage';
 import type { Coordinates } from '@/domain/types';
 import { ensureMapHtmlFile } from '@/services/map-web-html';
 
@@ -16,23 +17,48 @@ export type OsmWebMapHandle = {
   zoomBy: (delta: number) => void;
 };
 
-type OsmWebMapProps = {
+export type OsmWebMapProps = {
   initialCenter: Coordinates;
   initialZoom?: number;
   officerMarker?: Coordinates | null;
+  /**
+   * Zoom range that is actually on disk.
+   *
+   * Only a constraint while `offline` is true. Without that distinction the
+   * pack's z4..z10 gets scaled up to the z17 the picker opens at and the map
+   * is a blur on a working network.
+   *
+   * `null` means "not downloaded yet" and is passed through unclamped, so the
+   * map still renders at full detail from the network.
+   */
+  coverage?: MapCoverage | null;
+  /** Whether the device currently has no usable network. */
+  offline?: boolean;
   onRegionChangeComplete?: (coords: Coordinates) => void;
+  onCoverageChange?: (covered: boolean) => void;
   style?: StyleProp<ViewStyle>;
 };
 
 export const OsmWebMap = forwardRef<OsmWebMapHandle, OsmWebMapProps>(function OsmWebMap(
-  { initialCenter, initialZoom = 16, officerMarker, onRegionChangeComplete, style },
+  {
+    initialCenter,
+    initialZoom = 16,
+    officerMarker,
+    coverage = null,
+    offline = false,
+    onRegionChangeComplete,
+    onCoverageChange,
+    style,
+  },
   ref,
 ) {
   const webRef = useRef<WebView | null>(null);
   const [htmlUri, setHtmlUri] = useState<string | null>(null);
   const loadEndListenersRef = useRef<Set<() => void>>(new Set());
   const onRegionChangeRef = useRef(onRegionChangeComplete);
+  const onCoverageChangeRef = useRef(onCoverageChange);
   onRegionChangeRef.current = onRegionChangeComplete;
+  onCoverageChangeRef.current = onCoverageChange;
 
   useEffect(() => {
     let cancelled = false;
@@ -108,6 +134,41 @@ export const OsmWebMap = forwardRef<OsmWebMapHandle, OsmWebMapProps>(function Os
     };
   }, [htmlUri, officerMarker]);
 
+  useEffect(() => {
+    // Re-sent on every load because the document is shared and starts with no
+    // coverage: without this a remount would clamp to nothing (or, worse, to a
+    // stale value baked by an earlier screen).
+    const payload = JSON.stringify({
+      type: 'coverage',
+      ...(coverage ? { zoomMax: coverage.zoomMax, zoomMin: coverage.zoomMin } : {}),
+    });
+    const listeners = loadEndListenersRef.current;
+    function send() {
+      webRef.current?.postMessage(payload);
+    }
+    send();
+    listeners.add(send);
+    return () => {
+      listeners.delete(send);
+    };
+  }, [htmlUri, coverage]);
+
+  useEffect(() => {
+    // Gating clause for the whole coverage mechanism, so it travels on its own
+    // channel and takes effect the moment the radio flips rather than waiting
+    // for the officer to move the map.
+    const payload = JSON.stringify({ type: 'online', offline });
+    const listeners = loadEndListenersRef.current;
+    function send() {
+      webRef.current?.postMessage(payload);
+    }
+    send();
+    listeners.add(send);
+    return () => {
+      listeners.delete(send);
+    };
+  }, [htmlUri, offline]);
+
   function handleMessage(event: WebViewMessageEvent) {
     try {
       const data = JSON.parse(event.nativeEvent.data) as {
@@ -115,9 +176,13 @@ export const OsmWebMap = forwardRef<OsmWebMapHandle, OsmWebMapProps>(function Os
         latitude: number;
         longitude: number;
         zoom: number;
+        covered?: boolean;
       };
       if (data.type !== 'moveend') {
         return;
+      }
+      if (typeof data.covered === 'boolean') {
+        onCoverageChangeRef.current?.(data.covered);
       }
       onRegionChangeRef.current?.({ latitude: data.latitude, longitude: data.longitude });
     } catch {

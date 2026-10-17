@@ -8,9 +8,13 @@ import { getAppConfig } from '@/config/env';
  * but from a file origin (with the WebView's allow-file-access flags) the
  * slippy-map can load cached tiles directly from disk and fall back to the
  * network per tile when a file is missing.
+ *
+ * Bumping this version is mandatory whenever the document below changes: the
+ * file is written once and never rewritten, so a device that already has
+ * `index-v3.html` would keep running the old tile-level logic — and the old
+ * logic is what left officers staring at a blank map offline.
  */
-
-const HTML_FILE_VERSION = 3;
+const HTML_FILE_VERSION = 5;
 
 export function mapHtmlDirectory(): Directory {
   return new Directory(Paths.document, 'map');
@@ -18,21 +22,59 @@ export function mapHtmlDirectory(): Directory {
 
 function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
   return `<!DOCTYPE html>
-<html>
+<html lang="fa">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
-  html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; background: #e8edf0; }
-  #map { position: absolute; top: 0; left: 0; right: 0; bottom: 0; touch-action: none; overflow: hidden; }
-  #layer img { position: absolute; top: 0; left: 0; width: 256px; height: 256px; display: block;
-    transform-origin: 0 0; will-change: transform; -webkit-user-drag: none; user-select: none; pointer-events: none; }
-  .officer { position: absolute; top: 0; left: 0; width: 18px; height: 18px; margin: -9px 0 0 -9px;
+  html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; background: #e8f3f4; }
+  #map { position: absolute; top: 0; left: 0; bottom: 0; right: 0; touch-action: none; overflow: hidden; }
+
+  /* Design B — a missing tile is part of the app, not a hole in it.
+     Without this the <img> simply fails to paint and the officer sees the bare
+     page background: an unlabelled white void with no way to tell "no data"
+     from "broken". */
+  #layer .tile { position: absolute; top: 0; left: 0; width: 256px; height: 256px;
+    display: block; transform-origin: 0 0; will-change: transform;
+    -webkit-user-drag: none; user-select: none; pointer-events: none;
+    background-color: #e8f3f4;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(8,127,140,.10) 0 1px, transparent 1px 7px),
+      repeating-linear-gradient(-45deg, rgba(8,127,140,.10) 0 1px, transparent 1px 7px);
+    box-shadow: inset 0 0 0 1px rgba(8,127,140,.14); }
+  #layer .tile.loading {
+    background-color: #e9edf0;
+    background-image: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.75) 50%, transparent 80%);
+    background-size: 220% 100%; background-repeat: no-repeat;
+    animation: sweep 1.6s ease-in-out infinite; }
+  #layer .tile.loaded { background-image: none; box-shadow: none; }
+  @keyframes sweep { from { background-position: 140% 0; } to { background-position: -40% 0; } }
+
+  /* Unifies the OSM raster with the app without recolouring the cartography:
+     the officer still reads water, parks and roads as they actually are. */
+  #vignette { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(8,127,140,.07), rgba(8,127,140,.02)),
+      radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(18,50,72,.10) 100%); }
+
+  #officer { position: absolute; top: 0; left: 0; width: 18px; height: 18px; margin: -9px 0 0 -9px;
     border-radius: 9px; background: #2563eb; border: 3px solid #ffffff;
     box-shadow: 0 1px 4px rgba(0,0,0,.45); pointer-events: none; will-change: transform; }
+
+  #scale { position: absolute; bottom: 10px; left: 10px; display: flex; flex-direction: column;
+    align-items: flex-start; gap: 2px; pointer-events: none;
+    color: #123248; font: 600 9.5px system-ui, sans-serif;
+    text-shadow: 0 1px 2px rgba(255,255,255,.85); }
+  #scale .bar { width: 64px; height: 5px; border: 1px solid #123248; border-top: 0;
+    background: rgba(255,255,255,.55); }
 </style>
 </head>
 <body>
-<div id="map"><div id="layer"></div></div>
+<div id="map">
+  <div id="layer"></div>
+  <div id="vignette"></div>
+  <div id="officer"></div>
+  <div id="scale"><span id="scale-text"></span><span class="bar"></span></div>
+</div>
 <script>
 (function () {
   var TILE = 256;
@@ -42,19 +84,29 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
   var LOCAL_ROOT = ${JSON.stringify(localRoot)};
   var REMOTE_TILE_URL = ${JSON.stringify(remoteTileUrl)};
 
+  var SCALE_STEPS_METERS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000,
+                            10000, 20000, 50000, 100000, 200000];
+
   var state = {
     zoom: 14,
     lat: 35.6892,
     lng: 51.389,
     officerLat: null,
     officerLng: null,
+    /* null = nothing downloaded yet, which must NOT clamp: before the first
+       download the map is online, and clamping here is what made an officer's
+       z17 map blank because the pack only reached z12. */
+    coverage: null,
+    /* Coverage only constrains tile levels while this is true. */
+    offline: false,
     W: window.innerWidth,
     H: window.innerHeight
   };
 
   var layer = document.getElementById('layer');
+  var officerEl = document.getElementById('officer');
+  var scaleText = document.getElementById('scale-text');
   var tiles = new Map();
-  var markerEl = null;
   var framePending = false;
   var lastReconcile = 0;
   var activePan = null;
@@ -79,11 +131,25 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
     if (state.lat < -85.05) state.lat = -85.05;
   }
 
+  /**
+   * Mirrors tileZoomFor() in src/domain/map-coverage.ts.
+   *
+   * Coverage is a constraint ONLY while offline. Clamping unconditionally is a
+   * worse bug than the blank map it fixed: online, the z4..z10 pack gets scaled
+   * up to the z17 the officer asked for and the map is a blur, even though the
+   * real tiles are one request away.
+   */
   function baseZoom() {
-    var bz = Math.floor(state.zoom);
-    if (bz > MAX_ZOOM) bz = MAX_ZOOM;
-    if (bz < 0) bz = 0;
-    return bz;
+    var target = Math.floor(state.zoom);
+    if (target > MAX_ZOOM) target = MAX_ZOOM;
+    if (target < 0) target = 0;
+    var coverage = state.coverage;
+    if (!state.offline || !coverage) return target;
+    var lo = Math.min(coverage.zoomMin, coverage.zoomMax);
+    var hi = Math.max(coverage.zoomMin, coverage.zoomMax);
+    if (target > hi) target = hi;
+    if (target < lo) target = lo;
+    return target;
   }
 
   function applyFrame() {
@@ -102,18 +168,42 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
         entry.el.style.transform =
           'translate3d(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px,0) scale(' + scale.toFixed(4) + ')';
       });
-      if (markerEl && state.officerLat != null) {
+      if (state.officerLat != null) {
         var mx = lonToX(state.officerLng, zf) - lonToX(state.lng, zf) + state.W / 2;
-        var my = latToY(state.officerLat, zf) - latToY(state.lat, zf) + state.W / 2;
-        markerEl.style.transform = 'translate3d(' + mx.toFixed(1) + 'px,' + my.toFixed(1) + 'px,0)';
+        var my = latToY(state.officerLat, zf) - latToY(state.lat, zf) + state.H / 2;
+        officerEl.style.display = 'block';
+        officerEl.style.transform = 'translate3d(' + mx.toFixed(1) + 'px,' + my.toFixed(1) + 'px,0)';
+      } else {
+        officerEl.style.display = 'none';
       }
+      updateScale();
     });
+  }
+
+  /** Rounds to a metric distance so the bar does not flicker while panning. */
+  function updateScale() {
+    var perPixel = 156543.03392 * Math.cos(state.lat * Math.PI / 180) / Math.pow(2, state.zoom);
+    var wanted = perPixel * 80;
+    var metres = SCALE_STEPS_METERS[SCALE_STEPS_METERS.length - 1];
+    for (var i = 0; i < SCALE_STEPS_METERS.length; i += 1) {
+      if (SCALE_STEPS_METERS[i] >= wanted) { metres = SCALE_STEPS_METERS[i]; break; }
+    }
+    scaleText.textContent = metres >= 1000
+      ? (metres / 1000).toLocaleString('fa-IR') + ' کیلومتر'
+      : metres.toLocaleString('fa-IR') + ' متر';
   }
 
   function createTile(bz, wx, ty) {
     var img = document.createElement('img');
-    // Cached tile first; fall back to the network only when the file is absent.
+    img.className = 'tile loading';
+    /* Cached tile first; fall back to the network only when the file is absent.
+       The styled placeholder underneath stays visible when both miss, which is
+       what turns "blank white" into a legible "no offline coverage here". */
+    img.onload = function () {
+      img.className = 'tile loaded';
+    };
     img.onerror = function () {
+      img.className = 'tile';
       if (!img.dataset.fallback) {
         img.dataset.fallback = '1';
         img.src = REMOTE_TILE_URL + '/' + bz + '/' + wx + '/' + ty + '.png';
@@ -164,26 +254,28 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
     applyFrame();
   }
 
-  function ensureMarker() {
-    if (state.officerLat == null) {
-      if (markerEl) { markerEl.remove(); markerEl = null; }
-      return false;
-    }
-    if (!markerEl) {
-      markerEl = document.createElement('div');
-      markerEl.className = 'officer';
-      layer.appendChild(markerEl);
-    }
-    return true;
-  }
-
   function emitMoveEnd() {
     window.ReactNativeWebView.postMessage(JSON.stringify({
       type: 'moveend',
       latitude: state.lat,
       longitude: state.lng,
-      zoom: state.zoom
+      zoom: state.zoom,
+      /* About the REQUESTED zoom, never the clamped one. The clamp guarantees
+         something is drawn, so reporting on the clamped value would claim
+         "offline ready" at every zoom — the badge telling the officer a blurry
+         z10 render is a usable z17 map. */
+      covered: isOfflineReady(state.zoom)
     }));
+  }
+
+  /** Mirrors isOfflineReadyAt() in src/domain/map-coverage.ts. */
+  function isOfflineReady(zoom) {
+    var coverage = state.coverage;
+    if (!coverage) return false;
+    var lo = Math.min(coverage.zoomMin, coverage.zoomMax);
+    var hi = Math.max(coverage.zoomMin, coverage.zoomMax);
+    var target = Math.floor(zoom);
+    return target >= lo && target <= hi;
   }
 
   function panBy(dx, dy) {
@@ -228,7 +320,7 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
     if (animation.type === 'zoom') {
       state.zoom = animation.fromZoom + (animation.toZoom - animation.fromZoom) * e;
       var cxT = lonToX(animation.anchorLng, state.zoom) - (animation.ax - state.W / 2);
-      var cyT = latToY(animation.anchorLat, state.zoom) - (animation.ay - state.W / 2);
+      var cyT = latToY(animation.anchorLat, state.zoom) - (animation.ay - state.H / 2);
       state.lng = xToLon(cxT, state.zoom);
       state.lat = yToLat(cyT, state.zoom);
       clampLat();
@@ -391,10 +483,21 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
       } else if (data.type === 'zoomBy') {
         animateZoom(state.zoom + data.delta);
       } else if (data.type === 'officer') {
-        state.officerLat = data.latitude;
-        state.officerLng = data.longitude;
-        ensureMarker();
+        state.officerLat = typeof data.latitude === 'number' ? data.latitude : null;
+        state.officerLng = typeof data.longitude === 'number' ? data.longitude : null;
         applyFrame();
+      } else if (data.type === 'coverage') {
+        /* Applied without re-emitting moveend: a download finishing must not
+           look like the officer moved the map. */
+        state.coverage = typeof data.zoomMax === 'number'
+          ? { zoomMin: typeof data.zoomMin === 'number' ? data.zoomMin : MIN_ZOOM, zoomMax: data.zoomMax }
+          : null;
+        reconcile(true);
+      } else if (data.type === 'online') {
+        /* Connectivity gates whether coverage constrains the tile level, so it
+           arrives on its own channel and re-reconciles when the radio flips. */
+        state.offline = data.offline === true;
+        reconcile(true);
       }
     } catch (error) {}
   }
@@ -407,7 +510,7 @@ function buildMapHtml(localRoot: string, remoteTileUrl: string): string {
     reconcile(true);
   });
 
-  ensureMarker();
+  officerEl.style.display = 'none';
   reconcile(true);
 })();
 </script>

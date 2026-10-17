@@ -27,12 +27,15 @@ import { Banner } from '@/components/ui/banner';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { MapControls } from '@/components/ui/map-controls';
+import { MapCoverageBadge } from '@/components/ui/map-coverage-badge';
 import { ScreenHeader } from '@/components/ui/screen-header';
 import { StatusPill } from '@/components/ui/status-pill';
-import { AppIcons, type IconFamily, type IconName } from '@/constants/icon-map';
+import { AppIcons, iconProps, type IconFamily, type IconName } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { useBottomInset } from '@/hooks/use-bottom-inset';
 import { useDeviceLocation } from '@/hooks/use-device-location';
+import { useConnectivity } from '@/hooks/use-connectivity';
+import { useMapPacks } from '@/hooks/use-map-packs';
 import { getConnectivitySnapshot } from '@/services/connectivity';
 import { useRequiredSession } from '@/auth/use-required-session';
 
@@ -84,6 +87,9 @@ export default function IncidentLocationScreen() {
   const params = useLocalSearchParams<{ uuid?: string; lat?: string; lng?: string }>();
   const deviceLocation = useDeviceLocation();
   const { locate } = deviceLocation;
+  const { coverage } = useMapPacks();
+  const connectivity = useConnectivity();
+  const [covered, setCovered] = useState(true);
   const mapRef = useRef<OsmWebMapHandle | null>(null);
   const snapAbortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -256,9 +262,12 @@ export default function IncidentLocationScreen() {
 
       <View style={styles.mapContainer}>
         <OsmWebMap
+          coverage={coverage}
           initialCenter={mapInitialCenter}
           initialZoom={mapInitialZoom}
+          offline={connectivity?.status === 'offline'}
           officerMarker={deviceLocation.coords}
+          onCoverageChange={setCovered}
           onRegionChangeComplete={handleRegionChangeComplete}
           ref={mapRef}
           style={StyleSheet.absoluteFill}
@@ -269,6 +278,14 @@ export default function IncidentLocationScreen() {
             style={[styles.pinHalo, { opacity: haloOpacity, transform: [{ scale: haloScale }] }]}
           />
           <Icon color={AppTheme.colors.primary} name="location" size={46} />
+        </View>
+
+        <View pointerEvents="box-none" style={styles.coverageRow}>
+          <MapCoverageBadge
+            covered={covered}
+            coverage={coverage}
+            offline={connectivity?.status === 'offline'}
+          />
         </View>
 
         <View pointerEvents="none" style={styles.legendColumn}>
@@ -400,7 +417,7 @@ export default function IncidentLocationScreen() {
           {suggestSnap && roadSnap?.nearest_point ? (
             <Banner
               actionLabel="انتقال به مسیر"
-              icon={AppIcons.map.route.name}
+              {...iconProps(AppIcons.map.route)}
               message={`نقطه انتخابی ${formatDistance(roadSnap.distance_to_road_meters)} با محور راه فاصله دارد. اگر واقعه روی سطح سواره‌رو رخ داده، آن را به نزدیک‌ترین موقعیت روی محور منتقل کنید؛ در غیر این صورت همین نقطه ثبت می‌شود.`}
               tone="info"
               title="پیشنهاد تطبیق با راه"
@@ -512,11 +529,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 44,
   },
+  coverageRow: {
+    left: 12,
+    position: 'absolute',
+    top: 12,
+  },
   legendColumn: {
     gap: 8,
     left: 12,
     position: 'absolute',
-    top: 12,
+    top: 50,
   },
   legendChip: {
     alignItems: 'center',

@@ -1,9 +1,13 @@
 import { File } from 'expo-file-system';
 
+import { AREA_TIER, type CenterPoint } from '@/domain/map-area-pack';
+import { coverageFromPacks, planPackStart, type PlanInput } from '@/domain/map-pack-plan';
+import { AREA_RADII_KM } from '@/domain/map-area-pack';
 import {
   MAP_TIERS,
   estimatePack,
   iterTiles,
+  type GeoBounds,
   type MapTierId,
   type TileCoord,
 } from '@/domain/map-packs';
@@ -14,21 +18,13 @@ import {
   getMapPack,
   getSetting,
   deleteMapPack,
+  listMapPacks,
   saveMapPack,
   saveSetting,
 } from '@/storage/local-database';
-import {
-  deleteAllTiles,
-  downloadTile,
-  measureTileMirror,
-  tileLocalUri,
-} from '@/services/map-tile-store';
-import {
-  getConnectivitySnapshot,
-  subscribeToConnectivity,
-} from '@/services/connectivity';
+import { deleteAllTiles, downloadTile, measureTileMirror, tileLocalUri } from '@/services/map-tile-store';
+import { getConnectivitySnapshot, subscribeToConnectivity } from '@/services/connectivity';
 
-export const NATIONAL_PACK_ID = 'national';
 const WIFI_ONLY_SETTING_KEY = 'map_wifi_only';
 export const DEFAULT_WIFI_ONLY = true;
 
@@ -45,15 +41,16 @@ const OFFLINE_PAUSE_HINT = 'بدون اینترنت؛ دانلود نقشه پس
 export type MapPackView = {
   id: string;
   status: 'idle' | 'queued' | 'downloading' | 'paused' | 'done' | 'failed';
-  zoomMax: number;
   tierId: MapTierId | null;
+  zoomMin: number;
+  zoomMax: number;
   tilesTotal: number;
   tilesDone: number;
   bytesDone: number;
   error?: string;
 };
 
-type Controls = { paused: boolean; removed: boolean };
+type Controls = { paused: boolean; removed: Set<string> };
 
 let pumping = false;
 let controls: Controls | null = null;
@@ -87,11 +84,16 @@ function tierForZoomMax(zoomMax: number): MapTierId {
   return zoomMax >= MAP_TIERS.deep.zoomMax ? 'deep' : 'base';
 }
 
-export async function getNationalPack(): Promise<MapPackView | null> {
-  const pack = await getMapPack(NATIONAL_PACK_ID);
-  if (!pack) {
-    return null;
-  }
+function toView(pack: {
+  bytes_done: number;
+  error?: string;
+  id: string;
+  status: MapPackView['status'];
+  tiles_done: number;
+  tiles_total: number;
+  zoom_max: number;
+  zoom_min: number;
+}): MapPackView {
   return {
     bytesDone: pack.bytes_done,
     error: pack.error,
@@ -101,22 +103,34 @@ export async function getNationalPack(): Promise<MapPackView | null> {
     tilesDone: pack.tiles_done,
     tilesTotal: pack.tiles_total,
     zoomMax: pack.zoom_max,
+    zoomMin: pack.zoom_min,
   };
 }
 
+/** Both packs, national first, for the offline maps screen. */
+export async function getMapPackViews(): Promise<MapPackView[]> {
+  const packs = await listMapPacks();
+  return packs.map(toView);
+}
+
+/** The widest zoom range any downloaded pack actually covers. */
+export async function getOfflineCoverage(): Promise<{ zoomMin: number; zoomMax: number } | null> {
+  const packs = await listMapPacks();
+  return coverageFromPacks(packs);
+}
+
 /**
- * Starts (or upgrades) the single national Iran pack. Upgrading from base to
- * deep only raises `zoom_max` — already-downloaded tiles are kept and skipped.
+ * Starts (or widens) the national Iran pack. Upgrading base -> deep only raises
+ * `zoom_max`; already-downloaded tiles are kept and skipped.
  */
 export async function startNationalDownload(tierId: MapTierId): Promise<void> {
   const tier = MAP_TIERS[tierId];
-  const existing = await getMapPack(NATIONAL_PACK_ID);
+  const existing = await getMapPack('national');
   const timestamp = nowIso();
   const nextTilesTotal = estimatePack(tier).tilesTotal;
 
   if (existing && existing.zoom_max >= tier.zoomMax && existing.status !== 'failed') {
-    // Already requested at this depth; just requeue.
-    await saveMapPack({ ...existing, status: 'queued', error: undefined, updated_at: timestamp });
+    await saveMapPack({ ...existing, error: undefined, status: 'queued', updated_at: timestamp });
   } else if (existing) {
     await saveMapPack({
       ...existing,
@@ -132,7 +146,7 @@ export async function startNationalDownload(tierId: MapTierId): Promise<void> {
       bytes_done: 0,
       created_at: timestamp,
       error: undefined,
-      id: NATIONAL_PACK_ID,
+      id: 'national',
       status: 'queued',
       tiles_done: 0,
       tiles_total: nextTilesTotal,
@@ -145,41 +159,67 @@ export async function startNationalDownload(tierId: MapTierId): Promise<void> {
   void pump();
 }
 
-export async function pauseNationalDownload(): Promise<void> {
+/**
+ * Starts (or widens) the org area pack at z13..z17.
+ *
+ * Returns a Persian reason instead of throwing when the officer's org has no
+ * location — a Ghost/Manager/multi-org caller has no centre to derive a box
+ * from, and silently falling back to the national pack would look like the
+ * area download had succeeded.
+ */
+export async function startAreaDownload(center: CenterPoint | null, radiusKm: number): Promise<string | null> {
+  const input: PlanInput = { center, radiusKm, tier: AREA_TIER };
+  const existing = await getMapPack('area');
+  const plan = planPackStart('area', input, existing);
+  if (plan.action === 'skip' || !plan.pack) {
+    return plan.reason ?? 'دانلود محدوده ممکن نیست.';
+  }
+  await saveMapPack({ ...plan.pack, bounds: plan.pack.bounds ?? undefined });
+  notify();
+  void pump();
+  return null;
+}
+
+/** Preset radii the offline maps screen offers for the area pack. */
+export function areaRadiusPresets(): readonly { km: number; label: string }[] {
+  return AREA_RADII_KM;
+}
+
+export async function pauseDownload(id: string): Promise<void> {
   if (controls) {
     controls.paused = true;
   }
-  const pack = await getMapPack(NATIONAL_PACK_ID);
+  const pack = await getMapPack(id);
   if (pack && (pack.status === 'queued' || pack.status === 'downloading')) {
     await saveMapPack({ ...pack, status: 'paused', updated_at: nowIso() });
   }
   notify();
 }
 
-export async function resumeNationalDownload(): Promise<void> {
+export async function resumeDownload(id: string): Promise<void> {
   if (controls) {
     controls.paused = false;
   }
-  const pack = await getMapPack(NATIONAL_PACK_ID);
+  const pack = await getMapPack(id);
   if (pack && (pack.status === 'paused' || pack.status === 'failed')) {
-    await saveMapPack({
-      ...pack,
-      error: undefined,
-      status: 'queued',
-      updated_at: nowIso(),
-    });
+    await saveMapPack({ ...pack, error: undefined, status: 'queued', updated_at: nowIso() });
   }
   notify();
   void pump();
 }
 
-export async function removeNationalPack(): Promise<void> {
+export async function removePack(id: string): Promise<void> {
   if (controls) {
-    controls.removed = true;
+    controls.removed.add(id);
   }
-  await clearEmptyTileCache(NATIONAL_PACK_ID);
-  await deleteMapPack(NATIONAL_PACK_ID);
-  await deleteAllTiles();
+  await clearEmptyTileCache(id);
+  await deleteMapPack(id);
+  // Tiles are a flat z/x/y mirror shared by every pack, so only a wholesale
+  // removal may delete the mirror; dropping one pack leaves the files in place
+  // and the other pack's counters recount them on the next run.
+  if (id === 'national') {
+    await deleteAllTiles();
+  }
   notify();
 }
 
@@ -198,8 +238,8 @@ async function shouldPauseForNetwork(): Promise<string | null> {
   return null;
 }
 
-async function flushCounters(tilesDone: number, bytesDone: number): Promise<void> {
-  const pack = await getMapPack(NATIONAL_PACK_ID);
+async function flushCounters(id: string, tilesDone: number, bytesDone: number): Promise<void> {
+  const pack = await getMapPack(id);
   if (!pack) {
     return;
   }
@@ -212,15 +252,23 @@ async function flushCounters(tilesDone: number, bytesDone: number): Promise<void
   });
 }
 
+/**
+ * Yields the tiles a pack still needs.
+ *
+ * `visitAll` is built from the pack's own zoom range and bounds, so the area
+ * pack only walks its own box. The national pack keeps its Iran-wide bounds.
+ */
 async function* pendingCoords(
+  id: string,
   zoomMin: number,
   zoomMax: number,
+  bounds: GeoBounds | null,
   emptyKeys: ReadonlySet<string>,
 ): AsyncGenerator<TileCoord> {
   const queue: TileCoord[] = [];
   iterTiles({ id: 'base', zoomMin, zoomMax }, tile => {
     queue.push(tile);
-  });
+  }, bounds ?? undefined);
   for (const tile of queue) {
     let cached = false;
     try {
@@ -232,6 +280,7 @@ async function* pendingCoords(
       yield tile;
     }
   }
+  void id;
 }
 
 async function processOne(
@@ -253,12 +302,12 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function loadEmptyKeySet(): Promise<Set<string>> {
+async function loadEmptyKeySet(id: string): Promise<Set<string>> {
   const keys = new Set<string>();
   const database = await getLocalDatabase();
   const rows = await database.getAllAsync<{ z: number; x: number; y: number }>(
     "SELECT z, x, y FROM map_tiles WHERE pack_id = ? AND status = 'empty'",
-    NATIONAL_PACK_ID,
+    id,
   );
   for (const row of rows) {
     keys.add(`${row.z}/${row.x}/${row.y}`);
@@ -266,8 +315,8 @@ async function loadEmptyKeySet(): Promise<Set<string>> {
   return keys;
 }
 
-async function runPack(): Promise<'done' | 'stopped'> {
-  const pack = await getMapPack(NATIONAL_PACK_ID);
+async function runPack(id: string): Promise<'done' | 'stopped'> {
+  const pack = await getMapPack(id);
   if (!pack) {
     return 'stopped';
   }
@@ -279,18 +328,20 @@ async function runPack(): Promise<'done' | 'stopped'> {
     return 'stopped';
   }
 
-  // Recount from the filesystem so restarts/upgrades resume with exact numbers.
+  // Recount from the filesystem so restarts, widenings and upgrade-only
+  // changes all resume with exact numbers.
   const mirror = await measureTileMirror();
   const counters = { bytes: mirror.bytes, consecutiveFailures: 0, done: mirror.files };
-  await flushCounters(counters.done, counters.bytes);
+  await flushCounters(id, counters.done, counters.bytes);
 
-  const emptyKeys = await loadEmptyKeySet();
-  const iterator = pendingCoords(pack.zoom_min, pack.zoom_max, emptyKeys);
+  const emptyKeys = await loadEmptyKeySet(id);
+  const bounds = pack.bounds ?? null;
+  const iterator = pendingCoords(id, pack.zoom_min, pack.zoom_max, bounds, emptyKeys);
   let lastFlushAt = Date.now();
   let lastFlushCount = counters.done;
 
   const worker = async (): Promise<void> => {
-    while (!controls?.paused && !controls?.removed) {
+    while (!controls?.paused && !controls?.removed.has(id)) {
       const next = await iterator.next();
       if (next.done) {
         return;
@@ -301,7 +352,7 @@ async function runPack(): Promise<'done' | 'stopped'> {
         counters.bytes += result.bytes;
         counters.consecutiveFailures = 0;
       } else if (result.outcome === 'empty') {
-        await cacheEmptyTile(NATIONAL_PACK_ID, next.value.z, next.value.x, next.value.y);
+        await cacheEmptyTile(id, next.value.z, next.value.x, next.value.y);
         counters.done += 1;
         counters.consecutiveFailures = 0;
       } else {
@@ -314,7 +365,7 @@ async function runPack(): Promise<'done' | 'stopped'> {
       if (due) {
         lastFlushAt = Date.now();
         lastFlushCount = counters.done;
-        await flushCounters(counters.done, counters.bytes);
+        await flushCounters(id, counters.done, counters.bytes);
         notify();
       }
       if (counters.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
@@ -325,11 +376,11 @@ async function runPack(): Promise<'done' | 'stopped'> {
 
   await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
 
-  const fresh = await getMapPack(NATIONAL_PACK_ID);
+  const fresh = await getMapPack(id);
   if (!fresh) {
     return 'stopped';
   }
-  if (controls?.removed) {
+  if (controls?.removed.has(id)) {
     return 'stopped';
   }
   if (controls?.paused) {
@@ -349,9 +400,7 @@ async function runPack(): Promise<'done' | 'stopped'> {
   await saveMapPack({
     ...fresh,
     bytes_done: counters.bytes,
-    error: counters.consecutiveFailures > 0
-      ? 'ارسال بخشی از کاشی‌ها ناموفق بود؛ دوباره تلاش کنید.'
-      : undefined,
+    error: counters.consecutiveFailures > 0 ? 'ارسال بخشی از کاشی‌ها ناموفق بود؛ دوباره تلاش کنید.' : undefined,
     status: counters.consecutiveFailures > 0 ? 'failed' : 'done',
     tiles_done: counters.done,
     updated_at: nowIso(),
@@ -366,19 +415,24 @@ export async function pump(): Promise<void> {
     return;
   }
   pumping = true;
-  controls = { paused: false, removed: false };
+  controls = { paused: false, removed: new Set() };
   try {
-    // Recover a force-killed run.
-    const stuck = await getMapPack(NATIONAL_PACK_ID);
-    if (stuck && stuck.status === 'downloading') {
-      await saveMapPack({ ...stuck, status: 'queued', updated_at: nowIso() });
+    // Recover force-killed runs.
+    for (const stuck of await listMapPacks()) {
+      if (stuck.status === 'downloading') {
+        await saveMapPack({ ...stuck, status: 'queued', updated_at: nowIso() });
+      }
     }
-    while (!controls.paused && !controls.removed) {
-      const pack = await getMapPack(NATIONAL_PACK_ID);
-      if (!pack || pack.status !== 'queued') {
+    while (!controls.paused) {
+      const queued = (await listMapPacks()).filter(pack => pack.status === 'queued');
+      if (queued.length === 0) {
         break;
       }
-      const result = await runPack();
+      // National first: it is the coarse pack every other one layers onto, and
+      // finishing it means an interrupted area download still leaves a usable
+      // country overview behind.
+      const next = queued.sort((a, b) => a.zoom_max - b.zoom_max)[0];
+      const result = await runPack(next.id);
       if (result === 'stopped') {
         break;
       }
@@ -400,14 +454,12 @@ export function startMapDownloadWatcher(): () => void {
     void (async () => {
       const cellularBlocked = snapshot.type === 'cellular' && (await isWifiOnlyDownloads());
       if (!cellularBlocked) {
-        const pack = await getMapPack(NATIONAL_PACK_ID);
-        // Only system-set pauses (offline / Wi-Fi policy) auto-resume;
-        // a manual «توقف» by the officer must stay paused.
-        if (
-          pack?.status === 'paused' &&
-          (pack.error === CELLULAR_PAUSE_HINT || pack.error === OFFLINE_PAUSE_HINT)
-        ) {
-          await saveMapPack({ ...pack, error: undefined, status: 'queued', updated_at: nowIso() });
+        // Only system-set pauses (offline / Wi-Fi policy) auto-resume; a manual
+        // «توقف» by the officer must stay paused.
+        for (const pack of await listMapPacks()) {
+          if (pack.status === 'paused' && (pack.error === CELLULAR_PAUSE_HINT || pack.error === OFFLINE_PAUSE_HINT)) {
+            await saveMapPack({ ...pack, error: undefined, status: 'queued', updated_at: nowIso() });
+          }
         }
       }
       void pump();

@@ -17,16 +17,18 @@ import type { IconFamily, IconName } from '@/constants/icon-map';
 import { AppIcons } from '@/constants/icon-map';
 import { AppTheme, Estedad, Radius, Shadow } from '@/constants/theme';
 import { formatBytes } from '@/domain/map-packs';
-import { formatCoordinates, organizationPoint } from '@/domain/organization';
+import { formatCoordinates, organizationPoint , organizationPoint as organizationPointOf } from '@/domain/organization';
 import type { OfflineFormCacheStatus, OrgFormsAvailability } from '@/domain/offline-forms';
 import { isIncidentPatrolEnabled } from '@/domain/modules';
+import type { MapCoverage } from '@/domain/map-coverage';
 import type { PatrolOrganization } from '@/domain/types';
+import type { MapPackView } from '@/services/map-download';
 import { listDrafts } from '@/storage/local-database';
 import { useActiveShift } from '@/hooks/use-active-shift';
 import { useDeviceLocation, type DeviceLocationState } from '@/hooks/use-device-location';
+import { useMapPacks } from '@/hooks/use-map-packs';
 import { useOfflineForms } from '@/hooks/use-offline-forms';
-import { useNationalMapPack } from '@/hooks/use-national-map-pack';
-import { pauseNationalDownload, startNationalDownload } from '@/services/map-download';
+import { pauseDownload, startAreaDownload, startNationalDownload } from '@/services/map-download';
 
 const GPS_GOOD_METERS = 10;
 const GPS_FAIR_METERS = 30;
@@ -78,7 +80,7 @@ export default function HomeScreen() {
     logout,
   } = useActiveShift(translateApiError);
   const deviceLocation = useDeviceLocation();
-  const mapPack = useNationalMapPack();
+  const mapPacks = useMapPacks();
   const [draftCount, setDraftCount] = useState(0);
   const orgForms = useOfflineForms({
     session,
@@ -328,9 +330,13 @@ export default function HomeScreen() {
         <Text style={styles.heroHint}>ثبت تصادف، خرابی یا سایر رخدادها — حتی در حالت آفلاین</Text>
 
         <OfflineMapCard
+          coverage={mapPacks.coverage}
+          onStartArea={() =>
+            void startAreaDownload(organizationPointOf(session.primaryOrganization), 10)
+          }
           onStartBase={() => void startNationalDownload('base')}
-          onPause={() => void pauseNationalDownload()}
-          pack={mapPack.pack}
+          onPause={() => void pauseDownload('national')}
+          pack={mapPacks.packs.find(item => item.id === 'national') ?? null}
         />
 
         <View style={styles.grid}>
@@ -502,10 +508,14 @@ function QuickTile({
 
 function OfflineMapCard({
   pack,
+  coverage,
+  onStartArea,
   onStartBase,
   onPause,
 }: {
-  pack: ReturnType<typeof useNationalMapPack>['pack'];
+  pack: MapPackView | null;
+  coverage: MapCoverage | null;
+  onStartArea: () => void;
   onStartBase: () => void;
   onPause: () => void;
 }) {
@@ -522,7 +532,9 @@ function OfflineMapCard({
         ? 'دانلود متوقف شده است.'
         : pack.status === 'failed'
           ? (pack.error ?? 'دانلود ناموفق بود.')
-          : `نقشه آفلاین آماده است · ${formatBytes(pack.bytesDone)}`;
+          : coverage
+            ? `آماده تا بزرگ‌نمایی ${coverage.zoomMax.toLocaleString('fa-IR')} · ${formatBytes(pack.bytesDone)}`
+            : `نقشه آفلاین آماده است · ${formatBytes(pack.bytesDone)}`;
 
   return (
     <Pressable
@@ -546,7 +558,10 @@ function OfflineMapCard({
         ) : null}
       </View>
       {!pack || pack.status === 'failed' ? (
-        <Button label="دانلود" onPress={onStartBase} size="md" variant="soft" />
+        <View style={styles.mapCardActions}>
+          <Button label="سراسری" onPress={onStartBase} size="md" variant="soft" />
+          <Button label="محدوده من" onPress={onStartArea} size="md" variant="soft" />
+        </View>
       ) : working ? (
         <Button label="توقف" onPress={onPause} size="md" variant="soft" />
       ) : (
@@ -836,4 +851,5 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   mapProgressFill: { backgroundColor: AppTheme.colors.primary, height: '100%' },
+  mapCardActions: { flexDirection: 'row-reverse', gap: 6 },
 });
