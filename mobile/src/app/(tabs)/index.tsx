@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Card } from '@/components/ui/card';
 import { StatusPill } from '@/components/ui/status-pill';
+import { useToast } from '@/components/ui/toast';
 import { Badge } from '@/components/ui/badge';
 import { Banner } from '@/components/ui/banner';
 import type { IconFamily, IconName } from '@/constants/icon-map';
@@ -127,6 +128,23 @@ export default function HomeScreen() {
     void deviceLocation.locate();
   }, [deviceLocation]);
 
+  // Confirming a download matters more than it looks: the officer is about to leave
+  // base on the strength of it. A silent success leaves them unsure whether to press
+  // again before every patrol.
+  const toast = useToast();
+  const lastDownload = orgForms.lastDownload;
+  useEffect(() => {
+    if (!lastDownload) {
+      return;
+    }
+    toast.show(
+      lastDownload.changed.length > 0
+        ? `فرم‌های سازمان به‌روزرسانی شد: ${lastDownload.changed.join('، ')}`
+        : 'فرم‌های سازمان روی دستگاه ذخیره شد.',
+      'success',
+    );
+  }, [lastDownload, toast]);
+
   if (isLoading || !session) {
     return (
       <SafeAreaView style={styles.centered}>
@@ -189,7 +207,28 @@ export default function HomeScreen() {
           <IconButton accessibilityLabel="خروج از حساب" icon="log-out" onPress={confirmLogout} tone="danger" />
         </View>
 
-        <OrganizationCard organization={session.primaryOrganization ?? null} />
+        <OrganizationCard
+          availability={orgForms.availability}
+          busy={orgForms.busy}
+          onDownload={orgForms.download}
+          organization={session.primaryOrganization ?? null}
+          status={orgForms.status}
+          statusLabel={orgForms.statusLabel}
+        />
+
+        {orgForms.error ? <Banner tone="danger" message={orgForms.error} /> : null}
+
+        {/* Without this the officer finds out on the road, when the app quietly
+            falls back to its own forms. Only offered with signal, because offline
+            the control in the card above already says what is needed. */}
+        {orgForms.availability.enabled && !orgForms.busy && orgForms.status.formCount === 0 && !orgForms.status.hasProcess ? (
+          <Banner
+            actionLabel="دریافت فرم‌ها"
+            message="فرم‌های سازمان روی دستگاه ذخیره نشده است؛ بدون اینترنت گزارش با فرم پیش‌فرض ثبت می‌شود."
+            onAction={orgForms.download}
+            tone="warning"
+          />
+        ) : null}
 
         <View style={[styles.unitStrip, Shadow.card]}>
           <Icon color={AppTheme.colors.primaryStrong} family={AppIcons.home.unit.family} name={AppIcons.home.unit.name} size={20} />
@@ -359,27 +398,68 @@ function StatusCard({
  * سازمان از نشست خوانده می‌شود نه از یک درخواست، پس کارت آفلاین هم هست.
  * وقتی سازمانِ تکی قابل تشخیص نباشد (`null` برای کاربر سراسری یا عضو چند
  * سازمان) یک سطر خاموش نشان داده می‌شود، نه اینکه سازمانی دلبخواهی جا زده شود.
+ *
+ * دکمهٔ فرم‌ها همین‌جاست چون فرم‌ها به سازمان تعلق دارند: مأمور پیش از حرکت
+ * یک‌بار آن‌ها را می‌گیرد و بعد آفلاین همان را پر می‌کند. سطرِ وضعیت از SQLite
+ * خوانده می‌شود، پس بدون اینترنت هم حقیقت را نشان می‌دهد.
  */
-function OrganizationCard({ organization }: { organization: PatrolOrganization | null }) {
+function OrganizationCard({
+  organization,
+  status,
+  statusLabel,
+  availability,
+  busy,
+  onDownload,
+}: {
+  organization: PatrolOrganization | null;
+  status: OfflineFormCacheStatus;
+  statusLabel: string;
+  availability: OrgFormsAvailability;
+  busy: boolean;
+  onDownload: () => void;
+}) {
   const center = organizationPoint(organization);
+  const cached = status.formCount > 0 || status.hasProcess;
 
   return (
     <View style={[styles.orgCard, Shadow.card]}>
-      <View style={styles.orgIcon}>
-        <Icon color={AppTheme.colors.primaryStrong} family={AppIcons.home.unit.family} name={AppIcons.home.unit.name} size={18} />
+      <View style={styles.orgHead}>
+        <View style={styles.orgIcon}>
+          <Icon color={AppTheme.colors.primaryStrong} family={AppIcons.home.unit.family} name={AppIcons.home.unit.name} size={18} />
+        </View>
+        <View style={styles.orgCopy}>
+          <Text numberOfLines={1} style={styles.orgName}>
+            {organization?.name ?? 'سازمانی ثبت نشده'}
+          </Text>
+          <Text numberOfLines={1} style={styles.orgMeta}>
+            {organization
+              ? center
+                ? `کد ${organization.code} · مرکز ${formatCoordinates(center)}`
+                : `کد ${organization.code} · مرکز ثبت نشده`
+              : 'برای مأموران گشت سازمان روی حساب تعریف شود'}
+          </Text>
+        </View>
       </View>
-      <View style={styles.orgCopy}>
-        <Text numberOfLines={1} style={styles.orgName}>
-          {organization?.name ?? 'سازمانی ثبت نشده'}
-        </Text>
-        <Text numberOfLines={1} style={styles.orgMeta}>
-          {organization
-            ? center
-              ? `کد ${organization.code} · مرکز ${formatCoordinates(center)}`
-              : `کد ${organization.code} · مرکز ثبت نشده`
-            : 'برای مأموران گشت سازمان روی حساب تعریف شود'}
-        </Text>
-      </View>
+
+      {availability.visible ? (
+        <View style={styles.orgForms}>
+          <Text numberOfLines={2} style={styles.orgFormsStatus}>
+            {statusLabel}
+          </Text>
+          <Button
+            disabled={!availability.enabled}
+            fullWidth
+            icon={cached ? AppIcons.nav.refresh.name : AppIcons.home.offlinePack.name}
+            iconFamily={cached ? AppIcons.nav.refresh.family : AppIcons.home.offlinePack.family}
+            label={cached ? 'به‌روزرسانی فرم‌ها' : 'دریافت فرم‌های سازمان'}
+            loading={busy}
+            onPress={onDownload}
+            size="md"
+            variant={cached ? 'ghost' : 'soft'}
+          />
+          {availability.reason ? <Text style={styles.orgFormsHint}>{availability.reason}</Text> : null}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -546,15 +626,39 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   orgCard: {
-    alignItems: 'center',
+    alignItems: 'stretch',
     backgroundColor: AppTheme.colors.surface,
     borderColor: AppTheme.colors.border,
     borderRadius: Radius.lg,
     borderWidth: 1,
-    flexDirection: 'row-reverse',
     gap: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
+  },
+  orgHead: {
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    gap: 10,
+  },
+  orgForms: {
+    borderTopColor: AppTheme.colors.border,
+    borderTopWidth: 1,
+    gap: 6,
+    paddingTop: 8,
+  },
+  orgFormsStatus: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.regular,
+    fontSize: 11,
+    lineHeight: 17,
+    textAlign: 'right',
+  },
+  orgFormsHint: {
+    color: AppTheme.colors.textSecondary,
+    fontFamily: Estedad.regular,
+    fontSize: 10,
+    lineHeight: 16,
+    textAlign: 'right',
   },
   orgIcon: {
     alignItems: 'center',
