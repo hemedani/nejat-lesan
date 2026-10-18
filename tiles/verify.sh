@@ -33,13 +33,30 @@ if jq -e '.version==8 and .sources.protomaps.url and .glyphs and .sprite' "$TMP/
   ok "style.json shape"
 else bad "style.json shape"; fi
 for rel in "$(jq -r '.sources.protomaps.url' "$TMP/style.json")" \
-           "$(jq -r '.glyphs' "$TMP/style.json" | sed 's#{fontstack}#Vazirmatn%20Regular#; s#{range}#1536-1791#')" \
-           "$(jq -r '.sprite' "$TMP/style.json").json" \
-           "$(jq -r '.sprite' "$TMP/style.json").png" \
-           "$(jq -r '.sprite' "$TMP/style.json")@2x.json" \
-           "$(jq -r '.sprite' "$TMP/style.json")@2x.png"; do
+           "$(jq -r '.glyphs' "$TMP/style.json" | sed 's#{fontstack}#Vazirmatn%20Regular#; s#{range}#1536-1791#')"; do
   code="$(curl -sS -o /dev/null -w '%{http_code}' "$rel")"
   [[ "$code" == "200" ]] && ok "style url 200: $rel" || bad "style url $code: $rel"
+done
+
+# --- Criterion 3b: both sprite flavors served + @2x index internally consistent ---
+# Every asset style.json references must return 200: MapLibre counts a 404 toward an
+# offline region's requiredResourceCount but never completes it, so a single missing
+# style-referenced file (e.g. the @2x index a >=2x display requests) stalls every pack
+# at requiredResourceCount-1 forever. Both shipped flavors must be served, and the @2x
+# index must be a true doubled copy of the 1x index (names identical, geometry doubled,
+# pixelRatio 2) with an @2x.png exactly twice the 1x dimensions.
+SPRITE_DIR="$(jq -r '.sprite' "$TMP/style.json")"; SPRITE_DIR="${SPRITE_DIR%/*}"
+for flavor in light dark; do
+  for suffix in ".json" ".png" "@2x.json" "@2x.png"; do
+    file="$flavor$suffix"
+    scode="$(curl -sS -o "$TMP/$file" -w '%{http_code}' "$SPRITE_DIR/$file")"
+    [[ "$scode" == "200" ]] && ok "sprite url 200: $file" || bad "sprite url $scode: $file"
+  done
+  if sout="$(node "$ROOT/build/verify-sprites.mjs" "$TMP" "$flavor" 2>&1)"; then
+    ok "sprite @2x consistent: $sout"
+  else
+    bad "sprite @2x inconsistent: $sout"
+  fi
 done
 
 # --- Criterion 1: known tile at every zoom 0..14 decodes as MVT with layers ---
