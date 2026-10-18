@@ -9,7 +9,7 @@ interface Step {
 
 interface MultiStepFormProps<T extends FieldValues = FieldValues> {
   steps: Step[];
-  formData: T;
+  getFormData: () => T;
   onSubmit: (data: T) => void;
   isSubmitting: boolean;
   triggerValidation: UseFormTrigger<T>;
@@ -18,7 +18,7 @@ interface MultiStepFormProps<T extends FieldValues = FieldValues> {
 
 const MultiStepForm = <T extends FieldValues = FieldValues>({
   steps,
-  formData,
+  getFormData,
   onSubmit,
   isSubmitting,
   triggerValidation,
@@ -51,7 +51,7 @@ const MultiStepForm = <T extends FieldValues = FieldValues>({
     if (isValid) {
       // Scroll to top before submitting
       window.scrollTo({ top: 0, behavior: "smooth" });
-      onSubmit(formData);
+      onSubmit(getFormData());
     }
   };
 

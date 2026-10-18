@@ -1666,7 +1666,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     <div className="p-8 mb-42">
       <MultiStepForm
         steps={getSteps()}
-        formData={getValues()}
+        getFormData={getValues}
         onSubmit={onSubmit}
         isSubmitting={isSubmitting}
         triggerValidation={trigger}

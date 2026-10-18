@@ -1568,7 +1568,7 @@ export const EditUserPures = ({ isOwn, ...rest }: userSchema & { isOwn?: boolean
   return (
     <MultiStepForm
       steps={steps}
-      formData={getValues()}
+      getFormData={getValues}
       onSubmit={onSubmit}
       isSubmitting={isSubmitting}
       triggerValidation={trigger}
