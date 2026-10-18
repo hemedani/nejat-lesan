@@ -11,16 +11,7 @@ import {
 } from '@/domain/incident-type';
 import { isProcessRenderable } from '@/domain/process-form';
 import { resolveIncidentRoute } from '@/domain/form-routing';
-import {
-  buildFormPicker,
-  defaultAccidentPickerForm,
-  type PickerForm,
-} from '@/domain/form-picker';
-import {
-  DEFAULT_ACCIDENT_FORM_ICON,
-  DEFAULT_ACCIDENT_FORM_ID,
-  DEFAULT_ACCIDENT_FORM_TITLE,
-} from '@/domain/default-accident-form';
+import { buildFormPicker, type PickerForm } from '@/domain/form-picker';
 import { translateApiError } from '@/api/errors';
 import { isIncidentPatrolEnabled, moduleDisabledMessage } from '@/domain/modules';
 import type { AccidentDraft, IncidentType } from '@/domain/types';
@@ -76,15 +67,6 @@ const TYPE_TILES: {
     activeCaption: `حریق/نقص تجهیزات/سایر رخدادها · شناسه ${INCIDENT_TYPE_REPORT_PREFIX.other}-`,
   },
 ];
-
-/** The row the picker shows for the form bundled with the app. */
-const BUNDLED_ACCIDENT_FORM: PickerForm = {
-  _id: DEFAULT_ACCIDENT_FORM_ID,
-  name: DEFAULT_ACCIDENT_FORM_TITLE,
-  description: 'فرم پیش‌فرض برنامه؛ تا زمانی که سازمان فرم تصادفی بسازد استفاده می‌شود.',
-  icon: DEFAULT_ACCIDENT_FORM_ICON,
-  form_kind: 'accident',
-};
 
 export default function IncidentDraftScreen() {
   const router = useRouter();
@@ -255,12 +237,9 @@ export default function IncidentDraftScreen() {
   // forms and make the other three unreachable: tapping «خرابی راه» ran the
   // standard flow and never the organization's own «خرابی سطح راه» form.
   const picker = buildFormPicker(forms);
-  // The bundled form is appended only when the organization has authored no
-  // accident form of its own, so an accident card is always present — an
-  // unconfigured organization must still be able to file one.
-  const formCards: PickerForm[] = picker.usingDefaultAccidentForm
-    ? [defaultAccidentPickerForm(BUNDLED_ACCIDENT_FORM), ...picker.forms]
-    : picker.forms;
+  // The organization is authoritative: any authored form — of any kind — replaces
+  // the built-in list, so the officer sees their organization's forms or the built-in
+  // incident types, never both. The app appends no form of its own.
   // `formsLoaded` gates the mode as well as the list: until the backend answers, an
   // empty list is indistinguishable from an organization that authored nothing, and
   // rendering the type tiles first would flash them away once the forms arrive.
@@ -399,57 +378,26 @@ export default function IncidentDraftScreen() {
               />
             ) : null}
 
-            {/* An organization whose forms cover every incident type replaces the
-                built-in list entirely: its forms are the types, so showing both asks
-                the same question twice. The tiles stay when the forms cannot cover
-                them — no report form authored, so خرابی/مانع/سایر would have nothing
-                to file with — and for the offline device, which cannot load the list
-                at all. Until the backend answers, neither is known, so the chooser
-                waits rather than flashing the tiles away once the forms arrive. */}
+            {/* The organization is authoritative: any authored form replaces the
+                built-in list entirely, so the officer sees either their
+                organization's forms or the built-in incident types — never both.
+                Until the backend answers, an empty list is indistinguishable from an
+                organization that authored nothing, so the chooser waits rather than
+                flashing the tiles away once the forms arrive. */}
             {!formsLoaded ? (
               <View style={styles.skeletonGap}>
                 <SkeletonCard height={96} />
                 <SkeletonCard height={72} />
               </View>
-            ) : (
+            ) : choosesFromForms ? (
               <>
-                {choosesFromForms ? null : (
-                  <>
-                    <SectionHeader icon={AppIcons.phases.classification.name} iconFamily={AppIcons.phases.classification.family} title="نوع واقعه" />
-                    <View style={styles.typeGrid}>
-                      {TYPE_TILES.map(tile => (
-                        <TypeTile
-                          caption={hasLocation ? tile.activeCaption : 'ابتدا محل واقعه را تأیید کنید'}
-                          disabled={!hasLocation}
-                          icon={tile.icon}
-                          key={tile.type}
-                          label={tile.label}
-                          onPress={() => openFormFor(tile.type)}
-                          selected={hasLocation && currentType === tile.type}
-                        />
-                      ))}
-                    </View>
-
-                    {hasLocation ? (
-                      <Button
-                        fullWidth
-                        icon={AppIcons.phases.basicInfo.name}
-                        label={`ادامه ثبت ${INCIDENT_TYPE_LABEL[currentType]}`}
-                        onPress={() => openFormFor(currentType)}
-                        size="lg"
-                        style={styles.cta}
-                      />
-                    ) : null}
-                  </>
-                )}
-
                 <SectionHeader
                   icon={AppIcons.home.myReports.name}
                   iconFamily={AppIcons.home.myReports.family}
                   title="انتخاب فرم ثبت"
                 />
                 <View style={styles.formList}>
-                  {formCards.map(form => (
+                  {picker.forms.map(form => (
                     <FormCard
                       disabled={!hasLocation}
                       form={form}
@@ -458,6 +406,34 @@ export default function IncidentDraftScreen() {
                     />
                   ))}
                 </View>
+              </>
+            ) : (
+              <>
+                <SectionHeader icon={AppIcons.phases.classification.name} iconFamily={AppIcons.phases.classification.family} title="نوع واقعه" />
+                <View style={styles.typeGrid}>
+                  {TYPE_TILES.map(tile => (
+                    <TypeTile
+                      caption={hasLocation ? tile.activeCaption : 'ابتدا محل واقعه را تأیید کنید'}
+                      disabled={!hasLocation}
+                      icon={tile.icon}
+                      key={tile.type}
+                      label={tile.label}
+                      onPress={() => openFormFor(tile.type)}
+                      selected={hasLocation && currentType === tile.type}
+                    />
+                  ))}
+                </View>
+
+                {hasLocation ? (
+                  <Button
+                    fullWidth
+                    icon={AppIcons.phases.basicInfo.name}
+                    label={`ادامه ثبت ${INCIDENT_TYPE_LABEL[currentType]}`}
+                    onPress={() => openFormFor(currentType)}
+                    size="lg"
+                    style={styles.cta}
+                  />
+                ) : null}
               </>
             )}
           </>
@@ -578,7 +554,6 @@ function FormCard({
           <Text style={[styles.formCardTitle, disabled && styles.typeLabelDisabled]}>
             {form.name}
           </Text>
-          {form.isDefault ? <Text style={styles.formCardBadge}>پیش‌فرض</Text> : null}
         </View>
         {form.description ? (
           <Text numberOfLines={2} style={styles.formCardDescription}>
@@ -723,16 +698,6 @@ const styles = StyleSheet.create({
     fontSize: 14.5,
     lineHeight: 22,
     textAlign: 'right',
-  },
-  formCardBadge: {
-    backgroundColor: AppTheme.colors.primarySoft,
-    borderRadius: Radius.sm,
-    color: AppTheme.colors.primaryStrong,
-    fontFamily: Estedad.medium,
-    fontSize: 10.5,
-    overflow: 'hidden',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
   },
   formCardDescription: {
     color: AppTheme.colors.textSecondary,

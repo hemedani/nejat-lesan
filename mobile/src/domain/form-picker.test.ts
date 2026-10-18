@@ -43,19 +43,10 @@ describe('buildFormPicker', () => {
     }
   });
 
-  it('reports that no accident form is authored, so the caller can bundle one', () => {
-    const withoutAccident = buildFormPicker([form('b', 'خرابی')]);
-    expect(withoutAccident.usingDefaultAccidentForm).toBe(true);
-
-    const withAccident = buildFormPicker([form('a', 'تصادف', 'accident'), form('b', 'خرابی')]);
-    expect(withAccident.usingDefaultAccidentForm).toBe(false);
-  });
-
   it('treats a form with no kind as an accident', () => {
     // Older definitions predate `form_kind`; the backend defaults them to accident.
     const picker = buildFormPicker([{ _id: 'x', name: 'قدیمی' }]);
     expect(picker.forms[0].form_kind).toBe('accident');
-    expect(picker.usingDefaultAccidentForm).toBe(false);
   });
 
   it('keeps the report forms whatever the incident type is', () => {
@@ -81,8 +72,8 @@ describe('buildFormPicker', () => {
 
 describe('buildFormPicker mode', () => {
   it('hands the choice to the organization once it has authored a report form', () => {
-    // The demo organization: an accident form plus three report forms. Its forms
-    // cover every incident type, so the «نوع واقعه» tiles would be a duplicate.
+    // The demo organization: an accident form plus a report form. Its forms are the
+    // menu, so the «نوع واقعه» tiles would be a duplicate.
     const picker = buildFormPicker([
       form('a', 'گزارش تصادف', 'accident'),
       form('b', 'خرابی سطح راه', 'incident_report'),
@@ -91,25 +82,23 @@ describe('buildFormPicker mode', () => {
   });
 
   it('hands the choice over even with no accident form of its own', () => {
-    // The bundled accident default covers تصادف, so a report form alone is enough.
     const picker = buildFormPicker([form('b', 'خرابی سطح راه', 'incident_report')]);
     expect(picker.mode).toBe('forms');
-    expect(picker.usingDefaultAccidentForm).toBe(true);
   });
 
-  it('keeps the built-in types when the organization has only an accident form', () => {
-    // Hiding the tiles here would leave no way at all to file خرابی/مانع/سایر: the
-    // accident form cannot store them and no report form exists to stand in.
+  it('hands the choice over for a lone accident form', () => {
+    // The regression this pins: an organization with a single authored form used to
+    // keep the built-in «نوع واقعه» tiles, showing the officer an app default beside
+    // the one form their organization actually made.
     const picker = buildFormPicker([form('a', 'گزارش تصادف', 'accident')]);
-    expect(picker.mode).toBe('types');
+    expect(picker.mode).toBe('forms');
     expect(picker.forms.map((row) => row.name)).toEqual(['گزارش تصادف']);
   });
 
   it('falls back to the built-in incident types when it has authored none', () => {
-    // Also the offline state: the form list needs the network, so an empty list
-    // must leave the standard flow and its type tiles in place.
+    // Also the offline state with an empty cache: there is nothing stored, so the
+    // standard flow and its type tiles stay.
     expect(buildFormPicker([]).mode).toBe('types');
     expect(buildFormPicker([]).forms).toEqual([]);
-    expect(buildFormPicker([]).usingDefaultAccidentForm).toBe(true);
   });
 });
