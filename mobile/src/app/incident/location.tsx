@@ -6,6 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ApiError } from '@/api/errors';
 import { snapPointToRoad, validatePointInZone } from '@/api/road';
 import { saveIncidentLocation } from '@/domain/draft-actions';
+import { toRoadSnap } from '@/domain/road-snap';
+import { snapToCachedOrgRoad } from '@/services/org-road-service';
 import {
   ACCURACY_WARNING_METERS,
   formatCoordinate,
@@ -44,24 +46,6 @@ const SNAP_SUGGEST_METERS = 20;
 const SHEET_MIN_BOTTOM_PADDING = 16;
 
 type SnapState = 'idle' | 'loading' | 'done' | 'failed' | 'no_road' | 'offline';
-
-function toRoadSnap(coords: Coordinates, response: Awaited<ReturnType<typeof snapPointToRoad>>): RoadSnap {
-  return {
-    distance_to_road_meters: response.distanceToRoadMeters,
-    direction: response.direction,
-    from_origin_meters: response.fromOriginMeters,
-    kilometer: response.kilometer,
-    lanes: response.lanes,
-    meter: response.meter,
-    nearest_point: {
-      latitude: response.nearestPoint.coordinates[1],
-      longitude: response.nearestPoint.coordinates[0],
-    },
-    road_id: response.road._id,
-    road_name: response.road.name,
-    total_length_meters: response.totalLengthMeters,
-  };
-}
 
 function usePinPulse() {
   const value = useMemo(() => new Animated.Value(0), []);
@@ -138,6 +122,37 @@ export default function IncidentLocationScreen() {
     }
   }, [deviceLocation.coords, userSelected]);
 
+  /**
+   * The offline half of a snap.
+   *
+   * The organization's own centreline is already in SQLite, so an officer with no
+   * signal still gets the road, kilometre/meter and direction from the backend's
+   * own projection. When the road has no geometry to project onto, the picker keeps
+   * its «اطلاعات راه پس از اتصال تکمیل میشود» notice and the sync worker completes
+   * the snap later.
+   */
+  async function resolveOfflineSnap(coords: Coordinates, signal: AbortSignal) {
+    const organizationId = organization?._id;
+    if (organizationId) {
+      try {
+        const snap = await snapToCachedOrgRoad(organizationId, coords);
+        if (signal.aborted) {
+          return;
+        }
+        if (snap) {
+          setRoadSnap(snap);
+          setSnapState('done');
+          return;
+        }
+      } catch {
+        // Fall through to the honest offline notice rather than a failed state.
+      }
+    }
+    if (!signal.aborted) {
+      setSnapState('offline');
+    }
+  }
+
   function requestSnap(coords: Coordinates) {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -151,7 +166,7 @@ export default function IncidentLocationScreen() {
         try {
           const snapshot = await getConnectivitySnapshot();
           if (snapshot.status === 'offline') {
-            setSnapState('offline');
+            await resolveOfflineSnap(coords, controller.signal);
             return;
           }
           const response = await snapPointToRoad(coords, {
@@ -161,14 +176,14 @@ export default function IncidentLocationScreen() {
           if (controller.signal.aborted) {
             return;
           }
-          setRoadSnap(toRoadSnap(coords, response));
+          setRoadSnap(toRoadSnap(response));
           setSnapState('done');
         } catch (error) {
           if (controller.signal.aborted) {
             return;
           }
           if (error instanceof ApiError && error.code === 'offline') {
-            setSnapState('offline');
+            await resolveOfflineSnap(coords, controller.signal);
             return;
           }
           if (

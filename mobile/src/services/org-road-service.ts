@@ -9,7 +9,8 @@
 
 import { fetchOrgRoad } from '@/api/organization';
 import { roadLinesOf, type OrgRoad } from '@/domain/org-road';
-import type { PatrolOrganization, Session } from '@/domain/types';
+import { snapToOrgRoad } from '@/domain/road-snap';
+import type { Coordinates, PatrolOrganization, RoadSnap, Session } from '@/domain/types';
 import { getOrgRoadGeometry, saveOrgRoadGeometry } from '@/storage/local-database';
 
 export type OrgRoadDownload =
@@ -65,4 +66,21 @@ export async function downloadOrgRoad(
  */
 export function hasDrawableRoad(road: OrgRoad | null): boolean {
   return roadLinesOf(road).length > 0;
+}
+
+/**
+ * Snap a point to the organization's own road using only local storage.
+ *
+ * The location picker's offline answer to `road.snapPointToRoad`: the road is read
+ * from SQLite and projected with the backend's own method, so an officer out of
+ * coverage still gets the road, kilometre/meter and direction the server would
+ * have returned. `null` when nothing is stored or the road has no geometry, which
+ * keeps the picker's honest «اطلاعات راه پس از اتصال تکمیل میشود» notice.
+ */
+export async function snapToCachedOrgRoad(
+  organizationId: string,
+  coords: Coordinates,
+): Promise<RoadSnap | null> {
+  const road = await loadCachedOrgRoad(organizationId);
+  return snapToOrgRoad(coords, road);
 }

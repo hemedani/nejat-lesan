@@ -4,7 +4,7 @@ import type { OrgRoadDocument } from '@/api/organization';
 
 import type { PatrolOrganization, Session } from '@/domain/types';
 
-import { downloadOrgRoad, loadCachedOrgRoad } from './org-road-service';
+import { downloadOrgRoad, loadCachedOrgRoad, snapToCachedOrgRoad } from './org-road-service';
 
 const ORG: PatrolOrganization = { _id: 'org-1', code: 'AHR', name: 'آزادراه اهواز' };
 
@@ -110,5 +110,30 @@ describe('storing the officer’s own road', () => {
 
   it('reports nothing stored rather than an error when nothing was downloaded', async () => {
     expect(await loadCachedOrgRoad('org-unknown')).toBeNull();
+  });
+});
+
+describe('snapping to the cached road with no signal', () => {
+  const NEAR_BY = { latitude: 31.32, longitude: 48.671 };
+
+  it('computes the road reference from the stored geometry', async () => {
+    await downloadOrgRoad(SESSION, ORG);
+
+    const snap = await snapToCachedOrgRoad(ORG._id, NEAR_BY);
+
+    expect(snap).toMatchObject({ road_id: 'road-1', road_name: 'آزادراه اهواز – بندر امام' });
+  });
+
+  it('reports no road reference when the organization has no stored road', async () => {
+    // The picker then keeps its «اطلاعات راه پس از اتصال تکمیل میشود» notice and
+    // the sync worker resolves the snap later, rather than showing a fake one.
+    expect(await snapToCachedOrgRoad('org-unknown', NEAR_BY)).toBeNull();
+  });
+
+  it('reports no road reference for a stored road without geometry', async () => {
+    vi.mocked(fetchOrgRoad).mockResolvedValue({ road: { _id: 'road-1', name: 'جاده گلف' } });
+    await downloadOrgRoad(SESSION, ORG);
+
+    expect(await snapToCachedOrgRoad(ORG._id, NEAR_BY)).toBeNull();
   });
 });
