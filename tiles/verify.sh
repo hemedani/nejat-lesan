@@ -35,7 +35,9 @@ else bad "style.json shape"; fi
 for rel in "$(jq -r '.sources.protomaps.url' "$TMP/style.json")" \
            "$(jq -r '.glyphs' "$TMP/style.json" | sed 's#{fontstack}#Vazirmatn%20Regular#; s#{range}#1536-1791#')" \
            "$(jq -r '.sprite' "$TMP/style.json").json" \
-           "$(jq -r '.sprite' "$TMP/style.json").png"; do
+           "$(jq -r '.sprite' "$TMP/style.json").png" \
+           "$(jq -r '.sprite' "$TMP/style.json")@2x.json" \
+           "$(jq -r '.sprite' "$TMP/style.json")@2x.png"; do
   code="$(curl -sS -o /dev/null -w '%{http_code}' "$rel")"
   [[ "$code" == "200" ]] && ok "style url 200: $rel" || bad "style url $code: $rel"
 done
