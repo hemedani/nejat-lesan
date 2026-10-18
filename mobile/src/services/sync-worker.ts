@@ -164,7 +164,7 @@ function submissionProvenance(): SubmissionProvenance | null {
  * they could continue without the road, so a failed lookup must never block the
  * report — it just leaves the road reference unset.
  */
-async function resolveRoadSnap(draft: AccidentDraft): Promise<RoadSnap | null> {
+async function resolveRoadSnap(draft: AccidentDraft, session: Session): Promise<RoadSnap | null> {
   if (draft.road_snap) {
     return draft.road_snap;
   }
@@ -173,7 +173,10 @@ async function resolveRoadSnap(draft: AccidentDraft): Promise<RoadSnap | null> {
     return null;
   }
   try {
-    return toRoadSnap(await snapPointToRoad(coords));
+    // `road.snapPointToRoad` declares `setTokens` as a pre-act, so the `token`
+    // header is required — without it the backend throws «you should send your
+    // id with token key in req header» and this catch silently dropped the road.
+    return toRoadSnap(await snapPointToRoad(coords, { token: session.token }));
   } catch {
     return null;
   }
@@ -475,7 +478,7 @@ async function processRecord(
   // The deferred half of the road snap. Run only after the mapper accepts, so a
   // draft with no coordinates at all is rejected without a pointless lookup.
   emit?.({ type: 'phase', phase: 'linking' });
-  const roadSnap = await resolveRoadSnap(workingDraft);
+  const roadSnap = await resolveRoadSnap(workingDraft, session);
   const submissionDraft: AccidentDraft =
     roadSnap && !workingDraft.road_snap
       ? { ...workingDraft, road_snap: roadSnap }

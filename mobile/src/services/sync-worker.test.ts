@@ -243,6 +243,19 @@ describe('deferred road snap', () => {
     });
   });
 
+  it('sends the session token with the deferred lookup', async () => {
+    // `road.snapPointToRoad` requires the `token` header, so a lookup without it
+    // fails with «you should send your id with token key in req header». The
+    // failure was swallowed by `resolveRoadSnap`'s catch, so a report confirmed
+    // offline got no road reference and no one noticed.
+    vi.mocked(snapPointToRoad).mockResolvedValue(SNAP_RESPONSE);
+    enqueue(makeDraft());
+
+    await createSyncWorker().run(true);
+
+    expect(vi.mocked(snapPointToRoad).mock.calls[0][1]).toMatchObject({ token: 'token-1' });
+  });
+
   it('persists the resolved snap on the draft', async () => {
     vi.mocked(snapPointToRoad).mockResolvedValue(SNAP_RESPONSE);
     enqueue(makeDraft());
