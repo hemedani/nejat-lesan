@@ -16,7 +16,7 @@ One origin (`http://<host>:8790`) exposes:
 | `/tiles.json` | TileJSON 3.0 (`scheme: xyz`, `tileSize: 512`, `maxzoom: 14`) |
 | `/areas` | available areas (served from `areas.json`) |
 | `/glyphs/{fontstack}/{range}.pbf` | SDF glyphs (`application/x-protobuf`) |
-| `/sprites/v4/{light,dark}.{json,png,@2x.png}` | icon sprite sheet + index |
+| `/sprites/v4/{light,dark}.{json,png,@2x.json,@2x.png}` | icon sprite sheet + index (1× and 2×) |
 | `/tiles/{z}/{x}/{y}.mvt` | raw MVT (`application/x-protobuf`) |
 
 A static `caddy` process serves the generated artifacts (`dist/`) and reverse-proxies
@@ -86,6 +86,50 @@ origin (`/healthz` 200) while every tile is a 502.
 > `TILES_PUBLIC_ORIGIN=http://<host-lan-ip>:8790` before starting — otherwise the style
 > loads but every tile URL in it points at the device itself.
 
+> **Invariant — never 404 an asset `style.json` references.** MapLibre counts every tile,
+> glyph and sprite the style needs as a `requiredResourceCount`, and an offline region only
+> becomes usable once `status.isComplete` is true. A 404 is **never** counted as completed,
+> so one missing style-referenced file (e.g. the `@2x` sprite index a device-pixel-ratio ≥ 2
+> display requests) stalls **every** offline pack at `requiredResourceCount − 1`, forever —
+> the client shows it as paused and the map never renders offline. Out-of-coverage tiles
+> returning 204 is fine; missing style-referenced assets are not.
+
+### Sprite indices (`gen-sprites.mjs`)
+
+Sprite sheets are vendored under `sprites/v4/` (`light`/`dark`, 1× PNG + `@2x` PNG + 1×
+index). The **`@2x` index JSON is generated**, never hand-edited:
+
+```bash
+node build/gen-sprites.mjs        # also run by gen-artifacts.sh
+```
+
+It reads each `sprites/v4/<flavor>.json`, verifies `<flavor>@2x.png` is exactly 2× the 1×
+PNG, then writes `sprites/v4/<flavor>@2x.json` as a true doubled copy (same names, every
+`x/y/width/height` doubled, `pixelRatio: 2`). It **exits non-zero** on any mismatch, so a
+broken/dropped `@2x` artifact fails the build instead of silently 404ing in production.
+Pointing `@2x.json` at the 1× index is **wrong** — that index has `pixelRatio: 1` and half
+coordinates, so ≥2× devices would draw icons at the wrong size and position.
+
+### Deploy gate (asset changes)
+
+`dist/` is gitignored, so committing `sprites/*` does **not** update a running origin. To
+ship any sprite/asset change, on the host that serves the origin:
+
+```bash
+TILES_PUBLIC_ORIGIN=http://<origin>:8790 ./build/gen-artifacts.sh   # regenerate dist/ (incl. @2x indices)
+# restart the foreground server
+./run-local.sh
+```
+
+Then prove it against the live origin — this is the acceptance gate:
+
+```bash
+BASE=http://<origin>:8790 ./verify.sh        # must end with FAIL=0
+```
+
+`verify.sh` checks that both sprite flavors are served and that the `@2x` index is
+internally consistent, so a dropped/drifted `@2x.json` fails the harness.
+
 ## 3. Area config
 
 Edit `config/areas.json`:
@@ -138,7 +182,8 @@ node build/gen-glyphs.mjs     # or: ./build/gen-artifacts.sh regenerates everyth
 
 `gen-glyphs.mjs` writes 256 ranges (0–65535, step 256) per fontstack into
 `dist/glyphs/<fontstack>/`. The style maps every text layer to `Vazirmatn Regular`.
-The sprite id is `v4` (`/sprites/v4/...`).
+The sprite id is `v4` (`/sprites/v4/...`); regenerate the `@2x` sprite indices with
+`node build/gen-sprites.mjs` (see [Sprite indices](#sprite-indices-gen-spritesmjs)).
 
 ## 8. Offline pack sizing (measured)
 
@@ -212,6 +257,17 @@ EXPO_PUBLIC_MAP_STYLE_URL=http://<host>:8790/style.json
 `EXPO_PUBLIC_MAP_TILE_URL` is **retired** — do not use it. The client caches the style
 document, so cache-busting (e.g. appending a version query string) is the mobile task's
 concern.
+
+Before handing an origin to mobile, run the harness against it and require `FAIL=0`:
+
+```bash
+BASE=http://<host>:8790 ./verify.sh
+```
+
+It verifies every style-referenced asset resolves 200 and that both sprite flavors (`light`
+and `dark`) are complete — including the `@2x` sprite index a ≥2× display requests. Missing
+any of them stalls offline packs, so a green harness is the deploy gate (see
+[Deploy gate](#deploy-gate-asset-changes)).
 
 ---
 
