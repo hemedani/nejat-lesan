@@ -65,7 +65,7 @@ export default function MapScreen() {
           style={styles.mapControls}
         />
 
-        <ThemedText style={styles.attribution}>© OpenStreetMap contributors</ThemedText>
+        <ThemedText style={styles.attribution}>@Hemedani</ThemedText>
       </View>
     </SafeAreaView>
   );

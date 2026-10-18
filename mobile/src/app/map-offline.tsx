@@ -123,7 +123,7 @@ export default function MapOfflineScreen() {
         </Card>
 
         <Text style={styles.footerNote}>
-          منبع نقشه: © OpenStreetMap contributors — در حالت پرواز، کاشی‌های ذخیره‌شده بدون اینترنت
+          منبع نقشه: @Hemedani — در حالت پرواز، کاشی‌های ذخیره‌شده بدون اینترنت
           نمایش داده می‌شوند و نواحی خارج از محدوده دانلودشده با طرح راهنما مشخص می‌شوند.
         </Text>
       </ScrollView>

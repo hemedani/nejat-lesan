@@ -313,7 +313,7 @@ export default function IncidentLocationScreen() {
           style={styles.mapControls}
         />
 
-        <ThemedText style={styles.attribution}>© OpenStreetMap contributors</ThemedText>
+        <ThemedText style={styles.attribution}>@Hemedani</ThemedText>
       </View>
 
       {/* The confirm CTA lives at the bottom of this sheet, so the sheet — not the
