@@ -26,6 +26,7 @@ echo "[3/4] style"
 node build/gen-style.mjs
 
 echo "[4/4] sprites + areas"
+node build/gen-sprites.mjs
 cp -R sprites/. dist/sprites/
 cp config/areas.json dist/areas.json
 
