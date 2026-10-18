@@ -12,7 +12,9 @@ import {
   AREA_PACK_ID,
   NATIONAL_PACK_ID,
   coverageFromPacks,
+  packMatchesStyleUrl,
   planPackStart,
+  resolvePackStatus,
   type ExistingPack,
   type PackId,
   type PackStatus,
@@ -119,19 +121,12 @@ function toExisting(pack: OfflinePack): ExistingPack {
 function toView(pack: OfflinePack, id: PackId, status: OfflinePackStatus): MapPackView {
   const zoomMin = metaNumber(pack, 'zoomMin') ?? 0;
   const zoomMax = metaNumber(pack, 'zoomMax') ?? 0;
-  const paused = manuallyPaused.has(id) || networkPauseReasons.has(id);
-  let state: PackStatus;
-  if (packErrors.has(id)) {
-    state = 'failed';
-  } else if (paused) {
-    state = 'paused';
-  } else if (status.state === 'complete') {
-    state = 'done';
-  } else if (status.state === 'active') {
-    state = 'downloading';
-  } else {
-    state = 'idle';
-  }
+  const state = resolvePackStatus({
+    completedResources: status.completedResourceCount,
+    failed: packErrors.has(id),
+    nativeState: status.state,
+    paused: manuallyPaused.has(id) || networkPauseReasons.has(id),
+  });
   return {
     bytesDone: status.completedResourceSize,
     error: packErrors.get(id) ?? networkPauseReasons.get(id),
@@ -224,13 +219,15 @@ async function ensurePack(
   networkPauseReasons.delete(id);
   packErrors.delete(id);
 
+  const styleUrl = getAppConfig().mapStyleUrl;
   await OfflineManager.createPack(
     {
       bounds: toLngLatBounds(plan.bounds),
-      mapStyle: getAppConfig().mapStyleUrl,
+      mapStyle: styleUrl,
       maxZoom: plan.zoomMax,
       metadata: {
         packId: id,
+        styleUrl,
         zoomMax: plan.zoomMax,
         zoomMin: plan.zoomMin,
         ...(tierId ? { tierId } : {}),
@@ -326,6 +323,32 @@ export async function removePack(id: string): Promise<void> {
   notify();
 }
 
+/**
+ * Drops packs downloaded against a different tile server.
+ *
+ * MapLibre keys its offline database by the exact style-URL string, so after a
+ * host change the old packs are dead weight: the current map cannot read their
+ * tiles, and one that still resumes only hammers a dead origin for 404s.
+ * Reconciling once at startup makes a rebuild self-healing instead of leaving
+ * the officer with a blank map and a stale «شروع نشده» row.
+ */
+async function reconcileMapPacks(): Promise<void> {
+  const styleUrl = getAppConfig().mapStyleUrl;
+  for (const pack of await OfflineManager.getPacks()) {
+    if (packMatchesStyleUrl(pack.metadata, styleUrl)) {
+      continue;
+    }
+    const id = packIdOf(pack);
+    OfflineManager.removeListener(pack.id);
+    await OfflineManager.deletePack(pack.id);
+    if (id) {
+      manuallyPaused.delete(id);
+      networkPauseReasons.delete(id);
+      packErrors.delete(id);
+    }
+  }
+}
+
 /** Pauses active packs, or resumes those we paused, to match the radio. */
 async function applyNetworkPolicy(): Promise<void> {
   let snapshot;
@@ -371,7 +394,10 @@ async function applyNetworkPolicy(): Promise<void> {
  * on Wi-Fi" work without the officer touching anything.
  */
 export function startMapDownloadWatcher(): () => void {
-  void applyNetworkPolicy();
+  void (async () => {
+    await reconcileMapPacks();
+    await applyNetworkPolicy();
+  })();
   return subscribeToConnectivity(() => {
     void applyNetworkPolicy();
   });

@@ -23,6 +23,51 @@ export type PackId = typeof NATIONAL_PACK_ID | typeof AREA_PACK_ID;
 
 export type PackStatus = 'idle' | 'queued' | 'downloading' | 'paused' | 'done' | 'failed';
 
+/** The download states MapLibre's `OfflineManager` reports for a pack. */
+export type NativePackState = 'inactive' | 'active' | 'complete';
+
+/**
+ * Folds the app-level facts (did it fail, did we pause it) into the status the
+ * UI shows.
+ *
+ * The subtle case is `inactive`: MapLibre reports it both for a pack that has
+ * never downloaded and for one we paused mid-flight, so reading it alone is
+ * what made a half-finished 30 MB pack render as «شروع نشده». A pack with any
+ * completed resource has bytes on disk, so it is paused, not untouched.
+ */
+export function resolvePackStatus(input: {
+  completedResources: number;
+  failed: boolean;
+  nativeState: NativePackState;
+  paused: boolean;
+}): PackStatus {
+  if (input.failed) {
+    return 'failed';
+  }
+  if (input.nativeState === 'complete') {
+    return 'done';
+  }
+  if (input.nativeState === 'active') {
+    return 'downloading';
+  }
+  if (input.paused || input.completedResources > 0) {
+    return 'paused';
+  }
+  return 'idle';
+}
+
+/**
+ * Whether a stored pack belongs to the tile server the app points at now.
+ *
+ * MapLibre keys its offline database by the exact style-URL string, so a pack
+ * built against a different host is dead weight: the current map can never read
+ * its tiles, and an old build's pack that still resumes only earns 404s. Packs
+ * are stamped with `styleUrl` at creation, and anything else is pruned.
+ */
+export function packMatchesStyleUrl(metadata: Record<string, unknown>, styleUrl: string): boolean {
+  return metadata.styleUrl === styleUrl;
+}
+
 /** The narrowest description of a stored pack that planning needs. */
 export type ExistingPack = {
   bounds: GeoBounds | null;

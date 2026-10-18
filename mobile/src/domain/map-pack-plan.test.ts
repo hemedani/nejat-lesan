@@ -8,7 +8,9 @@ import {
   NATIONAL_PACK_ID,
   packBounds,
   packLabel,
+  packMatchesStyleUrl,
   planPackStart,
+  resolvePackStatus,
   type ExistingPack,
   type PlanInput,
   type PackPlan,
@@ -157,5 +159,55 @@ describe('packLabel', () => {
   it('describes each pack in Persian', () => {
     expect(packLabel(NATIONAL_PACK_ID)).toMatch(/ایران/);
     expect(packLabel(AREA_PACK_ID)).toMatch(/محدوده/);
+  });
+});
+
+describe('resolvePackStatus', () => {
+  const base = { completedResources: 0, failed: false, paused: false } as const;
+
+  it('reports failure over any download progress', () => {
+    expect(
+      resolvePackStatus({ ...base, completedResources: 900, failed: true, nativeState: 'active' }),
+    ).toBe('failed');
+  });
+
+  it('maps the native complete state to done', () => {
+    expect(resolvePackStatus({ ...base, nativeState: 'complete' })).toBe('done');
+  });
+
+  it('maps an active download to downloading', () => {
+    expect(resolvePackStatus({ ...base, nativeState: 'active' })).toBe('downloading');
+  });
+
+  it('treats an inactive pack with no resources as not started', () => {
+    expect(resolvePackStatus({ ...base, nativeState: 'inactive' })).toBe('idle');
+  });
+
+  it('treats an inactive pack holding resources as paused, not not-started', () => {
+    expect(resolvePackStatus({ ...base, completedResources: 1200, nativeState: 'inactive' })).toBe(
+      'paused',
+    );
+  });
+
+  it('honours an app-level pause flag on an empty pack', () => {
+    expect(resolvePackStatus({ ...base, nativeState: 'inactive', paused: true })).toBe('paused');
+  });
+});
+
+describe('packMatchesStyleUrl', () => {
+  it('accepts a pack stamped with the current style url', () => {
+    expect(packMatchesStyleUrl({ styleUrl: 'http://host:8790/style.json' }, 'http://host:8790/style.json')).toBe(
+      true,
+    );
+  });
+
+  it('rejects a pack built against a different host', () => {
+    expect(
+      packMatchesStyleUrl({ styleUrl: 'http://old:8790/style.json' }, 'http://host:8790/style.json'),
+    ).toBe(false);
+  });
+
+  it('rejects a pack with no style url stamp', () => {
+    expect(packMatchesStyleUrl({ packId: 'area' }, 'http://host:8790/style.json')).toBe(false);
   });
 });
