@@ -15,7 +15,7 @@ import MyDateInput from "../atoms/MyDateInput";
 import { ReqType } from "@/types/declarations/selectInp";
 import dynamic from "next/dynamic";
 import { SelectOption } from "../atoms/MyAsyncMultiSelect";
-import { useCallback, useState, useMemo, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
 import CustomCheckbox from "../atoms/CustomCheckbox";

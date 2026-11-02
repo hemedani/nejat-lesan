@@ -16,7 +16,6 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { LatLngExpression } from "leaflet";
 import { ToastNotify } from "@/utils/helper";
-import type { CSSObjectWithLabel } from "react-select";
 import MyInput from "../atoms/MyInput";
 import MyDateInput from "../atoms/MyDateInput";
 import MyAsyncMultiSelect from "../atoms/MyAsyncMultiSelect";

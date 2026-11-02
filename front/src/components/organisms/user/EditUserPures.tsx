@@ -11,7 +11,7 @@ import MyDateInput from "@/components/atoms/MyDateInput";
 import { updateUserPure } from "@/app/actions/user/updateUser";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
-import { useCallback, useState, useMemo, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { useSelectStyles } from "@/utils/select-styles";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { gets as getProvincesAction } from "@/app/actions/province/gets";

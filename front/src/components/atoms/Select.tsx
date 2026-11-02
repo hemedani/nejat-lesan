@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Select, { PropsValue, StylesConfig } from "react-select";
+import Select, { PropsValue } from "react-select";
 import {
   FieldValues,
   FieldPath,
@@ -40,8 +40,6 @@ interface ControlledSelectProps extends CommonSelectProps {
 export type SelectBoxProps<T extends FieldValues = FieldValues> =
   | RhfSelectProps<T>
   | ControlledSelectProps;
-
-type Option = ReactSelectOption;
 
 const SelectBox = <T extends FieldValues = FieldValues>(
   props: SelectBoxProps<T>,
