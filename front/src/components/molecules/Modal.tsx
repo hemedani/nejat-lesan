@@ -64,12 +64,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className = ""
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
-        className={`w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl ${className}`}
+        className={`w-full max-w-3xl mx-4 max-h-[90vh] overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl ${className}`}
       >
         {children}
       </div>

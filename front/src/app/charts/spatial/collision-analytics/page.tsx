@@ -569,7 +569,7 @@ interface SpatialCollisionAnalyticsResponse {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation
         currentSection="spatial"
@@ -599,10 +599,10 @@ interface SpatialCollisionAnalyticsResponse {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-fg">
                   مقایسه مکانی نحوه و نوع برخورد
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل و مقایسه انواع برخورد در مناطق مختلف شهر - نمودار میله‌ای توزیع انواع برخورد و نقشه درصد نوع برخورد انتخابی
                 </p>
               </div>
@@ -610,7 +610,7 @@ interface SpatialCollisionAnalyticsResponse {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -633,7 +633,7 @@ interface SpatialCollisionAnalyticsResponse {
                         "spatial-collision",
                       )
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -643,7 +643,7 @@ interface SpatialCollisionAnalyticsResponse {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg
                     className="w-5 h-5"
@@ -669,10 +669,10 @@ interface SpatialCollisionAnalyticsResponse {
 
           {/* Error State */}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
               <div className="flex items-center gap-2">
                 <svg
-                  className="w-5 h-5 text-red-600"
+                  className="w-5 h-5 text-danger-fg"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -682,11 +682,11 @@ interface SpatialCollisionAnalyticsResponse {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-red-800 font-medium">
+                <span className="text-danger-fg font-medium">
                   خطا در دریافت داده‌ها
                 </span>
               </div>
-              <p className="text-red-700 mt-2">{error}</p>
+              <p className="text-danger-fg mt-2">{error}</p>
             </div>
           )}
 
@@ -711,15 +711,15 @@ interface SpatialCollisionAnalyticsResponse {
 
           {/* Insights Section */}
           {analyticsData && !isLoading && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="mt-6 bg-surface rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-fg mb-4">
                 بینش‌های کلیدی
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-brand-soft rounded-lg">
+                  <div className="w-12 h-12 bg-brand-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-blue-600"
+                      className="w-6 h-6 text-brand-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -732,17 +732,17 @@ interface SpatialCollisionAnalyticsResponse {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
+                  <h4 className="font-medium text-fg mb-1">
                     کل مناطق بررسی شده
                   </h4>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-2xl font-bold text-brand-fg">
                     {analyticsData.barChart?.categories?.length || 0}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-success-soft rounded-lg">
+                  <div className="w-12 h-12 bg-success-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-green-600"
+                      className="w-6 h-6 text-success-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -755,17 +755,17 @@ interface SpatialCollisionAnalyticsResponse {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
+                  <h4 className="font-medium text-fg mb-1">
                     انواع برخورد
                   </h4>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-success-fg">
                     {analyticsData.barChart?.series?.length || 0}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-danger-soft rounded-lg">
+                  <div className="w-12 h-12 bg-danger-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-red-600"
+                      className="w-6 h-6 text-danger-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -778,10 +778,10 @@ interface SpatialCollisionAnalyticsResponse {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
+                  <h4 className="font-medium text-fg mb-1">
                     مناطق با نسبت بالا
                   </h4>
-                  <p className="text-2xl font-bold text-red-600">
+                  <p className="text-2xl font-bold text-danger-fg">
                     {derivedMapChart.filter((zone) => zone.ratio > 0.1)
                       .length || 0}
                   </p>
@@ -789,12 +789,12 @@ interface SpatialCollisionAnalyticsResponse {
               </div>
 
               {/* Additional insights */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="bg-green-50 rounded-lg p-4">
+              <div className="mt-6 pt-4 border-t border-line">
+                <div className="bg-success-soft rounded-lg p-4">
                   <h4 className="font-medium text-green-900 mb-2">
                     🚗 تحلیل انواع برخورد
                   </h4>
-                  <p className="text-sm text-green-800">
+                  <p className="text-sm text-success-fg">
                     این تحلیل توزیع انواع برخورد را در مناطق مختلف نشان می‌دهد.
                     مناطق با نسبت بالای برخورد خاص، نیاز به بررسی بیشتر علل و
                     عوامل مؤثر دارند.
@@ -805,8 +805,8 @@ interface SpatialCollisionAnalyticsResponse {
               {/* Collision Type Breakdown */}
               {analyticsData.barChart?.series &&
                 analyticsData.barChart.series.length > 0 && (
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-medium text-gray-900 mb-3">
+                  <div className="mt-4 p-4 bg-canvas rounded-lg">
+                    <h4 className="font-medium text-fg mb-3">
                       انواع برخورد بررسی شده
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -818,12 +818,12 @@ interface SpatialCollisionAnalyticsResponse {
                         return (
                           <div
                             key={index}
-                            className="flex items-center justify-between p-2 bg-white rounded border"
+                            className="flex items-center justify-between p-2 bg-surface rounded border"
                           >
-                            <span className="text-sm text-gray-700">
+                            <span className="text-sm text-fg">
                               {series.name}
                             </span>
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium text-fg">
                               {totalForThisType} تصادف
                             </span>
                           </div>

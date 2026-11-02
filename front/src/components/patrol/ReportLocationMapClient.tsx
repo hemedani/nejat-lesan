@@ -99,7 +99,7 @@ export default function ReportLocationMapClient({
   const separation = formatSeparation(location, gps);
 
   return (
-    <div className={`${height} overflow-hidden rounded-xl border border-white/10`}>
+    <div className={`${height} overflow-hidden rounded-xl border border-line`}>
       <MapContainer
         center={incident ?? officer!}
         zoom={14}

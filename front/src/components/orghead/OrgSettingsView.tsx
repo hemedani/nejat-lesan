@@ -61,15 +61,15 @@ export function OrgSettingsView({ orgId }: { orgId: string }) {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm text-blue-300">تنظیمات</p>
-        <h1 className="mt-1 text-2xl font-bold text-white">تنظیمات سازمان</h1>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="text-sm text-brand-fg">تنظیمات</p>
+        <h1 className="mt-1 text-2xl font-bold text-fg">تنظیمات سازمان</h1>
+        <p className="mt-2 text-sm text-fg-faint">
           مشخصات سازمان و ماژول‌های فعال. برای تغییر این موارد با مدیر سامانه تماس بگیرید.
         </p>
       </div>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl">
-        <h2 className="mb-4 font-semibold text-white">مشخصات سازمان</h2>
+      <section className="rounded-2xl border border-line bg-surface/75 p-5 shadow-xl">
+        <h2 className="mb-4 font-semibold text-fg">مشخصات سازمان</h2>
         <dl className="grid gap-4 sm:grid-cols-2">
           <Field label="نام سازمان" value={org.name} />
           <Field label="کد سازمان" value={org.code} mono />
@@ -93,16 +93,16 @@ export function OrgSettingsView({ orgId }: { orgId: string }) {
           <Field label="تعداد واحدها" value={unitCount === null ? "—" : unitCount.toLocaleString("fa-IR")} />
         </dl>
         {org.description && (
-          <div className="mt-4 border-t border-white/10 pt-4">
-            <p className="text-xs text-slate-500">توضیحات</p>
-            <p className="mt-1 text-sm leading-6 text-slate-300">{org.description}</p>
+          <div className="mt-4 border-t border-line pt-4">
+            <p className="text-xs text-fg-faint">توضیحات</p>
+            <p className="mt-1 text-sm leading-6 text-fg-muted">{org.description}</p>
           </div>
         )}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl">
-        <h2 className="mb-1 font-semibold text-white">ماژول‌های فعال</h2>
-        <p className="mb-4 text-xs text-slate-500">
+      <section className="rounded-2xl border border-line bg-surface/75 p-5 shadow-xl">
+        <h2 className="mb-1 font-semibold text-fg">ماژول‌های فعال</h2>
+        <p className="mb-4 text-xs text-fg-faint">
           فعال/غیرفعال کردن ماژول‌ها فقط توسط مدیر سامانه انجام می‌شود.
         </p>
         <ul className="space-y-2">
@@ -111,14 +111,14 @@ export function OrgSettingsView({ orgId }: { orgId: string }) {
             return (
               <li
                 key={key}
-                className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[.02] px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface-sunken px-4 py-3"
               >
-                <span className="text-sm text-slate-200">{MODULE_LABELS[key]}</span>
+                <span className="text-sm text-fg">{MODULE_LABELS[key]}</span>
                 <span
                   className={`rounded-full border px-3 py-1 text-xs ${
                     enabled
-                      ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
-                      : "border-slate-400/20 bg-slate-400/10 text-slate-300"
+                      ? "tint-emerald border-tint-border bg-tint-soft text-tint-fg"
+                      : "border-line-strong/20 bg-surface-hover text-fg-muted"
                   }`}
                 >
                   {enabled ? "فعال" : "غیرفعال"}
@@ -129,24 +129,24 @@ export function OrgSettingsView({ orgId }: { orgId: string }) {
         </ul>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl">
-        <h2 className="mb-4 font-semibold text-white">دسترسی سریع</h2>
+      <section className="rounded-2xl border border-line bg-surface/75 p-5 shadow-xl">
+        <h2 className="mb-4 font-semibold text-fg">دسترسی سریع</h2>
         <div className="flex flex-wrap gap-2">
           <Link
             href={orgRoutes.units()}
-            className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
+            className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm text-fg transition hover:bg-surface-hover"
           >
             مدیریت واحدها
           </Link>
           <Link
             href={orgRoutes.people()}
-            className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
+            className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm text-fg transition hover:bg-surface-hover"
           >
             افراد و نقش‌ها
           </Link>
           <Link
             href={orgRoutes.orgChart()}
-            className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
+            className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm text-fg transition hover:bg-surface-hover"
           >
             نمودار سازمانی
           </Link>
@@ -167,9 +167,9 @@ function Field({
 }) {
   return (
     <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
+      <dt className="text-xs text-fg-faint">{label}</dt>
       <dd
-        className={`mt-1 break-words text-slate-200 ${mono ? "font-mono text-xs" : ""}`}
+        className={`mt-1 break-words text-fg ${mono ? "font-mono text-xs" : ""}`}
         dir={mono ? "ltr" : undefined}
       >
         {value || "—"}

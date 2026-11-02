@@ -31,7 +31,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
 }: DateInputProps<T>) => {
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
-      <label htmlFor={name} className="text-sm font-medium text-slate-300 text-right">
+      <label htmlFor={name} className="text-sm font-medium text-fg-muted text-right">
         {label}
       </label>
 
@@ -68,12 +68,12 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
               disabled={disabled}
               containerClassName="w-full"
               inputClass={`
-                w-full pr-4 pl-10 py-2.5 text-sm text-white bg-white/[.04] border rounded-xl
-                placeholder:text-slate-600 text-right
+                w-full pr-4 pl-10 py-2.5 text-sm text-fg bg-surface-sunken border rounded-xl
+                placeholder:text-fg-faint text-right
                 transition-colors duration-200
                 focus:outline-none focus:border-blue-400/50
-                ${disabled ? "opacity-60 cursor-not-allowed" : "hover:border-white/20"}
-                ${errMsg ? "border-rose-400/50" : "border-white/10"}
+                ${disabled ? "opacity-60 cursor-not-allowed" : "hover:border-line-strong"}
+                ${errMsg ? "border-rose-400/50" : "border-line"}
               `}
               placeholder={placeholder || label}
               className="blue not-close-modal"
@@ -107,7 +107,7 @@ const MyDateInput = <T extends FieldValues = FieldValues>({
                   e.stopPropagation();
                   onChange(null);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none p-1 rounded-full hover:bg-white/10 transition-colors z-10"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-muted hover:text-fg focus:outline-none p-1 rounded-full hover:bg-surface-hover transition-colors z-10"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

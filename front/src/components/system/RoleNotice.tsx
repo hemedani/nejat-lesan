@@ -10,7 +10,7 @@ export function RoleNotice({
   message?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-8 text-center text-rose-100">
+    <div className="tint-rose rounded-2xl border border-tint-border bg-tint-soft p-8 text-center text-tint-fg">
       {message}
     </div>
   );

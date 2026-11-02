@@ -21,8 +21,8 @@ import { unwrapApiResponse, getPatrolErrorMessage } from "@/utils/api-response";
  */
 
 const INPUT_CLASS =
-  "w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-blue-400/40 focus:ring-2 focus:ring-blue-500/20";
-const LABEL_CLASS = "mb-1.5 block text-xs text-slate-400";
+  "w-full rounded-xl border border-line bg-canvas px-3 py-2.5 text-sm text-fg outline-none transition placeholder:text-fg-faint focus:border-blue-400/40 focus:ring-2 focus:ring-brand/20";
+const LABEL_CLASS = "mb-1.5 block text-xs text-fg-muted";
 
 export interface WareOption {
   _id: string;
@@ -261,12 +261,12 @@ export function GoodsRequestForm({
             placeholder="مثلاً ۵"
           />
         </div>
-        <label className="flex items-center gap-2 text-sm text-slate-300">
+        <label className="flex items-center gap-2 text-sm text-fg-muted">
           <input
             type="checkbox"
             checked={priority}
             onChange={(e) => setPriority(e.target.checked)}
-            className="h-4 w-4 rounded border-white/20 bg-slate-950"
+            className="h-4 w-4 rounded border-line-strong bg-canvas"
           />
           درخواست فوری
         </label>
@@ -377,7 +377,7 @@ export function GoodsReceiptForm({
               <button
                 type="button"
                 onClick={() => setLines((current) => current.filter((_, i) => i !== index))}
-                className="mb-1 rounded-xl border border-rose-400/20 px-3 py-2.5 text-xs text-rose-200 transition hover:bg-rose-400/10"
+                className="tint-rose mb-1 rounded-xl border border-tint-border px-3 py-2.5 text-xs text-tint-fg transition hover:bg-tint-soft"
               >
                 حذف
               </button>
@@ -393,7 +393,7 @@ export function GoodsReceiptForm({
               { wareId: "", received: "", rejected: "" },
             ])
           }
-          className="text-xs text-blue-300 transition hover:text-blue-200"
+          className="text-xs text-brand-fg transition hover:underline"
         >
           + افزودن قلم
         </button>
@@ -517,7 +517,7 @@ export function TransferForm({
           />
         </div>
         {fromUnitId && toUnitId && fromUnitId === toUnitId && (
-          <p className="text-xs text-rose-300">واحد مبدأ و مقصد نباید یکسان باشند.</p>
+          <p className="text-xs text-danger-fg">واحد مبدأ و مقصد نباید یکسان باشند.</p>
         )}
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="neutral" onClick={onClose}>
@@ -571,7 +571,7 @@ export function AdjustStockForm({
   return (
     <ModalShell title={`اصلاح موجودی — ${wareName}`} onClose={onClose}>
       <div className="space-y-4">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-fg-faint">
           موجودی فعلی: {currentQuantity.toLocaleString("fa-IR")}
         </p>
         <div>

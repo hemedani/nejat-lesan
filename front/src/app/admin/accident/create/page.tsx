@@ -4,7 +4,7 @@ import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 
 export default function CreateAccidentPage() {
   return (
-    <div className="relative min-h-full bg-gray-50 p-6">
+    <div className="relative min-h-full bg-canvas p-6">
       <Suspense
         fallback={
           <div className="h-64 flex items-center justify-center">

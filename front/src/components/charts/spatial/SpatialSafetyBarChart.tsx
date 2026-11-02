@@ -2,6 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -16,12 +17,13 @@ interface SpatialSafetyBarChartProps {
 }
 
 const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -29,10 +31,10 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isL
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">شاخص متوفیان به جمعیت</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">شاخص متوفیان به جمعیت</h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌ای برای نمایش موجود نیست</p>
+          <p className="text-fg-muted">داده‌ای برای نمایش موجود نیست</p>
         </div>
       </div>
     );
@@ -84,7 +86,7 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isL
       offsetY: -20,
       style: {
         fontSize: "12px",
-        colors: ["#304758"],
+        colors: [chartTheme.onFill],
         fontWeight: 600,
       },
     },
@@ -117,10 +119,10 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isL
     fill: {
       opacity: 1,
     },
-    colors: ["#EF4444"],
+    colors: [chartTheme.danger],
     grid: {
       show: true,
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       strokeDashArray: 0,
       position: "back" as const,
     },
@@ -134,10 +136,10 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isL
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">شاخص متوفیان به جمعیت</h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-fg">شاخص متوفیان به جمعیت</h3>
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -154,12 +156,12 @@ const SpatialSafetyBarChart: React.FC<SpatialSafetyBarChartProps> = ({ data, isL
       </div>
 
       {/* Chart Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <div className="w-3 h-3 bg-red-500 rounded-full"></div>
           <span>نسبت متوفیان به جمعیت در هر صد هزار نفر</span>
         </div>
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-fg-muted mt-2">
           این شاخص نسبت تعداد متوفیان تصادفات رانندگی به جمعیت هر منطقه را نشان می‌دهد
         </p>
       </div>

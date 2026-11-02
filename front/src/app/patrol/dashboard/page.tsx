@@ -62,13 +62,13 @@ export default function ReporterDashboardPage() {
         <PanelCard className="md:col-span-2">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs text-slate-500">مأمور گشت</p>
-              <h2 className="mt-1 text-lg font-semibold text-white">
+              <p className="text-xs text-fg-faint">مأمور گشت</p>
+              <h2 className="mt-1 text-lg font-semibold text-fg">
                 {[userData?.first_name, userData?.last_name].filter(Boolean).join(" ") || "کاربر"}
               </h2>
-              <p className="mt-1 text-sm text-slate-400">کد پرسنلی: {userData?.personnel_code || "ثبت نشده"}</p>
+              <p className="mt-1 text-sm text-fg-muted">کد پرسنلی: {userData?.personnel_code || "ثبت نشده"}</p>
             </div>
-            <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">
+            <span className="tint-emerald rounded-full border border-tint-border bg-tint-soft px-3 py-1 text-xs text-tint-fg">
               شیفت جاری
             </span>
           </div>
@@ -91,9 +91,9 @@ export default function ReporterDashboardPage() {
         </PanelCard>
 
         <section className="rounded-2xl border border-blue-400/20 bg-blue-400/5 p-5 shadow-xl">
-          <p className="text-xs text-blue-200">نیازمند اقدام</p>
-          <p className="mt-2 text-4xl font-bold text-white">{returnedCount.toLocaleString("fa-IR")}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-300">گزارش برگشت‌خورده در فهرست اخیر</p>
+          <p className="text-xs text-brand-fg">نیازمند اقدام</p>
+          <p className="mt-2 text-4xl font-bold text-fg">{returnedCount.toLocaleString("fa-IR")}</p>
+          <p className="mt-2 text-sm leading-6 text-fg-muted">گزارش برگشت‌خورده در فهرست اخیر</p>
         </section>
       </div>
 

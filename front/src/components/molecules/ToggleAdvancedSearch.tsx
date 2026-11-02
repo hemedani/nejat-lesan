@@ -18,9 +18,9 @@ const ToggleAdvancedSearch = ({ defaultSearchArrayValues, pageAddress }: {
       <button
         type="button"
         onClick={toggleAdvancedSearch}
-        className={`px-4 py-2 rounded-3xl text-white w-full md:w-auto transition-all ${showAdvancedSearch
-          ? "bg-blue-500 hover:bg-blue-600"
-          : "bg-gray-600 hover:bg-gray-500"
+        className={`px-4 py-2 rounded-3xl w-full md:w-auto transition-all ${showAdvancedSearch
+          ? "bg-brand text-on-brand hover:bg-brand-hover"
+          : "bg-surface-hover text-fg hover:bg-line-strong"
           }`}
       >
         {showAdvancedSearch ? "بستن جستجوی پیشرفته" : "باز کردن جستجوی پیشرفته"}

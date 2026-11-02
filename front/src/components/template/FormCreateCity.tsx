@@ -16,6 +16,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import GeoPointPicker, { type GeoPoint } from "@/components/maps/GeoPointPicker";
 import GeoPolygonDrawer, { type GeoPolygon } from "@/components/maps/GeoPolygonDrawer";
+import { useSelectStyles } from "@/utils/select-styles";
 
 // Dynamically import map components
 const MapContainer = dynamic(
@@ -85,6 +86,7 @@ export const FormCreateCity = ({
   token?: string;
   lesanUrl: string;
 }) => {
+  const selectStyles = useSelectStyles(undefined, { minHeight: "48px", rtl: true });
   const router = useRouter();
   const [centerPoint, setCenterPoint] = useState<GeoPoint | null>(null);
   const [mapCenter, setMapCenter] = useState({ lat: 32.4279, lng: 53.688 });
@@ -243,8 +245,8 @@ export const FormCreateCity = ({
     <div className="p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Form Fields */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-4">
+          <h2 className="text-lg font-semibold text-fg mb-4">
             اطلاعات شهر
           </h2>
 
@@ -277,7 +279,7 @@ export const FormCreateCity = ({
 
           {/* Province Selection */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700 text-right">
+            <label className="text-sm font-medium text-fg-muted text-right">
               انتخاب استان
             </label>
             <AsyncSelect
@@ -293,53 +295,7 @@ export const FormCreateCity = ({
               loadingMessage={() => "در حال بارگذاری..."}
               isRtl={true}
               isClearable
-              styles={{
-                control: (provided: Record<string, unknown>, state: { isFocused: boolean }) => ({
-                  ...provided,
-                  minHeight: "48px",
-                  backgroundColor: errors.provinceId ? "#fef2f2" : "white",
-                  borderColor: errors.provinceId
-                    ? state.isFocused
-                      ? "#ef4444"
-                      : "#fca5a5"
-                    : state.isFocused
-                      ? "#3b82f6"
-                      : "#cbd5e1",
-                  borderRadius: "12px",
-                  direction: "rtl",
-                }),
-                valueContainer: (provided: Record<string, unknown>) => ({
-                  ...provided,
-                  padding: "2px 16px",
-                  direction: "rtl",
-                }),
-                placeholder: (provided: Record<string, unknown>) => ({
-                  ...provided,
-                  color: "#94a3b8",
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-                singleValue: (provided: Record<string, unknown>) => ({
-                  ...provided,
-                  color: "#1e293b",
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-                option: (
-                  provided: Record<string, unknown>,
-                  state: { isSelected: boolean; isFocused: boolean },
-                ) => ({
-                  ...provided,
-                  backgroundColor: state.isSelected
-                    ? "#3b82f6"
-                    : state.isFocused
-                      ? "#f1f5f9"
-                      : "transparent",
-                  color: state.isSelected ? "white" : "#1e293b",
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-              }}
+              styles={selectStyles}
             />
             {errors.provinceId && (
               <span className="text-red-500 text-xs font-medium text-right mt-1">
@@ -363,28 +319,26 @@ export const FormCreateCity = ({
         {/* Errors render next to the control that caused them, inside each
             drawer's own `errorMessage` slot, instead of in separate red boxes
             floating above the map. */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-6">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-6">
           <GeoPolygonDrawer
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.area?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={6}
             label="محدودهٔ شهر"
             onChange={handleAreaChange}
             onClear={clearArea}
-            tone="light"
             value={area}
           />
 
           <GeoPointPicker
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.center_location?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={6}
             label="مرکز شهر"
             onChange={handleCenterChange}
             onClear={clearCenterPoint}
-            tone="light"
             value={centerPoint}
           />
         </div>
@@ -394,7 +348,7 @@ export const FormCreateCity = ({
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
+            className="px-8 py-3 bg-brand text-on-brand font-semibold rounded-lg hover:bg-brand-hover disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "در حال ایجاد..." : "ایجاد شهر"}
           </button>

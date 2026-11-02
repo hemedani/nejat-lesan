@@ -107,45 +107,45 @@ function formatDate(date: Date | string | undefined): string {
 
 function buildPopupHtml(a: accidentSchema, clusterSize?: number): string {
   const typeColor =
-    a.type?.name === "فوتی" ? "text-red-600"
+    a.type?.name === "فوتی" ? "text-danger-fg"
     : a.type?.name === "جرحی" ? "text-orange-600"
     : a.type?.name === "خسارتی" ? "text-yellow-600"
-    : "text-gray-600";
+    : "text-fg-muted";
 
   return `
     <div class="p-2 max-w-xs" dir="rtl">
-      <h3 class="font-semibold text-lg mb-2 text-gray-800">جزئیات تصادف</h3>
+      <h3 class="font-semibold text-lg mb-2 text-fg">جزئیات تصادف</h3>
       <div class="space-y-1 text-sm">
         ${!clusterSize || clusterSize <= 1 ? `
         <div class="flex justify-between">
-          <span class="text-gray-600">تاریخ:</span>
+          <span class="text-fg-muted">تاریخ:</span>
           <span class="font-medium">${formatDate(a.date_of_accident)}</span>
         </div>` : ""}
         <div class="flex justify-between">
-          <span class="text-gray-600">نوع:</span>
+          <span class="text-fg-muted">نوع:</span>
           <span class="font-medium ${typeColor}">${a.type?.name || "نامشخص"}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-600">فوتی:</span>
-          <span class="font-medium text-red-600">${a.dead_count || 0}</span>
+          <span class="text-fg-muted">فوتی:</span>
+          <span class="font-medium text-danger-fg">${a.dead_count || 0}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-600">مجروح:</span>
+          <span class="text-fg-muted">مجروح:</span>
           <span class="font-medium text-orange-600">${a.injured_count || 0}</span>
         </div>
         ${clusterSize && clusterSize > 1 ? `
         <div class="flex justify-between">
-          <span class="text-gray-600">تعداد تصادفات:</span>
-          <span class="font-medium text-blue-600">${clusterSize}</span>
+          <span class="text-fg-muted">تعداد تصادفات:</span>
+          <span class="font-medium text-brand-fg">${clusterSize}</span>
         </div>` : ""}
         ${(!clusterSize || clusterSize <= 1) && a.collision_type?.name ? `
         <div class="flex justify-between">
-          <span class="text-gray-600">نوع برخورد:</span>
+          <span class="text-fg-muted">نوع برخورد:</span>
           <span class="font-medium">${a.collision_type.name}</span>
         </div>` : ""}
         ${(!clusterSize || clusterSize <= 1) && a.light_status?.name ? `
         <div class="flex justify-between">
-          <span class="text-gray-600">وضعیت نور:</span>
+          <span class="text-fg-muted">وضعیت نور:</span>
           <span class="font-medium">${a.light_status.name}</span>
         </div>` : ""}
       </div>
@@ -581,7 +581,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
 
   if (!NESHAN_API_KEY) {
     return (
-      <div className="flex items-center justify-center h-full w-full bg-gray-100 text-gray-500">
+      <div className="flex items-center justify-center h-full w-full bg-surface-sunken text-fg-muted">
         <p>Neshan API key is not configured. Set NEXT_PUBLIC_NESHAN_API_KEY in .env.local</p>
       </div>
     );
@@ -589,7 +589,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
 
   if (sdkError) {
     return (
-      <div className="flex items-center justify-center h-full w-full bg-gray-100 text-gray-500">
+      <div className="flex items-center justify-center h-full w-full bg-surface-sunken text-fg-muted">
         <p>Failed to load Neshan map: {sdkError}</p>
       </div>
     );
@@ -598,10 +598,10 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
   return (
     <div className="relative w-full h-full">
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
+        <div className="absolute inset-0 bg-surface bg-opacity-75 flex items-center justify-center z-[1000]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">در حال بارگیری نقشه...</p>
+            <p className="mt-2 text-fg-muted">در حال بارگیری نقشه...</p>
           </div>
         </div>
       )}
@@ -610,7 +610,7 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
         {accidents && accidents.length > 0 && (
           <button
             onClick={() => setLocalViewMode(localViewMode === "heatmap" ? "dots" : "heatmap")}
-            className="bg-white text-gray-800 px-5 py-2.5 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-medium text-sm"
+            className="bg-surface text-fg px-5 py-2.5 rounded-lg shadow-lg hover:bg-surface-hover transition-colors font-medium text-sm"
           >
             {localViewMode === "heatmap" ? "تغییر به نمایش نقاط" : "تغییر به نمایش حرارتی"}
           </button>
@@ -621,8 +621,8 @@ const NeshanMapContainer: React.FC<NeshanMapContainerProps> = ({
             onClick={() => setDrawingEnabled(!drawingEnabled)}
             className={`px-5 py-2.5 rounded-lg shadow-lg transition-colors font-medium text-sm ${
               drawingEnabled
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-white text-gray-800 hover:bg-gray-100"
+                ? "bg-brand text-on-brand hover:bg-brand-hover"
+                : "bg-surface text-fg hover:bg-surface-hover"
             }`}
           >
             {drawingEnabled ? "لغو رسم چندضلعی" : "رسم چندضلعی"}

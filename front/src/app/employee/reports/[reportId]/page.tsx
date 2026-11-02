@@ -42,7 +42,7 @@ export default function EmployeeReportDetailPage() {
       {() => {
         if (!allowed) {
           return (
-            <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-8 text-center text-sm leading-6 text-amber-100">
+            <div className="tint-amber rounded-2xl border border-tint-border bg-tint-soft p-8 text-center text-sm leading-6 text-tint-fg">
               این بخش فقط برای کاربران با نقش «مأمور گشت» در دسترس است.
             </div>
           );
@@ -58,7 +58,7 @@ export default function EmployeeReportDetailPage() {
             <div className="mb-3">
               <Link
                 href={employeeRoutes.reports()}
-                className="text-xs text-blue-300 hover:text-cyan-200"
+                className="text-xs text-brand-fg hover:underline"
               >
                 → بازگشت به رخدادهای من
               </Link>

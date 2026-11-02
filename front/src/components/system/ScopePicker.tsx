@@ -84,7 +84,7 @@ export function ScopePicker({
     const sub = scopeKind === "unit" && unitName && orgName ? orgName : undefined;
     return (
       <span
-        className="hidden rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs text-slate-300 sm:inline-flex sm:items-center sm:gap-2"
+        className="hidden rounded-full border border-line bg-surface-sunken px-3 py-1.5 text-xs text-fg-muted sm:inline-flex sm:items-center sm:gap-2"
         title={sub}
       >
         {label}
@@ -98,7 +98,7 @@ export function ScopePicker({
         aria-label="انتخاب سازمان"
         value={orgId || ""}
         onChange={(event) => selectOrg(event.target.value)}
-        className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-slate-200 outline-none transition focus:border-blue-400/40"
+        className="rounded-xl border border-line bg-surface px-3 py-2 text-xs text-fg outline-none transition focus:border-blue-400/40"
       >
         <option value="">انتخاب سازمان…</option>
         {orgs.map((org) => (
@@ -114,7 +114,7 @@ export function ScopePicker({
           value={unitId || ""}
           disabled={loadingUnits}
           onChange={(event) => selectUnit(event.target.value)}
-          className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-slate-200 outline-none transition focus:border-blue-400/40 disabled:opacity-50"
+          className="rounded-xl border border-line bg-surface px-3 py-2 text-xs text-fg outline-none transition focus:border-blue-400/40 disabled:opacity-50"
         >
           <option value="">{loadingUnits ? "در حال بارگذاری…" : "انتخاب واحد…"}</option>
           {units.map((unit) => (

@@ -53,7 +53,7 @@ export function ExpandableReportMap({
 
   if (!location && !gps) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-white/10 text-sm text-slate-500">
+      <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-line text-sm text-fg-faint">
         مختصات مکانی ثبت نشده است.
       </div>
     );
@@ -80,7 +80,7 @@ export function ExpandableReportMap({
           onClick={() => setOpen(true)}
           aria-label="نمایش نقشه بزرگ"
           title="نمایش نقشه بزرگ"
-          className="absolute left-2 top-2 z-[1100] rounded-lg border border-white/15 bg-slate-900/85 p-1.5 text-slate-200 backdrop-blur transition hover:border-blue-400/50 hover:text-white"
+          className="absolute left-2 top-2 z-[1100] rounded-lg border border-line-strong bg-surface/85 p-1.5 text-fg backdrop-blur transition hover:border-blue-400/50 hover:text-fg"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path
@@ -158,19 +158,19 @@ function MapModal({
           A definite height gives the chain something to resolve against: overlay
           (`fixed inset-0`) → panel (`h-full`) → wrapper (`flex-1`) → map (`h-full`). */}
       <div
-        className="flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900"
+        className="flex h-full w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-line bg-surface"
         onClick={(event) => event.stopPropagation()}
       >
         {/* `shrink-0` so the chrome keeps its height and the map absorbs the remainder,
             rather than the map being squeezed to nothing on a short window. */}
-        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-          <h2 className="text-sm font-semibold text-white">موقعیت رخداد</h2>
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-3">
+          <h2 className="text-sm font-semibold text-fg">موقعیت رخداد</h2>
           <div className="flex items-center gap-2">
             <BasemapSelector variant="dark" />
             <button
               type="button"
               onClick={() => setFitKey((key) => key + 1)}
-              className="rounded-lg border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white"
+              className="rounded-lg border border-line bg-surface-sunken px-3 py-1.5 text-xs text-fg-muted transition hover:bg-surface-hover hover:text-fg"
             >
               نمایش هر دو نقطه
             </button>
@@ -178,7 +178,7 @@ function MapModal({
               type="button"
               onClick={onClose}
               aria-label="بستن"
-              className="rounded-lg border border-white/10 p-1.5 text-slate-400 transition hover:bg-white/10 hover:text-white"
+              className="rounded-lg border border-line p-1.5 text-fg-muted transition hover:bg-surface-hover hover:text-fg"
             >
               <PanelIcon name="close" className="h-4 w-4" />
             </button>
@@ -201,20 +201,20 @@ function MapModal({
           />
         </div>
 
-        <footer className="grid shrink-0 grid-cols-1 gap-2 border-t border-white/10 px-4 py-3 text-xs sm:grid-cols-3">
+        <footer className="grid shrink-0 grid-cols-1 gap-2 border-t border-line px-4 py-3 text-xs sm:grid-cols-3">
           <Coordinate label="محل حادثه" point={location} />
           <Coordinate label="GPS مأمور" point={gps} />
           <div className="flex items-center justify-between gap-2 sm:justify-start sm:gap-4">
-            <span className="text-slate-500">فاصلهٔ دو نقطه</span>
-            <span className="text-slate-200">
+            <span className="text-fg-faint">فاصلهٔ دو نقطه</span>
+            <span className="text-fg">
               {separation ??
                 (gps ? "محل حادثه ثبت نشده" : "موقعیت GPS ثبت نشده")}
             </span>
           </div>
           {gpsAccuracy != null && (
             <div className="flex items-center justify-between gap-2 sm:justify-start sm:gap-4">
-              <span className="text-slate-500">دقت GPS</span>
-              <span className="text-slate-200">
+              <span className="text-fg-faint">دقت GPS</span>
+              <span className="text-fg">
                 {gpsAccuracy.toLocaleString("fa-IR")} متر
               </span>
             </div>
@@ -229,8 +229,8 @@ function MapModal({
 function Coordinate({ label, point }: { label: string; point?: GeoPoint }) {
   return (
     <div className="flex items-center justify-between gap-2 sm:justify-start sm:gap-4">
-      <span className="text-slate-500">{label}</span>
-      <span className="text-slate-200" dir={point ? "ltr" : undefined}>
+      <span className="text-fg-faint">{label}</span>
+      <span className="text-fg" dir={point ? "ltr" : undefined}>
         {formatPoint(point) ?? "ثبت نشده"}
       </span>
     </div>
@@ -244,7 +244,7 @@ function Coordinate({ label, point }: { label: string; point?: GeoPoint }) {
  */
 function Legend({ hasGps }: { hasGps: boolean }) {
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-3 text-[10px] text-slate-500">
+    <div className="mt-2 flex flex-wrap items-center gap-3 text-[10px] text-fg-faint">
       <span>
         <span className="text-rose-400">●</span> محل حادثه
       </span>
@@ -254,7 +254,7 @@ function Legend({ hasGps }: { hasGps: boolean }) {
         </span>
       )}
       {hasGps && (
-        <span className="text-slate-600">— فاصلهٔ دو نقطه، دقت موقعیت را نشان می‌دهد</span>
+        <span className="text-fg-faint">— فاصلهٔ دو نقطه، دقت موقعیت را نشان می‌دهد</span>
       )}
     </div>
   );

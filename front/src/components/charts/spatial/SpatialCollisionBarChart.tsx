@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -21,6 +22,7 @@ interface SpatialCollisionBarChartProps {
   onToggle?: (index: number) => void;
 }
 
+/** Categorical identity colours — literal on purpose, same in both themes. */
 const COLORS = [
   "#3B82F6",
   "#10B981",
@@ -39,6 +41,7 @@ const sortData = (
   series: Array<{ name: string; data: number[] }>,
   visible: Set<number>,
 ) => {
+
   const totals = categories.map((_, ci) => {
     let t = 0;
     for (let si = 0; si < series.length; si++) if (visible.has(si)) t += series[si].data[ci];
@@ -60,6 +63,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   hidden: externalHidden,
   onToggle,
 }) => {
+  const chartTheme = useChartTheme();
   const [internalHidden, setInternalHidden] = useState<Set<number>>(new Set());
   const effectiveHidden = externalHidden ?? internalHidden;
 
@@ -92,15 +96,15 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <div className="h-6 bg-gray-200 rounded w-64 animate-pulse"></div>
-          <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+          <div className="h-6 bg-surface-sunken rounded w-64 animate-pulse"></div>
+          <div className="h-4 bg-surface-sunken rounded w-32 animate-pulse"></div>
         </div>
-        <div className="h-96 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
+        <div className="h-96 bg-surface-sunken rounded-lg animate-pulse flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-            <p className="text-sm text-gray-500">در حال بارگذاری...</p>
+            <p className="text-sm text-fg-muted">در حال بارگذاری...</p>
           </div>
         </div>
       </div>
@@ -110,16 +114,16 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   // No data state
   if (!displayData || !displayData.categories || displayData.categories.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-fg">
             شمار تصادفات به تفکیک نوع برخورد
           </h3>
         </div>
-        <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
+        <div className="h-96 bg-canvas rounded-lg flex items-center justify-center">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -131,10 +135,10 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-fg mb-2">
               داده‌ای موجود نیست
             </h3>
-            <p className="text-gray-600">
+            <p className="text-fg-muted">
               برای مشاهده نمودار، فیلترهای مناسب را انتخاب کنید
             </p>
           </div>
@@ -188,7 +192,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
             style: {
               fontSize: "12px",
               fontWeight: 600,
-              color: "#374151",
+              color: chartTheme.label,
             },
           },
         },
@@ -203,7 +207,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
         style: {
           fontSize: "12px",
           fontWeight: 500,
-          colors: "#6B7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -213,13 +217,13 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: 600,
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6B7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -238,7 +242,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       },
     },
     grid: {
-      borderColor: "#E5E7EB",
+      borderColor: chartTheme.grid,
       strokeDashArray: 3,
     },
     responsive: [
@@ -256,18 +260,18 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-fg">
             شمار تصادفات به تفکیک نوع برخورد
           </h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-fg-muted mt-1">
             توزیع انواع برخورد در مناطق مختلف شهر - هر رنگ یک نوع برخورد را نشان می‌دهد
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg
             className="w-4 h-4"
             fill="none"
@@ -296,8 +300,8 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
               onClick={() => handleToggle(i)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 select-none ${
                 vis
-                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
-                  : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                  ? "bg-surface-sunken text-fg hover:bg-surface-sunken hover:shadow-sm"
+                  : "bg-canvas text-fg-faint hover:bg-surface-hover"
               }`}
             >
               <span
@@ -314,7 +318,7 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
           );
         })}
       </div>
-      <p className="text-xs text-gray-500 text-center mb-4">
+      <p className="text-xs text-fg-muted text-center mb-4">
         درصد نقشه نسبت به مجموع انواع برخورد قابل مشاهده محاسبه می‌شود
       </p>
 
@@ -329,42 +333,42 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-line">
         <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600 mb-1">
+          <div className="text-2xl font-bold text-brand-fg mb-1">
             {displayData.categories.length}
           </div>
-          <div className="text-sm text-gray-600">مناطق بررسی شده</div>
+          <div className="text-sm text-fg-muted">مناطق بررسی شده</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-green-600 mb-1">
+          <div className="text-2xl font-bold text-success-fg mb-1">
             {displayData.series.length}
           </div>
-          <div className="text-sm text-gray-600">نوع برخورد</div>
+          <div className="text-sm text-fg-muted">نوع برخورد</div>
         </div>
         <div className="text-center">
           <div className="text-2xl font-bold text-orange-600 mb-1">
             {totalAccidents.reduce((sum, count) => sum + count, 0)}
           </div>
-          <div className="text-sm text-gray-600">کل تصادفات</div>
+          <div className="text-sm text-fg-muted">کل تصادفات</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-red-600 mb-1">
+          <div className="text-2xl font-bold text-danger-fg mb-1">
             {maxAccidents}
           </div>
-          <div className="text-sm text-gray-600">بیشترین تصادف ({topZone})</div>
+          <div className="text-sm text-fg-muted">بیشترین تصادف ({topZone})</div>
         </div>
       </div>
 
       {/* Chart Legend */}
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-2">راهنمای نمودار میله‌ای انباشته</h4>
-        <p className="text-sm text-gray-600 mb-2">
+      <div className="mt-4 p-4 bg-canvas rounded-lg">
+        <h4 className="font-medium text-fg mb-2">راهنمای نمودار میله‌ای انباشته</h4>
+        <p className="text-sm text-fg-muted mb-2">
           این نمودار میله‌ای انباشته، توزیع انواع برخورد در مناطق مختلف را نشان می‌دهد. هر میله نمایانگر یک منطقه است و رنگ‌های مختلف روی میله نشان‌دهنده انواع مختلف برخورد در آن منطقه هستند. عدد روی هر میله مجموع کل تصادفات آن منطقه است.
         </p>
-        <div className="flex flex-wrap gap-4 text-xs text-gray-600">
+        <div className="flex flex-wrap gap-4 text-xs text-fg-muted">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-blue-500 rounded"></div>
+            <div className="w-3 h-3 bg-brand rounded"></div>
             <span>هر رنگ نوع برخورد متفاوت را نشان می‌دهد</span>
           </div>
           <div className="flex items-center gap-1">
@@ -378,3 +382,5 @@ const SpatialCollisionBarChart: React.FC<SpatialCollisionBarChartProps> = ({
 };
 
 export default SpatialCollisionBarChart;
+
+

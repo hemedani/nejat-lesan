@@ -107,7 +107,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 
     return (
       <div className="space-y-2">
-        <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+        <h4 className="flex items-center gap-2 text-sm font-medium text-fg mb-2">
           {icon}
           <span>{title}</span>
         </h4>
@@ -136,12 +136,12 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 
     return (
       <div className="space-y-2">
-        <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700">
-          <CalendarIcon className="w-4 h-4 text-gray-500" />
+        <h4 className="flex items-center gap-2 text-sm font-medium text-fg">
+          <CalendarIcon className="w-4 h-4 text-fg-muted" />
           <span>📅 بازه زمانی</span>
         </h4>
         <div className="flex flex-wrap gap-1">
-          <span className="inline-block bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default">
+          <span className="inline-block tint-orange bg-tint-strong text-tint-fg text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default">
             {filters.dateOfAccidentFrom
               ? formatDate(filters.dateOfAccidentFrom)
               : "ابتدا"}{" "}
@@ -175,7 +175,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 
     return (
       <div className="space-y-2">
-        <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700">
+        <h4 className="flex items-center gap-2 text-sm font-medium text-fg">
           {icon}
           <span>{title}</span>
         </h4>
@@ -191,17 +191,17 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-sm mb-6 animate-in fade-in-50 duration-300">
+    <div className="tint-brand bg-tint-soft border border-brand-border rounded-xl p-6 shadow-sm mb-6 animate-in fade-in-50 duration-300">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-blue-200 hover:scale-110">
-          <FilterIcon className="w-4 h-4 text-blue-600" />
+        <div className="w-8 h-8 bg-brand-soft rounded-full flex items-center justify-center transition-all duration-200 hover:bg-tint-strong hover:scale-110">
+          <FilterIcon className="w-4 h-4 text-brand-fg" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 tracking-tight">
+        <h3 className="text-lg font-semibold text-fg tracking-tight">
           فیلترهای اعمال شده
         </h3>
         {/* GLOBAL FILTERS: Badge when global filters are active */}
         {showGlobalIndicator && hasGlobalFilters && (
-          <span className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-medium shadow-sm">
+          <span className="inline-flex items-center gap-1 tint-indigo bg-tint-strong text-tint-fg text-xs px-2.5 py-1 rounded-full font-medium shadow-sm">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
@@ -214,12 +214,12 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {/* Core Accident Details */}
         {filters.seri && (
           <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <FilterIcon className="w-4 h-4 text-blue-500" />
+            <h4 className="flex items-center gap-2 text-sm font-medium text-fg mb-2">
+              <FilterIcon className="w-4 h-4 tint-blue text-tint-fg" />
               <span>📄 سری</span>
             </h4>
             <div className="flex flex-wrap gap-1">
-              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-blue-100 text-blue-800">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-brand-soft text-brand-fg">
                 {filters.seri}
               </span>
             </div>
@@ -228,12 +228,12 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 
         {filters.serial && (
           <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <FilterIcon className="w-4 h-4 text-blue-500" />
+            <h4 className="flex items-center gap-2 text-sm font-medium text-fg mb-2">
+              <FilterIcon className="w-4 h-4 tint-blue text-tint-fg" />
               <span>🔢 سریال</span>
             </h4>
             <div className="flex flex-wrap gap-1">
-              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-blue-100 text-blue-800">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-brand-soft text-brand-fg">
                 {filters.serial}
               </span>
             </div>
@@ -242,12 +242,12 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 
         {filters.officer && (
           <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <UserIcon className="w-4 h-4 text-blue-500" />
+            <h4 className="flex items-center gap-2 text-sm font-medium text-fg mb-2">
+              <UserIcon className="w-4 h-4 tint-blue text-tint-fg" />
               <span>👮 افسر</span>
             </h4>
             <div className="flex flex-wrap gap-1">
-              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-blue-100 text-blue-800">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-brand-soft text-brand-fg">
                 {filters.officer}
               </span>
             </div>
@@ -257,23 +257,23 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {/* Geographic Filters */}
         {renderFilterSection(
           "📍 استان",
-          <MapPinIcon className="w-4 h-4 text-purple-500" />,
+          <MapPinIcon className="w-4 h-4 tint-purple text-tint-fg" />,
           filters.province,
-          "bg-purple-100 text-purple-800",
+          "tint-purple bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🏙️ شهر",
-          <HomeIcon className="w-4 h-4 text-indigo-500" />,
+          <HomeIcon className="w-4 h-4 tint-indigo text-tint-fg" />,
           filters.city,
-          "bg-indigo-100 text-indigo-800",
+          "tint-indigo bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🛣️ جاده",
-          <CogIcon className="w-4 h-4 text-slate-500" />,
+          <CogIcon className="w-4 h-4 text-fg-faint" />,
           filters.road,
-          "bg-slate-100 text-slate-800",
+          "bg-surface-sunken text-fg",
         )}
 
         {/* Date Range */}
@@ -282,231 +282,231 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         {/* Collision and Damage Filters */}
         {renderFilterSection(
           "🚗 نوع برخورد",
-          <CogIcon className="w-4 h-4 text-red-500" />,
+          <CogIcon className="w-4 h-4 tint-red text-tint-fg" />,
           filters.collisionType,
-          "bg-red-100 text-red-800",
+          "bg-danger-soft text-danger-fg",
         )}
 
         {renderFilterSection(
           "🔧 بخش‌های آسیب‌دیده",
-          <CogIcon className="w-4 h-4 text-yellow-500" />,
+          <CogIcon className="w-4 h-4 tint-yellow text-tint-fg" />,
           filters.vehicleMaxDamageSections,
-          "bg-yellow-100 text-yellow-800",
+          "tint-yellow bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "📋 نوع تصادف",
-          <FilterIcon className="w-4 h-4 text-emerald-500" />,
+          <FilterIcon className="w-4 h-4 tint-emerald text-tint-fg" />,
           filters.accidentType,
-          "bg-emerald-100 text-emerald-800",
+          "tint-emerald bg-tint-strong text-tint-fg",
         )}
 
         {/* Environmental Conditions */}
         {renderFilterSection(
           "💡 وضعیت نور",
-          <CogIcon className="w-4 h-4 text-amber-500" />,
+          <CogIcon className="w-4 h-4 tint-amber text-tint-fg" />,
           filters.lightStatus,
-          "bg-amber-100 text-amber-800",
+          "tint-warning bg-tint-soft text-tint-fg",
         )}
 
         {renderFilterSection(
           "🌤️ وضعیت هوا",
-          <CogIcon className="w-4 h-4 text-sky-500" />,
+          <CogIcon className="w-4 h-4 tint-sky text-tint-fg" />,
           filters.airStatuses,
-          "bg-sky-100 text-sky-800",
+          "tint-sky bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🏘️ کاربری منطقه",
-          <UsersIcon className="w-4 h-4 text-green-500" />,
+          <UsersIcon className="w-4 h-4 tint-green text-tint-fg" />,
           filters.areaUsages,
-          "bg-green-100 text-green-800",
+          "bg-success-soft text-success-fg",
         )}
 
         {renderFilterSection(
           "🛤️ وضعیت سطح جاده",
-          <CogIcon className="w-4 h-4 text-stone-500" />,
+          <CogIcon className="w-4 h-4 text-fg-faint" />,
           filters.roadSurfaceConditions,
-          "bg-stone-100 text-stone-800",
+          "bg-surface-sunken text-fg",
         )}
 
         {renderFilterSection(
           "🚧 نقص جاده",
-          <CogIcon className="w-4 h-4 text-gray-500" />,
+          <CogIcon className="w-4 h-4 text-fg-muted" />,
           filters.roadDefects,
-          "bg-gray-100 text-gray-800",
+          "bg-surface-sunken text-fg",
         )}
 
         {renderFilterSection(
           "🛣️ وضعیت جاده",
-          <CogIcon className="w-4 h-4 text-gray-600" />,
+          <CogIcon className="w-4 h-4 text-fg-muted" />,
           filters.roadSituation,
-          "bg-gray-50 text-gray-700",
+          "bg-canvas text-fg",
         )}
 
         {/* Reason-based Filters */}
         {renderFilterSection(
           "🧠 عوامل انسانی",
-          <FilterIcon className="w-4 h-4 text-pink-500" />,
+          <FilterIcon className="w-4 h-4 tint-pink text-tint-fg" />,
           filters.humanReasons,
-          "bg-pink-100 text-pink-800",
+          "tint-pink bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🔧 عوامل وسیله نقلیه",
-          <CogIcon className="w-4 h-4 text-orange-500" />,
+          <CogIcon className="w-4 h-4 tint-orange text-tint-fg" />,
           filters.vehicleReasons,
-          "bg-orange-100 text-orange-800",
+          "tint-orange bg-tint-strong text-tint-fg",
         )}
 
         {/* Vehicle Filters */}
         {renderFilterSection(
           "🚗 سیستم وسیله نقلیه",
-          <CarIcon className="w-4 h-4 text-teal-500" />,
+          <CarIcon className="w-4 h-4 tint-teal text-tint-fg" />,
           filters.vehicleSystem,
-          "bg-teal-100 text-teal-800",
+          "tint-teal bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "⚠️ وضعیت خرابی وسیله",
-          <CarIcon className="w-4 h-4 text-red-600" />,
+          <CarIcon className="w-4 h-4 text-danger-fg" />,
           filters.vehicleFaultStatus,
-          "bg-red-50 text-red-700",
+          "bg-danger-soft text-danger-fg",
         )}
 
         {renderFilterSection(
           "🎨 رنگ وسیله نقلیه",
-          <CarIcon className="w-4 h-4 text-violet-500" />,
+          <CarIcon className="w-4 h-4 tint-violet text-tint-fg" />,
           filters.vehicleColor,
-          "bg-violet-100 text-violet-800",
+          "tint-violet bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🛡️ شرکت بیمه",
-          <ShieldIcon className="w-4 h-4 text-cyan-500" />,
+          <ShieldIcon className="w-4 h-4 tint-cyan text-tint-fg" />,
           filters.vehicleInsuranceCo,
-          "bg-cyan-100 text-cyan-800",
+          "tint-cyan bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🛡️ بیمه بدنه",
-          <ShieldIcon className="w-4 h-4 text-cyan-600" />,
+          <ShieldIcon className="w-4 h-4 tint-cyan text-tint-fg" />,
           filters.vehicleBodyInsuranceCo,
-          "bg-cyan-50 text-cyan-700",
+          "tint-cyan bg-tint-soft text-tint-fg",
         )}
 
         {renderFilterSection(
           "🔢 نوع پلاک",
-          <FilterIcon className="w-4 h-4 text-slate-500" />,
+          <FilterIcon className="w-4 h-4 text-fg-faint" />,
           filters.vehiclePlaqueType,
-          "bg-slate-100 text-slate-800",
+          "bg-surface-sunken text-fg",
         )}
 
         {renderFilterSection(
           "🚗 کاربری پلاک",
-          <FilterIcon className="w-4 h-4 text-slate-600" />,
+          <FilterIcon className="w-4 h-4 text-fg-faint" />,
           filters.vehiclePlaqueUsage,
-          "bg-slate-50 text-slate-700",
+          "bg-canvas text-fg-muted",
         )}
 
         {renderFilterSection(
           "➡️ جهت حرکت",
-          <CarIcon className="w-4 h-4 text-emerald-500" />,
+          <CarIcon className="w-4 h-4 tint-emerald text-tint-fg" />,
           filters.vehicleMotionDirection,
-          "bg-emerald-100 text-emerald-800",
+          "tint-emerald bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🔧 آسیب تجهیزات",
-          <CarIcon className="w-4 h-4 text-yellow-600" />,
+          <CarIcon className="w-4 h-4 tint-yellow text-tint-fg" />,
           filters.equipmentDamages,
-          "bg-yellow-50 text-yellow-700",
+          "tint-yellow bg-tint-soft text-tint-fg",
         )}
 
         {renderFilterSection(
           "🛠️ نوع تعمیر جاده",
-          <RoadIcon className="w-4 h-4 text-amber-600" />,
+          <RoadIcon className="w-4 h-4 text-warning-fg" />,
           filters.roadRepairType,
-          "bg-amber-50 text-amber-700",
+          "bg-warning-soft text-warning-fg",
         )}
 
         {/* Driver Filters */}
         {renderFilterSection(
           "👤 جنسیت راننده",
-          <UserIcon className="w-4 h-4 text-purple-500" />,
+          <UserIcon className="w-4 h-4 tint-purple text-tint-fg" />,
           filters.driverSex,
-          "bg-purple-100 text-purple-800",
+          "tint-purple bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "📜 نوع گواهینامه راننده",
-          <FilterIcon className="w-4 h-4 text-indigo-600" />,
+          <FilterIcon className="w-4 h-4 tint-indigo text-tint-fg" />,
           filters.driverLicenceType,
-          "bg-indigo-50 text-indigo-700",
+          "tint-indigo bg-tint-soft text-tint-fg",
         )}
 
         {renderFilterSection(
           "🏥 نوع مصدومیت راننده",
-          <UserIcon className="w-4 h-4 text-rose-500" />,
+          <UserIcon className="w-4 h-4 tint-rose text-tint-fg" />,
           filters.driverInjuryType,
-          "bg-rose-100 text-rose-800",
+          "tint-rose bg-tint-strong text-tint-fg",
         )}
 
         {/* Road Infrastructure */}
         {renderFilterSection(
           "🛤️ وضعیت شانه",
-          <RoadIcon className="w-4 h-4 text-slate-600" />,
+          <RoadIcon className="w-4 h-4 text-fg-faint" />,
           filters.shoulderStatus,
-          "bg-slate-50 text-slate-700",
+          "bg-canvas text-fg-muted",
         )}
 
         {renderFilterSection(
           "🚦 منطقه ترافیکی",
-          <FilterIcon className="w-4 h-4 text-red-500" />,
+          <FilterIcon className="w-4 h-4 tint-red text-tint-fg" />,
           filters.trafficZone,
-          "bg-red-100 text-red-800",
+          "bg-danger-soft text-danger-fg",
         )}
 
         {renderFilterSection(
           "🏙️ منطقه شهری",
-          <HomeIcon className="w-4 h-4 text-indigo-500" />,
+          <HomeIcon className="w-4 h-4 tint-indigo text-tint-fg" />,
           filters.cityZone,
-          "bg-indigo-100 text-indigo-800",
+          "tint-indigo bg-tint-strong text-tint-fg",
         )}
 
         {renderFilterSection(
           "🌫️ منطقه آلودگی هوا",
-          <HomeIcon className="w-4 h-4 text-sky-500" />,
+          <HomeIcon className="w-4 h-4 tint-sky text-tint-fg" />,
           filters.airPollutionZone,
-          "bg-sky-100 text-sky-800",
+          "tint-sky bg-tint-strong text-tint-fg",
         )}
 
         {/* Casualty Count Ranges */}
         {renderCountRange(
           "☠️ تعداد فوتی",
-          <SkullIcon className="w-4 h-4 text-black" />,
+          <SkullIcon className="w-4 h-4 text-fg" />,
           filters.deadCountMin,
           filters.deadCountMax,
-          "bg-black text-white",
+          "bg-fg text-canvas",
         )}
 
         {renderCountRange(
           "🚑 تعداد مصدوم",
-          <AmbulanceIcon className="w-4 h-4 text-rose-500" />,
+          <AmbulanceIcon className="w-4 h-4 tint-rose text-tint-fg" />,
           filters.injuredCountMin,
           filters.injuredCountMax,
-          "bg-rose-100 text-rose-800",
+          "tint-rose bg-tint-strong text-tint-fg",
         )}
 
         {/* Pagination Controls */}
         {filters.limit !== undefined && (
           <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <FilterIcon className="w-4 h-4 text-indigo-500" />
+            <h4 className="flex items-center gap-2 text-sm font-medium text-fg mb-2">
+              <FilterIcon className="w-4 h-4 tint-indigo text-tint-fg" />
               <span>📊 تعداد نتایج</span>
             </h4>
             <div className="flex flex-wrap gap-1">
-              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-indigo-100 text-indigo-800">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default tint-indigo bg-tint-strong text-tint-fg">
                 {filters.limit}
               </span>
             </div>
@@ -515,12 +515,12 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
 
         {filters.skip !== undefined && (
           <div className="space-y-2">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <FilterIcon className="w-4 h-4 text-cyan-500" />
+            <h4 className="flex items-center gap-2 text-sm font-medium text-fg mb-2">
+              <FilterIcon className="w-4 h-4 tint-cyan text-tint-fg" />
               <span>⏭️ رد کردن نتایج</span>
             </h4>
             <div className="flex flex-wrap gap-1">
-              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default bg-cyan-100 text-cyan-800">
+              <span className="inline-block text-xs px-3 py-1 rounded-full font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm cursor-default tint-cyan bg-tint-strong text-tint-fg">
                 {filters.skip}
               </span>
             </div>
@@ -529,10 +529,10 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
       </div>
 
       {/* Summary Stats */}
-      <div className="mt-6 pt-4 border-t border-blue-200">
-        <div className="flex items-center justify-between text-sm text-gray-600">
+      <div className="mt-6 pt-4 border-t border-brand-border">
+        <div className="flex items-center justify-between text-sm text-fg-muted">
           <span className="font-medium">تعداد فیلترهای فعال:</span>
-          <span className="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-full transition-all duration-200 hover:bg-blue-100">
+          <span className="font-bold text-brand-fg bg-brand-soft px-2 py-1 rounded-full transition-all duration-200 hover:bg-brand-soft">
             {
               Object.entries(filters).filter(([, value]) => {
                 if (value === undefined || value === null) return false;

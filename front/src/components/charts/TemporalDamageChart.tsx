@@ -2,6 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 // ApexCharts types will be inferred
 
 // Dynamically import ApexCharts to avoid SSR issues
@@ -26,13 +27,14 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
   data,
   isLoading,
 }) => {
+  const chartTheme = useChartTheme();
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -41,13 +43,13 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
   // Empty data state
   if (!data || !data.series || data.series.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           مقایسه زمانی صدمات و نوع برخورد
         </h3>
-        <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+        <div className="flex flex-col items-center justify-center h-64 text-fg-muted">
           <svg
-            className="w-16 h-16 mb-4 text-gray-300"
+            className="w-16 h-16 mb-4 text-fg-faint"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -100,7 +102,7 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
       style: {
         fontSize: "18px",
         fontWeight: "bold",
-        color: "#1f2937",
+        color: chartTheme.fg,
       },
     },
     xaxis: {
@@ -110,13 +112,13 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: "bold",
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6b7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -126,13 +128,13 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: "bold",
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6b7280",
+          colors: chartTheme.label,
         },
         formatter: (value: number) => {
           return `${value.toFixed(1)}%`;
@@ -151,10 +153,10 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
         size: 8,
       },
     },
-    colors: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"],
+    colors: chartTheme.colors,
     grid: {
       show: true,
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       strokeDashArray: 5,
     },
     legend: {
@@ -164,7 +166,7 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
       fontSize: "14px",
       fontWeight: "normal",
       labels: {
-        colors: "#374151",
+        colors: chartTheme.label,
       },
     },
     tooltip: {
@@ -204,14 +206,14 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-fg">
               مقایسه زمانی صدمات و نوع برخورد
             </h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-fg-muted mt-1">
               درصد سهم صدمات انتخابی از کل تصادفات در بازه‌های زمانی مختلف
             </p>
           </div>
@@ -238,11 +240,11 @@ const TemporalDamageChart: React.FC<TemporalDamageChartProps> = ({
             const min = Math.min(...seriesData);
 
             return (
-              <div key={index} className="bg-gray-50 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-700 mb-2 truncate">
+              <div key={index} className="bg-canvas rounded-lg p-3">
+                <h4 className="text-sm font-medium text-fg mb-2 truncate">
                   {series.name}
                 </h4>
-                <div className="space-y-1 text-xs text-gray-600">
+                <div className="space-y-1 text-xs text-fg-muted">
                   <div className="flex justify-between">
                     <span>میانگین:</span>
                     <span className="font-medium">{average.toFixed(1)}%</span>

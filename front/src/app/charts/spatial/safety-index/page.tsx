@@ -26,10 +26,10 @@ const SpatialSafetyIndexAnalyticsPage = () => {
   const SpatialSafetyMap = dynamic(() => import("@/components/charts/spatial/SpatialSafetyMap"), {
     ssr: false,
     loading: () => (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-96 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-96 bg-surface-sunken rounded"></div>
         </div>
       </div>
     ),
@@ -404,7 +404,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="spatial" currentChart="safety-index" />
 
@@ -431,14 +431,14 @@ const SpatialSafetyIndexAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">مقایسه مکانی شاخص ناحیه‌ای ایمنی</h1>
-                <p className="text-sm text-gray-600 mt-1">تحلیل و مقایسه شاخص ایمنی در مناطق مختلف</p>
+                <h1 className="text-2xl font-bold text-fg">مقایسه مکانی شاخص ناحیه‌ای ایمنی</h1>
+                <p className="text-sm text-fg-muted mt-1">تحلیل و مقایسه شاخص ایمنی در مناطق مختلف</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -454,7 +454,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                 </button>
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -472,8 +472,8 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
           {/* GroupBy Selector */}
           <div className="mb-6">
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">سطح تحلیل مکانی</h3>
+            <div className="bg-surface rounded-lg shadow-sm p-4">
+              <h3 className="text-sm font-medium text-fg mb-3">سطح تحلیل مکانی</h3>
               <div className="flex gap-2">
                 {[
                   { value: "province", label: "استان" },
@@ -485,8 +485,8 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                     onClick={() => setGroupBy(option.value as GroupByType)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       groupBy === option.value
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        ? "bg-brand text-on-brand"
+                        : "bg-surface-sunken text-fg hover:bg-surface-sunken"
                     }`}
                   >
                     {option.label}
@@ -501,18 +501,18 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
           {/* Error State */}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-red-800 font-medium">خطا در دریافت داده‌ها</span>
+                <span className="text-danger-fg font-medium">خطا در دریافت داده‌ها</span>
               </div>
-              <p className="text-red-700 mt-2">{error}</p>
+              <p className="text-danger-fg mt-2">{error}</p>
             </div>
           )}
 
@@ -530,10 +530,10 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                 groupBy={groupBy}
               />
             ) : (
-              <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="bg-surface rounded-lg shadow-sm p-6">
                 <div className="animate-pulse">
-                  <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-                  <div className="h-96 bg-gray-200 rounded"></div>
+                  <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+                  <div className="h-96 bg-surface-sunken rounded"></div>
                 </div>
               </div>
             )}
@@ -541,13 +541,13 @@ const SpatialSafetyIndexAnalyticsPage = () => {
 
           {/* Insights Section */}
           {analyticsData && !isLoading && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های کلیدی</h3>
+            <div className="mt-6 bg-surface rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-fg mb-4">بینش‌های کلیدی</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-brand-soft rounded-lg">
+                  <div className="w-12 h-12 bg-brand-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-blue-600"
+                      className="w-6 h-6 text-brand-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -560,15 +560,15 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">
+                  <h4 className="font-medium text-fg mb-1">
                     کل {getGroupByDisplayName(groupBy)} بررسی شده
                   </h4>
-                  <p className="text-2xl font-bold text-blue-600">{analyticsData.length}</p>
+                  <p className="text-2xl font-bold text-brand-fg">{analyticsData.length}</p>
                 </div>
-                <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-danger-soft rounded-lg">
+                  <div className="w-12 h-12 bg-danger-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-red-600"
+                      className="w-6 h-6 text-danger-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -581,17 +581,17 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">بالاترین نرخ متوفیان</h4>
-                  <p className="text-2xl font-bold text-red-600">
+                  <h4 className="font-medium text-fg mb-1">بالاترین نرخ متوفیان</h4>
+                  <p className="text-2xl font-bold text-danger-fg">
                     {analyticsData.length > 0
                       ? Math.max(...analyticsData.map((d) => d.barChartMetric)).toFixed(2)
                       : "0"}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-success-soft rounded-lg">
+                  <div className="w-12 h-12 bg-success-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-green-600"
+                      className="w-6 h-6 text-success-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -604,8 +604,8 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">بالاترین شاخص ایمنی</h4>
-                  <p className="text-2xl font-bold text-green-600">
+                  <h4 className="font-medium text-fg mb-1">بالاترین شاخص ایمنی</h4>
+                  <p className="text-2xl font-bold text-success-fg">
                     {analyticsData.length > 0
                       ? Math.max(...analyticsData.map((d) => d.mapChartMetric)).toFixed(2)
                       : "0"}
@@ -614,10 +614,10 @@ const SpatialSafetyIndexAnalyticsPage = () => {
               </div>
 
               {/* Additional insights */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="bg-blue-50 rounded-lg p-4">
+              <div className="mt-6 pt-4 border-t border-line">
+                <div className="bg-brand-soft rounded-lg p-4">
                   <h4 className="font-medium text-blue-900 mb-2">📊 تحلیل شاخص ایمنی منطقه‌ای</h4>
-                  <p className="text-sm text-blue-800 mb-3">
+                  <p className="text-sm text-brand-fg mb-3">
                     این داشبورد شاخص ایمنی را در سطح {getGroupByDisplayName(groupBy)} نشان می‌دهد.
                     نمودار ستونی نسبت متوفیان به جمعیت و نقشه شاخص ایمنی کلی را نمایش می‌دهد. مناطق با
                     شاخص ایمنی پایین نیاز به توجه بیشتری دارند.
@@ -628,7 +628,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       <h5 className="font-medium text-blue-900 mb-2">
                         📈 نحوه تحلیل نمودار ستونی (متوفیان به جمعیت):
                       </h5>
-                      <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                      <ul className="text-sm text-brand-fg space-y-1 list-disc list-inside">
                         <li>
                           هر ستون نشان‌دهنده نسبت تعداد متوفیان تصادفات به جمعیت آن منطقه در هر ۱۰۰
                           هزار نفر است
@@ -654,7 +654,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       <h5 className="font-medium text-blue-900 mb-2">
                         🗺️ نحوه تحلیل نقشه حرارتی (شاخص ایمنی کلی):
                       </h5>
-                      <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                      <ul className="text-sm text-brand-fg space-y-1 list-disc list-inside">
                         <li>
                           هر منطقه بر اساس نسبت کل تلفات (متوفیان + مجروحان) به جمعیت در هر ۱۰۰ هزار
                           نفر رنگ‌بندی شده است
@@ -676,7 +676,7 @@ const SpatialSafetyIndexAnalyticsPage = () => {
                       <h5 className="font-medium text-blue-900 mb-2">
                         💡 نکات کلیدی برای تصمیم‌گیری:
                       </h5>
-                      <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                      <ul className="text-sm text-brand-fg space-y-1 list-disc list-inside">
                         <li>
                           مناطقی که در هر دو نمودار وضعیت بدی دارند (ستون بلند + رنگ قرمز تیره) اولویت
                           اصلی هستند

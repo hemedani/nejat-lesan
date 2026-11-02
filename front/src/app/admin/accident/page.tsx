@@ -38,24 +38,24 @@ export default async function AccidentDashboardPage({
   });
 
   return (
-    <div className="relative min-h-full bg-gray-50 p-6">
+    <div className="relative min-h-full bg-canvas p-6">
       {/* Dashboard Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
             <div className="bg-red-500 w-2 h-12 mr-4 rounded-full"></div>
             <div>
-              <h1 className="text-3xl md:text-4xl text-gray-800 font-bold">
+              <h1 className="text-3xl md:text-4xl text-fg font-bold">
                 {translateModelNameToPersian("accident")}
               </h1>
-              <p className="text-gray-500 mt-1">
+              <p className="text-fg-muted mt-1">
                 سیستم مدیریت و تحلیل {translateModelNameToPersian("accident")}
               </p>
             </div>
           </div>
           <Link
             href="/admin/accident/create"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="bg-brand hover:bg-brand-hover text-on-brand px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,11 +89,11 @@ export default async function AccidentDashboardPage({
       </Suspense>
 
       {/* Search Filters */}
-      <div className="bg-white p-5 rounded-lg shadow-sm mb-8 hover:shadow-md transition-all duration-300 ease-in-out border border-gray-100">
+      <div className="bg-surface p-5 rounded-lg shadow-sm mb-8 hover:shadow-md transition-all duration-300 ease-in-out border border-line">
         <div className="flex items-center mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-blue-600 ml-2"
+            className="h-5 w-5 text-brand-fg ml-2"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -103,7 +103,7 @@ export default async function AccidentDashboardPage({
               clipRule="evenodd"
             />
           </svg>
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-lg font-semibold text-fg">
             جستجوی پیشرفته
           </h2>
         </div>

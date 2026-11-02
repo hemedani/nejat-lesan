@@ -97,7 +97,7 @@ export function OrgIncidentDetailView({
   return (
     <div>
       <div className="mb-3">
-        <Link href={backHref} className="text-xs text-blue-300 hover:text-cyan-200">
+        <Link href={backHref} className="text-xs text-brand-fg hover:underline">
           → بازگشت به گزارش‌های رخداد
         </Link>
       </div>

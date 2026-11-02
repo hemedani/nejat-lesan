@@ -7,26 +7,26 @@ export const AnalyticsShowcase = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="py-24 min-h-[calc(100vh-64px)] flex flex-col justify-center bg-slate-950 relative overflow-hidden">
+    <section className="py-24 min-h-[calc(100vh-64px)] flex flex-col justify-center bg-canvas relative overflow-hidden">
       {/* Modal */}
       <AllChartsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] -translate-x-1/2"></div>
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-brand/10 rounded-full blur-[100px] -translate-x-1/2"></div>
         <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] bg-cyan-500/10 rounded-full blur-[120px] translate-x-1/3 translate-y-1/3"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 animate-slide-up">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold text-fg mb-6 leading-tight">
             تصمیم‌گیری مبتنی بر داده برای{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
               ارتقای ایمنی ترافیک
             </span>
           </h2>
-          <p className="text-lg text-slate-300 leading-relaxed">
+          <p className="text-lg text-fg-muted leading-relaxed">
             سامانه مرصاد با ارائه داشبوردهای تحلیلی پیشرفته، امکان بررسی دقیق الگوهای تصادفات را در
             ابعاد مختلف فراهم می‌کند تا مدیران بتوانند با دیدی روشن‌تر برای ایمن‌سازی راه‌ها اقدام
             کنند.
@@ -36,11 +36,11 @@ export const AnalyticsShowcase = () => {
         {/* Analytics Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Card 1: Temporal Analytics */}
-          <div className="group relative p-8 rounded-3xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-[50px] -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/30 transition-colors duration-500"></div>
+          <div className="group relative p-8 rounded-3xl bg-surface-hover hover:bg-surface-hover backdrop-blur-md border border-line hover:border-line-strong transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand/20 rounded-full blur-[50px] -translate-y-1/2 translate-x-1/2 group-hover:bg-brand/30 transition-colors duration-500"></div>
 
             <div className="mb-6 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center mb-4 text-blue-400">
+              <div className="w-12 h-12 rounded-xl bg-brand/20 border border-blue-500/30 flex items-center justify-center mb-4 text-blue-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -56,8 +56,8 @@ export const AnalyticsShowcase = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">روند زمانی تصادفات</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-xl font-bold text-fg mb-2">روند زمانی تصادفات</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">
                 بررسی الگوهای وقوع تصادفات در ساعات، روزها و ماه‌های مختلف سال برای تخصیص بهینه‌تر
                 منابع و نیروهای امدادی.
               </p>
@@ -65,7 +65,7 @@ export const AnalyticsShowcase = () => {
 
             {/* Mock Chart: Bar/Line Chart */}
             <div className="mt-auto pt-6 relative z-10">
-              <div className="h-32 w-full flex items-end justify-between gap-2 border-b border-slate-700/50 pb-2 relative">
+              <div className="h-32 w-full flex items-end justify-between gap-2 border-b border-line/50 pb-2 relative">
                 {/* Line overlay */}
                 <svg
                   className="absolute inset-0 w-full h-full"
@@ -84,16 +84,16 @@ export const AnalyticsShowcase = () => {
                 {[40, 60, 45, 80, 65, 90, 55].map((height, i) => (
                   <div
                     key={i}
-                    className="w-full bg-blue-500/20 hover:bg-blue-500/40 transition-colors rounded-t-sm relative group/bar"
+                    className="w-full bg-brand/20 hover:bg-brand-hover/40 transition-colors rounded-t-sm relative group/bar"
                     style={{ height: `${height}%` }}
                   >
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-xs text-white px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none">
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-sunken text-xs text-fg px-2 py-1 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity pointer-events-none">
                       {height * 12}
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="flex justify-between mt-2 text-[10px] text-slate-500">
+              <div className="flex justify-between mt-2 text-[10px] text-fg-faint">
                 <span>شنبه</span>
                 <span>دوشنبه</span>
                 <span>چهارشنبه</span>
@@ -103,7 +103,7 @@ export const AnalyticsShowcase = () => {
           </div>
 
           {/* Card 2: Spatial Analytics */}
-          <div className="group relative p-8 rounded-3xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
+          <div className="group relative p-8 rounded-3xl bg-surface-hover hover:bg-surface-hover backdrop-blur-md border border-line hover:border-line-strong transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-[50px] -translate-y-1/2 translate-x-1/2 group-hover:bg-purple-500/30 transition-colors duration-500"></div>
 
             <div className="mb-6 relative z-10">
@@ -123,8 +123,8 @@ export const AnalyticsShowcase = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">نقشه‌های حرارتی و مکانی</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-xl font-bold text-fg mb-2">نقشه‌های حرارتی و مکانی</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">
                 شناسایی نقاط حادثه‌خیز و تحلیل پراکندگی جغرافیایی تصادفات در سطح معابر شهری و محورهای
                 مواصلاتی.
               </p>
@@ -132,7 +132,7 @@ export const AnalyticsShowcase = () => {
 
             {/* Mock Chart: Heatmap/Spatial */}
             <div className="mt-auto pt-6 relative z-10">
-              <div className="h-32 w-full bg-slate-900/50 rounded-xl border border-slate-700/50 relative overflow-hidden">
+              <div className="h-32 w-full bg-surface/50 rounded-xl border border-line/50 relative overflow-hidden">
                 {/* Grid lines */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:1rem_1rem] opacity-30"></div>
 
@@ -171,7 +171,7 @@ export const AnalyticsShowcase = () => {
           </div>
 
           {/* Card 3: Severity Analytics */}
-          <div className="group relative p-8 rounded-3xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
+          <div className="group relative p-8 rounded-3xl bg-surface-hover hover:bg-surface-hover backdrop-blur-md border border-line hover:border-line-strong transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/20 rounded-full blur-[50px] -translate-y-1/2 translate-x-1/2 group-hover:bg-rose-500/30 transition-colors duration-500"></div>
 
             <div className="mb-6 relative z-10">
@@ -196,8 +196,8 @@ export const AnalyticsShowcase = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">تحلیل شدت و خسارات</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-xl font-bold text-fg mb-2">تحلیل شدت و خسارات</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">
                 ارزیابی میزان شدت تصادفات (جرحی، فوتی، خسارتی) و شناسایی عوامل موثر بر افزایش شدت حوادث
                 ترافیکی.
               </p>
@@ -249,24 +249,24 @@ export const AnalyticsShowcase = () => {
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center flex-col">
-                  <span className="text-2xl font-bold text-white">۱۴۰۳</span>
-                  <span className="text-[10px] text-slate-400">سال جاری</span>
+                  <span className="text-2xl font-bold text-fg">۱۴۰۳</span>
+                  <span className="text-[10px] text-fg-muted">سال جاری</span>
                 </div>
               </div>
 
               {/* Legend */}
               <div className="ml-6 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-xs text-slate-300">خسارتی (۶۰٪)</span>
+                  <div className="w-3 h-3 rounded-full bg-brand"></div>
+                  <span className="text-xs text-fg-muted">خسارتی (۶۰٪)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                  <span className="text-xs text-slate-300">جرحی (۲۵٪)</span>
+                  <span className="text-xs text-fg-muted">جرحی (۲۵٪)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-xs text-slate-300">فوتی (۱۵٪)</span>
+                  <span className="text-xs text-fg-muted">فوتی (۱۵٪)</span>
                 </div>
               </div>
             </div>
@@ -277,7 +277,7 @@ export const AnalyticsShowcase = () => {
         <div className="mt-16 flex justify-center">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="group relative inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_35px_rgba(59,130,246,0.5)] transition-all duration-300 px-12 py-4 rounded-full text-white font-bold text-base overflow-hidden"
+            className="group relative inline-flex items-center gap-3 bg-brand hover:bg-brand-hover shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_35px_rgba(59,130,246,0.5)] transition-all duration-300 px-12 py-4 rounded-full text-on-brand font-bold text-base overflow-hidden"
           >
             {/* Shimmer effect */}
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />

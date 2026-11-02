@@ -3,10 +3,12 @@ import { HeroChartButtons } from "@/components/organisms/HeroChartButtons";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen pt-16 flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900">
-      {/* Background Decorative Elements */}
+    <section className="relative min-h-screen pt-16 flex items-center justify-center overflow-hidden bg-canvas">
+      {/* Background Decorative Elements — ambient glow comes from these blurs.
+          The old `via-blue-950` page gradient is a navy-to-white sandwich in
+          light mode, so the shell is a flat canvas in both themes. */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[120px]"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-brand/20 blur-[120px]"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/20 blur-[120px]"></div>
         <div className="absolute top-[40%] left-[60%] w-[20%] h-[20%] rounded-full bg-cyan-500/10 blur-[80px]"></div>
       </div>
@@ -15,22 +17,22 @@ export const Hero = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Text Content */}
           <div className="flex flex-col items-start text-right space-y-6 animate-slide-down">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm font-medium mb-2">
+            <div className="tint-brand inline-flex items-center gap-2 px-4 py-2 rounded-full bg-tint-soft border border-tint-border text-tint-fg text-sm font-medium mb-2">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand"></span>
               </span>
               نسخه جدید مرصاد منتشر شد
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.4] md:leading-[1.3]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-fg leading-[1.4] md:leading-[1.3]">
               سامانه هوشمند مدیریت ترافیک و{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-fg to-brand">
                 تحلیل تصادفات
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-blue-100/80 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-fg-muted max-w-2xl leading-relaxed">
               با بهره‌گیری از هوش مصنوعی و تحلیل پیشرفته داده‌های مکانی، الگوهای ترافیکی را کشف کنید،
               تصادفات را پیش‌بینی کرده و ایمنی راه‌های کشور را به سطح جدیدی ارتقا دهید.
             </p>
@@ -44,15 +46,15 @@ export const Hero = () => {
           <div className="relative w-full h-full min-h-[400px] flex items-center justify-center animate-fade-in-delay perspective-[2000px]">
             {/* Main Floating Card */}
             <div
-              className="relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-2xl transition-transform duration-700 ease-out hover:rotate-0"
+              className="relative w-full max-w-lg aspect-[4/3] rounded-2xl overflow-hidden border border-line bg-surface/80 backdrop-blur-xl shadow-2xl transition-transform duration-700 ease-out hover:rotate-0"
               style={{ transform: "rotateX(8deg) rotateY(-12deg) rotateZ(2deg)" }}
             >
               {/* Mac-like Header */}
-              <div className="h-10 bg-slate-800/80 border-b border-white/5 flex items-center px-4 gap-2">
+              <div className="h-10 bg-surface-sunken/80 border-b border-line flex items-center px-4 gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
                 <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                <div className="ml-auto text-xs text-slate-400 font-mono">mersad-map-dashboard</div>
+                <div className="ml-auto text-xs text-fg-muted font-mono">mersad-map-dashboard</div>
               </div>
 
               {/* Dashboard Body (Map Simulation) */}
@@ -96,24 +98,24 @@ export const Hero = () => {
                 ></div>
 
                 {/* Floating UI Panels */}
-                <div className="absolute top-4 right-4 w-32 h-24 bg-slate-800/90 border border-white/10 rounded-lg p-3 backdrop-blur-md shadow-lg">
-                  <div className="w-full h-2 bg-slate-700 rounded mb-2"></div>
-                  <div className="w-3/4 h-2 bg-slate-700 rounded mb-4"></div>
+                <div className="absolute top-4 right-4 w-32 h-24 bg-surface-sunken/90 border border-line rounded-lg p-3 backdrop-blur-md shadow-lg">
+                  <div className="w-full h-2 bg-surface-hover rounded mb-2"></div>
+                  <div className="w-3/4 h-2 bg-surface-hover rounded mb-4"></div>
                   <div className="flex items-end gap-1 h-8">
-                    <div className="w-1/4 bg-blue-500 h-[40%] rounded-t-sm"></div>
-                    <div className="w-1/4 bg-blue-500 h-[70%] rounded-t-sm"></div>
-                    <div className="w-1/4 bg-blue-500 h-[50%] rounded-t-sm"></div>
-                    <div className="w-1/4 bg-blue-500 h-[90%] rounded-t-sm"></div>
+                    <div className="w-1/4 bg-brand h-[40%] rounded-t-sm"></div>
+                    <div className="w-1/4 bg-brand h-[70%] rounded-t-sm"></div>
+                    <div className="w-1/4 bg-brand h-[50%] rounded-t-sm"></div>
+                    <div className="w-1/4 bg-brand h-[90%] rounded-t-sm"></div>
                   </div>
                 </div>
 
-                <div className="absolute bottom-4 left-4 w-40 h-16 bg-slate-800/90 border border-white/10 rounded-lg p-3 backdrop-blur-md shadow-lg flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center border border-blue-500/50">
+                <div className="absolute bottom-4 left-4 w-40 h-16 bg-surface-sunken/90 border border-line rounded-lg p-3 backdrop-blur-md shadow-lg flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center border border-blue-500/50">
                     <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
                   </div>
                   <div className="flex-1">
-                    <div className="w-full h-2 bg-slate-700 rounded mb-2"></div>
-                    <div className="w-1/2 h-2 bg-slate-700 rounded"></div>
+                    <div className="w-full h-2 bg-surface-hover rounded mb-2"></div>
+                    <div className="w-1/2 h-2 bg-surface-hover rounded"></div>
                   </div>
                 </div>
               </div>

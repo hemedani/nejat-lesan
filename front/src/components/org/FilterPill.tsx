@@ -27,8 +27,8 @@ export function FilterPill({
       aria-pressed={active}
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
         active
-          ? "border-blue-400/40 bg-blue-400/10 text-blue-100"
-          : "border-white/10 text-slate-400 hover:bg-white/5 hover:text-white"
+          ? "tint-blue border-tint-border bg-tint-soft text-tint-fg"
+          : "border-line text-fg-muted hover:bg-surface-hover hover:text-fg"
       }`}
     >
       {/* The icon is the one the organization's form declared, so the pill and the

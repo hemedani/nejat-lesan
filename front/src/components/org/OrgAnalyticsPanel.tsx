@@ -79,7 +79,7 @@ export function OrgAnalyticsPanel({ orgId }: { orgId: string }) {
             if (!count) return null;
             const pct = summary.total ? Math.round((count / summary.total) * 100) : 0;
             return (
-              <span key={type} className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs text-slate-200">
+              <span key={type} className="rounded-full border border-line bg-surface-sunken px-3 py-1.5 text-xs text-fg">
                 {INCIDENT_TYPE_LABELS[type]} · {count.toLocaleString("fa-IR")} ({pct.toLocaleString("fa-IR")}٪)
               </span>
             );
@@ -92,9 +92,9 @@ export function OrgAnalyticsPanel({ orgId }: { orgId: string }) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[.02] p-3">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="mt-1 text-xl font-bold text-white">{value}</p>
+    <div className="relative overflow-hidden rounded-xl border border-line bg-surface-sunken p-3">
+      <p className="text-xs text-fg-muted">{label}</p>
+      <p className="mt-1 text-xl font-bold text-fg">{value}</p>
     </div>
   );
 }

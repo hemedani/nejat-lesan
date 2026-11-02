@@ -16,107 +16,107 @@ const AccidentTable: React.FC<AccidentTableProps> = ({
 }) => {
   return (
     <div className="overflow-x-auto mt-6">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full divide-y divide-line">
+        <thead className="bg-canvas">
           <tr>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               شماره سریال
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               تاریخ
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               موقعیت
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               نوع تصادف
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               تلفات
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               مجروحین
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               شاهد
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider"
             >
               عملیات
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-surface divide-y divide-line">
           {accidents.map((accident) => (
-            <tr key={accident._id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <tr key={accident._id} className="hover:bg-surface-hover">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-fg">
                 {accident.serial || "--"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-fg-muted">
                 {accident.date_of_accident
                   ? converDate(accident.date_of_accident.toString())
                   : "--"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-fg-muted">
                 {accident.province?.name && accident.city?.name
                   ? `${accident.province.name} - ${accident.city.name}`
                   : "--"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-fg-muted">
                 {accident.type?.name || "--"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-fg-muted">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                     accident.dead_count > 0
-                      ? "bg-red-100 text-red-800"
-                      : "bg-gray-100 text-gray-800"
+                      ? "bg-danger-soft text-danger-fg"
+                      : "bg-surface-sunken text-fg"
                   }`}
                 >
                   {accident.dead_count}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-fg-muted">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                     accident.injured_count > 0
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-gray-100 text-gray-800"
+                      ? "tint-warning bg-tint-strong text-tint-fg"
+                      : "bg-surface-sunken text-fg"
                   }`}
                 >
                   {accident.injured_count}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-fg-muted">
                 {accident.has_witness ? (
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-success-soft text-success-fg">
                     بله
                   </span>
                 ) : (
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-surface-sunken text-fg">
                     خیر
                   </span>
                 )}
@@ -125,19 +125,19 @@ const AccidentTable: React.FC<AccidentTableProps> = ({
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <button
                     onClick={() => onView(accident)}
-                    className="text-indigo-600 hover:text-indigo-900"
+                    className="text-tint-fg hover:text-indigo-900"
                   >
                     مشاهده
                   </button>
                   <button
                     onClick={() => onEdit(accident)}
-                    className="text-blue-600 hover:text-blue-900"
+                    className="text-brand-fg hover:text-blue-900"
                   >
                     ویرایش
                   </button>
                   <button
                     onClick={() => onDelete(accident)}
-                    className="text-red-600 hover:text-red-900"
+                    className="text-danger-fg hover:text-red-900"
                   >
                     حذف
                   </button>
@@ -149,7 +149,7 @@ const AccidentTable: React.FC<AccidentTableProps> = ({
       </table>
       {accidents.length === 0 && (
         <div className="text-center py-10">
-          <p className="text-gray-500">هیچ تصادفی یافت نشد</p>
+          <p className="text-fg-muted">هیچ تصادفی یافت نشد</p>
         </div>
       )}
     </div>

@@ -93,7 +93,7 @@ export function UnitHeadDashboard({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-gradient-to-l from-blue-950/70 via-slate-900 to-slate-900 p-5 shadow-xl sm:flex-row sm:items-center sm:p-6">
+      <div className="flex flex-col justify-between gap-4 rounded-2xl border border-line [background-image:var(--hero-gradient)] p-5 shadow-xl sm:flex-row sm:items-center sm:p-6">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             {unit.type && (
@@ -108,36 +108,36 @@ export function UnitHeadDashboard({
             <span
               className={`rounded-full border px-2.5 py-1 text-[11px] ${
                 unit.is_active
-                  ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
-                  : "border-rose-400/25 bg-rose-400/10 text-rose-200"
+                  ? "tint-emerald border-tint-border bg-tint-soft text-tint-fg"
+                  : "tint-rose border-tint-border bg-tint-soft text-tint-fg"
               }`}
             >
               {unit.is_active ? "فعال" : "غیرفعال"}
             </span>
             {unit.code && (
               <span
-                className="rounded-lg border border-white/10 bg-white/[.04] px-2 py-0.5 font-mono text-[11px] text-slate-400"
+                className="rounded-lg border border-line bg-surface-sunken px-2 py-0.5 font-mono text-[11px] text-fg-muted"
                 dir="ltr"
               >
                 {unit.code}
               </span>
             )}
           </div>
-          <h1 className="mt-3 text-2xl font-bold text-white">{unit.name}</h1>
-          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-400">
+          <h1 className="mt-3 text-2xl font-bold text-fg">{unit.name}</h1>
+          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs text-fg-muted">
             <span>
-              سازمان: <span className="text-slate-200">{unit.organization?.name || "—"}</span>
+              سازمان: <span className="text-fg">{unit.organization?.name || "—"}</span>
             </span>
             <span>
               واحد بالادست:{" "}
-              <span className="text-slate-200">{unit.parentUnit?.name || "—"}</span>
+              <span className="text-fg">{unit.parentUnit?.name || "—"}</span>
             </span>
             <span>
-              سرپرست: <span className="text-slate-200">{headName || "—"}</span>
+              سرپرست: <span className="text-fg">{headName || "—"}</span>
             </span>
             {unit.head_title && (
               <span>
-                عنوان: <span className="text-slate-200">{unit.head_title}</span>
+                عنوان: <span className="text-fg">{unit.head_title}</span>
               </span>
             )}
           </div>
@@ -145,14 +145,14 @@ export function UnitHeadDashboard({
         <div className="flex shrink-0 flex-wrap gap-2">
           <Link
             href={unitHeadRoutes.members()}
-            className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+            className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm font-semibold text-fg transition hover:bg-surface-hover"
           >
             اعضای واحد
           </Link>
           {warehouseOn && (
             <Link
               href={unitHeadRoutes.warehouse()}
-              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500"
+              className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-brand-hover"
             >
               انبار واحد
             </Link>
@@ -172,16 +172,16 @@ export function UnitHeadDashboard({
       </div>
 
       {(unit.address || unit.phone) && (
-        <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl">
-          <h2 className="mb-4 font-semibold text-white">اطلاعات تماس</h2>
+        <section className="rounded-2xl border border-line bg-surface/75 p-5 shadow-xl">
+          <h2 className="mb-4 font-semibold text-fg">اطلاعات تماس</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-xs text-slate-500">نشانی</p>
-              <p className="mt-1 text-sm text-slate-200">{unit.address || "—"}</p>
+              <p className="text-xs text-fg-faint">نشانی</p>
+              <p className="mt-1 text-sm text-fg">{unit.address || "—"}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">تلفن</p>
-              <p className="mt-1 text-sm text-slate-200" dir="ltr">
+              <p className="text-xs text-fg-faint">تلفن</p>
+              <p className="mt-1 text-sm text-fg" dir="ltr">
                 {unit.phone || "—"}
               </p>
             </div>
@@ -202,14 +202,14 @@ function Stat({
   tone?: "slate" | "amber" | "blue";
 }) {
   const tones = {
-    slate: "text-white",
-    amber: "text-amber-200",
-    blue: "text-blue-200",
+    slate: "text-fg",
+    amber: "text-warning-fg",
+    blue: "text-brand-fg",
   } as const;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl">
-      <p className="text-xs text-slate-500">{label}</p>
+    <div className="rounded-2xl border border-line bg-surface/75 p-5 shadow-xl">
+      <p className="text-xs text-fg-faint">{label}</p>
       <p className={`mt-2 text-2xl font-bold ${tones[tone]}`}>
         {value === null ? "—" : value.toLocaleString("fa-IR")}
       </p>

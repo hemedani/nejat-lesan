@@ -69,23 +69,23 @@ export function UnitListView({ orgId }: { orgId: string }) {
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">واحدهای سازمان</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">مدیریت واحدها</h1>
-          <p className="mt-2 text-sm text-slate-500">واحدها ساختار درخت سازمانی را می‌سازند؛ از گشت تا پاسگاه و واحدهای ستادی.</p>
+          <p className="text-sm text-brand-fg">واحدهای سازمان</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">مدیریت واحدها</h1>
+          <p className="mt-2 text-sm text-fg-faint">واحدها ساختار درخت سازمانی را می‌سازند؛ از گشت تا پاسگاه و واحدهای ستادی.</p>
         </div>
-        <Link href={orgRoutes.unitNew()} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500">
+        <Link href={orgRoutes.unitNew()} className="rounded-xl bg-brand px-4 py-2.5 text-center text-sm font-semibold text-on-brand shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-brand-hover">
           + واحد جدید
         </Link>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-3 sm:flex-row sm:items-center">
+      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-line bg-surface/60 p-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <svg className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="m20 20-3.5-3.5" /></svg>
+          <svg className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path strokeLinecap="round" d="m20 20-3.5-3.5" /></svg>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="جستجو بر اساس کد یا نام..."
-            className="w-full rounded-xl border border-white/10 bg-white/[.04] py-2.5 pl-3 pr-10 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/50"
+            className="w-full rounded-xl border border-line bg-surface-sunken py-2.5 pl-3 pr-10 text-sm text-fg outline-none placeholder:text-fg-faint focus:border-blue-400/50"
           />
         </div>
         <OrgFilterSelect value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
@@ -98,23 +98,23 @@ export function UnitListView({ orgId }: { orgId: string }) {
       ) : filtered.length === 0 ? (
         <EmptyState message="واحدی یافت نشد. اولین واحد را ایجاد کنید." />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 shadow-xl">
-          <div className="hidden grid-cols-12 gap-3 border-b border-white/10 bg-white/[.02] px-4 py-3 text-xs text-slate-400 md:grid">
+        <div className="overflow-hidden rounded-2xl border border-line bg-surface/70 shadow-xl">
+          <div className="hidden grid-cols-12 gap-3 border-b border-line bg-surface-sunken px-4 py-3 text-xs text-fg-muted md:grid">
             <span className="col-span-4">واحد</span>
             <span className="col-span-2">نوع</span>
             <span className="col-span-3">سرپرست</span>
             <span className="col-span-2">زیرمجموعه</span>
             <span className="col-span-1">وضعیت</span>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-line">
             {filtered.map((unit) => {
               const parentName = unit.parentUnit?.name;
               return (
-                <div key={unit._id} className="grid grid-cols-1 gap-3 px-4 py-3 transition hover:bg-white/[.02] md:grid-cols-12 md:items-center">
+                <div key={unit._id} className="grid grid-cols-1 gap-3 px-4 py-3 transition hover:bg-surface-sunken md:grid-cols-12 md:items-center">
                   <div className="col-span-4 flex min-w-0 flex-col md:flex-row md:items-center md:gap-3">
                     <button onClick={() => router.push(orgRoutes.unit(unit._id))} className="min-w-0 text-right">
-                      <span className="block truncate font-semibold text-white hover:text-blue-200">{unit.name}</span>
-                      <span className="mt-0.5 block font-mono text-[10px] text-slate-500" dir="ltr">{unit.code}</span>
+                      <span className="block truncate font-semibold text-fg hover:underline">{unit.name}</span>
+                      <span className="mt-0.5 block font-mono text-[10px] text-fg-faint" dir="ltr">{unit.code}</span>
                     </button>
                   </div>
                   <div className="col-span-2">
@@ -122,17 +122,17 @@ export function UnitListView({ orgId }: { orgId: string }) {
                       {UNIT_TYPE_LABELS[unit.type] || unit.type}
                     </span>
                   </div>
-                  <div className="col-span-3 text-xs text-slate-400">
+                  <div className="col-span-3 text-xs text-fg-muted">
                     {unit.head ? `${unit.head.first_name || ""} ${unit.head.last_name || ""}`.trim() || "—" : "—"}
                   </div>
-                  <div className="col-span-2 truncate text-xs text-slate-400">{parentName || "ریشه (ستاد)"}</div>
+                  <div className="col-span-2 truncate text-xs text-fg-muted">{parentName || "ریشه (ستاد)"}</div>
                   <div className="col-span-1">
-                    <span className={`rounded-full border px-2 py-0.5 text-[10px] ${unit.is_active ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200" : "border-rose-400/25 bg-rose-400/10 text-rose-200"}`}>
+                    <span className={`tint-rose tint-emerald rounded-full border px-2 py-0.5 text-[10px] ${unit.is_active ? "border-tint-border bg-tint-soft text-tint-fg" : "border-tint-border bg-tint-soft text-tint-fg"}`}>
                       {unit.is_active ? "فعال" : "غیرفعال"}
                     </span>
                   </div>
-                  <div className="col-span-12 flex justify-end gap-2 border-t border-white/5 pt-2 md:col-span-12 md:border-t-0 md:pt-0">
-                    <Link href={orgRoutes.unit(unit._id)} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/5 hover:text-white">ویرایش</Link>
+                  <div className="col-span-12 flex justify-end gap-2 border-t border-line pt-2 md:col-span-12 md:border-t-0 md:pt-0">
+                    <Link href={orgRoutes.unit(unit._id)} className="rounded-lg border border-line px-3 py-1.5 text-xs text-fg-muted transition hover:bg-surface-hover hover:text-fg">ویرایش</Link>
                     <Button variant="danger" size="sm" onClick={() => void handleRemove(unit)}>حذف</Button>
                   </div>
                 </div>

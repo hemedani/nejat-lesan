@@ -13,6 +13,7 @@ import { get as getCityAction } from "@/app/actions/city/get";
 import { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import React, { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
+import { useSelectStyles } from "@/utils/select-styles";
 
 // Dynamically import map components
 const MapContainer = dynamic(
@@ -70,6 +71,7 @@ export const FormCreateCityZone = ({
   token?: string;
   lesanUrl: string;
 }) => {
+  const selectStyles = useSelectStyles(undefined, { minHeight: "48px", rtl: true });
   const router = useRouter();
   const [drawnPolygon, setDrawnPolygon] = useState<LatLng[] | null>(null);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
@@ -278,8 +280,8 @@ export const FormCreateCityZone = ({
     <div className="p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Form Fields */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-4">
+          <h2 className="text-lg font-semibold text-fg mb-4">
             اطلاعات منطقه شهری
           </h2>
 
@@ -304,7 +306,7 @@ export const FormCreateCityZone = ({
 
           {/* City Selection */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700 text-right">
+            <label className="text-sm font-medium text-fg-muted text-right">
               انتخاب شهر
             </label>
             <AsyncSelect
@@ -320,50 +322,7 @@ export const FormCreateCityZone = ({
               loadingMessage={() => "در حال بارگذاری..."}
               isRtl={true}
               isClearable
-              styles={{
-                control: (provided: any, state: any) => ({
-                  ...provided,
-                  minHeight: "48px",
-                  backgroundColor: errors.cityId ? "#fef2f2" : "white",
-                  borderColor: errors.cityId
-                    ? state.isFocused
-                      ? "#ef4444"
-                      : "#fca5a5"
-                    : state.isFocused
-                      ? "#3b82f6"
-                      : "#cbd5e1",
-                  borderRadius: "12px",
-                  direction: "rtl",
-                }),
-                valueContainer: (provided: any) => ({
-                  ...provided,
-                  padding: "2px 16px",
-                  direction: "rtl",
-                }),
-                placeholder: (provided: any) => ({
-                  ...provided,
-                  color: "#94a3b8",
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-                singleValue: (provided: any) => ({
-                  ...provided,
-                  color: "#1e293b",
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-                option: (provided: any, state: any) => ({
-                  ...provided,
-                  backgroundColor: state.isSelected
-                    ? "#3b82f6"
-                    : state.isFocused
-                      ? "#f1f5f9"
-                      : "transparent",
-                  color: state.isSelected ? "white" : "#1e293b",
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-              }}
+              styles={selectStyles}
             />
             {errors.cityId && (
               <span className="text-red-500 text-xs font-medium text-right mt-1">
@@ -374,9 +333,9 @@ export const FormCreateCityZone = ({
         </div>
 
         {/* Map Section */}
-        <div className="bg-gray-100 p-6 border rounded-lg">
+        <div className="bg-surface-sunken p-6 border rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-700">
+            <h2 className="text-lg font-semibold text-fg">
               ترسیم منطقه بر روی نقشه
             </h2>
             <div className="flex gap-2">
@@ -384,7 +343,7 @@ export const FormCreateCityZone = ({
                 <button
                   type="button"
                   onClick={clearDrawnPolygon}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-red-600 hover:bg-red-700 text-on-brand px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                   <svg
                     className="w-4 h-4"
@@ -408,8 +367,8 @@ export const FormCreateCityZone = ({
                 className={`${
                   isDrawingMode
                     ? "bg-red-600 hover:bg-red-700"
-                    : "bg-blue-600 hover:bg-blue-700"
-                } text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2`}
+                    : "bg-brand hover:bg-brand-hover"
+                } text-on-brand px-4 py-2 rounded-lg transition-colors flex items-center gap-2`}
               >
                 <svg
                   className="w-4 h-4"
@@ -430,15 +389,15 @@ export const FormCreateCityZone = ({
           </div>
 
           {isDrawingMode && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800 font-medium">
+            <div className="mb-4 p-3 bg-brand-soft border border-brand-border rounded-lg">
+              <p className="text-sm text-brand-fg font-medium">
                 🖱️ کلیک چپ: اضافه کردن نقطه | راست کلیک: تمام کردن شکل | ESC:
                 لغو
               </p>
             </div>
           )}
 
-          <div className="h-96 rounded-lg overflow-hidden border border-gray-300">
+          <div className="h-96 rounded-lg overflow-hidden border border-line-strong">
             <MapContainer
               key={mapKey}
               center={mapCenter}
@@ -474,10 +433,10 @@ style={{ height: "100%", width: "100%" }}
           )}
 
           {drawnPolygon && (
-            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="mt-4 p-4 bg-success-soft border border-success-border rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <svg
-                  className="w-5 h-5 text-green-600"
+                  className="w-5 h-5 text-success-fg"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -489,11 +448,11 @@ style={{ height: "100%", width: "100%" }}
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <p className="text-sm text-green-800 font-semibold">
+                <p className="text-sm text-success-fg font-semibold">
                   منطقه شهری ترسیم شد
                 </p>
               </div>
-              <div className="text-xs text-green-700 space-y-1">
+              <div className="text-xs text-success-fg space-y-1">
                 <p>• تعداد نقاط: {drawnPolygon.length}</p>
                 <p>• منطقه بر روی نقشه نمایش داده شده و آماده ثبت است</p>
                 <p>
@@ -509,7 +468,7 @@ style={{ height: "100%", width: "100%" }}
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
+            className="px-8 py-3 bg-brand text-on-brand font-semibold rounded-lg hover:bg-brand-hover disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "در حال ایجاد..." : "ایجاد منطقه شهری"}
           </button>

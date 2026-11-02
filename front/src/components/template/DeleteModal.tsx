@@ -30,33 +30,33 @@ export const DeleteModal: FC<IProps> = ({
       }`}
     >
         <div
-        className={`bg-slate-900 border border-white/10 rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-transform duration-300 ${
+        className={`bg-surface border border-line rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center transform transition-transform duration-300 ${
           isVisible ? "scale-100" : "scale-90"
         }`}
       >
-        <p className="text-slate-300 mb-6">{message}</p>
+        <p className="text-fg-muted mb-6">{message}</p>
 
         <div className="flex items-center justify-start gap-2 mb-6">
-            <p className="text-sm text-slate-200">
+            <p className="text-sm text-fg">
             آیا اسناد وابسته نیز حذف شوند؟
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => onHardCascadeChange(true)}
-              className={`px-2 py-1 text-xs border border-white/15 rounded-lg text-slate-200 transition-all duration-300 ${
+              className={`px-2 py-1 text-xs border border-line-strong rounded-lg text-fg transition-all duration-300 ${
                 !isHardCascade
-                  ? "bg-slate-800"
-                  : "bg-red-500 border-none text-white hover:bg-red-600"
+                  ? "bg-surface-sunken"
+                  : "bg-red-500 border-none text-on-brand hover:bg-red-600"
               }`}
             >
               بله
             </button>
             <button
               onClick={() => onHardCascadeChange(false)}
-              className={`px-2 py-1 text-xs border border-white/15 rounded-lg text-slate-200 transition-all duration-300 ${
+              className={`px-2 py-1 text-xs border border-line-strong rounded-lg text-fg transition-all duration-300 ${
                 isHardCascade
-                  ? "bg-slate-800"
-                  : "bg-red-500 border-none text-white hover:bg-red-600"
+                  ? "bg-surface-sunken"
+                  : "bg-red-500 border-none text-on-brand hover:bg-red-600"
               }`}
             >
               خیر
@@ -74,13 +74,13 @@ export const DeleteModal: FC<IProps> = ({
         <div className="flex justify-end gap-4">
           <button
             onClick={onCancel}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300"
+            className="bg-red-500 text-on-brand px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300"
           >
             لغو
           </button>
           <button
             onClick={onConfirm}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-300"
+            className="bg-green-500 text-on-brand px-4 py-2 rounded-lg hover:bg-green-600 transition-all duration-300"
           >
             تایید
           </button>

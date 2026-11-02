@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -31,6 +32,7 @@ const sortData = (
   series: Array<{ name: string; data: number[] }>,
   visible: Set<number>,
 ) => {
+
   const totals = categories.map((_, ci) => {
     let t = 0;
     for (let si = 0; si < series.length; si++) if (visible.has(si)) t += series[si].data[ci];
@@ -47,6 +49,7 @@ const sortData = (
 };
 
 const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
   const [hidden, setHidden] = useState<Set<number>>(new Set());
 
   const displayData = useMemo(() => {
@@ -65,10 +68,10 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4" />
-          <div className="h-64 bg-gray-200 rounded" />
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4" />
+          <div className="h-64 bg-surface-sunken rounded" />
         </div>
       </div>
     );
@@ -76,12 +79,12 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
 
   if (!displayData || !displayData.categories || !displayData.series) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           شمار تصادفات به تفکیک وضعیت روشنایی
         </h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌ای برای نمایش موجود نیست</p>
+          <p className="text-fg-muted">داده‌ای برای نمایش موجود نیست</p>
         </div>
       </div>
     );
@@ -129,7 +132,7 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
     legend: { show: false },
     fill: { opacity: 1 },
     colors: seriesColors,
-    grid: { show: true, borderColor: "#e5e7eb", strokeDashArray: 0, position: "back" as const },
+    grid: { show: true, borderColor: chartTheme.grid, strokeDashArray: 0, position: "back" as const },
     tooltip: { y: { formatter: (val: number) => val + " تصادف" } },
   };
 
@@ -143,10 +146,10 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">شمار تصادفات به تفکیک وضعیت روشنایی</h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-fg">شمار تصادفات به تفکیک وضعیت روشنایی</h3>
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -168,8 +171,8 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
               onClick={() => handleToggle(i)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 select-none ${
                 vis
-                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
-                  : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                  ? "bg-surface-sunken text-fg hover:bg-surface-sunken hover:shadow-sm"
+                  : "bg-canvas text-fg-faint hover:bg-surface-hover"
               }`}
             >
               <span
@@ -191,8 +194,8 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
         <Chart options={chartOptions} series={displayData.series} type="bar" height={350} />
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="bg-amber-50 rounded-lg p-3 text-xs text-amber-800 leading-relaxed">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="bg-warning-soft rounded-lg p-3 text-xs text-amber-800 leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نمودار ستونی:</p>
           <p>این نمودار تعداد تصادفات را بر اساس وضعیت روشنایی (روز، شب، طلوع و غروب آفتاب) در هر منطقه نشان می‌دهد:</p>
           <ul className="list-disc list-inside mt-1 space-y-0.5">
@@ -211,3 +214,4 @@ const SpatialLightBarChart: React.FC<SpatialLightBarChartProps> = ({ data, isLoa
 };
 
 export default SpatialLightBarChart;
+

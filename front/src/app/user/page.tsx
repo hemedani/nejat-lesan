@@ -66,11 +66,11 @@ export default function UserProfilePage() {
 
   return (
     <div className="space-y-5">
-      <header className="rounded-2xl border border-white/10 bg-gradient-to-l from-blue-950/70 via-slate-900 to-slate-900 p-5 shadow-xl sm:p-6">
-        <h1 className="text-2xl font-bold text-white">
+      <header className="rounded-2xl border border-line [background-image:var(--hero-gradient)] p-5 shadow-xl sm:p-6">
+        <h1 className="text-2xl font-bold text-fg">
           {displayName(userData?.first_name, userData?.last_name)}
         </h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-fg-muted">
           {userLevel ? LEVEL_LABELS[userLevel] : "—"}
         </p>
         <dl className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -81,13 +81,13 @@ export default function UserProfilePage() {
         </dl>
       </header>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
-        <h2 className="text-sm font-semibold text-white">نقش‌ها و محدوده</h2>
-        <p className="mt-1 text-xs text-slate-500">
+      <section className="rounded-2xl border border-line bg-surface/70 p-5 shadow-xl">
+        <h2 className="text-sm font-semibold text-fg">نقش‌ها و محدوده</h2>
+        <p className="mt-1 text-xs text-fg-faint">
           نقش‌های ثبت‌شده برای این حساب و محدوده‌ای که هر نقش در آن اعمال می‌شود.
         </p>
         {roles.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">
+          <p className="mt-4 text-sm text-fg-faint">
             هیچ نقش سازمانی یا واحدی برای این حساب ثبت نشده است.
           </p>
         ) : (
@@ -97,12 +97,12 @@ export default function UserProfilePage() {
               return (
                 <li
                   key={`${role.roleId}-${role.scopeType ?? "none"}-${role.scopeId ?? "none"}`}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[.02] px-3 py-2.5"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-surface-sunken px-3 py-2.5"
                 >
-                  <span className="text-sm text-slate-200">
+                  <span className="text-sm text-fg">
                     {ROLE_LABELS[role.name] ?? role.name}
                   </span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-fg-faint">
                     {role.scopeType
                       ? `${SCOPE_LABELS[role.scopeType] ?? role.scopeType}: ${scopeName ?? "—"}`
                       : "بدون محدوده"}
@@ -114,9 +114,9 @@ export default function UserProfilePage() {
         )}
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
-        <h2 className="text-sm font-semibold text-white">ماژول‌های فعال</h2>
-        <p className="mt-1 text-xs text-slate-500">
+      <section className="rounded-2xl border border-line bg-surface/70 p-5 shadow-xl">
+        <h2 className="text-sm font-semibold text-fg">ماژول‌های فعال</h2>
+        <p className="mt-1 text-xs text-fg-faint">
           وضعیت قابلیت‌هایی که برای سازمان شما فعال است. تغییر این موارد در اختیار مدیر
           نصب است و از بخش «ماژول‌ها» در پنل مدیریت انجام می‌شود.
         </p>
@@ -126,14 +126,14 @@ export default function UserProfilePage() {
             return (
               <li
                 key={key}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-2.5"
+                className="flex items-center justify-between rounded-xl border border-line bg-surface-sunken px-3 py-2.5"
               >
-                <span className="text-xs text-slate-300">{MODULE_LABELS[key]}</span>
+                <span className="text-xs text-fg-muted">{MODULE_LABELS[key]}</span>
                 <span
                   className={
                     on
-                      ? "rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-[11px] text-emerald-200"
-                      : "rounded-full border border-white/10 bg-white/[.04] px-2 py-0.5 text-[11px] text-slate-500"
+                      ? "tint-emerald rounded-full border border-tint-border bg-tint-soft px-2 py-0.5 text-[11px] text-tint-fg"
+                      : "rounded-full border border-line bg-surface-sunken px-2 py-0.5 text-[11px] text-fg-faint"
                   }
                 >
                   {on ? "فعال" : "غیرفعال"}
@@ -158,9 +158,9 @@ function Field({
 }) {
   return (
     <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
+      <dt className="text-xs text-fg-faint">{label}</dt>
       <dd
-        className={`mt-1 text-sm text-slate-200 ${ltr ? "truncate" : ""}`}
+        className={`mt-1 text-sm text-fg ${ltr ? "truncate" : ""}`}
         dir={ltr ? "ltr" : undefined}
       >
         {value || "—"}

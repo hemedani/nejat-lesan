@@ -10,25 +10,25 @@ const trendChartMeta: Record<string, { title: string; description: string; icon:
     title: "سهم شدت تصادفات",
     description: "مقایسه سهم تصادفات در رویداد با سایر ایام",
     icon: (
-      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-6 h-6 text-success-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
       </svg>
     ),
-    bgColor: "bg-green-50",
-    borderColor: "border-green-200",
-    iconBg: "bg-green-100",
+    bgColor: "bg-success-soft",
+    borderColor: "border-success-border",
+    iconBg: "bg-success-soft",
   },
   "/charts/trend/collision-analytics": {
     title: "نحوه و نوع برخورد",
     description: "مقایسه سهم نحوه و نوع برخورد در رویداد با سایر ایام",
     icon: (
-      <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-6 h-6 text-tint-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
-    bgColor: "bg-purple-50",
-    borderColor: "border-purple-200",
-    iconBg: "bg-purple-100",
+    bgColor: "tint-purple bg-tint-soft",
+    borderColor: "border-tint-border",
+    iconBg: "bg-tint-strong",
   },
 };
 
@@ -62,7 +62,7 @@ const TrendChartsPage = () => {
   }, [userLevel, enterpriseSettings]);
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       <ChartNavigation currentSection="trend" />
 
       <div className="flex">
@@ -70,8 +70,8 @@ const TrendChartsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">روند رویداد</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">روند رویداد</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل روند تصادفات در ایام خاص و رویدادها
                 </p>
               </div>
@@ -79,8 +79,8 @@ const TrendChartsPage = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-6">
-              <h3 className="font-medium text-orange-800 mb-4">تحلیل‌های موجود</h3>
+            <div className="tint-warning bg-tint-soft border-tint-border rounded-lg p-6">
+              <h3 className="font-medium text-tint-fg mb-4">تحلیل‌های موجود</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {visibleCharts.map((navChart) => {
                   const meta = trendChartMeta[navChart.href];
@@ -88,18 +88,18 @@ const TrendChartsPage = () => {
                     <a
                       key={navChart.id}
                       href={navChart.href}
-                      className={`flex items-start gap-3 p-4 rounded-lg border ${meta?.borderColor || "border-gray-200"} ${meta?.bgColor || "bg-gray-50"} hover:shadow-md transition-shadow`}
+                      className={`flex items-start gap-3 p-4 rounded-lg border ${meta?.borderColor || "border-line"} ${meta?.bgColor || "bg-canvas"} hover:shadow-md transition-shadow`}
                     >
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${meta?.iconBg || "bg-gray-100"}`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${meta?.iconBg || "bg-surface-sunken"}`}>
                         {meta?.icon || (
-                          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                           </svg>
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">{navChart.label}</p>
-                        <p className="text-sm text-gray-600 mt-1">{meta?.description || ""}</p>
+                        <p className="font-medium text-fg">{navChart.label}</p>
+                        <p className="text-sm text-fg-muted mt-1">{meta?.description || ""}</p>
                       </div>
                     </a>
                   );
@@ -107,13 +107,13 @@ const TrendChartsPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های روند</h3>
+            <div className="bg-surface rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-fg mb-4">بینش‌های روند</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 {trendInsights.map((insight) => (
-                  <div key={insight.title} className="flex items-start gap-2 p-4 bg-gray-50 rounded-lg">
+                  <div key={insight.title} className="flex items-start gap-2 p-4 bg-canvas rounded-lg">
                     <svg
-                      className="w-4 h-4 text-orange-600 mt-0.5 flex-shrink-0"
+                      className="w-4 h-4 text-tint-fg mt-0.5 flex-shrink-0"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -124,8 +124,8 @@ const TrendChartsPage = () => {
                       />
                     </svg>
                     <div>
-                      <p className="font-medium text-gray-900">{insight.title}</p>
-                      <p className="text-gray-600">{insight.description}</p>
+                      <p className="font-medium text-fg">{insight.title}</p>
+                      <p className="text-fg-muted">{insight.description}</p>
                     </div>
                   </div>
                 ))}

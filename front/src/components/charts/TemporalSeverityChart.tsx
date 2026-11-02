@@ -2,6 +2,7 @@
 
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -22,12 +23,13 @@ interface TemporalSeverityChartProps {
 }
 
 const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/2 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/2 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     )
@@ -35,15 +37,15 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
 
   if (!data || !data.series || data.series.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">مقایسه زمانی سهم تصادفات فوتی از تصادفات شدید</h3>
-        <div className="flex items-center justify-center h-64 text-gray-500">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">مقایسه زمانی سهم تصادفات فوتی از تصادفات شدید</h3>
+        <div className="flex items-center justify-center h-64 text-fg-muted">
           <div className="text-center">
-            <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 mx-auto mb-4 text-fg-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <p className="text-sm">هیچ داده‌ای برای نمایش وجود ندارد</p>
-            <p className="text-xs text-gray-400 mt-1">لطفاً فیلترهای مناسب را اعمال کنید</p>
+            <p className="text-xs text-fg-faint mt-1">لطفاً فیلترهای مناسب را اعمال کنید</p>
           </div>
         </div>
       </div>
@@ -81,14 +83,14 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
         }
       }
     },
-    colors: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6'],
+    colors: [chartTheme.danger, chartTheme.warning, chartTheme.success, chartTheme.brand],
     dataLabels: {
       enabled: true,
       formatter: (value: number) => `${value.toFixed(1)}%`,
       style: {
         fontSize: '11px',
         fontWeight: 500,
-        colors: ['#374151']
+        colors: [chartTheme.label],
       }
     },
     stroke: {
@@ -108,13 +110,13 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
         style: {
           fontSize: '14px',
           fontWeight: 600,
-          color: '#374151'
+          color: chartTheme.label
         }
       },
       labels: {
         style: {
           fontSize: '12px',
-          colors: '#6B7280'
+          colors: chartTheme.label
         }
       }
     },
@@ -124,13 +126,13 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
         style: {
           fontSize: '14px',
           fontWeight: 600,
-          color: '#374151'
+          color: chartTheme.label
         }
       },
       labels: {
         style: {
           fontSize: '12px',
-          colors: '#6B7280'
+          colors: chartTheme.label
         },
         formatter: (value: number) => `${value.toFixed(1)}%`
       },
@@ -139,7 +141,7 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
     },
     grid: {
       show: true,
-      borderColor: '#E5E7EB',
+      borderColor: chartTheme.grid,
       strokeDashArray: 0,
       position: 'back' as const,
       xaxis: {
@@ -159,11 +161,11 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
       fontSize: '14px',
       fontWeight: 500,
       labels: {
-        colors: '#374151'
+        colors: chartTheme.label
       }
     },
     tooltip: {
-      theme: 'light',
+      theme: chartTheme.mode,
       style: {
         fontSize: '12px'
       },
@@ -201,11 +203,11 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
   const minIndex = severityData.indexOf(minSeverity)
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">مقایسه زمانی سهم تصادفات فوتی از تصادفات شدید</h3>
-        <div className="flex items-center gap-6 text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-fg mb-2">مقایسه زمانی سهم تصادفات فوتی از تصادفات شدید</h3>
+        <div className="flex items-center gap-6 text-sm text-fg-muted">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
             <span>میانگین: {avgSeverity.toFixed(1)}%</span>
@@ -232,7 +234,7 @@ const TemporalSeverityChart: React.FC<TemporalSeverityChartProps> = ({ data, isL
       </div>
 
       {/* Footer Info */}
-      <div className="mt-4 text-xs text-gray-500 text-center">
+      <div className="mt-4 text-xs text-fg-muted text-center">
         نمودار نشان‌دهنده درصد تصادفات فوتی از کل تصادفات شدید در هر دوره زمانی است
       </div>
     </div>

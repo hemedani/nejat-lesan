@@ -135,7 +135,7 @@ export function WarehouseWorkspace({
 
   if (orgId && !orgHasModule("warehouse")) {
     return (
-      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-8 text-center text-sm text-amber-100">
+      <div className="tint-amber rounded-2xl border border-tint-border bg-tint-soft p-8 text-center text-sm text-tint-fg">
         ماژول مدیریت انبار برای این سازمان فعال نیست.
       </div>
     );
@@ -194,11 +194,11 @@ export function WarehouseWorkspace({
 
   return (
     <div>
-      <div className="mb-5 flex flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-gradient-to-l from-blue-950/60 via-slate-900 to-slate-900 p-5 shadow-xl sm:flex-row sm:items-center sm:p-6">
+      <div className="mb-5 flex flex-col justify-between gap-4 rounded-2xl border border-line [background-image:var(--hero-gradient)] p-5 shadow-xl sm:flex-row sm:items-center sm:p-6">
         <div>
-          <p className="text-sm text-blue-300">انبار</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">{heading.title}</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+          <p className="text-sm text-brand-fg">انبار</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">{heading.title}</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-fg-muted">
             {heading.subtitle}
           </p>
         </div>
@@ -243,8 +243,8 @@ export function WarehouseWorkspace({
             onClick={() => setTab(key)}
             className={`rounded-full border px-3 py-1.5 text-xs transition ${
               tab === key
-                ? "border-blue-400/40 bg-blue-400/10 text-blue-100"
-                : "border-white/10 text-slate-400 hover:bg-white/5"
+                ? "tint-blue border-tint-border bg-tint-soft text-tint-fg"
+                : "border-line text-fg-muted hover:bg-surface-hover"
             }`}
           >
             {TAB_LABELS[key]}
@@ -378,16 +378,16 @@ function StockTable({
   ).length;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 shadow-xl">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-white/[.02] px-4 py-3">
-        <span className="text-sm font-semibold text-white">
+    <div className="overflow-hidden rounded-2xl border border-line bg-surface/70 shadow-xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface-sunken px-4 py-3">
+        <span className="text-sm font-semibold text-fg">
           موجودی ({rows.length.toLocaleString("fa-IR")} قلم)
         </span>
         <span
           className={`rounded-full border px-3 py-1 text-xs ${
             lowCount > 0
-              ? "border-amber-400/25 bg-amber-400/10 text-amber-200"
-              : "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
+              ? "tint-amber border-tint-border bg-tint-soft text-tint-fg"
+              : "tint-emerald border-tint-border bg-tint-soft text-tint-fg"
           }`}
         >
           زیر حد مجاز: {lowCount.toLocaleString("fa-IR")}
@@ -395,7 +395,7 @@ function StockTable({
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-right text-sm">
-          <thead className="border-b border-white/10 text-xs text-slate-500">
+          <thead className="border-b border-line text-xs text-fg-faint">
             <tr>
               {["کالا", "واحد", "موجودی", "حداقل", "مکان", "انقضا", ""].map((header) => (
                 <th key={header} className="whitespace-nowrap px-4 py-3 font-medium">
@@ -404,14 +404,14 @@ function StockTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5 text-slate-300">
+          <tbody className="divide-y divide-line text-fg-muted">
             {rows.map((row) => {
               const low = Number(row.quantity ?? 0) <= Number(row.min_quantity ?? 0);
               return (
                 <tr key={row._id} className={low ? "bg-amber-400/[.04]" : undefined}>
                   <td className="px-4 py-3">{row.ware?.name || "—"}</td>
                   <td className="px-4 py-3">{row.unit?.name || "—"}</td>
-                  <td className="px-4 py-3 font-semibold text-white">
+                  <td className="px-4 py-3 font-semibold text-fg">
                     {Number(row.quantity ?? 0).toLocaleString("fa-IR")}
                   </td>
                   <td className="px-4 py-3">
@@ -428,7 +428,7 @@ function StockTable({
                       <button
                         type="button"
                         onClick={() => onAdjust(row)}
-                        className="rounded-lg border border-white/10 px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/5"
+                        className="rounded-lg border border-line px-2.5 py-1.5 text-xs text-fg-muted transition hover:bg-surface-hover"
                       >
                         اصلاح
                       </button>
@@ -498,28 +498,28 @@ function RequestsList({
         return (
           <div
             key={row._id}
-            className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-slate-900/70 p-4 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 rounded-2xl border border-line bg-surface/70 p-4 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-semibold text-white">{row.ware?.name || "کالا"}</span>
-                <span className="text-xs text-slate-400">
+                <span className="font-semibold text-fg">{row.ware?.name || "کالا"}</span>
+                <span className="text-xs text-fg-muted">
                   ({Number(row.quantity ?? 0).toLocaleString("fa-IR")})
                 </span>
                 {row.priority && (
-                  <span className="rounded-full border border-rose-400/25 bg-rose-400/10 px-2 py-0.5 text-[10px] text-rose-200">
+                  <span className="tint-rose rounded-full border border-tint-border bg-tint-soft px-2 py-0.5 text-[10px] text-tint-fg">
                     فوری
                   </span>
                 )}
                 <StatusPill status={row.status} />
               </div>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-fg-faint">
                 واحد: {row.unit?.name || "—"}
                 {row.requested_by?.first_name
                   ? ` · ${row.requested_by.first_name} ${row.requested_by.last_name || ""}`
                   : ""}
               </p>
-              {row.notes && <p className="mt-1 text-xs text-slate-500">{row.notes}</p>}
+              {row.notes && <p className="mt-1 text-xs text-fg-faint">{row.notes}</p>}
             </div>
 
             <div className="flex shrink-0 gap-2">
@@ -662,23 +662,23 @@ function LedgerTable({
         return (
           <div
             key={id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-sm"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface/60 px-4 py-3 text-sm"
           >
             <div className="flex flex-wrap items-center gap-3">
-              <span className="font-medium text-white">{ware || "کالا"}</span>
+              <span className="font-medium text-fg">{ware || "کالا"}</span>
               {quantity !== undefined && (
-                <span className="font-mono text-xs text-slate-400">
+                <span className="font-mono text-xs text-fg-muted">
                   {Number(quantity).toLocaleString("fa-IR")}
                 </span>
               )}
               {receiptNo && (
-                <span className="font-mono text-xs text-slate-400" dir="ltr">
+                <span className="font-mono text-xs text-fg-muted" dir="ltr">
                   {receiptNo}
                 </span>
               )}
-              {unit && <span className="text-xs text-slate-500">{unit}</span>}
+              {unit && <span className="text-xs text-fg-faint">{unit}</span>}
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-fg-muted">
               {reason && <span>{reason}</span>}
               {status && <StatusPill status={status} />}
               {who?.first_name && (
@@ -701,12 +701,12 @@ function StatusPill({ status }: { status?: string }) {
   );
   const pending = ["pending", "draft"].includes(status || "");
   const tone = positive
-    ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200"
+    ? "tint-emerald border-tint-border bg-tint-soft text-tint-fg"
     : pending
-      ? "border-amber-400/25 bg-amber-400/10 text-amber-200"
+      ? "tint-amber border-tint-border bg-tint-soft text-tint-fg"
       : status === "rejected"
-        ? "border-rose-400/25 bg-rose-400/10 text-rose-200"
-        : "border-white/10 bg-white/[.04] text-slate-300";
+        ? "tint-rose border-tint-border bg-tint-soft text-tint-fg"
+        : "border-line bg-surface-sunken text-fg-muted";
 
   const labels: Record<string, string> = {
     pending: "در انتظار تأیید",

@@ -137,10 +137,10 @@ export const ImpactStats = () => {
   ];
 
   return (
-    <section className="py-16 min-h-screen flex flex-col justify-center bg-slate-950 relative border-y border-white/5 z-10">
+    <section className="py-16 min-h-screen flex flex-col justify-center bg-canvas relative border-y border-line z-10">
       {/* Subtle background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-blue-600/5 blur-[120px] rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-brand/5 blur-[120px] rounded-full"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -148,9 +148,9 @@ export const ImpactStats = () => {
           {stats.map((stat) => (
             <div
               key={stat.id}
-              className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-sm hover:bg-white/[0.04] hover:border-white/10 transition-all duration-300 hover:-translate-y-1 shadow-lg group"
+              className="flex flex-col items-center justify-center p-6 rounded-2xl bg-surface-sunken border border-line backdrop-blur-sm hover:bg-surface-sunken hover:border-line transition-all duration-300 hover:-translate-y-1 shadow-lg group"
             >
-              <div className="w-12 h-12 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-blue-500/20 transition-all duration-300">
+              <div className="w-12 h-12 rounded-full bg-brand/10 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-brand/20 transition-all duration-300">
                 {stat.icon}
               </div>
               <div
@@ -159,7 +159,7 @@ export const ImpactStats = () => {
               >
                 <Counter end={stat.end} prefix={stat.prefix} suffix={stat.suffix} />
               </div>
-              <div className="text-sm md:text-base text-slate-400 font-medium text-center">
+              <div className="text-sm md:text-base text-fg-muted font-medium text-center">
                 {stat.label}
               </div>
             </div>

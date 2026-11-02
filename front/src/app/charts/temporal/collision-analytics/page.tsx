@@ -355,7 +355,7 @@ const TemporalCollisionAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="temporal" currentChart="collision-analytics" />
 
@@ -384,8 +384,8 @@ const TemporalCollisionAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">مقایسه زمانی نحوه و نوع برخورد</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">مقایسه زمانی نحوه و نوع برخورد</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل روند زمانی انواع مختلف برخورد و مقایسه آن‌ها در بازه‌های مختلف
                 </p>
               </div>
@@ -393,7 +393,7 @@ const TemporalCollisionAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -412,7 +412,7 @@ const TemporalCollisionAnalyticsPage = () => {
                     onClick={() =>
                       downloadFullChartData(chartData.categories, chartData.series, "temporal-collision")
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -422,7 +422,7 @@ const TemporalCollisionAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -464,20 +464,20 @@ const TemporalCollisionAnalyticsPage = () => {
 
             {/* Chart Statistics */}
             {chartData && chartData.series && chartData.series.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">آمار کلی</h3>
+              <div className="bg-surface rounded-lg shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-fg mb-4">آمار کلی</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-center p-4 bg-brand-soft rounded-lg">
+                    <div className="text-2xl font-bold text-brand-fg">
                       {chartData.categories.length}
                     </div>
-                    <div className="text-sm text-blue-700">دوره زمانی</div>
+                    <div className="text-sm text-brand-fg">دوره زمانی</div>
                   </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{chartData.series.length}</div>
-                    <div className="text-sm text-green-700">سری داده</div>
+                  <div className="text-center p-4 bg-success-soft rounded-lg">
+                    <div className="text-2xl font-bold text-success-fg">{chartData.series.length}</div>
+                    <div className="text-sm text-success-fg">سری داده</div>
                   </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-center p-4 tint-purple bg-tint-soft rounded-lg">
                     <div className="text-2xl font-bold text-purple-600">
                       {chartData.series
                         .reduce(

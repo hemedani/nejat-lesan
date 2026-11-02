@@ -46,7 +46,7 @@ export function MyReportsView() {
 
   if (!allowed) {
     return (
-      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-8 text-center text-sm leading-6 text-amber-100">
+      <div className="tint-amber rounded-2xl border border-tint-border bg-tint-soft p-8 text-center text-sm leading-6 text-tint-fg">
         این بخش فقط برای کاربران با نقش «مأمور گشت» در دسترس است.
       </div>
     );
@@ -56,9 +56,9 @@ export function MyReportsView() {
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">گشت و رخدادها</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">رخدادهای من</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="text-sm text-brand-fg">گشت و رخدادها</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">رخدادهای من</h1>
+          <p className="mt-2 text-sm text-fg-faint">
             رخدادهای ثبت‌شده شما با وضعیت همگام‌سازی و بررسی.
           </p>
         </div>

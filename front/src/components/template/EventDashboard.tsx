@@ -91,16 +91,16 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
   return (
     <div>
       <button
-        className="absolute top-1 left-5 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        className="absolute top-1 left-5 mt-4 px-4 py-2 bg-brand text-on-brand rounded-lg hover:bg-brand-hover"
         onClick={() => openModal("createUpdate")}
       >
         ایجاد {translateModelNameToPersian(model)} جدید
       </button>
 
       <div className="mt-6 overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+        <table className="min-w-full bg-surface border border-line rounded-lg">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-surface-sunken">
               <th className="py-3 px-4 border-b text-right">نام</th>
               <th className="py-3 px-4 border-b text-right">توضیحات</th>
               <th className="py-3 px-4 border-b text-right">بازه‌های تاریخی</th>
@@ -123,7 +123,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                   : new Date();
 
               return (
-                <tr key={item._id} className="border-b hover:bg-gray-50">
+                <tr key={item._id} className="border-b hover:bg-surface-hover">
                   <td className="py-3 px-4 text-right">{item.name}</td>
                   <td
                     className="py-3 px-4 text-right max-w-xs truncate"
@@ -136,7 +136,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                       <div className="space-y-2">
                         {/* Individual date ranges with their respective overall ranges */}
                         <div>
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-fg-muted">
                             بازه‌های فعال:
                           </span>
                           <ul className="list-disc pr-4 mt-1 space-y-2">
@@ -145,9 +145,9 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                               const end = new Date(dateObj.to);
                               const range = formatDateTimeRange(start, end);
                               return (
-                                <li key={idx} className="text-sm text-gray-600">
+                                <li key={idx} className="text-sm text-fg-muted">
                                   <div className="font-medium">{range}</div>
-                                  <div className="text-xs text-gray-500">
+                                  <div className="text-xs text-fg-muted">
                                     بازه کلی:{" "}
                                     {formatDateTimeRange(
                                       new Date(dateObj.startEntireRange),
@@ -161,7 +161,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                         </div>
                       </div>
                     ) : (
-                      <span className="text-gray-400">بدون تاریخ</span>
+                      <span className="text-fg-faint">بدون تاریخ</span>
                     )}
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -171,7 +171,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                     <div className="flex space-x-2 justify-end">
                       <button
                         onClick={() => openModal("createUpdate", item)}
-                        className="text-blue-500 hover:text-blue-700"
+                        className="text-blue-500 hover:text-brand-fg"
                         title="ویرایش"
                       >
                         <svg
@@ -185,7 +185,7 @@ const EventDashboard: React.FC<EventDashboardProps> = ({
                       </button>
                       <button
                         onClick={() => openModal("delete", item)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-danger-fg"
                         title="حذف"
                       >
                         <svg

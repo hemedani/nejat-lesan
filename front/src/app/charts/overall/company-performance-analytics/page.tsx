@@ -10,6 +10,7 @@ import { ReqType } from "@/types/declarations/selectInp";
 import { formatNumber } from "@/utils/formatters";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/context/AuthContext";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamic import for ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -102,12 +103,14 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
   data,
   isLoading,
 }) => {
+  const chartTheme = useChartTheme();
+
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="flex flex-col items-center gap-4">
-            <svg className="w-12 h-12 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 animate-spin text-brand-fg" fill="none" viewBox="0 0 24 24">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -122,7 +125,7 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
                 d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <p className="text-gray-600">در حال بارگذاری نمودار...</p>
+            <p className="text-fg-muted">در حال بارگذاری نمودار...</p>
           </div>
         </div>
       </div>
@@ -131,11 +134,11 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -147,8 +150,8 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
                 d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 17h4a2 2 0 002-2V9a2 2 0 00-2-2H7a2 2 0 00-2 2v6a2 2 0 002 2h4m2 0a9 9 0 11-8 0"
               />
             </svg>
-            <p className="text-gray-600 mb-2">داده‌ای برای نمایش وجود ندارد</p>
-            <p className="text-sm text-gray-500">لطفاً فیلترهای مختلف را امتحان کنید</p>
+            <p className="text-fg-muted mb-2">داده‌ای برای نمایش وجود ندارد</p>
+            <p className="text-sm text-fg-muted">لطفاً فیلترهای مختلف را امتحان کنید</p>
           </div>
         </div>
       </div>
@@ -206,7 +209,7 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
       style: {
         fontSize: "18px",
         fontWeight: "bold",
-        color: "#1F2937",
+        color: chartTheme.fg,
       },
     },
     xaxis: {
@@ -215,7 +218,7 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
         style: {
           fontSize: "14px",
           fontWeight: "600",
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
@@ -231,7 +234,7 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
         style: {
           fontSize: "14px",
           fontWeight: "600",
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
@@ -260,37 +263,37 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
         }));
 
         return `
-          <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-200 min-w-64">
-            <div class="font-bold text-lg text-gray-900 mb-3 text-center border-b pb-2">
+          <div class="bg-surface p-4 rounded-lg shadow-lg border border-line min-w-64">
+            <div class="font-bold text-lg text-fg mb-3 text-center border-b pb-2">
               ${companyData.companyName}
             </div>
 
             <div class="space-y-2 mb-4">
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">سهم عامل وسیله:</span>
-                <span class="font-medium text-blue-600">${formatNumber(parseFloat(companyData.xAxis.toFixed(2)))}</span>
+                <span class="text-sm text-fg-muted">سهم عامل وسیله:</span>
+                <span class="font-medium text-brand-fg">${formatNumber(parseFloat(companyData.xAxis.toFixed(2)))}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">سهم تصادفات فوتی:</span>
-                <span class="font-medium text-red-600">${formatNumber(parseFloat(companyData.yAxis.toFixed(2)))}</span>
+                <span class="text-sm text-fg-muted">سهم تصادفات فوتی:</span>
+                <span class="font-medium text-danger-fg">${formatNumber(parseFloat(companyData.yAxis.toFixed(2)))}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-600">تعداد تصادفات:</span>
-                <span class="font-medium text-gray-900">${formatNumber(companyData.bubbleSize)}</span>
+                <span class="text-sm text-fg-muted">تعداد تصادفات:</span>
+                <span class="font-medium text-fg">${formatNumber(companyData.bubbleSize)}</span>
               </div>
             </div>
 
             <div class="border-t pt-3">
-              <div class="text-sm font-medium text-gray-900 mb-2">توزیع سال ساخت:</div>
+              <div class="text-sm font-medium text-fg mb-2">توزیع سال ساخت:</div>
               <div class="space-y-1">
                 ${yearPercentages
                   .map(
                     (item) => `
                   <div class="flex justify-between items-center text-xs">
-                    <span class="text-gray-600">${item.name}:</span>
+                    <span class="text-fg-muted">${item.name}:</span>
                     <div class="flex items-center gap-2">
-                      <span class="text-gray-900">${formatNumber(item.count)}</span>
-                      <span class="text-gray-500">(${item.percentage}%)</span>
+                      <span class="text-fg">${formatNumber(item.count)}</span>
+                      <span class="text-fg-muted">(${item.percentage}%)</span>
                     </div>
                   </div>
                 `,
@@ -314,13 +317,13 @@ const CompanyPerformanceBubbleChart: React.FC<CompanyPerformanceBubbleChartProps
       },
     },
     grid: {
-      borderColor: "#E5E7EB",
+      borderColor: chartTheme.grid,
       strokeDashArray: 3,
     },
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
       <div className="h-[500px]">
         <Chart options={options} series={series} type="bubble" height="100%" />
       </div>
@@ -548,7 +551,7 @@ const CompanyPerformanceAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="overall" />
 
@@ -574,10 +577,10 @@ const CompanyPerformanceAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-fg">
                   مقایسه عملکرد کمپانی‌های سازنده خودرو
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل مقایسه‌ای کمپانی‌ها بر اساس سهم تصادفات شدید و میزان آسیب‌پذیری در قالب نمودار
                   حبابی
                 </p>
@@ -586,7 +589,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -623,7 +626,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                       setChartData(null);
                       handleLoadData();
                     }}
-                    className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+                    className="flex items-center gap-2 bg-yellow-500 text-fg px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -638,7 +641,7 @@ const CompanyPerformanceAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -663,35 +666,35 @@ const CompanyPerformanceAnalyticsPage = () => {
           <div className="space-y-6">
             {/* Error Display */}
             {error && (
-              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-red-800">خطا</h3>
+                  <h3 className="font-medium text-danger-fg">خطا</h3>
                 </div>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-danger-fg">{error}</p>
               </div>
             )}
 
             {/* Demo Mode Warning */}
             {isDemoMode && chartData && (
-              <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="mb-6 tint-warning bg-tint-soft border-tint-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-tint-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-yellow-800">حالت نمایشی</h3>
+                  <h3 className="font-medium text-tint-fg">حالت نمایشی</h3>
                 </div>
-                <p className="text-sm text-yellow-700">
+                <p className="text-sm text-tint-fg">
                   در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای دریافت داده‌های واقعی،
                   دکمه &quot;تلاش مجدد API&quot; را فشار دهید.
                 </p>
@@ -711,18 +714,18 @@ const CompanyPerformanceAnalyticsPage = () => {
                   chartData.reduce((sum, company) => sum + company.yAxis, 0) / totalCompanies;
 
                 return (
-                  <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="mb-6 bg-success-soft border border-success-border rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
+                      <h3 className="font-medium text-success-fg">داده‌ها بارگذاری شد</h3>
                     </div>
-                    <p className="text-sm text-green-700">
+                    <p className="text-sm text-success-fg">
                       تحلیل {formatNumber(totalCompanies)} کمپانی با مجموع{" "}
                       {formatNumber(totalAccidents)} تصادف - میانگین سهم عامل وسیله:{" "}
                       {formatNumber(parseFloat(avgVehicleFaultShare.toFixed(2)))}% - میانگین سهم فوتی:{" "}
@@ -736,28 +739,28 @@ const CompanyPerformanceAnalyticsPage = () => {
             <CompanyPerformanceBubbleChart data={chartData} isLoading={isLoading} />
 
             {/* Chart Interpretation Guide */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">راهنمای تفسیر نمودار</h3>
+            <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
+              <h3 className="text-lg font-semibold text-fg mb-4">راهنمای تفسیر نمودار</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                    <div className="w-6 h-6 bg-brand-soft rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-3 h-3 bg-brand rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">اندازه حباب</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 className="font-medium text-fg">اندازه حباب</h4>
+                      <p className="text-sm text-fg-muted">
                         تعداد کل تصادفات مربوط به کمپانی را نشان می‌دهد
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 bg-danger-soft rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <div className="w-3 h-3 bg-red-600 rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">محور عمودی (Y)</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 className="font-medium text-fg">محور عمودی (Y)</h4>
+                      <p className="text-sm text-fg-muted">
                         سهم تصادفات فوتی از تصادفات شدید - هر چه بالاتر، خطرناک‌تر
                       </p>
                     </div>
@@ -765,23 +768,23 @@ const CompanyPerformanceAnalyticsPage = () => {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 bg-success-soft rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <div className="w-3 h-3 bg-green-600 rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">محور افقی (X)</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 className="font-medium text-fg">محور افقی (X)</h4>
+                      <p className="text-sm text-fg-muted">
                         سهم عامل وسیله نقلیه در تصادفات شدید - هر چه بالاتر، مشکل‌آفرین‌تر
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-6 h-6 bg-warning-soft rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <div className="w-3 h-3 bg-amber-600 rounded-full"></div>
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900">توزیع سال ساخت</h4>
-                      <p className="text-sm text-gray-600">
+                      <h4 className="font-medium text-fg">توزیع سال ساخت</h4>
+                      <p className="text-sm text-fg-muted">
                         با کلیک روی هر حباب، توزیع سال ساخت وسایل نقلیه آن کمپانی نمایش داده می‌شود
                       </p>
                     </div>
@@ -808,29 +811,29 @@ const CompanyPerformanceAnalyticsPage = () => {
                 );
 
                 return (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">خلاصه آماری</h3>
+                  <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
+                    <h3 className="text-lg font-semibold text-fg mb-4">خلاصه آماری</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">
+                      <div className="bg-brand-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-brand-fg">
                           {formatNumber(totalCompanies)}
                         </div>
-                        <div className="text-sm text-blue-800">تعداد کمپانی‌ها</div>
+                        <div className="text-sm text-brand-fg">تعداد کمپانی‌ها</div>
                       </div>
-                      <div className="bg-red-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-red-600">
+                      <div className="bg-danger-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-danger-fg">
                           {formatNumber(totalAccidents)}
                         </div>
-                        <div className="text-sm text-red-800">مجموع تصادفات</div>
+                        <div className="text-sm text-danger-fg">مجموع تصادفات</div>
                       </div>
-                      <div className="bg-green-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-green-600">
+                      <div className="bg-success-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-success-fg">
                           {formatNumber(parseFloat(avgVehicleFaultShare.toFixed(2)))}
                         </div>
-                        <div className="text-sm text-green-800">میانگین سهم عامل وسیله</div>
+                        <div className="text-sm text-success-fg">میانگین سهم عامل وسیله</div>
                       </div>
-                      <div className="bg-amber-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-amber-600">
+                      <div className="bg-warning-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-warning-fg">
                           {formatNumber(parseFloat(avgFatalityShare.toFixed(2)))}
                         </div>
                         <div className="text-sm text-amber-800">میانگین سهم فوتی</div>
@@ -838,20 +841,20 @@ const CompanyPerformanceAnalyticsPage = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-900 mb-2">بیشترین تصادفات</h4>
+                      <div className="bg-canvas p-4 rounded-lg">
+                        <h4 className="font-medium text-fg mb-2">بیشترین تصادفات</h4>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700">{maxAccidentsCompany.companyName}</span>
-                          <span className="font-bold text-gray-900">
+                          <span className="text-fg">{maxAccidentsCompany.companyName}</span>
+                          <span className="font-bold text-fg">
                             {formatNumber(maxAccidentsCompany.bubbleSize)} تصادف
                           </span>
                         </div>
                       </div>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="font-medium text-gray-900 mb-2">کمترین تصادفات</h4>
+                      <div className="bg-canvas p-4 rounded-lg">
+                        <h4 className="font-medium text-fg mb-2">کمترین تصادفات</h4>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700">{minAccidentsCompany.companyName}</span>
-                          <span className="font-bold text-gray-900">
+                          <span className="text-fg">{minAccidentsCompany.companyName}</span>
+                          <span className="font-bold text-fg">
                             {formatNumber(minAccidentsCompany.bubbleSize)} تصادف
                           </span>
                         </div>
@@ -872,23 +875,23 @@ const CompanyPerformanceAnalyticsPage = () => {
                   chartData.reduce((sum, company) => sum + company.yAxis, 0) / totalCompanies;
 
                 return (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">جدول عملکرد کمپانی‌ها</h3>
+                  <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
+                    <h3 className="text-lg font-semibold text-fg mb-4">جدول عملکرد کمپانی‌ها</h3>
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b border-gray-200">
-                            <th className="text-right py-3 px-4 font-medium text-gray-900">کمپانی</th>
-                            <th className="text-center py-3 px-4 font-medium text-gray-900">
+                          <tr className="border-b border-line">
+                            <th className="text-right py-3 px-4 font-medium text-fg">کمپانی</th>
+                            <th className="text-center py-3 px-4 font-medium text-fg">
                               تعداد تصادفات
                             </th>
-                            <th className="text-center py-3 px-4 font-medium text-gray-900">
+                            <th className="text-center py-3 px-4 font-medium text-fg">
                               سهم عامل وسیله (%)
                             </th>
-                            <th className="text-center py-3 px-4 font-medium text-gray-900">
+                            <th className="text-center py-3 px-4 font-medium text-fg">
                               سهم فوتی (%)
                             </th>
-                            <th className="text-center py-3 px-4 font-medium text-gray-900">
+                            <th className="text-center py-3 px-4 font-medium text-fg">
                               رتبه کلی
                             </th>
                           </tr>
@@ -899,20 +902,20 @@ const CompanyPerformanceAnalyticsPage = () => {
                             .map((company, index) => (
                               <tr
                                 key={company.companyName}
-                                className="border-b border-gray-100 hover:bg-gray-50"
+                                className="border-b border-line hover:bg-surface-hover"
                               >
-                                <td className="py-3 px-4 font-medium text-gray-900">
+                                <td className="py-3 px-4 font-medium text-fg">
                                   {company.companyName}
                                 </td>
-                                <td className="py-3 px-4 text-center text-gray-700">
+                                <td className="py-3 px-4 text-center text-fg">
                                   {formatNumber(company.bubbleSize)}
                                 </td>
                                 <td className="py-3 px-4 text-center">
                                   <span
                                     className={`px-2 py-1 rounded text-sm font-medium ${
                                       company.xAxis > avgVehicleFaultShare
-                                        ? "bg-red-100 text-red-800"
-                                        : "bg-green-100 text-green-800"
+                                        ? "bg-danger-soft text-danger-fg"
+                                        : "bg-success-soft text-success-fg"
                                     }`}
                                   >
                                     {formatNumber(parseFloat(company.xAxis.toFixed(2)))}
@@ -922,8 +925,8 @@ const CompanyPerformanceAnalyticsPage = () => {
                                   <span
                                     className={`px-2 py-1 rounded text-sm font-medium ${
                                       company.yAxis > avgFatalityShare
-                                        ? "bg-red-100 text-red-800"
-                                        : "bg-green-100 text-green-800"
+                                        ? "bg-danger-soft text-danger-fg"
+                                        : "bg-success-soft text-success-fg"
                                     }`}
                                   >
                                     {formatNumber(parseFloat(company.yAxis.toFixed(2)))}
@@ -933,12 +936,12 @@ const CompanyPerformanceAnalyticsPage = () => {
                                   <div
                                     className={`inline-flex items-center px-2 py-1 rounded-full text-sm font-medium ${
                                       index === 0
-                                        ? "bg-green-100 text-green-800"
+                                        ? "bg-success-soft text-success-fg"
                                         : index === 1
-                                          ? "bg-blue-100 text-blue-800"
+                                          ? "bg-brand-soft text-brand-fg"
                                           : index === 2
-                                            ? "bg-yellow-100 text-yellow-800"
-                                            : "bg-gray-100 text-gray-800"
+                                            ? "tint-warning bg-tint-strong text-tint-fg"
+                                            : "bg-surface-sunken text-fg"
                                     }`}
                                   >
                                     {formatNumber(index + 1)}

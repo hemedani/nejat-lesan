@@ -149,12 +149,12 @@ export function UnitCreateView({ orgId }: { orgId: string }) {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-5">
-        <p className="text-sm text-blue-300">ایجاد واحد</p>
-        <h1 className="mt-1 text-2xl font-bold text-white">واحد جدید در «{org.name}»</h1>
-        <p className="mt-2 text-sm text-slate-500">برای ساخت نمودار، ابتدا واحد ستاد را بدون «زیرمجموعه» بسازید؛ سپس بقیه واحدها را زیر آن تعریف کنید.</p>
+        <p className="text-sm text-brand-fg">ایجاد واحد</p>
+        <h1 className="mt-1 text-2xl font-bold text-fg">واحد جدید در «{org.name}»</h1>
+        <p className="mt-2 text-sm text-fg-faint">برای ساخت نمودار، ابتدا واحد ستاد را بدون «زیرمجموعه» بسازید؛ سپس بقیه واحدها را زیر آن تعریف کنید.</p>
       </div>
 
-      <div className="space-y-5 rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
+      <div className="space-y-5 rounded-2xl border border-line bg-surface/70 p-5 shadow-xl">
         <div className="grid gap-4 sm:grid-cols-2">
           <MyInput label="کد واحد" value={code} onValueChange={setCode} placeholder="مثلاً UN-001" />
           <MyInput label="نام واحد" value={name} onValueChange={setName} placeholder="مثلاً گشت آزادراه تهران-قم" />
@@ -166,12 +166,12 @@ export function UnitCreateView({ orgId }: { orgId: string }) {
         <MyInput label="تلفن" value={phone} onValueChange={setPhone} placeholder="(اختیاری)" />
         <MyInput label="نشانی" value={address} onValueChange={setAddress} placeholder="(اختیاری)" />
         <MyInput label="توضیحات" type="textarea" value={description} onValueChange={setDescription} />
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
-          <span className="text-sm text-slate-300">واحد فعال باشد</span>
+        <div className="flex items-center justify-between rounded-xl border border-line bg-surface-sunken px-3 py-3">
+          <span className="text-sm text-fg-muted">واحد فعال باشد</span>
           <ToggleSwitch checked={isActive} onChange={setIsActive} />
         </div>
-        {formError && <p className="rounded-xl border border-rose-400/25 bg-rose-400/10 px-3 py-2 text-xs text-rose-200">{formError}</p>}
-        <div className="flex justify-end gap-2 border-t border-white/10 pt-4">
+        {formError && <p className="tint-rose rounded-xl border border-tint-border bg-tint-soft px-3 py-2 text-xs text-tint-fg">{formError}</p>}
+        <div className="flex justify-end gap-2 border-t border-line pt-4">
           <Button variant="neutral" onClick={() => router.push(orgRoutes.units())}>انصراف</Button>
           <Button onClick={() => void handleSubmit()} loading={submitting} disabled={submitting}>
             {submitting ? "در حال ثبت..." : "ثبت واحد"}

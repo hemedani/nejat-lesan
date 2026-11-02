@@ -3,6 +3,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { ApexOptions } from 'apexcharts'
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -19,15 +20,17 @@ interface ChartProps {
 }
 
 const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
+
   // Early return for loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نحوه برخورد</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نحوه برخورد</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">در حال بارگذاری...</p>
+            <p className="text-fg-muted">در حال بارگذاری...</p>
           </div>
         </div>
       </div>
@@ -37,15 +40,15 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
   // Early return for no data state
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نحوه برخورد</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نحوه برخورد</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-16 h-16 text-fg-faint mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">داده‌ای موجود نیست</h4>
-            <p className="text-gray-600">اطلاعات نحوه برخورد در فیلترهای انتخابی یافت نشد.</p>
+            <h4 className="text-lg font-medium text-fg mb-2">داده‌ای موجود نیست</h4>
+            <p className="text-fg-muted">اطلاعات نحوه برخورد در فیلترهای انتخابی یافت نشد.</p>
           </div>
         </div>
       </div>
@@ -78,13 +81,13 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
     },
     series: chartSeries,
     labels: chartLabels,
-    colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#F97316', '#84CC16'],
+    colors: chartTheme.colors,
     legend: {
       position: 'bottom',
       fontSize: '14px',
       fontWeight: 500,
       labels: {
-        colors: '#374151'
+        colors: chartTheme.label
       },
       markers: {
       }
@@ -100,14 +103,14 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
               label: 'مجموع',
               fontSize: '16px',
               fontWeight: 600,
-              color: '#374151',
+              color: chartTheme.label,
               formatter: () => totalCount.toLocaleString()
             },
             value: {
               show: true,
               fontSize: '24px',
               fontWeight: 700,
-              color: '#111827',
+              color: chartTheme.fg,
               formatter: (val: string) => parseInt(val).toLocaleString()
             }
           }
@@ -120,7 +123,7 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
       style: {
         fontSize: '12px',
         fontWeight: 600,
-        colors: ['#FFFFFF']
+        colors: [chartTheme.onFill]
       },
       dropShadow: {
         enabled: true,
@@ -157,10 +160,10 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">نحوه برخورد</h3>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-fg">نحوه برخورد</h3>
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 2C5.582 2 2 5.582 2 10s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zM9 4a1 1 0 112 0v4a1 1 0 11-2 0V4zm0 8a1 1 0 112 0v2a1 1 0 11-2 0v-2z" clipRule="evenodd" />
           </svg>
@@ -179,12 +182,12 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
 
       {/* Data Summary Table */}
       <div className="mt-6 border-t pt-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">جزئیات انواع برخورد</h4>
+        <h4 className="text-sm font-medium text-fg mb-3">جزئیات انواع برخورد</h4>
         <div className="space-y-2 max-h-40 overflow-y-auto">
           {sortedData.map((item, index) => {
               const percentage = ((item.count / totalCount) * 100).toFixed(1)
               return (
-                <div key={index} className="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-50">
+                <div key={index} className="flex items-center justify-between py-1 px-2 rounded hover:bg-surface-hover">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-3 h-3 rounded-full"
@@ -192,11 +195,11 @@ const MainCollisionChart: React.FC<ChartProps> = ({ data, isLoading }) => {
                         backgroundColor: doughnutOptions.colors?.[index % (doughnutOptions.colors?.length || 8)] || '#3B82F6'
                       }}
                     ></div>
-                    <span className="text-sm text-gray-700">{item.name}</span>
+                    <span className="text-sm text-fg">{item.name}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-medium text-gray-900">{item.count.toLocaleString()}</span>
-                    <span className="text-xs text-gray-500 mr-2">({percentage}%)</span>
+                    <span className="text-sm font-medium text-fg">{item.count.toLocaleString()}</span>
+                    <span className="text-xs text-fg-muted mr-2">({percentage}%)</span>
                   </div>
                 </div>
               )

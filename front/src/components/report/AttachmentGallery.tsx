@@ -48,7 +48,7 @@ export function AttachmentGallery({
   if (!files.length) return null;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
       <SectionTitle count={files.length}>مستندات</SectionTitle>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
         {files.map((file) => (
@@ -74,7 +74,7 @@ function AttachmentTile({
     <button
       type="button"
       onClick={() => onOpen(file)}
-      className="group cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/[.02] text-right transition hover:border-blue-400/40"
+      className="group cursor-pointer overflow-hidden rounded-xl border border-line bg-surface-sunken text-right transition hover:border-blue-400/40"
     >
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -85,16 +85,16 @@ function AttachmentTile({
           className="h-24 w-full object-cover"
         />
       ) : (
-        <div className="flex h-24 items-center justify-center text-slate-500">
+        <div className="flex h-24 items-center justify-center text-fg-faint">
           <FileGlyph />
         </div>
       )}
       <div className="px-2 py-1.5">
-        <p className="truncate text-[10px] text-slate-300" dir="ltr">
+        <p className="truncate text-[10px] text-fg-muted" dir="ltr">
           {file.name}
         </p>
         {file.size != null && (
-          <p className="text-[9px] text-slate-500">{formatFileSize(file.size)}</p>
+          <p className="text-[9px] text-fg-faint">{formatFileSize(file.size)}</p>
         )}
       </div>
     </button>

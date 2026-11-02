@@ -14,6 +14,7 @@ import UnknownDataIndicator from "@/components/atoms/UnknownDataIndicator";
 import dynamic from "next/dynamic";
 import { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import { useAuth } from "@/context/AuthContext";
+import { useSelectStyles } from "@/utils/select-styles";
 
 // Dynamically import AsyncSelect
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
@@ -99,12 +100,13 @@ interface EventSelectorProps {
 }
 
 const EventSelector: React.FC<EventSelectorProps> = ({ onEventIdChange }) => {
+  const selectStyles = useSelectStyles(undefined, { minHeight: "48px", rtl: true });
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">انتخاب رویداد</h3>
+    <div className="bg-surface rounded-lg shadow-sm p-6 mb-6">
+      <h3 className="text-lg font-semibold text-fg mb-4">انتخاب رویداد</h3>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">انتخاب رویداد</label>
+        <label className="block text-sm font-medium text-fg mb-2">انتخاب رویداد</label>
         <AsyncSelect
           cacheOptions
           defaultOptions
@@ -119,44 +121,7 @@ const EventSelector: React.FC<EventSelectorProps> = ({ onEventIdChange }) => {
           loadingMessage={() => "در حال بارگذاری..."}
           isRtl={true}
           isClearable
-          styles={{
-            control: (provided, state) => ({
-              ...provided,
-              minHeight: "48px",
-              borderColor: state.isFocused ? "#3b82f6" : "#cbd5e1",
-              borderRadius: "8px",
-              boxShadow: "none",
-              "&:hover": {
-                borderColor: "#94a3b8",
-              },
-            }),
-            valueContainer: (provided) => ({
-              ...provided,
-              padding: "2px 12px",
-            }),
-            placeholder: (provided) => ({
-              ...provided,
-              color: "#64748b",
-            }),
-            singleValue: (provided) => ({
-              ...provided,
-              color: "#1e293b",
-              overflow: "visible",
-              maxWidth: "100%",
-              fontWeight: 500,
-            }),
-            option: (provided, state) => ({
-              ...provided,
-              backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#eff6ff" : "white",
-              color: state.isSelected ? "white" : "#1e293b",
-              cursor: "pointer",
-              padding: "10px 12px",
-            }),
-            menu: (provided) => ({
-              ...provided,
-              zIndex: 9999,
-            }),
-          }}
+          styles={selectStyles}
         />
       </div>
     </div>
@@ -407,7 +372,7 @@ const EventSeverityAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="trend" currentChart="severity-analytics" />
 
@@ -433,8 +398,8 @@ const EventSeverityAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">سهم شدت تصادفات در رویداد</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">سهم شدت تصادفات در رویداد</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   مقایسه سهم شدت تصادفات در دوره رویداد با سایر ایام سال
                 </p>
               </div>
@@ -461,7 +426,7 @@ const EventSeverityAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -477,7 +442,7 @@ const EventSeverityAnalyticsPage = () => {
                 </button>
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -501,7 +466,7 @@ const EventSeverityAnalyticsPage = () => {
 
           {/* Error Display */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="bg-danger-soft border border-danger-border rounded-lg p-4 mb-6">
               <div className="flex items-center">
                 <svg
                   className="w-5 h-5 text-red-400 mr-2"
@@ -516,7 +481,7 @@ const EventSeverityAnalyticsPage = () => {
                     d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span className="text-red-700">{error}</span>
+                <span className="text-danger-fg">{error}</span>
               </div>
             </div>
           )}

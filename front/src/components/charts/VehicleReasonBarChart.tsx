@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { ApexOptions } from 'apexcharts'
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -36,6 +37,8 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
   data,
   isLoading
 }) => {
+  const chartTheme = useChartTheme();
+
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -47,9 +50,9 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
     return (
       <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-          <div className="h-80 bg-gray-100 rounded flex items-center justify-center">
-            <div className="flex items-center gap-2 text-gray-500">
+          <div className="h-6 bg-surface-sunken rounded w-3/4 mb-4"></div>
+          <div className="h-80 bg-surface-sunken rounded flex items-center justify-center">
+            <div className="flex items-center gap-2 text-fg-muted">
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -66,10 +69,10 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
   if (!data || data.categories.length === 0 || data.series.length === 0) {
     return (
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">عامل وسیله نقلیه مؤثر در تصادف</h3>
-        <div className="h-80 flex items-center justify-center text-gray-500">
+        <h3 className="text-lg font-semibold text-fg mb-4">عامل وسیله نقلیه مؤثر در تصادف</h3>
+        <div className="h-80 flex items-center justify-center text-fg-muted">
           <div className="text-center">
-            <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 mx-auto mb-4 text-fg-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <p className="text-sm">داده‌ای برای نمایش وجود ندارد</p>
@@ -117,7 +120,7 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
         style: {
           fontSize: '12px',
           fontWeight: 500,
-          colors: '#374151'
+          colors: chartTheme.label
         },
         rotate: -45,
         rotateAlways: true,
@@ -125,11 +128,11 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
       },
       axisBorder: {
         show: true,
-        color: '#e5e7eb'
+        color: chartTheme.grid
       },
       axisTicks: {
         show: true,
-        color: '#e5e7eb'
+        color: chartTheme.grid
       }
     },
     yaxis: {
@@ -138,13 +141,13 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
         style: {
           fontSize: '14px',
           fontWeight: 600,
-          color: '#374151'
+          color: chartTheme.label
         }
       },
       labels: {
         style: {
           fontSize: '12px',
-          colors: '#6b7280'
+          colors: chartTheme.label
         },
         formatter: function(val: number) {
           return val.toLocaleString('fa-IR')
@@ -173,7 +176,7 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
     },
     grid: {
       show: true,
-      borderColor: '#f3f4f6',
+      borderColor: chartTheme.grid,
       strokeDashArray: 3,
       xaxis: {
         lines: {
@@ -193,7 +196,7 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
       fontSize: '14px',
       fontWeight: 500,
       labels: {
-        colors: '#374151'
+        colors: chartTheme.label
       },
       markers: {
         size: 6
@@ -205,7 +208,7 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
     },
     tooltip: {
       enabled: true,
-      theme: 'light',
+      theme: chartTheme.mode,
       style: {
         fontSize: '14px'
       },
@@ -254,8 +257,8 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">عامل وسیله نقلیه مؤثر در تصادف</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-fg mb-2">عامل وسیله نقلیه مؤثر در تصادف</h3>
+        <p className="text-sm text-fg-muted">
           توزیع انواع عوامل فنی وسیله نقلیه در تصادفات به تفکیک شدت
         </p>
       </div>
@@ -264,8 +267,8 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
       <div className="flex flex-wrap items-center gap-4 mb-6">
         {data.series.map((series) => (
           <div key={series.name} className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${SEVERITY_DOT_COLORS[series.name] || 'bg-blue-500'}`}></div>
-            <span className="text-sm text-gray-700">{series.name}</span>
+            <div className={`w-3 h-3 rounded-full ${SEVERITY_DOT_COLORS[series.name] || 'bg-brand'}`}></div>
+            <span className="text-sm text-fg">{series.name}</span>
           </div>
         ))}
       </div>
@@ -284,27 +287,27 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
 
       {/* Statistics Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <div className="bg-brand-soft p-4 rounded-lg border border-brand-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-800">مجموع عوامل</p>
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-sm font-medium text-brand-fg">مجموع عوامل</p>
+              <p className="text-2xl font-bold text-brand-fg">
                 {totalFaults.toLocaleString('fa-IR')}
               </p>
-              <p className="text-sm text-blue-700">در {data.categories.length} دسته</p>
+              <p className="text-sm text-brand-fg">در {data.categories.length} دسته</p>
             </div>
-            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+            <div className="w-3 h-3 rounded-full bg-brand"></div>
           </div>
         </div>
 
-        <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+        <div className="bg-warning-soft p-4 rounded-lg border border-warning-border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-amber-800">بیشترین مورد</p>
-              <p className="text-2xl font-bold text-amber-600">
+              <p className="text-2xl font-bold text-warning-fg">
                 {maxFault.toLocaleString('fa-IR')}
               </p>
-              <p className="text-sm text-amber-700 truncate" title={topFaultType}>
+              <p className="text-sm text-warning-fg truncate" title={topFaultType}>
                 {topFaultType}
               </p>
             </div>
@@ -312,14 +315,14 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
           </div>
         </div>
 
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+        <div className="bg-success-soft p-4 rounded-lg border border-success-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-green-800">میانگین</p>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-sm font-medium text-success-fg">میانگین</p>
+              <p className="text-2xl font-bold text-success-fg">
                 {data.categories.length > 0 ? Math.round(totalFaults / data.categories.length).toLocaleString('fa-IR') : '0'}
               </p>
-              <p className="text-sm text-green-700">در هر دسته</p>
+              <p className="text-sm text-success-fg">در هر دسته</p>
             </div>
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
@@ -328,22 +331,22 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
 
       {/* Detailed Breakdown */}
       <div className="mt-6">
-        <h4 className="text-md font-semibold text-gray-900 mb-3">جزئیات عوامل</h4>
+        <h4 className="text-md font-semibold text-fg mb-3">جزئیات عوامل</h4>
         <div className="space-y-2">
           {data.categories.map((category, index) => {
             const categoryTotal = categoryTotals[index]
             const categoryPercentage = totalFaults > 0 ? ((categoryTotal / totalFaults) * 100).toFixed(1) : '0'
 
             return (
-              <div key={index} className="py-2 px-3 bg-gray-50 rounded-lg">
+              <div key={index} className="py-2 px-3 bg-canvas rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700 flex-1 truncate" title={category}>
+                  <span className="text-sm font-medium text-fg flex-1 truncate" title={category}>
                     {category}
                   </span>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <span className="text-sm font-semibold text-fg">
                     {categoryTotal.toLocaleString('fa-IR')}
                   </span>
-                  <span className="text-sm text-gray-500 w-16 text-left">
+                  <span className="text-sm text-fg-muted w-16 text-left">
                     {categoryPercentage}%
                   </span>
                 </div>
@@ -354,12 +357,12 @@ const VehicleReasonBarChart: React.FC<VehicleReasonBarChartProps> = ({
 
                     return (
                       <div key={series.name} className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full ${SEVERITY_DOT_COLORS[series.name] || 'bg-blue-500'}`}></div>
-                        <span className="text-xs text-gray-600">{series.name}:</span>
-                        <span className="text-sm font-semibold text-gray-900">
+                        <div className={`w-3 h-3 rounded-full ${SEVERITY_DOT_COLORS[series.name] || 'bg-brand'}`}></div>
+                        <span className="text-xs text-fg-muted">{series.name}:</span>
+                        <span className="text-sm font-semibold text-fg">
                           {count.toLocaleString('fa-IR')}
                         </span>
-                        <span className="text-xs text-gray-500">({percentage}%)</span>
+                        <span className="text-xs text-fg-muted">({percentage}%)</span>
                       </div>
                     )
                   })}

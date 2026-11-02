@@ -27,10 +27,10 @@ const PRIORITY_LABELS: Record<string, string> = {
 };
 
 const PRIORITY_TONES: Record<string, string> = {
-  low: "border-white/10 bg-white/[.04] text-slate-300",
-  normal: "border-blue-400/25 bg-blue-400/10 text-blue-200",
-  high: "border-amber-400/25 bg-amber-400/10 text-amber-200",
-  urgent: "border-rose-400/25 bg-rose-400/10 text-rose-200",
+  low: "border-line bg-surface-sunken text-fg-muted",
+  normal: "tint-blue border-tint-border bg-tint-soft text-tint-fg",
+  high: "tint-amber border-tint-border bg-tint-soft text-tint-fg",
+  urgent: "tint-rose border-tint-border bg-tint-soft text-tint-fg",
 };
 
 /**
@@ -99,7 +99,7 @@ export function AnnouncementsView() {
 
   if (!allowed) {
     return (
-      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-8 text-center text-sm leading-6 text-amber-100">
+      <div className="tint-amber rounded-2xl border border-tint-border bg-tint-soft p-8 text-center text-sm leading-6 text-tint-fg">
         این بخش فقط برای کاربران با نقش «مأمور گشت» در دسترس است.
       </div>
     );
@@ -108,9 +108,9 @@ export function AnnouncementsView() {
   return (
     <div>
       <div className="mb-5">
-        <p className="text-sm text-blue-300">گشت و رخدادها</p>
-        <h1 className="mt-1 text-2xl font-bold text-white">اطلاعیه‌ها</h1>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="text-sm text-brand-fg">گشت و رخدادها</p>
+        <h1 className="mt-1 text-2xl font-bold text-fg">اطلاعیه‌ها</h1>
+        <p className="mt-2 text-sm text-fg-faint">
           اطلاعیه‌های سازمان و ستاد برای مأموران گشت.
         </p>
       </div>
@@ -128,12 +128,12 @@ export function AnnouncementsView() {
             return (
               <article
                 key={row._id}
-                className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl"
+                className="rounded-2xl border border-line bg-surface/70 p-5 shadow-xl"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="font-semibold text-white">{row.title || "بدون عنوان"}</h2>
+                      <h2 className="font-semibold text-fg">{row.title || "بدون عنوان"}</h2>
                       <span
                         className={`rounded-full border px-2 py-0.5 text-[10px] ${
                           PRIORITY_TONES[priority] || PRIORITY_TONES.normal
@@ -143,11 +143,11 @@ export function AnnouncementsView() {
                       </span>
                     </div>
                     {row.body && (
-                      <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-300">
+                      <p className="mt-2 whitespace-pre-line text-sm leading-6 text-fg-muted">
                         {row.body}
                       </p>
                     )}
-                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-faint">
                       {row.registrer && (
                         <span>
                           {`${row.registrer.first_name || ""} ${row.registrer.last_name || ""}`.trim()}

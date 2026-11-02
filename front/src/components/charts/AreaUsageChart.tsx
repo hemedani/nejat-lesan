@@ -4,6 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { formatNumber } from "@/utils/formatters";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -19,13 +20,15 @@ interface AreaUsageChartProps {
 }
 
 const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
+
   // Show loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="flex flex-col items-center gap-4">
-            <svg className="w-12 h-12 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 text-fg-faint animate-spin" fill="none" viewBox="0 0 24 24">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -40,7 +43,7 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
                 d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
             </svg>
-            <p className="text-gray-500">در حال بارگذاری نمودار...</p>
+            <p className="text-fg-muted">در حال بارگذاری نمودار...</p>
           </div>
         </div>
       </div>
@@ -50,11 +53,11 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
   // Show empty state
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="flex flex-col items-center gap-4">
             <svg
-              className="w-16 h-16 text-gray-300"
+              className="w-16 h-16 text-fg-faint"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -67,8 +70,8 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
               />
             </svg>
             <div className="text-center">
-              <p className="text-gray-500 font-medium mb-1">داده‌ای برای نمایش وجود ندارد</p>
-              <p className="text-gray-400 text-sm">لطفاً فیلترهای مورد نظر را اعمال کنید</p>
+              <p className="text-fg-muted font-medium mb-1">داده‌ای برای نمایش وجود ندارد</p>
+              <p className="text-fg-faint text-sm">لطفاً فیلترهای مورد نظر را اعمال کنید</p>
             </div>
           </div>
         </div>
@@ -108,24 +111,13 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
       style: {
         fontSize: "18px",
         fontWeight: "600",
-        color: "#1f2937",
+        color: chartTheme.fg,
       },
       margin: 20,
     },
     labels: chartLabels,
     series: chartSeries,
-    colors: [
-      "#3b82f6", // Blue
-      "#ef4444", // Red
-      "#10b981", // Green
-      "#f59e0b", // Amber
-      "#8b5cf6", // Purple
-      "#06b6d4", // Cyan
-      "#f97316", // Orange
-      "#84cc16", // Lime
-      "#ec4899", // Pink
-      "#6b7280", // Gray
-    ],
+    colors: chartTheme.colors,
     plotOptions: {
       pie: {
         donut: {
@@ -136,13 +128,13 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
               show: true,
               fontSize: "14px",
               fontWeight: "500",
-              color: "#374151",
+              color: chartTheme.label,
             },
             value: {
               show: true,
               fontSize: "20px",
               fontWeight: "700",
-              color: "#1f2937",
+              color: chartTheme.fg,
               formatter: function (val: string) {
                 return formatNumber(parseInt(val));
               },
@@ -152,7 +144,7 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
               label: "مجموع",
               fontSize: "14px",
               fontWeight: "500",
-              color: "#6b7280",
+              color: chartTheme.label,
               formatter: function () {
                 return formatNumber(totalCount);
               },
@@ -169,7 +161,7 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
       style: {
         fontSize: "12px",
         fontWeight: "600",
-        colors: ["#ffffff"],
+        colors: [chartTheme.onFill],
       },
       dropShadow: {
         enabled: true,
@@ -185,7 +177,7 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
       fontSize: "14px",
       fontWeight: "400",
       labels: {
-        colors: "#374151",
+        colors: chartTheme.label,
       },
       markers: {
         size: 12,
@@ -199,7 +191,7 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
     },
     tooltip: {
       enabled: true,
-      theme: "light",
+      theme: chartTheme.mode,
       style: {
         fontSize: "12px",
       },
@@ -227,35 +219,35 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
       <div className="h-96">
         <Chart options={chartOptions} series={chartSeries} type="donut" height="100%" />
       </div>
 
       {/* Data Summary Table */}
-      <div className="mt-6 border-t border-gray-200 pt-6">
-        <h4 className="text-lg font-semibold text-gray-900 mb-4">جزئیات آماری</h4>
+      <div className="mt-6 border-t border-line pt-6">
+        <h4 className="text-lg font-semibold text-fg mb-4">جزئیات آماری</h4>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-line">
+            <thead className="bg-canvas">
               <tr>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider">
                   کاربری محل
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider">
                   تعداد تصادفات
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-medium text-fg-muted uppercase tracking-wider">
                   درصد
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-surface divide-y divide-line">
               {data.map((item, index) => {
                 const percentage = ((item.count / totalCount) * 100).toFixed(1);
                 return (
-                  <tr key={item.name} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                  <tr key={item.name} className={index % 2 === 0 ? "bg-surface" : "bg-canvas"}>
+                    <td className="px-4 py-3 text-sm font-medium text-fg">
                       <div className="flex items-center gap-2">
                         <div
                           className="w-3 h-3 rounded-sm"
@@ -266,19 +258,19 @@ const AreaUsageChart: React.FC<AreaUsageChartProps> = ({ data, isLoading }) => {
                         {item.name}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{formatNumber(item.count)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{percentage}%</td>
+                    <td className="px-4 py-3 text-sm text-fg">{formatNumber(item.count)}</td>
+                    <td className="px-4 py-3 text-sm text-fg">{percentage}%</td>
                   </tr>
                 );
               })}
             </tbody>
-            <tfoot className="bg-gray-100">
+            <tfoot className="bg-surface-sunken">
               <tr>
-                <td className="px-4 py-3 text-sm font-semibold text-gray-900">مجموع</td>
-                <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                <td className="px-4 py-3 text-sm font-semibold text-fg">مجموع</td>
+                <td className="px-4 py-3 text-sm font-semibold text-fg">
                   {formatNumber(totalCount)}
                 </td>
-                <td className="px-4 py-3 text-sm font-semibold text-gray-900">100%</td>
+                <td className="px-4 py-3 text-sm font-semibold text-fg">100%</td>
               </tr>
             </tfoot>
           </table>

@@ -164,9 +164,9 @@ export function PeopleDetailView({ orgId, userId }: { orgId: string; userId: str
     <div className="space-y-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">افراد و نقش‌ها</p>
-          <h1 className="text-2xl font-bold text-white">{`${person.first_name || ""} ${person.last_name || ""}`.trim() || "کاربر"}</h1>
-          {person.email && <p className="mt-1 text-xs text-slate-500" dir="ltr">{person.email}</p>}
+          <p className="text-sm text-brand-fg">افراد و نقش‌ها</p>
+          <h1 className="text-2xl font-bold text-fg">{`${person.first_name || ""} ${person.last_name || ""}`.trim() || "کاربر"}</h1>
+          {person.email && <p className="mt-1 text-xs text-fg-faint" dir="ltr">{person.email}</p>}
         </div>
         <Button variant="secondary" onClick={() => router.push(orgRoutes.people())}>بازگشت به لیست</Button>
       </div>
@@ -176,7 +176,7 @@ export function PeopleDetailView({ orgId, userId }: { orgId: string; userId: str
           <MyInput label="نام" value={person.first_name || ""} onValueChange={(v) => setPersonField("first_name", v)} />
           <MyInput label="نام خانوادگی" value={person.last_name || ""} onValueChange={(v) => setPersonField("last_name", v)} />
           <MyInput label="کد پرسنلی" value={person.personnel_code || ""} onValueChange={(v) => setPersonField("personnel_code", v)} />
-          {person.mobile && <p className="flex items-end px-1 pb-2 text-xs text-slate-500">موبایل: <span className="mr-1 text-slate-300" dir="ltr">{person.mobile}</span></p>}
+          {person.mobile && <p className="flex items-end px-1 pb-2 text-xs text-fg-faint">موبایل: <span className="mr-1 text-fg-muted" dir="ltr">{person.mobile}</span></p>}
           <OrgSelect
             label="سطح دسترسی"
             value={person.level || ""}
@@ -194,16 +194,16 @@ export function PeopleDetailView({ orgId, userId }: { orgId: string; userId: str
         {(person.roles?.length || 0) > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {person.roles!.map((role, i) => (
-              <span key={`${role.name}-${i}`} className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs ${ORG_ROLE_TONES[role.name] || "border-white/10 text-slate-200"}`}>
+              <span key={`${role.name}-${i}`} className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs ${ORG_ROLE_TONES[role.name] || "border-line text-fg"}`}>
                 {ORG_ROLE_LABELS[role.name] || role.name}
                 {scopeLabel(role, unitNameMap, orgId) ? <span className="opacity-70">· {scopeLabel(role, unitNameMap, orgId)}</span> : null}
-                <button disabled={busy} onClick={() => void removeRole(role)} className="text-rose-300 hover:text-rose-200" aria-label="حذف نقش">×</button>
+                <button disabled={busy} onClick={() => void removeRole(role)} className="text-danger-fg hover:underline" aria-label="حذف نقش">×</button>
               </span>
             ))}
           </div>
         )}
 
-        <div className="flex flex-wrap items-end gap-3 rounded-xl border border-white/10 bg-white/[.02] p-3">
+        <div className="flex flex-wrap items-end gap-3 rounded-xl border border-line bg-surface-sunken p-3">
           <div className="w-56">
             <OrgSelect label="نقش جدید" value={pendingRoleName} onChange={(v) => setPendingRoleName(v as OrgRoleName)} options={ORG_ROLE_OPTIONS} />
           </div>

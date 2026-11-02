@@ -16,7 +16,7 @@ export const HeroChartButtons = () => {
     <>
       <Link
         href="/maps/accidents"
-        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-1"
+        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand hover:bg-brand-hover text-on-brand px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-1"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +37,7 @@ export const HeroChartButtons = () => {
 
       <Link
         href="/charts/overall"
-        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1"
+        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-surface-hover hover:bg-surface-hover backdrop-blur-md text-fg border border-line px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

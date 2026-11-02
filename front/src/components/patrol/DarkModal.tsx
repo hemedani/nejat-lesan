@@ -49,9 +49,9 @@ export function DarkModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl"
+        className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl"
       >
-        <h3 className="mb-4 text-lg font-bold text-white">{title}</h3>
+        <h3 className="mb-4 text-lg font-bold text-fg">{title}</h3>
         {children}
         {footer && <div className="mt-4 flex justify-end gap-2">{footer}</div>}
       </div>

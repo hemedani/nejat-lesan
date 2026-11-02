@@ -1,19 +1,19 @@
 import type { ReviewAction, ReviewStatus, SyncStatus } from "@/types/patrol";
 
 export const syncStatusMeta: Record<SyncStatus, { label: string; className: string }> = {
-  draft: { label: "پیش‌نویس", className: "border-slate-500/40 bg-slate-500/10 text-slate-300" },
-  queued: { label: "در صف همگام‌سازی", className: "border-amber-400/40 bg-amber-400/10 text-amber-200" },
-  syncing: { label: "در حال همگام‌سازی", className: "border-blue-400/40 bg-blue-400/10 text-blue-200" },
-  synced: { label: "همگام‌سازی‌شده", className: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200" },
-  rejected: { label: "ردشده در همگام‌سازی", className: "border-rose-400/40 bg-rose-400/10 text-rose-200" },
+  draft: { label: "پیش‌نویس", className: "border-line-strong bg-line-strong/10 text-fg-muted" },
+  queued: { label: "در صف همگام‌سازی", className: "tint-amber border-tint-border bg-tint-soft text-tint-fg" },
+  syncing: { label: "در حال همگام‌سازی", className: "tint-blue border-tint-border bg-tint-soft text-tint-fg" },
+  synced: { label: "همگام‌سازی‌شده", className: "tint-emerald border-tint-border bg-tint-soft text-tint-fg" },
+  rejected: { label: "ردشده در همگام‌سازی", className: "tint-rose border-tint-border bg-tint-soft text-tint-fg" },
 };
 
 export const reviewStatusMeta: Record<ReviewStatus, { label: string; className: string }> = {
-  submitted: { label: "ارسال‌شده", className: "border-blue-400/40 bg-blue-400/10 text-blue-200" },
-  under_review: { label: "در حال بررسی", className: "border-amber-400/40 bg-amber-400/10 text-amber-200" },
-  returned: { label: "برگشت برای اصلاح", className: "border-orange-400/40 bg-orange-400/10 text-orange-200" },
-  approved: { label: "تأییدشده", className: "border-cyan-400/40 bg-cyan-400/10 text-cyan-200" },
-  completed: { label: "تکمیل‌شده", className: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200" },
+  submitted: { label: "ارسال‌شده", className: "tint-blue border-tint-border bg-tint-soft text-tint-fg" },
+  under_review: { label: "در حال بررسی", className: "tint-amber border-tint-border bg-tint-soft text-tint-fg" },
+  returned: { label: "برگشت برای اصلاح", className: "tint-orange border-tint-border bg-tint-soft text-tint-fg" },
+  approved: { label: "تأییدشده", className: "tint-cyan border-tint-border bg-tint-soft text-tint-fg" },
+  completed: { label: "تکمیل‌شده", className: "tint-emerald border-tint-border bg-tint-soft text-tint-fg" },
 };
 
 export const normalizeReviewStatus = (status?: ReviewStatus): ReviewStatus => status ?? "submitted";

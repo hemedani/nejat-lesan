@@ -36,7 +36,7 @@ export function VehicleSection({
   if (!vehicles?.length) return null;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
       <SectionTitle count={vehicles.length}>خودروها</SectionTitle>
       <div className="space-y-2.5">
         {vehicles.map((vehicle, index) => (
@@ -64,10 +64,10 @@ function VehicleCard({
   const damageSections = vehicle.max_damage_sections ?? [];
 
   return (
-    <article className="rounded-xl border border-white/10 bg-white/[.02] p-3">
+    <article className="rounded-xl border border-line bg-surface-sunken p-3">
       <header className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
         <span
-          className="text-sm font-bold text-white"
+          className="text-sm font-bold text-fg"
           dir="ltr"
           title={plate ? undefined : "پلاک ثبت نشده"}
         >
@@ -130,9 +130,9 @@ function VehicleCard({
         </FieldGrid>
 
         {damageSections.length > 0 && (
-          <p className="mt-2 rounded-lg bg-white/[.03] p-2 text-[11px] leading-5 text-slate-400">
+          <p className="mt-2 rounded-lg bg-surface-sunken p-2 text-[11px] leading-5 text-fg-muted">
             قطعات آسیب‌دیده:{" "}
-            <span className="text-slate-200">
+            <span className="text-fg">
               {joinNames(damageSections.map((part) => part.name))}
             </span>
             {vehicle.damage_section_other && ` — ${vehicle.damage_section_other}`}

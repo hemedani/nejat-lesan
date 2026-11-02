@@ -103,14 +103,14 @@ export function NearbyAccidentsMap() {
       }
     >
       <div className="space-y-4">
-        <p className="text-xs leading-6 text-slate-500">
+        <p className="text-xs leading-6 text-fg-faint">
           فقط حوادث همگام‌سازی‌شده در محدوده‌ی نمایش‌داده‌شده نشان داده می‌شوند. پس از جابه‌جا کردن
           نقشه، «جست‌وجوی این محدوده» را بزنید تا فهرست تازه شود.
         </p>
 
         {error && <Notice tone="rose">{error}</Notice>}
 
-        <div className="relative h-[30rem] overflow-hidden rounded-xl border border-white/10 bg-slate-900">
+        <div className="relative h-[30rem] overflow-hidden rounded-xl border border-line bg-surface">
           <LeafletMap
             accidents={accidents}
             center={DEFAULT_CENTER}
@@ -120,14 +120,14 @@ export function NearbyAccidentsMap() {
 
           {!loading && !error && located === 0 && (
             <div className="pointer-events-none absolute inset-0 z-[500] flex items-center justify-center">
-              <div className="rounded-xl border border-white/10 bg-slate-900/90 px-4 py-3 text-sm text-slate-300">
+              <div className="rounded-xl border border-line bg-surface/90 px-4 py-3 text-sm text-fg-muted">
                 حادثه‌ای در این محدوده یافت نشد.
               </div>
             </div>
           )}
         </div>
 
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-fg-faint">
           {loading
             ? "در حال دریافت..."
             : `${located.toLocaleString("fa-IR")} حادثه روی نقشه`}

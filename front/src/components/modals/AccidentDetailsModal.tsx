@@ -99,13 +99,13 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         return (
           <>
             {formatted}
-            {time && <span className="text-gray-400 mr-1">{time}</span>}
+            {time && <span className="text-fg-faint mr-1">{time}</span>}
           </>
         );
       }
       case "dead_count":
         return (
-          <span className="text-red-600 font-medium">
+          <span className="text-danger-fg font-medium">
             {formatNumber(value as number)}
           </span>
         );
@@ -181,20 +181,20 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100000] p-4">
-      <div className="bg-white rounded-lg shadow-xl w-[95vw] max-w-[1600px] max-h-[90vh] flex flex-col">
+      <div className="bg-surface rounded-lg shadow-xl w-[95vw] max-w-[1600px] max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-fg">
               جزئیات تصادفات در منطقه انتخاب شده
             </h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-fg-muted mt-1">
               تعداد تصادفات: {data.length.toLocaleString("fa-IR")}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-fg-faint hover:text-fg-muted transition-colors"
           >
             <svg
               className="w-6 h-6"
@@ -213,10 +213,10 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         </div>
 
         {/* Field Selector Toolbar */}
-        <div className="flex items-center justify-between px-6 py-3 border-b bg-gray-50">
+        <div className="flex items-center justify-between px-6 py-3 border-b bg-canvas">
           <button
             onClick={() => setShowFieldSelector((v) => !v)}
-            className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-brand-fg hover:text-brand-fg transition-colors"
           >
             <svg
               className="w-4 h-4"
@@ -234,7 +234,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
             {showFieldSelector ? "بستن انتخاب ستون‌ها" : "انتخاب ستون‌های جدول"}
           </button>
           {isLoading && (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-fg-muted">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
               در حال بارگذاری...
             </div>
@@ -243,8 +243,8 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
 
         {/* Field Selector Panel */}
         {showFieldSelector && (
-          <div className="px-6 py-4 border-b bg-white">
-            <p className="text-sm text-gray-600 mb-3">
+          <div className="px-6 py-4 border-b bg-surface">
+            <p className="text-sm text-fg-muted mb-3">
               ستون‌های مورد نظر را انتخاب کنید و دکمه «اعمال» را بزنید تا داده‌ها
               دوباره از سامانه دریافت شوند.
             </p>
@@ -252,13 +252,13 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
               {fieldOptions.map((option) => (
                 <label
                   key={option.key}
-                  className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none"
+                  className="flex items-center gap-2 text-sm text-fg cursor-pointer select-none"
                 >
                   <input
                     type="checkbox"
                     checked={selectedFields.has(option.key)}
                     onChange={() => onToggleField(option.key)}
-                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 text-brand-fg rounded border-line-strong focus:ring-brand"
                   />
                   {option.label}
                 </label>
@@ -268,7 +268,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
               <button
                 onClick={onApplyFields}
                 disabled={isLoading}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors text-sm font-medium"
               >
                 <svg
                   className="w-4 h-4"
@@ -288,7 +288,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
               <button
                 onClick={onResetFields}
                 disabled={isLoading}
-                className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken disabled:bg-line-strong disabled:cursor-not-allowed transition-colors text-sm font-medium"
               >
                 بازنشانی به پیش‌فرض
               </button>
@@ -300,16 +300,16 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         <div className="flex-1 overflow-auto px-6 pb-6 overscroll-contain">
           {data.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">تصادفی در این منطقه یافت نشد.</p>
+              <p className="text-fg-muted">تصادفی در این منطقه یافت نشد.</p>
             </div>
           ) : (
-            <table className="w-full border-collapse border border-gray-300 min-w-[1000px]">
+            <table className="w-full border-collapse border border-line-strong min-w-[1000px]">
               <thead>
-                <tr className="bg-gray-50 sticky top-0 z-10">
+                <tr className="bg-canvas sticky top-0 z-10">
                   {activeColumns.map((option) => (
                     <th
                       key={option.key}
-                      className="border border-gray-300 px-2 py-1.5 text-right text-xs font-medium text-gray-900 whitespace-nowrap"
+                      className="border border-line-strong px-2 py-1.5 text-right text-xs font-medium text-fg whitespace-nowrap"
                     >
                       {option.label}
                     </th>
@@ -320,12 +320,12 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
                 {data.map((accident, index) => (
                   <tr
                     key={`${accident._id}-${index}`}
-                    className="hover:bg-gray-50"
+                    className="hover:bg-surface-hover"
                   >
                     {activeColumns.map((option) => (
                       <td
                         key={option.key}
-                        className="border border-gray-300 px-2 py-1.5 text-xs text-gray-900 whitespace-nowrap"
+                        className="border border-line-strong px-2 py-1.5 text-xs text-fg whitespace-nowrap"
                       >
                         {renderCell(option.key, accident)}
                       </td>
@@ -338,16 +338,16 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="border-t p-4 bg-gray-50">
+        <div className="border-t p-4 bg-canvas">
           <div className="flex justify-between items-center">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-fg-muted">
               مجموع تصادفات: {data.length.toLocaleString("fa-IR")} | مجموع فوتی:{" "}
               {totalDead.toLocaleString("fa-IR")} | مجموع مجروح:{" "}
               {totalInjured.toLocaleString("fa-IR")}
             </div>
             <button
               onClick={onClose}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
             >
               بستن
             </button>

@@ -22,13 +22,13 @@ export function MetricTile({
   tone?: "neutral" | "rose" | "amber";
 }) {
   const tones = {
-    neutral: "text-slate-100",
+    neutral: "text-fg",
     rose: "text-rose-400",
     amber: "text-amber-400",
   } as const;
   return (
-    <div className="rounded-xl bg-white/[.04] px-3 py-2">
-      <p className="text-[10px] text-slate-500">{label}</p>
+    <div className="rounded-xl bg-surface-sunken px-3 py-2">
+      <p className="text-[10px] text-fg-faint">{label}</p>
       <p className={`mt-0.5 text-lg font-bold leading-tight ${tones[tone]}`}>
         {value.toLocaleString("fa-IR")}
       </p>
@@ -55,10 +55,10 @@ export function Field({
 }) {
   const empty = value === undefined || value === null || value === "";
   return (
-    <div className="rounded-lg bg-white/[.03] px-2.5 py-1.5">
-      <p className="text-[10px] leading-tight text-slate-500">{label}</p>
+    <div className="rounded-lg bg-surface-sunken px-2.5 py-1.5">
+      <p className="text-[10px] leading-tight text-fg-faint">{label}</p>
       <p
-        className={`mt-0.5 text-xs leading-snug ${empty ? "text-slate-600" : "text-slate-200"}`}
+        className={`mt-0.5 text-xs leading-snug ${empty ? "text-fg-faint" : "text-fg"}`}
         dir={!empty && ltr ? "ltr" : undefined}
       >
         {empty ? "ثبت نشده" : value}
@@ -88,10 +88,10 @@ export function Pill({
   tone?: "slate" | "rose" | "amber" | "emerald";
 }) {
   const tones = {
-    slate: "border-white/10 bg-white/[.04] text-slate-300",
-    rose: "border-rose-400/25 bg-rose-400/10 text-rose-200",
-    amber: "border-amber-400/25 bg-amber-400/10 text-amber-200",
-    emerald: "border-emerald-400/25 bg-emerald-400/10 text-emerald-200",
+    slate: "border-line bg-surface-sunken text-fg-muted",
+    rose: "tint-rose border-tint-border bg-tint-soft text-tint-fg",
+    amber: "tint-amber border-tint-border bg-tint-soft text-tint-fg",
+    emerald: "tint-emerald border-tint-border bg-tint-soft text-tint-fg",
   } as const;
   return (
     <span
@@ -112,9 +112,9 @@ export function SectionTitle({
 }) {
   return (
     <div className="mb-3 flex items-baseline justify-between gap-3">
-      <h2 className="text-sm font-semibold text-white">{children}</h2>
+      <h2 className="text-sm font-semibold text-fg">{children}</h2>
       {count !== undefined && (
-        <span className="text-xs text-slate-500">
+        <span className="text-xs text-fg-faint">
           {count.toLocaleString("fa-IR")}
         </span>
       )}
@@ -151,7 +151,7 @@ export function Collapsible({
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls={panelId}
-        className="text-[11px] text-blue-300 transition hover:text-cyan-200"
+        className="text-[11px] text-brand-fg transition hover:underline"
       >
         {open ? "بستن جزئیات" : label}
       </button>

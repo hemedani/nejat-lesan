@@ -266,9 +266,9 @@ function OrgReportsConsole({
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">گزارش‌های رخداد</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">{headingText}</h1>
-          <p className="mt-2 text-sm text-slate-500">{subtitleText}</p>
+          <p className="text-sm text-brand-fg">گزارش‌های رخداد</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">{headingText}</h1>
+          <p className="mt-2 text-sm text-fg-faint">{subtitleText}</p>
         </div>
       </div>
 
@@ -311,11 +311,11 @@ function OrgReportsConsole({
                 type="button"
                 disabled={page <= 1}
                 onClick={() => push({ ...filter, page: page - 1 })}
-                className="rounded-xl border border-white/10 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-xl border border-line bg-surface-hover px-4 py-2.5 text-sm text-fg transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 صفحه قبل
               </button>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-fg-faint">
                 صفحه {page.toLocaleString("fa-IR")} از{" "}
                 {totalPages.toLocaleString("fa-IR")} ·{" "}
                 {total.toLocaleString("fa-IR")} گزارش
@@ -324,7 +324,7 @@ function OrgReportsConsole({
                 type="button"
                 disabled={page >= totalPages}
                 onClick={() => push({ ...filter, page: page + 1 })}
-                className="rounded-xl border border-white/10 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-xl border border-line bg-surface-hover px-4 py-2.5 text-sm text-fg transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 صفحه بعد
               </button>

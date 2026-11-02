@@ -113,7 +113,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col"
+        className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -122,7 +122,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
             <div className="flex items-center gap-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-white"
+                className="h-6 w-6 text-fg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -132,13 +132,13 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                   clipRule="evenodd"
                 />
               </svg>
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-fg">
                 حذف دسته‌ای تصادفات
               </h2>
             </div>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors"
+              className="text-fg/80 hover:text-fg transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +157,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
             </button>
           </div>
           {step !== "loading" && (
-            <p className="text-red-100 text-sm mt-2 mr-9">
+            <p className="text-danger-fg text-sm mt-2 mr-9">
               {step === "select"
                 ? "مرحله ۱ از ۲ - انتخاب بازه زمانی"
                 : "مرحله ۲ از ۲ - تأیید حذف"}
@@ -170,7 +170,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
           {step === "loading" && (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
               <LoadingSpinner />
-              <p className="text-gray-500 text-sm">در حال بارگذاری بازه‌های زمانی...</p>
+              <p className="text-fg-muted text-sm">در حال بارگذاری بازه‌های زمانی...</p>
             </div>
           )}
 
@@ -178,7 +178,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
             <>
               {fetchError ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-4">
-                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 bg-danger-soft rounded-full flex items-center justify-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-8 w-8 text-red-500"
@@ -194,7 +194,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-700 font-medium">{fetchError}</p>
+                  <p className="text-fg font-medium">{fetchError}</p>
                   <button
                     onClick={() => {
                       setStep("loading");
@@ -216,17 +216,17 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                           setStep("select");
                         });
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                    className="px-4 py-2 bg-brand text-on-brand rounded-lg hover:bg-brand-hover transition-colors text-sm"
                   >
                     تلاش مجدد
                   </button>
                 </div>
               ) : periods.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 bg-surface-sunken rounded-full flex items-center justify-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8 text-gray-400"
+                      className="h-8 w-8 text-fg-faint"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -239,13 +239,13 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-500 text-lg">
+                  <p className="text-fg-muted text-lg">
                     هیچ بازه زمانی برای نمایش وجود ندارد.
                   </p>
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-4 text-sm">
+                  <p className="text-fg-muted mb-4 text-sm">
                     لطفاً یک بازه زمانی را برای حذف دسته‌ای تصادفات انتخاب کنید:
                   </p>
                   <div
@@ -265,8 +265,8 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                           onClick={() => setSelectedPeriod(period)}
                           className={`w-full text-right p-4 rounded-xl border-2 transition-all duration-200 ${
                             isSelected
-                              ? "border-blue-500 bg-blue-50 ring-2 ring-blue-500"
-                              : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md"
+                              ? "border-blue-500 bg-brand-soft ring-2 ring-brand"
+                              : "border-line bg-surface hover:border-line-strong hover:shadow-md"
                           }`}
                         >
                           <div className="flex items-center justify-between">
@@ -274,14 +274,14 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                               <div
                                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                                   isSelected
-                                    ? "border-blue-500 bg-blue-500"
-                                    : "border-gray-300"
+                                    ? "border-blue-500 bg-brand"
+                                    : "border-line-strong"
                                 }`}
                               >
                                 {isSelected && (
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className="h-3 w-3 text-white"
+                                    className="h-3 w-3 text-fg"
                                     viewBox="0 0 20 20"
                                     fill="currentColor"
                                   >
@@ -294,10 +294,10 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                                 )}
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-sm font-medium text-gray-800">
+                                <span className="text-sm font-medium text-fg">
                                   {formatJalaliDateTime(new Date(period.from))}
                                 </span>
-                                <span className="text-xs text-gray-400">
+                                <span className="text-xs text-fg-faint">
                                   تا{" "}
                                   {formatJalaliDateTime(new Date(period.to))}
                                 </span>
@@ -306,8 +306,8 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-bold ${
                                 isSelected
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-red-50 text-red-600"
+                                  ? "bg-brand-soft text-brand-fg"
+                                  : "bg-danger-soft text-danger-fg"
                               }`}
                             >
                               {formatNumber(period.count)} تصادف
@@ -320,7 +320,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                   <div className="flex justify-end gap-3 mt-6">
                     <button
                       onClick={onClose}
-                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm"
+                      className="px-4 py-2 bg-surface-sunken text-fg rounded-lg hover:bg-line transition-colors text-sm"
                     >
                       انصراف
                     </button>
@@ -329,8 +329,8 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                       disabled={!selectedPeriod}
                       className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         selectedPeriod
-                          ? "bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          ? "bg-red-600 text-on-brand hover:bg-red-700 shadow-md hover:shadow-lg"
+                          : "bg-surface-sunken text-fg-faint cursor-not-allowed"
                       }`}
                     >
                       ادامه
@@ -346,7 +346,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
               {/* Back button */}
               <button
                 onClick={() => setStep("select")}
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors text-sm"
+                className="flex items-center gap-2 text-fg-muted hover:text-fg transition-colors text-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -364,14 +364,14 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
               </button>
 
               {/* Selected period info */}
-              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 space-y-3">
-                <h3 className="font-semibold text-gray-800 mb-3">
+              <div className="bg-canvas rounded-xl p-5 border border-line space-y-3">
+                <h3 className="font-semibold text-fg mb-3">
                   بازه زمانی انتخاب شده
                 </h3>
                 <div className="flex items-start gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400 mt-0.5 shrink-0"
+                    className="h-5 w-5 text-fg-faint mt-0.5 shrink-0"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -382,8 +382,8 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm text-gray-600">از:</p>
-                    <p className="font-medium text-gray-800">
+                    <p className="text-sm text-fg-muted">از:</p>
+                    <p className="font-medium text-fg">
                       {formatJalaliDateTime(new Date(selectedPeriod.from))}
                     </p>
                   </div>
@@ -391,7 +391,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                 <div className="flex items-start gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400 mt-0.5 shrink-0"
+                    className="h-5 w-5 text-fg-faint mt-0.5 shrink-0"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -402,8 +402,8 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm text-gray-600">تا:</p>
-                    <p className="font-medium text-gray-800">
+                    <p className="text-sm text-fg-muted">تا:</p>
+                    <p className="font-medium text-fg">
                       {formatJalaliDateTime(new Date(selectedPeriod.to))}
                     </p>
                   </div>
@@ -411,7 +411,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                 <div className="flex items-start gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400 mt-0.5 shrink-0"
+                    className="h-5 w-5 text-fg-faint mt-0.5 shrink-0"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -423,8 +423,8 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm text-gray-600">تعداد تصادفات:</p>
-                    <p className="font-bold text-red-600 text-lg">
+                    <p className="text-sm text-fg-muted">تعداد تصادفات:</p>
+                    <p className="font-bold text-danger-fg text-lg">
                       {formatNumber(selectedPeriod.count)} تصادف
                     </p>
                   </div>
@@ -432,7 +432,7 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
               </div>
 
               {/* Warning */}
-              <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+              <div className="bg-danger-soft border border-danger-border rounded-xl p-5">
                 <div className="flex items-start gap-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -447,10 +447,10 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-semibold text-red-700 mb-1">
+                    <p className="text-sm font-semibold text-danger-fg mb-1">
                       هشدار!
                     </p>
-                    <p className="text-sm text-red-600 leading-relaxed">
+                    <p className="text-sm text-danger-fg leading-relaxed">
                       آیا مطمئن هستید؟ این عمل غیرقابل بازگشت است و تمامی
                       تصادفات این بازه زمانی به همراه اثرات جانبی حذف خواهند
                       شد.
@@ -463,18 +463,18 @@ const BatchDeleteByPeriodModal: React.FC<BatchDeleteByPeriodModalProps> = ({
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={() => setStep("select")}
-                  className="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                  className="px-5 py-2.5 bg-surface-sunken text-fg rounded-lg hover:bg-line transition-colors text-sm font-medium"
                 >
                   بازگشت
                 </button>
                 <button
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-5 py-2.5 bg-red-600 text-on-brand rounded-lg hover:bg-red-700 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isDeleting ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-line-strong border-t-white rounded-full animate-spin" />
                       در حال حذف...
                     </>
                   ) : (

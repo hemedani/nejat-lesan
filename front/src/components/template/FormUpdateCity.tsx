@@ -235,7 +235,7 @@ export const FormUpdateCity = ({
         <div className="flex items-center justify-center py-12">
           <div className="flex flex-col items-center gap-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-gray-600">در حال بارگذاری اطلاعات شهر...</p>
+            <p className="text-fg-muted">در حال بارگذاری اطلاعات شهر...</p>
           </div>
         </div>
       </div>
@@ -246,8 +246,8 @@ export const FormUpdateCity = ({
     <div className="p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Form Fields */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-4">
+          <h2 className="text-lg font-semibold text-fg mb-4">
             ویرایش اطلاعات شهر
           </h2>
 
@@ -282,28 +282,26 @@ export const FormUpdateCity = ({
         {/* Errors render next to the control that caused them, inside each
             drawer's own `errorMessage` slot, instead of in separate red boxes
             floating above the map. */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-6">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-6">
           <GeoPolygonDrawer
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.area?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={6}
             label="محدودهٔ شهر"
             onChange={handleAreaChange}
             onClear={clearArea}
-            tone="light"
             value={area}
           />
 
           <GeoPointPicker
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.center_location?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={6}
             label="مرکز شهر"
             onChange={handleCenterChange}
             onClear={clearCenterPoint}
-            tone="light"
             value={centerPoint}
           />
         </div>
@@ -313,7 +311,7 @@ export const FormUpdateCity = ({
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed transition-colors"
+            className="px-8 py-3 bg-green-600 text-on-brand font-semibold rounded-lg hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "در حال ویرایش..." : "ویرایش شهر"}
           </button>

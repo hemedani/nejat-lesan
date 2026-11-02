@@ -273,23 +273,23 @@ export function OrganizationForm({ organization }: OrganizationFormProps) {
         </div>
 
         {isEdit && road && (
-          <p className="mt-2 text-xs text-slate-500">
-            راه سازمان یک‌بار تعیین می‌شود و با <span className="text-slate-300">road.organization</span>{" "}
+          <p className="mt-2 text-xs text-fg-faint">
+            راه سازمان یک‌بار تعیین می‌شود و با <span className="text-fg-muted">road.organization</span>{" "}
             یک‌به‌یک قفل است؛ برای تعویض باید سازمان تازه‌ای ساخته شود.
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
-          <span className="text-sm text-slate-300">سازمان فعال باشد</span>
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-line bg-surface-sunken px-3 py-3">
+          <span className="text-sm text-fg-muted">سازمان فعال باشد</span>
           <ToggleSwitch checked={isActive} onChange={setIsActive} />
         </div>
       </PanelCard>
 
       <PanelCard title="مرکز عملیاتی سازمان">
-        <p className="mb-3 text-xs text-slate-500">
+        <p className="mb-3 text-xs text-fg-faint">
           نقشهٔ اپلیکیشن مأمور روی این نقطه باز می‌شود (وقتی GPS در دسترس نیست)
           و دکمهٔ «مرکز سازمان» روی همین‌جا می‌رود. مختصات به ترتیب
-          <span className="text-slate-300"> [طول, عرض]</span> ذخیره می‌شوند.
+          <span className="text-fg-muted"> [طول, عرض]</span> ذخیره می‌شوند.
         </p>
         <GeoPointPicker
           fallbackCenter={FALLBACK_CENTER}

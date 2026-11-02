@@ -46,7 +46,7 @@ export function RoadDetailView({ roadId }: { roadId: string }) {
   return (
     <div>
       <button
-        className="mb-4 text-sm text-slate-400 hover:text-white"
+        className="mb-4 text-sm text-fg-muted hover:text-fg"
         onClick={() => router.push(adminRecordRoutes.roads())}
         type="button"
       >

@@ -7,7 +7,7 @@ const testimonials = [
       "سرعت پردازش داده‌ها در سامانه مرصاد بی‌نظیر است. به لطف معماری قدرتمند فریم‌ورک لسان (Lesan)، گزارش‌گیری و تحلیل میلیون‌ها رکورد تصادف در کسری از ثانیه و بدون هیچ‌گونه افت عملکردی انجام می‌شود.",
     author: "سرهنگ محمدی",
     role: "رئیس پلیس راهور استان",
-    avatarColor: "bg-blue-500",
+    avatarColor: "bg-brand",
     initials: "س.م",
   },
   {
@@ -32,23 +32,23 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <section className="py-24 min-h-screen flex flex-col justify-center bg-slate-900 relative overflow-hidden">
+    <section className="py-24 min-h-screen flex flex-col justify-center bg-surface relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-brand/10 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px]"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-3xl md:text-4xl font-bold text-fg mb-6 leading-tight">
             اعتماد سازمان‌ها به{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
               قدرت و پایداری مرصاد
             </span>
           </h2>
-          <p className="text-lg text-slate-300 leading-relaxed">
+          <p className="text-lg text-fg-muted leading-relaxed">
             نظرات مدیران و متخصصانی که روزانه برای حفظ ایمنی راه‌ها و تحلیل داده‌های کلان ترافیکی به
             سامانه مرصاد تکیه می‌کنند.
           </p>
@@ -59,7 +59,7 @@ export const Testimonials = () => {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="group relative p-8 rounded-3xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-2xl flex flex-col h-full"
+              className="group relative p-8 rounded-3xl bg-surface-hover hover:bg-surface-hover backdrop-blur-md border border-line hover:border-line-strong transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-2xl flex flex-col h-full"
             >
               {/* Quote Icon */}
               <div className="absolute top-6 right-6 text-blue-500/20 group-hover:text-blue-500/30 transition-colors duration-500">
@@ -75,19 +75,19 @@ export const Testimonials = () => {
 
               {/* Content */}
               <div className="relative z-10 flex-grow mb-8 pt-4">
-                <p className="text-slate-300 leading-loose text-justify">{testimonial.content}</p>
+                <p className="text-fg-muted leading-loose text-justify">{testimonial.content}</p>
               </div>
 
               {/* Author Info */}
-              <div className="relative z-10 flex items-center gap-4 pt-6 border-t border-white/10">
+              <div className="relative z-10 flex items-center gap-4 pt-6 border-t border-line">
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-inner ${testimonial.avatarColor}`}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-fg font-bold text-lg shadow-inner ${testimonial.avatarColor}`}
                 >
                   {testimonial.initials}
                 </div>
                 <div>
-                  <h4 className="text-white font-semibold text-base">{testimonial.author}</h4>
-                  <p className="text-slate-400 text-sm mt-1">{testimonial.role}</p>
+                  <h4 className="text-fg font-semibold text-base">{testimonial.author}</h4>
+                  <p className="text-fg-muted text-sm mt-1">{testimonial.role}</p>
                 </div>
               </div>
             </div>

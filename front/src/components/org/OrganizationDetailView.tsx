@@ -48,7 +48,7 @@ export function OrganizationDetailView({ organizationId }: { organizationId: str
   return (
     <div>
       <button
-        className="mb-4 text-sm text-slate-400 hover:text-white"
+        className="mb-4 text-sm text-fg-muted hover:text-fg"
         onClick={() => router.push(adminRecordRoutes.orgs())}
         type="button"
       >

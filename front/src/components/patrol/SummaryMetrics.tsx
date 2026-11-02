@@ -8,7 +8,7 @@ export function SummaryMetrics({ summary }: { summary?: StatusSummary }) {
   return (
     <div className="space-y-5">
       <div>
-        <p className="mb-2 text-xs font-semibold text-slate-500">وضعیت همگام‌سازی</p>
+        <p className="mb-2 text-xs font-semibold text-fg-faint">وضعیت همگام‌سازی</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
           {syncKeys.map((status) => (
             <Metric
@@ -21,7 +21,7 @@ export function SummaryMetrics({ summary }: { summary?: StatusSummary }) {
         </div>
       </div>
       <div>
-        <p className="mb-2 text-xs font-semibold text-slate-500">وضعیت بررسی</p>
+        <p className="mb-2 text-xs font-semibold text-fg-faint">وضعیت بررسی</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
           {reviewKeys.map((status) => (
             <Metric
@@ -40,7 +40,7 @@ export function SummaryMetrics({ summary }: { summary?: StatusSummary }) {
 function Metric({ label, value, accent }: { label: string; value: number; accent: string }) {
   return (
     <div className={`rounded-xl border p-3 ${accent}`}>
-      <p className="text-xl font-bold text-white">{value.toLocaleString("fa-IR")}</p>
+      <p className="text-xl font-bold text-fg">{value.toLocaleString("fa-IR")}</p>
       <p className="mt-1 text-[11px] leading-5 opacity-80">{label}</p>
     </div>
   );

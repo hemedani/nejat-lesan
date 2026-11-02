@@ -24,5 +24,5 @@ export function UserFilters() {
     if (value) next.set("levels", value); else next.delete("levels");
     router.push(`/admin/users?${next.toString()}`);
   };
-  return <div className="flex flex-col gap-3 sm:flex-row sm:items-center"><label className="text-sm font-medium text-slate-400" htmlFor="user-level-filter">فیلتر سطح دسترسی</label><SelectBox value={active} onValueChange={update} options={levels.map(([value, label]) => ({ value, label }))} clearable={false} className="min-w-52" /></div>;
+  return <div className="flex flex-col gap-3 sm:flex-row sm:items-center"><label className="text-sm font-medium text-fg-muted" htmlFor="user-level-filter">فیلتر سطح دسترسی</label><SelectBox value={active} onValueChange={update} options={levels.map(([value, label]) => ({ value, label }))} clearable={false} className="min-w-52" /></div>;
 }

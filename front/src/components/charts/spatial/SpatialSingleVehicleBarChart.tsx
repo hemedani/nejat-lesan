@@ -2,6 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -21,12 +22,13 @@ const SpatialSingleVehicleBarChart: React.FC<SpatialSingleVehicleBarChartProps> 
   data,
   isLoading,
 }) => {
+  const chartTheme = useChartTheme();
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -34,12 +36,12 @@ const SpatialSingleVehicleBarChart: React.FC<SpatialSingleVehicleBarChartProps> 
 
   if (!data || !data.categories || !data.series) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           شمار تصادفات تک وسیله ای به تفکیک نوع
         </h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌ای برای نمایش موجود نیست</p>
+          <p className="text-fg-muted">داده‌ای برای نمایش موجود نیست</p>
         </div>
       </div>
     );
@@ -106,10 +108,10 @@ const SpatialSingleVehicleBarChart: React.FC<SpatialSingleVehicleBarChartProps> 
     fill: {
       opacity: 1,
     },
-    colors: ["#EF4444", "#F59E0B", "#10B981"],
+    colors: [chartTheme.danger, chartTheme.warning, chartTheme.success],
     grid: {
       show: true,
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       strokeDashArray: 0,
       position: "back" as const,
     },
@@ -123,12 +125,12 @@ const SpatialSingleVehicleBarChart: React.FC<SpatialSingleVehicleBarChartProps> 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-fg">
           شمار تصادفات تک وسیله ای به تفکیک نوع
         </h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -150,8 +152,8 @@ const SpatialSingleVehicleBarChart: React.FC<SpatialSingleVehicleBarChartProps> 
       </div>
 
       {/* Chart Legend/Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="flex flex-wrap gap-4 text-sm text-fg-muted">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
             <span>برخورد وسیله نقلیه با شیء ثابت</span>

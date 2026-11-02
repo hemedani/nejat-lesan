@@ -8,38 +8,38 @@ interface ContactInfoProps {
 const ContactInfo = ({ user }: ContactInfoProps) => {
   return (
     <div className="space-y-4">
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <PhoneIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">
+          <label className="text-sm font-medium text-fg-muted">
             شماره موبایل
           </label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">{user.mobile}</p>
+        <p className="text-fg font-medium pr-11">{user.mobile}</p>
       </div>
 
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <IdCardIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">کد ملی</label>
+          <label className="text-sm font-medium text-fg-muted">کد ملی</label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">
+        <p className="text-fg font-medium pr-11">
           {user.national_number || "نامشخص"}
         </p>
       </div>
 
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <MapPinIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">آدرس</label>
+          <label className="text-sm font-medium text-fg-muted">آدرس</label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">
+        <p className="text-fg font-medium pr-11">
           {user.address || "نامشخص"}
         </p>
       </div>

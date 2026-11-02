@@ -2,6 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -25,12 +26,13 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
   data,
   isLoading,
 }) => {
+  const chartTheme = useChartTheme();
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/2 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/2 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -38,14 +40,14 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
 
   if (!data || !data.series || data.series.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           مقایسه زمانی تصادفات در شب
         </h3>
-        <div className="flex items-center justify-center h-64 text-gray-500">
+        <div className="flex items-center justify-center h-64 text-fg-muted">
           <div className="text-center">
             <svg
-              className="w-12 h-12 mx-auto mb-4 text-gray-400"
+              className="w-12 h-12 mx-auto mb-4 text-fg-faint"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -58,7 +60,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
               />
             </svg>
             <p className="text-sm">هیچ داده‌ای برای نمایش وجود ندارد</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-fg-faint mt-1">
               لطفاً فیلترهای مناسب را اعمال کنید
             </p>
           </div>
@@ -98,7 +100,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
         },
       },
     },
-    colors: ["#F59E0B", "#1F2937"], // Orange for "با روشنایی کافی", Dark gray for "بدون روشنایی کافی"
+    colors: [chartTheme.warning, chartTheme.faint], // Orange for "با روشنایی کافی", Dark gray for "بدون روشنایی کافی"
     dataLabels: {
       enabled: false,
     },
@@ -109,7 +111,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
     markers: {
       size: 5,
       strokeWidth: 2,
-      strokeColors: "#fff",
+      strokeColors: chartTheme.surface,
       hover: {
         size: 7,
       },
@@ -121,13 +123,13 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: 600,
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6B7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -137,20 +139,20 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: 600,
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6B7280",
+          colors: chartTheme.label,
         },
         formatter: (value: number) => Math.round(value).toString(),
       },
     },
     grid: {
       show: true,
-      borderColor: "#E5E7EB",
+      borderColor: chartTheme.grid,
       strokeDashArray: 0,
       position: "back" as const,
       xaxis: {
@@ -170,7 +172,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
       fontSize: "14px",
       fontWeight: 500,
       labels: {
-        colors: "#374151",
+        colors: chartTheme.label,
       },
       markers: {
         size: 12,
@@ -178,7 +180,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
       },
     },
     tooltip: {
-      theme: "light",
+      theme: chartTheme.mode,
       style: {
         fontSize: "12px",
       },
@@ -237,36 +239,36 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
       : 0;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-fg mb-2">
           مقایسه زمانی تصادفات در شب
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span className="text-gray-600">
+            <span className="text-fg-muted">
               با روشنایی کافی: {wellLitTotal.toLocaleString("fa-IR")} (
               {wellLitPercentage}%)
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-gray-800 rounded-full"></div>
-            <span className="text-gray-600">
+            <div className="w-3 h-3 bg-surface-sunken rounded-full"></div>
+            <span className="text-fg-muted">
               بدون روشنایی کافی: {poorlyLitTotal.toLocaleString("fa-IR")} (
               {poorlyLitPercentage}%)
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span className="text-gray-600">
+            <div className="w-3 h-3 bg-brand rounded-full"></div>
+            <span className="text-fg-muted">
               کل تصادفات: {totalAccidents.toLocaleString("fa-IR")}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span className="text-gray-600">
+            <span className="text-fg-muted">
               تعداد دوره‌ها: {data.categories.length.toLocaleString("fa-IR")}
             </span>
           </div>
@@ -285,13 +287,13 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
 
       {/* Analysis Summary */}
       {totalAccidents > 0 && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <h4 className="font-medium text-gray-900 mb-2">خلاصه تحلیل</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+        <div className="mt-6 p-4 bg-canvas rounded-lg">
+          <h4 className="font-medium text-fg mb-2">خلاصه تحلیل</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-fg">
             <div>
               <strong>نتیجه کلی:</strong>
               {poorlyLitTotal > wellLitTotal ? (
-                <span className="text-red-600">
+                <span className="text-danger-fg">
                   {" "}
                   تصادفات در شب بدون روشنایی کافی بیشتر است
                 </span>
@@ -301,7 +303,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
                   تصادفات در شب با روشنایی کافی بیشتر است
                 </span>
               ) : (
-                <span className="text-gray-600">
+                <span className="text-fg-muted">
                   {" "}
                   تصادفات در هر دو حالت تقریباً برابر است
                 </span>
@@ -320,7 +322,7 @@ const TemporalNightChart: React.FC<TemporalNightChartProps> = ({
       )}
 
       {/* Footer Info */}
-      <div className="mt-4 text-xs text-gray-500 text-center">
+      <div className="mt-4 text-xs text-fg-muted text-center">
         داده‌ها بر اساس فیلترهای اعمال شده و شرایط روشنایی محل تصادف نمایش داده
         شده‌اند
       </div>

@@ -32,7 +32,7 @@ export default function FormsLayout({
 					must consult `orgHasModule`, not the installation feed.
 				*/}
 				<ModuleGate module="forms" scoped>
-					<div dir="rtl" className="min-h-screen bg-slate-950 text-slate-100">
+					<div dir="rtl" className="min-h-screen bg-canvas text-fg">
 						<div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] [background-size:3rem_3rem]" />
 						<div className="relative">
 							<FormAuthorHeader />

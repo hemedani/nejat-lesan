@@ -10,7 +10,7 @@ const Page = async ({ params, }: { params: Promise<{ id: string }> }) => {
       {success ? (
         <UserProfileCard user={body} isAdminContext={true} />
       ) : (
-        <div className="bg-red-50 text-red-600 p-4 rounded-lg">
+        <div className="bg-danger-soft text-danger-fg p-4 rounded-lg">
           مشکلی در دریافت اطلاعات کاربر وجود دارد - {body.message}
         </div>
       )}

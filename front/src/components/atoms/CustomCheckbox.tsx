@@ -21,7 +21,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
       className={`flex items-center gap-3 rounded-xl border p-3 transition-colors duration-200 ${
         checked
           ? "border-blue-400/30 bg-blue-400/10"
-          : "border-white/10 hover:bg-white/5"
+          : "border-line hover:bg-surface-hover"
       } ${className}`}
     >
       <div
@@ -37,13 +37,13 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
         }}
         className={`relative flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-lg border transition-colors duration-200 ${
           checked
-            ? "border-transparent bg-blue-600"
-            : "border-white/15 bg-white/[.04] hover:border-blue-400/40"
+            ? "border-transparent bg-brand"
+            : "border-line-strong bg-surface-sunken hover:border-blue-400/40"
         }`}
       >
         {checked && (
           <svg
-            className="h-4 w-4 text-white"
+            className="h-4 w-4 text-fg"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -70,7 +70,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
       <label
         htmlFor={id}
         className={`cursor-pointer text-sm font-medium transition-colors duration-200 ${
-          checked ? "text-blue-200" : "text-slate-300"
+          checked ? "text-brand-fg" : "text-fg-muted"
         }`}
       >
         {label}

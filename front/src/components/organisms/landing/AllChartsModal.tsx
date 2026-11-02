@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import { baseChartOptions, useChartTheme, type ChartTheme } from "@/utils/chart-theme";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -19,7 +20,6 @@ interface AllChartsModalProps {
 // ─────────────────────────────────────────────────────────────────────────────
 const SEVERITY_SERIES = [12480, 47230, 5640];
 const SEVERITY_LABELS = ["فوتی", "جرحی", "خسارتی"];
-const SEVERITY_COLORS = ["#ef4444", "#f59e0b", "#3b82f6"];
 
 const MONTHLY_SERIES = [
   {
@@ -64,40 +64,35 @@ const PROVINCE_CATEGORIES = [
 // Shared dark-theme ApexCharts base options
 // Cast via unknown to avoid version-specific ApexChart property mismatches
 // ─────────────────────────────────────────────────────────────────────────────
-const darkBaseOptions = {
-  chart: {
-    background: "transparent",
-    fontFamily: "Vazir, sans-serif",
-    toolbar: { show: false },
-    zoom: { enabled: false },
-    animations: { enabled: true, easing: "easeinout", speed: 800 },
-  },
-  theme: { mode: "dark" },
-  grid: {
-    borderColor: "rgba(255,255,255,0.05)",
-    strokeDashArray: 4,
-    xaxis: { lines: { show: true } },
-    yaxis: { lines: { show: true } },
-  },
-  tooltip: {
-    theme: "dark",
-    style: { fontSize: "13px", fontFamily: "Vazir, sans-serif" },
-  },
-} as unknown as ApexOptions;
+function baseOptions(theme: ChartTheme): ApexOptions {
+  const base = baseChartOptions(theme);
+  return {
+    ...base,
+    grid: {
+      ...base.grid,
+      xaxis: { lines: { show: true } },
+      yaxis: { lines: { show: true } },
+    },
+    tooltip: {
+      ...base.tooltip,
+      style: { fontSize: "13px", fontFamily: "vazir-matn, sans-serif" },
+    },
+  };
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Chart 1 – Accident Severity Donut
 // ─────────────────────────────────────────────────────────────────────────────
-const severityChartOptions: ApexOptions = {
-  ...darkBaseOptions,
-  chart: { ...darkBaseOptions.chart, type: "donut" },
-  colors: SEVERITY_COLORS,
+const severityChartOptions = (theme: ChartTheme): ApexOptions => ({
+  ...baseOptions(theme),
+  chart: { ...baseOptions(theme).chart, type: "donut" },
+  colors: [theme.danger, theme.warning, theme.brand],
   labels: SEVERITY_LABELS,
   legend: {
     position: "bottom",
     fontSize: "14px",
     fontFamily: "Vazir, sans-serif",
-    labels: { colors: "#94a3b8" },
+    labels: { colors: theme.label },
   },
   plotOptions: {
     pie: {
@@ -111,7 +106,7 @@ const severityChartOptions: ApexOptions = {
             fontSize: "15px",
             fontFamily: "Vazir, sans-serif",
             fontWeight: 600,
-            color: "#94a3b8",
+            color: theme.label,
             formatter: () => "۶۵,۳۵۰",
           },
           value: {
@@ -119,7 +114,7 @@ const severityChartOptions: ApexOptions = {
             fontSize: "26px",
             fontFamily: "Vazir, sans-serif",
             fontWeight: 700,
-            color: "#f1f5f9",
+            color: theme.fg,
           },
         },
       },
@@ -128,19 +123,19 @@ const severityChartOptions: ApexOptions = {
   dataLabels: {
     enabled: true,
     formatter: (val: number) => `${val.toFixed(1)}٪`,
-    style: { fontSize: "12px", fontFamily: "Vazir, sans-serif", fontWeight: "600", colors: ["#fff"] },
+    style: { fontSize: "12px", fontFamily: "Vazir, sans-serif", fontWeight: "600", colors: [theme.onFill] },
     dropShadow: { enabled: true, opacity: 0.4 },
   },
-  stroke: { width: 2, colors: ["#0f172a"] },
-};
+  stroke: { width: 2, colors: [theme.surface] },
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Chart 2 – Monthly Trend (area)
 // ─────────────────────────────────────────────────────────────────────────────
-const monthlyChartOptions: ApexOptions = {
-  ...darkBaseOptions,
-  chart: { ...darkBaseOptions.chart, type: "area" },
-  colors: ["#ef4444", "#3b82f6"],
+const monthlyChartOptions = (theme: ChartTheme): ApexOptions => ({
+  ...baseOptions(theme),
+  chart: { ...baseOptions(theme).chart, type: "area" },
+  colors: [theme.danger, theme.brand],
   fill: {
     type: "gradient",
     gradient: {
@@ -166,43 +161,43 @@ const monthlyChartOptions: ApexOptions = {
       "بهمن",
       "اسفند",
     ],
-    labels: { style: { colors: "#64748b", fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
-    axisBorder: { color: "rgba(255,255,255,0.06)" },
-    axisTicks: { color: "rgba(255,255,255,0.06)" },
+    labels: { style: { colors: theme.label, fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
+    axisBorder: { color: theme.axisLine },
+    axisTicks: { color: theme.axisLine },
   },
   yaxis: {
-    labels: { style: { colors: "#64748b", fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
+    labels: { style: { colors: theme.label, fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
   },
   legend: {
     position: "top",
     horizontalAlign: "right",
     fontFamily: "Vazir, sans-serif",
     fontSize: "13px",
-    labels: { colors: "#94a3b8" },
+    labels: { colors: theme.label },
   },
   markers: { size: 4, strokeWidth: 0 },
   tooltip: {
-    ...darkBaseOptions.tooltip,
+    ...baseChartOptions(theme).tooltip,
     x: { show: true },
   },
-};
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Chart 3 – Hourly Distribution (bar)
 // ─────────────────────────────────────────────────────────────────────────────
-const hourlyChartOptions: ApexOptions = {
-  ...darkBaseOptions,
-  chart: { ...darkBaseOptions.chart, type: "bar" },
-  colors: ["#3b82f6"],
+const hourlyChartOptions = (theme: ChartTheme): ApexOptions => ({
+  ...baseOptions(theme),
+  chart: { ...baseOptions(theme).chart, type: "bar" },
+  colors: [theme.brand],
   plotOptions: {
     bar: {
       borderRadius: 4,
       columnWidth: "60%",
       colors: {
         ranges: [
-          { from: 80, to: 100, color: "#ef4444" },
-          { from: 60, to: 79, color: "#f59e0b" },
-          { from: 0, to: 59, color: "#3b82f6" },
+          { from: 80, to: 100, color: theme.danger },
+          { from: 60, to: 79, color: theme.warning },
+          { from: 0, to: 59, color: theme.brand },
         ],
       },
     },
@@ -210,24 +205,24 @@ const hourlyChartOptions: ApexOptions = {
   xaxis: {
     categories: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     labels: {
-      style: { colors: "#64748b", fontFamily: "Vazir, sans-serif", fontSize: "10px" },
+      style: { colors: theme.label, fontFamily: "Vazir, sans-serif", fontSize: "10px" },
       rotate: -45,
     },
-    axisBorder: { color: "rgba(255,255,255,0.06)" },
-    axisTicks: { color: "rgba(255,255,255,0.06)" },
+    axisBorder: { color: theme.axisLine },
+    axisTicks: { color: theme.axisLine },
   },
   yaxis: {
-    labels: { style: { colors: "#64748b", fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
+    labels: { style: { colors: theme.label, fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
   },
   legend: { show: false },
-};
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Chart 4 – Top Provinces (horizontal bar)
 // ─────────────────────────────────────────────────────────────────────────────
-const provinceChartOptions: ApexOptions = {
-  ...darkBaseOptions,
-  chart: { ...darkBaseOptions.chart, type: "bar" },
+const provinceChartOptions = (theme: ChartTheme): ApexOptions => ({
+  ...baseOptions(theme),
+  chart: { ...baseOptions(theme).chart, type: "bar" },
   plotOptions: {
     bar: {
       horizontal: true,
@@ -236,6 +231,12 @@ const provinceChartOptions: ApexOptions = {
       distributed: true,
     },
   },
+  /**
+   * Ten distinct hues for ten provinces. Deliberately literal: this is
+   * categorical *identity*, not chrome, and the 8-token `chart` palette would
+   * cycle and make two provinces share a colour. Tailwind-500 reads the same on
+   * either surface, so it needs no theme axis.
+   */
   colors: [
     "#3b82f6",
     "#6366f1",
@@ -250,20 +251,20 @@ const provinceChartOptions: ApexOptions = {
   ],
   xaxis: {
     categories: PROVINCE_CATEGORIES,
-    labels: { style: { colors: "#64748b", fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
-    axisBorder: { color: "rgba(255,255,255,0.06)" },
-    axisTicks: { color: "rgba(255,255,255,0.06)" },
+    labels: { style: { colors: theme.label, fontFamily: "Vazir, sans-serif", fontSize: "11px" } },
+    axisBorder: { color: theme.axisLine },
+    axisTicks: { color: theme.axisLine },
   },
   yaxis: {
-    labels: { style: { colors: "#94a3b8", fontFamily: "Vazir, sans-serif", fontSize: "12px" } },
+    labels: { style: { colors: theme.label, fontFamily: "Vazir, sans-serif", fontSize: "12px" } },
   },
   legend: { show: false },
   dataLabels: {
     enabled: true,
     formatter: (val: number) => val.toLocaleString("fa-IR"),
-    style: { fontSize: "11px", fontFamily: "Vazir, sans-serif", colors: ["#fff"] },
+    style: { fontSize: "11px", fontFamily: "Vazir, sans-serif", colors: [theme.onFill] },
   },
-};
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Section separator component
@@ -272,7 +273,7 @@ function SectionDivider() {
   return (
     <div className="flex items-center gap-4 py-4">
       <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <div className="w-1.5 h-1.5 rounded-full bg-blue-500/60" />
+      <div className="w-1.5 h-1.5 rounded-full bg-brand/60" />
       <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </div>
   );
@@ -282,6 +283,7 @@ function SectionDivider() {
 // Main component
 // ─────────────────────────────────────────────────────────────────────────────
 export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose }) => {
+  const chartTheme = useChartTheme();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Lock body scroll while modal is open
@@ -311,18 +313,18 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
     /* ── Backdrop ── */
     <div
       dir="rtl"
-      className="fixed inset-0 bg-slate-950/80 backdrop-blur-xl z-[10000] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-canvas/80 backdrop-blur-xl z-[10000] flex items-center justify-center p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       {/* ── Container ── */}
-      <div className="max-w-6xl w-full h-[90vh] bg-slate-900/50 border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-[0_0_80px_rgba(59,130,246,0.1)]">
+      <div className="max-w-6xl w-full h-[90vh] bg-surface/50 border border-line rounded-3xl overflow-hidden flex flex-col shadow-[0_0_80px_rgba(59,130,246,0.1)]">
         {/* ── Sticky Header ── */}
-        <div className="flex-shrink-0 flex items-center justify-between px-8 py-5 bg-white/5 backdrop-blur-md border-b border-white/10">
+        <div className="flex-shrink-0 flex items-center justify-between px-8 py-5 bg-surface-hover backdrop-blur-md border-b border-line">
           <div className="flex items-center gap-4">
             {/* Decorative icon */}
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-brand/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -339,10 +341,10 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
               </svg>
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold text-white leading-tight">
+              <h2 className="text-lg md:text-xl font-bold text-fg leading-tight">
                 کاتالوگ جامع تحلیل‌ها و هوش بصری
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-fg-muted mt-0.5">
                 سامانه مرصاد — نمای کامل داده‌های تصادفات
               </p>
             </div>
@@ -352,7 +354,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
           <button
             onClick={onClose}
             aria-label="بستن"
-            className="group flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/40 transition-all duration-300 hover:shadow-[0_0_16px_rgba(59,130,246,0.25)]"
+            className="group flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-fg-muted hover:text-fg bg-surface-hover hover:bg-surface-hover border border-line hover:border-blue-500/40 transition-all duration-300 hover:shadow-[0_0_16px_rgba(59,130,246,0.25)]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -380,7 +382,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
             <section>
               {/* Section badge */}
               <div className="flex items-center gap-3 mb-8">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wider">
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
                   تحلیل شدت
                 </span>
@@ -388,11 +390,11 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
               </div>
 
               {/* Chart card */}
-              <div className="rounded-2xl bg-slate-800/40 border border-white/8 p-6 md:p-8 mb-8 hover:border-blue-500/20 transition-colors duration-500">
+              <div className="rounded-2xl bg-surface-sunken/40 border border-line p-6 md:p-8 mb-8 hover:border-blue-500/20 transition-colors duration-500">
                 <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-1">سهم شدت تصادفات</h3>
-                    <p className="text-sm text-slate-400">توزیع درصدی بر اساس نوع شدت حادثه</p>
+                    <h3 className="text-xl font-bold text-fg mb-1">سهم شدت تصادفات</h3>
+                    <p className="text-sm text-fg-muted">توزیع درصدی بر اساس نوع شدت حادثه</p>
                   </div>
                   {/* Summary chips */}
                   <div className="flex flex-wrap gap-2">
@@ -402,7 +404,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                     <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
                       <span className="w-2 h-2 rounded-full bg-amber-400" /> جرحی — ۴۷,۲۳۰
                     </span>
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
+                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-brand/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
                       <span className="w-2 h-2 rounded-full bg-blue-400" /> خسارتی — ۵,۶۴۰
                     </span>
                   </div>
@@ -410,7 +412,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
 
                 <div className="h-[380px]">
                   <Chart
-                    options={severityChartOptions}
+                    options={severityChartOptions(chartTheme)}
                     series={SEVERITY_SERIES}
                     type="donut"
                     height="100%"
@@ -426,7 +428,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 </h4>
 
                 {/* Description paragraphs */}
-                <div className="text-slate-300 leading-8 text-base space-y-3">
+                <div className="text-fg-muted leading-8 text-base space-y-3">
                   <p>
                     داده‌های سامانه مرصاد نشان می‌دهد که تصادفات جرحی با سهم ۷۲٪ بیشترین حجم را در میان
                     حوادث ترافیکی به خود اختصاص می‌دهند، که این رقم هشداری جدی برای سیاست‌گذاران حوزه
@@ -449,9 +451,9 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 </div>
 
                 {/* Actionable outcome box */}
-                <div className="mt-6 p-6 rounded-2xl bg-blue-500/10 border border-blue-500/20">
+                <div className="mt-6 p-6 rounded-2xl bg-brand/10 border border-blue-500/20">
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 mt-0.5">
+                    <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-brand/20 border border-blue-500/30 flex items-center justify-center text-blue-400 mt-0.5">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -468,10 +470,10 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h5 className="text-blue-300 font-bold text-base mb-3">
+                      <h5 className="tint-blue text-tint-fg font-bold text-base mb-3">
                         دستاوردهای عملیاتی برای مدیریت ترافیک
                       </h5>
-                      <ul className="space-y-2.5 text-sm text-slate-300">
+                      <ul className="space-y-2.5 text-sm text-fg-muted">
                         <li className="flex items-start gap-2.5">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -563,14 +565,14 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 <div className="flex-1 h-px bg-gradient-to-l from-transparent to-cyan-500/20" />
               </div>
 
-              <div className="rounded-2xl bg-slate-800/40 border border-white/8 p-6 md:p-8 mb-8 hover:border-cyan-500/20 transition-colors duration-500">
+              <div className="rounded-2xl bg-surface-sunken/40 border border-line p-6 md:p-8 mb-8 hover:border-cyan-500/20 transition-colors duration-500">
                 <div className="mb-6">
-                  <h3 className="text-xl font-bold text-white mb-1">روند ماهانه تصادفات در طول سال</h3>
-                  <p className="text-sm text-slate-400">مقایسه تصادفات فوتی و جرحی به تفکیک ماه</p>
+                  <h3 className="text-xl font-bold text-fg mb-1">روند ماهانه تصادفات در طول سال</h3>
+                  <p className="text-sm text-fg-muted">مقایسه تصادفات فوتی و جرحی به تفکیک ماه</p>
                 </div>
                 <div className="h-[340px]">
                   <Chart
-                    options={monthlyChartOptions}
+                    options={monthlyChartOptions(chartTheme)}
                     series={MONTHLY_SERIES}
                     type="area"
                     height="100%"
@@ -582,7 +584,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 <h4 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]">
                   بینش استراتژیک: فصلی‌بودن حوادث و اثر آن بر برنامه‌ریزی
                 </h4>
-                <div className="text-slate-300 leading-8 text-base space-y-3">
+                <div className="text-fg-muted leading-8 text-base space-y-3">
                   <p>
                     نمودار روند ماهانه به وضوح نشان می‌دهد که ماه‌های مهر و آبان اوج تصادفات را در پی
                     دارند که با آغاز فصل سرما، کاهش دید و افزایش ترافیک همزمان می‌شود.
@@ -619,10 +621,10 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h5 className="text-cyan-300 font-bold text-base mb-3">
+                      <h5 className="tint-cyan text-tint-fg font-bold text-base mb-3">
                         دستاوردهای عملیاتی برای برنامه‌ریزی فصلی
                       </h5>
-                      <ul className="space-y-2.5 text-sm text-slate-300">
+                      <ul className="space-y-2.5 text-sm text-fg-muted">
                         <li className="flex items-start gap-2.5">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -696,12 +698,12 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 <div className="flex-1 h-px bg-gradient-to-l from-transparent to-amber-500/20" />
               </div>
 
-              <div className="rounded-2xl bg-slate-800/40 border border-white/8 p-6 md:p-8 mb-8 hover:border-amber-500/20 transition-colors duration-500">
+              <div className="rounded-2xl bg-surface-sunken/40 border border-line p-6 md:p-8 mb-8 hover:border-amber-500/20 transition-colors duration-500">
                 <div className="mb-6">
-                  <h3 className="text-xl font-bold text-white mb-1">
+                  <h3 className="text-xl font-bold text-fg mb-1">
                     توزیع تصادفات بر اساس ساعت شبانه‌روز
                   </h3>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-fg-muted">
                     <span className="text-red-400 font-medium">قرمز:</span> ساعات بحرانی &nbsp;|&nbsp;
                     <span className="text-amber-400 font-medium">نارنجی:</span> ساعات پرخطر
                     &nbsp;|&nbsp;
@@ -710,7 +712,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 </div>
                 <div className="h-[320px]">
                   <Chart
-                    options={hourlyChartOptions}
+                    options={hourlyChartOptions(chartTheme)}
                     series={HOURLY_SERIES}
                     type="bar"
                     height="100%"
@@ -722,7 +724,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 <h4 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-300 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]">
                   بینش استراتژیک: ساعت‌های طلایی کنترل ترافیک
                 </h4>
-                <div className="text-slate-300 leading-8 text-base space-y-3">
+                <div className="text-fg-muted leading-8 text-base space-y-3">
                   <p>
                     نمودار ساعتی دو پیک مشخص را نمایش می‌دهد: پیک صبح (۷ تا ۹) مرتبط با ترافیک تردد
                     اداری، و پیک عصر (۱۷ تا ۱۹) که خطرناک‌ترین بازه زمانی با بالاترین تعداد تصادفات
@@ -760,10 +762,10 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h5 className="text-amber-300 font-bold text-base mb-3">
+                      <h5 className="tint-amber text-tint-fg font-bold text-base mb-3">
                         دستاوردهای عملیاتی برای مدیریت زمانی
                       </h5>
-                      <ul className="space-y-2.5 text-sm text-slate-300">
+                      <ul className="space-y-2.5 text-sm text-fg-muted">
                         <li className="flex items-start gap-2.5">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -838,16 +840,16 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 <div className="flex-1 h-px bg-gradient-to-l from-transparent to-purple-500/20" />
               </div>
 
-              <div className="rounded-2xl bg-slate-800/40 border border-white/8 p-6 md:p-8 mb-8 hover:border-purple-500/20 transition-colors duration-500">
+              <div className="rounded-2xl bg-surface-sunken/40 border border-line p-6 md:p-8 mb-8 hover:border-purple-500/20 transition-colors duration-500">
                 <div className="mb-6">
-                  <h3 className="text-xl font-bold text-white mb-1">۱۰ استان با بیشترین تصادفات</h3>
-                  <p className="text-sm text-slate-400">
+                  <h3 className="text-xl font-bold text-fg mb-1">۱۰ استان با بیشترین تصادفات</h3>
+                  <p className="text-sm text-fg-muted">
                     رتبه‌بندی استان‌ها بر اساس تعداد کل حوادث ثبت‌شده
                   </p>
                 </div>
                 <div className="h-[400px]">
                   <Chart
-                    options={provinceChartOptions}
+                    options={provinceChartOptions(chartTheme)}
                     series={PROVINCE_SERIES}
                     type="bar"
                     height="100%"
@@ -859,7 +861,7 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                 <h4 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300 drop-shadow-[0_0_20px_rgba(168,85,247,0.4)]">
                   بینش استراتژیک: چرخه جغرافیایی تصادفات در ایران
                 </h4>
-                <div className="text-slate-300 leading-8 text-base space-y-3">
+                <div className="text-fg-muted leading-8 text-base space-y-3">
                   <p>
                     استان تهران با اختلافی چشمگیر در صدر جدول تصادفات قرار دارد که ناشی از تراکم
                     جمعیتی، حجم بالای ترافیک شهری و پیچیدگی شبکه معابر است.
@@ -896,10 +898,10 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h5 className="text-purple-300 font-bold text-base mb-3">
+                      <h5 className="tint-purple text-tint-fg font-bold text-base mb-3">
                         دستاوردهای عملیاتی برای مدیریت استانی
                       </h5>
-                      <ul className="space-y-2.5 text-sm text-slate-300">
+                      <ul className="space-y-2.5 text-sm text-fg-muted">
                         <li className="flex items-start gap-2.5">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -965,13 +967,13 @@ export const AllChartsModal: React.FC<AllChartsModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* ── Sticky Footer ── */}
-        <div className="flex-shrink-0 px-8 py-4 bg-white/3 border-t border-white/10 flex items-center justify-between flex-wrap gap-4">
-          <p className="text-xs text-slate-500">
+        <div className="flex-shrink-0 px-8 py-4 bg-surface-hover border-t border-line flex items-center justify-between flex-wrap gap-4">
+          <p className="text-xs text-fg-faint">
             داده‌های نمایش‌داده‌شده نمونه آموزشی هستند. برای داده زنده وارد داشبورد شوید.
           </p>
           <button
             onClick={onClose}
-            className="px-6 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200"
+            className="px-6 py-2 rounded-xl text-sm font-medium text-fg-muted hover:text-fg bg-surface-hover hover:bg-surface-hover border border-line hover:border-line-strong transition-all duration-200"
           >
             بستن پنجره
           </button>

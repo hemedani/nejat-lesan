@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { ApexOptions } from 'apexcharts'
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -19,6 +20,8 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
   data,
   isLoading
 }) => {
+  const chartTheme = useChartTheme();
+
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -30,9 +33,9 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
     return (
       <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-          <div className="h-80 bg-gray-100 rounded flex items-center justify-center">
-            <div className="flex items-center gap-2 text-gray-500">
+          <div className="h-6 bg-surface-sunken rounded w-3/4 mb-4"></div>
+          <div className="h-80 bg-surface-sunken rounded flex items-center justify-center">
+            <div className="flex items-center gap-2 text-fg-muted">
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -49,10 +52,10 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
   if (!data || data.length === 0) {
     return (
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">سهم وسایل نقلیه با/بدون عامل</h3>
-        <div className="h-80 flex items-center justify-center text-gray-500">
+        <h3 className="text-lg font-semibold text-fg mb-4">سهم وسایل نقلیه با/بدون عامل</h3>
+        <div className="h-80 flex items-center justify-center text-fg-muted">
           <div className="text-center">
-            <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 mx-auto mb-4 text-fg-faint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
             <p className="text-sm">داده‌ای برای نمایش وجود ندارد</p>
@@ -89,13 +92,13 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
 
     series: chartData,
     labels: chartLabels,
-    colors: ['#ef4444', '#22c55e'], // Red for 'با عامل', Green for 'بدون عامل'
+    colors: [chartTheme.danger, chartTheme.success], // Red for 'با عامل', Green for 'بدون عامل'
     dataLabels: {
       enabled: true,
       style: {
         fontSize: '14px',
         fontWeight: 'bold',
-        colors: ['#ffffff']
+        colors: [chartTheme.onFill]
       },
       formatter: function(val: number) {
         return val.toFixed(1) + '%'
@@ -111,14 +114,14 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
               show: true,
               fontSize: '16px',
               fontWeight: 'bold',
-              color: '#374151',
+              color: chartTheme.label,
               offsetY: -10
             },
             value: {
               show: true,
               fontSize: '24px',
               fontWeight: 'bold',
-              color: '#111827',
+              color: chartTheme.fg,
               offsetY: 10,
               formatter: function(val: string) {
                 return parseInt(val).toLocaleString('fa-IR')
@@ -130,7 +133,7 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
               label: 'مجموع',
               fontSize: '14px',
               fontWeight: 'normal',
-              color: '#6b7280',
+              color: chartTheme.label,
               formatter: function() {
                 return totalCount.toLocaleString('fa-IR')
               }
@@ -146,7 +149,7 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
       fontSize: '14px',
       fontWeight: 500,
       labels: {
-        colors: '#374151'
+        colors: chartTheme.label
       },
       markers: {
         size: 6
@@ -158,7 +161,7 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
     },
     tooltip: {
       enabled: true,
-      theme: 'light',
+      theme: chartTheme.mode,
       style: {
         fontSize: '14px'
       },
@@ -192,8 +195,8 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">سهم وسایل نقلیه با/بدون عامل</h3>
-        <p className="text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-fg mb-2">سهم وسایل نقلیه با/بدون عامل</h3>
+        <p className="text-sm text-fg-muted">
           توزیع وسایل نقلیه بر اساس وجود یا عدم وجود عامل مؤثر در تصادف
         </p>
       </div>
@@ -221,24 +224,24 @@ const VehicleReasonPieChart: React.FC<VehicleReasonPieChartProps> = ({
               key={index}
               className={`p-4 rounded-lg border-2 ${
                 isWithFault
-                  ? 'bg-red-50 border-red-200'
-                  : 'bg-green-50 border-green-200'
+                  ? 'bg-danger-soft border-danger-border'
+                  : 'bg-success-soft border-success-border'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`text-sm font-medium ${
-                    isWithFault ? 'text-red-800' : 'text-green-800'
+                    isWithFault ? 'text-danger-fg' : 'text-success-fg'
                   }`}>
                     {item.name}
                   </p>
                   <p className={`text-2xl font-bold ${
-                    isWithFault ? 'text-red-600' : 'text-green-600'
+                    isWithFault ? 'text-danger-fg' : 'text-success-fg'
                   }`}>
                     {item.count.toLocaleString('fa-IR')}
                   </p>
                   <p className={`text-sm ${
-                    isWithFault ? 'text-red-700' : 'text-green-700'
+                    isWithFault ? 'text-danger-fg' : 'text-success-fg'
                   }`}>
                     {percentage}% از کل
                   </p>

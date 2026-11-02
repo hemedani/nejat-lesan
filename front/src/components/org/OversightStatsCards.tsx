@@ -77,13 +77,13 @@ export function OversightStatsCards({
     <div className="mb-5 grid gap-4 lg:grid-cols-2">
       <PanelCard title="گزارش‌دهندگان">
         {byOfficer.length === 0 ? (
-          <p className="py-4 text-center text-xs text-slate-500">
+          <p className="py-4 text-center text-xs text-fg-faint">
             برای این فیلتر گزارشی ثبت نشده است.
           </p>
         ) : (
           <div className="max-h-72 overflow-y-auto">
             <table className="w-full text-right text-sm">
-              <thead className="sticky top-0 bg-slate-900 text-xs text-slate-500">
+              <thead className="sticky top-0 bg-surface text-xs text-fg-faint">
                 <tr>
                   <th className={cell}>گزارش‌دهنده</th>
                   <th className={cell}>کل</th>
@@ -93,15 +93,15 @@ export function OversightStatsCards({
                   <th className={cell}>میانهٔ همگام‌سازی</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-line">
                 {byOfficer.map((row) => (
-                  <tr key={row.officer_id} className="text-slate-300">
+                  <tr key={row.officer_id} className="text-fg-muted">
                     <td className={cell}>
-                      <span className={row.unattributed ? "text-slate-400" : undefined}>
+                      <span className={row.unattributed ? "text-fg-muted" : undefined}>
                         {officerName(row)}
                       </span>
                       {row.personnel_code && (
-                        <span className="block text-[10px] text-slate-500" dir="ltr">
+                        <span className="block text-[10px] text-fg-faint" dir="ltr">
                           {row.personnel_code}
                         </span>
                       )}
@@ -124,12 +124,12 @@ export function OversightStatsCards({
       <div className="space-y-4">
         <PanelCard title="نسخهٔ اپلیکیشن">
           {byAppVersion.length === 0 ? (
-            <p className="py-4 text-center text-xs text-slate-500">
+            <p className="py-4 text-center text-xs text-fg-faint">
               برای این فیلتر گزارشی ثبت نشده است.
             </p>
           ) : (
             <table className="w-full text-right text-sm">
-              <thead className="text-xs text-slate-500">
+              <thead className="text-xs text-fg-faint">
                 <tr>
                   <th className={cell}>نسخه</th>
                   <th className={cell}>کل</th>
@@ -137,9 +137,9 @@ export function OversightStatsCards({
                   <th className={cell}>مأموران متمایز</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-line">
                 {byAppVersion.map((row) => (
-                  <tr key={row.app_version} className="text-slate-300">
+                  <tr key={row.app_version} className="text-fg-muted">
                     <td className={`${cell} font-medium`} dir={row.app_version === "—" ? "rtl" : "ltr"}>
                       {row.app_version === "—" ? "خارج از اپلیکیشن" : row.app_version}
                     </td>
@@ -154,9 +154,9 @@ export function OversightStatsCards({
         </PanelCard>
 
         <PanelCard title="گزارش‌های معطل">
-          <p className="mb-3 text-xs text-slate-500">
+          <p className="mb-3 text-xs text-fg-faint">
             بیش از{" "}
-            <span className="text-slate-300">{count(aging.thresholdHours)} ساعت</span> در این
+            <span className="text-fg-muted">{count(aging.thresholdHours)} ساعت</span> در این
             وضعیت مانده‌اند:
           </p>
           <div className="grid grid-cols-2 gap-3">
@@ -164,7 +164,7 @@ export function OversightStatsCards({
             <AgingTile label="در حال بررسی" value={aging.under_review} />
           </div>
           {stuck === 0 && (
-            <p className="mt-3 text-xs text-emerald-200">
+            <p className="mt-3 text-xs text-success-fg">
               هیچ گزارشی بیش از این مدت معطل نمانده است.
             </p>
           )}
@@ -181,11 +181,11 @@ function AgingTile({ label, value }: { label: string; value: number }) {
       className={`rounded-xl border p-3 ${
         stalled
           ? "border-amber-400/25 bg-amber-400/10"
-          : "border-white/10 bg-white/[.02]"
+          : "border-line bg-surface-sunken"
       }`}
     >
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className={`mt-1 text-xl font-bold ${stalled ? "text-amber-100" : "text-slate-400"}`}>
+      <p className="text-xs text-fg-muted">{label}</p>
+      <p className={`mt-1 text-xl font-bold ${stalled ? "text-warning-fg" : "text-fg-muted"}`}>
         {count(value)}
       </p>
     </div>

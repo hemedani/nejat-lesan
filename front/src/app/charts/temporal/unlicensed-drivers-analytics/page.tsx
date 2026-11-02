@@ -10,6 +10,7 @@ import { ReqType } from "@/types/declarations/selectInp";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/context/AuthContext";
 import { downloadFullChartData } from "@/utils/exportChartData";
+import { useChartTheme } from "@/utils/chart-theme";
 
 
 
@@ -44,13 +45,15 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
   data,
   isLoading,
 }) => {
+  const chartTheme = useChartTheme();
+
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-sm text-gray-600">در حال بارگذاری...</p>
+            <p className="mt-2 text-sm text-fg-muted">در حال بارگذاری...</p>
           </div>
         </div>
       </div>
@@ -59,11 +62,11 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
 
   if (!data || !data.series || data.series.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -75,8 +78,8 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
                 d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p className="text-gray-600">هیچ داده‌ای برای نمایش وجود ندارد</p>
-            <p className="text-sm text-gray-500 mt-1">لطفاً فیلترهای مناسب را انتخاب کنید</p>
+            <p className="text-fg-muted">هیچ داده‌ای برای نمایش وجود ندارد</p>
+            <p className="text-sm text-fg-muted mt-1">لطفاً فیلترهای مناسب را انتخاب کنید</p>
           </div>
         </div>
       </div>
@@ -112,7 +115,7 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
       style: {
         fontSize: "18px",
         fontWeight: "600",
-        color: "#1f2937",
+        color: chartTheme.fg,
       },
     },
     xaxis: {
@@ -122,13 +125,13 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
         style: {
           fontSize: "14px",
           fontWeight: "500",
-          color: "#6b7280",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6b7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -138,13 +141,13 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
         style: {
           fontSize: "14px",
           fontWeight: "500",
-          color: "#6b7280",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6b7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -155,11 +158,11 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
     colors: ["#ef4444", "#f59e0b", "#10b981", "#3b82f6"],
     grid: {
       show: true,
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       strokeDashArray: 4,
     },
     tooltip: {
-      theme: "light",
+      theme: chartTheme.mode,
       style: {
         fontSize: "12px",
       },
@@ -195,7 +198,7 @@ const TemporalUnlicensedDriversChart: React.FC<TemporalUnlicensedDriversChartPro
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <Chart options={chartOptions} series={data.series} type="line" height={400} />
     </div>
   );
@@ -580,7 +583,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="temporal" currentChart="unlicensed-drivers-analytics" />
 
@@ -606,10 +609,10 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-fg">
                   مقایسه زمانی کاربران فاقد گواهینامه معتبر
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل روند زمانی تصادفات ناشی از رانندگان فاقد گواهینامه معتبر
                 </p>
               </div>
@@ -617,7 +620,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -636,7 +639,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
                     onClick={() =>
                       downloadFullChartData(chartData.categories, chartData.series, "unlicensed-drivers-analytics")
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -646,7 +649,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -669,10 +672,10 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
           <div className="space-y-6">
             {/* Error Display */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2">
                   <svg
-                    className="w-5 h-5 text-red-600"
+                    className="w-5 h-5 text-danger-fg"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -684,7 +687,7 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
                     />
                   </svg>
-                  <span className="text-red-800 font-medium">{error}</span>
+                  <span className="text-danger-fg font-medium">{error}</span>
                 </div>
               </div>
             )}
@@ -693,9 +696,9 @@ const TemporalUnlicensedDriversAnalyticsPage = () => {
             <TemporalUnlicensedDriversChart data={chartData} isLoading={isLoading} />
 
             {/* Analysis Information */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-brand-soft border border-brand-border rounded-lg p-4">
               <h3 className="font-semibold text-blue-900 mb-2">📊 درباره این تحلیل</h3>
-              <p className="text-blue-800 text-sm">
+              <p className="text-brand-fg text-sm">
                 این نمودار روند زمانی تصادفات ناشی از رانندگان فاقد گواهینامه معتبر را نشان می‌دهد. این
                 تحلیل به شناسایی الگوهای زمانی و روندهای تصادفات مرتبط با عدم داشتن گواهینامه کمک
                 می‌کند.

@@ -22,8 +22,8 @@ export function ReportSummaryCard({
   source: ReportSource;
 }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-      <h2 className="mb-3 text-sm font-semibold text-white">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">
         {source === "accident" ? "خلاصه حادثه" : "خلاصه رخداد"}
       </h2>
 
@@ -50,7 +50,7 @@ export function ReportSummaryCard({
             />
           </div>
 
-          <div className="mt-3 space-y-1.5 border-t border-white/10 pt-3">
+          <div className="mt-3 space-y-1.5 border-t border-line pt-3">
             <Field
               label="راه"
               value={
@@ -90,7 +90,7 @@ export function ReportSummaryCard({
             <RailFlag label="نیاز به پیگیری" value={report.follow_up_required} />
           </div>
 
-          <div className="mt-3 space-y-1.5 border-t border-white/10 pt-3">
+          <div className="mt-3 space-y-1.5 border-t border-line pt-3">
             <Field
               label="راه"
               value={
@@ -124,7 +124,7 @@ export function ReportSummaryCard({
       )}
 
       {report.review_status === "returned" && report.review_reason && (
-        <p className="mt-3 rounded-lg border border-amber-400/20 bg-amber-400/10 p-2 text-[11px] leading-5 text-amber-100">
+        <p className="tint-amber mt-3 rounded-lg border border-tint-border bg-tint-soft p-2 text-[11px] leading-5 text-tint-fg">
           {report.review_reason}
         </p>
       )}
@@ -136,7 +136,7 @@ function RailFlag({ label, value }: { label: string; value?: boolean }) {
   if (value === undefined || value === null) return null;
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-xs text-slate-400">{label}</span>
+      <span className="text-xs text-fg-muted">{label}</span>
       <Pill tone={value ? "amber" : "slate"}>{value ? "بله" : "خیر"}</Pill>
     </div>
   );

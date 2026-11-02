@@ -78,7 +78,7 @@ function RowLink({
   const { userLevel } = useAuth();
   if (!canOpenReportDetail(userLevel)) {
     return (
-      <span className={`${className} cursor-default text-slate-400`} title={title}>
+      <span className={`${className} cursor-default text-fg-muted`} title={title}>
         {children}
       </span>
     );
@@ -115,10 +115,10 @@ function Provenance({ row }: { row: OversightRow }) {
 
   return (
     <div className="whitespace-nowrap">
-      <p className="text-xs text-slate-200" dir={submitted?.app_version ? "ltr" : "rtl"}>
+      <p className="text-xs text-fg" dir={submitted?.app_version ? "ltr" : "rtl"}>
         {submitted?.app_version ?? "—"}
       </p>
-      <p className="text-[10px] text-slate-500">
+      <p className="text-[10px] text-fg-faint">
         {note ?? (submitted?.platform ? PLATFORM_LABELS[submitted.platform] ?? "—" : "—")}
       </p>
     </div>
@@ -151,10 +151,10 @@ export function OversightTable({
   const allOnPageSelected = rows.length > 0 && selectedOnPage === rows.length;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/65">
+    <div className="overflow-hidden rounded-2xl border border-line bg-surface/65">
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-right text-sm">
-          <thead className="border-b border-white/10 bg-white/[.03] text-xs text-slate-500">
+          <thead className="border-b border-line bg-surface-sunken text-xs text-fg-faint">
             <tr>
               <th scope="col" className={`${cell} w-10`}>
                 <input
@@ -174,11 +174,11 @@ export function OversightTable({
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-line">
             {rows.map((row) => (
               <tr
                 key={row._id}
-                className={`text-slate-300 transition hover:bg-white/[.03] ${
+                className={`text-fg-muted transition hover:bg-surface-sunken ${
                   selected.includes(row._id) ? "bg-blue-400/5" : ""
                 }`}
               >
@@ -195,7 +195,7 @@ export function OversightTable({
                   <RowLink
                     row={row}
                     base={detailBase}
-                    className="font-semibold text-blue-200 hover:text-cyan-200"
+                    className="font-semibold text-brand-fg hover:underline"
                   >
                     {reportLabel(row)}
                   </RowLink>
@@ -209,29 +209,29 @@ export function OversightTable({
                       {row.group_title ?? "فرم"}
                     </span>
                     {row.incident_severity?.name && (
-                      <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] text-cyan-200">
+                      <span className="tint-cyan rounded-full border border-tint-border bg-tint-soft px-2 py-0.5 text-[10px] text-tint-fg">
                         شدت: {row.incident_severity.name}
                       </span>
                     )}
                   </div>
                   {row.description && (
-                    <p className="mt-1 max-w-[260px] truncate text-[10px] text-slate-500">
+                    <p className="mt-1 max-w-[260px] truncate text-[10px] text-fg-faint">
                       {row.description}
                     </p>
                   )}
                 </td>
                 <td className={`${cell} whitespace-nowrap`}>
                   {fullName(row.officer)}
-                  <p className="text-xs text-slate-500" dir="ltr">
+                  <p className="text-xs text-fg-faint" dir="ltr">
                     {row.officer?.personnel_code ?? "—"}
                   </p>
-                  <p className="text-xs text-slate-500">{row.patrol_unit?.name ?? "—"}</p>
+                  <p className="text-xs text-fg-faint">{row.patrol_unit?.name ?? "—"}</p>
                 </td>
                 <td className={`${cell} whitespace-nowrap`}>{formatDate(row.sort_at)}</td>
                 <td className={cell}>
                   <StatusBadge kind="sync" value={row.sync_status} />
                   {row.rejection_reason && (
-                    <p className="mt-1 max-w-[180px] truncate text-[10px] text-rose-200">
+                    <p className="mt-1 max-w-[180px] truncate text-[10px] text-danger-fg">
                       {row.rejection_reason}
                     </p>
                   )}
@@ -239,7 +239,7 @@ export function OversightTable({
                 <td className={cell}>
                   <StatusBadge kind="review" value={row.review_status} />
                   {row.review_reason && (
-                    <p className="mt-1 max-w-[180px] truncate text-[10px] text-orange-200">
+                    <p className="mt-1 max-w-[180px] truncate text-[10px] text-warning-fg">
                       {row.review_reason}
                     </p>
                   )}
@@ -252,7 +252,7 @@ export function OversightTable({
                     row={row}
                     base={detailBase}
                     title="مشاهده گزارش"
-                    className="whitespace-nowrap text-xs text-blue-300 hover:text-cyan-200"
+                    className="whitespace-nowrap text-xs text-brand-fg hover:underline"
                   >
                     مشاهده
                   </RowLink>
@@ -263,7 +263,7 @@ export function OversightTable({
         </table>
       </div>
 
-      <div className="divide-y divide-white/5 md:hidden">
+      <div className="divide-y divide-line md:hidden">
         {rows.map((row) => (
           <article key={row._id} className="space-y-3 p-4">
             <div className="flex items-start justify-between gap-3">
@@ -271,11 +271,11 @@ export function OversightTable({
                 <RowLink
                   row={row}
                   base={detailBase}
-                  className="font-semibold text-blue-200"
+                  className="font-semibold text-brand-fg"
                 >
                   {reportLabel(row)}
                 </RowLink>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-fg-faint">
                   {formatDate(row.sort_at)} · {row.group_title ?? "فرم"}
                 </p>
               </div>
@@ -299,16 +299,16 @@ export function OversightTable({
               <StatusBadge kind="sync" value={row.sync_status} />
               <StatusBadge kind="review" value={row.review_status} />
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-fg-muted">
               {fullName(row.officer)} · {row.patrol_unit?.name ?? "واحد نامشخص"}
             </p>
             <Provenance row={row} />
             {row.review_reason && (
-              <p className="rounded-lg border border-orange-400/20 bg-orange-400/5 p-2 text-xs leading-5 text-orange-100">
+              <p className="tint-orange rounded-lg border border-tint-border bg-tint-soft p-2 text-xs leading-5 text-tint-fg">
                 {row.review_reason}
               </p>
             )}
-            <RowLink row={row} base={detailBase} className="text-xs text-blue-300">
+            <RowLink row={row} base={detailBase} className="text-xs text-brand-fg">
               جزئیات
             </RowLink>
           </article>

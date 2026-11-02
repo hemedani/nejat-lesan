@@ -84,8 +84,8 @@ export function ReportDetail({
         <div className="space-y-3 lg:sticky lg:top-4">
           <ReportSummaryCard report={report} source={source} />
 
-          <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-white">
+          <section className="rounded-2xl border border-line bg-surface/75 p-4">
+            <h2 className="mb-3 text-sm font-semibold text-fg">
               {manager ? "اقدامات بررسی" : "اقدام مأمور"}
             </h2>
             {manager ? (
@@ -99,8 +99,8 @@ export function ReportDetail({
             )}
           </section>
 
-          <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-white">موقعیت</h2>
+          <section className="rounded-2xl border border-line bg-surface/75 p-4">
+            <h2 className="mb-3 text-sm font-semibold text-fg">موقعیت</h2>
             <ExpandableReportMap
               location={report.location}
               gps={report.gps_coords}
@@ -159,13 +159,13 @@ function Header({
   return (
     <header className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
       <div>
-        <p className="text-xs text-blue-300">
+        <p className="text-xs text-brand-fg">
           گزارش گشت · {isAccident ? "تصادف" : report.form_title || "رخداد"}
         </p>
-        <h1 className="mt-1 text-xl font-bold text-white">
+        <h1 className="mt-1 text-xl font-bold text-fg">
           {report.report_id || `#${report.serial ?? report._id.slice(-6)}`}
         </h1>
-        <p className="mt-1.5 text-xs text-slate-500">
+        <p className="mt-1.5 text-xs text-fg-faint">
           {[
             officerName(report),
             report.patrol_unit?.name || report.patrol_unit?.code,
@@ -199,7 +199,7 @@ function StatusLine({ report }: { report: ReportDetailDoc }) {
       )}
       {report.submitted_from?.app_version && (
         <span
-          className="rounded-full border border-white/10 bg-white/[.04] px-2.5 py-0.5 text-[10px] text-slate-400"
+          className="rounded-full border border-line bg-surface-sunken px-2.5 py-0.5 text-[10px] text-fg-muted"
           dir="ltr"
         >
           {report.submitted_from.app_version}
@@ -219,15 +219,15 @@ function AccidentContext({ report }: { report: ReportDetailDoc }) {
   if (!hasPolice && !report.officer_cause_description) return null;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-      <h2 className="mb-3 text-sm font-semibold text-white">شرح و حضور پلیس</h2>
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">شرح و حضور پلیس</h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <Field label="حضور پلیس" value={yesNo(report.police_present)} />
         <Field label="کارشناس پلیس" value={report.police_expert_name} />
         <Field label="زمان حضور" value={when(report.police_arrival_time)} />
       </div>
       {report.officer_cause_description && (
-        <p className="mt-2.5 rounded-xl bg-white/[.03] p-3 text-sm leading-7 text-slate-200">
+        <p className="mt-2.5 rounded-xl bg-surface-sunken p-3 text-sm leading-7 text-fg">
           {report.officer_cause_description}
         </p>
       )}
@@ -238,8 +238,8 @@ function AccidentContext({ report }: { report: ReportDetailDoc }) {
 /** The blocks both models share. */
 function ReportContext({ report }: { report: ReportDetailDoc }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-      <h2 className="mb-3 text-sm font-semibold text-white">زمینه گزارش</h2>
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">زمینه گزارش</h2>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <Field label="واحد گشت" value={report.patrol_unit?.name ?? report.patrol_unit?.code} />
         <Field label="خودرو" value={report.vehicle?.plaque_no} ltr />
@@ -289,32 +289,32 @@ function DynamicAnswers({
   const anyLabel = resolved > 0;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-sm font-semibold text-white">پاسخ‌های مأمور</h2>
-        <span className="text-xs text-slate-500">
+        <h2 className="text-sm font-semibold text-fg">پاسخ‌های مأمور</h2>
+        <span className="text-xs text-fg-faint">
           {answers.length.toLocaleString("fa-IR")} مورد
         </span>
       </div>
 
       {groups.map((group) => (
         <div key={group.stepKey} className="mb-4 last:mb-0">
-          <h3 className="mb-2 text-xs font-semibold text-cyan-200">
+          <h3 className="mb-2 text-xs font-semibold text-info-fg">
             {group.title}
           </h3>
-          <dl className="divide-y divide-white/5">
+          <dl className="divide-y divide-line">
             {group.rows.map((row) => (
               <div
                 key={`${row.stepKey}:${row.path}`}
                 className="flex flex-wrap gap-x-3 gap-y-1 py-2"
               >
-                <dt className="min-w-[10rem] text-xs text-slate-400">
+                <dt className="min-w-[10rem] text-xs text-fg-muted">
                   {row.group && (
-                    <span className="ml-1.5 text-slate-600">{row.group}</span>
+                    <span className="ml-1.5 text-fg-faint">{row.group}</span>
                   )}
                   {row.label}
                 </dt>
-                <dd className="flex-1 text-xs leading-6 text-slate-100">
+                <dd className="flex-1 text-xs leading-6 text-fg">
                   {row.text}
                   {row.files && <AnswerFileList files={row.files} />}
                 </dd>
@@ -326,12 +326,12 @@ function DynamicAnswers({
 
       {anyLabel ? (
         resolved < answers.length && (
-          <p className="mt-3 rounded-xl border border-white/10 bg-white/[.03] p-3 text-[11px] leading-6 text-slate-500">
+          <p className="mt-3 rounded-xl border border-line bg-surface-sunken p-3 text-[11px] leading-6 text-fg-faint">
             {`${(answers.length - resolved).toLocaleString("fa-IR")} پاسخ با کلید خام نمایش داده شده‌اند، چون در فرم داخلی اپ تعریف نشده‌اند.`}
           </p>
         )
       ) : (
-        <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-xs leading-6 text-amber-100">
+        <p className="tint-amber rounded-xl border border-tint-border bg-tint-soft p-3 text-xs leading-6 text-tint-fg">
           این گزارش با فرمی خارج از فرم داخلی اپ ثبت شده است، بنابراین عنوان پرسش‌ها
           در دسترس نیست و کلیدهای خام نمایش داده می‌شوند.
         </p>

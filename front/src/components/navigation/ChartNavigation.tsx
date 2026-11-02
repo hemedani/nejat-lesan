@@ -127,15 +127,15 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
   const chartNavigation = currentSection ? getChartNavigation(currentSection) : [];
 
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-surface border-b border-line">
       {/* Breadcrumbs */}
-      <div className="px-6 py-3 border-b border-gray-100">
+      <div className="px-6 py-3 border-b border-line">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2 space-x-reverse">
             {breadcrumbs.map((crumb, index) => (
               <li key={index} className="flex items-center">
                 {index > 0 && (
-                  <svg className="w-5 h-5 text-gray-400 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-fg-faint mx-2" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
@@ -144,11 +144,11 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
                   </svg>
                 )}
                 {index === breadcrumbs.length - 1 ? (
-                  <span className="text-sm font-medium text-gray-500">{crumb.label}</span>
+                  <span className="text-sm font-medium text-fg-muted">{crumb.label}</span>
                 ) : (
                   <Link
                     href={crumb.href}
-                    className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                    className="text-sm font-medium text-fg hover:text-fg transition-colors"
                   >
                     {crumb.label}
                   </Link>
@@ -187,8 +187,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
                   href={item.href}
                   className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     isActive
-                      ? "border-blue-500 text-blue-600"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      ? "border-blue-500 text-brand-fg"
+                      : "border-transparent text-fg-muted hover:text-fg hover:border-line-strong"
                   }`}
                 >
                   {item.icon}
@@ -201,7 +201,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
 
       {/* Chart Section Navigation */}
       {pathname.includes("/charts") && (
-        <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+        <div className="px-6 py-3 bg-canvas border-t border-line">
           <nav className="flex space-x-6 space-x-reverse">
             {chartSections.map((section) => {
               const isActive = pathname.startsWith(section.href);
@@ -211,8 +211,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
                   href={section.href}
                   className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-brand-soft text-brand-fg"
+                      : "text-fg-muted hover:text-fg hover:bg-surface-hover"
                   }`}
                 >
                   {section.label}
@@ -225,7 +225,7 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
 
       {/* Map Section Navigation */}
       {pathname.includes("/maps") && (
-        <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+        <div className="px-6 py-3 bg-canvas border-t border-line">
           <nav className="flex space-x-6 space-x-reverse">
             {mapSections.map((section) => {
               const isActive = pathname.startsWith(section.href);
@@ -235,8 +235,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
                   href={section.href}
                   className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-brand-soft text-brand-fg"
+                      : "text-fg-muted hover:text-fg hover:bg-surface-hover"
                   }`}
                 >
                   {section.label}
@@ -249,9 +249,9 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
 
       {/* Chart-specific Navigation */}
       {pathname.includes("/charts") && currentSection && chartNavigation.length > 0 && (
-        <div className="px-6 py-3 bg-gray-25 border-t border-gray-100">
+        <div className="px-6 py-3 bg-canvas border-t border-line">
           <nav className="flex space-x-4 space-x-reverse">
-            <span className="text-sm font-medium text-gray-700 py-2">نمودارها:</span>
+            <span className="text-sm font-medium text-fg py-2">نمودارها:</span>
             {chartNavigation.map((chart) => {
               const isActive = pathname === chart.href;
               return (
@@ -260,8 +260,8 @@ const ChartNavigation: React.FC<ChartNavigationProps> = ({ currentSection, curre
                   href={chart.href}
                   className={`py-2 px-3 rounded-md text-sm transition-colors ${
                     isActive
-                      ? "bg-blue-50 text-blue-700 font-medium"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-brand-soft text-brand-fg font-medium"
+                      : "text-fg-muted hover:text-fg hover:bg-surface-hover"
                   }`}
                 >
                   {chart.label}

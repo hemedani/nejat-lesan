@@ -2,7 +2,7 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
-import { CSSObjectWithLabel } from "react-select";
+import { useSelectStyles } from "@/utils/select-styles";
 
 // Single select component that stores both _id and name
 const MySelectWithName = dynamic(
@@ -31,9 +31,13 @@ const MySelectWithName = dynamic(
         errMsg?: string;
         placeholder?: string;
       }) {
+        // `as never` keeps the dynamic import's inferred option type intact —
+        // narrowing `styles` to `unknown` would widen `onChange` with it.
+        const styles = useSelectStyles(errMsg, { minHeight: "48px", rtl: true });
+
         return (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700 text-right">
+            <label className="text-sm font-medium text-fg-muted text-right">
               {label}
             </label>
             <AsyncSelect
@@ -55,28 +59,7 @@ const MySelectWithName = dynamic(
               loadingMessage={() => "در حال بارگذاری..."}
               isClearable
               isRtl
-              styles={{
-                control: (
-                  provided: CSSObjectWithLabel,
-                ): CSSObjectWithLabel => ({
-                  ...provided,
-                  minHeight: "48px",
-                  borderRadius: "12px",
-                  borderColor: errMsg ? "#ef4444" : "#cbd5e1",
-                  direction: "rtl",
-                }),
-                option: (provided: CSSObjectWithLabel): CSSObjectWithLabel => ({
-                  ...provided,
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-                singleValue: (
-                  provided: CSSObjectWithLabel,
-                ): CSSObjectWithLabel => ({
-                  ...provided,
-                  direction: "rtl",
-                }),
-              }}
+              styles={styles}
             />
             {errMsg && (
               <span className="text-red-500 text-xs font-medium text-right mt-1">

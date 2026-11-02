@@ -44,7 +44,7 @@ export type LeafletSurfaceProps = {
 const LeafletSurface: React.FC<LeafletSurfaceProps> = ({
   center,
   zoom = 6,
-  className = "h-[420px] w-full rounded-lg overflow-hidden border border-slate-700",
+  className = "h-[420px] w-full rounded-lg overflow-hidden border border-line",
   children,
 }) => {
   useEffect(() => {

@@ -77,7 +77,7 @@ export const EditUserRelations = ({
       <div className="w-full flex gap-4 justify-end">
         <button
           type="submit"
-          className="p-4 px-8 bg-blue-600 text-white text-center font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
+          className="p-4 px-8 bg-brand text-on-brand text-center font-semibold rounded-lg hover:bg-brand-hover disabled:bg-blue-300"
         >
           ارسال
         </button>

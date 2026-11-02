@@ -387,7 +387,7 @@ const TemporalNightAnalyticsPage = () => {
   const stats = getStatistics();
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="temporal" currentChart="night-analytics" />
 
@@ -413,8 +413,8 @@ const TemporalNightAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">مقایسه زمانی تصادفات در شب</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">مقایسه زمانی تصادفات در شب</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل مقایسه‌ای تصادفات شبانه بر اساس شرایط روشنایی محل حادثه
                 </p>
               </div>
@@ -422,7 +422,7 @@ const TemporalNightAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -457,7 +457,7 @@ const TemporalNightAnalyticsPage = () => {
                     onClick={() =>
                       downloadFullChartData(chartData.categories, chartData.series, "temporal-night")
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -472,7 +472,7 @@ const TemporalNightAnalyticsPage = () => {
                       setChartData(null);
                       handleLoadData();
                     }}
-                    className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+                    className="flex items-center gap-2 bg-yellow-500 text-fg px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -487,7 +487,7 @@ const TemporalNightAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -512,35 +512,35 @@ const TemporalNightAnalyticsPage = () => {
           <div className="space-y-4">
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-red-800">خطا</h3>
+                  <h3 className="font-medium text-danger-fg">خطا</h3>
                 </div>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-danger-fg">{error}</p>
               </div>
             )}
 
             {/* Demo Mode Warning */}
             {isDemoMode && chartData && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="tint-warning bg-tint-soft border-tint-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-tint-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-yellow-800">حالت نمایشی</h3>
+                  <h3 className="font-medium text-tint-fg">حالت نمایشی</h3>
                 </div>
-                <p className="text-sm text-yellow-700">
+                <p className="text-sm text-tint-fg">
                   در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای دریافت داده‌های واقعی،
                   دکمه &quot;تلاش مجدد API&quot; را فشار دهید.
                 </p>
@@ -549,18 +549,18 @@ const TemporalNightAnalyticsPage = () => {
 
             {/* Success Message with Statistics */}
             {chartData && !isLoading && !isDemoMode && stats && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="bg-success-soft border border-success-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
+                  <h3 className="font-medium text-success-fg">داده‌ها بارگذاری شد</h3>
                 </div>
-                <p className="text-sm text-green-700">
+                <p className="text-sm text-success-fg">
                   تحلیل {stats.periods} دوره زمانی با مجموع{" "}
                   {stats.totalAccidents.toLocaleString("fa-IR")} تصادف شبانه - با روشنایی کافی:{" "}
                   {stats.wellLitPercentage}% - بدون روشنایی کافی: {stats.poorlyLitPercentage}%
@@ -575,10 +575,10 @@ const TemporalNightAnalyticsPage = () => {
 
             {/* Initial Instructions */}
             {!chartData && !isLoading && !error && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <div className="bg-brand-soft border border-brand-border rounded-lg p-6">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="w-6 h-6 text-blue-600 mt-0.5"
+                    className="w-6 h-6 text-brand-fg mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -591,8 +591,8 @@ const TemporalNightAnalyticsPage = () => {
                     />
                   </svg>
                   <div>
-                    <h3 className="font-medium text-blue-800 mb-2">راهنمای استفاده</h3>
-                    <ul className="space-y-1 text-sm text-blue-700">
+                    <h3 className="font-medium text-brand-fg mb-2">راهنمای استفاده</h3>
+                    <ul className="space-y-1 text-sm text-brand-fg">
                       <li>
                         • از دکمه &quot;بارگذاری مجدد&quot; برای دریافت آخرین داده‌ها استفاده کنید
                       </li>
@@ -613,8 +613,8 @@ const TemporalNightAnalyticsPage = () => {
             {chartData && stats && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Lighting Analysis */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
+                  <h3 className="font-medium text-fg mb-4 flex items-center gap-2">
                     <svg
                       className="w-5 h-5 text-orange-600"
                       fill="none"
@@ -632,27 +632,27 @@ const TemporalNightAnalyticsPage = () => {
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">کل تصادفات شبانه:</span>
-                      <span className="font-semibold text-gray-900">
+                      <span className="text-fg-muted">کل تصادفات شبانه:</span>
+                      <span className="font-semibold text-fg">
                         {stats.totalAccidents.toLocaleString("fa-IR")}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">با روشنایی کافی:</span>
+                      <span className="text-fg-muted">با روشنایی کافی:</span>
                       <span className="font-semibold text-orange-600">
                         {stats.wellLitTotal.toLocaleString("fa-IR")} ({stats.wellLitPercentage}%)
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">بدون روشنایی کافی:</span>
-                      <span className="font-semibold text-gray-800">
+                      <span className="text-fg-muted">بدون روشنایی کافی:</span>
+                      <span className="font-semibold text-fg">
                         {stats.poorlyLitTotal.toLocaleString("fa-IR")} ({stats.poorlyLitPercentage}%)
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">نسبت ریسک:</span>
+                      <span className="text-fg-muted">نسبت ریسک:</span>
                       <span
-                        className={`font-semibold ${stats.riskRatio > 1 ? "text-red-600" : stats.riskRatio < 1 ? "text-green-600" : "text-gray-600"}`}
+                        className={`font-semibold ${stats.riskRatio > 1 ? "text-danger-fg" : stats.riskRatio < 1 ? "text-success-fg" : "text-fg-muted"}`}
                       >
                         {stats.riskRatio.toFixed(2)}x
                       </span>
@@ -661,8 +661,8 @@ const TemporalNightAnalyticsPage = () => {
                 </div>
 
                 {/* Statistical Insights */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
+                  <h3 className="font-medium text-fg mb-4 flex items-center gap-2">
                     <svg
                       className="w-5 h-5 text-purple-600"
                       fill="none"
@@ -680,26 +680,26 @@ const TemporalNightAnalyticsPage = () => {
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">میانگین با روشنایی:</span>
+                      <span className="text-fg-muted">میانگین با روشنایی:</span>
                       <span className="font-semibold text-orange-600">
                         {stats.wellLitAverage.toLocaleString("fa-IR")}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">میانگین بدون روشنایی:</span>
-                      <span className="font-semibold text-gray-800">
+                      <span className="text-fg-muted">میانگین بدون روشنایی:</span>
+                      <span className="font-semibold text-fg">
                         {stats.poorlyLitAverage.toLocaleString("fa-IR")}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">پیک با روشنایی:</span>
+                      <span className="text-fg-muted">پیک با روشنایی:</span>
                       <span className="font-semibold text-orange-600">
                         {stats.wellLitMax.toLocaleString("fa-IR")} ({stats.wellLitMaxPeriod})
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">پیک بدون روشنایی:</span>
-                      <span className="font-semibold text-gray-800">
+                      <span className="text-fg-muted">پیک بدون روشنایی:</span>
+                      <span className="font-semibold text-fg">
                         {stats.poorlyLitMax.toLocaleString("fa-IR")} ({stats.poorlyLitMaxPeriod})
                       </span>
                     </div>
@@ -710,10 +710,10 @@ const TemporalNightAnalyticsPage = () => {
 
             {/* Seasonal Pattern Analysis */}
             {chartData && stats && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h3 className="font-medium text-blue-800 mb-4 flex items-center gap-2">
+              <div className="bg-brand-soft border border-brand-border rounded-lg p-6">
+                <h3 className="font-medium text-brand-fg mb-4 flex items-center gap-2">
                   <svg
-                    className="w-5 h-5 text-blue-600"
+                    className="w-5 h-5 text-brand-fg"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -728,23 +728,23 @@ const TemporalNightAnalyticsPage = () => {
                   تحلیل الگوهای زمانی
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  <div className="text-center p-3 bg-white bg-opacity-50 rounded-lg">
-                    <div className="text-lg font-bold text-blue-800">
+                  <div className="text-center p-3 bg-surface bg-opacity-50 rounded-lg">
+                    <div className="text-lg font-bold text-brand-fg">
                       {stats.totalAccidents.toLocaleString("fa-IR")}
                     </div>
-                    <div className="text-blue-600">کل تصادفات شبانه</div>
+                    <div className="text-brand-fg">کل تصادفات شبانه</div>
                   </div>
-                  <div className="text-center p-3 bg-white bg-opacity-50 rounded-lg">
+                  <div className="text-center p-3 bg-surface bg-opacity-50 rounded-lg">
                     <div className="text-lg font-bold text-orange-600">{stats.wellLitPercentage}%</div>
-                    <div className="text-blue-600">با روشنایی کافی</div>
+                    <div className="text-brand-fg">با روشنایی کافی</div>
                   </div>
-                  <div className="text-center p-3 bg-white bg-opacity-50 rounded-lg">
-                    <div className="text-lg font-bold text-gray-800">{stats.poorlyLitPercentage}%</div>
-                    <div className="text-blue-600">بدون روشنایی کافی</div>
+                  <div className="text-center p-3 bg-surface bg-opacity-50 rounded-lg">
+                    <div className="text-lg font-bold text-fg">{stats.poorlyLitPercentage}%</div>
+                    <div className="text-brand-fg">بدون روشنایی کافی</div>
                   </div>
                 </div>
                 <div className="mt-4 text-center">
-                  <p className="text-sm text-blue-700">
+                  <p className="text-sm text-brand-fg">
                     {stats.poorlyLitPercentage > stats.wellLitPercentage
                       ? "کمبود روشنایی یکی از عوامل اصلی تصادفات شبانه است"
                       : "عوامل دیگری غیر از روشنایی در تصادفات شبانه مؤثر هستند"}

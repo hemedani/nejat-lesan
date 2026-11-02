@@ -25,7 +25,7 @@ export function ReportLocationMap({
 }) {
   if (!location && !gps) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-white/10 text-sm text-slate-500">
+      <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-line text-sm text-fg-faint">
         مختصات مکانی ثبت نشده است.
       </div>
     );

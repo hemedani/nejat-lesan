@@ -30,9 +30,9 @@ export function ModuleConfigClient() {
   return (
     <div dir="rtl">
       <div className="mb-5">
-        <p className="text-sm text-blue-300">سیستم / فعال‌سازی</p>
-        <h1 className="mt-1 text-2xl font-bold text-white">تنظیمات ماژول‌ها</h1>
-        <p className="mt-2 text-sm text-slate-500">ماژول‌ها در دو لایه کنترل می‌شوند: سطح نصب و سطح هر سازمان. گزینهٔ مؤثر برای هر سازمان = نصب و سازمان.</p>
+        <p className="text-sm text-brand-fg">سیستم / فعال‌سازی</p>
+        <h1 className="mt-1 text-2xl font-bold text-fg">تنظیمات ماژول‌ها</h1>
+        <p className="mt-2 text-sm text-fg-faint">ماژول‌ها در دو لایه کنترل می‌شوند: سطح نصب و سطح هر سازمان. گزینهٔ مؤثر برای هر سازمان = نصب و سازمان.</p>
       </div>
 
       <div className="mb-5 flex gap-2">
@@ -49,7 +49,7 @@ function TabButton({ active, label, onClick }: { active: boolean; label: string;
   return (
     <button
       onClick={onClick}
-      className={`rounded-xl px-4 py-2 text-sm transition ${active ? "bg-blue-600 text-white shadow-[0_0_18px_rgba(37,99,235,.25)]" : "border border-white/10 text-slate-300 hover:bg-white/5"}`}
+      className={`rounded-xl px-4 py-2 text-sm transition ${active ? "bg-brand text-on-brand shadow-[0_0_18px_rgba(37,99,235,.25)]" : "border border-line text-fg-muted hover:bg-surface-hover"}`}
     >
       {label}
     </button>
@@ -111,16 +111,16 @@ function InstallationModules() {
 
 function ModuleCard({ title, enabled, busy, onToggle }: { title: string; enabled: boolean; busy: boolean; onToggle: (v: boolean) => void }) {
   return (
-    <div className="flex flex-col rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-xl">
+    <div className="flex flex-col rounded-2xl border border-line bg-surface/70 p-4 shadow-xl">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-white">{title}</span>
-        <span className={`rounded-full border px-2.5 py-1 text-[11px] ${enabled ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200" : "border-rose-400/25 bg-rose-400/10 text-rose-200"}`}>
+        <span className="text-sm font-semibold text-fg">{title}</span>
+        <span className={`tint-rose tint-emerald rounded-full border px-2.5 py-1 text-[11px] ${enabled ? "border-tint-border bg-tint-soft text-tint-fg" : "border-tint-border bg-tint-soft text-tint-fg"}`}>
           {enabled ? "فعال" : "غیرفعال"}
         </span>
       </div>
-      <p className="mt-2 flex-1 text-xs leading-5 text-slate-500">{enabled ? "این ماژول برای کل نصب فعال است." : "این ماژول برای کل نصب غیرفعال است."}</p>
+      <p className="mt-2 flex-1 text-xs leading-5 text-fg-faint">{enabled ? "این ماژول برای کل نصب فعال است." : "این ماژول برای کل نصب غیرفعال است."}</p>
       <div className="mt-4 flex items-center justify-between">
-        <span className="text-xs text-slate-400">وضعیت</span>
+        <span className="text-xs text-fg-muted">وضعیت</span>
         <ToggleSwitch checked={enabled} disabled={busy} onChange={onToggle} />
       </div>
     </div>
@@ -158,12 +158,12 @@ function OrganizationModules() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-3">
+      <div className="rounded-2xl border border-line bg-surface/60 p-3">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="جستجوی سازمان..."
-          className="w-full rounded-xl border border-white/10 bg-white/[.04] px-3 py-2.5 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/50"
+          className="w-full rounded-xl border border-line bg-surface-sunken px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-faint focus:border-blue-400/50"
         />
       </div>
       {filtered.length === 0 ? (
@@ -227,23 +227,23 @@ function OrgModuleRow({ org }: { org: OrganizationListItem }) {
     }
   };
 
-  if (loading) return <div className="h-28 animate-pulse rounded-2xl bg-white/5" />;
+  if (loading) return <div className="h-28 animate-pulse rounded-2xl bg-surface-hover" />;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-xl">
+    <div className="rounded-2xl border border-line bg-surface/70 p-4 shadow-xl">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="font-semibold text-white">{org.name}</p>
-          <p className="mt-0.5 text-xs text-slate-500" dir="ltr">{org.code}</p>
+          <p className="font-semibold text-fg">{org.name}</p>
+          <p className="mt-0.5 text-xs text-fg-faint" dir="ltr">{org.code}</p>
         </div>
-        <span className={`rounded-full border px-2.5 py-1 text-[11px] ${inheritFromInstallation ? "border-white/10 bg-white/[.04] text-slate-400" : "border-amber-400/25 bg-amber-400/10 text-amber-200"}`}>
+        <span className={`tint-amber rounded-full border px-2.5 py-1 text-[11px] ${inheritFromInstallation ? "border-line bg-surface-sunken text-fg-muted" : "border-tint-border bg-tint-soft text-tint-fg"}`}>
           {inheritFromInstallation ? "پیرو نصب" : "تنظیم اختصاصی"}
         </span>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {MODULE_KEYS.map((key) => (
-          <div key={key} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-2.5">
-            <span className="text-xs text-slate-300">{MODULE_LABELS[key]}</span>
+          <div key={key} className="flex items-center justify-between rounded-xl border border-line bg-surface-sunken px-3 py-2.5">
+            <span className="text-xs text-fg-muted">{MODULE_LABELS[key]}</span>
             <ToggleSwitch checked={isEnabled(key)} disabled={busyKey === key} onChange={(v) => void toggle(key, v)} />
           </div>
         ))}

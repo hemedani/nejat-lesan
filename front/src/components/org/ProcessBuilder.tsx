@@ -158,13 +158,13 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
     <div className="space-y-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">سازنده فرایند</p>
-          <h1 className="text-2xl font-bold text-white">{processId ? draft.name || "فرایند" : "فرایند جدید"}</h1>
-          {version !== undefined && <p className="mt-1 text-xs text-slate-500">نسخه {version}</p>}
+          <p className="text-sm text-brand-fg">سازنده فرایند</p>
+          <h1 className="text-2xl font-bold text-fg">{processId ? draft.name || "فرایند" : "فرایند جدید"}</h1>
+          {version !== undefined && <p className="mt-1 text-xs text-fg-faint">نسخه {version}</p>}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {processId && (
-            <Link href={orgRoutes.processes()} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">
+            <Link href={orgRoutes.processes()} className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2 text-sm text-fg transition hover:bg-surface-hover">
               بازگشت
             </Link>
           )}
@@ -187,12 +187,12 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
       </div>
 
       {readOnly && (
-        <div className="rounded-xl border border-amber-400/25 bg-amber-400/10 px-3 py-2 text-xs text-amber-100">
+        <div className="tint-amber rounded-xl border border-tint-border bg-tint-soft px-3 py-2 text-xs text-tint-fg">
           این فرایند فعال است و قابل ویرایش نیست؛ برای تغییر، از نسخه‌ای تکراری یا پیش‌نویس استفاده کنید.
         </div>
       )}
 
-      <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
+      <div className="rounded-2xl border border-line bg-surface/70 p-5 shadow-xl">
         <div className="grid gap-4 sm:grid-cols-2">
           <MyInput label="نام فرایند" value={draft.name} onValueChange={(v) => setDraft({ ...draft, name: v })} />
           <OrgSelect
@@ -274,7 +274,7 @@ export function ProcessBuilder({ orgId, processId }: { orgId: string; processId?
       )}
 
       {draft.incident_type && (
-        <p className="text-xs text-slate-500">این فرایند برای رخداد «{INCIDENT_TYPE_LABELS[draft.incident_type]}» ساخته می‌شود.</p>
+        <p className="text-xs text-fg-faint">این فرایند برای رخداد «{INCIDENT_TYPE_LABELS[draft.incident_type]}» ساخته می‌شود.</p>
       )}
     </div>
   );
@@ -334,24 +334,24 @@ function StepCard({
   onRemove: () => void;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4 shadow-xl">
+    <div className="rounded-2xl border border-line bg-surface/60 p-4 shadow-xl">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500/15 text-sm text-blue-200">{(index + 1).toLocaleString("fa-IR")}</span>
-          <span className="text-sm font-semibold text-white">گام</span>
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/15 text-sm text-brand-fg">{(index + 1).toLocaleString("fa-IR")}</span>
+          <span className="text-sm font-semibold text-fg">گام</span>
         </div>
         {!readOnly && (
           <div className="flex items-center gap-1">
-            <button disabled={index === 0} onClick={() => onMove(-1)} className="rounded-lg border border-white/10 px-2 py-1 text-xs text-slate-300 disabled:opacity-30">↑</button>
-            <button onClick={() => onMove(1)} className="rounded-lg border border-white/10 px-2 py-1 text-xs text-slate-300">↓</button>
-            <button onClick={onRemove} className="rounded-lg border border-rose-400/20 px-2 py-1 text-xs text-rose-300 hover:bg-rose-400/10">حذف گام</button>
+            <button disabled={index === 0} onClick={() => onMove(-1)} className="rounded-lg border border-line px-2 py-1 text-xs text-fg-muted disabled:opacity-30">↑</button>
+            <button onClick={() => onMove(1)} className="rounded-lg border border-line px-2 py-1 text-xs text-fg-muted">↓</button>
+            <button onClick={onRemove} className="tint-rose rounded-lg border border-tint-border px-2 py-1 text-xs text-tint-fg hover:bg-tint-soft">حذف گام</button>
           </div>
         )}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <MyInput label="عنوان گام" value={step.title} onValueChange={(v) => onStep({ title: v })} />
-        <div className="flex items-end gap-2 pb-2 text-xs text-slate-300">
+        <div className="flex items-end gap-2 pb-2 text-xs text-fg-muted">
           الزامی
           <ToggleSwitch checked={step.required} onChange={(v) => onStep({ required: v })} disabled={readOnly} />
         </div>
@@ -417,19 +417,19 @@ function QuestionRow({
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[.02] p-3">
+    <div className="rounded-xl border border-line bg-surface-sunken p-3">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500">پرسش {(index + 1).toLocaleString("fa-IR")}</span>
+          <span className="text-xs text-fg-faint">پرسش {(index + 1).toLocaleString("fa-IR")}</span>
           {!readOnly && (
             <div className="flex items-center gap-1">
-              <button disabled={index === 0} onClick={() => onMove(-1)} className="rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-slate-300 disabled:opacity-30">↑</button>
-              <button onClick={() => onMove(1)} className="rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-slate-300">↓</button>
+              <button disabled={index === 0} onClick={() => onMove(-1)} className="rounded border border-line px-1.5 py-0.5 text-[10px] text-fg-muted disabled:opacity-30">↑</button>
+              <button onClick={() => onMove(1)} className="rounded border border-line px-1.5 py-0.5 text-[10px] text-fg-muted">↓</button>
             </div>
           )}
         </div>
         {!readOnly && (
-          <button onClick={onRemove} className="text-xs text-rose-300 hover:text-rose-200">حذف پرسش</button>
+          <button onClick={onRemove} className="text-xs text-danger-fg hover:underline">حذف پرسش</button>
         )}
       </div>
 
@@ -443,7 +443,7 @@ function QuestionRow({
           disabled={readOnly}
         />
         {question.model_name ? (
-          <div className="flex flex-wrap gap-4 text-xs text-slate-300">
+          <div className="flex flex-wrap gap-4 text-xs text-fg-muted">
             <div className="flex items-center gap-2">
               پرسش الزامی
               <ToggleSwitch checked={question.required} onChange={(v) => onChange({ required: v })} disabled={readOnly} />
@@ -455,17 +455,17 @@ function QuestionRow({
           </div>
         ) : null}
         <div>
-          <p className="mb-1 text-xs text-slate-400">
+          <p className="mb-1 text-xs text-fg-muted">
             پاسخ‌های مجاز — چند گزینه از فهرست را علامت بزنید (کاربر موبایل در حالت «چند انتخابی» چند مورد و در «تک انتخابی» یک مورد از همین فهرست برمی‌گزیند)
           </p>
           {rows.length === 0 ? (
-            <p className="text-[11px] text-slate-600">بارگذاری گزینه‌ها...</p>
+            <p className="text-[11px] text-fg-faint">بارگذاری گزینه‌ها...</p>
           ) : (
-            <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-white/10 bg-white/[.02] p-2">
+            <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-line bg-surface-sunken p-2">
               {rows.map((row) => {
                 const checked = question.allowed_answer_ids.includes(row._id);
                 return (
-                  <label key={row._id} className="flex cursor-pointer items-center gap-2 text-xs text-slate-300">
+                  <label key={row._id} className="flex cursor-pointer items-center gap-2 text-xs text-fg-muted">
                     <input type="checkbox" className="accent-blue-500" disabled={readOnly} checked={checked} onChange={() => toggleAnswer(row._id)} />
                     {row.name}
                   </label>

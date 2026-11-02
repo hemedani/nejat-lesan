@@ -34,7 +34,7 @@ const MapsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation />
 
@@ -58,13 +58,13 @@ const MapsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">نقشه‌ها</h1>
-                <p className="text-sm text-gray-600 mt-1">نمایش جغرافیایی تصادفات و تحلیل‌های مکانی</p>
+                <h1 className="text-2xl font-bold text-fg">نقشه‌ها</h1>
+                <p className="text-sm text-fg-muted mt-1">نمایش جغرافیایی تصادفات و تحلیل‌های مکانی</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -85,11 +85,11 @@ const MapsPage = () => {
             {/* Map Types Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               <Link href="/maps/accidents" className="block">
-                <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-red-200 hover:border-red-300 transition-colors cursor-pointer hover:shadow-md">
+                <div className="bg-surface rounded-lg shadow-sm p-6 border-2 border-danger-border hover:border-danger-fg transition-colors cursor-pointer hover:shadow-md">
                   <div className="text-center">
-                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <div className="w-12 h-12 bg-danger-soft rounded-lg flex items-center justify-center mx-auto mb-4">
                       <svg
-                        className="w-6 h-6 text-red-600"
+                        className="w-6 h-6 text-danger-fg"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -108,17 +108,17 @@ const MapsPage = () => {
                         />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-gray-900 mb-2">نقشه تصادفات</h3>
-                    <p className="text-sm text-gray-600">نمایش حرارتی و خوشه‌ای تصادفات</p>
+                    <h3 className="font-medium text-fg mb-2">نقشه تصادفات</h3>
+                    <p className="text-sm text-fg-muted">نمایش حرارتی و خوشه‌ای تصادفات</p>
                   </div>
                 </div>
               </Link>
 
               {/*<div className="bg-white rounded-lg shadow-sm p-6 border-2 border-dashed border-gray-200">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-tint-strong rounded-lg flex items-center justify-center mx-auto mb-4">
                     <svg
-                      className="w-6 h-6 text-green-600"
+                      className="w-6 h-6 text-tint-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -140,9 +140,9 @@ const MapsPage = () => {
 
               {/*<div className="bg-white rounded-lg shadow-sm p-6 border-2 border-dashed border-gray-200">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-tint-strong rounded-lg flex items-center justify-center mx-auto mb-4">
                     <svg
-                      className="w-6 h-6 text-purple-600"
+                      className="w-6 h-6 text-tint-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -162,9 +162,9 @@ const MapsPage = () => {
 
               <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-dashed border-gray-200">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-tint-strong rounded-lg flex items-center justify-center mx-auto mb-4">
                     <svg
-                      className="w-6 h-6 text-yellow-600"
+                      className="w-6 h-6 text-tint-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -183,11 +183,11 @@ const MapsPage = () => {
               </div>*/}
 
               <Link href="/maps/comparison" className="block">
-                <div className="bg-white rounded-lg shadow-sm p-6 border-2 border-indigo-200 hover:border-indigo-300 transition-colors cursor-pointer hover:shadow-md">
+                <div className="bg-surface rounded-lg shadow-sm p-6 border-2 tint-indigo border-tint-border hover:border-tint-fg transition-colors cursor-pointer hover:shadow-md">
                   <div className="text-center">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <div className="w-12 h-12 bg-tint-strong rounded-lg flex items-center justify-center mx-auto mb-4">
                       <svg
-                        className="w-6 h-6 text-indigo-600"
+                        className="w-6 h-6 text-tint-fg"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -200,18 +200,18 @@ const MapsPage = () => {
                         />
                       </svg>
                     </div>
-                    <h3 className="font-medium text-gray-900 mb-2">
+                    <h3 className="font-medium text-fg mb-2">
                       مقایسه نقشه‌ها
                       {getComparisonCount() > 0 && (
-                        <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-indigo-500 rounded-full mr-2">
+                        <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-on-brand bg-indigo-500 rounded-full mr-2">
                           {getComparisonCount()}
                         </span>
                       )}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-fg-muted">
                       مقایسه تصاویر ذخیره شده
                       {getComparisonCount() > 0 && (
-                        <span className="text-indigo-600 font-medium">
+                        <span className="text-tint-fg font-medium">
                           {" "}
                           ({getComparisonCount()} ذخیره شده)
                         </span>
@@ -252,12 +252,12 @@ const MapsPage = () => {
             </div>*/}
 
             {/* Features Coming Soon */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-              <h3 className="font-medium text-blue-800 mb-3">قابلیت‌های در دست توسعه</h3>
+            <div className="bg-brand-soft border border-brand-border rounded-lg p-6">
+              <h3 className="font-medium text-brand-fg mb-3">قابلیت‌های در دست توسعه</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ul className="space-y-2 text-sm text-blue-700">
+                <ul className="space-y-2 text-sm text-brand-fg">
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -267,7 +267,7 @@ const MapsPage = () => {
                     نقشه تعاملی با قابلیت زوم و پان
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -277,7 +277,7 @@ const MapsPage = () => {
                     نمایش نقاط تصادف با جزئیات
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -287,7 +287,7 @@ const MapsPage = () => {
                     لایه‌های مختلف (راه‌ها، مناطق، نقاط خدماتی)
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -297,9 +297,9 @@ const MapsPage = () => {
                     فیلترهای مکانی و زمانی
                   </li>
                 </ul>
-                <ul className="space-y-2 text-sm text-blue-700">
+                <ul className="space-y-2 text-sm text-brand-fg">
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -309,7 +309,7 @@ const MapsPage = () => {
                     نقشه حرارتی تراکم تصادفات
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -319,7 +319,7 @@ const MapsPage = () => {
                     تحلیل کلاستر و خوشه‌بندی
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -329,7 +329,7 @@ const MapsPage = () => {
                     محاسبه شعاع تأثیر و حریم امنیت
                   </li>
                   <li className="flex items-center gap-2">
-                    <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -343,12 +343,12 @@ const MapsPage = () => {
             </div>
 
             {/* Technology Stack */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="font-medium text-gray-900 mb-4">تکنولوژی‌های استفاده شده</h3>
+            <div className="bg-canvas rounded-lg p-6">
+              <h3 className="font-medium text-fg mb-4">تکنولوژی‌های استفاده شده</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
-                    <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="w-12 h-12 bg-surface rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
+                    <svg className="w-6 h-6 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z"
@@ -356,21 +356,21 @@ const MapsPage = () => {
                       />
                     </svg>
                   </div>
-                  <div className="text-sm font-medium text-gray-900">Leaflet</div>
-                  <div className="text-xs text-gray-600">نقشه تعاملی</div>
+                  <div className="text-sm font-medium text-fg">Leaflet</div>
+                  <div className="text-xs text-fg-muted">نقشه تعاملی</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
-                    <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="w-12 h-12 bg-surface rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
+                    <svg className="w-6 h-6 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <div className="text-sm font-medium text-gray-900">MongoDB</div>
-                  <div className="text-xs text-gray-600">پایگاه داده مکانی</div>
+                  <div className="text-sm font-medium text-fg">MongoDB</div>
+                  <div className="text-xs text-fg-muted">پایگاه داده مکانی</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
-                    <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="w-12 h-12 bg-surface rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
+                    <svg className="w-6 h-6 text-tint-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -378,17 +378,17 @@ const MapsPage = () => {
                       />
                     </svg>
                   </div>
-                  <div className="text-sm font-medium text-gray-900">GeoServer</div>
-                  <div className="text-xs text-gray-600">سرویس نقشه</div>
+                  <div className="text-sm font-medium text-fg">GeoServer</div>
+                  <div className="text-xs text-fg-muted">سرویس نقشه</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
-                    <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="w-12 h-12 bg-surface rounded-lg shadow-sm flex items-center justify-center mx-auto mb-2">
+                    <svg className="w-6 h-6 text-tint-fg" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                     </svg>
                   </div>
-                  <div className="text-sm font-medium text-gray-900">D3.js</div>
-                  <div className="text-xs text-gray-600">تجسم داده</div>
+                  <div className="text-sm font-medium text-fg">D3.js</div>
+                  <div className="text-xs text-fg-muted">تجسم داده</div>
                 </div>
               </div>
             </div>

@@ -42,13 +42,13 @@ const UnknownDataIndicator: React.FC<UnknownDataIndicatorProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-amber-200 overflow-hidden ${className}`}
+      className={`bg-surface rounded-lg shadow-sm border border-warning-border overflow-hidden ${className}`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-6 pb-5">
         <div className="flex items-start gap-3 flex-1">
-          <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+          <div className="flex-shrink-0 w-10 h-10 bg-warning-soft rounded-full flex items-center justify-center">
             <svg
-              className="w-6 h-6 text-amber-600"
+              className="w-6 h-6 text-warning-fg"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -61,7 +61,7 @@ const UnknownDataIndicator: React.FC<UnknownDataIndicatorProps> = ({
           </div>
           <div>
             <h3 className="text-base font-bold text-amber-800">{title}</h3>
-            <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+            <p className="text-sm text-fg-muted mt-1 leading-relaxed">
               {description ||
                 `از مجموع ${formatNumber(totalCount)} مورد، ${formatNumber(unknownCount)} مورد (${formatPercent(
                   unknownPercent,
@@ -71,17 +71,17 @@ const UnknownDataIndicator: React.FC<UnknownDataIndicatorProps> = ({
         </div>
 
         <div className="text-right sm:text-left sm:pl-6 flex-shrink-0">
-          <div className="text-3xl font-extrabold text-amber-600">
+          <div className="text-3xl font-extrabold text-warning-fg">
             {formatPercent(unknownPercent)}%
           </div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-xs text-fg-muted mt-1">
             معادل {formatNumber(unknownCount)} مورد
           </div>
         </div>
       </div>
 
       <div className="px-6 pb-6">
-        <div className="flex h-3 rounded-full overflow-hidden bg-gray-100">
+        <div className="flex h-3 rounded-full overflow-hidden bg-surface-sunken">
           <div
             className="h-full bg-emerald-500 transition-all duration-500"
             style={{ width: `${knownPercent}%` }}
@@ -95,15 +95,15 @@ const UnknownDataIndicator: React.FC<UnknownDataIndicatorProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2 mt-3 text-sm">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0" />
-            <span className="text-gray-600">داده‌های مشخص</span>
+            <span className="text-fg-muted">داده‌های مشخص</span>
             <span className="font-bold text-emerald-600">{formatNumber(knownCount)}</span>
-            <span className="text-gray-400">({formatPercent(knownPercent)}%)</span>
+            <span className="text-fg-faint">({formatPercent(knownPercent)}%)</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 flex-shrink-0" />
-            <span className="text-gray-600">داده‌های نامشخص</span>
-            <span className="font-bold text-amber-600">{formatNumber(unknownCount)}</span>
-            <span className="text-gray-400">({formatPercent(unknownPercent)}%)</span>
+            <span className="text-fg-muted">داده‌های نامشخص</span>
+            <span className="font-bold text-warning-fg">{formatNumber(unknownCount)}</span>
+            <span className="text-fg-faint">({formatPercent(unknownPercent)}%)</span>
           </div>
         </div>
       </div>

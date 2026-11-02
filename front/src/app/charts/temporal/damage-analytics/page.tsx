@@ -245,7 +245,7 @@ const TemporalDamageAnalyticsPage = () => {
   const statistics = getStatistics();
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="temporal" currentChart="damage-analytics" />
 
@@ -353,15 +353,15 @@ const TemporalDamageAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">مقایسه زمانی صدمات و نوع برخورد</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">مقایسه زمانی صدمات و نوع برخورد</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل درصد سهم صدمات انتخابی از کل تصادفات در بازه‌های زمانی مختلف
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -376,7 +376,7 @@ const TemporalDamageAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                  className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover disabled:opacity-50 transition-colors"
                 >
                   <svg
                     className={`w-5 h-5 ${isLoading ? "animate-spin" : ""}`}
@@ -398,7 +398,7 @@ const TemporalDamageAnalyticsPage = () => {
                     onClick={() =>
                       downloadFullChartData(chartData.categories, chartData.series, "temporal-damage")
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -417,9 +417,9 @@ const TemporalDamageAnalyticsPage = () => {
 
           {/* Demo Mode Alert */}
           {isDemoMode && (
-            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="mb-6 tint-warning bg-tint-soft border-tint-border rounded-lg p-4">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-yellow-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-tint-fg mr-3" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -427,8 +427,8 @@ const TemporalDamageAnalyticsPage = () => {
                   />
                 </svg>
                 <div>
-                  <h3 className="text-sm font-medium text-yellow-800">حالت نمایشی</h3>
-                  <p className="text-sm text-yellow-700 mt-1">
+                  <h3 className="text-sm font-medium text-tint-fg">حالت نمایشی</h3>
+                  <p className="text-sm text-tint-fg mt-1">
                     به دلیل عدم دسترسی به API، داده‌های نمونه نمایش داده می‌شود.
                   </p>
                 </div>
@@ -438,9 +438,9 @@ const TemporalDamageAnalyticsPage = () => {
 
           {/* Error Alert */}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-danger-fg mr-3" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -448,8 +448,8 @@ const TemporalDamageAnalyticsPage = () => {
                   />
                 </svg>
                 <div>
-                  <h3 className="text-sm font-medium text-red-800">خطا</h3>
-                  <p className="text-sm text-red-700 mt-1">{error}</p>
+                  <h3 className="text-sm font-medium text-danger-fg">خطا</h3>
+                  <p className="text-sm text-danger-fg mt-1">{error}</p>
                 </div>
               </div>
             </div>
@@ -458,25 +458,25 @@ const TemporalDamageAnalyticsPage = () => {
           {/* Statistics Cards */}
           {statistics && (
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                <h3 className="text-sm font-medium text-gray-600 mb-1">میانگین</h3>
-                <p className="text-2xl font-bold text-blue-600">{statistics.average}%</p>
+              <div className="bg-surface rounded-lg p-4 shadow-sm border border-line">
+                <h3 className="text-sm font-medium text-fg-muted mb-1">میانگین</h3>
+                <p className="text-2xl font-bold text-brand-fg">{statistics.average}%</p>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                <h3 className="text-sm font-medium text-gray-600 mb-1">حداکثر</h3>
-                <p className="text-2xl font-bold text-green-600">{statistics.max}%</p>
+              <div className="bg-surface rounded-lg p-4 shadow-sm border border-line">
+                <h3 className="text-sm font-medium text-fg-muted mb-1">حداکثر</h3>
+                <p className="text-2xl font-bold text-success-fg">{statistics.max}%</p>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                <h3 className="text-sm font-medium text-gray-600 mb-1">حداقل</h3>
-                <p className="text-2xl font-bold text-red-600">{statistics.min}%</p>
+              <div className="bg-surface rounded-lg p-4 shadow-sm border border-line">
+                <h3 className="text-sm font-medium text-fg-muted mb-1">حداقل</h3>
+                <p className="text-2xl font-bold text-danger-fg">{statistics.min}%</p>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                <h3 className="text-sm font-medium text-gray-600 mb-1">دوره بالاترین</h3>
-                <p className="text-lg font-bold text-green-600">{statistics.maxPeriod}</p>
+              <div className="bg-surface rounded-lg p-4 shadow-sm border border-line">
+                <h3 className="text-sm font-medium text-fg-muted mb-1">دوره بالاترین</h3>
+                <p className="text-lg font-bold text-success-fg">{statistics.maxPeriod}</p>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                <h3 className="text-sm font-medium text-gray-600 mb-1">دوره پایین‌ترین</h3>
-                <p className="text-lg font-bold text-red-600">{statistics.minPeriod}</p>
+              <div className="bg-surface rounded-lg p-4 shadow-sm border border-line">
+                <h3 className="text-sm font-medium text-fg-muted mb-1">دوره پایین‌ترین</h3>
+                <p className="text-lg font-bold text-danger-fg">{statistics.minPeriod}</p>
               </div>
             </div>
           )}
@@ -485,12 +485,12 @@ const TemporalDamageAnalyticsPage = () => {
           <TemporalDamageChart data={chartData} isLoading={isLoading} />
 
           {/* Info Section */}
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="font-medium text-blue-800 mb-3">راهنمای تفسیر نمودار</h3>
-            <ul className="space-y-2 text-sm text-blue-700">
+          <div className="mt-6 bg-brand-soft border border-brand-border rounded-lg p-6">
+            <h3 className="font-medium text-brand-fg mb-3">راهنمای تفسیر نمودار</h3>
+            <ul className="space-y-2 text-sm text-brand-fg">
               <li className="flex items-start gap-2">
                 <svg
-                  className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
+                  className="w-4 h-4 text-brand-fg mt-0.5 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -506,7 +506,7 @@ const TemporalDamageAnalyticsPage = () => {
               </li>
               <li className="flex items-start gap-2">
                 <svg
-                  className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
+                  className="w-4 h-4 text-brand-fg mt-0.5 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -522,7 +522,7 @@ const TemporalDamageAnalyticsPage = () => {
               </li>
               <li className="flex items-start gap-2">
                 <svg
-                  className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
+                  className="w-4 h-4 text-brand-fg mt-0.5 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -536,7 +536,7 @@ const TemporalDamageAnalyticsPage = () => {
               </li>
               <li className="flex items-start gap-2">
                 <svg
-                  className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
+                  className="w-4 h-4 text-brand-fg mt-0.5 flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >

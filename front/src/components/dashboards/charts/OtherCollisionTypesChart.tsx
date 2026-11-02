@@ -3,6 +3,7 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { ApexOptions } from 'apexcharts'
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
@@ -19,15 +20,17 @@ interface ChartProps {
 }
 
 const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
+
   // Early return for loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">شمار سایر انواع برخورد</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">شمار سایر انواع برخورد</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">در حال بارگذاری...</p>
+            <p className="text-fg-muted">در حال بارگذاری...</p>
           </div>
         </div>
       </div>
@@ -37,15 +40,15 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
   // Early return for no data state
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">شمار سایر انواع برخورد</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">شمار سایر انواع برخورد</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-16 h-16 text-fg-faint mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1-2H8l-1 2H5V5z" />
             </svg>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">داده‌ای موجود نیست</h4>
-            <p className="text-gray-600">اطلاعات سایر انواع برخورد در فیلترهای انتخابی یافت نشد.</p>
+            <h4 className="text-lg font-medium text-fg mb-2">داده‌ای موجود نیست</h4>
+            <p className="text-fg-muted">اطلاعات سایر انواع برخورد در فیلترهای انتخابی یافت نشد.</p>
           </div>
         </div>
       </div>
@@ -86,18 +89,18 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
         style: {
           fontSize: '12px',
           fontWeight: 500,
-          colors: '#374151'
+          colors: chartTheme.label
         },
         rotate: -45,
         maxHeight: 120
       },
       axisBorder: {
         show: true,
-        color: '#E5E7EB'
+        color: chartTheme.grid
       },
       axisTicks: {
         show: true,
-        color: '#E5E7EB'
+        color: chartTheme.grid
       }
     },
     yaxis: {
@@ -105,7 +108,7 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
         style: {
           fontSize: '12px',
           fontWeight: 500,
-          colors: '#374151'
+          colors: chartTheme.label
         },
         formatter: (val: number) => val.toLocaleString()
       },
@@ -114,11 +117,11 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
         style: {
           fontSize: '14px',
           fontWeight: 600,
-          color: '#374151'
+          color: chartTheme.label
         }
       }
     },
-    colors: ['#8B5CF6'],
+    colors: [chartTheme.colors[4]],
     plotOptions: {
       bar: {
         borderRadius: 4,
@@ -135,7 +138,7 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
       style: {
         fontSize: '11px',
         fontWeight: 600,
-        colors: ['#374151']
+        colors: [chartTheme.label]
       }
     },
     tooltip: {
@@ -149,7 +152,7 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
     },
     grid: {
       show: true,
-      borderColor: '#F3F4F6',
+      borderColor: chartTheme.grid,
       strokeDashArray: 3,
       xaxis: {
         lines: {
@@ -183,10 +186,10 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">شمار سایر انواع برخورد</h3>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-fg">شمار سایر انواع برخورد</h3>
+        <div className="flex items-center gap-4 text-sm text-fg-muted">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1-2H8l-1 2H5V5z" clipRule="evenodd" />
@@ -218,17 +221,17 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
 
       {/* Data Summary Table */}
       <div className="mt-6 border-t pt-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">جزئیات سایر انواع برخورد</h4>
+        <h4 className="text-sm font-medium text-fg mb-3">جزئیات سایر انواع برخورد</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {sortedData.slice(0, Math.ceil(sortedData.length / 2)).map((item, index) => {
               const percentage = ((item.count / totalCount) * 100).toFixed(1)
               const relativeHeight = (item.count / maxValue) * 100
               return (
-                <div key={index} className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50 border-r-2 border-purple-200">
+                <div key={index} className="flex items-center justify-between py-2 px-3 rounded hover:bg-surface-hover border-r-2 border-tint-border">
                   <div className="flex-1">
-                    <span className="text-sm text-gray-700 font-medium">{item.name}</span>
-                    <div className="mt-1 bg-gray-200 rounded-full h-2">
+                    <span className="text-sm text-fg font-medium">{item.name}</span>
+                    <div className="mt-1 bg-surface-sunken rounded-full h-2">
                       <div
                         className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${relativeHeight}%` }}
@@ -236,8 +239,8 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
                     </div>
                   </div>
                   <div className="text-right ml-4">
-                    <span className="text-sm font-bold text-gray-900">{item.count.toLocaleString()}</span>
-                    <div className="text-xs text-gray-500">({percentage}%)</div>
+                    <span className="text-sm font-bold text-fg">{item.count.toLocaleString()}</span>
+                    <div className="text-xs text-fg-muted">({percentage}%)</div>
                   </div>
                 </div>
               )
@@ -248,10 +251,10 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
               const percentage = ((item.count / totalCount) * 100).toFixed(1)
               const relativeHeight = (item.count / maxValue) * 100
               return (
-                <div key={index} className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50 border-r-2 border-purple-200">
+                <div key={index} className="flex items-center justify-between py-2 px-3 rounded hover:bg-surface-hover border-r-2 border-tint-border">
                   <div className="flex-1">
-                    <span className="text-sm text-gray-700 font-medium">{item.name}</span>
-                    <div className="mt-1 bg-gray-200 rounded-full h-2">
+                    <span className="text-sm text-fg font-medium">{item.name}</span>
+                    <div className="mt-1 bg-surface-sunken rounded-full h-2">
                       <div
                         className="bg-purple-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${relativeHeight}%` }}
@@ -259,8 +262,8 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
                     </div>
                   </div>
                   <div className="text-right ml-4">
-                    <span className="text-sm font-bold text-gray-900">{item.count.toLocaleString()}</span>
-                    <div className="text-xs text-gray-500">({percentage}%)</div>
+                    <span className="text-sm font-bold text-fg">{item.count.toLocaleString()}</span>
+                    <div className="text-xs text-fg-muted">({percentage}%)</div>
                   </div>
                 </div>
               )
@@ -271,20 +274,20 @@ const OtherCollisionTypesChart: React.FC<ChartProps> = ({ data, isLoading }) => 
 
       {/* Statistics Summary */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-        <div className="bg-purple-50 rounded-lg p-3">
+        <div className="tint-purple bg-tint-soft rounded-lg p-3">
           <div className="text-xs text-purple-600 font-medium">بیشترین مورد</div>
           <div className="text-sm font-bold text-purple-900">{sortedData[0]?.name || 'نامشخص'}</div>
           <div className="text-xs text-purple-700">{sortedData[0]?.count.toLocaleString() || 0} مورد</div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-xs text-gray-600 font-medium">میانگین موارد</div>
-          <div className="text-sm font-bold text-gray-900">{Math.round(totalCount / data.length).toLocaleString()}</div>
-          <div className="text-xs text-gray-700">به ازای هر نوع</div>
+        <div className="bg-canvas rounded-lg p-3">
+          <div className="text-xs text-fg-muted font-medium">میانگین موارد</div>
+          <div className="text-sm font-bold text-fg">{Math.round(totalCount / data.length).toLocaleString()}</div>
+          <div className="text-xs text-fg">به ازای هر نوع</div>
         </div>
-        <div className="bg-blue-50 rounded-lg p-3">
-          <div className="text-xs text-blue-600 font-medium">تنوع انواع</div>
+        <div className="bg-brand-soft rounded-lg p-3">
+          <div className="text-xs text-brand-fg font-medium">تنوع انواع</div>
           <div className="text-sm font-bold text-blue-900">{data.length}</div>
-          <div className="text-xs text-blue-700">نوع مختلف</div>
+          <div className="text-xs text-brand-fg">نوع مختلف</div>
         </div>
       </div>
     </div>

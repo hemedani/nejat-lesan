@@ -209,30 +209,30 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           : "h-0 opacity-0 -translate-y-4 pointer-events-none"
       }`}
     >
-      <div className="bg-white border border-slate-200 rounded-xl shadow-lg mt-6">
+      <div className="bg-surface border border-line rounded-xl shadow-lg mt-6">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={`${compact ? "p-4 space-y-6" : "p-8 space-y-10"}`}
         >
           {/* Header */}
-          <header className="border-b border-slate-200 pb-6">
-            <h2 className="text-2xl font-bold text-slate-800 text-right mb-2">
+          <header className="border-b border-line pb-6">
+            <h2 className="text-2xl font-bold text-fg text-right mb-2">
               جستجوی پیشرفته تصادفات
             </h2>
-            <p className="text-slate-600 text-right text-sm">
+            <p className="text-fg-faint text-right text-sm">
               با استفاده از فیلترهای زیر، جستجوی دقیق و تخصصی خود را انجام دهید
             </p>
           </header>
 
           {/* Multi-Select Filters Section */}
           <section
-            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+            className={`bg-canvas/50 rounded-xl border border-line ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
-              <div className="w-1 h-6 bg-blue-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <div className="w-1 h-6 bg-brand rounded-full"></div>
+              <h3 className="text-xl font-semibold text-fg">
                 فیلترهای دسته‌بندی (چند انتخابی)
               </h3>
             </div>
@@ -325,13 +325,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Core Accident Details Section */}
           <section
-            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+            className={`bg-surface rounded-xl border border-line shadow-sm ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 جزئیات اصلی تصادف
               </h3>
             </div>
@@ -473,13 +473,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Location & Context Section */}
           <section
-            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+            className={`bg-canvas/50 rounded-xl border border-line ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-amber-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 موقعیت و شرایط مکانی/زمانی
               </h3>
             </div>
@@ -632,13 +632,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Attachments Section */}
           <section
-            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+            className={`bg-surface rounded-xl border border-line shadow-sm ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-purple-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 فایل‌های ضمیمه
               </h3>
             </div>
@@ -667,13 +667,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Vehicle Details Section */}
           <section
-            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+            className={`bg-canvas/50 rounded-xl border border-line ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-indigo-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 جزئیات وسیله نقلیه
               </h3>
             </div>
@@ -875,13 +875,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Driver Details Section */}
           <section
-            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+            className={`bg-surface rounded-xl border border-line shadow-sm ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-rose-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 جزئیات راننده
               </h3>
             </div>
@@ -960,13 +960,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Passenger Details Section */}
           <section
-            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+            className={`bg-canvas/50 rounded-xl border border-line ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-teal-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 جزئیات سرنشین
               </h3>
             </div>
@@ -1037,13 +1037,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Pedestrian Details Section */}
           <section
-            className={`bg-white rounded-xl border border-slate-200 shadow-sm ${compact ? "p-4" : "p-8"}`}
+            className={`bg-surface rounded-xl border border-line shadow-sm ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
               <div className="w-1 h-6 bg-orange-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <h3 className="text-xl font-semibold text-fg">
                 جزئیات عابر پیاده
               </h3>
             </div>
@@ -1114,13 +1114,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Pagination Controls Section */}
           <section
-            className={`bg-slate-50/50 rounded-xl border border-slate-100 ${compact ? "p-4" : "p-8"}`}
+            className={`bg-canvas/50 rounded-xl border border-line ${compact ? "p-4" : "p-8"}`}
           >
             <div
               className={`flex items-center gap-3 ${compact ? "mb-4" : "mb-8"}`}
             >
-              <div className="w-1 h-6 bg-slate-600 rounded-full"></div>
-              <h3 className="text-xl font-semibold text-slate-800">
+              <div className="w-1 h-6 bg-surface-hover rounded-full"></div>
+              <h3 className="text-xl font-semibold text-fg">
                 تنظیمات صفحه‌بندی
               </h3>
             </div>
@@ -1151,11 +1151,11 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
           {/* Submit Button */}
           <footer
-            className={`flex flex-col justify-between items-center gap-4 border-t border-slate-200 ${compact ? "pt-4 sm:flex-col" : "pt-8 sm:flex-row gap-6"}`}
+            className={`flex flex-col justify-between items-center gap-4 border-t border-line ${compact ? "pt-4 sm:flex-col" : "pt-8 sm:flex-row gap-6"}`}
           >
             {!compact && (
               <div className="flex-1 text-right">
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-fg-faint">
                   تمامی فیلترهای انتخاب شده در جستجو اعمال خواهند شد
                 </p>
               </div>
@@ -1166,13 +1166,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <button
                 type="button"
                 onClick={() => router.push(pageAddress || "/")}
-                className={`text-slate-600 bg-white border border-slate-300 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 ${compact ? "px-4 py-2 text-sm" : "px-6 py-3"}`}
+                className={`text-fg-faint bg-surface border border-line-strong rounded-xl font-medium hover:bg-canvas hover:border-line-strong transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-line-focus focus:ring-offset-2 focus:ring-offset-canvas ${compact ? "px-4 py-2 text-sm" : "px-6 py-3"}`}
               >
                 پاک کردن فیلترها
               </button>
               <button
                 type="submit"
-                className={`bg-gradient-to-l from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${compact ? "px-4 py-2 text-sm" : "px-8 py-3"}`}
+                className={`bg-gradient-to-l from-blue-600 to-blue-700 text-on-brand font-semibold rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-canvas ${compact ? "px-4 py-2 text-sm" : "px-8 py-3"}`}
               >
                 اعمال فیلترها و جستجو
               </button>

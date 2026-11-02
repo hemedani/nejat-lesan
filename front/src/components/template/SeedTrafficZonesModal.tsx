@@ -11,6 +11,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import React, { useCallback } from "react";
 import dynamic from "next/dynamic";
+import { useSelectStyles } from "@/utils/select-styles";
 
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
@@ -38,6 +39,7 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
   cityId,
   cityName,
 }) => {
+  const selectStyles = useSelectStyles(undefined, { minHeight: "48px", rtl: true });
   const [uploadedFileId, setUploadedFileId] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<SelectOption | null>(
     cityId && cityName ? { value: cityId, label: cityName } : null,
@@ -136,16 +138,16 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000]">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">
+          <h2 className="text-xl font-semibold text-fg">
             {cityName
               ? `افزودن مناطق ترافیک و آلودگی هوا - ${cityName}`
               : "افزودن مناطق ترافیک و آلودگی هوا"}
           </h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-fg-faint hover:text-fg-muted transition-colors"
             disabled={isProcessing}
           >
             <svg
@@ -165,8 +167,8 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
         </div>
 
         <div className="p-6 space-y-4">
-          <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
-            <p className="text-sm text-amber-700">
+          <div className="p-3 bg-warning-soft border border-warning-border rounded-md">
+            <p className="text-sm text-warning-fg">
               ⚠️ توجه: اجرای دوباره این عملیات باعث ایجاد مناطق تکراری می‌شود.
               لطفا برای هر شهر فقط یک بار اجرا کنید.
             </p>
@@ -175,7 +177,7 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
           {/* City Selection - hidden when the city is preset (per-city seeding) */}
           {!cityId && (
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-slate-700 text-right">
+              <label className="text-sm font-medium text-fg-muted text-right">
                 انتخاب شهر
               </label>
               <AsyncSelect
@@ -192,49 +194,13 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
                 isRtl={true}
                 isClearable
                 isDisabled={isProcessing}
-                styles={{
-                  control: (provided: any, state: any) => ({
-                    ...provided,
-                    minHeight: "48px",
-                    borderColor: state.isFocused ? "#3b82f6" : "#cbd5e1",
-                    borderRadius: "12px",
-                    direction: "rtl",
-                  }),
-                  valueContainer: (provided: any) => ({
-                    ...provided,
-                    padding: "2px 16px",
-                    direction: "rtl",
-                  }),
-                  placeholder: (provided: any) => ({
-                    ...provided,
-                    color: "#94a3b8",
-                    direction: "rtl",
-                    textAlign: "right",
-                  }),
-                  singleValue: (provided: any) => ({
-                    ...provided,
-                    color: "#1e293b",
-                    direction: "rtl",
-                    textAlign: "right",
-                  }),
-                  option: (provided: any, state: any) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? "#3b82f6"
-                      : state.isFocused
-                        ? "#f1f5f9"
-                        : "transparent",
-                    color: state.isSelected ? "white" : "#1e293b",
-                    direction: "rtl",
-                    textAlign: "right",
-                  }),
-                }}
+                styles={selectStyles}
               />
             </div>
           )}
 
           <div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-fg-muted mb-4">
               لطفا فایل GeoJSON شامل مناطق ترافیک و آلودگی هوا را آپلود کنید.
               فایل باید شامل اطلاعات جغرافیایی مناطق با فرمت استاندارد GeoJSON
               باشد.
@@ -248,19 +214,19 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
           </div>
 
           {uploadedFileId && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-sm text-green-700">
+            <div className="p-3 bg-success-soft border border-success-border rounded-md">
+              <p className="text-sm text-success-fg">
                 ✓ فایل با موفقیت آپلود شد
               </p>
             </div>
           )}
 
           {summary && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-md space-y-2">
-              <p className="text-sm font-semibold text-blue-800">
+            <div className="p-4 bg-brand-soft border border-brand-border rounded-md space-y-2">
+              <p className="text-sm font-semibold text-brand-fg">
                 خلاصه عملیات:
               </p>
-              <div className="text-sm text-blue-700 space-y-1">
+              <div className="text-sm text-brand-fg space-y-1">
                 <p>• مناطق ترافیک ایجاد شده: {summary.trafficZonesCreated ?? 0}</p>
                 <p>
                   • مناطق آلودگی هوا ایجاد شده:{" "}
@@ -269,10 +235,10 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
                 <p>• تصادفات به‌روزرسانی شده: {summary.accidentsUpdated ?? 0}</p>
                 {summary.errors && summary.errors.length > 0 && (
                   <div className="pt-1">
-                    <p className="text-xs font-medium text-red-600">
+                    <p className="text-xs font-medium text-danger-fg">
                       خطاها ({summary.errors.length}):
                     </p>
-                    <ul className="list-disc pr-4 text-xs text-red-600 space-y-1 mt-1">
+                    <ul className="list-disc pr-4 text-xs text-danger-fg space-y-1 mt-1">
                       {summary.errors.map((err, idx) => (
                         <li key={idx}>{err}</li>
                       ))}
@@ -284,17 +250,17 @@ const SeedTrafficZonesModal: React.FC<SeedTrafficZonesModalProps> = ({
           )}
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t bg-gray-50">
+        <div className="flex justify-end gap-3 p-6 border-t bg-canvas">
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+            className="px-4 py-2 text-fg bg-surface-sunken rounded-md hover:bg-line transition-colors"
             disabled={isProcessing}
           >
             انصراف
           </button>
           <button
             onClick={handleSeedZones}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-4 py-2 bg-brand text-on-brand rounded-md hover:bg-brand-hover transition-colors disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed flex items-center gap-2"
             disabled={!selectedCity?.value || !uploadedFileId || isProcessing}
           >
             {isProcessing ? (

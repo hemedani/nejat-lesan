@@ -356,7 +356,7 @@ const TemporalSeverityAnalyticsPage = () => {
   const stats = getStatistics();
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="temporal" currentChart="severity-analytics" />
 
@@ -382,10 +382,10 @@ const TemporalSeverityAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-fg">
                   مقایسه زمانی سهم تصادفات فوتی از تصادفات شدید
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل روند درصد تصادفات فوتی در بین تصادفات شدید در بازه‌های زمانی مختلف
                 </p>
               </div>
@@ -393,7 +393,7 @@ const TemporalSeverityAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -428,7 +428,7 @@ const TemporalSeverityAnalyticsPage = () => {
                     onClick={() =>
                       downloadFullChartData(chartData.categories, chartData.series, "temporal-severity")
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -443,7 +443,7 @@ const TemporalSeverityAnalyticsPage = () => {
                       setChartData(null);
                       handleLoadData();
                     }}
-                    className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+                    className="flex items-center gap-2 bg-yellow-500 text-fg px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -458,7 +458,7 @@ const TemporalSeverityAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -483,35 +483,35 @@ const TemporalSeverityAnalyticsPage = () => {
           <div className="space-y-6">
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-red-800">خطا</h3>
+                  <h3 className="font-medium text-danger-fg">خطا</h3>
                 </div>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-danger-fg">{error}</p>
               </div>
             )}
 
             {/* Demo Mode Warning */}
             {isDemoMode && chartData && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="tint-warning bg-tint-soft border-tint-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-tint-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-yellow-800">حالت نمایشی</h3>
+                  <h3 className="font-medium text-tint-fg">حالت نمایشی</h3>
                 </div>
-                <p className="text-sm text-yellow-700">
+                <p className="text-sm text-tint-fg">
                   در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای دریافت داده‌های واقعی،
                   دکمه &quot;تلاش مجدد API&quot; را فشار دهید.
                 </p>
@@ -520,18 +520,18 @@ const TemporalSeverityAnalyticsPage = () => {
 
             {/* Success Message with Statistics */}
             {chartData && !isLoading && !isDemoMode && stats && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="bg-success-soft border border-success-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
+                  <h3 className="font-medium text-success-fg">داده‌ها بارگذاری شد</h3>
                 </div>
-                <p className="text-sm text-green-700">
+                <p className="text-sm text-success-fg">
                   تحلیل {stats.periods} دوره زمانی - میانگین: {stats.average}% - حداکثر: {stats.max}% (
                   {stats.maxPeriod}) - حداقل: {stats.min}% ({stats.minPeriod}) - محدوده نوسان:{" "}
                   {stats.range}%
@@ -546,10 +546,10 @@ const TemporalSeverityAnalyticsPage = () => {
 
             {/* Initial Instructions */}
             {!chartData && !isLoading && !error && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <div className="bg-brand-soft border border-brand-border rounded-lg p-6">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="w-6 h-6 text-blue-600 mt-0.5"
+                    className="w-6 h-6 text-brand-fg mt-0.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -562,8 +562,8 @@ const TemporalSeverityAnalyticsPage = () => {
                     />
                   </svg>
                   <div>
-                    <h3 className="font-medium text-blue-800 mb-2">راهنمای استفاده</h3>
-                    <ul className="space-y-1 text-sm text-blue-700">
+                    <h3 className="font-medium text-brand-fg mb-2">راهنمای استفاده</h3>
+                    <ul className="space-y-1 text-sm text-brand-fg">
                       <li>
                         • از دکمه &quot;بارگذاری مجدد&quot; برای دریافت آخرین داده‌ها استفاده کنید
                       </li>
@@ -583,10 +583,10 @@ const TemporalSeverityAnalyticsPage = () => {
             {chartData && stats && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Chart Features */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
+                  <h3 className="font-medium text-fg mb-4 flex items-center gap-2">
                     <svg
-                      className="w-5 h-5 text-blue-600"
+                      className="w-5 h-5 text-brand-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -602,51 +602,51 @@ const TemporalSeverityAnalyticsPage = () => {
                   </h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-700">امکان زوم و پن</span>
+                      <span className="text-fg">امکان زوم و پن</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-700">دانلود نمودار</span>
+                      <span className="text-fg">دانلود نمودار</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-700">نمایش جزئیات</span>
+                      <span className="text-fg">نمایش جزئیات</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-700">طراحی واکنش‌گرا</span>
+                      <span className="text-fg">طراحی واکنش‌گرا</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Data Insights */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
+                  <h3 className="font-medium text-fg mb-4 flex items-center gap-2">
                     <svg
                       className="w-5 h-5 text-purple-600"
                       fill="none"
@@ -664,28 +664,28 @@ const TemporalSeverityAnalyticsPage = () => {
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">میانگین سهم:</span>
-                      <span className="font-semibold text-gray-900">{stats.average}%</span>
+                      <span className="text-fg-muted">میانگین سهم:</span>
+                      <span className="font-semibold text-fg">{stats.average}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">بیشترین سهم:</span>
-                      <span className="font-semibold text-red-600">
+                      <span className="text-fg-muted">بیشترین سهم:</span>
+                      <span className="font-semibold text-danger-fg">
                         {stats.max}% ({stats.maxPeriod})
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">کمترین سهم:</span>
-                      <span className="font-semibold text-green-600">
+                      <span className="text-fg-muted">کمترین سهم:</span>
+                      <span className="font-semibold text-success-fg">
                         {stats.min}% ({stats.minPeriod})
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">محدوده نوسان:</span>
-                      <span className="font-semibold text-gray-900">{stats.range}%</span>
+                      <span className="text-fg-muted">محدوده نوسان:</span>
+                      <span className="font-semibold text-fg">{stats.range}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">تعداد دوره‌ها:</span>
-                      <span className="font-semibold text-gray-900">{stats.periods}</span>
+                      <span className="text-fg-muted">تعداد دوره‌ها:</span>
+                      <span className="font-semibold text-fg">{stats.periods}</span>
                     </div>
                   </div>
                 </div>
@@ -694,10 +694,10 @@ const TemporalSeverityAnalyticsPage = () => {
 
             {/* Recommendations Panel */}
             {chartData && stats && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+              <div className="tint-brand bg-tint-soft border border-brand-border rounded-lg p-6">
                 <h3 className="font-medium text-blue-900 mb-4 flex items-center gap-2">
                   <svg
-                    className="w-5 h-5 text-blue-600"
+                    className="w-5 h-5 text-brand-fg"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -712,17 +712,17 @@ const TemporalSeverityAnalyticsPage = () => {
                   توصیه‌های تحلیلی
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div className="bg-white bg-opacity-50 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-800 mb-2">الگوهای شدت</h4>
-                    <ul className="space-y-1 text-blue-700">
+                  <div className="bg-surface bg-opacity-50 rounded-lg p-4">
+                    <h4 className="font-medium text-brand-fg mb-2">الگوهای شدت</h4>
+                    <ul className="space-y-1 text-brand-fg">
                       <li>• دوره {stats.maxPeriod} دارای بیشترین سهم تصادفات فوتی است</li>
                       <li>• دوره {stats.minPeriod} دارای کمترین سهم تصادفات فوتی است</li>
                       <li>• نوسان شدت: {stats.range} درصد</li>
                     </ul>
                   </div>
-                  <div className="bg-white bg-opacity-50 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-800 mb-2">اقدامات پیشنهادی</h4>
-                    <ul className="space-y-1 text-blue-700">
+                  <div className="bg-surface bg-opacity-50 rounded-lg p-4">
+                    <h4 className="font-medium text-brand-fg mb-2">اقدامات پیشنهادی</h4>
+                    <ul className="space-y-1 text-brand-fg">
                       <li>• تمرکز بر دوره‌های پرخطر</li>
                       <li>• بررسی عوامل مؤثر در کاهش شدت</li>
                       <li>• برنامه‌ریزی برای کنترل شدت تصادفات</li>

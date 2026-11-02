@@ -5,6 +5,7 @@ import { ToastNotify } from "@/utils/helper";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import Select from "react-select";
 import { updateCityRelations } from "@/app/actions/city/updateCityRelations";
+import { useSelectStyles } from "@/utils/select-styles";
 
 interface ProvinceOption {
   _id: string;
@@ -37,6 +38,7 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
   token,
   onSuccessAction,
 }) => {
+  const selectStyles = useSelectStyles();
   const [cityData, setCityData] = useState<CityData | undefined>(undefined);
   const [provinces, setProvinces] = useState<ProvinceOption[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<{
@@ -180,16 +182,16 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000] overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] overflow-y-auto m-4">
+      <div className="bg-surface rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] overflow-y-auto m-4">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg">
+        <div className="flex items-center justify-between p-6 border-b border-line sticky top-0 bg-surface rounded-t-lg">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">مدیریت ارتباط شهر با استان</h2>
-            <p className="text-sm text-gray-500 mt-1">{cityName}</p>
+            <h2 className="text-xl font-bold text-fg">مدیریت ارتباط شهر با استان</h2>
+            <p className="text-sm text-fg-muted mt-1">{cityName}</p>
           </div>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2"
+            className="text-fg-faint hover:text-fg-muted transition-colors p-2"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -208,7 +210,7 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
             <div className="flex items-center justify-center py-12">
               <div className="flex flex-col items-center gap-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-gray-600">در حال بارگذاری اطلاعات شهر...</p>
+                <p className="text-fg-muted">در حال بارگذاری اطلاعات شهر...</p>
               </div>
             </div>
           )}
@@ -216,9 +218,9 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
           {error && (
             <div className="flex items-center justify-center py-12">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 bg-danger-soft rounded-full flex items-center justify-center">
                   <svg
-                    className="w-8 h-8 text-red-600"
+                    className="w-8 h-8 text-danger-fg"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -232,10 +234,10 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
                   </svg>
                 </div>
                 <div className="text-center">
-                  <p className="text-red-600 font-medium">{error}</p>
+                  <p className="text-danger-fg font-medium">{error}</p>
                   <button
                     onClick={fetchCityData}
-                    className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="mt-3 px-4 py-2 bg-brand text-on-brand rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     تلاش مجدد
                   </button>
@@ -247,16 +249,16 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
           {!isLoading && !error && (
             <div className="space-y-6">
               {/* Current Province Display */}
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">استان فعلی:</h3>
-                <p className="text-gray-900">{cityData?.province?.name || "بدون استان"}</p>
+              <div className="bg-canvas p-4 rounded-lg border border-line">
+                <h3 className="text-sm font-medium text-fg mb-2">استان فعلی:</h3>
+                <p className="text-fg">{cityData?.province?.name || "بدون استان"}</p>
               </div>
 
               {/* Province Selection */}
               <div>
                 <label
                   htmlFor="province-select"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-fg mb-2"
                 >
                   انتخاب استان:
                 </label>
@@ -267,20 +269,21 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
                   onChange={(newValue) => setSelectedProvince(newValue)}
                   placeholder="استان را انتخاب کنید..."
                   classNamePrefix="react-select"
+                  styles={selectStyles}
                   className="text-sm"
                   isClearable
                   noOptionsMessage={() => "استانی یافت نشد"}
                 />
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-fg-muted mt-2">
                   برای حذف ارتباط شهر با استان، گزینه را پاک کنید
                 </p>
               </div>
 
               {/* Info Box */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-brand-soft border border-brand-border rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <svg
-                    className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
+                    className="w-5 h-5 text-brand-fg mt-0.5 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -292,9 +295,9 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <div className="text-sm text-blue-800">
+                  <div className="text-sm text-brand-fg">
                     <p className="font-medium mb-1">توضیحات:</p>
-                    <ul className="space-y-1 text-blue-700">
+                    <ul className="space-y-1 text-brand-fg">
                       <li>• هر شهر می‌تواند به یک استان متصل باشد</li>
                       <li>• با انتخاب استان جدید، ارتباط قبلی حذف می‌شود</li>
                       <li>• می‌توانید شهر را بدون استان رها کنید</li>
@@ -307,10 +310,10 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 sticky bottom-0 bg-white rounded-b-lg">
+        <div className="flex justify-end gap-3 p-6 border-t border-line sticky bottom-0 bg-surface rounded-b-lg">
           <button
             onClick={handleClose}
-            className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="px-6 py-2 bg-line-strong text-fg rounded-lg hover:bg-surface-hover transition-colors"
             disabled={isSaving}
           >
             انصراف
@@ -318,10 +321,10 @@ const CityProvinceRelationModal: React.FC<CityProvinceRelationModalProps> = ({
           <button
             onClick={handleSave}
             disabled={isSaving || isLoading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2 bg-brand text-on-brand rounded-lg hover:bg-brand-hover transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isSaving && (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-line-strong"></div>
             )}
             {isSaving ? "در حال ذخیره..." : "ذخیره تغییرات"}
           </button>

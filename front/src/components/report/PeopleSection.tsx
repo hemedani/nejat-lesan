@@ -29,21 +29,21 @@ export function PeopleSection({
   if (!cards.length) return null;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
       <SectionTitle count={cards.length}>افراد</SectionTitle>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {cards.map((card, index) => (
           <article
             key={`${card.name ?? "person"}-${index}`}
-            className="rounded-xl border border-white/10 bg-white/[.02] p-2.5"
+            className="rounded-xl border border-line bg-surface-sunken p-2.5"
           >
             <div className="flex items-start justify-between gap-2">
-              <span className="text-xs font-semibold text-slate-100">
+              <span className="text-xs font-semibold text-fg">
                 {card.name ?? "نامشخص"}
               </span>
               {card.injury && <Pill tone={injuryTone(card.injury)}>{card.injury}</Pill>}
             </div>
-            <p className="mt-1 text-[10px] text-slate-500">
+            <p className="mt-1 text-[10px] text-fg-faint">
               {[
                 card.role,
                 SEX_LABELS[card.sex ?? ""],
@@ -53,7 +53,7 @@ export function PeopleSection({
                 .join(" · ")}
             </p>
             {card.nationalCode && (
-              <p className="mt-1 text-[10px] text-slate-500" dir="ltr">
+              <p className="mt-1 text-[10px] text-fg-faint" dir="ltr">
                 {card.nationalCode}
               </p>
             )}

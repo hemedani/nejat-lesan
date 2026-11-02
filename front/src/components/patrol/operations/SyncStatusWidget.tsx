@@ -14,11 +14,11 @@ type SyncBuckets = {
 };
 
 const BUCKETS = [
-  { key: "draft", label: "پیش‌نویس", style: "bg-slate-700/60 text-slate-300" },
-  { key: "queued", label: "در صف", style: "bg-blue-400/10 text-blue-200" },
-  { key: "syncing", label: "در حال همگام‌سازی", style: "bg-cyan-400/10 text-cyan-200" },
-  { key: "synced", label: "همگام‌شده", style: "bg-emerald-400/10 text-emerald-200" },
-  { key: "rejected", label: "رد‌شده", style: "bg-rose-400/10 text-rose-200" },
+  { key: "draft", label: "پیش‌نویس", style: "bg-surface-hover/60 text-fg-muted" },
+  { key: "queued", label: "در صف", style: "tint-blue bg-tint-soft text-tint-fg" },
+  { key: "syncing", label: "در حال همگام‌سازی", style: "tint-cyan bg-tint-soft text-tint-fg" },
+  { key: "synced", label: "همگام‌شده", style: "tint-emerald bg-tint-soft text-tint-fg" },
+  { key: "rejected", label: "رد‌شده", style: "tint-rose bg-tint-soft text-tint-fg" },
 ] as const;
 
 export function SyncStatusWidget({ userId, className = "" }: { userId?: string; className?: string }) {

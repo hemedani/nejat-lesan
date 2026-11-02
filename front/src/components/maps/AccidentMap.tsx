@@ -137,10 +137,10 @@ const AccidentMap: React.FC<{
   return (
     <div className="relative w-full h-full">
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-[1000]">
+        <div className="absolute inset-0 bg-surface bg-opacity-75 flex items-center justify-center z-[1000]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">در حال بارگیری نقشه...</p>
+            <p className="mt-2 text-fg-muted">در حال بارگیری نقشه...</p>
           </div>
         </div>
       )}
@@ -247,14 +247,14 @@ const AccidentMap: React.FC<{
         <BasemapSelector />
         <button
           onClick={() => setViewMode(viewMode === "heatmap" ? "dots" : "heatmap")}
-          className="bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg hover:bg-gray-100 transition-colors font-medium"
+          className="bg-surface text-fg px-4 py-2 rounded-lg shadow-lg hover:bg-surface-hover transition-colors font-medium"
         >
           {viewMode === "heatmap" ? "تغییر به نمایش نقاط" : "تغییر به نمایش حرارتی"}
         </button>
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg z-[1000]">
+      <div className="absolute bottom-4 left-4 bg-surface p-3 rounded-lg shadow-lg z-[1000]">
         <h4 className="font-semibold text-sm mb-2">راهنما</h4>
         <div className="space-y-1 text-xs">
           <div className="flex items-center gap-2">
@@ -270,12 +270,12 @@ const AccidentMap: React.FC<{
             <span>خسارتی</span>
           </div>
         </div>
-        <div className="mt-2 pt-2 border-t text-xs text-gray-600">
+        <div className="mt-2 pt-2 border-t text-xs text-fg-muted">
           {viewMode === "heatmap" ? "نمایش حرارتی" : "نمایش نقاط"}
         </div>
         <div className="mt-2 pt-2 border-t text-xs">
-          <div className="font-medium text-gray-700 mb-1">ابزار ترسیم:</div>
-          <div className="text-gray-600 space-y-1">
+          <div className="font-medium text-fg mb-1">ابزار ترسیم:</div>
+          <div className="text-fg-muted space-y-1">
             <div>• چندضلعی: کلیک برای نقاط</div>
             <div>• مستطیل: کشیدن از گوشه</div>
             <div>• دایره: کلیک و کشیدن</div>
@@ -286,12 +286,12 @@ const AccidentMap: React.FC<{
       </div>
 
       {/* Stats overlay */}
-      <div className="absolute bottom-4 right-4 bg-white p-3 rounded-lg shadow-lg z-[1000]">
+      <div className="absolute bottom-4 right-4 bg-surface p-3 rounded-lg shadow-lg z-[1000]">
         <div className="text-sm">
           <div className="font-semibold">
             تعداد تصادفات: {accidents.length.toLocaleString("fa-IR")}
           </div>
-          <div className="text-xs text-gray-600 mt-1">
+          <div className="text-xs text-fg-muted mt-1">
             زوم: {currentZoom} | {viewMode === "heatmap" ? "حرارتی" : "نقاط"}
           </div>
         </div>

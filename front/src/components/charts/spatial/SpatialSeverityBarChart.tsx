@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
+import { useChartTheme } from "@/utils/chart-theme";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -23,6 +24,7 @@ const sortData = (
   series: Array<{ name: string; data: number[] }>,
   visible: Set<number>,
 ) => {
+
   const totals = categories.map((_, ci) => {
     let t = 0;
     for (let si = 0; si < series.length; si++) if (visible.has(si)) t += series[si].data[ci];
@@ -42,6 +44,7 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
   data,
   isLoading,
 }) => {
+  const chartTheme = useChartTheme();
   const [hidden, setHidden] = useState<Set<number>>(new Set());
 
   const displayData = useMemo(() => {
@@ -60,10 +63,10 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -71,12 +74,12 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
 
   if (!displayData || !displayData.categories || !displayData.series) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           شمار تصادفات به تفکیک شدت
         </h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌ای برای نمایش موجود نیست</p>
+          <p className="text-fg-muted">داده‌ای برای نمایش موجود نیست</p>
         </div>
       </div>
     );
@@ -148,7 +151,7 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
     colors: seriesColors,
     grid: {
       show: true,
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       strokeDashArray: 0,
       position: "back" as const,
     },
@@ -171,12 +174,12 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-fg">
           شمار تصادفات به تفکیک شدت
         </h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -198,8 +201,8 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
               onClick={() => handleToggle(i)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 select-none ${
                 vis
-                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
-                  : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                  ? "bg-surface-sunken text-fg hover:bg-surface-sunken hover:shadow-sm"
+                  : "bg-canvas text-fg-faint hover:bg-surface-hover"
               }`}
             >
               <span
@@ -227,8 +230,8 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
       </div>
 
       {/* Chart Legend/Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800 leading-relaxed">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="bg-brand-soft rounded-lg p-3 text-xs text-brand-fg leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نمودار ستونی:</p>
           <p>این نمودار تعداد تصادفات را بر اساس شدت (فوتی، جرحی، خسارتی) در هر منطقه نشان می‌دهد. برای تحلیل:</p>
           <ul className="list-disc list-inside mt-1 space-y-0.5">
@@ -243,3 +246,5 @@ const SpatialSeverityBarChart: React.FC<SpatialSeverityBarChartProps> = ({
 };
 
 export default SpatialSeverityBarChart;
+
+

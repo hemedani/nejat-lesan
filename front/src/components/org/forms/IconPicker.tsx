@@ -28,17 +28,17 @@ export function IconPicker({
 	return (
 		<div>
 			<div className="mb-1 flex items-center gap-2">
-				<span className="text-xs text-slate-400">{label}</span>
+				<span className="text-xs text-fg-muted">{label}</span>
 				<button
 					type="button"
 					onClick={() => setOpen((current) => !current)}
-					className="rounded-lg border border-white/10 bg-white px-2 py-1 text-xs text-slate-300 transition hover:bg-white/[.04]"
+					className="rounded-lg border border-line bg-surface px-2 py-1 text-xs text-fg-muted transition hover:bg-surface-sunken"
 				>
 					{open ? "بستن" : "انتخاب آیکون"}
 				</button>
 				{value
 					? (
-						<span className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-2 py-1 text-[11px] text-slate-300">
+						<span className="inline-flex items-center gap-1 rounded-full bg-surface-sunken px-2 py-1 text-[11px] text-fg-muted">
 							<FormIcon name={value} size={14} />
 							{value}
 							<button
@@ -51,15 +51,15 @@ export function IconPicker({
 							</button>
 						</span>
 					)
-					: <span className="text-[11px] text-slate-500">بدون آیکون</span>}
+					: <span className="text-[11px] text-fg-faint">بدون آیکون</span>}
 			</div>
 
 			{open
 				? (
-					<div className="max-h-64 space-y-3 overflow-auto rounded-lg border border-white/10 bg-slate-900 p-3">
+					<div className="max-h-64 space-y-3 overflow-auto rounded-lg border border-line bg-surface p-3">
 						{FORM_ICON_GROUPS.map((group) => (
 							<div key={group.key}>
-								<p className="mb-1 text-[11px] font-bold text-slate-400">
+								<p className="mb-1 text-[11px] font-bold text-fg-muted">
 									{group.label}
 								</p>
 								<div
@@ -81,8 +81,8 @@ export function IconPicker({
 											}}
 											className={`flex aspect-square items-center justify-center rounded-md border transition ${
 												value === icon
-													? "border-emerald-400/40 bg-emerald-400/10 text-emerald-100"
-													: "border-white/10 text-slate-400 hover:bg-white/[.04]"
+													? "tint-emerald border-tint-border bg-tint-soft text-tint-fg"
+													: "border-line text-fg-muted hover:bg-surface-sunken"
 											}`}
 										>
 											<FormIcon name={icon} size={18} />

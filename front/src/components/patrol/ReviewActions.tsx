@@ -98,7 +98,7 @@ export function ReviewActions({
   };
 
   if (!actions.length) {
-    return <p className="text-sm text-slate-500">اقدام مدیریتی برای این وضعیت موجود نیست.</p>;
+    return <p className="text-sm text-fg-faint">اقدام مدیریتی برای این وضعیت موجود نیست.</p>;
   }
 
   return (
@@ -129,8 +129,8 @@ export function ReviewActions({
 
       {returnOpen && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
-            <h3 className="mb-4 text-lg font-bold text-white">برگشت گزارش برای اصلاح</h3>
+          <div className="w-[calc(100%-2rem)] max-w-md rounded-2xl border border-line bg-surface p-6 shadow-2xl">
+            <h3 className="mb-4 text-lg font-bold text-fg">برگشت گزارش برای اصلاح</h3>
             <MyInput
               type="textarea"
               name="return-reason"

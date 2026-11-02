@@ -37,11 +37,11 @@ const SideBarItem: FC<SideBarItemProps> = ({ item, isActive, collapsed, isTransi
         title={collapsed ? item.label : undefined}
         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
           isActive
-            ? "bg-white/10 text-white shadow-lg"
-            : "hover:bg-white/5 text-gray-200"
+            ? "bg-surface-hover text-fg shadow-lg"
+            : "hover:bg-surface-hover text-fg-muted"
         }`}
       >
-        <span className="text-indigo-300">
+        <span className="text-tint-fg">
           <Icon className="w-5 h-5" />
         </span>
         {!collapsed && (
@@ -87,11 +87,11 @@ const SideBarGroup: FC<SideBarGroupProps> = ({
         title={collapsed ? group.title : undefined}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
           isOpen
-            ? "bg-white/10 text-white"
-            : "hover:bg-white/5 text-gray-200"
+            ? "bg-surface-hover text-fg"
+            : "hover:bg-surface-hover text-fg-muted"
         }`}
       >
-        <span className="text-indigo-300">
+        <span className="text-tint-fg">
           <GroupIcon className="w-5 h-5" />
         </span>
         {!collapsed && (
@@ -104,7 +104,7 @@ const SideBarGroup: FC<SideBarGroupProps> = ({
               {group.title}
             </span>
             <ChevronLeftIcon
-              className={`w-4 h-4 text-indigo-300 transition-transform duration-300 ${
+              className={`w-4 h-4 text-tint-fg transition-transform duration-300 ${
                 isOpen ? "-rotate-90" : "rotate-90"
               }`}
             />
@@ -112,7 +112,7 @@ const SideBarGroup: FC<SideBarGroupProps> = ({
         )}
       </button>
       {isOpen && !collapsed && (
-        <ul className="mt-1 mr-4 space-y-1 border-r border-indigo-700/40 pr-1">
+        <ul className="mt-1 mr-4 space-y-1 border-r border-tint-border pr-1">
           {items.map((item) => (
             <SideBarItem
               key={item.href}
@@ -220,19 +220,19 @@ export const AdminSidebar: FC = () => {
   return (
     <aside
       ref={asideRef}
-      className={`relative sticky top-16 h-full bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 text-white flex flex-col shadow-xl z-10 transition-all duration-300 ease-in-out ${
+      className={`relative sticky top-16 h-full tint-indigo text-fg [background-image:var(--sidebar-gradient)] flex flex-col shadow-xl z-10 transition-all duration-300 ease-in-out ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      <div className="p-4 flex items-center justify-between border-b border-white/10">
+      <div className="p-4 flex items-center justify-between border-b border-line">
         {!collapsed && (
-          <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-blue-300 opacity-100 transition-opacity duration-300">
+          <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-fg to-brand-hover opacity-100 transition-opacity duration-300">
             پنل ادمین
           </div>
         )}
         <button
           onClick={handleToggleCollapse}
-          className="p-2 rounded-full hover:bg-indigo-800/50 transition-all duration-300"
+          className="p-2 rounded-full hover:bg-tint-strong transition-all duration-300"
         >
           {collapsed ? (
             <ChevronRightIcon className="w-5 h-5" />
@@ -245,7 +245,7 @@ export const AdminSidebar: FC = () => {
       {!collapsed && (
         <div className="px-4 py-3">
           <div className="relative">
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-indigo-300">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-tint-fg">
               <SearchIcon className="w-4 h-4" />
             </span>
             <input
@@ -253,13 +253,13 @@ export const AdminSidebar: FC = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="جستجوی منو..."
-              className="w-full bg-white/10 border border-indigo-700/50 rounded-lg pl-9 pr-9 py-2 text-sm text-white placeholder-indigo-300/70 focus:outline-none focus:ring-2 focus:ring-pink-400/50 transition-all"
+              className="w-full bg-surface-hover border border-tint-border rounded-lg pl-9 pr-9 py-2 text-sm text-fg placeholder:text-fg-faint focus:outline-none focus:ring-2 focus:ring-line-focus transition-all"
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
                 aria-label="پاک کردن جستجو"
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-indigo-300 hover:text-white hover:bg-white/10 transition-all duration-300"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-tint-fg hover:text-fg hover:bg-surface-hover transition-all duration-300"
               >
                 <CloseIcon className="w-4 h-4" />
               </button>
@@ -305,12 +305,12 @@ export const AdminSidebar: FC = () => {
         </ul>
       </nav>
 
-      <div className="border-t border-white/10 p-3 space-y-1">
+      <div className="border-t border-line p-3 space-y-1">
         <button
           onClick={() => router.replace("/")}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-300"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-hover transition-all duration-300"
         >
-          <span className="text-indigo-300">
+          <span className="text-tint-fg">
             <HomeIcon className="w-5 h-5" />
           </span>
           {!collapsed && (
@@ -326,9 +326,9 @@ export const AdminSidebar: FC = () => {
 
         <button
           onClick={logOutHandler}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-300"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-hover transition-all duration-300"
         >
-          <span className="text-pink-300">
+          <span className="text-danger-fg">
             <LogoutIcon className="w-5 h-5" />
           </span>
           {!collapsed && (
@@ -344,7 +344,7 @@ export const AdminSidebar: FC = () => {
       </div>
 
       {!collapsed && (
-          <div className="p-4 text-center text-xs text-slate-500">
+          <div className="p-4 text-center text-xs text-fg-faint">
           <span>© ۱۴۰۳ پنل مدیریت</span>
         </div>
       )}
@@ -356,10 +356,10 @@ export const AdminSidebar: FC = () => {
         return (
           <div
             style={{ top: flyoutTop }}
-            className="absolute right-full mr-2 w-56 bg-gradient-to-b from-indigo-900 to-purple-900 border border-indigo-700/50 rounded-xl shadow-2xl z-20 overflow-hidden"
+            className="absolute right-full mr-2 w-56 bg-tint-strong border border-tint-border rounded-xl shadow-2xl z-20 overflow-hidden"
           >
-            <div className="px-3 py-2.5 flex items-center gap-2 border-b border-indigo-700/50">
-              <span className="text-indigo-300">
+            <div className="px-3 py-2.5 flex items-center gap-2 border-b border-tint-border">
+              <span className="text-tint-fg">
                 <GroupIcon className="w-5 h-5" />
               </span>
               <span className="font-bold text-sm">{group.title}</span>

@@ -196,7 +196,7 @@ const FormUpdateTownship: React.FC<FormUpdateTownshipProps> = ({
   }, [setValue, trigger]);
 
   return (
-    <div className="bg-white rounded-lg p-6">
+    <div className="bg-surface rounded-lg p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -225,7 +225,7 @@ const FormUpdateTownship: React.FC<FormUpdateTownshipProps> = ({
 
         {/* Map Section */}
         <div className="border-t pt-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <h3 className="text-lg font-semibold text-fg mb-4">
             ویرایش منطقه و مرکز شهرستان بر روی نقشه
           </h3>
 
@@ -235,26 +235,24 @@ const FormUpdateTownship: React.FC<FormUpdateTownshipProps> = ({
               to instead of floating above an unrelated block. */}
 
           <GeoPolygonDrawer
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.area?.message}
             fallbackCenter={{ lat: 32.4279, lng: 53.688 }}
             fallbackZoom={8}
             label="محدودهٔ شهرستان"
             onChange={handleAreaChange}
             onClear={clearArea}
-            tone="light"
             value={area}
           />
 
           <GeoPointPicker
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.center_location?.message}
             fallbackCenter={{ lat: 32.4279, lng: 53.688 }}
             fallbackZoom={8}
             label="مرکز شهرستان"
             onChange={handleCenterChange}
             onClear={clearCenterPoint}
-            tone="light"
             value={centerPoint}
           />
         </div>
@@ -264,7 +262,7 @@ const FormUpdateTownship: React.FC<FormUpdateTownshipProps> = ({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-3 rounded-lg font-medium bg-gray-300 text-gray-700 hover:bg-gray-400 transition-colors"
+            className="px-6 py-3 rounded-lg font-medium bg-line text-fg hover:bg-line-strong transition-colors"
           >
             انصراف
           </button>
@@ -272,8 +270,8 @@ const FormUpdateTownship: React.FC<FormUpdateTownshipProps> = ({
             type="submit"
             disabled={!isValid || isSubmitting}
             className={`px-6 py-3 rounded-lg font-medium transition-colors ${isValid && !isSubmitting
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-brand text-on-brand hover:bg-brand-hover"
+                : "bg-line text-fg-muted cursor-not-allowed"
               }`}
           >
             {isSubmitting ? "در حال به‌روزرسانی..." : "به‌روزرسانی شهرستان"}

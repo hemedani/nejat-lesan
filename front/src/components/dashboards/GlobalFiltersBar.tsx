@@ -139,8 +139,8 @@ export default function GlobalFiltersBar() {
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 left-6 z-[10000] flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 ${
           hasGlobalFilters
-            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-            : "bg-gradient-to-r from-gray-700 to-gray-800 text-white"
+            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-on-brand"
+            : "bg-gradient-to-r from-surface-hover to-surface-sunken text-fg-muted"
         }`}
         title={isOpen ? "بستن فیلترهای عمومی" : "فیلترهای عمومی"}
       >
@@ -148,7 +148,7 @@ export default function GlobalFiltersBar() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
         </svg>
         {hasGlobalFilters && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-md">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-on-brand text-xs rounded-full flex items-center justify-center font-bold shadow-md">
             {globalFilterCount}
           </span>
         )}
@@ -164,30 +164,30 @@ export default function GlobalFiltersBar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-white shadow-2xl z-[10002] transition-all duration-300 ease-in-out flex flex-col ${
+        className={`fixed top-0 left-0 h-full bg-surface shadow-2xl z-[10002] transition-all duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ width: "22rem", direction: "rtl" }}
       >
         {/* Header */}
-        <div className="p-5 border-b border-gray-200 flex items-center justify-between bg-gradient-to-l from-blue-50 to-indigo-50">
+        <div className="p-5 border-b border-line flex items-center justify-between tint-brand bg-tint-soft">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-9 h-9 bg-brand-soft rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-brand-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">فیلترهای عمومی</h2>
-              <p className="text-xs text-gray-500 mt-0.5">در تمام صفحات اعمال می‌شود</p>
+              <h2 className="text-lg font-bold text-fg">فیلترهای عمومی</h2>
+              <p className="text-xs text-fg-muted mt-0.5">در تمام صفحات اعمال می‌شود</p>
             </div>
           </div>
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full hover:bg-surface-sunken flex items-center justify-center transition-colors"
           >
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -195,19 +195,19 @@ export default function GlobalFiltersBar() {
 
         {/* Active Global Badge */}
         {hasGlobalFilters && (
-          <div className="mx-5 mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center gap-2">
-            <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <div className="mx-5 mt-3 bg-brand-soft border border-brand-border rounded-lg p-3 flex items-center gap-2">
+            <svg className="w-4 h-4 text-brand-fg flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm text-blue-800 font-medium">{globalFilterCount} فیلتر عمومی فعال است</span>
+            <span className="text-sm text-brand-fg font-medium">{globalFilterCount} فیلتر عمومی فعال است</span>
           </div>
         )}
 
         {/* Form */}
         <form onSubmit={handleSubmit(handleSaveGlobal)} className="flex-1 overflow-y-auto p-5 space-y-5">
           {/* Basic Filters */}
-          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
-            <h3 className="text-sm font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">فیلترهای اصلی</h3>
+          <div className="bg-surface rounded-lg p-4 shadow-sm border border-line">
+            <h3 className="text-sm font-semibold text-fg mb-4 border-b border-line pb-2">فیلترهای اصلی</h3>
 
             <div className="grid grid-cols-1 gap-4 mb-4">
               <MyDateInput  name="dateOfAccidentFrom" label="تاریخ شروع تصادف" control={control} errMsg={errors.dateOfAccidentFrom?.message} placeholder="از تاریخ" portalZIndex={20000} />
@@ -239,7 +239,7 @@ export default function GlobalFiltersBar() {
           <button
             type="button"
             onClick={() => setAdvancedFiltersOpen(!advancedFiltersOpen)}
-            className="flex items-center justify-between w-full text-sm font-semibold text-gray-800 bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:text-blue-600 transition-colors"
+            className="flex items-center justify-between w-full text-sm font-semibold text-fg bg-surface rounded-lg p-4 shadow-sm border border-line hover:text-brand-fg transition-colors"
           >
             <span>فیلترهای پیشرفته</span>
             <svg className={`w-5 h-5 transform transition-transform ${advancedFiltersOpen ? "rotate-180" : ""}`} fill="currentColor" viewBox="0 0 20 20">
@@ -248,8 +248,8 @@ export default function GlobalFiltersBar() {
           </button>
 
           {advancedFiltersOpen && (
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 space-y-4">
-              <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">شرایط راه و محیط</h4>
+            <div className="bg-surface rounded-lg p-4 shadow-sm border border-line space-y-4">
+              <h4 className="text-sm font-medium text-fg border-b border-line pb-2">شرایط راه و محیط</h4>
               <MyAsyncMultiSelect  name="lightStatus" label="وضعیت روشنایی" setValue={setValue} loadOptions={loadLightStatusesOptions} errMsg={errors.lightStatus?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.lightStatus)} />
               <MyAsyncMultiSelect  name="roadSituation" label="نوع راه" setValue={setValue} loadOptions={loadRoadSituationsOptions} errMsg={errors.roadSituation?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.roadSituation)} />
               <MyAsyncMultiSelect  name="roadDefects" label="نقایص راه" setValue={setValue} loadOptions={loadRoadDefectsOptions} errMsg={errors.roadDefects?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.roadDefects)} />
@@ -258,7 +258,7 @@ export default function GlobalFiltersBar() {
               <MyAsyncMultiSelect  name="humanReasons" label="علل انسانی" setValue={setValue} loadOptions={loadHumanReasonsOptions} errMsg={errors.humanReasons?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.humanReasons)} />
               <MyAsyncMultiSelect  name="vehicleReasons" label="علل وسیله نقلیه" setValue={setValue} loadOptions={loadVehicleReasonsOptions} errMsg={errors.vehicleReasons?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleReasons)} />
 
-              <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">وسیله نقلیه</h4>
+              <h4 className="text-sm font-medium text-fg border-b border-line pb-2">وسیله نقلیه</h4>
               <MyAsyncMultiSelect  name="vehicleSystem" label="سیستم وسیله" setValue={setValue} loadOptions={loadVehicleSystemsOptions} errMsg={errors.vehicleSystem?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleSystem)} />
               <MyAsyncMultiSelect  name="vehicleColor" label="رنگ" setValue={setValue} loadOptions={loadColorsOptions} errMsg={errors.vehicleColor?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehicleColor)} />
               <MyAsyncMultiSelect  name="vehiclePlaqueType" label="نوع پلاک" setValue={setValue} loadOptions={loadPlaqueTypesOptions} errMsg={errors.vehiclePlaqueType?.message} placeholder="انتخاب..." defaultOptions value={toSelectOptions(formValues.vehiclePlaqueType)} />
@@ -270,7 +270,7 @@ export default function GlobalFiltersBar() {
           <div className="space-y-3 pt-2">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-on-brand py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-canvas transition-all shadow-md hover:shadow-lg"
             >
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +282,7 @@ export default function GlobalFiltersBar() {
             <button
               type="button"
               onClick={handleClearGlobal}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors border border-gray-200"
+              className="w-full bg-surface-sunken text-fg py-3 px-4 rounded-lg font-medium hover:bg-surface-sunken focus:ring-2 focus:ring-line-focus focus:ring-offset-2 focus:ring-offset-canvas transition-colors border border-line"
             >
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

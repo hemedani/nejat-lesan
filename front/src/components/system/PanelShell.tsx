@@ -55,22 +55,22 @@ export function PanelShell({
   const hasSidebar = sections.length > 0;
 
   return (
-    <div className="admin-shell min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-100" dir="rtl">
-      <div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] [background-size:3rem_3rem]" />
+    <div className="min-h-[calc(100vh-4rem)] bg-canvas text-fg" dir="rtl">
+      <div className="pointer-events-none fixed inset-0 opacity-30 [background-image:linear-gradient(to_right,var(--line)_1px,transparent_1px),linear-gradient(to_bottom,var(--line)_1px,transparent_1px)] [background-size:3rem_3rem]" />
 
       <div className="relative mx-auto flex w-full max-w-[1600px] gap-5 px-4 py-5 sm:px-6 lg:px-8">
         {hasSidebar && (
-          <aside className="hidden w-60 shrink-0 self-start rounded-2xl border border-white/10 bg-slate-900/75 p-3 shadow-2xl backdrop-blur-xl lg:sticky lg:top-5 lg:block">
-            <div className="mb-5 flex items-start gap-3 border-b border-white/10 px-3 pb-4">
-              <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-blue-400/25 bg-blue-400/10 text-blue-200">
+          <aside className="hidden w-60 shrink-0 self-start rounded-2xl border border-line bg-surface/75 p-3 shadow-2xl backdrop-blur-xl lg:sticky lg:top-5 lg:block">
+            <div className="mb-5 flex items-start gap-3 border-b border-line px-3 pb-4">
+              <span className="tint-blue mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-tint-border bg-tint-soft text-tint-fg">
                 <PanelIcon name={nav.brand.icon} className="h-5 w-5" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs text-blue-300">سامانه مرصاد</p>
-                <h1 className="mt-0.5 truncate text-base font-bold text-white">
+                <p className="text-xs text-brand-fg">سامانه مرصاد</p>
+                <h1 className="mt-0.5 truncate text-base font-bold text-fg">
                   {nav.brand.label}
                 </h1>
-                <p className="mt-0.5 text-[11px] leading-5 text-slate-500">
+                <p className="mt-0.5 text-[11px] leading-5 text-fg-faint">
                   {nav.brand.description}
                 </p>
               </div>
@@ -79,7 +79,7 @@ export function PanelShell({
             <nav className="space-y-4">
               {sections.map((section) => (
                 <div key={section.label}>
-                  <p className="px-3 pb-1.5 text-[11px] font-medium text-slate-500">
+                  <p className="px-3 pb-1.5 text-[11px] font-medium text-fg-faint">
                     {section.label}
                   </p>
                   <ul className="space-y-1">
@@ -91,8 +91,8 @@ export function PanelShell({
                             href={item.href}
                             className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
                               active
-                                ? "bg-blue-500/15 text-blue-200 shadow-[0_0_20px_rgba(37,99,235,.12)]"
-                                : "text-slate-400 hover:bg-white/5 hover:text-white"
+                                ? "bg-brand/15 text-brand-fg shadow-[0_0_20px_rgba(37,99,235,.12)]"
+                                : "text-fg-muted hover:bg-surface-hover hover:text-fg"
                             }`}
                           >
                             <PanelIcon name={item.icon} className="h-4 w-4 shrink-0" />
@@ -119,13 +119,13 @@ export function PanelShell({
         )}
 
         <main className="min-w-0 flex-1">
-          <header className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-900/75 px-4 py-3 shadow-xl backdrop-blur-xl sm:px-5">
+          <header className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface/75 px-4 py-3 shadow-xl backdrop-blur-xl sm:px-5">
             <div className="flex min-w-0 items-center gap-3">
               {hasSidebar && (
                 <button
                   type="button"
                   onClick={() => setMobileNavOpen((open) => !open)}
-                  className="rounded-xl border border-white/10 p-2 text-slate-300 transition hover:bg-white/5 lg:hidden"
+                  className="rounded-xl border border-line p-2 text-fg-muted transition hover:bg-surface-hover lg:hidden"
                   aria-label={mobileNavOpen ? "بستن منو" : "باز کردن منو"}
                   aria-expanded={mobileNavOpen}
                 >
@@ -133,24 +133,24 @@ export function PanelShell({
                 </button>
               )}
               <div className="min-w-0">
-                <p className="text-xs text-slate-500">فضای کاری</p>
-                <p className="truncate font-semibold text-white">{name}</p>
+                <p className="text-xs text-fg-faint">فضای کاری</p>
+                <p className="truncate font-semibold text-fg">{name}</p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-fg-muted">
               <ScopePicker scopeKind={scopeKind} />
-              <span className="rounded-full border border-blue-400/30 bg-blue-400/10 px-3 py-1.5 text-blue-200">
+              <span className="tint-blue rounded-full border border-tint-border bg-tint-soft px-3 py-1.5 text-tint-fg">
                 {roleChip}
               </span>
             </div>
           </header>
 
           {hasSidebar && mobileNavOpen && (
-            <nav className="mb-5 space-y-3 rounded-2xl border border-white/10 bg-slate-900/90 p-3 shadow-xl lg:hidden">
+            <nav className="mb-5 space-y-3 rounded-2xl border border-line bg-surface/90 p-3 shadow-xl lg:hidden">
               {sections.map((section) => (
                 <div key={section.label}>
-                  <p className="px-3 pb-1 text-[11px] text-slate-500">{section.label}</p>
+                  <p className="px-3 pb-1 text-[11px] text-fg-faint">{section.label}</p>
                   <div className="space-y-1">
                     {section.items.map((item) => {
                       const active = isNavItemActive(pathname, item.href);
@@ -161,8 +161,8 @@ export function PanelShell({
                           onClick={() => setMobileNavOpen(false)}
                           className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
                             active
-                              ? "bg-blue-500/15 text-blue-200"
-                              : "text-slate-400 hover:bg-white/5 hover:text-white"
+                              ? "bg-brand/15 text-brand-fg"
+                              : "text-fg-muted hover:bg-surface-hover hover:text-fg"
                           }`}
                         >
                           <PanelIcon name={item.icon} className="h-4 w-4 shrink-0" />
@@ -192,8 +192,8 @@ export function PanelShell({
                       href={item.href}
                       className={`shrink-0 rounded-xl border px-3 py-2 text-sm transition ${
                         active
-                          ? "border-blue-400/40 bg-blue-400/10 text-blue-200"
-                          : "border-white/10 text-slate-400 hover:bg-white/5 hover:text-white"
+                          ? "tint-brand border-tint-border bg-tint-soft text-tint-fg"
+                          : "border-line text-fg-muted hover:bg-surface-hover hover:text-fg"
                       }`}
                     >
                       {item.label}
@@ -204,7 +204,7 @@ export function PanelShell({
           )}
 
           {needsOrgSelection && (
-            <div className="mb-5 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-5 text-sm leading-6 text-amber-100">
+            <div className="tint-warning mb-5 rounded-2xl border border-tint-border bg-tint-soft p-5 text-sm leading-6 text-tint-fg">
               برای مشاهده این پنل، ابتدا از بالای صفحه یک سازمان را انتخاب کنید.
             </div>
           )}

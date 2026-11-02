@@ -69,22 +69,22 @@ export function OrgChartView({ orgId }: { orgId: string }) {
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">نمودار سازمانی</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">{orgName ? `نمودار سازمانی «${orgName}»` : "نمودار سازمانی"}</h1>
-          <p className="mt-2 text-sm text-slate-500">سلسله‌مراتب واحدها؛ ریشه همان واحد «ستاد» است که زیرمجموعه‌ها زیر آن قرار می‌گیرند.</p>
+          <p className="text-sm text-brand-fg">نمودار سازمانی</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">{orgName ? `نمودار سازمانی «${orgName}»` : "نمودار سازمانی"}</h1>
+          <p className="mt-2 text-sm text-fg-faint">سلسله‌مراتب واحدها؛ ریشه همان واحد «ستاد» است که زیرمجموعه‌ها زیر آن قرار می‌گیرند.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={() => void load()} loading={loading} disabled={loading}>
             تازه‌سازی
           </Button>
-          <Link href={orgRoutes.unitNew()} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500">
+          <Link href={orgRoutes.unitNew()} className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
             + واحد جدید
           </Link>
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-3">
-        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface/60 p-3">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-fg-muted">
           <div className="flex items-center gap-2">
             <ToggleSwitch checked={showStats} onChange={setShowStats} />
             آمار بر اساس نوع واحد
@@ -94,7 +94,7 @@ export function OrgChartView({ orgId }: { orgId: string }) {
             نمایش واحدهای غیرفعال
           </div>
         </div>
-        <span className="text-xs text-slate-500">{units.length.toLocaleString("fa-IR")} واحد</span>
+        <span className="text-xs text-fg-faint">{units.length.toLocaleString("fa-IR")} واحد</span>
       </div>
 
       {showStats && stats && stats.length > 0 && (
@@ -108,12 +108,12 @@ export function OrgChartView({ orgId }: { orgId: string }) {
       )}
 
       {visibleRoots.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-10 text-center">
-          <p className="text-sm text-slate-300">
+        <div className="rounded-2xl border border-dashed border-line-strong bg-surface-sunken p-10 text-center">
+          <p className="text-sm text-fg-muted">
             {units.length === 0 ? "این سازمان هنوز واحدی ندارد." : "هیچ واحدی برای نمایش وجود ندارد."}
           </p>
           {units.length === 0 ? (
-            <Link href={orgRoutes.unitNew()} className="mt-5 inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500">
+            <Link href={orgRoutes.unitNew()} className="mt-5 inline-flex items-center justify-center rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
               ایجاد اولین واحد
             </Link>
           ) : null}
@@ -131,7 +131,7 @@ export function OrgChartView({ orgId }: { orgId: string }) {
 
 function OrgTreeNode({ node, depth }: { node: UnitNode; depth: number }) {
   return (
-    <div className={depth === 0 ? "" : "mr-4 border-r border-white/10 pr-4 sm:mr-6 sm:pr-6"}>
+    <div className={depth === 0 ? "" : "mr-4 border-r border-line pr-4 sm:mr-6 sm:pr-6"}>
       <NodeCard node={node} />
       {node.children.length > 0 && (
         <div className="mt-3 space-y-3">
@@ -147,7 +147,7 @@ function OrgTreeNode({ node, depth }: { node: UnitNode; depth: number }) {
 function NodeCard({ node }: { node: UnitNode }) {
   const inactive = node.is_active === false;
   return (
-    <div className={`flex flex-col gap-3 rounded-2xl border p-4 shadow-lg transition sm:flex-row sm:items-center ${inactive ? "border-white/5 bg-slate-900/40 opacity-70" : "border-white/10 bg-slate-900/70 hover:border-blue-400/25"}`}>
+    <div className={`flex flex-col gap-3 rounded-2xl border p-4 shadow-lg transition sm:flex-row sm:items-center ${inactive ? "border-line bg-surface/40 opacity-70" : "border-line bg-surface/70 hover:border-blue-400/25"}`}>
       <div className="flex min-w-0 flex-1 items-start gap-3">
         <span className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm ${UNIT_TYPE_TONES[node.type]}`}>
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -156,28 +156,28 @@ function NodeCard({ node }: { node: UnitNode }) {
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-semibold text-white">{node.name}</span>
-            {node.code && <span className="rounded-md border border-white/10 bg-white/[.04] px-1.5 py-0.5 font-mono text-[10px] text-slate-400" dir="ltr">{node.code}</span>}
+            <span className="font-semibold text-fg">{node.name}</span>
+            {node.code && <span className="rounded-md border border-line bg-surface-sunken px-1.5 py-0.5 font-mono text-[10px] text-fg-muted" dir="ltr">{node.code}</span>}
             <span className={`rounded-full border px-2 py-0.5 text-[10px] ${UNIT_TYPE_TONES[node.type]}`}>
               {UNIT_TYPE_LABELS[node.type] || node.type}
             </span>
             {inactive && (
-              <span className="rounded-full border border-rose-400/25 bg-rose-400/10 px-2 py-0.5 text-[10px] text-rose-200">غیرفعال</span>
+              <span className="tint-rose rounded-full border border-tint-border bg-tint-soft px-2 py-0.5 text-[10px] text-tint-fg">غیرفعال</span>
             )}
           </div>
-          <p className="mt-1 text-xs text-slate-400">
+          <p className="mt-1 text-xs text-fg-muted">
             سرپرست:{" "}
-            <span className="text-slate-200">
+            <span className="text-fg">
               {node.head ? `${node.head.first_name || ""} ${node.head.last_name || ""}`.trim() || "—" : node.head_title || "—"}
             </span>
           </p>
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <Link href={orgRoutes.unit(node._id)} className="rounded-xl border border-white/10 px-3 py-2 text-xs text-slate-300 transition hover:bg-white/5 hover:text-white">
+        <Link href={orgRoutes.unit(node._id)} className="rounded-xl border border-line px-3 py-2 text-xs text-fg-muted transition hover:bg-surface-hover hover:text-fg">
           ویرایش واحد
         </Link>
-        {node.children.length > 0 && <span className="text-xs text-slate-500">{node.children.length.toLocaleString("fa-IR")} زیرمجموعه</span>}
+        {node.children.length > 0 && <span className="text-xs text-fg-faint">{node.children.length.toLocaleString("fa-IR")} زیرمجموعه</span>}
       </div>
     </div>
   );

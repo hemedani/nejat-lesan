@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { format } from "date-fns-jalali";
 import { excludeUnknown } from "@/utils/chartData";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -42,6 +43,7 @@ interface ChartProps {
 
 // Helper function to calculate percentages
 const calculatePercentages = (data: SeverityData[]) => {
+
   if (!data || data.length === 0)
     return { percentages: [], labels: [], counts: [] };
 
@@ -91,17 +93,18 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
   selectedEventType,
   eventDateRanges,
 }) => {
+  const chartTheme = useChartTheme();
   // Early return for loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           مقایسه سهم شدت تصادفات در رویداد
         </h3>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">در حال بارگذاری...</p>
+            <p className="text-fg-muted">در حال بارگذاری...</p>
           </div>
         </div>
       </div>
@@ -111,14 +114,14 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
   // Early return for no data state
   if (!data || (!data.eventData?.length && !data.nonEventData?.length)) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           مقایسه سهم شدت تصادفات در رویداد
         </h3>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -130,10 +133,10 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">
+            <h4 className="text-lg font-medium text-fg mb-2">
               داده‌ای موجود نیست
             </h4>
-            <p className="text-gray-600">
+            <p className="text-fg-muted">
               اطلاعات تحلیل شدت رویداد در فیلترهای انتخابی یافت نشد.
             </p>
           </div>
@@ -175,7 +178,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       offsetY: -20,
       style: {
         fontSize: "12px",
-        colors: ["#304758"],
+        colors: [chartTheme.onFill],
       },
     },
     xaxis: {
@@ -197,7 +200,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       },
       max: 100,
     },
-    colors: ["#3B82F6", "#10B981", "#F59E0B"],
+    colors: [chartTheme.brand, chartTheme.success, chartTheme.warning],
     tooltip: {
       y: {
         formatter: function (val: number, opts: { dataPointIndex: number }) {
@@ -216,7 +219,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       },
     },
     grid: {
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       yaxis: {
         lines: {
           show: true,
@@ -254,7 +257,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       offsetY: -20,
       style: {
         fontSize: "12px",
-        colors: ["#304758"],
+        colors: [chartTheme.onFill],
       },
     },
     xaxis: {
@@ -276,7 +279,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       },
       max: 100,
     },
-    colors: ["#DC2626", "#059669", "#D97706"],
+    colors: [chartTheme.danger, chartTheme.success, chartTheme.warning],
     tooltip: {
       y: {
         formatter: function (val: number, opts: { dataPointIndex: number }) {
@@ -295,7 +298,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       },
     },
     grid: {
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       yaxis: {
         lines: {
           show: true,
@@ -321,14 +324,14 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
   return (
     <div className="space-y-6">
       {/* Header with event info */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-fg">
             مقایسه سهم شدت تصادفات در رویداد
           </h3>
-          <div className="text-sm text-gray-600 flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-wrap">
+          <div className="text-sm text-fg-muted flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-wrap">
             <div className="flex items-center flex-wrap gap-2">
-              <span className="font-medium bg-blue-50 px-2 py-1 rounded-md">
+              <span className="font-medium bg-brand-soft px-2 py-1 rounded-md">
                 {getEventTypeLabel(selectedEventType)}
               </span>
               <span className="hidden sm:inline-block mx-1">|</span>
@@ -341,16 +344,16 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                 eventDateRanges.map((range, index) => (
                   <div key={index} className="flex flex-col gap-1">
                     <div className="flex items-center gap-1">
-                      <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                      <span className="bg-surface-sunken px-2 py-1 rounded-md text-fg font-medium">
                         {formatJalaliDate(range.from)}
                       </span>
-                      <span className="text-gray-400 self-center">تا</span>
-                      <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                      <span className="text-fg-faint self-center">تا</span>
+                      <span className="bg-surface-sunken px-2 py-1 rounded-md text-fg font-medium">
                         {formatJalaliDate(range.to)}
                       </span>
                     </div>
                     {range.startEntireRange && range.endEntireRange && (
-                      <div className="text-xs flex items-center text-gray-500">
+                      <div className="text-xs flex items-center text-fg-muted">
                         <span className="font-medium">کل بازه:</span>
                         <span className="mx-1">
                           {formatJalaliDate(range.startEntireRange)}
@@ -362,18 +365,18 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                       </div>
                     )}
                     {index < eventDateRanges.length - 1 && (
-                      <div className="w-full my-1 border-t border-gray-200"></div>
+                      <div className="w-full my-1 border-t border-line"></div>
                     )}
                   </div>
                 ))
               ) : (
                 // Show overall date range for other types
                 <div className="flex items-center gap-1">
-                  <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                  <span className="bg-surface-sunken px-2 py-1 rounded-md text-fg font-medium">
                     {formatJalaliDate(eventRange.from)}
                   </span>
-                  <span className="text-gray-400 self-center">تا</span>
-                  <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-800 font-medium">
+                  <span className="text-fg-faint self-center">تا</span>
+                  <span className="bg-surface-sunken px-2 py-1 rounded-md text-fg font-medium">
                     {formatJalaliDate(eventRange.to)}
                   </span>
                 </div>
@@ -384,8 +387,8 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
 
         {/* Summary statistics */}
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="text-sm text-blue-600 font-medium">
+          <div className="bg-brand-soft rounded-lg p-4">
+            <div className="text-sm text-brand-fg font-medium">
               تصادفات در رویداد
             </div>
             <div className="text-2xl font-bold text-blue-900">
@@ -394,11 +397,11 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                 .toLocaleString()}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="text-sm text-gray-600 font-medium">
+          <div className="bg-canvas rounded-lg p-4">
+            <div className="text-sm text-fg-muted font-medium">
               تصادفات سایر ایام
             </div>
-            <div className="text-2xl font-bold text-gray-900">
+            <div className="text-2xl font-bold text-fg">
               {(data.nonEventData || [])
                 .reduce((sum, item) => sum + item.count, 0)
                 .toLocaleString()}
@@ -410,7 +413,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Event Chart */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-surface rounded-lg shadow-sm p-6">
           {eventAnalysis.percentages.length > 0 ? (
             <Chart
               options={eventChartOptions}
@@ -422,7 +425,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
                 <svg
-                  className="w-12 h-12 text-gray-400 mx-auto mb-4"
+                  className="w-12 h-12 text-fg-faint mx-auto mb-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -434,14 +437,14 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
                 </svg>
-                <p className="text-gray-600">داده‌ای برای رویداد موجود نیست</p>
+                <p className="text-fg-muted">داده‌ای برای رویداد موجود نیست</p>
               </div>
             </div>
           )}
         </div>
 
         {/* Non-Event Chart */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-surface rounded-lg shadow-sm p-6">
           {nonEventAnalysis.percentages.length > 0 ? (
             <Chart
               options={nonEventChartOptions}
@@ -453,7 +456,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
                 <svg
-                  className="w-12 h-12 text-gray-400 mx-auto mb-4"
+                  className="w-12 h-12 text-fg-faint mx-auto mb-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -465,7 +468,7 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
                 </svg>
-                <p className="text-gray-600">
+                <p className="text-fg-muted">
                   داده‌ای برای سایر ایام موجود نیست
                 </p>
               </div>
@@ -477,8 +480,8 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
       {/* Comparison insights */}
       {eventAnalysis.percentages.length > 0 &&
         nonEventAnalysis.percentages.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-surface rounded-lg shadow-sm p-6">
+            <h4 className="text-lg font-semibold text-fg mb-4">
               تحلیل مقایسه‌ای
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -491,20 +494,20 @@ const EventSeverityComparisonChart: React.FC<ChartProps> = ({
                 return (
                   <div
                     key={label}
-                    className="border border-gray-200 rounded-lg p-4"
+                    className="border border-line rounded-lg p-4"
                   >
-                    <div className="text-sm font-medium text-gray-900 mb-2">
+                    <div className="text-sm font-medium text-fg mb-2">
                       {label}
                     </div>
                     <div className="space-y-1">
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-fg-muted">
                         در رویداد: {eventPercent.toFixed(1)}%
                       </div>
-                      <div className="text-xs text-gray-600">
+                      <div className="text-xs text-fg-muted">
                         سایر ایام: {nonEventPercent.toFixed(1)}%
                       </div>
                       <div
-                        className={`text-xs font-medium ${difference >= 0 ? "text-red-600" : "text-green-600"}`}
+                        className={`text-xs font-medium ${difference >= 0 ? "text-danger-fg" : "text-success-fg"}`}
                       >
                         {difference >= 0 ? "+" : ""}
                         {difference.toFixed(1)}%

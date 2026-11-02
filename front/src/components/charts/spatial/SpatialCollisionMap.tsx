@@ -455,15 +455,15 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <div className="h-6 bg-gray-200 rounded w-64 animate-pulse"></div>
-          <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+          <div className="h-6 bg-surface-sunken rounded w-64 animate-pulse"></div>
+          <div className="h-4 bg-surface-sunken rounded w-32 animate-pulse"></div>
         </div>
-        <div className="h-96 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
+        <div className="h-96 bg-surface-sunken rounded-lg animate-pulse flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-            <p className="text-sm text-gray-500">در حال بارگذاری نقشه...</p>
+            <p className="text-sm text-fg-muted">در حال بارگذاری نقشه...</p>
           </div>
         </div>
       </div>
@@ -473,14 +473,14 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   // No GeoJSON data state
   if (!geoJsonData || !geoJsonData.features) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">نقشه مقایسه مکانی نحوه و نوع برخورد</h3>
+          <h3 className="text-lg font-semibold text-fg">نقشه مقایسه مکانی نحوه و نوع برخورد</h3>
         </div>
-        <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
+        <div className="h-96 bg-canvas rounded-lg flex items-center justify-center">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -492,8 +492,8 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
                 d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
               />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">نقشه در دسترس نیست</h3>
-            <p className="text-gray-600">داده‌های جغرافیایی برای شهر انتخاب شده موجود نمی‌باشد</p>
+            <h3 className="text-lg font-medium text-fg mb-2">نقشه در دسترس نیست</h3>
+            <p className="text-fg-muted">داده‌های جغرافیایی برای شهر انتخاب شده موجود نمی‌باشد</p>
           </div>
         </div>
       </div>
@@ -501,16 +501,16 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">نقشه مقایسه مکانی نحوه و نوع برخورد</h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <h3 className="text-lg font-semibold text-fg">نقشه مقایسه مکانی نحوه و نوع برخورد</h3>
+          <p className="text-sm text-fg-muted mt-1">
             توزیع درصد نوع برخورد انتخابی در مناطق مختلف شهر - هرچه رنگ قرمزتر باشد درصد بالاتر
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -524,7 +524,7 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       </div>
 
       {/* Map */}
-      <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
+      <div className="relative h-96 rounded-lg overflow-hidden border border-line">
         {basemap === "neshan" ? (
           <>
             <NeshanMapContainer
@@ -570,53 +570,53 @@ const SpatialCollisionMap: React.FC<SpatialCollisionMapProps> = ({
       </div>
 
       {/* Color Legend */}
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h4 className="font-medium text-gray-900 mb-3">راهنمای رنگ‌ها (درصد نوع برخورد انتخابی)</h4>
+      <div className="mt-4 p-4 bg-canvas rounded-lg">
+        <h4 className="font-medium text-fg mb-3">راهنمای رنگ‌ها (درصد نوع برخورد انتخابی)</h4>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-gray-300"
+              className="w-4 h-4 rounded border border-line-strong"
               style={{ backgroundColor: "#10B981" }}
             ></div>
-            <span className="text-xs text-gray-600">۰-۲۰٪ (پایین)</span>
+            <span className="text-xs text-fg-muted">۰-۲۰٪ (پایین)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-gray-300"
+              className="w-4 h-4 rounded border border-line-strong"
               style={{ backgroundColor: "#84CC16" }}
             ></div>
-            <span className="text-xs text-gray-600">۲۰-۴۰٪ (کم)</span>
+            <span className="text-xs text-fg-muted">۲۰-۴۰٪ (کم)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-gray-300"
+              className="w-4 h-4 rounded border border-line-strong"
               style={{ backgroundColor: "#F59E0B" }}
             ></div>
-            <span className="text-xs text-gray-600">۴۰-۶۰٪ (متوسط)</span>
+            <span className="text-xs text-fg-muted">۴۰-۶۰٪ (متوسط)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-gray-300"
+              className="w-4 h-4 rounded border border-line-strong"
               style={{ backgroundColor: "#F97316" }}
             ></div>
-            <span className="text-xs text-gray-600">۶۰-۸۰٪ (بالا)</span>
+            <span className="text-xs text-fg-muted">۶۰-۸۰٪ (بالا)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-gray-300"
+              className="w-4 h-4 rounded border border-line-strong"
               style={{ backgroundColor: "#EF4444" }}
             ></div>
-            <span className="text-xs text-gray-600">۸۰-۱۰۰٪ (بحرانی)</span>
+            <span className="text-xs text-fg-muted">۸۰-۱۰۰٪ (بحرانی)</span>
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-gray-300"
+              className="w-4 h-4 rounded border border-line-strong"
               style={{ backgroundColor: "#E5E7EB" }}
             ></div>
-            <span className="text-xs text-gray-600">بدون داده</span>
+            <span className="text-xs text-fg-muted">بدون داده</span>
           </div>
         </div>
-        <p className="text-xs text-gray-600 mt-2">
+        <p className="text-xs text-fg-muted mt-2">
           این رنگ‌ها درصد نوع برخورد انتخابی (فیلتر شده) را در هر منطقه نشان می‌دهند. رنگ سبز = درصد
           پایین (ایمن‌تر)، رنگ قرمز = درصد بالا (نیاز به بررسی بیشتر). روی هر منطقه کلیک کنید برای
           مشاهده جزئیات.

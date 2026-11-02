@@ -285,7 +285,7 @@ export const FormUpdateAirPollutionZone = ({
         <div className="flex items-center justify-center py-12">
           <div className="flex flex-col items-center gap-4">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="text-gray-600">در حال بارگذاری اطلاعات منطقه آلودگی هوا...</p>
+            <p className="text-fg-muted">در حال بارگذاری اطلاعات منطقه آلودگی هوا...</p>
           </div>
         </div>
       </div>
@@ -296,8 +296,8 @@ export const FormUpdateAirPollutionZone = ({
     <div className="p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Form Fields */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-4">
+          <h2 className="text-lg font-semibold text-fg mb-4">
             ویرایش اطلاعات منطقه آلودگی هوا
           </h2>
 
@@ -322,9 +322,9 @@ export const FormUpdateAirPollutionZone = ({
         </div>
 
         {/* Map Section */}
-        <div className="bg-gray-100 p-6 border rounded-lg">
+        <div className="bg-surface-sunken p-6 border rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-700">
+            <h2 className="text-lg font-semibold text-fg">
               ویرایش منطقه آلودگی هوا بر روی نقشه
             </h2>
             <div className="flex gap-2">
@@ -332,7 +332,7 @@ export const FormUpdateAirPollutionZone = ({
                 <button
                   type="button"
                   onClick={clearDrawnPolygon}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-red-600 hover:bg-red-700 text-on-brand px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                   <svg
                     className="w-4 h-4"
@@ -356,8 +356,8 @@ export const FormUpdateAirPollutionZone = ({
                 className={`${
                   isDrawingMode
                     ? "bg-red-600 hover:bg-red-700"
-                    : "bg-blue-600 hover:bg-blue-700"
-                } text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2`}
+                    : "bg-brand hover:bg-brand-hover"
+                } text-on-brand px-4 py-2 rounded-lg transition-colors flex items-center gap-2`}
               >
                 <svg
                   className="w-4 h-4"
@@ -378,15 +378,15 @@ export const FormUpdateAirPollutionZone = ({
           </div>
 
           {isDrawingMode && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800 font-medium">
+            <div className="mb-4 p-3 bg-brand-soft border border-brand-border rounded-lg">
+              <p className="text-sm text-brand-fg font-medium">
                 🖱️ حالت ترسیم منطقه: کلیک چپ: اضافه کردن نقطه | راست کلیک:
                 تمام کردن شکل | ESC: لغو
               </p>
             </div>
           )}
 
-          <div className="h-96 rounded-lg overflow-hidden border border-gray-300">
+          <div className="h-96 rounded-lg overflow-hidden border border-line-strong">
             <MapContainer
               key={mapKey}
               center={mapCenter}
@@ -423,10 +423,10 @@ export const FormUpdateAirPollutionZone = ({
 
           <div className="mt-4 space-y-3">
             {drawnPolygon && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="p-4 bg-success-soft border border-success-border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <svg
-                    className="w-5 h-5 text-green-600"
+                    className="w-5 h-5 text-success-fg"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -438,11 +438,11 @@ export const FormUpdateAirPollutionZone = ({
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  <p className="text-sm text-green-800 font-semibold">
+                  <p className="text-sm text-success-fg font-semibold">
                     منطقه آلودگی هوا ترسیم شد
                   </p>
                 </div>
-                <div className="text-xs text-green-700 space-y-1">
+                <div className="text-xs text-success-fg space-y-1">
                   <p>• تعداد نقاط: {drawnPolygon.length}</p>
                   <p>• منطقه بر روی نقشه نمایش داده شده و آماده ثبت است</p>
                 </div>
@@ -456,7 +456,7 @@ export const FormUpdateAirPollutionZone = ({
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed transition-colors"
+            className="px-8 py-3 bg-green-600 text-on-brand font-semibold rounded-lg hover:bg-green-700 disabled:bg-green-300 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "در حال ویرایش..." : "ویرایش منطقه آلودگی هوا"}
           </button>

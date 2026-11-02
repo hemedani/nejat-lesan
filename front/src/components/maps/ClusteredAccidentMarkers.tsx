@@ -258,27 +258,27 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
           >
             <Popup>
               <div className="p-2 max-w-xs">
-                <h3 className="font-semibold text-lg mb-2 text-gray-800">جزئیات تصادف</h3>
+                <h3 className="font-semibold text-lg mb-2 text-fg">جزئیات تصادف</h3>
 
                 <div className="space-y-1 text-sm">
                   {(!accident.clusterSize || accident.clusterSize <= 1) && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">تاریخ:</span>
+                      <span className="text-fg-muted">تاریخ:</span>
                       <span className="font-medium">{formatDate(accident.date_of_accident)}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between">
-                    <span className="text-gray-600">نوع:</span>
+                    <span className="text-fg-muted">نوع:</span>
                     <span
                       className={`font-medium ${
                         accident.type?.name === "فوتی"
-                          ? "text-red-600"
+                          ? "text-danger-fg"
                           : accident.type?.name === "جرحی"
                             ? "text-orange-600"
                             : accident.type?.name === "خسارتی"
                               ? "text-yellow-600"
-                              : "text-gray-600"
+                              : "text-fg-muted"
                       }`}
                     >
                       {accident.type?.name || "نامشخص"}
@@ -286,54 +286,54 @@ const ClusteredAccidentMarkers: React.FC<ClusteredAccidentMarkersProps> = ({ acc
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-gray-600">فوتی:</span>
-                    <span className="font-medium text-red-600">{accident.dead_count}</span>
+                    <span className="text-fg-muted">فوتی:</span>
+                    <span className="font-medium text-danger-fg">{accident.dead_count}</span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-gray-600">مجروح:</span>
+                    <span className="text-fg-muted">مجروح:</span>
                     <span className="font-medium text-orange-600">{accident.injured_count}</span>
                   </div>
 
                   {/* Show cluster size if this is a cluster */}
                   {accident.clusterSize && accident.clusterSize > 1 && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">تعداد تصادفات:</span>
-                      <span className="font-medium text-blue-600">{accident.clusterSize}</span>
+                      <span className="text-fg-muted">تعداد تصادفات:</span>
+                      <span className="font-medium text-brand-fg">{accident.clusterSize}</span>
                     </div>
                   )}
 
                   {(!accident.clusterSize || accident.clusterSize <= 1) && accident.collision_type?.name && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">نوع برخورد:</span>
+                      <span className="text-fg-muted">نوع برخورد:</span>
                       <span className="font-medium">{accident.collision_type.name}</span>
                     </div>
                   )}
 
                   {accident.province?.name && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">استان:</span>
+                      <span className="text-fg-muted">استان:</span>
                       <span className="font-medium">{accident.province.name}</span>
                     </div>
                   )}
 
                   {accident.city?.name && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">شهر:</span>
+                      <span className="text-fg-muted">شهر:</span>
                       <span className="font-medium">{accident.city.name}</span>
                     </div>
                   )}
 
                   {accident.road?.name && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">راه:</span>
+                      <span className="text-fg-muted">راه:</span>
                       <span className="font-medium">{accident.road.name}</span>
                     </div>
                   )}
 
                   {(!accident.clusterSize || accident.clusterSize <= 1) && accident.light_status?.name && (
                     <div className="flex justify-between">
-                      <span className="text-gray-600">وضعیت نور:</span>
+                      <span className="text-fg-muted">وضعیت نور:</span>
                       <span className="font-medium">{accident.light_status.name}</span>
                     </div>
                   )}

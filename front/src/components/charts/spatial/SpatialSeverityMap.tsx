@@ -262,10 +262,10 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-96 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-96 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -278,10 +278,10 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     geoJsonData.features.length === 0
   ) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه سهم شدت تصادفات</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نقشه سهم شدت تصادفات</h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌های نقشه موجود نیست</p>
+          <p className="text-fg-muted">داده‌های نقشه موجود نیست</p>
         </div>
       </div>
     );
@@ -338,10 +338,10 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
     : defaultCenter;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">نقشه سهم شدت تصادفات</h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-fg">نقشه سهم شدت تصادفات</h3>
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -353,7 +353,7 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
         </div>
       </div>
 
-      <div className="relative h-96 rounded-lg overflow-hidden border border-gray-200">
+      <div className="relative h-96 rounded-lg overflow-hidden border border-line">
         {basemap === "neshan" ? (
           <>
             <NeshanMapContainer
@@ -381,10 +381,10 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
             </div>
             <FitBoundsOnGeoJsonChange geoJsonData={geoJsonData} />
             {mapError ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-surface bg-opacity-75 z-10">
                 <div className="text-center p-4">
-                  <p className="text-red-600 font-medium">خطا در بارگذاری نقشه</p>
-                  <p className="text-sm text-gray-500 mt-1">{mapError}</p>
+                  <p className="text-danger-fg font-medium">خطا در بارگذاری نقشه</p>
+                  <p className="text-sm text-fg-muted mt-1">{mapError}</p>
                 </div>
               </div>
             ) : (
@@ -400,9 +400,9 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       </div>
 
       {/* Color Legend */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">راهنمای رنگ‌ها</h4>
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-line">
+        <h4 className="text-sm font-medium text-fg mb-3">راهنمای رنگ‌ها</h4>
+        <div className="flex flex-wrap gap-4 text-sm text-fg-muted">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#10B981" }}></div>
             <span>۰-۲۰٪</span>
@@ -427,8 +427,8 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       </div>
 
       {/* Map Analysis Explanation */}
-      <div className="mt-3 pt-3 border-t border-gray-200">
-        <div className="bg-green-50 rounded-lg p-3 text-xs text-green-800 leading-relaxed">
+      <div className="mt-3 pt-3 border-t border-line">
+        <div className="bg-success-soft rounded-lg p-3 text-xs text-success-fg leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نقشه:</p>
           <p>
             این نقشه نسبت تصادفات فوتی به کل تصادفات شدید (فوتی + جرحی) را در هر منطقه نشان می‌دهد:
@@ -443,8 +443,8 @@ const SpatialSeverityMap: React.FC<SpatialSeverityMapProps> = ({
       </div>
 
       {/* Map Controls Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="flex flex-wrap gap-4 text-sm text-fg-muted">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path

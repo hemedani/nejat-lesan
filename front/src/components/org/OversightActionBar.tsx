@@ -352,14 +352,14 @@ export function OversightActionBar({
 
   return (
     <>
-      <section className="sticky top-16 z-20 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-900/90 p-4 backdrop-blur-xl">
+      <section className="sticky top-16 z-20 mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface/90 p-4 backdrop-blur-xl">
         <div>
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-fg">
             {selectedCount > 0
               ? `${count(selectedCount)} گزارش انتخاب شده`
               : "گزارشی انتخاب نشده"}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-fg-faint">
             شروع بررسی، تأیید و برگشت روی همهٔ گزارش‌های انتخاب‌شده اعمال می‌شود؛ تصادف‌ها و
             گزارش‌های رخداد با هم.
           </p>
@@ -456,7 +456,7 @@ export function OversightActionBar({
           </>
         }
       >
-        <p className="mb-3 text-xs leading-6 text-slate-400">
+        <p className="mb-3 text-xs leading-6 text-fg-muted">
           گزارش‌های زیر به وضعیت «در حال بررسی» می‌روند تا بتوانید آن‌ها را تأیید یا برای اصلاح
           برگردانید؛ تصادف‌ها و گزارش‌های رخداد با هم. گزارشی که همین حالا در حال بررسی است
           اعمال نمی‌شود و دلیلش پس از اجرا فهرست می‌شود.
@@ -483,7 +483,7 @@ export function OversightActionBar({
           </>
         }
       >
-        <p className="mb-3 text-xs leading-6 text-slate-400">
+        <p className="mb-3 text-xs leading-6 text-fg-muted">
           گزارش‌های زیر به وضعیت «تأییدشده» می‌روند و از صف بررسی خارج می‌شوند؛ تصادف‌ها و
           گزارش‌های رخداد با هم. تنها گزارش‌هایی که همین حالا «در حال بررسی» هستند این
           انتقال را می‌پذیرند.
@@ -511,7 +511,7 @@ export function OversightActionBar({
           </>
         }
       >
-        <p className="mb-3 text-xs leading-6 text-slate-400">
+        <p className="mb-3 text-xs leading-6 text-fg-muted">
           این دلیل روی {selectionLabel(selectedCount)} ثبت می‌شود؛ ثبت دلیل برای برگشت
           الزامی است.
         </p>
@@ -547,7 +547,7 @@ function SelectedReportList({
   labelFor: (id: string) => string;
 }) {
   return (
-    <ul className="max-h-40 space-y-1 overflow-y-auto rounded-xl border border-white/10 bg-white/[.02] p-3 text-xs leading-5 text-slate-300">
+    <ul className="max-h-40 space-y-1 overflow-y-auto rounded-xl border border-line bg-surface-sunken p-3 text-xs leading-5 text-fg-muted">
       {selected.slice(0, MAX_LISTED_TARGETS).map((id) => (
         <li key={id}>
           <span dir="ltr" className="font-medium">
@@ -556,7 +556,7 @@ function SelectedReportList({
         </li>
       ))}
       {selected.length > MAX_LISTED_TARGETS && (
-        <li className="text-slate-500">
+        <li className="text-fg-faint">
           و {count(selected.length - MAX_LISTED_TARGETS)} گزارش دیگر
         </li>
       )}

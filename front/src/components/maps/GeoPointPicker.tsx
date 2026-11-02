@@ -29,8 +29,6 @@ export type GeoPointPickerProps = {
   className?: string;
   errorMessage?: string;
   label?: string;
-  /** رنگ دکمه‌ها — فرم‌های روشنِ قدیمی ظاهر متفاوتی دارند. */
-  tone?: "dark" | "light";
 };
 
 /**
@@ -52,7 +50,6 @@ export const GeoPointPicker: React.FC<GeoPointPickerProps> = ({
   className,
   errorMessage,
   label = "انتخاب روی نقشه",
-  tone = "dark",
 }) => {
   const [isPicking, setIsPicking] = useState(false);
 
@@ -72,17 +69,15 @@ export const GeoPointPicker: React.FC<GeoPointPickerProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className={`text-sm font-medium ${tone === "light" ? "text-gray-700" : "text-slate-300"}`}>
+        <span className="text-sm font-medium text-fg">
           {label}
         </span>
         <div className="flex gap-2">
           <button
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               isPicking
-                ? "bg-amber-500 text-gray-900"
-                : tone === "light"
-                  ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  : "bg-slate-700 text-slate-100 hover:bg-slate-600"
+                ? "bg-amber-500 text-fg"
+                : "bg-surface-sunken text-fg hover:bg-line"
             }`}
             onClick={() => setIsPicking((prev) => !prev)}
             type="button"
@@ -91,7 +86,7 @@ export const GeoPointPicker: React.FC<GeoPointPickerProps> = ({
           </button>
           {value && onClear && (
             <button
-              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-on-brand hover:bg-red-700"
               onClick={onClear}
               type="button"
             >
@@ -109,7 +104,7 @@ export const GeoPointPicker: React.FC<GeoPointPickerProps> = ({
       </LeafletSurface>
 
       {markerPosition && markerPosition.lat !== 0 && (
-        <p className={`text-xs ${tone === "light" ? "text-gray-600" : "text-slate-400"}`}>
+        <p className="text-xs text-fg-muted">
           عرض جغرافیایی: {markerPosition.lat.toFixed(6)} · طول جغرافیایی:{" "}
           {markerPosition.lng.toFixed(6)}
         </p>

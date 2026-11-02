@@ -1,5 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useSelectStyles } from "@/utils/select-styles";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +18,6 @@ import { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import { useCallback, useState, useMemo, useEffect } from "react";
 import { gets as getCitiesAction } from "@/app/actions/city/gets";
 import { gets as getProvincesAction } from "@/app/actions/province/gets";
-import type { StylesConfig } from "react-select";
 import CustomCheckbox from "../atoms/CustomCheckbox";
 import {
   ALL_ANALYTIC_FILTERS,
@@ -497,149 +497,8 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
   };
 
   // Memoized select styles for better performance
-  const selectStyles = useMemo<StylesConfig<unknown, false>>(
-    () => ({
-      control: (provided, state) => ({
-        ...provided,
-        minHeight: "48px",
-        backgroundColor: errors.citySettingIds ? "#fef2f2" : "white",
-        borderColor: errors.citySettingIds
-          ? state.isFocused
-            ? "#ef4444"
-            : "#fca5a5"
-          : state.isFocused
-            ? "#3b82f6"
-            : "#cbd5e1",
-        borderRadius: "12px",
-        direction: "rtl",
-        borderWidth: "1px",
-        boxShadow: state.isFocused
-          ? errors.citySettingIds
-            ? "0 0 0 2px rgba(239, 68, 68, 0.1)"
-            : "0 0 0 2px rgba(59, 130, 246, 0.1)"
-          : "none",
-        transition: "all 0.2s ease-in-out",
-        cursor: "pointer",
-      }),
-      valueContainer: (provided) => ({
-        ...provided,
-        padding: "2px 16px",
-        direction: "rtl",
-      }),
-      input: (provided) => ({
-        ...provided,
-        margin: "0",
-        padding: "0",
-        color: "#1e293b",
-        direction: "rtl",
-      }),
-      placeholder: (provided) => ({
-        ...provided,
-        color: "#94a3b8",
-        fontSize: "14px",
-        direction: "rtl",
-        textAlign: "right",
-      }),
-      singleValue: (provided) => ({
-        ...provided,
-        color: "#1e293b",
-        direction: "rtl",
-        textAlign: "right",
-      }),
-      multiValue: (provided) => ({
-        ...provided,
-        backgroundColor: "#e2e8f0",
-        borderRadius: "8px",
-        margin: "2px",
-        direction: "rtl",
-      }),
-      multiValueLabel: (provided) => ({
-        ...provided,
-        color: "#475569",
-        fontSize: "13px",
-        fontWeight: "500",
-        padding: "4px 8px",
-        direction: "rtl",
-      }),
-      multiValueRemove: (provided) => ({
-        ...provided,
-        color: "#64748b",
-        borderRadius: "0 8px 8px 0",
-        cursor: "pointer",
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          backgroundColor: "#ef4444",
-          color: "white",
-        },
-      }),
-      indicatorSeparator: () => ({
-        display: "none",
-      }),
-      dropdownIndicator: (provided, state) => ({
-        ...provided,
-        color: "#64748b",
-        padding: "8px 12px",
-        transform: state.selectProps.menuIsOpen ? "rotate(180deg)" : "rotate(0deg)",
-        transition: "all 0.2s ease-in-out",
-      }),
-      clearIndicator: (provided) => ({
-        ...provided,
-        color: "#64748b",
-        padding: "8px",
-        cursor: "pointer",
-        transition: "all 0.2s ease-in-out",
-      }),
-      menu: (provided) => ({
-        ...provided,
-        backgroundColor: "white",
-        border: "1px solid #e2e8f0",
-        borderRadius: "12px",
-        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        marginTop: "4px",
-        overflow: "hidden",
-        zIndex: 9999,
-      }),
-      menuList: (provided) => ({
-        ...provided,
-        padding: "8px",
-        maxHeight: "200px",
-      }),
-      option: (provided, state) => ({
-        ...provided,
-        backgroundColor: state.isSelected ? "#3b82f6" : state.isFocused ? "#f1f5f9" : "transparent",
-        color: state.isSelected ? "white" : "#1e293b",
-        borderRadius: "8px",
-        margin: "2px 0",
-        padding: "12px 16px",
-        cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: state.isSelected ? "500" : "400",
-        direction: "rtl",
-        textAlign: "right",
-        transition: "all 0.15s ease-in-out",
-        "&:hover": {
-          backgroundColor: state.isSelected ? "#2563eb" : "#f1f5f9",
-        },
-      }),
-      noOptionsMessage: (provided) => ({
-        ...provided,
-        color: "#64748b",
-        fontSize: "14px",
-        padding: "12px 16px",
-        direction: "rtl",
-        textAlign: "right",
-      }),
-      loadingMessage: (provided) => ({
-        ...provided,
-        color: "#64748b",
-        fontSize: "14px",
-        padding: "12px 16px",
-        direction: "rtl",
-        textAlign: "right",
-      }),
-    }),
-    [errors],
-  );
+  // Shared themed styles — see utils/select-styles.ts.
+  const selectStyles = useSelectStyles(Boolean(errors.provinceSettingIds));
 
   // Define steps based on user level
   const basicInfoStep = {
@@ -649,7 +508,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
       <div className="space-y-4">
         <div className="w-full flex flex-wrap">
           <div className="w-1/2 p-2">
-            <span className="text-sm font-medium text-gray-700">عکس پروفایل</span>
+            <span className="text-sm font-medium text-fg">عکس پروفایل</span>
             <UploadImage
               inputName="avatar"
               setUploadedImage={(uploaded: string) => setValue("avatar", uploaded)}
@@ -658,7 +517,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
             />
           </div>
           <div className="w-1/2 p-2">
-            <span className="text-sm font-medium text-gray-700">عکس کارت ملی</span>
+            <span className="text-sm font-medium text-fg">عکس کارت ملی</span>
             <UploadImage
               inputName="nationalCard"
               setUploadedImage={(uploaded: string) => setValue("nationalCard", uploaded)}
@@ -847,8 +706,8 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
           />
           {watchedLevel === "Patrol" && (
             <div className="w-full p-2">
-              <span className="text-sm font-medium text-gray-700">دسترسی‌های مأمور گشت</span>
-              <div className="mt-2 grid grid-cols-1 gap-2 rounded-xl border border-gray-200 p-3 sm:grid-cols-2 lg:grid-cols-3">
+              <span className="text-sm font-medium text-fg">دسترسی‌های مأمور گشت</span>
+              <div className="mt-2 grid grid-cols-1 gap-2 rounded-xl border border-line p-3 sm:grid-cols-2 lg:grid-cols-3">
                 {patrolPermissionFields.map((field) => (
                   <CustomCheckbox
                     key={field.key}
@@ -877,10 +736,10 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
     title: "تنظیمات شهر",
     component: (
       <div className="flex flex-col gap-2">
-        <h4 className="text-lg font-semibold text-gray-700 mb-2">تنظیات کاربری</h4>
+        <h4 className="text-lg font-semibold text-fg mb-2">تنظیات کاربری</h4>
 
         <div>
-          <label className="text-sm font-medium text-slate-700 text-right block mb-2">
+          <label className="text-sm font-medium text-fg-muted text-right block mb-2">
             انتخاب استان‌های تحت مدیریت کاربر
           </label>
           <AsyncSelect
@@ -904,7 +763,7 @@ export const FormCreateUser = ({ token }: { token?: string }) => {
         </div>
 
         <div className="mb-4">
-          <label className="text-sm font-medium text-slate-700 text-right block mb-2">
+          <label className="text-sm font-medium text-fg-muted text-right block mb-2">
             انتخاب شهرهای تحت مدیریت کاربر
           </label>
           <AsyncSelect

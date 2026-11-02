@@ -166,8 +166,8 @@ export const FormCreateProvince = ({
     <div className="p-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Form Fields */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-4">
+          <h2 className="text-lg font-semibold text-fg mb-4">
             اطلاعات استان
           </h2>
 
@@ -202,28 +202,26 @@ export const FormCreateProvince = ({
         {/* Errors render next to the control that caused them, inside each
             drawer's own `errorMessage` slot, instead of in separate red boxes
             floating above the map. */}
-        <div className="bg-gray-100 p-6 border rounded-lg space-y-6">
+        <div className="bg-surface-sunken p-6 border rounded-lg space-y-6">
           <GeoPolygonDrawer
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.area?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={6}
             label="محدودهٔ استان"
             onChange={handleAreaChange}
             onClear={clearArea}
-            tone="light"
             value={area}
           />
 
           <GeoPointPicker
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.center_location?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={6}
             label="مرکز استان"
             onChange={handleCenterChange}
             onClear={clearCenterPoint}
-            tone="light"
             value={centerPoint}
           />
         </div>
@@ -233,7 +231,7 @@ export const FormCreateProvince = ({
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
+            className="px-8 py-3 bg-brand text-on-brand font-semibold rounded-lg hover:bg-brand-hover disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
           >
             {isSubmitting ? "در حال ایجاد..." : "ایجاد استان"}
           </button>

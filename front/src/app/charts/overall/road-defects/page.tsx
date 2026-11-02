@@ -143,7 +143,7 @@ const RoadDefectsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="overall" currentChart="road-defects" />
 
@@ -167,8 +167,8 @@ const RoadDefectsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">تحلیل نقص راه</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">تحلیل نقص راه</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل تفصیلی نقص‌های راه و تأثیر آن بر وقوع تصادفات
                 </p>
               </div>
@@ -176,7 +176,7 @@ const RoadDefectsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ const RoadDefectsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -257,18 +257,18 @@ const RoadDefectsPage = () => {
           <div className="space-y-6">
             {/* Error Display */}
             {error && (
-              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-red-800">خطا</h3>
+                  <h3 className="font-medium text-danger-fg">خطا</h3>
                 </div>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-danger-fg">{error}</p>
               </div>
             )}
 
@@ -286,12 +286,12 @@ const RoadDefectsPage = () => {
 
                 return (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-surface rounded-lg shadow-sm p-6">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <div className="w-8 h-8 bg-brand-soft rounded-lg flex items-center justify-center">
                             <svg
-                              className="w-5 h-5 text-blue-600"
+                              className="w-5 h-5 text-brand-fg"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -300,20 +300,20 @@ const RoadDefectsPage = () => {
                           </div>
                         </div>
                         <div className="mr-4">
-                          <div className="text-sm font-medium text-gray-500">کل تصادفات</div>
-                          <div className="text-2xl font-bold text-gray-900">
+                          <div className="text-sm font-medium text-fg-muted">کل تصادفات</div>
+                          <div className="text-2xl font-bold text-fg">
                             {formatNumber(totalAccidents)}
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-surface rounded-lg shadow-sm p-6">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                          <div className="w-8 h-8 bg-danger-soft rounded-lg flex items-center justify-center">
                             <svg
-                              className="w-5 h-5 text-red-600"
+                              className="w-5 h-5 text-danger-fg"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -326,20 +326,20 @@ const RoadDefectsPage = () => {
                           </div>
                         </div>
                         <div className="mr-4">
-                          <div className="text-sm font-medium text-gray-500">نرخ نقص راه</div>
-                          <div className="text-2xl font-bold text-gray-900">
+                          <div className="text-sm font-medium text-fg-muted">نرخ نقص راه</div>
+                          <div className="text-2xl font-bold text-fg">
                             {Number(defectPercentage).toLocaleString("fa-IR")}%
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-surface rounded-lg shadow-sm p-6">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                          <div className="w-8 h-8 tint-warning bg-tint-strong rounded-lg flex items-center justify-center">
                             <svg
-                              className="w-5 h-5 text-yellow-600"
+                              className="w-5 h-5 text-tint-fg"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -352,8 +352,8 @@ const RoadDefectsPage = () => {
                           </div>
                         </div>
                         <div className="mr-4">
-                          <div className="text-sm font-medium text-gray-500">شایع‌ترین نقص</div>
-                          <div className="text-lg font-bold text-gray-900">{mostCommonDefect}</div>
+                          <div className="text-sm font-medium text-fg-muted">شایع‌ترین نقص</div>
+                          <div className="text-lg font-bold text-fg">{mostCommonDefect}</div>
                         </div>
                       </div>
                     </div>
@@ -373,10 +373,10 @@ const RoadDefectsPage = () => {
             )}
 
             {/* Chart Description */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="bg-brand-soft border border-brand-border rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
-                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -385,8 +385,8 @@ const RoadDefectsPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-blue-800 mb-2">درباره این تحلیل</h3>
-                  <p className="text-sm text-blue-700">
+                  <h3 className="font-medium text-brand-fg mb-2">درباره این تحلیل</h3>
+                  <p className="text-sm text-brand-fg">
                     این نمودار تحلیل جامعی از نقص‌های راه و تأثیر آن‌ها بر وقوع تصادفات ارائه می‌دهد.
                     شامل توزیع تصادفات با و بدون نقص راه، انواع نقص‌های شایع، و تحلیل بر اساس شدت
                     تصادفات می‌باشد.

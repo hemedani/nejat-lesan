@@ -23,7 +23,7 @@ export function LivePreview({ definition }: { definition: FormDefinition }) {
 
 	if (definition.pages.length === 0) {
 		return (
-			<div className="rounded-xl border border-dashed border-white/10 p-8 text-center text-sm text-slate-400">
+			<div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-fg-muted">
 				پیش‌نمایش پس از افزودن اولین صفحه نمایش داده می‌شود.
 			</div>
 		);
@@ -31,7 +31,7 @@ export function LivePreview({ definition }: { definition: FormDefinition }) {
 
 	if (!page) {
 		return (
-			<div className="rounded-xl border border-amber-400/20 bg-amber-400/10 p-6 text-sm text-amber-100">
+			<div className="tint-amber rounded-xl border border-tint-border bg-tint-soft p-6 text-sm text-tint-fg">
 				با پاسخ‌های فعلی هیچ صفحه‌ای نمایش داده نمی‌شود. شرط‌های نمایش را بررسی کنید.
 			</div>
 		);
@@ -44,7 +44,7 @@ export function LivePreview({ definition }: { definition: FormDefinition }) {
 
 	return (
 		<div className="space-y-4" dir="rtl">
-			<div className="flex flex-wrap gap-1 rounded-lg bg-slate-800 p-1">
+			<div className="flex flex-wrap gap-1 rounded-lg bg-surface-sunken p-1">
 				{pages.map((candidate, index) => (
 					<button
 						key={candidate.key}
@@ -53,8 +53,8 @@ export function LivePreview({ definition }: { definition: FormDefinition }) {
 						className={[
 							"flex-1 rounded-md px-3 py-1.5 text-xs",
 							index === pageIndex
-								? "bg-blue-400/10 text-blue-200 font-medium shadow-[0_0_20px_rgba(37,99,235,.12)]"
-								: "text-slate-400 hover:bg-white/[.06] hover:text-white",
+								? "tint-blue bg-tint-soft text-tint-fg font-medium shadow-[0_0_20px_rgba(37,99,235,.12)]"
+								: "text-fg-muted hover:bg-surface-hover hover:text-fg",
 						].join(" ")}
 					>
 						{candidate.title}
@@ -67,7 +67,7 @@ export function LivePreview({ definition }: { definition: FormDefinition }) {
 
 			<div className="space-y-4">
 				{page.sections?.map((section) => (
-					<div key={section.key} className="rounded-xl border border-white/10 p-3">
+					<div key={section.key} className="rounded-xl border border-line p-3">
 						<h4 className="mb-2 text-sm font-semibold">{section.title}</h4>
 						<div className="space-y-3">
 							{section.nodes?.map((node) => (
@@ -88,26 +88,26 @@ export function LivePreview({ definition }: { definition: FormDefinition }) {
 
 			{result.warnings.length > 0 && (
 				<div className="rounded-xl border border-amber-400/20 bg-amber-400/10 p-3">
-					<strong className="text-sm text-amber-100">
+					<strong className="text-sm text-warning-fg">
 						هشدار ({result.warnings.length})
 					</strong>
-					<ul className="mt-1 list-disc pr-5 text-sm text-amber-100">
+					<ul className="mt-1 list-disc pr-5 text-sm text-warning-fg">
 						{result.warnings.map((issue, index) => (
 							<li key={index}>{issue.message}</li>
 						))}
 					</ul>
-					<p className="mt-1 text-xs text-amber-100">
+					<p className="mt-1 text-xs text-warning-fg">
 						هشدارها مانع ارسال گزارش نیستند و فقط برای بازبینی هستند.
 					</p>
 				</div>
 			)}
 
-			<div className="rounded-xl border border-white/10 p-3 text-sm">
+			<div className="rounded-xl border border-line p-3 text-sm">
 				<strong>وضعیت: </strong>
 				{result.errors.length === 0 ? (
-					<span className="text-emerald-200">آماده ارسال</span>
+					<span className="text-success-fg">آماده ارسال</span>
 				) : (
-					<span className="text-rose-300">
+					<span className="text-danger-fg">
 						{result.errors.length} خطا باقی مانده است
 					</span>
 				)}
@@ -136,8 +136,8 @@ function PreviewNode({
 
 	if (node.kind === "group") {
 		return (
-			<div className="space-y-3 rounded-lg border border-white/10 p-2">
-				{node.label && <span className="text-xs text-slate-400">{node.label}</span>}
+			<div className="space-y-3 rounded-lg border border-line p-2">
+				{node.label && <span className="text-xs text-fg-muted">{node.label}</span>}
 				{node.children.map((child) => (
 					<PreviewNode
 						key={child.key}
@@ -158,12 +158,12 @@ function PreviewNode({
 			? (answers[node.key] as Array<Record<string, AnswerValue>>)
 			: [];
 		return (
-			<div className="rounded-lg border border-dashed border-white/10 p-2">
+			<div className="rounded-lg border border-dashed border-line p-2">
 				<div className="mb-2 flex items-center justify-between">
 					<span className="text-sm font-medium">{node.label}</span>
 					<button
 						type="button"
-						className="rounded-lg border border-emerald-400/40 px-2 py-1 text-xs text-emerald-200"
+						className="tint-emerald rounded-lg border border-tint-border px-2 py-1 text-xs text-tint-fg"
 						onClick={() =>
 							onChange({ ...answers, [node.key]: [...rows, {}] })
 						}
@@ -172,8 +172,8 @@ function PreviewNode({
 					</button>
 				</div>
 				{rows.map((row, index) => (
-					<div key={index} className="mb-2 rounded-lg bg-white/[.04] p-2">
-						<div className="mb-1 flex items-center justify-between text-xs text-slate-400">
+					<div key={index} className="mb-2 rounded-lg bg-surface-sunken p-2">
+						<div className="mb-1 flex items-center justify-between text-xs text-fg-muted">
 							<span>{node.itemLabel ?? `${node.label} ${index + 1}`}</span>
 							<button
 								type="button"
@@ -222,12 +222,12 @@ function PreviewNode({
 		<div>
 			<label className="mb-1 block text-sm font-medium">{node.label}</label>
 			{node.description && (
-				<p className="mb-1 text-xs text-slate-400">{node.description}</p>
+				<p className="mb-1 text-xs text-fg-muted">{node.description}</p>
 			)}
 
 			{node.type === "textarea" ? (
 				<textarea
-					className="w-full rounded-lg border border-white/10 p-2 text-sm"
+					className="w-full rounded-lg border border-line p-2 text-sm"
 					value={String(value ?? "")}
 					onChange={(event) => onChange({ ...answers, [node.key]: event.target.value })}
 				/>
@@ -264,10 +264,10 @@ function PreviewNode({
 								className={[
 									"rounded-lg border px-3 py-1.5 text-xs",
 									selected
-										? "border-emerald-400/40 bg-emerald-400/10 text-emerald-100"
-										: "border-white/10 hover:bg-white/[.04]",
+										? "tint-emerald border-tint-border bg-tint-soft text-tint-fg"
+										: "border-line hover:bg-surface-sunken",
 									option.tone === "danger" && !selected
-										? "border-rose-400/50 text-rose-300"
+										? "tint-rose border-tint-border text-tint-fg"
 										: "",
 								].join(" ")}
 							>
@@ -277,7 +277,7 @@ function PreviewNode({
 					})}
 				</div>
 			) : node.type === "reference" ? (
-				<p className="text-sm text-slate-400">
+				<p className="text-sm text-fg-muted">
 					گزینه‌ها از مدل «
 					{node.options?.kind === "reference" ? node.options.model : ""}» در سرور خوانده
 					می‌شوند.
@@ -285,7 +285,7 @@ function PreviewNode({
 			) : (
 				<input
 					type={node.type === "number" ? "number" : "text"}
-					className="w-full rounded-lg border border-white/10 p-2 text-sm"
+					className="w-full rounded-lg border border-line p-2 text-sm"
 					value={String(value ?? "")}
 					onChange={(event) => onChange({ ...answers, [node.key]: event.target.value })}
 				/>
@@ -297,7 +297,7 @@ function PreviewNode({
 				</p>
 			))}
 			{warnings.map((issue, index) => (
-				<p key={index} className="mt-1 text-xs text-amber-200">
+				<p key={index} className="mt-1 text-xs text-warning-fg">
 					⚠ {issue.message}
 				</p>
 			))}
@@ -340,7 +340,7 @@ function PreviewField({
 								"rounded border px-2 py-1 text-[11px]",
 								value === option.value
 									? "border-emerald-400/40 bg-emerald-400/10"
-									: "border-white/10",
+									: "border-line",
 							].join(" ")}
 						>
 							{option.label}
@@ -349,7 +349,7 @@ function PreviewField({
 				</div>
 			) : (
 				<input
-					className="w-full rounded border border-white/10 p-1.5 text-xs"
+					className="w-full rounded border border-line p-1.5 text-xs"
 					value={String(value ?? "")}
 					onChange={(event) =>
 						onRowChange({ ...row, [resolved.key]: event.target.value })

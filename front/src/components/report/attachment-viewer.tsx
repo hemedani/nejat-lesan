@@ -103,7 +103,7 @@ export function AttachmentLightbox({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100000] flex items-center justify-center bg-slate-950/70 p-4 pt-14 backdrop-blur-md"
+      className="fixed inset-0 z-[100000] flex items-center justify-center bg-canvas/70 p-4 pt-14 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -115,7 +115,7 @@ export function AttachmentLightbox({
         type="button"
         onClick={onClose}
         aria-label="بستن"
-        className="absolute left-4 top-4 z-[100001] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-slate-200 backdrop-blur-sm transition hover:border-white/30 hover:bg-white/20 hover:text-white"
+        className="absolute left-4 top-4 z-[100001] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-surface-hover text-fg backdrop-blur-sm transition hover:border-line-strong hover:bg-surface-hover hover:text-fg"
       >
         <CloseGlyph />
       </button>
@@ -138,14 +138,14 @@ export function AttachmentLightbox({
           <iframe
             src={url}
             title={file.name}
-            className="h-[70vh] w-full rounded-xl bg-white"
+            className="h-[70vh] w-full rounded-xl bg-surface"
           />
         )}
-        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-slate-300">
+        <div className="mt-3 flex items-center justify-between gap-3 text-xs text-fg-muted">
           <span className="truncate" dir="ltr">
             {file.name}
           </span>
-          <span className="shrink-0 text-slate-500">
+          <span className="shrink-0 text-fg-faint">
             {file.category ?? "—"}
             {file.size != null && ` · ${formatFileSize(file.size)}`}
           </span>
@@ -206,7 +206,7 @@ function FileTile({
       type="button"
       onClick={() => onOpen(file)}
       title={file.name}
-      className="group block cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-white/[.02] transition hover:border-blue-400/40"
+      className="group block cursor-pointer overflow-hidden rounded-xl border border-line bg-surface-sunken transition hover:border-blue-400/40"
     >
       {kind === "image" ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -225,7 +225,7 @@ function FileTile({
           className="h-20 w-28 bg-black object-cover"
         />
       ) : (
-        <div className="flex h-20 w-28 flex-col items-center justify-center gap-1 bg-white/[.04] text-slate-400">
+        <div className="flex h-20 w-28 flex-col items-center justify-center gap-1 bg-surface-sunken text-fg-muted">
           <FileGlyph />
           <span className="text-[9px]">
             {file.size != null ? formatFileSize(file.size) : "سند"}

@@ -35,7 +35,6 @@ export type GeoPolygonDrawerProps = {
   errorMessage?: string;
   label?: string;
   /** رنگ و متن دکمه‌ها — فرم‌های روشنِ قدیمی ظاهر متفاوتی دارند. */
-  tone?: "dark" | "light";
 };
 
 const toLeafletRing = (ring: [number, number][]): [number, number][] =>
@@ -53,27 +52,26 @@ const toGeoJsonRing = (points: LatLng[]): [number, number][] => {
   return ring;
 };
 
-const TONES = {
-  dark: {
-    start: "bg-amber-500 text-slate-900",
-    idle: "bg-slate-700 text-slate-100 hover:bg-slate-600",
-    commit: "bg-emerald-600 text-white hover:bg-emerald-700",
-    cancel: "bg-slate-600 text-white hover:bg-slate-500",
-    clear: "bg-red-600 text-white hover:bg-red-700",
-    label: "text-slate-300",
-    hint: "text-slate-400",
-    draftLine: "#f59e0b",
-  },
-  light: {
-    start: "bg-amber-500 text-gray-900",
-    idle: "bg-gray-200 text-gray-800 hover:bg-gray-300",
-    commit: "bg-emerald-600 text-white hover:bg-emerald-700",
-    cancel: "bg-gray-300 text-gray-800 hover:bg-gray-400",
-    clear: "bg-red-600 text-white hover:bg-red-700",
-    label: "text-gray-700",
-    hint: "text-gray-600",
-    draftLine: "#d97706",
-  },
+/**
+ * Button/chrome classes for the drawing toolbar.
+ *
+ * This used to be a `TONES` table keyed by a `tone` prop, because the legacy
+ * province/city/township forms were light surfaces while every newer surface was
+ * dark. Both surfaces now read tokens, so the two variants differed only in
+ * contrast rather than in theme — and every caller passed `tone="light"`.
+ *
+ * Collapsed to the `light` values on purpose: that is what all six forms were
+ * already rendering, so removing the prop is not allowed to restyle them.
+ */
+const TONE = {
+  start: "bg-amber-500 text-fg",
+  idle: "bg-surface-sunken text-fg hover:bg-line",
+  commit: "bg-emerald-600 text-on-brand hover:bg-emerald-700",
+  cancel: "bg-line text-fg hover:bg-line-strong",
+  clear: "bg-red-600 text-on-brand hover:bg-red-700",
+  label: "text-fg",
+  hint: "text-fg-muted",
+  draftLine: "#d97706",
 } as const;
 
 /**
@@ -94,12 +92,11 @@ export const GeoPolygonDrawer: React.FC<GeoPolygonDrawerProps> = ({
   className,
   errorMessage,
   label = "ترسیم محدوده",
-  tone = "dark",
 }) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [draft, setDraft] = useState<LatLng[]>([]);
 
-  const t = TONES[tone];
+  const t = TONE;
   // `MultiPolygon.coordinates` آرایه‌ی *چندضلعی‌هاست* و هر کدام آرایه‌ای از
   // حلقه‌ها. اینجا فقط یک حلقه پشتیبانی می‌شود، پس هر محدوده یک حلقه دارد.
   const savedPolygons = useMemo(() => value?.coordinates ?? [], [value]);

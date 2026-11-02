@@ -2,7 +2,7 @@ import React from "react";
 
 export const MapFeaturePreview = () => {
   return (
-    <section className="py-24 min-h-screen flex flex-col justify-center bg-slate-900 relative overflow-hidden">
+    <section className="py-24 min-h-screen flex flex-col justify-center bg-surface relative overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/2 start-0 w-full h-full bg-blue-900/10 blur-[150px] -translate-y-1/2 pointer-events-none"></div>
 
@@ -10,7 +10,7 @@ export const MapFeaturePreview = () => {
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           {/* Text Content */}
           <div className="w-full lg:w-1/2 space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand/10 border border-blue-500/20 text-blue-400 text-sm font-medium">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -33,14 +33,14 @@ export const MapFeaturePreview = () => {
               تحلیل دقیق مکانی
             </div>
 
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-fg leading-tight">
               تسلط کامل بر جغرافیا با{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
                 ابزارهای پیشرفته نقشه
               </span>
             </h2>
 
-            <p className="text-lg text-slate-300 leading-relaxed">
+            <p className="text-lg text-fg-muted leading-relaxed">
               سامانه مرصاد با ارائه یک نقشه تعاملی قدرتمند، به شما اجازه می‌دهد تا داده‌های تصادفات را
               با دقت بالا فیلتر و بررسی کنید. از انتخاب سلسله‌مراتبی مناطق تا رسم آزادانه روی نقشه، همه
               چیز برای تحلیل دقیق فراهم است.
@@ -49,7 +49,7 @@ export const MapFeaturePreview = () => {
             <div className="space-y-6 pt-4">
               {/* Feature 1 */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-blue-400">
+                <div className="w-12 h-12 rounded-xl bg-surface-hover border border-line flex items-center justify-center shrink-0 text-blue-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -66,8 +66,8 @@ export const MapFeaturePreview = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">سازمان‌دهی سلسله‌مراتبی</h3>
-                  <p className="text-slate-400 leading-relaxed">
+                  <h3 className="text-xl font-semibold text-fg mb-2">سازمان‌دهی سلسله‌مراتبی</h3>
+                  <p className="text-fg-muted leading-relaxed">
                     فیلتر داده‌ها بر اساس استان، شهرستان، شهر، منطقه شهرداری و حتی محورهای مواصلاتی خاص
                     برای رسیدن به دقیق‌ترین نتایج.
                   </p>
@@ -76,7 +76,7 @@ export const MapFeaturePreview = () => {
 
               {/* Feature 2 */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-cyan-400">
+                <div className="w-12 h-12 rounded-xl bg-surface-hover border border-line flex items-center justify-center shrink-0 text-cyan-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -93,10 +93,10 @@ export const MapFeaturePreview = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
+                  <h3 className="text-xl font-semibold text-fg mb-2">
                     انتخاب محدوده با رسم چندضلعی (Polygon)
                   </h3>
-                  <p className="text-slate-400 leading-relaxed">
+                  <p className="text-fg-muted leading-relaxed">
                     با ابزار رسم پیشرفته، محدوده دلخواه خود را به صورت آزادانه روی نقشه مشخص کنید تا
                     تنها تصادفات همان ناحیه تحلیل شوند.
                   </p>
@@ -107,7 +107,7 @@ export const MapFeaturePreview = () => {
 
           {/* Visual Content */}
           <div className="w-full lg:w-1/2">
-            <div className="relative w-full aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-slate-800/80 backdrop-blur-xl shadow-2xl group">
+            <div className="relative w-full aspect-square sm:aspect-[4/3] rounded-3xl overflow-hidden border border-line bg-surface-sunken/80 backdrop-blur-xl shadow-2xl group">
               {/* Map Background Pattern */}
               <div className="absolute inset-0 bg-[#0f172a]">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-40"></div>
@@ -177,14 +177,14 @@ export const MapFeaturePreview = () => {
               ></div>
 
               {/* Markers Outside Polygon (Dimmed) */}
-              <div className="absolute top-[20%] start-[20%] w-2 h-2 bg-slate-500 rounded-full opacity-50 z-10"></div>
-              <div className="absolute top-[70%] start-[80%] w-2 h-2 bg-slate-500 rounded-full opacity-50 z-10"></div>
-              <div className="absolute top-[80%] start-[30%] w-2 h-2 bg-slate-500 rounded-full opacity-50 z-10"></div>
+              <div className="absolute top-[20%] start-[20%] w-2 h-2 bg-line-strong rounded-full opacity-50 z-10"></div>
+              <div className="absolute top-[70%] start-[80%] w-2 h-2 bg-line-strong rounded-full opacity-50 z-10"></div>
+              <div className="absolute top-[80%] start-[30%] w-2 h-2 bg-line-strong rounded-full opacity-50 z-10"></div>
 
               {/* Leaflet-like Controls Mockup */}
               <div className="absolute top-4 end-4 flex flex-col gap-2 z-30">
-                <div className="bg-slate-800/90 border border-white/10 rounded-lg backdrop-blur-md overflow-hidden shadow-lg">
-                  <div className="w-8 h-8 flex items-center justify-center border-b border-white/10 text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer transition-colors">
+                <div className="bg-surface-sunken/90 border border-line rounded-lg backdrop-blur-md overflow-hidden shadow-lg">
+                  <div className="w-8 h-8 flex items-center justify-center border-b border-line text-fg-muted hover:text-fg hover:bg-surface-hover cursor-pointer transition-colors">
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -195,7 +195,7 @@ export const MapFeaturePreview = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <div className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer transition-colors">
+                  <div className="w-8 h-8 flex items-center justify-center text-fg-muted hover:text-fg hover:bg-surface-hover cursor-pointer transition-colors">
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -207,8 +207,8 @@ export const MapFeaturePreview = () => {
                     </svg>
                   </div>
                 </div>
-                <div className="bg-slate-800/90 border border-white/10 rounded-lg backdrop-blur-md overflow-hidden shadow-lg">
-                  <div className="w-8 h-8 flex items-center justify-center text-blue-400 bg-blue-500/10 cursor-pointer">
+                <div className="bg-surface-sunken/90 border border-line rounded-lg backdrop-blur-md overflow-hidden shadow-lg">
+                  <div className="w-8 h-8 flex items-center justify-center text-blue-400 bg-brand/10 cursor-pointer">
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -227,20 +227,20 @@ export const MapFeaturePreview = () => {
               </div>
 
               {/* Floating Info Card */}
-              <div className="absolute bottom-6 start-6 end-6 sm:end-auto sm:w-64 bg-slate-800/90 border border-white/10 rounded-xl p-4 backdrop-blur-md shadow-2xl z-30 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+              <div className="absolute bottom-6 start-6 end-6 sm:end-auto sm:w-64 bg-surface-sunken/90 border border-line rounded-xl p-4 backdrop-blur-md shadow-2xl z-30 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                  <span className="text-sm font-medium text-white">محدوده انتخاب شده</span>
+                  <span className="text-sm font-medium text-fg">محدوده انتخاب شده</span>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-400">مساحت:</span>
-                    <span className="text-blue-300 font-mono" dir="ltr">
+                    <span className="text-fg-muted">مساحت:</span>
+                    <span className="text-brand-fg font-mono" dir="ltr">
                       12.5 km²
                     </span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-400">تعداد تصادفات:</span>
+                    <span className="text-fg-muted">تعداد تصادفات:</span>
                     <span className="text-red-400 font-mono">۴ مورد</span>
                   </div>
                 </div>

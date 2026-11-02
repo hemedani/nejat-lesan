@@ -76,16 +76,16 @@ export function BindingEditor({
 		: binding.path;
 
 	return (
-		<div className="rounded-lg border border-white/10 bg-white/[.04] p-3">
+		<div className="rounded-lg border border-line bg-surface-sunken p-3">
 			<p className="text-sm font-medium">ذخیره پاسخ در</p>
-			<p className="mt-1 mb-2 text-xs text-slate-400">
+			<p className="mt-1 mb-2 text-xs text-fg-muted">
 				محل ذخیرهٔ پاسخ این پرسش در مدل «
 				{FORM_KIND_LABELS[formKind]}» تعیین می‌کند. بدون اتصال، پاسخ فقط
 				به‌صورت متن آزاد ذخیره می‌شود و در تحلیل‌ها قابل استفاده نیست.
 			</p>
 
 			<select
-				className="w-full rounded-lg border border-white/10 bg-white/[.04] p-2 text-sm"
+				className="w-full rounded-lg border border-line bg-surface-sunken p-2 text-sm"
 				value={selectedPath ?? ""}
 				disabled={loading}
 				onChange={(event) => {
@@ -128,9 +128,9 @@ export function BindingEditor({
 			</select>
 
 			{binding?.kind === "relation" && (
-				<p className="mt-2 text-[11px] text-slate-400">
+				<p className="mt-2 text-[11px] text-fg-muted">
 					کلید ارسالی:{" "}
-					<code className="rounded bg-white/[.06] px-1">
+					<code className="rounded bg-surface-hover px-1">
 						{relationSetKeyFor(binding.path, binding.multi)}
 					</code>
 				</p>

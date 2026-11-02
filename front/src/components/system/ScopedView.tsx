@@ -31,7 +31,7 @@ export function ScopedView({
 
   if (require === "org" && !orgId) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-10 text-center text-sm text-slate-500">
+      <div className="rounded-2xl border border-dashed border-line-strong bg-surface-sunken p-10 text-center text-sm text-fg-faint">
         سازمانی برای نمایش وجود ندارد.
       </div>
     );
@@ -39,7 +39,7 @@ export function ScopedView({
 
   if (require === "unit" && (!unitId || !orgId)) {
     return (
-      <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-10 text-center text-sm text-slate-500">
+      <div className="rounded-2xl border border-dashed border-line-strong bg-surface-sunken p-10 text-center text-sm text-fg-faint">
         واحدی به حساب شما متصل نیست. برای دسترسی به این بخش، عضویت شما در یک واحد باید توسط سرپرست سازمان ثبت شود.
       </div>
     );

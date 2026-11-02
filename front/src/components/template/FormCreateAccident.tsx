@@ -53,6 +53,7 @@ import { gets as getFaultStatuses } from "@/app/actions/fault_status/gets";
 import { gets as getMotionDirections } from "@/app/actions/motion_direction/gets";
 import { gets as getSystems } from "@/app/actions/system/gets";
 import { gets as getSystemTypes } from "@/app/actions/system_type/gets";
+import { useSelectStyles } from "@/utils/select-styles";
 
 // Dynamic imports for map components
 const MapContainer = dynamic(
@@ -129,9 +130,10 @@ const MySingleSelect = dynamic(
         errMsg?: string;
         placeholder?: string;
       }) {
+        const selectStyles = useSelectStyles(undefined, { minHeight: "48px", rtl: true });
         return (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-700 text-right">
+            <label className="text-sm font-medium text-fg-muted text-right">
               {label}
             </label>
             <AsyncSelect
@@ -146,24 +148,7 @@ const MySingleSelect = dynamic(
               loadingMessage={() => "در حال بارگذاری..."}
               isClearable
               isRtl
-              styles={{
-                control: (provided: CSSObjectWithLabel) => ({
-                  ...provided,
-                  minHeight: "48px",
-                  borderRadius: "12px",
-                  borderColor: errMsg ? "#ef4444" : "#cbd5e1",
-                  direction: "rtl",
-                }),
-                option: (provided: CSSObjectWithLabel) => ({
-                  ...provided,
-                  direction: "rtl",
-                  textAlign: "right",
-                }),
-                singleValue: (provided: CSSObjectWithLabel) => ({
-                  ...provided,
-                  direction: "rtl",
-                }),
-              }}
+              styles={selectStyles}
             />
             {errMsg && (
               <span className="text-red-500 text-xs font-medium text-right mt-1">
@@ -1225,18 +1210,18 @@ const FormCreateAccident = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="max-w-6xl mx-auto p-6 bg-surface rounded-lg shadow-lg">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+        <h1 className="text-3xl font-bold text-fg mb-2">
           افزودن حادثه جدید
         </h1>
-        <p className="text-gray-600">اطلاعات کامل حادثه را وارد کنید</p>
+        <p className="text-fg-muted">اطلاعات کامل حادثه را وارد کنید</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Basic Information */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        <div className="bg-canvas p-6 rounded-lg">
+          <h2 className="text-xl font-semibold text-fg mb-4">
             اطلاعات پایه
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1285,8 +1270,8 @@ const FormCreateAccident = () => {
         </div>
 
         {/* Date Information */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        <div className="bg-canvas p-6 rounded-lg">
+          <h2 className="text-xl font-semibold text-fg mb-4">
             اطلاعات تاریخ
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1306,8 +1291,8 @@ const FormCreateAccident = () => {
         </div>
 
         {/* Location Information */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        <div className="bg-canvas p-6 rounded-lg">
+          <h2 className="text-xl font-semibold text-fg mb-4">
             اطلاعات مکان
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1376,10 +1361,10 @@ const FormCreateAccident = () => {
 
             {/* Map Display */}
             <div className="h-96">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">
+              <h3 className="text-lg font-medium text-fg mb-2">
                 موقعیت در نقشه
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-fg-muted mb-4">
                 مارکر را بکشید تا موقعیت حادثه را تنظیم کنید یا مختصات را با
                 اعداد فارسی وارد کنید
               </p>
@@ -1409,8 +1394,8 @@ const FormCreateAccident = () => {
         </div>
 
         {/* Road and Environment Conditions */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        <div className="bg-canvas p-6 rounded-lg">
+          <h2 className="text-xl font-semibold text-fg mb-4">
             شرایط جاده و محیط
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1482,8 +1467,8 @@ const FormCreateAccident = () => {
         </div>
 
         {/* Accident Details */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        <div className="bg-canvas p-6 rounded-lg">
+          <h2 className="text-xl font-semibold text-fg mb-4">
             جزئیات حادثه
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1548,11 +1533,11 @@ const FormCreateAccident = () => {
                 type="checkbox"
                 id="has_witness"
                 {...register("has_witness")}
-                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-brand-fg bg-surface-sunken border-line-strong rounded focus:ring-brand"
               />
               <label
                 htmlFor="has_witness"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-fg"
               >
                 شاهد دارد
               </label>
@@ -1561,15 +1546,15 @@ const FormCreateAccident = () => {
         </div>
 
         {/* Vehicle Information */}
-        <div className="bg-gray-50 p-6 rounded-lg">
+        <div className="bg-canvas p-6 rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-700">
+            <h2 className="text-xl font-semibold text-fg">
               اطلاعات وسایل نقلیه
             </h2>
             <button
               type="button"
               onClick={addVehicle}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-green-600 hover:bg-green-700 text-on-brand px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <svg
                 className="w-4 h-4"
@@ -1590,16 +1575,16 @@ const FormCreateAccident = () => {
           {vehicleFields.map((field, index) => (
             <div
               key={field.id}
-              className="border border-gray-200 rounded-lg p-4 mb-4 bg-white"
+              className="border border-line rounded-lg p-4 mb-4 bg-surface"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-700">
+                <h3 className="text-lg font-medium text-fg">
                   وسیله نقلیه {index + 1}
                 </h3>
                 <button
                   type="button"
                   onClick={() => removeVehicle(index)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                  className="bg-red-600 hover:bg-red-700 text-on-brand px-3 py-1 rounded text-sm transition-colors"
                 >
                   حذف
                 </button>
@@ -1700,7 +1685,7 @@ const FormCreateAccident = () => {
 
               {/* Driver Information */}
               <div className="border-t pt-4">
-                <h4 className="text-md font-medium text-gray-700 mb-3">
+                <h4 className="text-md font-medium text-fg mb-3">
                   اطلاعات راننده
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1760,15 +1745,15 @@ const FormCreateAccident = () => {
         </div>
 
         {/* Pedestrian Information */}
-        <div className="bg-gray-50 p-6 rounded-lg">
+        <div className="bg-canvas p-6 rounded-lg">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-700">
+            <h2 className="text-xl font-semibold text-fg">
               اطلاعات عابران پیاده
             </h2>
             <button
               type="button"
               onClick={addPedestrian}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-green-600 hover:bg-green-700 text-on-brand px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <svg
                 className="w-4 h-4"
@@ -1789,16 +1774,16 @@ const FormCreateAccident = () => {
           {pedestrianFields.map((field, index) => (
             <div
               key={field.id}
-              className="border border-gray-200 rounded-lg p-4 mb-4 bg-white"
+              className="border border-line rounded-lg p-4 mb-4 bg-surface"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-700">
+                <h3 className="text-lg font-medium text-fg">
                   عابر پیاده {index + 1}
                 </h3>
                 <button
                   type="button"
                   onClick={() => removePedestrian(index)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                  className="bg-red-600 hover:bg-red-700 text-on-brand px-3 py-1 rounded text-sm transition-colors"
                 >
                   حذف
                 </button>
@@ -1854,14 +1839,14 @@ const FormCreateAccident = () => {
           <button
             type="button"
             onClick={() => router.push("/admin/accident")}
-            className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="px-6 py-3 bg-line-strong text-fg rounded-lg hover:bg-surface-hover transition-colors"
           >
             انصراف
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-brand text-on-brand rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "در حال ارسال..." : "ثبت حادثه"}
           </button>

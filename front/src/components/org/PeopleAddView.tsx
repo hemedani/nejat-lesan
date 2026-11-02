@@ -174,14 +174,14 @@ export function PeopleAddView({ orgId }: { orgId: string }) {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-5">
-        <p className="text-sm text-blue-300">افراد و نقش‌ها</p>
-        <h1 className="mt-1 text-2xl font-bold text-white">افزودن فرد جدید</h1>
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="text-sm text-brand-fg">افراد و نقش‌ها</p>
+        <h1 className="mt-1 text-2xl font-bold text-fg">افزودن فرد جدید</h1>
+        <p className="mt-2 text-sm text-fg-faint">
           با انتخاب سطح دسترسی، نقش سازمانی (سرپرست/مامور) به‌صورت خودکار بر پایه سازمان/واحد ساخته می‌شود.
         </p>
       </div>
 
-      <div className="space-y-5 rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl">
+      <div className="space-y-5 rounded-2xl border border-line bg-surface/70 p-5 shadow-xl">
         <div className="grid gap-4 sm:grid-cols-2">
           <MyInput label="نام" value={firstName} onValueChange={setFirstName} errMsg={fieldErrors.first_name} />
           <MyInput label="نام خانوادگی" value={lastName} onValueChange={setLastName} errMsg={fieldErrors.last_name} />
@@ -196,7 +196,7 @@ export function PeopleAddView({ orgId }: { orgId: string }) {
         </div>
 
         {level === "OrgHead" && (
-          <div className="rounded-xl border border-violet-400/20 bg-violet-400/10 px-3 py-3 text-xs text-violet-100">
+          <div className="tint-violet rounded-xl border border-tint-border bg-tint-soft px-3 py-3 text-xs text-tint-fg">
             این فرد به‌عنوان «سرپرست سازمان» در همین سازمان ثبت می‌شود.
           </div>
         )}
@@ -213,8 +213,8 @@ export function PeopleAddView({ orgId }: { orgId: string }) {
           </div>
         )}
 
-        {formError && <p className="rounded-xl border border-rose-400/25 bg-rose-400/10 px-3 py-2 text-xs text-rose-200">{formError}</p>}
-        <div className="flex justify-end gap-2 border-t border-white/10 pt-4">
+        {formError && <p className="tint-rose rounded-xl border border-tint-border bg-tint-soft px-3 py-2 text-xs text-tint-fg">{formError}</p>}
+        <div className="flex justify-end gap-2 border-t border-line pt-4">
           <Button variant="neutral" onClick={() => router.push(orgRoutes.people())}>انصراف</Button>
           <Button onClick={() => void handleSubmit()} loading={submitting} disabled={submitting}>
             {submitting ? "در حال ثبت..." : "ثبت فرد"}

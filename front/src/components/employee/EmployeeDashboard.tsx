@@ -115,16 +115,16 @@ export function EmployeeDashboard({
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-white/10 bg-gradient-to-l from-blue-950/70 via-slate-900 to-slate-900 p-5 shadow-xl sm:p-6">
-        <p className="text-sm text-blue-300">پنل کارمند</p>
-        <h1 className="mt-1 text-2xl font-bold text-white">خوش آمدید، {name}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+      <div className="rounded-2xl border border-line [background-image:var(--hero-gradient)] p-5 shadow-xl sm:p-6">
+        <p className="text-sm text-brand-fg">پنل کارمند</p>
+        <h1 className="mt-1 text-2xl font-bold text-fg">خوش آمدید، {name}</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-fg-muted">
           از این پنل به انبار واحد خود دسترسی دارید و می‌توانید مصرف ثبت کنید،
           درخواست کالا بدهید و در صورت داشتن نقش گشت، رخدادهای خود را پیگیری کنید.
         </p>
 
         {unit && (
-          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-fg-muted">
             {unit.type && (
               <span
                 className={`rounded-full border px-2.5 py-1 ${
@@ -135,15 +135,15 @@ export function EmployeeDashboard({
               </span>
             )}
             <span>
-              واحد: <span className="text-slate-200">{unit.name || "—"}</span>
+              واحد: <span className="text-fg">{unit.name || "—"}</span>
             </span>
             <span>
-              سازمان: <span className="text-slate-200">{unit.organization?.name || "—"}</span>
+              سازمان: <span className="text-fg">{unit.organization?.name || "—"}</span>
             </span>
             {unit.head && (
               <span>
                 سرپرست واحد:{" "}
-                <span className="text-slate-200">
+                <span className="text-fg">
                   {`${unit.head.first_name || ""} ${unit.head.last_name || ""}`.trim() || "—"}
                 </span>
               </span>
@@ -157,7 +157,7 @@ export function EmployeeDashboard({
           <>
             <Link
               href={employeeRoutes.warehouse()}
-              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-blue-500"
+              className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-[0_0_20px_rgba(37,99,235,.18)] transition hover:bg-brand-hover"
             >
               انبار واحد من
             </Link>
@@ -167,19 +167,19 @@ export function EmployeeDashboard({
           <>
             <Link
               href={employeeRoutes.reports()}
-              className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+              className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm font-semibold text-fg transition hover:bg-surface-hover"
             >
               رخدادهای من
             </Link>
             <Link
               href={employeeRoutes.map()}
-              className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+              className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm font-semibold text-fg transition hover:bg-surface-hover"
             >
               نقشه حوادث
             </Link>
             <Link
               href={employeeRoutes.announcements()}
-              className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+              className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm font-semibold text-fg transition hover:bg-surface-hover"
             >
               اطلاعیه‌ها
             </Link>
@@ -202,7 +202,7 @@ export function EmployeeDashboard({
       )}
 
       {!warehouseOn && !(patrolOn && isPatrol) && (
-        <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-6 text-sm leading-6 text-amber-100">
+        <div className="tint-amber rounded-2xl border border-tint-border bg-tint-soft p-6 text-sm leading-6 text-tint-fg">
           هیچ ماژولی برای این سازمان فعال نیست. برای فعال‌سازی انبار یا ماژول گشت با
           سرپرست سازمان تماس بگیرید.
         </div>
@@ -221,14 +221,14 @@ function Stat({
   tone?: "slate" | "amber" | "blue";
 }) {
   const tones = {
-    slate: "text-white",
-    amber: "text-amber-200",
-    blue: "text-blue-200",
+    slate: "text-fg",
+    amber: "text-warning-fg",
+    blue: "text-brand-fg",
   } as const;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/75 p-5 shadow-xl">
-      <p className="text-xs text-slate-500">{label}</p>
+    <div className="rounded-2xl border border-line bg-surface/75 p-5 shadow-xl">
+      <p className="text-xs text-fg-faint">{label}</p>
       <p className={`mt-2 text-2xl font-bold ${tones[tone]}`}>
         {value === null ? "—" : value.toLocaleString("fa-IR")}
       </p>

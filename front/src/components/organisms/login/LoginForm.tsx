@@ -131,20 +131,20 @@ const LoginForm = () => {
   };
 
   const inputBaseClass = (hasError?: string) => `
-    w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border text-white placeholder:text-slate-500 text-left
+    w-full pl-12 pr-4 py-3.5 rounded-xl bg-surface-hover border text-fg placeholder:text-fg-faint text-left
     transition-all duration-200
     focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-blue-500
     ${
       hasError
         ? "border-red-500/50 bg-red-500/5 focus:ring-red-500/40"
-        : "border-white/10 focus:ring-blue-500/40 hover:border-white/20"
+        : "border-line focus:ring-brand/40 hover:border-line-strong"
     }
   `;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       {formError && (
-        <div className="flex items-start gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm animate-fade-in">
+        <div className="tint-red flex items-start gap-2 px-4 py-3 rounded-xl bg-tint-soft border border-tint-border text-tint-fg text-sm animate-fade-in">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -164,7 +164,7 @@ const LoginForm = () => {
       )}
 
       <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-slate-300">
+        <label htmlFor="email" className="block text-sm font-medium text-fg-muted">
           ایمیل
         </label>
         <div className="relative">
@@ -174,7 +174,7 @@ const LoginForm = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-fg-faint"
           >
             <path
               strokeLinecap="round"
@@ -197,7 +197,7 @@ const LoginForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="password" className="block text-sm font-medium text-slate-300">
+        <label htmlFor="password" className="block text-sm font-medium text-fg-muted">
           رمز عبور
         </label>
         <div className="relative">
@@ -207,7 +207,7 @@ const LoginForm = () => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-fg-faint"
           >
             <path
               strokeLinecap="round"
@@ -228,7 +228,7 @@ const LoginForm = () => {
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-fg-muted hover:text-fg transition-colors"
             aria-label={showPassword ? "پنهان کردن رمز عبور" : "نمایش رمز عبور"}
           >
             {showPassword ? (
@@ -275,7 +275,7 @@ const LoginForm = () => {
       <button
         type="submit"
         disabled={isLoading || lockoutMinutes !== null}
-        className="group relative w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800/60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] overflow-hidden"
+        className="group relative w-full inline-flex items-center justify-center gap-2 bg-brand hover:bg-brand-hover disabled:bg-blue-800/60 disabled:cursor-not-allowed text-on-brand px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] overflow-hidden"
       >
         <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
         {isLoading ? (

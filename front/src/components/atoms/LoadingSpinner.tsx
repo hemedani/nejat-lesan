@@ -10,7 +10,7 @@ const LoadingSpinner = ({ className = "", size = "md" }: LoadingSpinnerProps) =>
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <div
-        className={`${SIZES[size]} rounded-full border-white/10 border-t-blue-400 animate-spin`}
+        className={`${SIZES[size]} rounded-full border-line border-t-blue-400 animate-spin`}
       />
       <span className="sr-only">در حال بارگذاری...</span>
     </div>

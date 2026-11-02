@@ -17,10 +17,10 @@ const FormComponent = async ({
       {foundedUser.success ? (
         <div className="p-6 min-h-full">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-700">ویرایش «{foundedUser.body.first_name} {foundedUser.body.last_name}»</h1>
+            <h1 className="text-2xl font-bold text-fg">ویرایش «{foundedUser.body.first_name} {foundedUser.body.last_name}»</h1>
             <Link
               href="/admin/users"
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 bg-surface-hover text-fg rounded-lg hover:bg-surface-sunken transition-colors"
             >
               بازگشت به لیست
             </Link>
@@ -33,7 +33,7 @@ const FormComponent = async ({
 
           <Link
             href="/admin/users"
-            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            className="px-6 py-3 bg-brand text-on-brand rounded-md hover:bg-brand-hover transition"
           >
             بازگشت
           </Link>

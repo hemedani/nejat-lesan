@@ -20,19 +20,19 @@ export function FacilityDamageSection({
   if (!damages?.length) return null;
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
       <SectionTitle count={damages.length}>خسارت به تأسیسات</SectionTitle>
       <div className="space-y-2.5">
         {damages.map((damage, index) => (
           <article
             key={`${damage.asset_group?.name ?? "asset"}-${index}`}
-            className="rounded-xl border border-white/10 bg-white/[.02] p-3"
+            className="rounded-xl border border-line bg-surface-sunken p-3"
           >
             <header className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-slate-100">
+              <span className="text-xs font-semibold text-fg">
                 {damage.asset_group?.name ?? "تأسیسات نامشخص"}
                 {damage.asset_code && (
-                  <span className="mr-1.5 font-normal text-slate-500" dir="ltr">
+                  <span className="mr-1.5 font-normal text-fg-faint" dir="ltr">
                     {damage.asset_code}
                   </span>
                 )}

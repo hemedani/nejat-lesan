@@ -219,18 +219,18 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold text-white">{unit.name}</h1>
+            <h1 className="text-2xl font-bold text-fg">{unit.name}</h1>
             <span className={`rounded-full border px-2.5 py-1 text-[11px] ${UNIT_TYPE_TONES[unit.type] || UNIT_TYPE_TONES.General}`}>
               {UNIT_TYPE_LABELS[unit.type] || unit.type}
             </span>
-            <span className={`rounded-full border px-2 py-0.5 text-[11px] ${unit.is_active ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-200" : "border-rose-400/25 bg-rose-400/10 text-rose-200"}`}>
+            <span className={`tint-rose tint-emerald rounded-full border px-2 py-0.5 text-[11px] ${unit.is_active ? "border-tint-border bg-tint-soft text-tint-fg" : "border-tint-border bg-tint-soft text-tint-fg"}`}>
               {unit.is_active ? "فعال" : "غیرفعال"}
             </span>
           </div>
-          <p className="mt-2 text-sm text-slate-500" dir="ltr">{unit.code}</p>
+          <p className="mt-2 text-sm text-fg-faint" dir="ltr">{unit.code}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={orgRoutes.orgChart()} className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10">نمودار</Link>
+          <Link href={orgRoutes.orgChart()} className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2 text-sm text-fg transition hover:bg-surface-hover">نمودار</Link>
           <Button variant="danger" onClick={() => void handleDelete()}>حذف واحد</Button>
         </div>
       </div>
@@ -253,8 +253,8 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
         <div className="mt-4">
           <MyInput label="توضیحات" type="textarea" value={unit.description || ""} onValueChange={(v) => setUnit({ ...unit, description: v })} />
         </div>
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
-          <span className="text-sm text-slate-300">واحد فعال باشد</span>
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-line bg-surface-sunken px-3 py-3">
+          <span className="text-sm text-fg-muted">واحد فعال باشد</span>
           <ToggleSwitch checked={!!unit.is_active} onChange={(v) => setUnit({ ...unit, is_active: v })} />
         </div>
         <div className="mt-4 flex justify-end">
@@ -264,9 +264,9 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
 
       <PanelCard title="ارتباطات (سازمان، واحد بالادست، سرپرست)">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-white/10 bg-white/[.02] px-3 py-3 text-sm">
-            <p className="text-xs text-slate-500">سازمان / آزادراه</p>
-            <p className="mt-1 text-slate-200">{unit.organization?.name || "—"}</p>
+          <div className="rounded-xl border border-line bg-surface-sunken px-3 py-3 text-sm">
+            <p className="text-xs text-fg-faint">سازمان / آزادراه</p>
+            <p className="mt-1 text-fg">{unit.organization?.name || "—"}</p>
           </div>
           <OrgSelect
             label="زیرمجموعه (واحد بالادست)"
@@ -284,7 +284,7 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
             options={officerOptions.length ? officerOptions : []}
             placeholder={unit.head ? `${unit.head.first_name || ""} ${unit.head.last_name || ""}`.trim() || unit.head._id : "سرپرستی انتخاب نشده"}
           />
-          {officerOptions.length === 0 && <p className="mt-1 text-xs text-slate-500">مأمور فعال دیگری برای انتصاب یافت نشد.</p>}
+          {officerOptions.length === 0 && <p className="mt-1 text-xs text-fg-faint">مأمور فعال دیگری برای انتصاب یافت نشد.</p>}
         </div>
         <div className="mt-4 flex justify-end">
           <Button onClick={() => void saveRelations()} loading={pureBusy} disabled={pureBusy}>ذخیره ارتباطات</Button>
@@ -295,10 +295,10 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
         {officers.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {officers.map((o) => (
-              <div key={o._id} className="flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-xs text-slate-200">
+              <div key={o._id} className="flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-xs text-fg">
                 <span className="font-medium">{`${o.first_name || ""} ${o.last_name || ""}`.trim() || "مأمور"}</span>
-                {o.personnel_code && <span className="text-slate-500" dir="ltr">{o.personnel_code}</span>}
-                <button className="text-rose-300 transition hover:text-rose-200" disabled={membersBusy} onClick={() => void applyOfficers([], [o._id])} aria-label="حذف عضو">
+                {o.personnel_code && <span className="text-fg-faint" dir="ltr">{o.personnel_code}</span>}
+                <button className="text-danger-fg transition hover:underline" disabled={membersBusy} onClick={() => void applyOfficers([], [o._id])} aria-label="حذف عضو">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d="M6 18 18 6M6 6l12 12" /></svg>
                 </button>
               </div>
@@ -306,16 +306,16 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
           </div>
         )}
         {availableOfficers.length > 0 && (
-          <div className="rounded-xl border border-white/10 bg-white/[.02] p-3">
-            <p className="mb-2 text-xs text-slate-400">انتخاب مأموران برای افزودن</p>
+          <div className="rounded-xl border border-line bg-surface-sunken p-3">
+            <p className="mb-2 text-xs text-fg-muted">انتخاب مأموران برای افزودن</p>
             <div className="flex flex-wrap gap-2">
               {availableOfficers.map((o) => {
                 const checked = selectedOfficers.includes(o._id);
                 return (
-                  <label key={o._id} className="flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/5" style={{ borderColor: checked ? "rgba(96,165,250,.5)" : "rgba(255,255,255,.1)" }}>
+                  <label key={o._id} className="flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs text-fg-muted transition hover:bg-surface-hover" style={{ borderColor: checked ? "rgba(96,165,250,.5)" : "rgba(255,255,255,.1)" }}>
                     <input type="checkbox" className="accent-blue-500" checked={checked} onChange={() => setSelectedOfficers((prev) => (checked ? prev.filter((id) => id !== o._id) : [...prev, o._id]))} />
                     {`${o.first_name || ""} ${o.last_name || ""}`.trim() || o._id}
-                    {o.personnel_code && <span className="text-slate-500" dir="ltr">{o.personnel_code}</span>}
+                    {o.personnel_code && <span className="text-fg-faint" dir="ltr">{o.personnel_code}</span>}
                   </label>
                 );
               })}
@@ -333,10 +333,10 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
         {vehicles.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
             {vehicles.map((v) => (
-              <div key={v._id} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.03] px-3 py-2 text-xs text-slate-200">
+              <div key={v._id} className="flex items-center gap-2 rounded-xl border border-line bg-surface-sunken px-3 py-2 text-xs text-fg">
                 <span className="font-mono" dir="ltr">{v.plaque_no || "—"}</span>
-                {v.title && <span className="text-slate-500">{v.title}</span>}
-                <button className="text-rose-300 transition hover:text-rose-200" disabled={membersBusy} onClick={() => void applyVehicles([], [v._id])} aria-label="حذف خودرو">
+                {v.title && <span className="text-fg-faint">{v.title}</span>}
+                <button className="text-danger-fg transition hover:underline" disabled={membersBusy} onClick={() => void applyVehicles([], [v._id])} aria-label="حذف خودرو">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d="M6 18 18 6M6 6l12 12" /></svg>
                 </button>
               </div>
@@ -344,16 +344,16 @@ export function UnitDetailView({ orgId, unitId }: { orgId: string; unitId: strin
           </div>
         )}
         {availableVehicles.length > 0 && (
-          <div className="rounded-xl border border-white/10 bg-white/[.02] p-3">
-            <p className="mb-2 text-xs text-slate-400">انتخاب خودرو برای افزودن</p>
+          <div className="rounded-xl border border-line bg-surface-sunken p-3">
+            <p className="mb-2 text-xs text-fg-muted">انتخاب خودرو برای افزودن</p>
             <div className="flex flex-wrap gap-2">
               {availableVehicles.map((v) => {
                 const checked = selectedVehicles.includes(v._id);
                 return (
-                  <label key={v._id} className="flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/5" style={{ borderColor: checked ? "rgba(96,165,250,.5)" : "rgba(255,255,255,.1)" }}>
+                  <label key={v._id} className="flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs text-fg-muted transition hover:bg-surface-hover" style={{ borderColor: checked ? "rgba(96,165,250,.5)" : "rgba(255,255,255,.1)" }}>
                     <input type="checkbox" className="accent-blue-500" checked={checked} onChange={() => setSelectedVehicles((prev) => (checked ? prev.filter((id) => id !== v._id) : [...prev, v._id]))} />
                     <span className="font-mono" dir="ltr">{v.plaque_no || v._id}</span>
-                    {v.title && <span className="text-slate-500">{v.title}</span>}
+                    {v.title && <span className="text-fg-faint">{v.title}</span>}
                   </label>
                 );
               })}

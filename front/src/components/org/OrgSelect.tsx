@@ -73,11 +73,11 @@ export function ModalShell({
   children: ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm" dir="rtl">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-canvas/70 p-4 backdrop-blur-sm" dir="rtl">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-line bg-surface p-6 shadow-2xl">
         <div className="mb-5 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-          <button onClick={onClose} className="rounded-lg p-1 text-slate-400 transition hover:bg-white/5 hover:text-white" aria-label="بستن">
+          <h3 className="text-lg font-bold text-fg">{title}</h3>
+          <button onClick={onClose} className="rounded-lg p-1 text-fg-muted transition hover:bg-surface-hover hover:text-fg" aria-label="بستن">
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d="M6 18 18 6M6 6l12 12" /></svg>
           </button>
         </div>

@@ -270,7 +270,7 @@ const VehicleReasonAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="overall" />
 
@@ -296,8 +296,8 @@ const VehicleReasonAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">تحلیل عوامل فنی وسایل نقلیه</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">تحلیل عوامل فنی وسایل نقلیه</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   نمایش توزیع عوامل فنی مؤثر در وقوع تصادفات به صورت نمودار قطبی (Polar)
                 </p>
               </div>
@@ -305,7 +305,7 @@ const VehicleReasonAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -342,7 +342,7 @@ const VehicleReasonAnalyticsPage = () => {
                       setChartData(null);
                       handleLoadData();
                     }}
-                    className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+                    className="flex items-center gap-2 bg-yellow-500 text-fg px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -381,7 +381,7 @@ const VehicleReasonAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -406,35 +406,35 @@ const VehicleReasonAnalyticsPage = () => {
           <div className="space-y-6">
             {/* Error Display */}
             {error && (
-              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-red-800">خطا</h3>
+                  <h3 className="font-medium text-danger-fg">خطا</h3>
                 </div>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-danger-fg">{error}</p>
               </div>
             )}
 
             {/* Demo Mode Warning */}
             {isDemoMode && chartData && (
-              <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="mb-6 tint-warning bg-tint-soft border-tint-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-tint-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-yellow-800">حالت نمایشی</h3>
+                  <h3 className="font-medium text-tint-fg">حالت نمایشی</h3>
                 </div>
-                <p className="text-sm text-yellow-700">
+                <p className="text-sm text-tint-fg">
                   در حال نمایش داده‌های نمونه - اتصال به API برقرار نشد. برای دریافت داده‌های واقعی،
                   دکمه &quot;تلاش مجدد API&quot; را فشار دهید.
                 </p>
@@ -459,18 +459,18 @@ const VehicleReasonAnalyticsPage = () => {
                   filteredBar.categories.length > 0 ? filteredBar.categories[0] : "نامشخص";
 
                 return (
-                  <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="mb-6 bg-success-soft border border-success-border rounded-lg p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <h3 className="font-medium text-green-800">داده‌ها بارگذاری شد</h3>
+                      <h3 className="font-medium text-success-fg">داده‌ها بارگذاری شد</h3>
                     </div>
-                    <p className="text-sm text-green-700">
+                    <p className="text-sm text-success-fg">
                       تحلیل {totalVehicles.toLocaleString("fa-IR")} وسیله نقلیه با نرخ عامل{" "}
                       {faultPercentage}% - شایع‌ترین عامل: {mostCommonFault}
                     </p>
@@ -506,29 +506,29 @@ const VehicleReasonAnalyticsPage = () => {
                   chartData.pieChart.find((item) => item.name === "فاقد عامل")?.count || 0;
 
                 return (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">خلاصه آماری</h3>
+                  <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
+                    <h3 className="text-lg font-semibold text-fg mb-4">خلاصه آماری</h3>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">
+                      <div className="bg-brand-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-brand-fg">
                           {totalVehicles.toLocaleString("fa-IR")}
                         </div>
-                        <div className="text-sm text-blue-800">مجموع وسایل نقلیه</div>
+                        <div className="text-sm text-brand-fg">مجموع وسایل نقلیه</div>
                       </div>
-                      <div className="bg-red-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-red-600">
+                      <div className="bg-danger-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-danger-fg">
                           {vehiclesWithFault.toLocaleString("fa-IR")}
                         </div>
-                        <div className="text-sm text-red-800">دارای عامل وسیله نقلیه</div>
+                        <div className="text-sm text-danger-fg">دارای عامل وسیله نقلیه</div>
                       </div>
-                      <div className="bg-green-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-green-600">
+                      <div className="bg-success-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-success-fg">
                           {vehiclesWithoutFault.toLocaleString("fa-IR")}
                         </div>
-                        <div className="text-sm text-green-800">فاقد عامل وسیله نقلیه</div>
+                        <div className="text-sm text-success-fg">فاقد عامل وسیله نقلیه</div>
                       </div>
-                      <div className="bg-amber-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-amber-600">
+                      <div className="bg-warning-soft p-4 rounded-lg">
+                        <div className="text-2xl font-bold text-warning-fg">
                           {chartData.barChart.categories.length}
                         </div>
                         <div className="text-sm text-amber-800">انواع عوامل شناسایی شده</div>

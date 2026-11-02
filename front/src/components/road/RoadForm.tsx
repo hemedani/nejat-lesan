@@ -224,9 +224,9 @@ export function RoadForm({ road }: RoadFormProps) {
           onClear={() => setArea(null)}
           value={area}
         />
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-fg-faint">
           طول محور (محاسبه‌شده):{" "}
-          <span className="text-slate-300">{lengthLabel}</span> — این عدد از روی
+          <span className="text-fg-muted">{lengthLabel}</span> — این عدد از روی
           همین هندسه در سرور ساخته می‌شود و قابل ویرایش نیست.
         </p>
       </PanelCard>
@@ -244,9 +244,9 @@ export function RoadForm({ road }: RoadFormProps) {
           placeholder="خط اول، شانه راست، …"
           value={lanes}
         />
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-fg-faint">
           خطوط از فهرست «موقعیت» انتخاب می‌شوند؛ همین‌ها هستند که
-          <span className="text-slate-300"> road.snapPointToRoad </span>
+          <span className="text-fg-muted"> road.snapPointToRoad </span>
           برمی‌گرداند.
         </p>
       </PanelCard>

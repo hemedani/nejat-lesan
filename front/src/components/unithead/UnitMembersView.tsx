@@ -77,17 +77,17 @@ export function UnitMembersView({ unitId }: { unitId: string }) {
     <div className="space-y-5">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">واحد من</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">
+          <p className="text-sm text-brand-fg">واحد من</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">
             اعضای «{unit.name || "واحد"}»
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-fg-faint">
             {members.length.toLocaleString("fa-IR")} عضو در این واحد ثبت شده است.
           </p>
         </div>
         <Link
           href={unitHeadRoutes.dashboard()}
-          className="rounded-xl border border-white/15 bg-white/[.06] px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10"
+          className="rounded-xl border border-line-strong bg-surface-hover px-4 py-2.5 text-sm text-fg transition hover:bg-surface-hover"
         >
           بازگشت به داشبورد
         </Link>
@@ -96,10 +96,10 @@ export function UnitMembersView({ unitId }: { unitId: string }) {
       {members.length === 0 ? (
         <EmptyState message="عضوی برای این واحد ثبت نشده است." />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 shadow-xl">
+        <div className="overflow-hidden rounded-2xl border border-line bg-surface/70 shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-right text-sm">
-              <thead className="border-b border-white/10 text-xs text-slate-500">
+              <thead className="border-b border-line text-xs text-fg-faint">
                 <tr>
                   {["نام و نام خانوادگی", "کد پرسنلی", "سطح", "نقش‌ها", "تماس"].map((header) => (
                     <th key={header} className="whitespace-nowrap px-4 py-3 font-medium">
@@ -108,10 +108,10 @@ export function UnitMembersView({ unitId }: { unitId: string }) {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300">
+              <tbody className="divide-y divide-line text-fg-muted">
                 {members.map((member) => (
                   <tr key={member._id}>
-                    <td className="px-4 py-3 font-medium text-white">
+                    <td className="px-4 py-3 font-medium text-fg">
                       {`${member.first_name || ""} ${member.last_name || ""}`.trim() || "—"}
                     </td>
                     <td className="px-4 py-3 font-mono text-xs" dir="ltr">
@@ -123,7 +123,7 @@ export function UnitMembersView({ unitId }: { unitId: string }) {
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1.5">
                         {(member.roles || []).length === 0 && (
-                          <span className="text-xs text-slate-500">—</span>
+                          <span className="text-xs text-fg-faint">—</span>
                         )}
                         {(member.roles || []).map((role) => (
                           <RoleChip key={role.roleId || `${role.name}-${role.scopeId}`} role={role} />
@@ -133,7 +133,7 @@ export function UnitMembersView({ unitId }: { unitId: string }) {
                     <td className="px-4 py-3 text-xs">
                       {member.mobile && <span dir="ltr">{member.mobile}</span>}
                       {member.email && (
-                        <span className="block text-slate-500" dir="ltr">
+                        <span className="block text-fg-faint" dir="ltr">
                           {member.email}
                         </span>
                       )}
@@ -154,7 +154,7 @@ function RoleChip({ role }: { role: UserRole }) {
   const label =
     ORG_ROLE_LABELS[role.name as keyof typeof ORG_ROLE_LABELS] || role.name;
   const tone =
-    ORG_ROLE_TONES[role.name] || "border-white/10 bg-white/[.04] text-slate-300";
+    ORG_ROLE_TONES[role.name] || "border-line bg-surface-sunken text-fg-muted";
   return (
     <span className={`rounded-full border px-2 py-0.5 text-[10px] ${tone}`} title={role.scopeId}>
       {label}

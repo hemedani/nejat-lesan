@@ -48,7 +48,7 @@ const MapComparisonPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation />
 
@@ -58,17 +58,17 @@ const MapComparisonPage: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-fg">
                 مقایسه نقشه‌ها
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-fg-muted mt-2">
                 مقایسه تصاویر ذخیره شده از نقشه‌های تصادفات با فیلترهای مختلف
               </p>
             </div>
             <div className="flex items-center gap-4">
               <Link
                 href="/maps/accidents"
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -88,7 +88,7 @@ const MapComparisonPage: React.FC = () => {
               {comparisonItems.length > 0 && (
                 <button
                   onClick={handleClearAll}
-                  className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 bg-red-600 text-on-brand px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                 >
                   <svg
                     className="w-5 h-5"
@@ -112,23 +112,23 @@ const MapComparisonPage: React.FC = () => {
 
         {/* Stats */}
         <div className="mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-surface rounded-lg shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold text-brand-fg">
                     {comparisonItems.length}
                   </div>
-                  <div className="text-sm text-gray-600">مقایسه ذخیره شده</div>
+                  <div className="text-sm text-fg-muted">مقایسه ذخیره شده</div>
                 </div>
                 {comparisonItems.length > 0 && (
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-green-600">
+                    <div className="text-lg font-semibold text-success-fg">
                       {formatDate(
                         comparisonItems[comparisonItems.length - 1].createdAt,
                       )}
                     </div>
-                    <div className="text-sm text-gray-600">آخرین مقایسه</div>
+                    <div className="text-sm text-fg-muted">آخرین مقایسه</div>
                   </div>
                 )}
               </div>
@@ -143,7 +143,7 @@ const MapComparisonPage: React.FC = () => {
             <div className="max-w-md mx-auto">
               <div className="mb-6">
                 <svg
-                  className="w-20 h-20 text-gray-400 mx-auto"
+                  className="w-20 h-20 text-fg-faint mx-auto"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -156,17 +156,17 @@ const MapComparisonPage: React.FC = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-xl font-semibold text-fg mb-4">
                 هیچ مقایسه‌ای ذخیره نشده است
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-fg-muted mb-6">
                 برای شروع، به صفحه نقشه تصادفات بروید و با استفاده از دکمه
                 &quot;ارسال برای مقایسه&quot; تصاویری از نقشه‌های خود با
                 فیلترهای مختلف ذخیره کنید.
               </p>
               <Link
                 href="/maps/accidents"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 bg-brand text-on-brand px-6 py-3 rounded-lg hover:bg-brand-hover transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -191,22 +191,22 @@ const MapComparisonPage: React.FC = () => {
             {comparisonItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-surface rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
               >
                 {/* Header */}
-                <div className="p-4 border-b border-gray-200">
+                <div className="p-4 border-b border-line">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 text-sm mb-1">
+                      <h3 className="font-semibold text-fg text-sm mb-1">
                         {item.title || "نقشه تصادفات"}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-fg-muted">
                         {formatDate(item.createdAt)}
                       </p>
                     </div>
                     <button
                       onClick={() => handleRemoveComparison(item.id)}
-                      className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                      className="p-1 text-fg-faint hover:text-danger-fg transition-colors"
                       title="حذف این مقایسه"
                     >
                       <svg
@@ -236,14 +236,14 @@ const MapComparisonPage: React.FC = () => {
                     height={192}
                     unoptimized
                   />
-                  <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                  <div className="absolute top-2 right-2 bg-black/50 text-fg px-2 py-1 rounded text-xs">
                     تصویر نقشه
                   </div>
                 </div>
 
                 {/* Applied Filters */}
                 <div className="p-4">
-                  <h4 className="font-medium text-gray-900 mb-3 text-sm">
+                  <h4 className="font-medium text-fg mb-3 text-sm">
                     فیلترهای اعمال شده:
                   </h4>
                   <div className="max-h-32 overflow-y-auto">
@@ -252,8 +252,8 @@ const MapComparisonPage: React.FC = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="px-4 py-3 bg-canvas border-t border-line">
+                  <div className="flex items-center justify-between text-xs text-fg-muted">
                     <span>شناسه: {item.id}</span>
                     <span>ذخیره شده</span>
                   </div>

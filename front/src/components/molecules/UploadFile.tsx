@@ -90,7 +90,7 @@ export const UploadImage = ({
   return (
     <div className="w-full p-4 border rounded-lg shadow-md flex flex-col items-center">
       {label && (
-        <label className="w-full text-sm font-medium text-gray-700 mb-2">
+        <label className="w-full text-sm font-medium text-fg mb-2">
           {label}
           {isRequired && <span className="text-red-500 mr-1">*</span>}
         </label>
@@ -98,7 +98,7 @@ export const UploadImage = ({
 
       <label
         htmlFor={inputName}
-        className="w-full py-3 bg-gray-200 flex items-center justify-center rounded-lg cursor-pointer hover:bg-gray-300"
+        className="w-full py-3 bg-surface-sunken flex items-center justify-center rounded-lg cursor-pointer hover:bg-line"
       >
         <input
           type="file"
@@ -138,7 +138,7 @@ export const UploadImage = ({
         (file.type === "application/json" ||
           file.type === "application/geo+json" ||
           file.name.toLowerCase().endsWith(".geojson")) ? (
-        <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border flex items-center justify-center bg-gray-50">
+        <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border flex items-center justify-center bg-canvas">
           <div className="text-center">
             <svg
               className="w-16 h-16 mx-auto mb-2 text-blue-500"
@@ -153,8 +153,8 @@ export const UploadImage = ({
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p className="text-sm text-gray-600">فایل GeoJSON</p>
-            <p className="text-xs text-gray-500">{file.name}</p>
+            <p className="text-sm text-fg-muted">فایل GeoJSON</p>
+            <p className="text-xs text-fg-muted">{file.name}</p>
           </div>
         </div>
       ) : filePath && isValidImageExtension(filePath) ? (
@@ -175,7 +175,7 @@ export const UploadImage = ({
           />
         </div>
       ) : filePath && isValidGeoJsonExtension(filePath) ? (
-        <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border flex items-center justify-center bg-gray-50">
+        <div className="w-full h-40 mt-4 rounded-lg overflow-hidden border flex items-center justify-center bg-canvas">
           <div className="text-center">
             <svg
               className="w-16 h-16 mx-auto mb-2 text-blue-500"
@@ -190,8 +190,8 @@ export const UploadImage = ({
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <p className="text-sm text-gray-600">فایل GeoJSON</p>
-            <p className="text-xs text-gray-500">{filePath}</p>
+            <p className="text-sm text-fg-muted">فایل GeoJSON</p>
+            <p className="text-xs text-fg-muted">{filePath}</p>
           </div>
         </div>
       ) : (
@@ -201,7 +201,7 @@ export const UploadImage = ({
       {file && (
         <button
           onClick={handleUpload}
-          className={`mt-4 w-full h-10 bg-blue-500 text-white rounded-lg transition-all duration-200 hover:shadow-md disabled:bg-gray-400`}
+          className={`mt-4 w-full h-10 bg-brand text-on-brand rounded-lg transition-all duration-200 hover:shadow-md disabled:bg-line-strong disabled:text-fg-muted`}
           disabled={isUploaded === "uploading" || isUploaded === true}
         >
           {isUploaded === "uploading"

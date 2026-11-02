@@ -21,9 +21,9 @@ export const ORG_ROLE_LABELS: Record<OrgRoleName, string> = {
 };
 
 export const ORG_ROLE_TONES: Record<string, string> = {
-  OrgHead: "border-violet-400/30 bg-violet-400/10 text-violet-200",
-  UnitHead: "border-blue-400/30 bg-blue-400/10 text-blue-200",
-  Officer: "border-cyan-400/30 bg-cyan-400/10 text-cyan-200",
+  OrgHead: "tint-violet border-tint-border bg-tint-soft text-tint-fg",
+  UnitHead: "tint-blue border-tint-border bg-tint-soft text-tint-fg",
+  Officer: "tint-cyan border-tint-border bg-tint-soft text-tint-fg",
 };
 
 export const MEMBER_LEVEL_OPTIONS = [

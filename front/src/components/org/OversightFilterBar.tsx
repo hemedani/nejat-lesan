@@ -100,11 +100,11 @@ export function OversightFilterBar({
   const activeCount = countActive(value);
 
   return (
-    <section className="mb-5 rounded-2xl border border-white/10 bg-slate-900/75 p-5">
+    <section className="mb-5 rounded-2xl border border-line bg-surface/75 p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold text-white">فیلترها</h2>
+        <h2 className="text-sm font-semibold text-fg">فیلترها</h2>
         {activeCount > 0 && (
-          <span className="rounded-full border border-blue-400/40 bg-blue-400/10 px-2.5 py-0.5 text-[10px] text-blue-100">
+          <span className="tint-blue rounded-full border border-tint-border bg-tint-soft px-2.5 py-0.5 text-[10px] text-tint-fg">
             {activeCount.toLocaleString("fa-IR")} فیلتر فعال
           </span>
         )}
@@ -133,7 +133,7 @@ export function OversightFilterBar({
           })}
         </Field>
         {formsError && (
-          <p className="text-xs text-amber-200">
+          <p className="text-xs text-warning-fg">
             فهرست فرم‌های این سازمان خوانده نشد؛ فیلتر نوع گزارش فعلاً فقط تصادف را پیشنهاد می‌کند.
           </p>
         )}
@@ -205,7 +205,7 @@ export function OversightFilterBar({
               جستجو
             </Button>
           </form>
-          <label className="flex cursor-pointer items-center gap-2 pb-2 text-xs text-slate-300">
+          <label className="flex cursor-pointer items-center gap-2 pb-2 text-xs text-fg-muted">
             <input
               type="checkbox"
               className="accent-blue-500"
@@ -267,7 +267,7 @@ export function OversightFilterBar({
         </div>
 
         {optionsError && (
-          <p className="mt-3 text-xs text-amber-200">
+          <p className="mt-3 text-xs text-warning-fg">
             فهرست گزارش‌دهندگان و نسخه‌های اپ خوانده نشد؛ این دو فیلتر فعلاً گزینه‌ای برای
             انتخاب ندارند.
           </p>
@@ -280,7 +280,7 @@ export function OversightFilterBar({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="mb-2 text-xs text-slate-500">{label}</p>
+      <p className="mb-2 text-xs text-fg-faint">{label}</p>
       <div className="flex flex-wrap items-center gap-2">{children}</div>
     </div>
   );
@@ -295,11 +295,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
  */
 function Disclosure({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <details className="group rounded-xl border border-white/10 bg-white/[.02]">
-      <summary className="cursor-pointer px-3 py-2 text-xs text-slate-300 transition hover:text-white">
+    <details className="group rounded-xl border border-line bg-surface-sunken">
+      <summary className="cursor-pointer px-3 py-2 text-xs text-fg-muted transition hover:text-fg">
         {label}
       </summary>
-      <div className="border-t border-white/10 p-3">{children}</div>
+      <div className="border-t border-line p-3">{children}</div>
     </details>
   );
 }
@@ -315,8 +315,8 @@ function CheckRow({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs transition hover:bg-white/5 ${
-        checked ? "border-blue-400/50 text-blue-100" : "border-transparent text-slate-300"
+      className={`flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs transition hover:bg-surface-hover ${
+        checked ? "tint-blue border-tint-border text-tint-fg" : "border-transparent text-fg-muted"
       }`}
     >
       <input type="checkbox" className="accent-blue-500" checked={checked} onChange={onChange} />

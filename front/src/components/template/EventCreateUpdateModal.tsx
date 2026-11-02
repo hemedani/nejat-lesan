@@ -290,7 +290,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="p-6 w-full max-h-[70vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4 text-gray-800 text-right">
+        <h2 className="text-xl font-bold mb-4 text-fg text-right">
           {isEdit ? "ویرایش رویداد" : "ایجاد رویداد جدید"}
         </h2>
 
@@ -316,10 +316,10 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
             />
           </div>
 
-          <div className="border-t border-gray-200 pt-6 flex-1">
+          <div className="border-t border-line pt-6 flex-1">
             <div className="space-y-5">
               <div className="flex justify-between items-center">
-                <h3 className="text-base font-semibold text-gray-700">بازه‌های تاریخی فعال</h3>
+                <h3 className="text-base font-semibold text-fg">بازه‌های تاریخی فعال</h3>
                 <button
                   type="button"
                   onClick={() => {
@@ -330,7 +330,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
                       endEntireRange: "",
                     });
                   }}
-                  className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium"
+                  className="px-3 py-1.5 bg-brand text-on-brand rounded-lg hover:bg-brand-hover text-sm font-medium"
                 >
                   + افزودن بازه جدید
                 </button>
@@ -340,7 +340,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="flex flex-col gap-4 p-4 border border-gray-200 rounded-lg"
+                    className="flex flex-col gap-4 p-4 border border-line rounded-lg"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       <div>
@@ -392,7 +392,7 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
                       <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="p-2 text-red-500 hover:text-red-700 self-start"
+                        className="p-2 text-red-500 hover:text-danger-fg self-start"
                         title="حذف بازه"
                       >
                         <svg
@@ -426,13 +426,13 @@ const EventCreateUpdateModal: React.FC<EventCreateUpdateModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                className="px-4 py-2.5 border border-line-strong rounded-lg text-fg hover:bg-surface-hover transition-colors font-medium"
               >
                 لغو
               </button>
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="px-6 py-2.5 bg-brand text-on-brand rounded-lg hover:bg-brand-hover transition-colors font-medium"
               >
                 {isEdit ? "به‌روزرسانی" : "ایجاد"}
               </button>

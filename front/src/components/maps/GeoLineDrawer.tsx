@@ -122,13 +122,13 @@ export const GeoLineDrawer: React.FC<GeoLineDrawerProps> = ({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-sm font-medium text-slate-300">{label}</span>
+        <span className="text-sm font-medium text-fg-muted">{label}</span>
         <div className="flex flex-wrap gap-2">
           <button
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               isDrawing
-                ? "bg-amber-500 text-slate-900"
-                : "bg-slate-700 text-slate-100 hover:bg-slate-600"
+                ? "bg-amber-500 text-fg"
+                : "bg-surface-hover text-fg hover:bg-surface-hover"
             }`}
             onClick={() => {
               setDraft([]);
@@ -143,7 +143,7 @@ export const GeoLineDrawer: React.FC<GeoLineDrawerProps> = ({
           {isDrawing && (
             <>
               <button
-                className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-on-brand hover:bg-emerald-700 disabled:opacity-50"
                 disabled={draft.length < 2}
                 onClick={commitDraft}
                 type="button"
@@ -151,7 +151,7 @@ export const GeoLineDrawer: React.FC<GeoLineDrawerProps> = ({
                 پایان قطعه
               </button>
               <button
-                className="rounded-lg bg-slate-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-500"
+                className="rounded-lg bg-surface-hover px-3 py-1.5 text-sm font-medium text-fg hover:bg-line-strong"
                 onClick={cancelDraft}
                 type="button"
               >
@@ -161,7 +161,7 @@ export const GeoLineDrawer: React.FC<GeoLineDrawerProps> = ({
           )}
           {savedLines.length > 0 && onClear && (
             <button
-              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-on-brand hover:bg-red-700"
               onClick={onClear}
               type="button"
             >
@@ -212,7 +212,7 @@ export const GeoLineDrawer: React.FC<GeoLineDrawerProps> = ({
         ))}
       </LeafletSurface>
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-fg-muted">
         {isDrawing
           ? "روی نقشه کلیک کنید تا رأس اضافه شود. برای پایان، «پایان قطعه» را بزنید یا دابل‌کلیک کنید. Esc انصراف است."
           : savedLines.length > 0

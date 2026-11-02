@@ -554,7 +554,7 @@ const SpatialSeverityAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="spatial" currentChart="severity-analytics" />
 
@@ -581,8 +581,8 @@ const SpatialSeverityAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">مقایسه مکانی سهم شدت تصادفات</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">مقایسه مکانی سهم شدت تصادفات</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل و مقایسه سهم شدت تصادفات در مناطق مختلف شهر
                 </p>
               </div>
@@ -590,7 +590,7 @@ const SpatialSeverityAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -613,7 +613,7 @@ const SpatialSeverityAnalyticsPage = () => {
                         "spatial-severity",
                       )
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -623,7 +623,7 @@ const SpatialSeverityAnalyticsPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -644,18 +644,18 @@ const SpatialSeverityAnalyticsPage = () => {
 
           {/* Error State */}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-red-800 font-medium">خطا در دریافت داده‌ها</span>
+                <span className="text-danger-fg font-medium">خطا در دریافت داده‌ها</span>
               </div>
-              <p className="text-red-700 mt-2">{error}</p>
+              <p className="text-danger-fg mt-2">{error}</p>
             </div>
           )}
 
@@ -674,56 +674,56 @@ const SpatialSeverityAnalyticsPage = () => {
 
           {/* Summary Section */}
           {summaryTotals && !isLoading && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="mt-6 bg-surface rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-fg mb-4">
                 خلاصه تحلیل
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="text-center p-4 bg-brand-soft rounded-lg">
+                  <div className="w-12 h-12 bg-brand-soft rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-brand-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">کل تصادفات</h4>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <h4 className="font-medium text-fg mb-1">کل تصادفات</h4>
+                  <p className="text-2xl font-bold text-brand-fg">
                     {summaryTotals.totalAccidents.toLocaleString("fa-IR")}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="text-center p-4 bg-success-soft rounded-lg">
+                  <div className="w-12 h-12 bg-success-soft rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-success-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق بررسی شده</h4>
-                  <p className="text-2xl font-bold text-green-600">
+                  <h4 className="font-medium text-fg mb-1">مناطق بررسی شده</h4>
+                  <p className="text-2xl font-bold text-success-fg">
                     {summaryTotals.zonesCount.toLocaleString("fa-IR")}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-red-50 rounded-lg">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="text-center p-4 bg-danger-soft rounded-lg">
+                  <div className="w-12 h-12 bg-danger-soft rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-danger-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">بیشترین نسبت شدت</h4>
-                  <p className="text-2xl font-bold text-red-600">
+                  <h4 className="font-medium text-fg mb-1">بیشترین نسبت شدت</h4>
+                  <p className="text-2xl font-bold text-danger-fg">
                     {summaryTotals.topZone ? summaryTotals.topZone.zoneName : "—"}
                   </p>
                   {summaryTotals.topZone && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-fg-muted mt-1">
                       {(summaryTotals.topZone.ratio * 100).toFixed(1)}%
                     </p>
                   )}
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 tint-purple bg-tint-soft rounded-lg">
+                  <div className="w-12 h-12 tint-purple bg-tint-strong rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">انواع شدت</h4>
+                  <h4 className="font-medium text-fg mb-1">انواع شدت</h4>
                   <p className="text-2xl font-bold text-purple-600">
                     {summaryTotals.severityTypesCount.toLocaleString("fa-IR")}
                   </p>
@@ -731,10 +731,10 @@ const SpatialSeverityAnalyticsPage = () => {
               </div>
 
               {/* Additional analysis description */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="bg-green-50 rounded-lg p-4">
+              <div className="mt-6 pt-4 border-t border-line">
+                <div className="bg-success-soft rounded-lg p-4">
                   <h4 className="font-medium text-green-900 mb-2">تحلیل سهم شدت تصادفات</h4>
-                  <p className="text-sm text-green-800">
+                  <p className="text-sm text-success-fg">
                     این تحلیل نسبت تصادفات فوتی به کل تصادفات شدید (فوتی+جرحی) را در مناطق مختلف
                     نشان می‌دهد. از مجموع {summaryTotals.totalAccidents.toLocaleString("fa-IR")} تصادف،
                     {" "}{summaryTotals.severeCount.toLocaleString("fa-IR")} مورد شدید (فوتی و جرحی) بوده است.

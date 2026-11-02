@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { UNKNOWN_LABEL } from "@/utils/chartData";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -29,6 +30,7 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
   isLoading,
   activeReasons,
 }) => {
+  const chartTheme = useChartTheme();
   // Filter series based on activeReasons
   const visibleSeries = useMemo(() => {
     if (!data || !data.series) return [];
@@ -87,11 +89,11 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
       },
       axisBorder: {
         show: true,
-        color: "#e2e8f0",
+        color: chartTheme.axisLine,
       },
       axisTicks: {
         show: true,
-        color: "#e2e8f0",
+        color: chartTheme.axisLine,
       },
     },
     yaxis: {
@@ -136,7 +138,7 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
     },
     grid: {
       show: true,
-      borderColor: "#f1f5f9",
+      borderColor: chartTheme.grid,
       strokeDashArray: 2,
       xaxis: {
         lines: {
@@ -149,18 +151,7 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
         },
       },
     },
-    colors: [
-      "#3b82f6", // blue
-      "#ef4444", // red
-      "#10b981", // green
-      "#f59e0b", // amber
-      "#8b5cf6", // purple
-      "#06b6d4", // cyan
-      "#84cc16", // lime
-      "#f97316", // orange
-      "#ec4899", // pink
-      "#6366f1", // indigo
-    ],
+    colors: chartTheme.colors,
     dataLabels: {
       enabled: false,
     },
@@ -187,11 +178,11 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">در حال بارگذاری نمودار...</p>
+            <p className="text-fg-muted">در حال بارگذاری نمودار...</p>
           </div>
         </div>
       </div>
@@ -201,11 +192,11 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
   // No data state
   if (!data || !data.series || data.series.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -217,8 +208,8 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <p className="text-gray-600">داده‌ای برای نمایش موجود نیست</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-fg-muted">داده‌ای برای نمایش موجود نیست</p>
+            <p className="text-sm text-fg-muted mt-2">
               لطفاً فیلترهای مناسب را انتخاب کنید
             </p>
           </div>
@@ -230,11 +221,11 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
   // No visible series state
   if (visibleSeries.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -252,8 +243,8 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
               />
             </svg>
-            <p className="text-gray-600">هیچ علتی برای نمایش انتخاب نشده</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-fg-muted">هیچ علتی برای نمایش انتخاب نشده</p>
+            <p className="text-sm text-fg-muted mt-2">
               از فیلتر کناری حداقل یک علت را انتخاب کنید
             </p>
           </div>
@@ -263,21 +254,21 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
       {/* Chart Header */}
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-fg">
           مقایسه زمانی علت تامه تصادفات
         </h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-fg-muted mt-1">
           روند تغییرات علل اصلی تصادفات در طول زمان
         </p>
         <div className="flex items-center gap-2 mt-2">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-fg-muted">
             نمایش {visibleSeries.length} از {data.series.length} علت
           </span>
-          <span className="text-xs text-gray-400">•</span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-fg-faint">•</span>
+          <span className="text-xs text-fg-muted">
             {data.categories.length} دوره زمانی
           </span>
         </div>
@@ -294,8 +285,8 @@ const TemporalTotalReasonChart: React.FC<TemporalTotalReasonChartProps> = ({
       </div>
 
       {/* Chart Footer */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-fg-muted">
           <div className="flex items-center gap-1">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path

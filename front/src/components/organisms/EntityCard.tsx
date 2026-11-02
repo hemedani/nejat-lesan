@@ -20,13 +20,13 @@ const EntityCard: React.FC<SimpleCardProps> = ({
   onSeedTrafficZones,
 }) => {
   return (
-    <div className="border border-white/10 w-full bg-slate-900/75 rounded-xl shadow-xl p-4 flex justify-between items-center hover:border-blue-400/30 transition-colors">
-      <h3 className="text-lg font-semibold text-slate-100 truncate">{title}</h3>
+    <div className="border border-line w-full bg-surface/75 rounded-xl shadow-xl p-4 flex justify-between items-center hover:border-blue-400/30 transition-colors">
+      <h3 className="text-lg font-semibold text-fg truncate">{title}</h3>
       <div className="flex gap-2">
         {onProvinceRelation && (
           <button
             onClick={onProvinceRelation}
-            className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-all duration-200 shadow"
+            className="p-2 bg-indigo-500 text-on-brand rounded-full hover:bg-indigo-600 transition-all duration-200 shadow"
             title="مدیریت ارتباط با استان"
           >
             <LocationMarkerIcon />
@@ -35,7 +35,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
         {onSeedZones && (
           <button
             onClick={onSeedZones}
-            className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200 shadow"
+            className="p-2 bg-brand text-on-brand rounded-full hover:bg-brand-hover transition-all duration-200 shadow"
             title="اضافه کردن مناطق شهر"
           >
             <MapIcon />
@@ -44,7 +44,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
         {onSeedTownships && (
           <button
             onClick={onSeedTownships}
-            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200 shadow"
+            className="p-2 bg-green-500 text-on-brand rounded-full hover:bg-green-600 transition-all duration-200 shadow"
             title="اضافه کردن شهرستان‌های استان"
           >
             <MapIcon />
@@ -53,7 +53,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
         {onSeedTrafficZones && (
           <button
             onClick={onSeedTrafficZones}
-            className="p-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-all duration-200 shadow"
+            className="p-2 bg-purple-500 text-on-brand rounded-full hover:bg-purple-600 transition-all duration-200 shadow"
             title="اضافه کردن مناطق ترافیک و آلودگی هوا"
           >
             <MapIcon />
@@ -62,7 +62,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
         {onEdit && (
           <button
             onClick={onEdit}
-            className="p-2 bg-yellow-400 text-white rounded-full hover:bg-yellow-500 transition-all duration-200 shadow"
+            className="p-2 tint-warning bg-tint-strong text-tint-fg rounded-full border border-tint-border hover:bg-tint-soft transition-all duration-200 shadow"
             title="ویرایش"
           >
             <EditIcon />
@@ -71,7 +71,7 @@ const EntityCard: React.FC<SimpleCardProps> = ({
         {onDelete && (
           <button
             onClick={onDelete}
-            className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200 shadow"
+            className="p-2 bg-red-500 text-on-brand rounded-full hover:bg-red-600 transition-all duration-200 shadow"
             title="حذف"
           >
             <TrashIcon />

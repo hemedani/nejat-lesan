@@ -65,21 +65,21 @@ const MultiStepForm = <T extends FieldValues = FieldValues>({
     <div className="w-full max-w-4xl mx-auto">
       <div className="mb-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-800">{steps[currentStep].title}</h2>
-          <div className="text-sm text-gray-500">
+          <h2 className="text-xl font-bold text-fg">{steps[currentStep].title}</h2>
+          <div className="text-sm text-fg-muted">
             گام {currentStep + 1} از {steps.length}
           </div>
         </div>
 
-        <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5">
+        <div className="mt-4 w-full bg-surface-sunken rounded-full h-2.5">
           <div
-            className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+            className="bg-brand h-2.5 rounded-full transition-all duration-300"
             style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
           ></div>
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">{steps[currentStep].component}</div>
+      <div className="bg-surface p-6 rounded-lg shadow-md">{steps[currentStep].component}</div>
 
       <div className="mt-8 flex justify-between">
         <button
@@ -87,8 +87,8 @@ const MultiStepForm = <T extends FieldValues = FieldValues>({
           disabled={currentStep === 0}
           className={`py-2 px-6 rounded-lg ${
             currentStep === 0
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-gray-600 text-white hover:bg-gray-700"
+              ? "bg-line text-fg-muted cursor-not-allowed"
+              : "bg-surface-hover text-fg hover:bg-surface-sunken"
           }`}
         >
           قبلی
@@ -98,14 +98,14 @@ const MultiStepForm = <T extends FieldValues = FieldValues>({
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="py-2 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
+            className="py-2 px-6 bg-brand text-on-brand rounded-lg hover:bg-brand-hover disabled:bg-blue-300"
           >
             {isSubmitting ? "در حال ارسال..." : "تکمیل ثبت"}
           </button>
         ) : (
           <button
             onClick={nextStep}
-            className="py-2 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="py-2 px-6 bg-brand text-on-brand rounded-lg hover:bg-brand-hover"
           >
             بعدی
           </button>

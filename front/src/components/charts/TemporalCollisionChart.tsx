@@ -3,6 +3,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { UNKNOWN_LABEL } from "@/utils/chartData";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -30,13 +31,14 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
   error,
   isDemoMode = false,
 }) => {
+  const chartTheme = useChartTheme();
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -45,11 +47,11 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
   // Error state
   if (error && !isDemoMode) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-danger-soft rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-8 h-8 text-red-600"
+              className="w-8 h-8 text-danger-fg"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -62,10 +64,10 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-fg mb-2">
             خطا در بارگذاری داده‌ها
           </h3>
-          <p className="text-gray-600">{error}</p>
+          <p className="text-fg-muted">{error}</p>
         </div>
       </div>
     );
@@ -74,11 +76,11 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
   // Empty data state
   if (!data || !data.series || data.series.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-surface-sunken rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-8 h-8 text-fg-faint"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -91,10 +93,10 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-fg mb-2">
             داده‌ای موجود نیست
           </h3>
-          <p className="text-gray-600">
+          <p className="text-fg-muted">
             برای مشاهده نمودار، لطفاً فیلترهای مناسب را اعمال کنید.
           </p>
         </div>
@@ -134,7 +136,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
       style: {
         fontSize: "18px",
         fontWeight: "600",
-        color: "#1f2937",
+        color: chartTheme.fg,
       },
     },
     subtitle: {
@@ -142,7 +144,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
       align: "center" as const,
       style: {
         fontSize: "12px",
-        color: "#6b7280",
+        color: chartTheme.label,
       },
     },
     xaxis: {
@@ -152,13 +154,13 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: "500",
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
         style: {
           fontSize: "12px",
-          colors: "#6b7280",
+          colors: chartTheme.label,
         },
       },
     },
@@ -168,7 +170,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
         style: {
           fontSize: "14px",
           fontWeight: "500",
-          color: "#374151",
+          color: chartTheme.label,
         },
       },
       labels: {
@@ -177,7 +179,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
         },
         style: {
           fontSize: "12px",
-          colors: "#6b7280",
+          colors: chartTheme.label,
         },
       },
       min: 0,
@@ -204,10 +206,10 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
         size: 7,
       },
     },
-    colors: ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316", "#6366f1", "#84cc16"],
+    colors: chartTheme.colors,
     grid: {
       show: true,
-      borderColor: "#e5e7eb",
+      borderColor: chartTheme.grid,
       strokeDashArray: 3,
     },
     legend: {
@@ -240,13 +242,13 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       {/* Demo Mode Warning */}
       {isDemoMode && (
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div className="mb-4 p-3 tint-warning bg-tint-soft border-tint-border rounded-lg">
           <div className="flex items-center gap-2">
             <svg
-              className="w-5 h-5 text-yellow-600"
+              className="w-5 h-5 text-tint-fg"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -258,7 +260,7 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z"
               />
             </svg>
-            <span className="text-sm font-medium text-yellow-800">
+            <span className="text-sm font-medium text-tint-fg">
               در حال نمایش داده‌های نمونه
             </span>
           </div>
@@ -276,11 +278,11 @@ const TemporalCollisionChart: React.FC<TemporalCollisionChartProps> = ({
       </div>
 
       {/* Chart Info */}
-      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">
+      <div className="mt-4 p-4 bg-canvas rounded-lg">
+        <h4 className="text-sm font-medium text-fg mb-2">
           توضیحات نمودار
         </h4>
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-fg-muted">
           این نمودار سهم درصدی انواع مختلف برخورد را در طول زمان نمایش می‌دهد.
           هر خط نمایانگر یک نوع برخورد خاص است و تغییرات آن در دوره‌های زمانی
           مختلف را نشان می‌دهد.

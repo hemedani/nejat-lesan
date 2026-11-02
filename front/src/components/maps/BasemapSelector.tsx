@@ -37,8 +37,8 @@ export function BasemapSelector({
 
   const shell =
     variant === "dark"
-      ? "border-white/10 bg-slate-900/85 text-slate-300 backdrop-blur"
-      : "border-slate-200 bg-white/95 text-slate-600 shadow-lg backdrop-blur-sm";
+      ? "border-line bg-surface/85 text-fg-muted backdrop-blur"
+      : "border-line bg-surface/95 text-fg-faint shadow-lg backdrop-blur-sm";
 
   return (
     <div
@@ -58,13 +58,13 @@ export function BasemapSelector({
               variant === "dark"
                 ? `rounded-md px-3 py-1.5 text-xs font-medium transition ${
                     selected
-                      ? "bg-blue-500 text-white"
-                      : "text-slate-400 hover:bg-white/10 hover:text-slate-200"
+                      ? "bg-brand text-on-brand"
+                      : "text-fg-muted hover:bg-surface-hover hover:text-fg"
                   }`
                 : `rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
                     selected
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                      ? "bg-brand text-on-brand shadow-sm"
+                      : "text-fg-faint hover:bg-surface-hover hover:text-fg"
                   }`
             }
           >

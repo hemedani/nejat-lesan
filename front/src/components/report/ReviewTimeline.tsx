@@ -14,13 +14,13 @@ const ACTION_LABELS: Record<ReviewHistoryItem["action"], string> = {
 };
 
 const ACTION_TONES: Record<ReviewHistoryItem["action"], string> = {
-  submitted: "text-slate-400",
-  started_review: "text-sky-300",
-  returned: "text-amber-300",
-  resubmitted: "text-sky-300",
-  approved: "text-emerald-300",
-  completed: "text-emerald-300",
-  reopened: "text-amber-300",
+  submitted: "text-fg-muted",
+  started_review: "text-info-fg",
+  returned: "text-warning-fg",
+  resubmitted: "text-info-fg",
+  approved: "text-success-fg",
+  completed: "text-success-fg",
+  reopened: "text-warning-fg",
 };
 
 /**
@@ -42,9 +42,9 @@ export function ReviewTimeline({
 }) {
   if (!history?.length) {
     return (
-      <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-        <h2 className="mb-3 text-sm font-semibold text-white">سوابق بررسی</h2>
-        <p className="text-sm text-slate-500">هنوز اقدامی روی این گزارش ثبت نشده است.</p>
+      <section className="rounded-2xl border border-line bg-surface/75 p-4">
+        <h2 className="mb-3 text-sm font-semibold text-fg">سوابق بررسی</h2>
+        <p className="text-sm text-fg-faint">هنوز اقدامی روی این گزارش ثبت نشده است.</p>
       </section>
     );
   }
@@ -54,19 +54,19 @@ export function ReviewTimeline({
   );
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-slate-900/75 p-4">
-      <h2 className="mb-3 text-sm font-semibold text-white">سوابق بررسی</h2>
-      <ol className="space-y-3 border-r border-white/10 pr-3">
+    <section className="rounded-2xl border border-line bg-surface/75 p-4">
+      <h2 className="mb-3 text-sm font-semibold text-fg">سوابق بررسی</h2>
+      <ol className="space-y-3 border-r border-line pr-3">
         {newestFirst.map((item, index) => (
           <li key={item._id ?? `${item.action}-${index}`} className="relative">
             <span
-              className="absolute -right-[1.06rem] top-1.5 h-2 w-2 rounded-full bg-slate-600 ring-4 ring-slate-900"
+              className="absolute -right-[1.06rem] top-1.5 h-2 w-2 rounded-full bg-surface-hover ring-4 ring-line"
               aria-hidden
             />
             <p className={`text-xs font-semibold ${ACTION_TONES[item.action]}`}>
               {ACTION_LABELS[item.action]}
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-500">
+            <p className="mt-0.5 text-[11px] text-fg-faint">
               {[
                 [item.reviewer?.first_name, item.reviewer?.last_name]
                   .filter(Boolean)
@@ -77,7 +77,7 @@ export function ReviewTimeline({
                 .join(" — ")}
             </p>
             {item.reason && (
-              <p className="mt-1 rounded-lg bg-white/[.03] p-2 text-[11px] leading-5 text-slate-400">
+              <p className="mt-1 rounded-lg bg-surface-sunken p-2 text-[11px] leading-5 text-fg-muted">
                 {item.reason}
               </p>
             )}

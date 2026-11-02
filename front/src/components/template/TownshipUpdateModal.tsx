@@ -144,12 +144,12 @@ const TownshipUpdateModal: React.FC<TownshipUpdateModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000] overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto m-4">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-lg">
-          <h2 className="text-xl font-bold text-gray-800">ویرایش شهرستان</h2>
+      <div className="bg-surface rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto m-4">
+        <div className="flex items-center justify-between p-6 border-b border-line sticky top-0 bg-surface rounded-t-lg">
+          <h2 className="text-xl font-bold text-fg">ویرایش شهرستان</h2>
           <button
             onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
+            className="text-fg-muted hover:text-fg text-2xl"
             aria-label="بستن"
           >
             ×
@@ -160,16 +160,16 @@ const TownshipUpdateModal: React.FC<TownshipUpdateModalProps> = ({
           {isLoading && (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="mr-2 text-gray-600">در حال بارگذاری...</span>
+              <span className="mr-2 text-fg-muted">در حال بارگذاری...</span>
             </div>
           )}
 
           {error && !isLoading && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <p className="text-red-600">{error}</p>
+            <div className="bg-danger-soft border border-danger-border rounded-lg p-4 mb-4">
+              <p className="text-danger-fg">{error}</p>
               <button
                 onClick={fetchTownshipData}
-                className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                className="mt-2 px-4 py-2 bg-red-600 text-on-brand rounded hover:bg-red-700 transition-colors"
               >
                 تلاش مجدد
               </button>

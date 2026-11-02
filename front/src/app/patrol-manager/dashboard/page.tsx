@@ -65,7 +65,7 @@ export default function ManagerDashboardPage() {
       </PanelCard>
 
       <PanelCard title="وضعیت همگام‌سازی گزارش‌ها" className="mt-5">
-        <p className="mb-3 text-xs text-slate-500">
+        <p className="mb-3 text-xs text-fg-faint">
           توزیع گزارش‌های ثبت‌شده توسط اپلیکیشن موبایل بر اساس وضعیت همگام‌سازی.
         </p>
         <SyncStatusWidget />

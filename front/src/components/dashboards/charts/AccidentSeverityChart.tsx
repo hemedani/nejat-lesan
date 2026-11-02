@@ -4,6 +4,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { formatNumber } from "@/utils/formatters";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamic import to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -21,15 +22,17 @@ interface ChartProps {
 }
 
 const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamageActive }) => {
+  const chartTheme = useChartTheme();
+
   // Early return for loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">سهم شدت تصادفات</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">سهم شدت تصادفات</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">در حال بارگذاری...</p>
+            <p className="text-fg-muted">در حال بارگذاری...</p>
           </div>
         </div>
       </div>
@@ -39,12 +42,12 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
   // Early return for no data state
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">سهم شدت تصادفات</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">سهم شدت تصادفات</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -56,8 +59,8 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">داده‌ای موجود نیست</h4>
-            <p className="text-gray-600">اطلاعات شدت تصادفات در فیلترهای انتخابی یافت نشد.</p>
+            <h4 className="text-lg font-medium text-fg mb-2">داده‌ای موجود نیست</h4>
+            <p className="text-fg-muted">اطلاعات شدت تصادفات در فیلترهای انتخابی یافت نشد.</p>
           </div>
         </div>
       </div>
@@ -104,12 +107,12 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
   // If no valid data to show
   if (totalCount === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">سهم شدت تصادفات</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">سهم شدت تصادفات</h3>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
+              className="w-16 h-16 text-fg-faint mx-auto mb-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -121,8 +124,8 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <h4 className="text-lg font-medium text-gray-900 mb-2">داده‌ای موجود نیست</h4>
-            <p className="text-gray-600">
+            <h4 className="text-lg font-medium text-fg mb-2">داده‌ای موجود نیست</h4>
+            <p className="text-fg-muted">
               {isDamageActive
                 ? "اطلاعات شدت تصادفات در فیلترهای انتخابی یافت نشد."
                 : "اطلاعات تصادفات فوتی و جرحی در فیلترهای انتخابی یافت نشد."}
@@ -168,7 +171,7 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
       fontSize: "14px",
       fontWeight: 500,
       labels: {
-        colors: "#374151",
+        colors: chartTheme.label,
       },
       markers: {},
     },
@@ -183,14 +186,14 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
               label: "مجموع",
               fontSize: "16px",
               fontWeight: 600,
-              color: "#374151",
+              color: chartTheme.label,
               formatter: () => formatNumber(totalCount),
             },
             value: {
               show: true,
               fontSize: "24px",
               fontWeight: 700,
-              color: "#111827",
+              color: chartTheme.fg,
               formatter: (val: string) => formatNumber(parseInt(val)),
             },
           },
@@ -203,7 +206,7 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
       style: {
         fontSize: "12px",
         fontWeight: 600,
-        colors: ["#FFFFFF"],
+        colors: [chartTheme.onFill],
       },
       dropShadow: {
         enabled: true,
@@ -240,11 +243,11 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">سهم شدت تصادفات</h3>
+        <h3 className="text-lg font-semibold text-fg">سهم شدت تصادفات</h3>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-fg-muted">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -264,7 +267,7 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
 
       {/* Data Summary Table */}
       <div className="mt-6 border-t pt-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">جزئیات شدت تصادفات</h4>
+        <h4 className="text-sm font-medium text-fg mb-3">جزئیات شدت تصادفات</h4>
         <div className="space-y-2">
           {filteredData
             .sort((a, b) => b.count - a.count)
@@ -274,17 +277,17 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between py-2 px-3 rounded hover:bg-gray-50"
+                  className="flex items-center justify-between py-2 px-3 rounded hover:bg-surface-hover"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-4 h-4 rounded-full" style={{ backgroundColor: color }}></div>
-                    <span className="text-sm font-medium text-gray-700">{item.name}</span>
+                    <span className="text-sm font-medium text-fg">{item.name}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-sm font-semibold text-fg">
                       {formatNumber(item.count)}
                     </span>
-                    <span className="text-xs text-gray-500 mr-2">({percentage}%)</span>
+                    <span className="text-xs text-fg-muted mr-2">({percentage}%)</span>
                   </div>
                 </div>
               );
@@ -293,16 +296,16 @@ const AccidentSeverityChart: React.FC<ChartProps> = ({ data, isLoading, isDamage
       </div>
 
       {/* Filter Status Info */}
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+      <div className="mt-4 p-3 bg-brand-soft border border-brand-border rounded-lg">
         <div className="flex items-start gap-2">
-          <svg className="w-4 h-4 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-4 h-4 text-brand-fg mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
               d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
               clipRule="evenodd"
             />
           </svg>
-          <div className="text-xs text-blue-700">
+          <div className="text-xs text-brand-fg">
             <p className="font-medium mb-1">نحوه محاسبه درصدها:</p>
             <p>
               {isDamageActive

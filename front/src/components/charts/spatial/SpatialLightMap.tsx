@@ -390,10 +390,10 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-96 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
+          <div className="h-96 bg-surface-sunken rounded"></div>
         </div>
       </div>
     );
@@ -403,10 +403,10 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   if (!geoJsonData) {
     console.log("No GeoJSON data provided");
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌های نقشه موجود نیست</p>
+          <p className="text-fg-muted">داده‌های نقشه موجود نیست</p>
         </div>
       </div>
     );
@@ -415,10 +415,10 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   if (!geoJsonData.features || !Array.isArray(geoJsonData.features)) {
     console.log("Invalid GeoJSON features structure:", geoJsonData);
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">ساختار داده‌های نقشه نامعتبر است</p>
+          <p className="text-fg-muted">ساختار داده‌های نقشه نامعتبر است</p>
         </div>
       </div>
     );
@@ -427,10 +427,10 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   if (geoJsonData.features.length === 0) {
     console.log("No features found in GeoJSON data");
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">هیچ منطقه‌ای برای نمایش یافت نشد</p>
+          <p className="text-fg-muted">هیچ منطقه‌ای برای نمایش یافت نشد</p>
         </div>
       </div>
     );
@@ -450,20 +450,20 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
   if (validFeatures.length === 0) {
     console.log("No valid features with geometry found");
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">نقشه وضعیت روشنایی</h3>
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">نقشه وضعیت روشنایی</h3>
         <div className="text-center py-8">
-          <p className="text-gray-500">داده‌های جغرافیایی معتبر یافت نشد</p>
+          <p className="text-fg-muted">داده‌های جغرافیایی معتبر یافت نشد</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 overflow-hidden">
+    <div className="bg-surface rounded-lg shadow-sm p-6 overflow-hidden">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">نقشه وضعیت روشنایی</h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-fg">نقشه وضعیت روشنایی</h3>
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -544,8 +544,8 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       </div>
 
       {/* Map Legend */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="flex flex-wrap gap-4 text-sm text-fg-muted mb-3">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span>روشنایی کافی (۰-۲۰٪)</span>
@@ -567,11 +567,11 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
             <span>روشنایی بسیار ناکافی (۸۰-۱۰۰٪)</span>
           </div>
         </div>
-        <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800 leading-relaxed">
+        <div className="bg-brand-soft rounded-lg p-3 text-xs text-brand-fg leading-relaxed">
           <p className="font-semibold mb-1">نحوه تحلیل نقشه کوروپلث:</p>
           <p>این نقشه مناطق شهری را بر اساس نسبت تصادفات شبانه با روشنایی ناکافی به کل تصادفات شبانه رنگ‌بندی می‌کند:</p>
-          <div className="mt-2 mb-2 p-2 bg-white/50 rounded text-center font-mono text-blue-900" dir="ltr">
-            نسبت نور ناکافی = <span className="text-red-600">شب با نور ناکافی</span> ÷ (<span className="text-red-600">شب با نور ناکافی</span> + <span className="text-green-600">شب با نور کافی</span>)
+          <div className="mt-2 mb-2 p-2 bg-surface/50 rounded text-center font-mono text-blue-900" dir="ltr">
+            نسبت نور ناکافی = <span className="text-danger-fg">شب با نور ناکافی</span> ÷ (<span className="text-danger-fg">شب با نور ناکافی</span> + <span className="text-success-fg">شب با نور کافی</span>)
           </div>
           <ul className="list-disc list-inside mt-1 space-y-0.5">
             <li>مناطق سبز = درصد پایین تصادفات با روشنایی ناکافی (روشنایی مطلوب)</li>
@@ -586,8 +586,8 @@ const SpatialLightMap: React.FC<SpatialLightMapProps> = ({
       </div>
 
       {/* Map Controls Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="flex flex-wrap gap-4 text-sm text-fg-muted">
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path

@@ -359,7 +359,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="spatial" currentChart="single-vehicle-analytics" />
 
@@ -386,8 +386,8 @@ const SpatialSingleVehicleAnalyticsPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">مقایسه مکانی تصادفات تک وسیله ای</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">مقایسه مکانی تصادفات تک وسیله ای</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   تحلیل و مقایسه تصادفات تک وسیله ای در مناطق مختلف شهر
                 </p>
               </div>
@@ -395,7 +395,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -411,7 +411,7 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                 </button>
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -432,18 +432,18 @@ const SpatialSingleVehicleAnalyticsPage = () => {
 
           {/* Error State */}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-red-800 font-medium">خطا در دریافت داده‌ها</span>
+                <span className="text-danger-fg font-medium">خطا در دریافت داده‌ها</span>
               </div>
-              <p className="text-red-700 mt-2">{error}</p>
+              <p className="text-danger-fg mt-2">{error}</p>
             </div>
           )}
 
@@ -465,13 +465,13 @@ const SpatialSingleVehicleAnalyticsPage = () => {
 
           {/* Insights Section */}
           {analyticsData && !isLoading && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">بینش‌های کلیدی</h3>
+            <div className="mt-6 bg-surface rounded-lg shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-fg mb-4">بینش‌های کلیدی</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-brand-soft rounded-lg">
+                  <div className="w-12 h-12 bg-brand-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-blue-600"
+                      className="w-6 h-6 text-brand-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -484,13 +484,13 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">کل مناطق بررسی شده</h4>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <h4 className="font-medium text-fg mb-1">کل مناطق بررسی شده</h4>
+                  <p className="text-2xl font-bold text-brand-fg">
                     {analyticsData.barChart?.categories?.length || 0}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-orange-50 rounded-lg">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 tint-warning bg-tint-soft rounded-lg">
+                  <div className="w-12 h-12 tint-warning bg-tint-strong rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
                       className="w-6 h-6 text-orange-600"
                       fill="none"
@@ -505,15 +505,15 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق پرخطر تصادفات تک وسیله ای</h4>
+                  <h4 className="font-medium text-fg mb-1">مناطق پرخطر تصادفات تک وسیله ای</h4>
                   <p className="text-2xl font-bold text-orange-600">
                     {analyticsData.mapChart?.filter((zone) => zone.ratio > 60).length || 0}
                   </p>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="text-center p-4 bg-success-soft rounded-lg">
+                  <div className="w-12 h-12 bg-success-soft rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg
-                      className="w-6 h-6 text-green-600"
+                      className="w-6 h-6 text-success-fg"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -526,18 +526,18 @@ const SpatialSingleVehicleAnalyticsPage = () => {
                       />
                     </svg>
                   </div>
-                  <h4 className="font-medium text-gray-900 mb-1">مناطق با وضعیت ایمنی مناسب</h4>
-                  <p className="text-2xl font-bold text-green-600">
+                  <h4 className="font-medium text-fg mb-1">مناطق با وضعیت ایمنی مناسب</h4>
+                  <p className="text-2xl font-bold text-success-fg">
                     {analyticsData.mapChart?.filter((zone) => zone.ratio <= 40).length || 0}
                   </p>
                 </div>
               </div>
 
               {/* Additional insights */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="bg-blue-50 rounded-lg p-4">
+              <div className="mt-6 pt-4 border-t border-line">
+                <div className="bg-brand-soft rounded-lg p-4">
                   <h4 className="font-medium text-blue-900 mb-2">🚗 تحلیل تصادفات تک وسیله ای</h4>
-                  <p className="text-sm text-blue-800 mb-3">
+                  <p className="text-sm text-brand-fg mb-3">
                     این تحلیل شامل دو بخش اصلی است: نمودار ستونی و نقشه مناطق.
                   </p>
                   <div className="space-y-3 text-sm">

@@ -548,19 +548,19 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-80 bg-gray-50 border-l border-gray-200 h-full flex flex-col" dir="rtl">
+    <div className="w-80 bg-canvas border-l border-line h-full flex flex-col" dir="rtl">
       <div className="flex-1 overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-600 mt-1">{description}</p>
+        <div className="p-6 border-b border-line">
+          <h2 className="text-xl font-bold text-fg">{title}</h2>
+          <p className="text-sm text-fg-muted mt-1">{description}</p>
           {/* GLOBAL FILTERS: Badge when global filters are active */}
           {hasGlobalFilters && (
-            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-2.5 flex items-center gap-2">
-              <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <div className="mt-3 bg-brand-soft border border-brand-border rounded-lg p-2.5 flex items-center gap-2">
+              <svg className="w-4 h-4 text-brand-fg flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="text-sm text-blue-800 font-medium">{globalFilterCount} فیلتر عمومی فعال</span>
+              <span className="text-sm text-brand-fg font-medium">{globalFilterCount} فیلتر عمومی فعال</span>
             </div>
           )}
         </div>
@@ -568,8 +568,8 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
           {/* Basic Filters Section */}
           {hasMainFilters() && (
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
+            <div className="bg-surface rounded-lg p-4 shadow-sm">
+              <h3 className="text-sm font-semibold text-fg mb-4 border-b border-line pb-2">
                 فیلترهای اصلی
               </h3>
 
@@ -688,20 +688,20 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
               {!config.disableSeverityFilter && (
                 <div className="mb-4">
                   {config.lockToSevereAccidents && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <div className="bg-brand-soft border border-brand-border rounded-lg p-3 mb-4">
                       <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-4 h-4 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                           <path
                             fillRule="evenodd"
                             d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span className="text-sm text-blue-800 font-medium">
+                        <span className="text-sm text-brand-fg font-medium">
                           فیلتر تصادفات شدید فعال است
                         </span>
                       </div>
-                      <p className="text-xs text-blue-700 mt-1">
+                      <p className="text-xs text-brand-fg mt-1">
                         فقط تصادفات با حداقل یک فوتی یا مجروح نمایش داده می‌شود
                       </p>
                     </div>
@@ -816,15 +816,15 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
 
           {/* Dynamic Checkbox Filter Section */}
           {dynamicCheckboxFilter && (
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <h3 className="text-sm font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
+            <div className="bg-surface rounded-lg p-4 shadow-sm">
+              <h3 className="text-sm font-semibold text-fg mb-4 border-b border-line pb-2">
                 {dynamicCheckboxFilter.title}
               </h3>
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {dynamicCheckboxFilter.options.map((option, index) => (
                   <label
                     key={index}
-                    className="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center gap-2 p-2 rounded hover:bg-surface-hover cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -835,25 +835,25 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           : dynamicCheckboxFilter.activeOptions.filter((o) => o !== option);
                         dynamicCheckboxFilter.onChange(newActiveOptions);
                       }}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                      className="w-4 h-4 text-brand-fg bg-surface-sunken border-line-strong rounded focus:ring-brand focus:ring-2"
                     />
-                    <span className="text-sm text-gray-700">{option}</span>
+                    <span className="text-sm text-fg">{option}</span>
                   </label>
                 ))}
               </div>
               {dynamicCheckboxFilter.options.length === 0 && (
-                <p className="text-sm text-gray-500 text-center py-4">هیچ گزینه‌ای در دسترس نیست</p>
+                <p className="text-sm text-fg-muted text-center py-4">هیچ گزینه‌ای در دسترس نیست</p>
               )}
             </div>
           )}
 
           {/* Advanced Filters Section */}
           {activeAdvancedFilters && hasAdvancedFilters() && (
-            <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="bg-surface rounded-lg p-4 shadow-sm">
               <button
                 type="button"
                 onClick={() => setAdvancedFiltersOpen(!advancedFiltersOpen)}
-                className="flex items-center justify-between w-full text-sm font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4 hover:text-blue-600 transition-colors"
+                className="flex items-center justify-between w-full text-sm font-semibold text-fg border-b border-line pb-2 mb-4 hover:text-brand-fg transition-colors"
               >
                 <span>فیلترهای پیشرفته</span>
                 <svg
@@ -879,7 +879,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     enabledFilters.includes("completionDateFrom") ||
                     enabledFilters.includes("completionDateTo")) && (
                     <>
-                      <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                      <h4 className="text-sm font-medium text-fg border-b border-line pb-2">
                         جزئیات اصلی تصادف
                       </h4>
                       <div className="grid grid-cols-2 gap-4">
@@ -905,7 +905,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                       <div className="grid grid-cols-1 gap-4">
                         {enabledFilters.includes("hasWitness") && (
                           <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
+                            <label className="block text-sm font-medium text-fg">
                               وجود شاهد
                             </label>
                             <div className="flex flex-wrap gap-4">
@@ -914,27 +914,27 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                                   type="radio"
                                   value="true"
                                   {...control.register("hasWitness")}
-                                  className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                  className="form-radio h-4 w-4 text-brand-fg border-line-strong focus:ring-brand"
                                 />
-                                <span className="mr-2 text-gray-700">بله</span>
+                                <span className="mr-2 text-fg">بله</span>
                               </label>
                               <label className="inline-flex items-center cursor-pointer">
                                 <input
                                   type="radio"
                                   value="false"
                                   {...control.register("hasWitness")}
-                                  className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                  className="form-radio h-4 w-4 text-brand-fg border-line-strong focus:ring-brand"
                                 />
-                                <span className="mr-2 text-gray-700">خیر</span>
+                                <span className="mr-2 text-fg">خیر</span>
                               </label>
                               <label className="inline-flex items-center cursor-pointer">
                                 <input
                                   type="radio"
                                   value=""
                                   {...control.register("hasWitness")}
-                                  className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                  className="form-radio h-4 w-4 text-brand-fg border-line-strong focus:ring-brand"
                                 />
-                                <span className="mr-2 text-gray-700">هرکدام</span>
+                                <span className="mr-2 text-fg">هرکدام</span>
                               </label>
                             </div>
                             {errors.hasWitness && (
@@ -977,7 +977,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   {(enabledFilters.includes("attachmentName") ||
                     enabledFilters.includes("attachmentType")) && (
                     <>
-                      <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                      <h4 className="text-sm font-medium text-fg border-b border-line pb-2">
                         پیوست‌ها
                       </h4>
                       <div className="grid grid-cols-1 gap-4">
@@ -1013,7 +1013,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     enabledFilters.includes("areaUsages") ||
                     enabledFilters.includes("roadSurfaceConditions")) && (
                     <>
-                      <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                      <h4 className="text-sm font-medium text-fg border-b border-line pb-2">
                         شرایط راه و محیط
                       </h4>
                       {enabledFilters.includes("roadSituation") && (
@@ -1126,7 +1126,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   {(enabledFilters.includes("humanReasons") ||
                     enabledFilters.includes("vehicleReasons")) && (
                     <>
-                      <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                      <h4 className="text-sm font-medium text-fg border-b border-line pb-2">
                         علل تصادف
                       </h4>
                       {enabledFilters.includes("humanReasons") && (
@@ -1181,7 +1181,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     enabledFilters.includes("vehicleMaxDamageSections") ||
                     enabledFilters.includes("equipmentDamages")) && (
                     <>
-                      <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                      <h4 className="text-sm font-medium text-fg border-b border-line pb-2">
                         جزئیات وسیله نقلیه
                       </h4>
                       <div className="grid grid-cols-1 gap-4">
@@ -1447,7 +1447,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                     enabledFilters.includes("pedestrianFaultStatus") ||
                     enabledFilters.includes("pedestrianTotalReason")) && (
                     <>
-                      <h4 className="text-sm font-medium text-gray-800 border-b border-gray-200 pb-2">
+                      <h4 className="text-sm font-medium text-fg border-b border-line pb-2">
                         جزئیات اشخاص
                       </h4>
                       {/* Driver */}
@@ -1460,7 +1460,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                         enabledFilters.includes("driverInjuryType") ||
                         enabledFilters.includes("driverTotalReason")) && (
                         <>
-                          <h5 className="text-sm font-medium text-gray-700 pt-2">راننده</h5>
+                          <h5 className="text-sm font-medium text-fg pt-2">راننده</h5>
                           <div className="grid grid-cols-1 gap-4">
                             {enabledFilters.includes("driverFirstName") && (
                               <MyInput
@@ -1501,7 +1501,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           </div>
                           {enabledFilters.includes("driverSex") && (
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-fg">
                                 جنسیت راننده
                               </label>
                               <div className="flex gap-4">
@@ -1510,18 +1510,18 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                                     type="checkbox"
                                     value="Male"
                                     {...control.register("driverSex")}
-                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    className="w-4 h-4 text-brand-fg bg-surface-sunken border-line-strong rounded focus:ring-brand focus:ring-2"
                                   />
-                                  <span className="mr-2 text-sm text-gray-700">مرد</span>
+                                  <span className="mr-2 text-sm text-fg">مرد</span>
                                 </label>
                                 <label className="flex items-center">
                                   <input
                                     type="checkbox"
                                     value="Female"
                                     {...control.register("driverSex")}
-                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    className="w-4 h-4 text-brand-fg bg-surface-sunken border-line-strong rounded focus:ring-brand focus:ring-2"
                                   />
-                                  <span className="mr-2 text-sm text-gray-700">زن</span>
+                                  <span className="mr-2 text-sm text-fg">زن</span>
                                 </label>
                               </div>
                             </div>
@@ -1540,7 +1540,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("driverInjuryType") && (
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-fg">
                                 نوع آسیب راننده
                               </label>
                               <div className="flex gap-4 flex-wrap">
@@ -1598,7 +1598,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                         enabledFilters.includes("passengerFaultStatus") ||
                         enabledFilters.includes("passengerTotalReason")) && (
                         <>
-                          <h5 className="text-sm font-medium text-gray-700 pt-2">جزئیات سرنشین</h5>
+                          <h5 className="text-sm font-medium text-fg pt-2">جزئیات سرنشین</h5>
                           <div className="grid grid-cols-1 gap-4">
                             {enabledFilters.includes("passengerFirstName") && (
                               <MyInput
@@ -1630,7 +1630,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           </div>
                           {enabledFilters.includes("passengerSex") && (
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-fg">
                                 جنسیت سرنشین
                               </label>
                               <div className="flex gap-4">
@@ -1657,7 +1657,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("passengerInjuryType") && (
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-fg">
                                 نوع آسیب سرنشین
                               </label>
                               <div className="flex gap-4 flex-wrap">
@@ -1727,7 +1727,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                         enabledFilters.includes("pedestrianFaultStatus") ||
                         enabledFilters.includes("pedestrianTotalReason")) && (
                         <>
-                          <h5 className="text-sm font-medium text-gray-700 pt-2">جزئیات عابر پیاده</h5>
+                          <h5 className="text-sm font-medium text-fg pt-2">جزئیات عابر پیاده</h5>
                           <div className="grid grid-cols-1 gap-4">
                             {enabledFilters.includes("pedestrianFirstName") && (
                               <MyInput
@@ -1759,7 +1759,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           </div>
                           {enabledFilters.includes("pedestrianSex") && (
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-fg">
                                 جنسیت عابر پیاده
                               </label>
                               <div className="flex gap-4">
@@ -1786,7 +1786,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                           )}
                           {enabledFilters.includes("pedestrianInjuryType") && (
                             <div className="space-y-2">
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-fg">
                                 نوع آسیب عابر پیاده
                               </label>
                               <div className="flex gap-4 flex-wrap">
@@ -1860,7 +1860,7 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
               <button
                 type="button"
                 onClick={applyGlobalFiltersToLocal}
-                className="w-full bg-indigo-50 text-indigo-700 border border-indigo-200 py-3 px-4 rounded-lg font-medium hover:bg-indigo-100 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors flex items-center justify-center gap-2"
+                className="w-full tint-brand bg-tint-soft text-tint-fg border border-tint-border py-3 px-4 rounded-lg font-medium hover:bg-tint-strong focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-canvas transition-colors flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1870,14 +1870,14 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
             )}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              className="w-full bg-brand text-on-brand py-3 px-4 rounded-lg font-medium hover:bg-brand-hover focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-canvas transition-colors"
             >
               اعمال فیلتر و نمایش تحلیل
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="w-full bg-gray-200 text-gray-800 py-3 px-4 rounded-lg font-medium hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              className="w-full bg-surface-sunken text-fg py-3 px-4 rounded-lg font-medium hover:bg-line focus:ring-2 focus:ring-line-focus focus:ring-offset-2 focus:ring-offset-canvas transition-colors"
             >
               پاک کردن فیلتر
             </button>

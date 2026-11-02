@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useSelectStyles } from "@/utils/select-styles";
 
 /**
  * `react-select/async` پشت `dynamic(..., { ssr: false })` تایپش را از دست
@@ -15,43 +16,6 @@ import dynamic from "next/dynamic";
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
 export type RefOption = { value: string; label: string };
-
-const STYLES = {
-  control: (base: Record<string, unknown>) => ({
-    ...base,
-    backgroundColor: "rgba(255,255,255,.04)",
-    borderColor: "rgba(255,255,255,.1)",
-    color: "#fff",
-  }),
-  menu: (base: Record<string, unknown>) => ({ ...base, backgroundColor: "#0f172a" }),
-  option: (
-    base: Record<string, unknown>,
-    state: { isSelected: boolean; isFocused: boolean },
-  ) => ({
-    ...base,
-    backgroundColor: state.isSelected
-      ? "#1d4ed8"
-      : state.isFocused
-        ? "#1e293b"
-        : "transparent",
-    color: "#fff",
-    direction: "rtl",
-    textAlign: "right",
-  }),
-  multiValue: (base: Record<string, unknown>) => ({
-    ...base,
-    backgroundColor: "#1e3a8a",
-  }),
-  multiValueLabel: (base: Record<string, unknown>) => ({
-    ...base,
-    color: "#fff",
-  }),
-  input: (base: Record<string, unknown>) => ({ ...base, color: "#fff" }),
-  placeholder: (base: Record<string, unknown>) => ({
-    ...base,
-    color: "#64748b",
-  }),
-} as never;
 
 type BaseProps = {
   /** شناسه‌ی یکتا — `react-select` برای چند نمونه روی یک صفحه لازمش دارد. */
@@ -95,12 +59,14 @@ export function RefSelect(props: RefSelectProps) {
     disabled,
   } = props;
 
+  const styles = useSelectStyles(errorMessage);
+
   const loadOptions = (input: string) =>
     onFilter ? onFilter(input) : options;
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-slate-300">{label}</label>
+      <label className="block text-sm font-medium text-fg-muted">{label}</label>
       <AsyncSelect
         cacheOptions
         defaultOptions
@@ -118,7 +84,7 @@ export function RefSelect(props: RefSelectProps) {
         }}
         options={options}
         placeholder={placeholder}
-        styles={STYLES}
+        styles={styles}
         value={value}
       />
       {errorMessage && (

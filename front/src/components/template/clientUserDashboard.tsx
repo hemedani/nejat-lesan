@@ -66,7 +66,7 @@ const ClientUserDashboard: React.FC<ClientDashboardProps> = ({ users }) => {
 
   return (
     <div className="mt-5">
-      <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><h2 className="text-lg font-bold text-white">فهرست حساب‌ها</h2><p className="mt-1 text-xs text-slate-500">برای مشاهده جزئیات یا تغییر سطح دسترسی، کارت کاربر را انتخاب کنید.</p></div><Link href="/admin/users/createUser" className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500">+ ایجاد کاربر جدید</Link></div>
+      <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center"><div><h2 className="text-lg font-bold text-fg">فهرست حساب‌ها</h2><p className="mt-1 text-xs text-fg-faint">برای مشاهده جزئیات یا تغییر سطح دسترسی، کارت کاربر را انتخاب کنید.</p></div><Link href="/admin/users/createUser" className="inline-flex items-center justify-center rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover">+ ایجاد کاربر جدید</Link></div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {users?.map((user) => (
           <UserCard

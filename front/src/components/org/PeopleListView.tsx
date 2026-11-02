@@ -107,11 +107,11 @@ export function PeopleListView({ orgId }: { orgId: string }) {
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">افراد و نقش‌ها</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">اعضای سازمان</h1>
-          <p className="mt-2 text-sm text-slate-500">افراد را اضافه کنید و نقش سازمانی (سرپرست سازمان/واحد یا مامور) به آن‌ها بدهید.</p>
+          <p className="text-sm text-brand-fg">افراد و نقش‌ها</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">اعضای سازمان</h1>
+          <p className="mt-2 text-sm text-fg-faint">افراد را اضافه کنید و نقش سازمانی (سرپرست سازمان/واحد یا مامور) به آن‌ها بدهید.</p>
         </div>
-        <Link href={orgRoutes.personNew()} className="rounded-xl bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-blue-500">
+        <Link href={orgRoutes.personNew()} className="rounded-xl bg-brand px-4 py-2.5 text-center text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
           + افزودن فرد
         </Link>
       </div>
@@ -123,12 +123,12 @@ export function PeopleListView({ orgId }: { orgId: string }) {
         <Kpi label="ماموران" value={counts.Officer.toLocaleString("fa-IR")} />
       </div>
 
-      <div className="mb-4 rounded-2xl border border-white/10 bg-slate-900/60 p-3">
+      <div className="mb-4 rounded-2xl border border-line bg-surface/60 p-3">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="جستجوی نام، ایمیل یا کد پرسنلی..."
-          className="w-full rounded-xl border border-white/10 bg-white/[.04] px-3 py-2.5 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/50"
+          className="w-full rounded-xl border border-line bg-surface-sunken px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-faint focus:border-blue-400/50"
         />
       </div>
 
@@ -137,7 +137,7 @@ export function PeopleListView({ orgId }: { orgId: string }) {
       ) : error ? (
         <RetryErrorBox message={error} onRetry={() => void load()} />
       ) : filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-10 text-center text-sm text-slate-500">
+        <div className="rounded-2xl border border-dashed border-line-strong bg-surface-sunken p-10 text-center text-sm text-fg-faint">
           فردی یافت نشد.
         </div>
       ) : (
@@ -146,22 +146,22 @@ export function PeopleListView({ orgId }: { orgId: string }) {
             <button
               key={member._id}
               onClick={() => router.push(orgRoutes.person(member._id))}
-              className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 text-right transition hover:border-blue-400/25"
+              className="rounded-2xl border border-line bg-surface/70 p-4 text-right transition hover:border-blue-400/25"
             >
               <div className="flex items-start justify-between gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blue-400/30 bg-blue-400/10 font-bold text-blue-100">
+                <span className="tint-blue flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-tint-border bg-tint-soft font-bold text-tint-fg">
                   {`${member.first_name || ""} ${member.last_name || ""}`.trim().slice(0, 1) || "؟"}
                 </span>
-                <span className="rounded-full border border-white/10 bg-white/[.04] px-2 py-0.5 text-[11px] text-slate-400">
+                <span className="rounded-full border border-line bg-surface-sunken px-2 py-0.5 text-[11px] text-fg-muted">
                   {member.level || "—"}
                 </span>
               </div>
-              <p className="mt-3 font-semibold text-white">
+              <p className="mt-3 font-semibold text-fg">
                 {`${member.first_name || ""} ${member.last_name || ""}`.trim() || "بدون نام"}
               </p>
-              {member.email && <p className="mt-0.5 text-xs text-slate-400" dir="ltr">{member.email}</p>}
+              {member.email && <p className="mt-0.5 text-xs text-fg-muted" dir="ltr">{member.email}</p>}
               {(member.personnel_code || member.mobile) && (
-                <p className="mt-1 text-xs text-slate-500" dir="ltr">{member.personnel_code || member.mobile}</p>
+                <p className="mt-1 text-xs text-fg-faint" dir="ltr">{member.personnel_code || member.mobile}</p>
               )}
               {(member.roles?.length || 0) > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
@@ -183,9 +183,9 @@ export function PeopleListView({ orgId }: { orgId: string }) {
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/70 p-3 shadow-xl">
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="mt-1 text-xl font-bold text-white">{value}</p>
+    <div className="relative overflow-hidden rounded-2xl border border-line bg-surface/70 p-3 shadow-xl">
+      <p className="text-xs text-fg-muted">{label}</p>
+      <p className="mt-1 text-xl font-bold text-fg">{value}</p>
     </div>
   );
 }

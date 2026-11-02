@@ -78,28 +78,28 @@ export function FormAnswersSection({
       </SectionTitle>
 
       {description && (
-        <p className="mb-3 rounded-xl border border-white/10 bg-white/[.03] p-3 text-sm leading-7 text-slate-200">
+        <p className="mb-3 rounded-xl border border-line bg-surface-sunken p-3 text-sm leading-7 text-fg">
           {description}
         </p>
       )}
 
       {report.temporary_action && (
-        <p className="mb-3 rounded-xl border border-sky-400/20 bg-sky-400/10 p-3 text-xs leading-6 text-sky-100">
+        <p className="tint-sky mb-3 rounded-xl border border-tint-border bg-tint-soft p-3 text-xs leading-6 text-tint-fg">
           اقدام موقت: {report.temporary_action}
         </p>
       )}
 
       {rows.length > 0 ? (
-        <dl className="divide-y divide-white/5">
+        <dl className="divide-y divide-line">
           {rows.map((row) => (
             <div key={row.path} className="flex flex-wrap gap-x-3 gap-y-1 py-2">
-              <dt className="min-w-[9rem] text-xs text-slate-500">
+              <dt className="min-w-[9rem] text-xs text-fg-faint">
                 {row.groupLabel && (
-                  <span className="ml-1.5 text-slate-600">{row.groupLabel}</span>
+                  <span className="ml-1.5 text-fg-faint">{row.groupLabel}</span>
                 )}
                 {row.label}
               </dt>
-              <dd className="flex-1 text-xs leading-6 text-slate-200">
+              <dd className="flex-1 text-xs leading-6 text-fg">
                 {row.text}
                 {row.files && <AnswerFileList files={row.files} />}
               </dd>
@@ -249,7 +249,7 @@ function FallbackAnswers({
 
   if (!answers || rows.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-fg-faint">
         {hasDefinition
           ? "پاسخی برای این گزارش ثبت نشده است."
           : "برای این گزارش پاسخی ثبت نشده یا تعریف فرم در دسترس نیست."}
@@ -260,18 +260,18 @@ function FallbackAnswers({
   return (
     <>
       {!hasDefinition && (
-        <p className="mb-3 rounded-xl border border-amber-400/20 bg-amber-400/5 p-3 text-xs leading-6 text-amber-100">
+        <p className="tint-amber mb-3 rounded-xl border border-tint-border bg-tint-soft p-3 text-xs leading-6 text-tint-fg">
           تعریف فرم این گزارش در دسترس نیست، بنابراین پاسخ‌ها با کلید خام نمایش داده
           می‌شوند.
         </p>
       )}
-      <dl className="divide-y divide-white/5">
+      <dl className="divide-y divide-line">
         {rows.map((row) => (
           <div key={row.path} className="flex flex-wrap gap-x-3 gap-y-1 py-2">
-            <dt className="min-w-[9rem] text-xs text-slate-500" dir="ltr">
+            <dt className="min-w-[9rem] text-xs text-fg-faint" dir="ltr">
               {row.path}
             </dt>
-            <dd className="flex-1 text-xs leading-6 text-slate-200">
+            <dd className="flex-1 text-xs leading-6 text-fg">
               {row.text}
               {row.files && <AnswerFileList files={row.files} />}
             </dd>

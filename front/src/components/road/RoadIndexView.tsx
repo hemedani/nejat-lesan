@@ -72,15 +72,15 @@ export function RoadIndexView() {
     <div>
       <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="text-sm text-blue-300">مدیریت جاده‌ها</p>
-          <h1 className="mt-1 text-2xl font-bold text-white">جاده‌ها</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="text-sm text-brand-fg">مدیریت جاده‌ها</p>
+          <h1 className="mt-1 text-2xl font-bold text-fg">جاده‌ها</h1>
+          <p className="mt-2 text-sm text-fg-faint">
             محور هر جاده را روی نقشه رسم کنید؛ طول آن در سرور از روی همان هندسه
             محاسبه و ذخیره می‌شود.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="rounded-full border border-white/10 bg-white/[.04] px-3 py-1.5 text-xs text-slate-400">
+          <span className="rounded-full border border-line bg-surface-sunken px-3 py-1.5 text-xs text-fg-muted">
             {total.toLocaleString("fa-IR")} جاده
           </span>
           <Button onClick={() => router.push(adminRecordRoutes.roadNew())}>
@@ -89,9 +89,9 @@ export function RoadIndexView() {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-3 sm:flex-row sm:items-center">
+      <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-line bg-surface/60 p-3 sm:flex-row sm:items-center">
         <input
-          className="w-full rounded-xl border border-white/10 bg-white/[.04] px-3 py-2.5 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-400/50"
+          className="w-full rounded-xl border border-line bg-surface-sunken px-3 py-2.5 text-sm text-fg outline-none placeholder:text-fg-faint focus:border-blue-400/50"
           onChange={(e) => {
             setQuery(e.target.value);
             setPage(1);
@@ -114,29 +114,29 @@ export function RoadIndexView() {
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {rows.map((road) => (
             <div
-              className="rounded-2xl border border-white/10 bg-slate-900/75 p-4 shadow-xl"
+              className="rounded-2xl border border-line bg-surface/75 p-4 shadow-xl"
               key={road._id}
             >
               <div className="flex items-start justify-between gap-2">
                 <button
-                  className="text-right text-sm font-semibold text-white hover:text-blue-300"
+                  className="text-right text-sm font-semibold text-fg hover:underline"
                   onClick={() => router.push(adminRecordRoutes.road(road._id))}
                   type="button"
                 >
                   {road.name}
                 </button>
-                <span className="shrink-0 rounded-full border border-white/10 bg-white/[.04] px-2 py-0.5 text-[11px] text-slate-400">
+                <span className="shrink-0 rounded-full border border-line bg-surface-sunken px-2 py-0.5 text-[11px] text-fg-muted">
                   {road.province?.name ?? "بدون استان"}
                 </span>
               </div>
 
               {(road.origin || road.destination) && (
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-fg-muted">
                   {road.origin || "؟"} ← {road.destination || "؟"}
                 </p>
               )}
 
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-fg-faint">
                 طول:{" "}
                 {road.total_length_meters
                   ? `${Math.round(road.total_length_meters).toLocaleString("fa-IR")} متر`
@@ -174,7 +174,7 @@ export function RoadIndexView() {
           >
             قبلی
           </Button>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-fg-muted">
             صفحهٔ {page.toLocaleString("fa-IR")} از{" "}
             {pageCount.toLocaleString("fa-IR")}
           </span>

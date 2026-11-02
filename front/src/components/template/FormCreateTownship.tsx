@@ -15,6 +15,7 @@ import React, { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import GeoPointPicker, { type GeoPoint } from "@/components/maps/GeoPointPicker";
 import GeoPolygonDrawer, { type GeoPolygon } from "@/components/maps/GeoPolygonDrawer";
+import { useSelectStyles } from "@/utils/select-styles";
 
 // نقشه از کامپوننت‌های مشترک می‌آید؛ فقط `AsyncSelect` هنوز جدا لازم است
 // چون به `react-hook-form` وصل است.
@@ -59,6 +60,7 @@ const FormCreateTownship = ({
   token?: string;
   lesanUrl: string;
 }) => {
+  const selectStyles = useSelectStyles(undefined, { minHeight: "48px", rtl: true });
   const router = useRouter();
   // نقشه مستقیماً از این دو مقدار می‌خواند؛ حالتِ «کلیک‌گیری فعال است؟» و
   // «مرکز نقشه کجاست» داخل خودِ کامپوننت‌های مشترک است.
@@ -206,7 +208,7 @@ const FormCreateTownship = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-surface rounded-lg shadow-md p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -233,7 +235,7 @@ const FormCreateTownship = ({
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-fg mb-1">
               استان <span className="text-red-500">*</span>
             </label>
             <AsyncSelect
@@ -246,28 +248,7 @@ const FormCreateTownship = ({
               noOptionsMessage={() => "استانی یافت نشد"}
               loadingMessage={() => "در حال بارگذاری..."}
               className="text-sm"
-              styles={{
-                control: (provided, state) => ({
-                  ...provided,
-                  minHeight: "42px",
-                  borderColor: errors.provinceId
-                    ? "#ef4444"
-                    : provided.borderColor,
-                  borderWidth: errors.provinceId ? "2px" : "1px",
-                  boxShadow: state.isFocused
-                    ? errors.provinceId
-                      ? "0 0 0 1px #ef4444"
-                      : "0 0 0 1px #3b82f6"
-                    : "none",
-                  "&:hover": {
-                    borderColor: errors.provinceId ? "#ef4444" : "#d1d5db",
-                  },
-                }),
-                placeholder: (provided) => ({
-                  ...provided,
-                  fontSize: "14px",
-                }),
-              }}
+              styles={selectStyles}
             />
             {errors.provinceId && (
               <p className="text-red-500 text-sm mt-1">
@@ -279,14 +260,14 @@ const FormCreateTownship = ({
 
         {/* Map Section */}
         <div className="border-t pt-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <h3 className="text-lg font-semibold text-fg mb-4">
             تعیین منطقه و مرکز شهرستان بر روی نقشه
           </h3>
 
           {/* Instructions */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-            <h4 className="font-medium text-blue-800 mb-2">راهنمای استفاده:</h4>
-            <ul className="text-blue-700 text-sm space-y-1">
+          <div className="bg-brand-soft border border-brand-border rounded-lg p-4 mb-4">
+            <h4 className="font-medium text-brand-fg mb-2">راهنمای استفاده:</h4>
+            <ul className="text-brand-fg text-sm space-y-1">
               <li>• ابتدا استان مربوطه را انتخاب کنید</li>
               <li>
                 • بر روی دکمه &quot;ترسیم منطقه&quot; کلیک کنید و مرزهای شهرستان
@@ -302,40 +283,38 @@ const FormCreateTownship = ({
 
           {/* Error Messages */}
           {errors.area && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-              <p className="text-red-600 text-sm">{errors.area.message}</p>
+            <div className="bg-danger-soft border border-danger-border rounded-lg p-3 mb-4">
+              <p className="text-danger-fg text-sm">{errors.area.message}</p>
             </div>
           )}
 
           {errors.center_location && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-              <p className="text-red-600 text-sm">
+            <div className="bg-danger-soft border border-danger-border rounded-lg p-3 mb-4">
+              <p className="text-danger-fg text-sm">
                 {errors.center_location.message}
               </p>
             </div>
           )}
 
           <GeoPolygonDrawer
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.area?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={mapZoom}
             label="محدودهٔ شهرستان"
             onChange={handleAreaChange}
             onClear={clearArea}
-            tone="light"
             value={area}
           />
 
           <GeoPointPicker
-            className="h-96 border border-gray-300 rounded-lg"
+            className="h-96 border border-line-strong rounded-lg"
             errorMessage={errors.center_location?.message}
             fallbackCenter={mapCenter}
             fallbackZoom={mapZoom}
             label="مرکز شهرستان"
             onChange={handleCenterChange}
             onClear={clearCenterPoint}
-            tone="light"
             value={centerPoint}
           />
         </div>
@@ -346,8 +325,8 @@ const FormCreateTownship = ({
             type="submit"
             disabled={!isValid || isSubmitting}
             className={`px-6 py-3 rounded-lg font-medium transition-colors ${isValid && !isSubmitting
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-brand text-on-brand hover:bg-brand-hover"
+                : "bg-line text-fg-muted cursor-not-allowed"
               }`}
           >
             {isSubmitting ? "در حال ایجاد..." : "ایجاد شهرستان"}

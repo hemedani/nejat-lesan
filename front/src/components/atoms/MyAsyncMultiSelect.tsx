@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import React, { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { FieldPath, FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
-import { components as defaultComponents, GroupBase, MultiValueProps, OptionsOrGroups, PropsValue, StylesConfig } from "react-select";
+import { components as defaultComponents, GroupBase, MultiValueProps, OptionsOrGroups, PropsValue } from "react-select";
+import { useSelectStyles } from "@/utils/select-styles";
 
 const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
@@ -60,8 +61,8 @@ const MultiValueWithTooltip = (props: MultiValueProps<unknown, boolean, GroupBas
                 top: pos.top - 8,
                 right: pos.right,
                 transform: "translateY(-100%)",
-                background: "#1e293b",
-              color: "#f1f5f9",
+                background: "var(--tooltip-bg)",
+              color: "var(--tooltip-fg)",
               padding: "5px 10px",
               borderRadius: "7px",
               fontSize: "12px",
@@ -97,174 +98,13 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
   placeholder
 }: InputProps<Option, Group, T>) => {
 
-  const customStyles: StylesConfig<unknown, true> = {
-    control: (provided, state) => ({
-      ...provided,
-      minHeight: '48px',
-      backgroundColor: errMsg ? 'rgba(251, 113, 133, 0.10)' : 'rgba(255, 255, 255, 0.04)',
-      borderColor: errMsg
-        ? (state.isFocused ? '#fb7185' : 'rgba(251, 113, 133, 0.50)')
-        : (state.isFocused ? 'rgba(96, 165, 250, 0.65)' : (state.menuIsOpen ? '#64748b' : 'rgba(255, 255, 255, 0.10)')),
-      borderWidth: '1px',
-      borderRadius: '12px',
-      boxShadow: state.isFocused
-        ? (errMsg ? '0 0 0 2px rgba(251, 113, 133, 0.10)' : '0 0 0 2px rgba(59, 130, 246, 0.14)')
-        : 'none',
-      '&:hover': {
-        borderColor: errMsg ? '#fb7185' : 'rgba(255, 255, 255, 0.20)',
-        backgroundColor: errMsg ? 'rgba(251, 113, 133, 0.14)' : 'rgba(255, 255, 255, 0.06)'
-      },
-      transition: 'all 0.2s ease-in-out',
-      cursor: 'pointer',
-      direction: 'rtl'
-    }),
-
-    valueContainer: (provided) => ({
-      ...provided,
-      padding: '2px 16px',
-      direction: 'rtl'
-    }),
-
-    input: (provided) => ({
-      ...provided,
-      margin: '0',
-      padding: '0',
-      color: '#e2e8f0',
-      direction: 'rtl'
-    }),
-
-    placeholder: (provided) => ({
-      ...provided,
-      color: '#64748b',
-      fontSize: '14px',
-      direction: 'rtl',
-      textAlign: 'right'
-    }),
-
-    singleValue: (provided) => ({
-      ...provided,
-      color: '#e2e8f0',
-      direction: 'rtl',
-      textAlign: 'right'
-    }),
-
-    multiValue: (provided) => ({
-      ...provided,
-      backgroundColor: 'rgba(96, 165, 250, 0.14)',
-      border: '1px solid rgba(96, 165, 250, 0.30)',
-      borderRadius: '8px',
-      margin: '2px',
-      direction: 'rtl'
-    }),
-
-    multiValueLabel: (provided) => ({
-      ...provided,
-      color: '#bfdbfe',
-      fontSize: '13px',
-      fontWeight: '500',
-      padding: '4px 8px',
-      direction: 'rtl'
-    }),
-
-    multiValueRemove: (provided) => ({
-      ...provided,
-      color: '#94a3b8',
-      borderRadius: '0 8px 8px 0',
-      '&:hover': {
-        backgroundColor: '#fb7185',
-        color: '#0f172a'
-      },
-      cursor: 'pointer',
-      transition: 'all 0.2s ease-in-out'
-    }),
-
-    indicatorSeparator: () => ({
-      display: 'none'
-    }),
-
-    dropdownIndicator: (provided, state) => ({
-      ...provided,
-      color: '#64748b',
-      padding: '8px 12px',
-      '&:hover': {
-        color: '#60a5fa'
-      },
-      transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-      transition: 'all 0.2s ease-in-out'
-    }),
-
-    clearIndicator: (provided) => ({
-      ...provided,
-      color: '#64748b',
-      padding: '8px',
-      '&:hover': {
-        color: '#fb7185'
-      },
-      cursor: 'pointer',
-      transition: 'all 0.2s ease-in-out'
-    }),
-
-    menu: (provided) => ({
-      ...provided,
-      backgroundColor: '#0f172a',
-      border: '1px solid rgba(255, 255, 255, 0.10)',
-      borderRadius: '12px',
-      boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.5)',
-      marginTop: '4px',
-      overflow: 'hidden',
-      zIndex: 9999
-    }),
-
-    menuList: (provided) => ({
-      ...provided,
-      padding: '8px',
-      maxHeight: '200px'
-    }),
-
-    option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? 'rgba(37, 99, 235, 0.35)'
-        : (state.isFocused ? 'rgba(59, 130, 246, 0.14)' : 'transparent'),
-      color: state.isSelected ? '#dbeafe' : '#cbd5e1',
-      borderRadius: '8px',
-      margin: '2px 0',
-      padding: '12px 16px',
-      cursor: 'pointer',
-      fontSize: '14px',
-      fontWeight: state.isSelected ? '500' : '400',
-      direction: 'rtl',
-      textAlign: 'right',
-      '&:hover': {
-        backgroundColor: state.isSelected ? 'rgba(37, 99, 235, 0.45)' : 'rgba(59, 130, 246, 0.14)'
-      },
-      transition: 'all 0.15s ease-in-out'
-    }),
-
-    noOptionsMessage: (provided) => ({
-      ...provided,
-      color: '#64748b',
-      fontSize: '14px',
-      padding: '12px 16px',
-      direction: 'rtl',
-      textAlign: 'right'
-    }),
-
-    loadingMessage: (provided) => ({
-      ...provided,
-      color: '#64748b',
-      fontSize: '14px',
-      padding: '12px 16px',
-      direction: 'rtl',
-      textAlign: 'right'
-    })
-  };
+  const customStyles = useSelectStyles(errMsg, { minHeight: "48px", rtl: true });
 
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
       <label
         htmlFor={name}
-        className="text-sm font-medium text-slate-300 text-right"
+        className="text-sm font-medium text-fg-muted text-right"
       >
         {label}
       </label>

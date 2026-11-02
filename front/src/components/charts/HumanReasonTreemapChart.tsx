@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { formatNumber } from "@/utils/formatters";
 import { excludeUnknown } from "@/utils/chartData";
+import { useChartTheme } from "@/utils/chart-theme";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -20,6 +21,8 @@ interface HumanReasonTreemapChartProps {
 }
 
 const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data, isLoading }) => {
+  const chartTheme = useChartTheme();
+
   // Transform data for ApexCharts treemap format
   const transformDataForTreemap = (apiData: HumanReasonData[]) => {
     if (!apiData || apiData.length === 0) return [];
@@ -58,7 +61,7 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
       style: {
         fontSize: "18px",
         fontWeight: "bold",
-        color: "#1f2937",
+        color: chartTheme.fg,
         fontFamily: "inherit",
       },
       margin: 20,
@@ -126,11 +129,11 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
         const data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
         const percentage = ((data.y / w.globals.seriesTotals[0]) * 100).toFixed(1);
         return `
-          <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-200" dir="rtl" style="font-family: inherit;">
-            <div class="font-semibold text-gray-900 mb-2 text-base">${data.x}</div>
+          <div class="bg-surface p-4 rounded-lg shadow-lg border border-line" dir="rtl" style="font-family: inherit;">
+            <div class="font-semibold text-fg mb-2 text-base">${data.x}</div>
             <div class="space-y-1">
-              <div class="text-sm text-gray-600">تعداد: <span class="font-medium text-blue-600">${formatNumber(data.y)}</span> مورد</div>
-              <div class="text-sm text-gray-600">درصد: <span class="font-medium text-green-600">${formatNumber(Number(percentage))} %</span></div>
+              <div class="text-sm text-fg-muted">تعداد: <span class="font-medium text-brand-fg">${formatNumber(data.y)}</span> مورد</div>
+              <div class="text-sm text-fg-muted">درصد: <span class="font-medium text-success-fg">${formatNumber(Number(percentage))} %</span></div>
             </div>
           </div>
         `;
@@ -193,13 +196,13 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-6"></div>
-          <div className="h-96 bg-gray-200 rounded"></div>
+          <div className="h-6 bg-surface-sunken rounded w-3/4 mx-auto mb-6"></div>
+          <div className="h-96 bg-surface-sunken rounded"></div>
         </div>
         <div className="flex items-center justify-center mt-4">
-          <svg className="w-6 h-6 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 animate-spin text-brand-fg" fill="none" viewBox="0 0 24 24">
             <circle
               className="opacity-25"
               cx="12"
@@ -214,7 +217,7 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
               d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <span className="mr-2 text-gray-600">در حال بارگذاری نمودار...</span>
+          <span className="mr-2 text-fg-muted">در حال بارگذاری نمودار...</span>
         </div>
       </div>
     );
@@ -223,10 +226,10 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
   // Empty data state
   if (!data || data.length === 0 || filteredData.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
         <div className="text-center py-12">
           <svg
-            className="w-16 h-16 text-gray-400 mx-auto mb-4"
+            className="w-16 h-16 text-fg-faint mx-auto mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -238,8 +241,8 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
             />
           </svg>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">داده‌ای یافت نشد</h3>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-medium text-fg mb-2">داده‌ای یافت نشد</h3>
+          <p className="text-fg-muted">
             برای مشاهده نمودار توزیع عامل انسانی مؤثر در تصادفات، لطفاً فیلترهای مناسب را اعمال کنید.
           </p>
         </div>
@@ -248,20 +251,20 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div className="bg-surface rounded-lg shadow-sm border border-line p-6">
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span className="text-sm font-medium text-gray-600">
+            <div className="w-3 h-3 bg-brand rounded-full"></div>
+            <span className="text-sm font-medium text-fg-muted">
               {formatNumber(filteredData.length)} عامل انسانی برتر شناسایی شده
             </span>
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-fg-muted">
             مجموع: {formatNumber(filteredData.reduce((sum, item) => sum + item.count, 0))} مورد
           </div>
         </div>
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-fg-muted">
           اندازه هر مربع متناسب با تعداد وقایع آن عامل انسانی می‌باشد
         </div>
       </div>
@@ -273,30 +276,30 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
       {/* Legend and Statistics */}
       <div className="mt-6 space-y-4">
         {/* All Causes Ranked */}
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <h4 className="text-sm font-medium text-blue-800 mb-3">همه علل (به ترتیب فراوانی)</h4>
+        <div className="p-4 bg-brand-soft rounded-lg">
+          <h4 className="text-sm font-medium text-brand-fg mb-3">همه علل (به ترتیب فراوانی)</h4>
           <div className="space-y-1.5 max-h-80 overflow-y-auto">
             {[...filteredData]
               .sort((a, b) => b.count - a.count)
               .map((item, index) => (
                 <div
                   key={item.name}
-                  className="flex items-center justify-between gap-2 py-1.5 px-2 rounded-md hover:bg-blue-100/50 transition-colors"
+                  className="flex items-center justify-between gap-2 py-1.5 px-2 rounded-md hover:bg-brand-soft/50 transition-colors"
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                      className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-on-brand ${
                         index === 0 ? 'bg-red-500' :
                         index === 1 ? 'bg-orange-400' :
                         index === 2 ? 'bg-amber-400' :
-                        'bg-gray-300 text-gray-600'
+                        'bg-line text-fg-muted'
                       }`}
                     >
                       {index + 1}
                     </span>
                     <span className="text-sm text-blue-900 truncate">{item.name}</span>
                   </div>
-                  <span className="text-sm font-semibold text-blue-700 flex-shrink-0" dir="ltr">
+                  <span className="text-sm font-semibold text-brand-fg flex-shrink-0" dir="ltr">
                     {formatNumber(item.count)}
                   </span>
                 </div>
@@ -305,47 +308,47 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
         </div>
 
         {/* Color Legend */}
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <h4 className="text-sm font-medium text-gray-800 mb-3">راهنمای رنگ‌ها بر اساس تعداد:</h4>
+        <div className="p-4 bg-canvas rounded-lg">
+          <h4 className="text-sm font-medium text-fg mb-3">راهنمای رنگ‌ها بر اساس تعداد:</h4>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
             <div className="flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-sm border border-gray-200"
+                className="w-4 h-4 rounded-sm border border-line"
                 style={{ backgroundColor: "#dbeafe" }}
               ></div>
               <span>۱-۱۵ مورد</span>
             </div>
             <div className="flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-sm border border-gray-200"
+                className="w-4 h-4 rounded-sm border border-line"
                 style={{ backgroundColor: "#93c5fd" }}
               ></div>
               <span>۱۶-۳۵ مورد</span>
             </div>
             <div className="flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-sm border border-gray-200"
+                className="w-4 h-4 rounded-sm border border-line"
                 style={{ backgroundColor: "#60a5fa" }}
               ></div>
               <span>۳۶-۷۰ مورد</span>
             </div>
             <div className="flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-sm border border-gray-200"
+                className="w-4 h-4 rounded-sm border border-line"
                 style={{ backgroundColor: "#3b82f6" }}
               ></div>
               <span>۷۱-۱۲۰ مورد</span>
             </div>
             <div className="flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-sm border border-gray-200"
+                className="w-4 h-4 rounded-sm border border-line"
                 style={{ backgroundColor: "#2563eb" }}
               ></div>
               <span>۱۲۱-۲۰۰ مورد</span>
             </div>
             <div className="flex items-center gap-2">
               <div
-                className="w-4 h-4 rounded-sm border border-gray-200"
+                className="w-4 h-4 rounded-sm border border-line"
                 style={{ backgroundColor: "#1d4ed8" }}
               ></div>
               <span>۲۰۱+ مورد</span>
@@ -354,9 +357,9 @@ const HumanReasonTreemapChart: React.FC<HumanReasonTreemapChartProps> = ({ data,
         </div>
 
         {/* Human Factor Categories */}
-        <div className="p-4 bg-amber-50 rounded-lg">
+        <div className="p-4 bg-warning-soft rounded-lg">
           <h4 className="text-sm font-medium text-amber-800 mb-3">دسته‌بندی عوامل انسانی:</h4>
-          <div className="text-xs text-amber-700 space-y-1">
+          <div className="text-xs text-warning-fg space-y-1">
             <div>
               • <strong>رفتاری:</strong> عدم رعایت حق تقدم، سرعت غیرمجاز، تغییر مسیر ناگهانی
             </div>

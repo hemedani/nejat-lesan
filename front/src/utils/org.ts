@@ -12,15 +12,27 @@ export const UNIT_TYPE_LABELS: Record<UnitType, string> = {
   General: "عمومی",
 };
 
+/**
+ * Per-unit-type chip colours.
+ *
+ * These were `tint-cyan bg-tint-soft text-tint-fg border-tint-border` — a translucent
+ * mid-hue wash plus a *pale* label. On the dark shell that reads as a soft tint;
+ * on a white card the wash is invisible and a `-200` label is white-on-white,
+ * which is what made the `/orghead` summary row unreadable in light mode.
+ *
+ * `tint-*` resolves all four roles from one hue and re-derives them per theme
+ * (`--tint-soft-strength` etc. differ between `:root` and `[data-theme=light]`),
+ * so there is exactly one place to tune. Keep the hue, drop the palette ramp.
+ */
 export const UNIT_TYPE_TONES: Record<UnitType, string> = {
-  Patrol: "bg-cyan-500/15 text-cyan-200 border-cyan-400/25",
-  Station: "bg-blue-500/15 text-blue-200 border-blue-400/25",
-  Ops: "bg-violet-500/15 text-violet-200 border-violet-400/25",
-  Maintenance: "bg-emerald-500/15 text-emerald-200 border-emerald-400/25",
-  Logistics: "bg-amber-500/15 text-amber-200 border-amber-400/25",
-  Administration: "bg-rose-500/15 text-rose-200 border-rose-400/25",
-  Warehouse: "bg-teal-500/15 text-teal-200 border-teal-400/25",
-  General: "bg-slate-500/15 text-slate-200 border-slate-400/25",
+  Patrol: "tint-cyan bg-tint-soft text-tint-fg border-tint-border",
+  Station: "tint-brand bg-tint-soft text-tint-fg border-tint-border",
+  Ops: "tint-violet bg-tint-soft text-tint-fg border-tint-border",
+  Maintenance: "tint-emerald bg-tint-soft text-tint-fg border-tint-border",
+  Logistics: "tint-amber bg-tint-soft text-tint-fg border-tint-border",
+  Administration: "tint-rose bg-tint-soft text-tint-fg border-tint-border",
+  Warehouse: "tint-teal bg-tint-soft text-tint-fg border-tint-border",
+  General: "tint-slate bg-tint-soft text-tint-fg border-tint-border",
 };
 
 export const INCIDENT_TYPE_LABELS: Record<string, string> = {

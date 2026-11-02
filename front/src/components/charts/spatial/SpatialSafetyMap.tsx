@@ -220,15 +220,15 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
       if (data) {
         const tooltipContent = `
           <div class="p-3 min-w-[200px]">
-            <h3 class="font-semibold text-gray-900 mb-2">${featureName}</h3>
+            <h3 class="font-semibold text-fg mb-2">${featureName}</h3>
             <div class="space-y-1 text-sm">
               <div class="flex justify-between">
-                <span class="text-gray-600">نسبت متوفیان به جمعیت:</span>
-                <span class="font-medium text-red-600">${!isNaN(data.barChartMetric) ? data.barChartMetric.toFixed(2) : "N/A"}</span>
+                <span class="text-fg-muted">نسبت متوفیان به جمعیت:</span>
+                <span class="font-medium text-danger-fg">${!isNaN(data.barChartMetric) ? data.barChartMetric.toFixed(2) : "N/A"}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">شاخص ایمنی:</span>
-                <span class="font-medium text-blue-600">${!isNaN(data.mapChartMetric) ? data.mapChartMetric.toFixed(2) : "N/A"}</span>
+                <span class="text-fg-muted">شاخص ایمنی:</span>
+                <span class="font-medium text-brand-fg">${!isNaN(data.mapChartMetric) ? data.mapChartMetric.toFixed(2) : "N/A"}</span>
               </div>
             </div>
           </div>
@@ -244,8 +244,8 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
         layer.bindTooltip(
           `
           <div class="p-3">
-            <h3 class="font-semibold text-gray-900 mb-2">${featureName}</h3>
-            <p class="text-sm text-gray-500">داده‌ای موجود نیست</p>
+            <h3 class="font-semibold text-fg mb-2">${featureName}</h3>
+            <p class="text-sm text-fg-muted">داده‌ای موجود نیست</p>
           </div>
         `,
           {
@@ -336,11 +336,11 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-6 bg-surface-sunken rounded w-1/3 mb-4"></div>
           <div
-            className="h-96 bg-gray-200 rounded"
+            className="h-96 bg-surface-sunken rounded"
             style={{ minHeight: "500px" }}
           ></div>
         </div>
@@ -354,8 +354,8 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
     geoJsonData.features.length === 0
   ) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-fg mb-4">
           نقشه شاخص ایمنی منطقه‌ای
         </h3>
         <div
@@ -368,9 +368,9 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
           }}
         >
           <div>
-            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 bg-surface-sunken rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-6 h-6 text-gray-400"
+                className="w-6 h-6 text-fg-faint"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -383,8 +383,8 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
                 />
               </svg>
             </div>
-            <p className="text-gray-500">داده‌های نقشه موجود نیست</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-fg-muted">داده‌های نقشه موجود نیست</p>
+            <p className="text-xs text-fg-faint mt-1">
               لطفاً فیلترهای مختلف را امتحان کنید
             </p>
           </div>
@@ -394,12 +394,12 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
+    <div className="bg-surface rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-fg">
           نقشه شاخص ایمنی منطقه‌ای
         </h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -413,7 +413,7 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
 
       <div className="relative">
         <div
-          className="bg-gray-100 rounded-lg overflow-hidden relative"
+          className="bg-surface-sunken rounded-lg overflow-hidden relative"
           style={{ height: "500px" }}
         >
           {typeof window !== "undefined" ? (
@@ -446,10 +446,10 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
                 )}
             </MapContainer>
           ) : (
-            <div className="flex items-center justify-center h-full bg-gray-100">
+            <div className="flex items-center justify-center h-full bg-surface-sunken">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">در حال بارگذاری نقشه...</p>
+                <p className="text-fg-muted">در حال بارگذاری نقشه...</p>
               </div>
             </div>
           )}
@@ -457,8 +457,8 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
 
         {/* Legend */}
         {legendData.length > 0 && (
-          <div className="absolute top-4 left-4 bg-white bg-opacity-95 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-gray-200 max-w-xs z-[1000] pointer-events-none">
-            <h4 className="text-sm font-semibold text-gray-900 mb-2">
+          <div className="absolute top-4 left-4 bg-surface bg-opacity-95 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-line max-w-xs z-[1000] pointer-events-none">
+            <h4 className="text-sm font-semibold text-fg mb-2">
               شاخص ایمنی
             </h4>
             <div className="space-y-1">
@@ -468,7 +468,7 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
                     className="w-4 h-4 rounded flex-shrink-0"
                     style={{ backgroundColor: item.color }}
                   ></div>
-                  <span className="text-xs text-gray-700 whitespace-nowrap">
+                  <span className="text-xs text-fg whitespace-nowrap">
                     {item.label}
                   </span>
                 </div>
@@ -479,17 +479,17 @@ const SpatialSafetyMap: React.FC<SpatialSafetyMapProps> = ({
       </div>
 
       {/* Map Info */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+      <div className="mt-4 pt-4 border-t border-line">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-fg-muted">
           <div>
-            <h4 className="font-medium text-gray-900 mb-1">راهنمای رنگ‌ها</h4>
+            <h4 className="font-medium text-fg mb-1">راهنمای رنگ‌ها</h4>
             <p>
               رنگ‌های روشن‌تر نشان‌دهنده شاخص ایمنی بهتر و رنگ‌های تیره‌تر
               نشان‌دهنده وضعیت بحرانی‌تر هستند.
             </p>
           </div>
           <div>
-            <h4 className="font-medium text-gray-900 mb-1">نحوه استفاده</h4>
+            <h4 className="font-medium text-fg mb-1">نحوه استفاده</h4>
             <p>
               بر روی هر منطقه کلیک کنید تا جزئیات شاخص ایمنی آن منطقه را مشاهده
               کنید.

@@ -160,7 +160,7 @@ const MonthlyHolidayPage = () => {
   const statistics = getStatistics();
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-canvas">
       {/* Navigation */}
       <ChartNavigation currentSection="overall" currentChart="monthly-holiday" />
 
@@ -184,8 +184,8 @@ const MonthlyHolidayPage = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">تحلیل ماهانه تعطیلات</h1>
-                <p className="text-sm text-gray-600 mt-1">
+                <h1 className="text-2xl font-bold text-fg">تحلیل ماهانه تعطیلات</h1>
+                <p className="text-sm text-fg-muted mt-1">
                   مقایسه تصادفات در روزهای تعطیل و غیرتعطیل به تفکیک ماه
                 </p>
               </div>
@@ -193,7 +193,7 @@ const MonthlyHolidayPage = () => {
                 <button
                   onClick={handleLoadData}
                   disabled={isLoading}
-                  className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-green-600 text-on-brand px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors"
                 >
                   {isLoading ? (
                     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ const MonthlyHolidayPage = () => {
                         "monthly-holiday",
                       )
                     }
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -242,7 +242,7 @@ const MonthlyHolidayPage = () => {
                 )}
                 <button
                   onClick={() => setShowFilterSidebar(!showFilterSidebar)}
-                  className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken transition-colors"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -267,47 +267,47 @@ const MonthlyHolidayPage = () => {
           <div className="space-y-6">
             {/* Error Display */}
             {error && (
-              <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="mb-6 bg-danger-soft border border-danger-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                       clipRule="evenodd"
                     />
                   </svg>
-                  <h3 className="font-medium text-red-800">خطا</h3>
+                  <h3 className="font-medium text-danger-fg">خطا</h3>
                 </div>
-                <p className="text-sm text-red-700">{error}</p>
+                <p className="text-sm text-danger-fg">{error}</p>
               </div>
             )}
 
             {/* Success Message and Stats */}
             {statistics && (
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                      <div className="w-8 h-8 bg-brand-soft rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-brand-fg" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                         </svg>
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">کل تصادفات</div>
-                      <div className="text-2xl font-bold text-gray-900">
+                      <div className="text-sm font-medium text-fg-muted">کل تصادفات</div>
+                      <div className="text-2xl font-bold text-fg">
                         {formatNumber(statistics.totalAccidents)}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <div className="w-8 h-8 bg-danger-soft rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-danger-fg" fill="currentColor" viewBox="0 0 20 20">
                           <path
                             fillRule="evenodd"
                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
@@ -317,20 +317,20 @@ const MonthlyHolidayPage = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">تصادفات تعطیل</div>
-                      <div className="text-2xl font-bold text-gray-900">
+                      <div className="text-sm font-medium text-fg-muted">تصادفات تعطیل</div>
+                      <div className="text-2xl font-bold text-fg">
                         {formatNumber(statistics.totalHolidayAccidents)}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-success-soft rounded-lg flex items-center justify-center">
                         <svg
-                          className="w-5 h-5 text-green-600"
+                          className="w-5 h-5 text-success-fg"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -343,20 +343,20 @@ const MonthlyHolidayPage = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">نرخ تعطیلات</div>
-                      <div className="text-2xl font-bold text-gray-900">
+                      <div className="text-sm font-medium text-fg-muted">نرخ تعطیلات</div>
+                      <div className="text-2xl font-bold text-fg">
                         {Number(statistics.holidayPercentage).toLocaleString("fa-IR")}%
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="bg-surface rounded-lg shadow-sm p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 tint-warning bg-tint-strong rounded-lg flex items-center justify-center">
                         <svg
-                          className="w-5 h-5 text-yellow-600"
+                          className="w-5 h-5 text-tint-fg"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -369,8 +369,8 @@ const MonthlyHolidayPage = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-500">ماه اوج</div>
-                      <div className="text-lg font-bold text-gray-900">{statistics.peakMonth}</div>
+                      <div className="text-sm font-medium text-fg-muted">ماه اوج</div>
+                      <div className="text-lg font-bold text-fg">{statistics.peakMonth}</div>
                     </div>
                   </div>
                 </div>
@@ -378,10 +378,10 @@ const MonthlyHolidayPage = () => {
             )}
 
             {/* Chart Description */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div className="bg-success-soft border border-success-border rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
-                  <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6 text-success-fg" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -390,8 +390,8 @@ const MonthlyHolidayPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-green-800 mb-2">درباره این تحلیل</h3>
-                  <p className="text-sm text-green-700">
+                  <h3 className="font-medium text-success-fg mb-2">درباره این تحلیل</h3>
+                  <p className="text-sm text-success-fg">
                     این نمودار تحلیل ماهانه تصادفات در روزهای تعطیل و غیرتعطیل را نمایش می‌دهد. این
                     تحلیل به شناسایی الگوهای فصلی و تأثیر تعطیلات بر نرخ تصادفات کمک می‌کند. اطلاعات
                     ارائه شده شامل مقایسه تصادفات در ماه‌های مختلف سال و تفکیک بین روزهای تعطیل و کاری

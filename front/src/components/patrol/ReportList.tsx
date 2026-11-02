@@ -17,13 +17,13 @@ export const fullName = (user?: { first_name?: string; last_name?: string }) =>
 export const incidentTypeTone = (type?: string): string => {
   switch (type) {
     case "accident":
-      return "border-rose-400/25 bg-rose-400/10 text-rose-200";
+      return "tint-rose border-tint-border bg-tint-soft text-tint-fg";
     case "road_breakdown":
-      return "border-amber-400/25 bg-amber-400/10 text-amber-200";
+      return "tint-amber border-tint-border bg-tint-soft text-tint-fg";
     case "road_obstacle":
-      return "border-orange-400/25 bg-orange-400/10 text-orange-200";
+      return "tint-orange border-tint-border bg-tint-soft text-tint-fg";
     case "other":
-      return "border-slate-400/25 bg-slate-400/10 text-slate-200";
+      return "border-line-strong/25 bg-surface-hover text-fg";
     default:
       return "";
   }
@@ -39,11 +39,11 @@ export const reportSourceTone = (
 ): string => {
   switch (source) {
     case "accident":
-      return "border-rose-400/25 bg-rose-400/10 text-rose-200";
+      return "tint-rose border-tint-border bg-tint-soft text-tint-fg";
     case "incident_report":
-      return "border-blue-400/25 bg-blue-400/10 text-blue-200";
+      return "tint-blue border-tint-border bg-tint-soft text-tint-fg";
     default:
-      return "border-white/10 bg-white/[.04] text-slate-300";
+      return "border-line bg-surface-sunken text-fg-muted";
   }
 };
 
@@ -57,12 +57,12 @@ export function IncidentBadge({ report }: { report: PatrolReport }) {
         {INCIDENT_TYPE_LABELS[type] || type}
       </span>
       {report.incident_severity?.name && (
-        <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 text-[10px] text-cyan-200">
+        <span className="tint-cyan rounded-full border border-tint-border bg-tint-soft px-2 py-0.5 text-[10px] text-tint-fg">
           شدت: {report.incident_severity.name}
         </span>
       )}
       {report.incident_payload?.description && (
-        <span className="max-w-[220px] truncate text-[10px] text-slate-500">{report.incident_payload.description}</span>
+        <span className="max-w-[220px] truncate text-[10px] text-fg-faint">{report.incident_payload.description}</span>
       )}
     </div>
   );
@@ -88,10 +88,10 @@ export function ReportList({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/65">
+    <div className="overflow-hidden rounded-2xl border border-line bg-surface/65">
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full text-right text-sm">
-          <thead className="border-b border-white/10 bg-white/[.03] text-xs text-slate-500">
+          <thead className="border-b border-line bg-surface-sunken text-xs text-fg-faint">
             <tr>
               {["گزارش", ...(manager ? ["گزارش‌دهنده", "واحد", "خودرو"] : []), "تاریخ حادثه", "همگام‌سازی", "بررسی", ""].map(
                 (heading) => (
@@ -102,21 +102,21 @@ export function ReportList({
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-line">
             {reports.map((report) => (
-              <tr key={report._id} className="text-slate-300 transition hover:bg-white/[.03]">
+              <tr key={report._id} className="text-fg-muted transition hover:bg-surface-sunken">
                 <td className="px-4 py-4">
-                  <Link className="font-semibold text-blue-200 hover:text-cyan-200" href={detailHref(report, manager, detailBase)}>
+                  <Link className="font-semibold text-brand-fg hover:underline" href={detailHref(report, manager, detailBase)}>
                     {reportLabel(report)}
                   </Link>
-                  <p className="mt-1 text-xs text-slate-500">{report.type?.name || "نوع ثبت نشده"}</p>
+                  <p className="mt-1 text-xs text-fg-faint">{report.type?.name || "نوع ثبت نشده"}</p>
                   <IncidentBadge report={report} />
                 </td>
                 {manager && (
                   <>
                     <td className="px-4 py-4">
                       {fullName(report.officer)}
-                      <p className="text-xs text-slate-500">{report.officer?.personnel_code || "بدون کد"}</p>
+                      <p className="text-xs text-fg-faint">{report.officer?.personnel_code || "بدون کد"}</p>
                     </td>
                     <td className="px-4 py-4">{report.patrol_unit?.name || report.patrol_unit?.code || "نامشخص"}</td>
                     <td className="px-4 py-4">{report.vehicle?.plaque_no || "نامشخص"}</td>
@@ -130,7 +130,7 @@ export function ReportList({
                   <StatusBadge kind="review" value={report.review_status} />
                 </td>
                 <td className="px-4 py-4">
-                  <Link href={detailHref(report, manager, detailBase)} aria-label="مشاهده گزارش" className="text-blue-300 hover:text-cyan-200">
+                  <Link href={detailHref(report, manager, detailBase)} aria-label="مشاهده گزارش" className="text-brand-fg hover:underline">
                     مشاهده
                   </Link>
                 </td>
@@ -140,25 +140,25 @@ export function ReportList({
         </table>
       </div>
 
-      <div className="divide-y divide-white/5 md:hidden">
+      <div className="divide-y divide-line md:hidden">
         {reports.map((report) => (
           <article key={report._id} className="space-y-3 p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <Link href={detailHref(report, manager, detailBase)} className="font-semibold text-blue-200">
+                <Link href={detailHref(report, manager, detailBase)} className="font-semibold text-brand-fg">
                   {reportLabel(report)}
                 </Link>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-fg-faint">
                   {formatDate(report.date_of_accident)} · {report.type?.name || "نوع ثبت نشده"}
                 </p>
                 <IncidentBadge report={report} />
               </div>
-              <Link href={detailHref(report, manager, detailBase)} className="text-xs text-blue-300">
+              <Link href={detailHref(report, manager, detailBase)} className="text-xs text-brand-fg">
                 جزئیات
               </Link>
             </div>
             {manager && (
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-fg-muted">
                 {fullName(report.officer)} · {report.patrol_unit?.name || "واحد نامشخص"}
               </p>
             )}
@@ -167,7 +167,7 @@ export function ReportList({
               <StatusBadge kind="review" value={report.review_status} />
             </div>
             {report.review_reason && (
-              <p className="rounded-lg border border-orange-400/20 bg-orange-400/5 p-2 text-xs leading-5 text-orange-100">
+              <p className="tint-orange rounded-lg border border-tint-border bg-tint-soft p-2 text-xs leading-5 text-tint-fg">
                 {report.review_reason}
               </p>
             )}

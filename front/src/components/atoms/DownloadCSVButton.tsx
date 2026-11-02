@@ -54,7 +54,7 @@ const DownloadCSVButton: React.FC<DownloadCSVButtonProps> = ({
     <button
       onClick={downloadCSV}
       disabled={!data || data.length === 0}
-      className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm"
+      className="flex items-center gap-2 bg-brand text-on-brand px-3 py-2 rounded-lg hover:bg-brand-hover disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors text-sm"
     >
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path

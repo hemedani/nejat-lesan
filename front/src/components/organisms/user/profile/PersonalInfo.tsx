@@ -10,54 +10,54 @@ interface PersonalInfoProps {
 const PersonalInfo = ({ user }: PersonalInfoProps) => {
   return (
     <div className="space-y-4">
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <UserIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">نام پدر</label>
+          <label className="text-sm font-medium text-fg-muted">نام پدر</label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">{user.father_name}</p>
+        <p className="text-fg font-medium pr-11">{user.father_name}</p>
       </div>
 
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <UserIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">جنسیت</label>
+          <label className="text-sm font-medium text-fg-muted">جنسیت</label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">
+        <p className="text-fg font-medium pr-11">
           {translateGender(user.gender)}
         </p>
       </div>
 
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <CalendarIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">
+          <label className="text-sm font-medium text-fg-muted">
             تاریخ تولد
           </label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">
+        <p className="text-fg font-medium pr-11">
           {user.birth_date
             ? format(new Date(user.birth_date), "yyyy/MM/dd")
             : "نامشخص"}
         </p>
       </div>
 
-      <div className="group bg-gray-50/50 hover:bg-gray-50 p-4 rounded-lg border border-gray-100 transition-all duration-300">
+      <div className="group bg-canvas/50 hover:bg-surface-hover p-4 rounded-lg border border-line transition-all duration-300">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+          <div className="p-2 tint-brand bg-tint-soft rounded-lg text-tint-fg">
             <UserIcon className="w-5 h-5" />
           </div>
-          <label className="text-sm font-medium text-gray-600">
+          <label className="text-sm font-medium text-fg-muted">
             کد ملی
           </label>
         </div>
-        <p className="text-gray-800 font-medium pr-11">
+        <p className="text-fg font-medium pr-11">
           {user.national_number || "نامشخص"}
         </p>
       </div>
