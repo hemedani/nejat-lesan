@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { useScrollLock } from "@/hooks/useScrollLock";
-import { AccidentFieldOption } from "@/utils/accidentProjection";
+import {
+  AccidentFieldOption,
+  DEFAULT_FIELD_KEYS,
+} from "@/utils/accidentProjection";
 
 interface AccidentDetailsModalProps {
   isOpen: boolean;
@@ -12,9 +15,8 @@ interface AccidentDetailsModalProps {
   isLoading?: boolean;
   fieldOptions: AccidentFieldOption[];
   selectedFields: Set<string>;
-  onToggleField: (key: string) => void;
-  onApplyFields: () => void;
-  onResetFields: () => void;
+  onApplyFields: (keys: Set<string>) => void | Promise<void>;
+  onResetFields: () => void | Promise<void>;
 }
 
 const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
@@ -24,16 +26,57 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
   isLoading,
   fieldOptions,
   selectedFields,
-  onToggleField,
   onApplyFields,
   onResetFields,
 }) => {
   const [showFieldSelector, setShowFieldSelector] = useState(false);
+  // Pending checkbox selection. It is committed to the table only when the user
+  // presses «اعمال», so headers never change ahead of their data.
+  const [draftFields, setDraftFields] = useState<Set<string>>(
+    () => new Set(selectedFields),
+  );
 
   // Prevent background scrolling when modal is open
   useScrollLock(isOpen);
 
   if (!isOpen) return null;
+
+  const toggleFieldSelector = () => {
+    if (!showFieldSelector) setDraftFields(new Set(selectedFields));
+    setShowFieldSelector((v) => !v);
+  };
+
+  const toggleField = (key: string) => {
+    setDraftFields((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const allFieldsSelected =
+    fieldOptions.length > 0 &&
+    fieldOptions.every((option) => draftFields.has(option.key));
+
+  const toggleAllFields = () => {
+    setDraftFields(
+      allFieldsSelected
+        ? new Set()
+        : new Set(fieldOptions.map((option) => option.key)),
+    );
+  };
+
+  const handleApplyFields = async () => {
+    setShowFieldSelector(false);
+    await onApplyFields(draftFields);
+  };
+
+  const handleResetFields = async () => {
+    setDraftFields(new Set(DEFAULT_FIELD_KEYS));
+    setShowFieldSelector(false);
+    await onResetFields();
+  };
 
   // Format numbers with Persian digits
   const formatNumber = (value?: number | null) => {
@@ -78,15 +121,14 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
     return list.map((item) => item.name).filter(Boolean).join("، ");
   };
 
-  // Render a single table cell for the given field key
-  const renderCell = (key: string, accident: accidentSchema): React.ReactNode => {
+  // Plain text of a cell, shared by the table and the CSV export
+  const formatCellText = (key: string, accident: accidentSchema): string => {
     const value = getFieldValue(accident, key);
     switch (key) {
-      case "_id":
-        return (value as string) || "—";
       case "seri":
       case "serial":
-      case "news_number":
+      case "dead_count":
+      case "injured_count":
         return formatNumber(value as number);
       case "location": {
         const coords = (value as { coordinates?: number[] } | undefined)?.coordinates;
@@ -96,33 +138,9 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
       case "date_of_accident": {
         const formatted = formatDate(value as Date | string);
         const time = formatTime(value as Date | string);
-        return (
-          <>
-            {formatted}
-            {time && <span className="text-fg-faint mr-1">{time}</span>}
-          </>
-        );
+        return time ? `${formatted} ${time}` : formatted;
       }
-      case "dead_count":
-        return (
-          <span className="text-danger-fg font-medium">
-            {formatNumber(value as number)}
-          </span>
-        );
-      case "injured_count":
-        return (
-          <span className="text-orange-600 font-medium">
-            {formatNumber(value as number)}
-          </span>
-        );
-      case "has_witness":
-        return value ? "بله" : "خیر";
       case "officer": {
-        // `officer` is a relation to `user`, so it arrives as `{first_name,
-        // last_name, personnel_code}` rather than as a string. The projection in
-        // `utils/accidentProjection.ts` used to send `officer: 1`, which the act
-        // rejected outright — so this branch was unreachable and the cast was never
-        // exercised. Read the name properly now that the request succeeds.
         const officer = value as
           | { first_name?: string; last_name?: string; personnel_code?: string }
           | undefined;
@@ -132,17 +150,12 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
           "—"
         );
       }
-      case "completion_date":
-      case "createdAt":
-      case "updatedAt":
-        return formatDate(value as Date | string);
       case "vehicle_dtos":
       case "pedestrian_dtos":
       case "attachments":
         return formatNumber((value as unknown[] | undefined)?.length);
       case "province":
       case "city":
-      case "township":
       case "road":
       case "traffic_zone":
       case "city_zone":
@@ -168,10 +181,64 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
     }
   };
 
+  // Render a single table cell, keeping the semantic colours of counts
+  const renderCell = (key: string, accident: accidentSchema): React.ReactNode => {
+    if (key === "dead_count") {
+      return (
+        <span className="text-danger-fg font-medium">
+          {formatNumber(getFieldValue(accident, key) as number)}
+        </span>
+      );
+    }
+    if (key === "injured_count") {
+      return (
+        <span className="text-orange-600 font-medium">
+          {formatNumber(getFieldValue(accident, key) as number)}
+        </span>
+      );
+    }
+    if (key === "date_of_accident") {
+      const value = getFieldValue(accident, key) as Date | string;
+      const time = formatTime(value);
+      return (
+        <>
+          {formatDate(value)}
+          {time && <span className="text-fg-faint mr-1">{time}</span>}
+        </>
+      );
+    }
+    return formatCellText(key, accident);
+  };
+
   // Columns to display, in the field-option order
   const activeColumns = fieldOptions.filter((option) =>
     selectedFields.has(option.key),
   );
+
+  const escapeCsv = (value: string) =>
+    /[",\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+
+  const handleExportCsv = () => {
+    if (data.length === 0 || activeColumns.length === 0) return;
+    const header = activeColumns.map((option) => option.label);
+    const rows = data.map((accident) =>
+      activeColumns.map((option) => formatCellText(option.key, accident)),
+    );
+    const csv =
+      "\uFEFF" +
+      [header, ...rows]
+        .map((row) => row.map(escapeCsv).join(","))
+        .join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `accidents-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
 
   const totalDead = data.reduce((sum, acc) => sum + (acc.dead_count || 0), 0);
   const totalInjured = data.reduce(
@@ -215,7 +282,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         {/* Field Selector Toolbar */}
         <div className="flex items-center justify-between px-6 py-3 border-b bg-canvas">
           <button
-            onClick={() => setShowFieldSelector((v) => !v)}
+            onClick={toggleFieldSelector}
             className="flex items-center gap-2 text-sm font-medium text-brand-fg hover:text-brand-fg transition-colors"
           >
             <svg
@@ -244,10 +311,20 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
         {/* Field Selector Panel */}
         {showFieldSelector && (
           <div className="px-6 py-4 border-b bg-surface">
-            <p className="text-sm text-fg-muted mb-3">
-              ستون‌های مورد نظر را انتخاب کنید و دکمه «اعمال» را بزنید تا داده‌ها
-              دوباره از سامانه دریافت شوند.
-            </p>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm text-fg-muted">
+                ستون‌های مورد نظر را انتخاب کنید و دکمه «اعمال» را بزنید تا داده‌ها
+                دوباره از سامانه دریافت شوند.
+              </p>
+              <button
+                type="button"
+                onClick={toggleAllFields}
+                disabled={isLoading}
+                className="shrink-0 text-sm font-medium text-brand-fg hover:underline disabled:text-fg-muted disabled:no-underline"
+              >
+                {allFieldsSelected ? "حذف انتخاب همه" : "انتخاب همه"}
+              </button>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {fieldOptions.map((option) => (
                 <label
@@ -256,8 +333,8 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
                 >
                   <input
                     type="checkbox"
-                    checked={selectedFields.has(option.key)}
-                    onChange={() => onToggleField(option.key)}
+                    checked={draftFields.has(option.key)}
+                    onChange={() => toggleField(option.key)}
                     className="w-4 h-4 text-brand-fg rounded border-line-strong focus:ring-brand"
                   />
                   {option.label}
@@ -266,7 +343,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
-                onClick={onApplyFields}
+                onClick={handleApplyFields}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors text-sm font-medium"
               >
@@ -286,7 +363,7 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
                 اعمال و بارگذاری مجدد
               </button>
               <button
-                onClick={onResetFields}
+                onClick={handleResetFields}
                 disabled={isLoading}
                 className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-sunken disabled:bg-line-strong disabled:cursor-not-allowed transition-colors text-sm font-medium"
               >
@@ -298,7 +375,14 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
 
         {/* Table Container */}
         <div className="flex-1 overflow-auto px-6 pb-6 overscroll-contain">
-          {data.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center gap-3 py-20">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-brand" />
+              <p className="text-sm text-fg-muted">
+                در حال دریافت جدول با ستون‌های انتخاب‌شده...
+              </p>
+            </div>
+          ) : data.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-fg-muted">تصادفی در این منطقه یافت نشد.</p>
             </div>
@@ -339,18 +423,40 @@ const AccidentDetailsModal: React.FC<AccidentDetailsModalProps> = ({
 
         {/* Footer */}
         <div className="border-t p-4 bg-canvas">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-fg-muted">
               مجموع تصادفات: {data.length.toLocaleString("fa-IR")} | مجموع فوتی:{" "}
               {totalDead.toLocaleString("fa-IR")} | مجموع مجروح:{" "}
               {totalInjured.toLocaleString("fa-IR")}
             </div>
-            <button
-              onClick={onClose}
-              className="bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
-            >
-              بستن
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportCsv}
+                disabled={isLoading || data.length === 0}
+                className="flex items-center gap-2 bg-surface-sunken text-fg px-4 py-2 rounded-lg hover:bg-surface-hover disabled:bg-line-strong disabled:text-fg-muted disabled:cursor-not-allowed transition-colors text-sm font-medium"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
+                  />
+                </svg>
+                خروجی CSV
+              </button>
+              <button
+                onClick={onClose}
+                className="bg-brand text-on-brand px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors"
+              >
+                بستن
+              </button>
+            </div>
           </div>
         </div>
       </div>

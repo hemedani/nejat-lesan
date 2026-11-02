@@ -19,33 +19,26 @@ export interface AccidentFieldOption {
 }
 
 export const ACCIDENT_FIELD_OPTIONS: AccidentFieldOption[] = [
-  { key: "_id", label: "شناسه", projection: { _id: 1 } },
   { key: "seri", label: "سری", projection: { seri: 1 } },
   { key: "serial", label: "شماره", projection: { serial: 1 } },
   { key: "location", label: "موقعیت جغرافیایی", projection: { location: 1 } },
   { key: "date_of_accident", label: "تاریخ تصادف", projection: { date_of_accident: 1 } },
   { key: "dead_count", label: "تعداد متوفیان", projection: { dead_count: 1 } },
-  { key: "has_witness", label: "دارای شاهد", projection: { has_witness: 1 } },
-  { key: "news_number", label: "شماره خبر", projection: { news_number: 1 } },
   {
     key: "officer",
     label: "مامور",
     projection: { officer: { first_name: 1, last_name: 1, personnel_code: 1 } },
   },
   { key: "injured_count", label: "تعداد مجروحان", projection: { injured_count: 1 } },
-  { key: "completion_date", label: "تاریخ تکمیل", projection: { completion_date: 1 } },
-  { key: "createdAt", label: "زمان ثبت", projection: { createdAt: 1 } },
-  { key: "updatedAt", label: "زمان بروزرسانی", projection: { updatedAt: 1 } },
   { key: "province", label: "استان", projection: { province: { name: 1 } } },
   { key: "city", label: "شهر", projection: { city: { name: 1 } } },
-  { key: "township", label: "شهرستان", projection: { township: { name: 1 } } },
   { key: "road", label: "راه", projection: { road: { name: 1 } } },
   { key: "traffic_zone", label: "منطقه ترافیکی", projection: { traffic_zone: { name: 1 } } },
   { key: "city_zone", label: "منطقه شهری", projection: { city_zone: { name: 1 } } },
   { key: "type", label: "نوع تصادف", projection: { type: { name: 1 } } },
   { key: "area_usages", label: "کاربری اراضی", projection: { area_usages: { name: 1 } } },
   { key: "position", label: "موقعیت", projection: { position: { name: 1 } } },
-  { key: "ruling_type", label: "نوع رای", projection: { ruling_type: { name: 1 } } },
+  { key: "ruling_type", label: "وضعیت خط کشی", projection: { ruling_type: { name: 1 } } },
   { key: "air_statuses", label: "وضعیت آب و هوا", projection: { air_statuses: { name: 1 } } },
   { key: "light_status", label: "وضعیت روشنایی", projection: { light_status: { name: 1 } } },
   { key: "road_defects", label: "نقایص راه", projection: { road_defects: { name: 1 } } },
@@ -95,7 +88,6 @@ export const buildAccidentProjection = (
 };
 
 export const DEFAULT_FIELD_KEYS: string[] = [
-  "_id",
   "location",
   "date_of_accident",
   "dead_count",

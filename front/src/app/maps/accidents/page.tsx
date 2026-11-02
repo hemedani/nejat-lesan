@@ -191,7 +191,7 @@ const AccidentsMapPage: React.FC = () => {
     geoJSON: GeoJSON.Feature,
     layer: { getRadius?(): number } | undefined,
     proj: Record<string, unknown>,
-  ) => {
+  ): Promise<boolean> => {
     setIsPolygonLoading(true);
     try {
       const coordinates = extractPolygonCoordinates(geoJSON, layer);
@@ -219,9 +219,12 @@ const AccidentsMapPage: React.FC = () => {
       if (response.success && response.body) {
         setDrawnShapeResult(response.body.accidents || []);
         setIsModalOpen(true);
+        return true;
       }
+      return false;
     } catch (error) {
       console.error("Error fetching polygon accidents:", error);
+      return false;
     } finally {
       setIsPolygonLoading(false);
     }
@@ -266,43 +269,33 @@ const AccidentsMapPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  // Toggle a selectable projection field
-  const handleToggleField = (key: string) => {
-    setSelectedFieldKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
+  // Re-fetch the active shape, then commit the newly selected columns to the table.
+  // Columns must not change until the matching data has arrived, otherwise the
+  // table shows headers that the current rows cannot fill.
+  const applyFieldKeys = async (keys: Set<string>) => {
+    const newProjection = buildAccidentProjection(keys);
+    if (!activeShape) {
+      setSelectedFieldKeys(new Set(keys));
+      setProjection(newProjection);
+      return;
+    }
+    // Use the live layer geometry so dragged/resized shapes query their real area
+    const liveGeoJSON = activeLayer?.toGeoJSON
+      ? activeLayer.toGeoJSON()
+      : activeShape;
+    const ok = await fetchShapeData(liveGeoJSON, activeLayer ?? undefined, newProjection);
+    if (ok) {
+      setSelectedFieldKeys(new Set(keys));
+      setProjection(newProjection);
+    }
   };
 
   // Re-fetch the active shape with the selected projection fields
-  const handleApplyFields = async () => {
-    const newProjection = buildAccidentProjection(selectedFieldKeys);
-    setProjection(newProjection);
-    if (activeShape) {
-      // Use the live layer geometry so dragged/resized shapes query their real area
-      const liveGeoJSON = activeLayer?.toGeoJSON
-        ? activeLayer.toGeoJSON()
-        : activeShape;
-      await fetchShapeData(liveGeoJSON, activeLayer ?? undefined, newProjection);
-    }
-  };
+  const handleApplyFields = (keys: Set<string>) => applyFieldKeys(keys);
 
   // Reset projection to the default fields and re-fetch
-  const handleResetFields = async () => {
-    const defaultKeys = new Set(DEFAULT_FIELD_KEYS);
-    setSelectedFieldKeys(defaultKeys);
-    const defaultProjection = buildAccidentProjection(DEFAULT_FIELD_KEYS);
-    setProjection(defaultProjection);
-    if (activeShape) {
-      // Use the live layer geometry so dragged/resized shapes query their real area
-      const liveGeoJSON = activeLayer?.toGeoJSON
-        ? activeLayer.toGeoJSON()
-        : activeShape;
-      await fetchShapeData(liveGeoJSON, activeLayer ?? undefined, defaultProjection);
-    }
-  };
+  const handleResetFields = () =>
+    applyFieldKeys(new Set(DEFAULT_FIELD_KEYS));
 
   // Handle snapshot capture for comparison
   const handleCaptureSnapshot = async () => {
@@ -533,7 +526,6 @@ const AccidentsMapPage: React.FC = () => {
             isLoading={isPolygonLoading}
             fieldOptions={ACCIDENT_FIELD_OPTIONS}
             selectedFields={selectedFieldKeys}
-            onToggleField={handleToggleField}
             onApplyFields={handleApplyFields}
             onResetFields={handleResetFields}
           />
