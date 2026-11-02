@@ -4,6 +4,10 @@ import { resolveUserOrgId } from "../../form_definition/helpers.ts";
 import { resolveFilingOrgId } from "../../accident/reportScope.ts";
 import { type MyContext, throwError } from "@lib";
 import { splitRelationIds } from "../relations.ts";
+import {
+	findCityZoneForPoint,
+	type PointGeometry,
+} from "../../shared/cityZoneLookup.ts";
 
 /**
  * Create a report from one of the organization's active forms.
@@ -131,6 +135,23 @@ export const addFn: ActFn = async (body) => {
 	doc.synced_at = new Date();
 	if (doc.review_status === undefined) {
 		doc.review_status = "submitted";
+	}
+
+	// --- 4c. Resolve the city zone from the location when not supplied ---------
+	// Mirrors `accident.add`: a client-sent `cityZoneId` wins, and the lookup
+	// only fills a gap so zone-scoped analytics do not silently miss the report.
+	if (!("city_zone" in relations) && doc.location) {
+		const cityRelation = relations.city as { _ids?: ObjectId } | undefined;
+		const resolvedZoneId = await findCityZoneForPoint(
+			doc.location as PointGeometry,
+			cityRelation?._ids ?? null,
+		);
+		if (resolvedZoneId) {
+			relations.city_zone = {
+				_ids: resolvedZoneId,
+				relatedRelations: { incident_reports: true },
+			};
+		}
 	}
 
 	// --- 5. Provenance: link the filing organization, for app submissions ------

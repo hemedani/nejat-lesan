@@ -13,6 +13,10 @@ import type { MyContext } from "@lib";
 import { accident_relations } from "@model";
 import { throwError } from "@lib";
 import { resolveFilingOrgId } from "../reportScope.ts";
+import {
+	findCityZoneForPoint,
+	type PointGeometry,
+} from "../../shared/cityZoneLookup.ts";
 
 export const addFn: ActFn = async (body) => {
 	const { set, get } = body.details;
@@ -373,6 +377,22 @@ export const addFn: ActFn = async (body) => {
 		relations.attachments = {
 			_ids: allIds.map((id: string) => new ObjectId(id)),
 		};
+	}
+
+	// --- 3a. Resolve the city zone from the location when not supplied ---------
+	// A client-sent `cityZoneId` always wins; this only fills the gap so a new
+	// accident is never left out of every zone-scoped chart and filter.
+	if (!cityZoneId && doc.location) {
+		const resolvedZoneId = await findCityZoneForPoint(
+			doc.location as PointGeometry,
+			cityId as string | undefined,
+		);
+		if (resolvedZoneId) {
+			relations.city_zone = {
+				_ids: resolvedZoneId,
+				relatedRelations: { accidents: true },
+			};
+		}
 	}
 
 	// --- 3. Provenance: link the filing organization, for app submissions ------

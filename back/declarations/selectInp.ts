@@ -81256,6 +81256,19 @@ summary: (1 );
 };
 
           
+            backfillCityZones: {
+set: {
+model?: ("accident" | "incident_report" | "both" );
+cityId?: string;
+limit?: number;
+dryRun?: boolean;
+};
+get: {
+summary: (1 );
+};
+};
+
+          
           }
 
         

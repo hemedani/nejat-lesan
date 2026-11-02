@@ -5,6 +5,7 @@ import { updateSetup } from "./update/mod.ts";
 import { removeSetup } from "./remove/mod.ts";
 import { countSetup } from "./count/mod.ts";
 import { seedCityZonesSetup } from "./seedCityZones/mod.ts";
+import { backfillCityZonesSetup } from "./backfillCityZones/mod.ts";
 
 export const cityZoneSetup = () => {
 	addSetup();
@@ -14,4 +15,5 @@ export const cityZoneSetup = () => {
 	removeSetup();
 	countSetup();
 	seedCityZonesSetup();
+	backfillCityZonesSetup();
 };

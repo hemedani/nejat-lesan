@@ -46,6 +46,10 @@ import {
 import { AccidentJson } from "../../../utils/sampleTypes.ts";
 import { accident_pure, accident_relations } from "@model";
 import { normalizePersianText } from "../../../utils/normalizePersianText.ts";
+import {
+	findCityZoneForPoint,
+	type PointGeometry,
+} from "../../shared/cityZoneLookup.ts";
 
 export const seedFn: ActFn = async (body) => {
 	const { set: { fileID } } = body.details;
@@ -1356,6 +1360,25 @@ export const seedFn: ActFn = async (body) => {
 				invalidRelations.forEach((key) => {
 					delete (accidentRelations as any)[key];
 				});
+
+				// Resolve the city zone from the coordinates. One indexed lookup per
+				// record, next to the insert and the many reference `findOrCreate`s
+				// this loop already performs. Existing links always win.
+				if (!accidentRelations.city_zone && accidentDoc.location) {
+					const cityRelation = accidentRelations.city as
+						| { _ids?: ObjectId }
+						| undefined;
+					const resolvedZoneId = await findCityZoneForPoint(
+						accidentDoc.location as PointGeometry,
+						cityRelation?._ids ?? null,
+					);
+					if (resolvedZoneId) {
+						accidentRelations.city_zone = {
+							_ids: resolvedZoneId,
+							relatedRelations: { accidents: true },
+						};
+					}
+				}
 
 				await accident.insertOne({
 					doc: accidentDoc,
