@@ -39,7 +39,7 @@
 │ │   city_zone ─────► ناحیه شهری       (معکوس: تصادفات)        │   │
 │ │   type ──────────► نوع تصادف        (معکوس: تصادفات)        │   │
 │ │   position ──────► موقعیت           (معکوس: تصادفات)        │   │
-│ │   ruling_type ───► نوع رأی          (معکوس: تصادفات)        │   │
+│ │   ruling_type ───► وضعیت خط کشی          (معکوس: تصادفات)        │   │
 │ │   light_status ─► وضعیت روشنایی     (معکوس: تصادفات)        │   │
 │ │   collision_type ► نوع برخورد       (معکوس: تصادفات)        │   │
 │ │   road_situation ► وضعیت راه        (معکوس: تصادفات)        │   │
@@ -136,7 +136,7 @@
 | type | تکی | نوع | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
 | area_usages | چندتایی | کاربری اراضی | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
 | position | تکی | موقعیت | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
-| ruling_type | تکی | نوع رأی | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
+| ruling_type | تکی | وضعیت خط کشی | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
 | air_statuses | چندتایی | وضعیت هوا | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
 | light_status | تکی | وضعیت روشنایی | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
 | road_defects | چندتایی | نقص راه | بله | createdAt، updatedAt | تصادفات (چندتایی، ۲۰) |
