@@ -35,7 +35,7 @@ export const getsFn: ActFn = async (body) => {
 		pipeline.push({ $match: matchConditions });
 	}
 
-	pipeline.push({ $sort: { _id: -1 } });
+	pipeline.push({ $sort: { name: 1, _id: 1 } });
 	pipeline.push({ $skip: (page - 1) * limit });
 	pipeline.push({ $limit: limit });
 
@@ -43,6 +43,9 @@ export const getsFn: ActFn = async (body) => {
 		.aggregation({
 			pipeline,
 			projection: get,
+			options: {
+				collation: { locale: "fa", numericOrdering: true },
+			},
 		})
 		.toArray();
 
