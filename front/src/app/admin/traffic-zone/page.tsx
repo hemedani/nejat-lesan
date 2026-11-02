@@ -1,3 +1,4 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import ClientCommonModelDashboard from "@/components/template/clientCommonModelDashboard";
 import SearchBox from "@/components/molecules/SearchBox";
 import Pagination from "@/components/molecules/Pagination";
@@ -34,7 +35,7 @@ export default async function AirStatusDashboard({
     get: { qty: 1 },
   });
 
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   return (
     <div className="relative min-h-full">

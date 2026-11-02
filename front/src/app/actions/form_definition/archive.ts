@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -12,7 +13,7 @@ import { FORM_DEFINITION_PROJECTION } from "./projection";
  * backend refuses it and returns a Persian message, which the caller surfaces.
  */
 export async function archiveFormDefinition(request: { set: { _id: string } }) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return AppApi().send(
     {
       service: "main",

@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { AppApi } from "@/services/api";
 import type { ReqType } from "@/types/declarations/selectInp";
@@ -7,7 +8,7 @@ import { cookies } from "next/headers";
 type Set = ReqType["main"]["user"]["addOrRemoveRoles"]["set"];
 
 export async function updateUserRoles(data: Set) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return await AppApi().send(
     {
       service: "main",

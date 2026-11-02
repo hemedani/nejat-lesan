@@ -1,9 +1,10 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { FormCreateUser } from "@/components/template/FormCreateUser";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
 const Page = async () => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   return (
     <div className="p-6 min-h-full">

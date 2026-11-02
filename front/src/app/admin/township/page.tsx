@@ -1,3 +1,4 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { TownshipDashboard } from "@/components/template";
 import SearchBox from "@/components/molecules/SearchBox";
 import Pagination from "@/components/molecules/Pagination";
@@ -33,7 +34,7 @@ export default async function TownshipPage({
     get: { qty: 1 },
   });
 
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const lesanUrl = process.env.LESAN_URL
     ? process.env.LESAN_URL
     : "http://localhost:1382";

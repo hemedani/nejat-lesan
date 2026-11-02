@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -28,7 +29,7 @@ export async function fetchOversightList(filters: OversightFilters = {}): Promis
   rows: OversightRow[];
   total: number;
 }> {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   // Annotated rather than passed inline: `send` infers its `set` type from the
   // argument, and an inferred type parameter accepts any extra key — so a

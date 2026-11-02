@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,8 +8,15 @@ export async function POST(request: NextRequest) {
     const fullUrl = `${backendUrl}/lesan`;
 
     // Get the authorization token from cookies or headers
-    const authHeader = request.headers.get("authorization") || request.headers.get("token");
     const cookieHeader = request.headers.get("cookie");
+    let authHeader = request.headers.get("authorization") || request.headers.get("token");
+
+    if (!authHeader && cookieHeader) {
+      const match = cookieHeader.match(
+        new RegExp(`(?:^|;\\s*)${AUTH_COOKIE}=([^;]+)`),
+      );
+      if (match) authHeader = decodeURIComponent(match[1]);
+    }
 
     // Check if this is a multipart request (for file uploads)
     const contentType = request.headers.get("content-type");

@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
 
@@ -12,7 +13,7 @@ interface City {
 }
 
 export const getAllCities = async () => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   try {
     const response = await AppApi().send(

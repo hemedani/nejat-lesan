@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { z } from "zod";
 import { loginAction } from "@/app/actions/login";
 import { useAuth } from "@/context/AuthContext";
@@ -105,8 +104,6 @@ const LoginForm = () => {
       if (res.success && res.body && "token" in res.body && res.body.token && res.body.user) {
         const { token, user, modules, orgModules } = res.body;
 
-        Cookies.set("token", token, { path: "/", expires: 7, sameSite: "lax" });
-        sessionStorage.setItem("lesan_user", JSON.stringify(user));
         login(token, user as UserData, { modules, orgModules });
 
         // Land on the panel that matches this account's roles instead of the

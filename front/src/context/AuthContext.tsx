@@ -1,19 +1,60 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-import Cookies from "js-cookie";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
-import type { UserLevel, UserData, EnterpriseSettings, ModuleKey, ModuleFeed, UserRole, RoleName } from "@/types/auth";
+import type {
+  UserLevel,
+  UserData,
+  EnterpriseSettings,
+  ModuleKey,
+  ModuleFeed,
+  UserRole,
+  RoleName,
+} from "@/types/auth";
 import { getModules } from "@/app/actions/app_modules/getModules";
-
-const SESSION_KEY = "lesan_user";
-const MODULE_FEED_KEY = "lesan_module_feed";
+import { getMe } from "@/app/actions/user/getMe";
+import {
+  clearAuthToken,
+  clearCachedModuleFeed,
+  clearCachedUser,
+  getAuthToken,
+  purgeLegacyAuthArtifacts,
+  readCachedModuleFeed,
+  readCachedUser,
+  setAuthToken,
+  writeCachedModuleFeed,
+  writeCachedUser,
+} from "@/utils/auth-storage";
 
 const ORG_ROLE_NAMES: RoleName[] = ["OrgHead", "UnitHead", "Officer"];
+const SESSION_VALIDATION_TIMEOUT_MS = 8000;
+
+const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("session-validation-timeout")), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+};
+
+interface MeBody extends UserData {
+  modules?: string[];
+  orgModules?: string[];
+}
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  /** False until the session has been read from cookies/sessionStorage. */
+  /** False until the session has been read from cookies/localStorage. */
   authReady: boolean;
   userLevel: UserLevel;
   userData: UserData | null;
@@ -45,20 +86,6 @@ export const useAuth = () => {
   return context;
 };
 
-const readStoredModuleFeed = (): ModuleFeed | null => {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = sessionStorage.getItem(MODULE_FEED_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as ModuleFeed;
-    return typeof parsed?.modules === "undefined" && typeof parsed?.orgModules === "undefined"
-      ? null
-      : parsed;
-  } catch {
-    return null;
-  }
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authReady, setAuthReady] = useState<boolean>(false);
@@ -70,56 +97,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [modulesKnown, setModulesKnown] = useState<boolean>(false);
   const router = useRouter();
 
-  const applyModuleFeed = (feed: ModuleFeed | null | undefined) => {
-    if (feed?.modules) {
+  const applyModuleFeed = useCallback((feed: ModuleFeed | null | undefined) => {
+    if (Array.isArray(feed?.modules)) {
       setEnabledModules(feed.modules);
       setModulesKnown(true);
     }
     if (Array.isArray(feed?.orgModules)) {
       setOrgEnabledModules(feed.orgModules);
     }
-  };
-
-  // Initialize from cookie on mount
-  useEffect(() => {
-    const token = Cookies.get("token");
-    const storedUser = sessionStorage.getItem(SESSION_KEY);
-
-    if (token && storedUser) {
-      try {
-        const user = JSON.parse(storedUser) as UserData;
-        setIsAuthenticated(true);
-        setUserLevel(user.level);
-        setUserData(user);
-        setEnterpriseSettings(user.settings);
-        const feed = readStoredModuleFeed();
-        applyModuleFeed(feed || { modules: user.modules, orgModules: user.orgModules });
-      } catch {
-        Cookies.remove("token", { path: "/" });
-        sessionStorage.removeItem(SESSION_KEY);
-        sessionStorage.removeItem(MODULE_FEED_KEY);
-      }
-    }
-    setAuthReady(true);
   }, []);
 
-  const login = (token: string, user: UserData, moduleFeed?: ModuleFeed) => {
-    Cookies.set("token", token, { path: "/", expires: 7, sameSite: "lax" });
+  const applyIdentity = useCallback((user: UserData) => {
     setIsAuthenticated(true);
     setUserLevel(user.level);
     setUserData(user);
     setEnterpriseSettings(user.settings);
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
-    if (moduleFeed?.modules || moduleFeed?.orgModules) {
-      sessionStorage.setItem(MODULE_FEED_KEY, JSON.stringify(moduleFeed));
-    }
-    applyModuleFeed(moduleFeed || { modules: user.modules, orgModules: user.orgModules });
-  };
+  }, []);
 
-  const logout = () => {
-    Cookies.remove("token", { path: "/" });
-    sessionStorage.removeItem(SESSION_KEY);
-    sessionStorage.removeItem(MODULE_FEED_KEY);
+  const clearAuthState = useCallback(() => {
     setIsAuthenticated(false);
     setUserLevel(null);
     setUserData(null);
@@ -127,6 +122,82 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setEnabledModules([]);
     setOrgEnabledModules([]);
     setModulesKnown(false);
+  }, []);
+
+  const clearSession = useCallback(() => {
+    clearAuthToken();
+    clearCachedUser();
+    clearCachedModuleFeed();
+    clearAuthState();
+  }, [clearAuthState]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const restoreSession = async () => {
+      purgeLegacyAuthArtifacts();
+
+      if (!getAuthToken()) {
+        clearSession();
+        if (!cancelled) setAuthReady(true);
+        return;
+      }
+
+      const cachedUser = readCachedUser();
+      const cachedFeed = readCachedModuleFeed();
+
+      try {
+        const response = await withTimeout(getMe(), SESSION_VALIDATION_TIMEOUT_MS);
+        if (cancelled) return;
+
+        const body = response?.body as MeBody | undefined;
+        if (response?.success && body) {
+          applyIdentity(body);
+          writeCachedUser(body);
+
+          const feed: ModuleFeed = {
+            modules: Array.isArray(body.modules) ? body.modules : cachedFeed?.modules,
+            orgModules: Array.isArray(body.orgModules) ? body.orgModules : cachedFeed?.orgModules,
+          };
+          applyModuleFeed(feed);
+          writeCachedModuleFeed(feed);
+        } else {
+          clearSession();
+        }
+      } catch {
+        if (cachedUser) {
+          applyIdentity(cachedUser);
+          applyModuleFeed(cachedFeed);
+        } else {
+          clearSession();
+        }
+      } finally {
+        if (!cancelled) setAuthReady(true);
+      }
+    };
+
+    restoreSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyIdentity, applyModuleFeed, clearSession]);
+
+  const login = (token: string, user: UserData, moduleFeed?: ModuleFeed) => {
+    setAuthToken(token);
+    applyIdentity(user);
+    writeCachedUser(user);
+
+    const feed: ModuleFeed = moduleFeed ?? {
+      modules: user.modules,
+      orgModules: user.orgModules,
+    };
+    applyModuleFeed(feed);
+    writeCachedModuleFeed(feed);
+  };
+
+  const logout = () => {
+    clearSession();
     router.push("/");
   };
 

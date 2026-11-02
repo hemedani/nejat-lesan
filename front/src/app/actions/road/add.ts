@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
 import { asSingleItemResponse } from "@/utils/api-response";
@@ -22,7 +23,7 @@ export const add = async (request: {
   set: Partial<RoadAddSet>;
   get?: Partial<ReqType["main"]["road"]["add"]["get"]>;
 }): Promise<LesanResponse<unknown>> => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return (await AppApi().send(
     {
       service: "main",
@@ -50,7 +51,7 @@ export const update = async (request: {
   set: Partial<RoadUpdateSet>;
   get?: Partial<ReqType["main"]["road"]["update"]["get"]>;
 }): Promise<LesanResponse<unknown>> => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return (asSingleItemResponse(
     await AppApi().send(
       {

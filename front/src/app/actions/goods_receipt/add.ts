@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -8,7 +9,7 @@ type Act = ReqType["main"]["goods_receipt"]["add"];
 
 /** Records a goods receipt; the backend adds the items to unit stock. */
 export async function addGoodsReceipt(request: { set: Act["set"]; get?: Act["get"] }) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return AppApi().send(
     {
       service: "main",

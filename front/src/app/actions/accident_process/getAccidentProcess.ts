@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -21,7 +22,7 @@ const PROCESS_GET = {
 };
 
 export async function getAccidentProcess(request: Partial<Act>) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const response = await AppApi().send(
     {
       service: "main",

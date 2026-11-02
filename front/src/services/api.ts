@@ -1,3 +1,4 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { lesanApi } from "@/types/declarations/selectInp";
 import Cookies from "js-cookie";
 
@@ -61,7 +62,7 @@ export const AppApi = (lesanUrl?: string, token?: string | undefined) => {
     const isClientSide = typeof window !== "undefined";
 
     // Get token from cookies if not provided
-    const authToken = token || (isClientSide ? Cookies.get("token") : null);
+    const authToken = token || (isClientSide ? Cookies.get(AUTH_COOKIE) : null);
 
     // Set up base headers with possible authentication
     const baseHeaders: Record<string, string> = {

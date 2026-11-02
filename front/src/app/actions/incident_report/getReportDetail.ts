@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -214,7 +215,7 @@ export async function fetchReportDetail(
   reportId: string,
   source: ReportSource,
 ): Promise<ReportDetailDoc> {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   const response =
     source === "incident_report"

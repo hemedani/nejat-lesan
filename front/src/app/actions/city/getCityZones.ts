@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
 
@@ -31,7 +32,7 @@ const buildCityZonesGeoJSON = (zones: CityZoneRow[]) => ({
 });
 
 export const getCityZonesGeoJSON = async (cityNames: string[]) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   try {
     const response = await AppApi().send(
@@ -74,7 +75,7 @@ export const getCityZonesGeoJSON = async (cityNames: string[]) => {
 };
 
 export const getCityZonesGeoJSONByNames = async (zoneNames: string[]) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   try {
     const response = await AppApi().send(

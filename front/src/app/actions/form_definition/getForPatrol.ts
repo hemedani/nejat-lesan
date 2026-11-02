@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -30,7 +31,7 @@ export async function getPatrolForm(request: {
   set?: Partial<Act["set"]>;
 }): Promise<{ success: boolean; body?: PatrolFormPayload; message?: string }> {
   // `set.formKind` selects the kind; there is no incident-type filter any more.
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const response = await AppApi().send(
     {
       service: "main",

@@ -1,3 +1,4 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import {
   isValidImageExtension,
   isValidPdfExtension,
@@ -60,7 +61,7 @@ export const UploadImage = ({
       formData.append("lesan-body", JSON.stringify(lesanBody));
 
       // Get the auth token
-      const authToken = token || Cookies.get("token");
+      const authToken = token || Cookies.get(AUTH_COOKIE);
 
       // Make the request to the proxy endpoint
       const response = await fetch("/api/proxy", {

@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { ReqType } from "@/types/declarations/selectInp";
 import { asSingleItemResponse } from "@/utils/api-response";
@@ -17,7 +18,7 @@ export const get = async (
   _id: string,
   get?: Partial<ReqType["main"]["road"]["get"]["get"]>,
 ) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const response = await AppApi().send(
     {
       service: "main",

@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -8,7 +9,7 @@ type Act = ReqType["main"]["inventory"]["checkReorder"];
 
 /** Flags every item at or below its reorder point for a unit or organization. */
 export async function checkReorder(request: { set: Act["set"]; get?: Act["get"] }) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return AppApi().send(
     {
       service: "main",

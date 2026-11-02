@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
 
@@ -22,7 +23,7 @@ interface GeoFeature {
 export const getGeoJSON = async (
   groupBy: "province" | "city" | "city_zone",
 ) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   try {
     let model: string;

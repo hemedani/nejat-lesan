@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
 
@@ -10,7 +11,7 @@ interface AirPollutionZoneRow {
 }
 
 export const getAirPollutionZonesGeoJSON = async (zoneNames: string[]) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   try {
     const response = await AppApi().send(

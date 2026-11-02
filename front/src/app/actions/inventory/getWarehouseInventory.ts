@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -12,7 +13,7 @@ type Act = ReqType["main"]["inventory"]["getWarehouseInventory"];
  * act returns only what the caller may see.
  */
 export async function getWarehouseInventory(request: { set: Act["set"]; get?: Act["get"] }) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return AppApi().send(
     {
       service: "main",

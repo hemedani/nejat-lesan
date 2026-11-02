@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -11,7 +12,7 @@ type Act = ReqType["main"]["announcement"]["gets"];
  * Patrol/Manager, so callers must be level-gated in the UI.
  */
 export async function getAnnouncementRows(request: { set?: Partial<Act["set"]>; get?: Record<string, unknown> } = {}) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return AppApi().send(
     {
       service: "main",

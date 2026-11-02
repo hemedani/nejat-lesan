@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -16,7 +17,7 @@ type Request = ReqType["main"]["incident_report"]["reviewReport"];
  * either without the buttons silently acting on the wrong collection.
  */
 export async function reviewIncidentReport(request: Request) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return AppApi().send({
     service: "main",
     model: "incident_report",

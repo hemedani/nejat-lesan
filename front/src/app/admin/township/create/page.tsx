@@ -1,9 +1,10 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { FormCreateTownship } from "@/components/template";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
 const Page = async () => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const lesanUrl = process.env.LESAN_URL
     ? process.env.LESAN_URL
     : "http://localhost:1382";

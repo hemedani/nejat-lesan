@@ -1,4 +1,5 @@
 "use client";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import { updateRelationUser } from "@/app/actions/user/updateRelationUser";
@@ -31,7 +32,7 @@ export const EditUserRelations = ({
     resolver: zodResolver(UpdateUserRelationSchema),
   });
 
-  const token = Cookies.get("token");
+  const token = Cookies.get(AUTH_COOKIE);
   const router = useRouter();
 
   const onSubmit: SubmitHandler<UpdateUserRelationSet> = async (formData) => {

@@ -1,9 +1,10 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import { AppApi } from "@/services/api";
 import { cookies } from "next/headers";
 
 export const updateCityRelations = async (cityId: string, provinceId?: string) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
 
   const set: Record<string, unknown> = { _id: cityId };
   if (provinceId !== undefined) {

@@ -1,4 +1,5 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { cookies } from "next/headers";
 import { AppApi } from "@/services/api";
@@ -32,7 +33,7 @@ export interface ValidationResult {
 export async function validateFormAnswers(request: {
   set: Act["set"];
 }) {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const response = await AppApi().send(
     {
       service: "main",

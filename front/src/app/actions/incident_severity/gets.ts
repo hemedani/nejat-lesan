@@ -1,11 +1,12 @@
 "use server";
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 
 import { AppApi } from "@/services/api";
 import type { ReqType } from "@/types/declarations/selectInp";
 import { cookies } from "next/headers";
 
 export const gets = async ({ set, get }: ReqType["main"]["incident_severity"]["gets"]) => {
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   return await AppApi().send(
     {
       service: "main",
