@@ -146,9 +146,14 @@ const AccidentsMapPage: React.FC = () => {
         // Fetch zone polygon overlays (city zones, traffic zones, air pollution zones)
         const zoneGeoJson = await loadZoneGeoJson(finalFilters);
         setGeoJsonData(zoneGeoJson);
+      } else {
+        toast.error(
+          "دریافت تصادفات ناموفق بود. لطفاً دوباره تلاش کنید.",
+        );
       }
     } catch (error) {
       console.error("Error fetching accidents:", error);
+      toast.error("خطا در دریافت تصادفات. لطفاً دوباره تلاش کنید.");
     } finally {
       setIsLoading(false);
     }
@@ -221,9 +226,11 @@ const AccidentsMapPage: React.FC = () => {
         setIsModalOpen(true);
         return true;
       }
+      toast.error("دریافت تصادفات این ناحیه ناموفق بود.");
       return false;
     } catch (error) {
       console.error("Error fetching polygon accidents:", error);
+      toast.error("خطا در دریافت تصادفات این ناحیه.");
       return false;
     } finally {
       setIsPolygonLoading(false);
@@ -296,6 +303,54 @@ const AccidentsMapPage: React.FC = () => {
   // Reset projection to the default fields and re-fetch
   const handleResetFields = () =>
     applyFieldKeys(new Set(DEFAULT_FIELD_KEYS));
+
+  // Fetch every row matching the current filters/shape for CSV export. The
+  // table itself stays capped for rendering, but an export must not silently
+  // drop records beyond that cap, so page through the backend in chunks.
+  const handleExportRows = async (
+    keys: Set<string>,
+  ): Promise<{ rows: accidentSchema[]; total: number; truncated: boolean }> => {
+    const exportProjection = buildAccidentProjection(keys);
+    const liveGeoJSON = activeLayer?.toGeoJSON
+      ? activeLayer.toGeoJSON()
+      : activeShape;
+    const coordinates = liveGeoJSON
+      ? extractPolygonCoordinates(liveGeoJSON, activeLayer ?? undefined)
+      : null;
+
+    const basePayload: Record<string, unknown> = { ...appliedFilters };
+    delete basePayload.limit;
+    delete basePayload.skip;
+    if (coordinates) {
+      basePayload.polygon = { type: "Polygon" as const, coordinates };
+    }
+
+    const pageSize = 2000;
+    const maxRows = 50000;
+    const rows: accidentSchema[] = [];
+    let total = 0;
+
+    for (let skip = 0; skip < maxRows; skip += pageSize) {
+      const response = await mapAccidents({
+        set: { ...basePayload, limit: pageSize, skip },
+        get: {
+          accidents:
+            exportProjection as ReqType["main"]["accident"]["mapAccidents"]["get"]["accidents"],
+          total: 1,
+        },
+      });
+      if (!response.success || !response.body) {
+        throw new Error("دریافت داده‌های خروجی ناموفق بود");
+      }
+      const page = response.body.accidents || [];
+      total = response.body.total || 0;
+      rows.push(...page);
+      if (rows.length >= total || page.length < pageSize) break;
+    }
+
+    const truncated = total > rows.length;
+    return { rows: rows.slice(0, maxRows), total, truncated };
+  };
 
   // Handle snapshot capture for comparison
   const handleCaptureSnapshot = async () => {
@@ -528,6 +583,7 @@ const AccidentsMapPage: React.FC = () => {
             selectedFields={selectedFieldKeys}
             onApplyFields={handleApplyFields}
             onResetFields={handleResetFields}
+            onExportRows={handleExportRows}
           />
 
           {/* Summary Stats */}

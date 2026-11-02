@@ -16,48 +16,68 @@ export interface AccidentFieldOption {
   key: string;
   label: string;
   projection: Record<string, unknown>;
+  /** Position in the column picker and the table header. */
+  order: number;
+  /** Selected on first load and restored by «بازنشانی به پیش‌فرض». */
+  defaultVisible: boolean;
+  /** Whether the user may choose this column. Hidden/system fields are omitted. */
+  selectable: boolean;
 }
 
+/**
+ * Single source of truth for the accident table's columns.
+ *
+ * The order here is the order in both the checkboxes and the table header.
+ * The first 15 are `defaultVisible`, matching the QA report; the remaining 15
+ * are opt-in. System fields removed from the old picker are deliberately
+ * absent so neither the list nor «select all» can bring them back.
+ */
 export const ACCIDENT_FIELD_OPTIONS: AccidentFieldOption[] = [
-  { key: "seri", label: "سری", projection: { seri: 1 } },
-  { key: "serial", label: "شماره", projection: { serial: 1 } },
-  { key: "location", label: "موقعیت جغرافیایی", projection: { location: 1 } },
-  { key: "date_of_accident", label: "تاریخ تصادف", projection: { date_of_accident: 1 } },
-  { key: "dead_count", label: "تعداد متوفیان", projection: { dead_count: 1 } },
+  { key: "seri", label: "سری", order: 1, defaultVisible: true, selectable: true, projection: { seri: 1 } },
+  { key: "serial", label: "سریال", order: 2, defaultVisible: true, selectable: true, projection: { serial: 1 } },
+  { key: "date_of_accident", label: "تاریخ و ساعت تصادف", order: 3, defaultVisible: true, selectable: true, projection: { date_of_accident: 1 } },
+  { key: "type", label: "نوع تصادف", order: 4, defaultVisible: true, selectable: true, projection: { type: { name: 1 } } },
+  { key: "province", label: "استان", order: 5, defaultVisible: true, selectable: true, projection: { province: { name: 1 } } },
+  { key: "city", label: "شهر", order: 6, defaultVisible: true, selectable: true, projection: { city: { name: 1 } } },
+  { key: "road", label: "راه", order: 7, defaultVisible: true, selectable: true, projection: { road: { name: 1 } } },
+  { key: "location", label: "موقعیت جغرافیایی", order: 8, defaultVisible: true, selectable: true, projection: { location: 1 } },
+  { key: "collision_type", label: "نوع برخورد", order: 9, defaultVisible: true, selectable: true, projection: { collision_type: { name: 1 } } },
+  { key: "light_status", label: "وضعیت روشنایی", order: 10, defaultVisible: true, selectable: true, projection: { light_status: { name: 1 } } },
+  { key: "air_statuses", label: "وضعیت آب و هوا", order: 11, defaultVisible: true, selectable: true, projection: { air_statuses: { name: 1 } } },
+  { key: "road_defects", label: "نقایص راه", order: 12, defaultVisible: true, selectable: true, projection: { road_defects: { name: 1 } } },
+  { key: "road_surface_conditions", label: "وضعیت سطح راه", order: 13, defaultVisible: true, selectable: true, projection: { road_surface_conditions: { name: 1 } } },
+  { key: "road_situation", label: "نوع راه", order: 14, defaultVisible: true, selectable: true, projection: { road_situation: { name: 1 } } },
+  { key: "area_usages", label: "کاربری اراضی", order: 15, defaultVisible: true, selectable: true, projection: { area_usages: { name: 1 } } },
+  { key: "dead_count", label: "تعداد متوفیان", order: 16, defaultVisible: false, selectable: true, projection: { dead_count: 1 } },
+  { key: "injured_count", label: "تعداد مجروحان", order: 17, defaultVisible: false, selectable: true, projection: { injured_count: 1 } },
+  { key: "traffic_zone", label: "منطقه ترافیکی", order: 18, defaultVisible: false, selectable: true, projection: { traffic_zone: { name: 1 } } },
+  { key: "city_zone", label: "منطقه شهری", order: 19, defaultVisible: false, selectable: true, projection: { city_zone: { name: 1 } } },
+  { key: "human_reasons", label: "عوامل انسانی", order: 20, defaultVisible: false, selectable: true, projection: { human_reasons: { name: 1 } } },
+  { key: "vehicle_reasons", label: "عوامل وسیله نقلیه", order: 21, defaultVisible: false, selectable: true, projection: { vehicle_reasons: { name: 1 } } },
+  { key: "road_repair_type", label: "نوع تعمیرات راه", order: 22, defaultVisible: false, selectable: true, projection: { road_repair_type: { name: 1 } } },
+  { key: "equipment_damages", label: "خسارت تجهیزات", order: 23, defaultVisible: false, selectable: true, projection: { equipment_damages: { name: 1 } } },
+  { key: "shoulder_status", label: "وضعیت شانه", order: 24, defaultVisible: false, selectable: true, projection: { shoulder_status: { name: 1 } } },
+  { key: "vehicle_dtos", label: "وسیله نقلیه", order: 25, defaultVisible: false, selectable: true, projection: { vehicle_dtos: 1 } },
+  { key: "pedestrian_dtos", label: "عابر پیاده", order: 26, defaultVisible: false, selectable: true, projection: { pedestrian_dtos: 1 } },
+  { key: "ruling_type", label: "وضعیت خط‌کشی", order: 27, defaultVisible: false, selectable: true, projection: { ruling_type: { name: 1 } } },
+  { key: "position", label: "موقعیت", order: 28, defaultVisible: false, selectable: true, projection: { position: { name: 1 } } },
   {
     key: "officer",
-    label: "مامور",
+    label: "مأمور",
+    order: 29,
+    defaultVisible: false,
+    selectable: true,
     projection: { officer: { first_name: 1, last_name: 1, personnel_code: 1 } },
   },
-  { key: "injured_count", label: "تعداد مجروحان", projection: { injured_count: 1 } },
-  { key: "province", label: "استان", projection: { province: { name: 1 } } },
-  { key: "city", label: "شهر", projection: { city: { name: 1 } } },
-  { key: "road", label: "راه", projection: { road: { name: 1 } } },
-  { key: "traffic_zone", label: "منطقه ترافیکی", projection: { traffic_zone: { name: 1 } } },
-  { key: "city_zone", label: "منطقه شهری", projection: { city_zone: { name: 1 } } },
-  { key: "type", label: "نوع تصادف", projection: { type: { name: 1 } } },
-  { key: "area_usages", label: "کاربری اراضی", projection: { area_usages: { name: 1 } } },
-  { key: "position", label: "موقعیت", projection: { position: { name: 1 } } },
-  { key: "ruling_type", label: "وضعیت خط کشی", projection: { ruling_type: { name: 1 } } },
-  { key: "air_statuses", label: "وضعیت آب و هوا", projection: { air_statuses: { name: 1 } } },
-  { key: "light_status", label: "وضعیت روشنایی", projection: { light_status: { name: 1 } } },
-  { key: "road_defects", label: "نقایص راه", projection: { road_defects: { name: 1 } } },
-  { key: "human_reasons", label: "عوامل انسانی", projection: { human_reasons: { name: 1 } } },
-  { key: "collision_type", label: "نوع برخورد", projection: { collision_type: { name: 1 } } },
-  { key: "road_situation", label: "وضعیت راه", projection: { road_situation: { name: 1 } } },
-  { key: "road_repair_type", label: "نوع تعمیرات راه", projection: { road_repair_type: { name: 1 } } },
-  { key: "shoulder_status", label: "وضعیت شانه", projection: { shoulder_status: { name: 1 } } },
-  { key: "vehicle_reasons", label: "عوامل وسیله نقلیه", projection: { vehicle_reasons: { name: 1 } } },
-  { key: "equipment_damages", label: "خسارات تجهیزات", projection: { equipment_damages: { name: 1 } } },
-  { key: "road_surface_conditions", label: "وضعیت سطح راه", projection: { road_surface_conditions: { name: 1 } } },
   {
     key: "attachments",
     label: "پیوست‌ها",
+    order: 30,
+    defaultVisible: false,
+    selectable: true,
     projection: { attachments: { name: 1, type: 1, size: 1 } },
   },
-  { key: "vehicle_dtos", label: "وسایل نقلیه", projection: { vehicle_dtos: 1 } },
-  { key: "pedestrian_dtos", label: "عابران پیاده", projection: { pedestrian_dtos: 1 } },
-];
+].sort((a, b) => a.order - b.order);
 
 // Minimal projection for the map overlay markers/popups (keeps the payload light)
 export const MAP_PROJECTION: Record<string, unknown> = {
@@ -87,20 +107,9 @@ export const buildAccidentProjection = (
   return projection;
 };
 
-export const DEFAULT_FIELD_KEYS: string[] = [
-  "location",
-  "date_of_accident",
-  "dead_count",
-  "injured_count",
-  "type",
-  "collision_type",
-  "light_status",
-  "position",
-  "road_defects",
-  "human_reasons",
-  "vehicle_dtos",
-  "pedestrian_dtos",
-];
+export const DEFAULT_FIELD_KEYS: string[] = ACCIDENT_FIELD_OPTIONS
+  .filter((option) => option.defaultVisible)
+  .map((option) => option.key);
 
 export const DEFAULT_PROJECTION: Record<string, unknown> =
   buildAccidentProjection(DEFAULT_FIELD_KEYS);
