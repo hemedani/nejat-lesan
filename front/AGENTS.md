@@ -531,6 +531,278 @@ You may still:
 - Help debug configuration issues
 - Explain what different commands do
 
+## 🎨 Theming — one axis, one token layer
+
+**Design**: `../docs/superpowers/specs/2026-11-01-theme-architecture-design.md`
+
+The app historically carried **two design systems**: panels written in dark
+literals (`bg-slate-950`, `border-white/10`) and analytics pages written in light
+literals (`bg-white`, `text-gray-900`). Measured across 355 `.tsx` files:
+**2,958 light-idiom and 2,022 dark-idiom class uses, with 110 files containing
+both.** A `.admin-shell` block in `globals.css` was the seam between them — ~150
+lines of `!important` that rewrote light utilities into dark for `/admin` and
+`PanelShell` only, while `/charts` and `/maps` rendered outside it and stayed
+light.
+
+**That is resolved.** Both systems are gone: every surface reads tokens, and the
+wrapper is deleted. Literal count went **6,235 → 706**, and the remaining ones
+are data colours (choropleth ramps, categorical series) or brand artwork.
+
+### The rule
+
+> **The theme is a property of the document, not of a route or a wrapper.**
+
+It lives on `<html data-theme="light|dark">`. Components must not know or care
+what theme they are in. Anything that reintroduces per-route or per-panel
+theming — a route default, a `dark:` pair, a wrapper class — reproduces the bug
+for the next shared component, the next portal, and the next chart library.
+
+| Layer | Where | Responsibility |
+| --- | --- | --- |
+| Tokens | `app/globals.css` (`:root` + `:root[data-theme="light"]`) | the palette |
+| Utilities | `app/globals.css` (`@theme inline`) | exposes tokens to Tailwind |
+| Runtime | `utils/theme.ts`, `context/ThemeContext.tsx` | cookie, OS preference, `data-theme` |
+| Pre-paint | `THEME_INIT_SCRIPT` in `app/layout.tsx` | prevents flash of the wrong theme |
+| Non-CSS | `utils/chart-theme.ts` | ApexCharts / Leaflet colours |
+| Migration | `scripts/theme-codemod.mjs` | literal → token, mechanically |
+| Migration | `../.workbuddy-ai/tools/tint-codemod.py` | dark-native alpha idiom → `tint-*` |
+| Ratchet | `../.workbuddy-ai/tools/theme-audit.py` | literals may fall, never rise |
+| Visual check | `../.workbuddy-ai/tools/theme-shot.py` | real SSR markup, both themes |
+
+### Use the tokens
+
+```
+bg-canvas            page background
+bg-surface           card / panel          bg-surface-raised   modal, menu
+bg-surface-sunken    input well, th        bg-surface-hover    hover tint
+border-line          default hairline      border-line-strong  emphasised
+text-fg              primary text          text-fg-muted       secondary
+text-fg-faint        caption, placeholder  text-on-brand       text on bg-brand
+bg-brand             primary action        bg-brand-soft       tinted chip
+bg-success-soft      + text-success-fg     (same for warning / danger / info)
+```
+
+`--chart-1..8`, `--chart-grid`, `--chart-label`, `--map-*`, `--tooltip-*` and
+`--scroll-*` are **tier 3**: read them with `getComputedStyle`, never as a class.
+
+### Categorical colour — use `tint-*`, never `bg-orange-50`
+
+Some colour is *identity*, not status: each chart card on a landing page, each
+filter chip in `AppliedFiltersDisplay`, each level badge on `UserCard`. Collapsing
+them onto the five semantic statuses would make eight chips look identical, so
+the hue has to survive. But `bg-orange-50` is a **light-mode tint** — on a dark
+card it is a pale block, and its `text-orange-800` label is unreadable. That is a
+whole class of bug the grey/white codemod could not see, and it is why
+`/charts/overall` and the filter panel looked half-themed.
+
+The hue stays; the tint is derived from it:
+
+```tsx
+<a className="tint-orange bg-tint-soft border border-tint-border">
+  <div className="bg-tint-strong">
+    <svg className="text-tint-fg" />
+  </div>
+</a>
+```
+
+`tint-<hue>` sets `--tint` on the element and the three surfaces read it:
+
+| Utility | Derivation | Reads as |
+| --- | --- | --- |
+| `bg-tint-soft` | `color-mix(hue, --surface)` | card wash |
+| `bg-tint-strong` | same, more pigment | chip / icon well |
+| `border-tint-border` | same, more again | hairline |
+| `text-tint-fg` | `color-mix(hue, --fg)` | label, **darkens** in light / **lightens** in dark |
+
+Hues: `red orange amber yellow lime green emerald teal cyan sky blue indigo
+violet purple fuchsia pink rose slate`, plus `brand success warning danger info`.
+`--tint` defaults to brand, so a forgotten `tint-*` degrades to a neutral wash
+rather than dropping the declaration (an undefined `var()` inside `color-mix`
+invalidates the whole property).
+
+Two things not to "fix": the strengths in `:root` / `:root[data-theme="light"]`
+are **measured**, not arbitrary. Light `--tint-fg-strength: 56%` is the lowest
+value at which every one of the 17 hues clears 4.5:1 against both tint surfaces
+(yellow is the binding constraint; at 78% it reached only 2.9:1). Changing them
+without re-running the contrast check will silently break legibility.
+
+### The other half of the idiom: pale label, pale hover
+
+`tint-*` covers the *triple* (`border` + `bg` + `text` on one element). Two
+sibling defects come from the same dark-native habit and are fixed differently:
+
+| Written as | Why it breaks on a light card | Write instead |
+| --- | --- | --- |
+| `text-blue-300` as a section label | a *pale* hue is a light colour; on white it is nearly white | `text-brand-fg` (`#bfdbfe` dark / `#1d4ed8` light) |
+| `text-rose-200` / `text-emerald-200` / `text-amber-200` | same | `text-danger-fg` / `text-success-fg` / `text-warning-fg` |
+| `hover:text-blue-100`, `hover:text-cyan-200` | the hover end is *lighter* than the base, so hovering makes the label vanish | `hover:underline` — the base colour is already the accent |
+| `hover:bg-blue-400/10` + `hover:text-blue-100` | wash and label both disappear together | `hover:bg-tint-soft` + `hover:text-fg` |
+| `hover:border-blue-400/25` | a 25 % hairline on white is invisible | `hover:border-line-focus` (65 % blue in dark, `#2563eb` in light) |
+| `bg-gradient-to-l from-blue-950/90 via-surface` | reads as a deep navy edge in dark, a navy-to-white slab in light | `[background-image:var(--hero-gradient)]` |
+| `bg-yellow-400 text-fg` | the plate is a *fixed* light yellow but `--fg` flips to near-white in dark | `tint-warning bg-tint-strong text-tint-fg` |
+| `text-fg-muted hover:bg-surface-hover hover:text-on-brand` | `--on-brand` is `#ffffff` in **both** themes because it means "text on brand blue". On a light hover wash it is white-on-white | `hover:text-fg` |
+| `text-on-brand disabled:bg-line-strong` | the disabled plate is neutral, but the label keeps the white-on-colour assumption | add `disabled:text-fg-muted` |
+
+`--on-brand` is the single most dangerous token in the system: it is the only one
+that is deliberately *theme-independent*, so it is correct on `bg-brand` /
+`bg-green-600` / `bg-red-600` and wrong everywhere else. Reach for it only when
+the same element also sets a solid brand-or-status background. Every nav link,
+sidebar item and dropdown row wants `text-fg` on hover — not `--on-brand`.
+
+`--brand-fg`, `--danger-fg`, `--success-fg`, `--warning-fg` and `--info-fg` are
+the five status/accent label tokens. They are the *only* correct choice for
+accent text that is not sitting on its own tint — a palette step like
+`text-blue-300` has no light-theme meaning at all.
+
+`--hero-gradient` is a token for the same reason `--sidebar-gradient` is: the
+literal was one hue at two opposite strengths, and only the theme can decide
+which. Dark mixes 34 % `--hue-blue` into the canvas; light mixes 7 % into the
+surface, because 34 % navy on white is the slab the gradient was reported for.
+
+### Three traps that decide whether this works at all
+
+1. **`@theme inline` is mandatory.** Plain `@theme` compiles the resolved hex into
+   every utility, so `data-theme` repaints nothing. Verified: the compiled
+   `.bg-surface` rule is `background-color: var(--surface)`.
+2. **ApexCharts cannot read CSS variables.** It writes `fill`/`stroke` into its
+   own SVG from a JS options object, so a token never reaches it. Every chart must
+   use `useChartTheme()` from `utils/chart-theme.ts` and spread
+   `theme.options` first. **A chrome hex colour in a chart file is a bug.**
+   `src/types/apexcharts.d.ts` was extended for this — the hand-written stub had
+   no `theme`, `foreColor` or axis colours, so a themed options object could not
+   even be typed.
+   *One exception, and it is a trap of its own:* the **tooltip bubble** is styled
+   from `globals.css`, not from options. ApexCharts' stylesheet sets
+   `background: #fff` for `.apexcharts-theme-light` and **no `color`**, so the
+   text inherits `foreColor` — light in dark mode, i.e. white on white. Only
+   `tooltip.theme` selects the dark variant, and most charts override
+   `tooltip: { shared, y }` and drop it. Fixing that per chart would work until
+   the next chart. So the bubble is tokenised once (`--chart-tooltip-bg/-fg`) with
+   `html`-prefixed selectors, because ApexCharts appends its `<style>` to `<head>`
+   at init — *after* this stylesheet — and equal specificity would lose.
+3. **`react-select` is the third non-CSS surface.** Its `styles` prop takes
+   inline style objects, so `classNamePrefix` + CSS cannot theme it. Use
+   `useSelectStyles()` from `utils/select-styles.ts`; it reads the same palette as
+   the chart hook. Its return type is deliberately `StylesConfig<any, any, any>`
+   — `react-select`'s generics are invariant, so pinning them here would widen the
+   component's own generic and break `onChange` typing at every call site.
+
+### Literals that are *supposed* to stay
+
+A hex that encodes a **data value** is not chrome and must not be tokenised:
+
+| Kind | Example | Why it stays |
+| --- | --- | --- |
+| Choropleth / heat ramps | `SpatialSeverityMap`, `HourlyDayOfWeekHeatmap` | the colour *is* the value; both themes use the same ramp so intensities stay comparable |
+| Categorical series | `COLORS` arrays in `spatial/*BarChart` | identity, not surface; 10 provinces need 10 hues and the 8-token palette would cycle |
+| Brand artwork | `IconLogo` | a fixed lockup with its own white plate |
+
+The one exception is the **zero stop** of a sequential ramp: an empty heatmap cell
+should read as background, so it takes `chartTheme.surfaceSunken` rather than a
+near-white literal that would glow on a dark card.
+
+Likewise, `HourlyDayOfWeekHeatmap` keeps `dataLabels.style.colors: ["#000000"]`
+in both themes. The label sits on the *ramp*, not on a surface — the ramp is the
+same in both themes, so a token there would put white text on the pale cells.
+
+### Default is `dark`, deliberately not `system`
+
+Navbar, login, landing, all seven panels and the form builder are dark-native and
+define the product's identity. A machine whose OS is light still gets the intended
+UI. `system` remains a user choice, not the factory default. `:root` **is** the
+dark theme, so a missing attribute fails safe.
+
+### Migration state
+
+| Phase | Scope | Status |
+| --- | --- | --- |
+| 0 | token layer, `data-theme` on `<html>`, chart resolver, audit baseline | **done** |
+| 1 | `components/{atoms,system,modals,molecules}`, `Navbar` → tokens | **done** |
+| 2 | `components/{charts,dashboards,maps}`, `app/{charts,maps}` → tokens + `useChartTheme()` | **done** |
+| 3 | delete `.admin-shell`, flip `THEME_TOGGLE_ENABLED = true` | **done** |
+| 4 | `theme-audit.py --enforce` in CI | **tool ready**, not wired into CI yet |
+| 5 | dark-native alpha idiom → `tint-*`, pale labels → `*-fg`, hero gradients → `--hero-gradient` | **done** |
+
+**`.admin-shell` no longer exists.** It was deleted once both systems read
+tokens, and replaced by a token-driven `@layer base` block that styles native
+`input`/`select`/`textarea`, `label` and `table` elements **globally**. The layer
+matters: Tailwind utilities live in `@layer utilities` and must still win, which
+is why the old block needed `!important` and the new one needs none.
+
+**`THEME_TOGGLE_ENABLED` in `utils/theme.ts` is `true`.** The switch is mounted in
+`Navbar` as a three-way segmented control (light / dark / system). Setting it back
+to `false` only hides the control — the cookie and `data-theme` keep working, so a
+user who already chose light stays on light.
+
+### Verification
+
+```bash
+# class literals → tokens (dry run is the default)
+node front/scripts/theme-codemod.mjs
+node front/scripts/theme-codemod.mjs --check   # exit 1 if work remains
+node front/scripts/theme-codemod.mjs --write src/components/charts
+
+# ApexCharts hex → useChartTheme()
+node front/scripts/chart-theme-codemod.mjs
+node front/scripts/chart-theme-codemod.mjs --write path/to/Chart.tsx
+
+# literal count per area, compared to the committed baseline
+python3 .workbuddy-ai/tools/theme-audit.py
+python3 .workbuddy-ai/tools/theme-audit.py --enforce
+
+# dark-native alpha idiom → tint-* (dry run is the default)
+python3 .workbuddy-ai/tools/tint-codemod.py
+python3 .workbuddy-ai/tools/tint-codemod.py --apply
+
+# screenshot real pages in both themes
+python3 .workbuddy-ai/tools/theme-shot.py /login /
+python3 .workbuddy-ai/tools/theme-shot.py /login --themes light
+```
+
+Both codemods are idempotent — a second `--write` is a no-op. `theme-codemod`
+skips comments and prose (it tokenises strings first), and `chart-theme-codemod`
+masks module-level `COLORS` palettes so a categorical grey is not mistaken for a
+label colour.
+
+`tint-codemod` **only fires when a pale label is present** (`text-{hue}-100|200|300`)
+**and** a wash or border accompanies it. A bare `text-blue-300` is reported, never
+rewritten, because it might legitimately sit on a solid blue button where
+pale-on-blue is correct. That is why it needs a human pass on its leftover list
+rather than a blind `--apply`.
+
+**Look at it.** Static analysis shipped five bugs in the first round, so the
+audit is a floor, not a proof. `theme-shot.py` captures real SSR markup in both
+themes; read the PNGs in `.workbuddy-ai/previews/theme/`. Its docstring records
+the three things that make headless Chrome behave — strip `<script>`, don't use a
+local proxy, and give every capture its own `--user-data-dir` — because each one
+cost an afternoon.
+
+Baseline: **706 literals** (61 light / 31 dark / 614 neutral). The two counts
+that matter both fell hard: light-only went 2,958 → 61 and dark-only 342 → 31.
+`--check` reports **0 files with literals**; the audit's chart section lists the
+17 files whose remaining hex is deliberate data colouring.
+
+### Known gaps — surfaces that still lean one way
+
+The dark-native alpha idiom (`border-blue-400/20 bg-blue-400/10 text-blue-200`)
+is **gone**: 45 files were converted mechanically to `tint-*`, and the ~80 bare
+pale labels that had no wash to identify them were mapped onto the five
+`*-fg` tokens. `/orghead`, `/admin`, `/unit-head`, `/employee`, `/patrol`,
+`/report` and `/warehouse` all read correctly in both themes now, and the navy
+hero gradient is a token on all five pages that had it.
+
+What is left is deliberate, not unfinished:
+
+| Surface | Why it stays |
+| --- | --- |
+| Chart chrome hex (17 files) | ApexCharts writes `fill`/`stroke` into its own SVG; a token cannot reach it. These are `useChartTheme()`'s inputs, not surface colours |
+| Choropleth / heat ramps, categorical `COLORS` arrays | the colour *is* the value |
+| `IconLogo` | a fixed lockup with its own white plate — a design call, not a theming bug |
+| `bg-[#0f172a]` in the `Hero` mockup | a simulated product screenshot; it is a picture of a dark dashboard, not a surface |
+
+The audit counts the first two as `light`/`neutral`, which is why the light
+count still reads 61. That is the floor, not a backlog.
+
 ## 📝 Recent Changes
 
 ### Role-Scoped Panels (`/orghead`, `/unit-head`, `/employee`)
@@ -721,6 +993,7 @@ Two static audits that catch failures TypeScript cannot see. Run them with the m
 | `audit-frontend-actions.py` | every `model`/`act` pair in `front/src/app/actions/**` resolves to a registered act | 450 acts / 356 calls / 0 unresolved |
 | `map-surface-test.py` | `LeafletSurface` keeps the map's height on a wrapper, never on the `MapContainer` (see the `.leaflet-container { height: 100% !important }` trap above) | 15 call-sites scanned |
 | `panel-routing-test.py` | panel access + default-landing + nav-filtering logic in `utils/panels.ts` / `utils/panel-nav.ts` | 121 assertions pass |
+| `theme-audit.py` | hardcoded colour literals per area vs. a committed baseline, plus hex colours in chart files | 1,160 literals / 17 chart files |
 | `probe-empty-get.py` | live probe: does `get: {}` get rejected by an aggregation act? | reference |
 
 `panel-routing-test.py` transpiles `panels.ts` + `panel-nav.ts` with `tsc` and runs assertions in
@@ -800,6 +1073,23 @@ Still missing the fix: `components/template/FormCreateTownship.tsx`,
 
 **Installation Required**:
 Run `pnpm install` to install the new dependencies before testing.
+
+**Theming note (added with the theme migration).** The library injects its own
+stylesheet at runtime and hardcodes `background-color: #fff` on two containers.
+`globals.css` tokenises them, and both must stay tokenised:
+
+- `.rmdp-wrapper` / `.rmdp-calendar` — the day grid.
+- `.rmdp-month-picker` / `.rmdp-year-picker` — the **month and year panels**. This
+  is a *separate* container, so tokenising only `.rmdp-calendar` leaves a white
+  rectangle that opens over a dark calendar — which looks exactly like the picker
+  reverting to light mode. Their cells are ordinary `.rmdp-day` elements, so the
+  existing colour/hover/selected rules already reach them; only the surface was
+  missing.
+- `.rmdp-ep-arrow::after` and its `[direction]` borders — the popup pointer, also
+  hardcoded `#fff`.
+
+`className="blue"` on the `DatePicker` is inert: `styles/colors/blue.css` is never
+imported, so the "blue theme" comes entirely from `globals.css`.
 
 ### Email/Password Auth Migration
 
@@ -1030,9 +1320,14 @@ silently into `road.snapPointToRoad`'s kilometre/meter output. The same applies 
 `accident.serial` and any other field the backend derives — if a form exposes it as
 editable, that is a backend contract change, not a UI one.
 
-`GeoPolygonDrawer` / `GeoPointPicker` take `tone="light"` because the legacy
-province/city/township forms are a light theme while every newer surface is dark.
-That prop exists for those six files, not as a general theming hook.
+`GeoPolygonDrawer` / `GeoPointPicker` used to take `tone="light"` because the
+legacy province/city/township forms were built as a light surface while every
+newer surface was dark. **That prop is gone.** It was a casualty of the old
+two-theme split: once both surfaces read tokens the two variants differed only in
+contrast, and all twelve call sites passed the same value. The surviving
+constants are the `light` ones, so removing the prop did not restyle those forms.
+Do not reintroduce a per-surface appearance knob — theme is a document property.
+See *🎨 Theming* above.
 `osm` is served from `tile.openstreetmap.org` and is unreliable from inside Iran;
 `mapir` (Map.ir) and `neshan` are reachable. `DEFAULT_BASEMAP` stays `osm` deliberately
 (changing it would alter every map in the app), so **every `MapContainer` map needs a way
