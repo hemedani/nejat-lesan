@@ -103,7 +103,7 @@ export const REFERENCE_MODEL_LABELS: Record<string, string> = {
 	road_repair_type: "نوع تعمیر راه",
 	road_situation: "وضعیت راه",
 	road_surface_condition: "سطح راه",
-	ruling_type: "نوع حکم",
+	ruling_type: "وضعیت خط کشی",
 	shoulder_status: "وضعیت شانه",
 	type: "شدت تصادف",
 	vehicle_reason: "دلیل خودرو",

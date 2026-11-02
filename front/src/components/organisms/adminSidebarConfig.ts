@@ -146,7 +146,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { key: "shoulder_status", label: "وضعیت شانه جاده", href: "/admin/shoulder-status", icon: "road" },
       { key: "road_repair_type", label: "نوع تعمیر جاده", href: "/admin/road-repair-type", icon: "cog" },
       { key: "road_defect", label: "عیب جاده", href: "/admin/road-defect", icon: "cog" },
-      { key: "ruling_type", label: "نوع حکم", href: "/admin/ruling-type", icon: "document" },
+      { key: "ruling_type", label: "وضعیت خط کشی", href: "/admin/ruling-type", icon: "document" },
       { key: "area_usage", label: "نوع کاربری منطقه", href: "/admin/area-usage", icon: "map" },
     ],
   },

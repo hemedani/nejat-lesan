@@ -570,7 +570,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               <MyAsyncMultiSelect
                 className="!w-full !p-0"
                 name="rulingType"
-                label="نوع رای"
+                label="وضعیت خط کشی"
                 setValue={setValue}
                 defaultValue={defaultSearchArrayValues.rulingType}
                 loadOptions={loadRulingTypesOptions}

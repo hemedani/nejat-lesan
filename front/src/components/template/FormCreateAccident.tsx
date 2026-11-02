@@ -1498,7 +1498,7 @@ const FormCreateAccident = () => {
             />
             <MySingleSelect
               name="ruling_type"
-              label="نوع حکم"
+              label="وضعیت خط کشی"
               loadOptions={loadRulingTypes}
               setValue={setValueWrapper}
               defaultOptions={true}
