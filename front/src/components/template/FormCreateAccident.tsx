@@ -1422,7 +1422,7 @@ const FormCreateAccident = () => {
             />
             <MySingleSelect
               name="road_situation"
-              label="وضعیت جاده"
+              label="نوع راه"
               loadOptions={loadRoadSituations}
               setValue={setValueWrapper}
               defaultOptions={true}
@@ -1503,7 +1503,7 @@ const FormCreateAccident = () => {
             />
             <MySingleSelect
               name="ruling_type"
-              label="وضعیت خط کشی"
+              label="وضعیت خط‌کشی"
               loadOptions={loadRulingTypes}
               setValue={setValueWrapper}
               defaultOptions={true}

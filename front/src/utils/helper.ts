@@ -165,11 +165,11 @@ function translateModelNameToPersian(modelName: ModelName): string {
     case "road_repair_type":
       return "نوع تعمیر جاده";
     case "road_situation":
-      return "وضعیت جاده";
+      return "نوع راه";
     case "road_surface_condition":
       return "شرایط سطح جاده";
     case "ruling_type":
-      return "وضعیت خط کشی";
+      return "وضعیت خط‌کشی";
     case "shoulder_status":
       return "وضعیت شانه جاده";
     case "system":

@@ -338,7 +338,7 @@ const AppliedFiltersDisplay: React.FC<AppliedFiltersDisplayProps> = ({
         )}
 
         {renderFilterSection(
-          "🛣️ وضعیت جاده",
+          "🛣️ نوع راه",
           <CogIcon className="w-4 h-4 text-fg-muted" />,
           filters.roadSituation,
           "bg-canvas text-fg",

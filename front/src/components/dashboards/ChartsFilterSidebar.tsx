@@ -658,11 +658,11 @@ const ChartsFilterSidebar: React.FC<SidebarProps> = ({
                   {enabledFilters.includes("rulingType") && (
                     <MyAsyncMultiSelect
                       name="rulingType"
-                      label="وضعیت خط کشی"
+                      label="وضعیت خط‌کشی"
                       setValue={setValue}
                       loadOptions={loadRulingTypesOptions}
                       errMsg={errors.rulingType?.message}
-                      placeholder="انتخاب وضعیت خط کشی..."
+                      placeholder="انتخاب وضعیت خط‌کشی..."
                       defaultOptions
                       value={toSelectOptions(formValues.rulingType)}
                     />
