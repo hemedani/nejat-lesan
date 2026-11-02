@@ -1,63 +1,425 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-@tailwind utilities;
+/* ============================================================================
+ * THEME LAYER
+ *
+ * One axis: `<html data-theme="light">` or `<html data-theme="dark">`.
+ * Nothing else selects a theme — not a route, not a wrapper class.
+ *
+ * Design: docs/superpowers/specs/2026-11-01-theme-architecture-design.md
+ *
+ * Three tiers, and components may only use tier 2:
+ *
+ *   tier 1  primitives   Tailwind's palette (--color-slate-950, --color-blue-500)
+ *                        used ONLY inside the token definitions below
+ *   tier 2  semantic     --canvas, --surface, --fg, --line, --brand, --danger…
+ *                        exposed as utilities (bg-surface, text-fg-muted, …)
+ *   tier 3  domain       --chart-*, --map-*, --tooltip-*, --scroll-*
+ *                        read by JS via getComputedStyle (ApexCharts, Leaflet)
+ *
+ * `@theme inline` is load-bearing. Plain `@theme` would compile the resolved hex
+ * into every utility, so changing `data-theme` would repaint nothing. `inline`
+ * makes Tailwind emit `background-color: var(--surface)` instead.
+ * ========================================================================= */
 
 /**
- * Design tokens — the single dark theme.
- *
- * These exist so the palette has one home. The class names already dominant in
- * the codebase (`border-white/10`, `bg-slate-900/75`, `text-slate-400`) stay
- * literals and are NOT renamed to these; declaring them here means the palette
- * can be retuned in one place instead of by hand-editing ~250 files.
- *
- * See docs/superpowers/specs/2026-10-04-dark-theme-unification-design.md
+ * Binds Tailwind's `dark:` variant to the theme attribute instead of
+ * `prefers-color-scheme`. This is an **escape hatch**, not the migration target:
+ * a `dark:` pair that could have been a single token is a review comment.
  */
-@theme {
-    /* Surfaces */
-    --color-surface: #020617;         /* bg-slate-950    page / root       */
-    --color-surface-raised: #0f172a;   /* bg-slate-900/75 card, header, side */
-    --color-surface-solid: #0f172a;    /* bg-slate-900    modal, menu       */
-    --color-control: #1e293b;          /* bg-slate-800    neutral control   */
-    --color-inset: #ffffff0a;          /* bg-white/[.04]  input well, inset */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-    /* Hairline — the single border token */
-    --color-hairline: #ffffff1a;       /* border-white/10                     */
+/* ============================================================================
+ * Accent tints — one hue in, three surfaces out.
+ *
+ * The codebase colour-codes categorical things: each chart card on a landing
+ * page, each filter chip in `AppliedFiltersDisplay`. That is *identity*, so
+ * collapsing every hue onto the five semantic statuses would destroy the
+ * information design. But `bg-orange-50` is a light-mode tint: on a dark card it
+ * is a pale block, and its `text-orange-800` label is unreadable.
+ *
+ * So the hue stays, and the *tint* is derived from it:
+ *
+ *     <a class="tint-orange bg-tint-soft border border-tint-border">
+ *         <span class="bg-tint-strong text-tint-fg">…</span>
+ *     </a>
+ *
+ * `color-mix` does the work. Mixing 16% of a hue into `--surface` yields a pale
+ * wash on white and a dark wash on slate from the same declaration — the tint
+ * follows the theme for free. `--tint-fg` mixes the hue into `--fg`, so the label
+ * is *darkened* in light mode and *lightened* in dark mode. No per-hue tokens,
+ * no `dark:` pairs, and a new hue costs one line.
+ *
+ * Hue primitives live in `:root` below and never change between themes: they are
+ * the input to the mix, not a surface.
+ * ========================================================================= */
+
+@theme inline {
+    /* Surfaces */
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-sunken: var(--surface-sunken);
+    --color-surface-hover: var(--surface-hover);
+    --color-overlay: var(--overlay);
+
+    /* Hairlines — the only border colours */
+    --color-line: var(--line);
+    --color-line-strong: var(--line-strong);
+    --color-line-focus: var(--line-focus);
 
     /* Text */
-    --color-ink: #ffffff;              /* text-white      headings, values   */
-    --color-body: #e2e8f0;             /* text-slate-200  body, labels       */
-    --color-muted: #94a3b8;            /* text-slate-400  secondary nav      */
-    --color-faint: #64748b;            /* text-slate-500  captions, empty     */
+    --color-fg: var(--fg);
+    --color-fg-muted: var(--fg-muted);
+    --color-fg-faint: var(--fg-faint);
+    --color-on-brand: var(--on-brand);
 
-    /* Accent */
-    --color-accent-soft: #2563eb1f;    /* bg-blue-500/15  nav active         */
-    --color-accent-chip: #60a5fa1a;    /* bg-blue-400/10  icon / pill chip   */
-    --color-accent-line: #60a5fa4d;    /* border-blue-400/30 accent border   */
-    --color-accent-text: #bfdbfe;      /* text-blue-200   accent text        */
+    /* Brand */
+    --color-brand: var(--brand);
+    --color-brand-hover: var(--brand-hover);
+    --color-brand-soft: var(--brand-soft);
+    --color-brand-border: var(--brand-border);
+    --color-brand-fg: var(--brand-fg);
 
-    /* Status — each used as /10 background, /20 border, /100 text */
-    --color-rose: #fb7185;             /* rose-400     */
-    --color-amber: #fbbf24;            /* amber-400    */
-    --color-emerald: #34d399;          /* emerald-400  */
-    --color-orange: #fb923c;           /* orange-400   */
+    /* Status — each is solid / soft background / soft border / text-on-soft */
+    --color-success: var(--success);
+    --color-success-soft: var(--success-soft);
+    --color-success-border: var(--success-border);
+    --color-success-fg: var(--success-fg);
+
+    --color-warning: var(--warning);
+    --color-warning-soft: var(--warning-soft);
+    --color-warning-border: var(--warning-border);
+    --color-warning-fg: var(--warning-fg);
+
+    --color-danger: var(--danger);
+    --color-danger-soft: var(--danger-soft);
+    --color-danger-border: var(--danger-border);
+    --color-danger-fg: var(--danger-fg);
+
+    --color-info: var(--info);
+    --color-info-soft: var(--info-soft);
+    --color-info-border: var(--info-border);
+    --color-info-fg: var(--info-fg);
+
+    /* Accent tints — see the block above. `--tint` is set by a `tint-*` utility. */
+    --color-tint-soft: color-mix(in oklab, var(--tint) var(--tint-soft-strength), var(--surface));
+    --color-tint-strong: color-mix(in oklab, var(--tint) var(--tint-strong-strength), var(--surface));
+    /*
+     * Mixed into `--surface`, not `--line`: `--line` is `rgb(255 255 255 / .1)`
+     * in dark, so mixing into it would blend the hue toward white *and* inherit
+     * its alpha, producing a washed-out grey. An opaque base keeps the three
+     * tint steps monotonic — soft < strong < border — in both themes.
+     */
+    --color-tint-border: color-mix(in oklab, var(--tint) var(--tint-border-strength), var(--surface));
+    --color-tint-fg: color-mix(in oklab, var(--tint) var(--tint-fg-strength), var(--fg));
 
     /* Shape */
-    --radius-card: 1rem;               /* rounded-2xl  containers            */
-    --radius-control: 0.75rem;         /* rounded-xl   controls, nav items   */
-
-    /* Decoration */
-    --color-grid-line: #1e293b;        /* PanelShell / Hero grid overlay      */
+    --radius-card: 1rem;
+    --radius-control: 0.75rem;
 }
 
+/* ============================================================================
+ * Tier 1 — accent hues.
+ *
+ * These are inputs to `color-mix`, not surfaces, so they are identical in both
+ * themes. A `tint-*` utility maps a name onto one of these:
+ *
+ *     .tint-orange { --tint: var(--hue-orange); }
+ *
+ * `--tint` defaults to the brand hue so a forgotten `tint-*` degrades to a
+ * neutral-brand wash instead of dropping the declaration entirely (an undefined
+ * `var()` inside `color-mix` would invalidate the whole property).
+ * ========================================================================= */
+
+:root {
+    --hue-red: #ef4444;
+    --hue-orange: #f97316;
+    --hue-amber: #f59e0b;
+    --hue-yellow: #eab308;
+    --hue-lime: #84cc16;
+    --hue-green: #22c55e;
+    --hue-emerald: #10b981;
+    --hue-teal: #14b8a6;
+    --hue-cyan: #06b6d4;
+    --hue-sky: #0ea5e9;
+    --hue-blue: #3b82f6;
+    --hue-indigo: #6366f1;
+    --hue-violet: #8b5cf6;
+    --hue-purple: #a855f7;
+    --hue-fuchsia: #d946ef;
+    --hue-pink: #ec4899;
+    --hue-rose: #f43f5e;
+    --hue-slate: #64748b;
+
+    --tint: var(--hue-blue);
+
+    /* Dark: the wash sits on slate, so it needs more pigment to read at all. */
+    --tint-soft-strength: 22%;
+    --tint-strong-strength: 32%;
+    --tint-border-strength: 46%;
+    --tint-fg-strength: 62%;
+
+    /**
+     * The panel sidebar is a *raised* surface, not the canvas — it keeps a navy
+     * cast in dark mode so it reads as a distinct plane. Built from the indigo
+     * hue so light mode can dial the same idea down to a paper wash instead of
+     * the white-to-navy ramp the literal gradient produced.
+     */
+    --sidebar-gradient: linear-gradient(
+        to bottom,
+        var(--canvas),
+        color-mix(in oklab, var(--hue-indigo) 22%, var(--canvas))
+    );
+
+    /**
+     * Page heroes (`/admin`, `/orghead`, the login split-screen) are a single
+     * wide panel that fades from a tinted edge into the card surface. The
+     * literal version — `from-blue-950/90 via-surface to-surface` — read as a
+     * deep navy edge in dark mode, which is the intent, but in light mode it
+     * became a navy-to-white ramp: a dark slab bleeding into a white card. Same
+     * hue, opposite amount of pigment, so it is one token with two strengths.
+     */
+    --hero-gradient: linear-gradient(
+        to left,
+        color-mix(in oklab, var(--hue-blue) 34%, var(--canvas)),
+        var(--canvas) 58%
+    );
+}
+
+@utility tint-red { --tint: var(--hue-red); }
+@utility tint-orange { --tint: var(--hue-orange); }
+@utility tint-amber { --tint: var(--hue-amber); }
+@utility tint-yellow { --tint: var(--hue-yellow); }
+@utility tint-lime { --tint: var(--hue-lime); }
+@utility tint-green { --tint: var(--hue-green); }
+@utility tint-emerald { --tint: var(--hue-emerald); }
+@utility tint-teal { --tint: var(--hue-teal); }
+@utility tint-cyan { --tint: var(--hue-cyan); }
+@utility tint-sky { --tint: var(--hue-sky); }
+@utility tint-blue { --tint: var(--hue-blue); }
+@utility tint-indigo { --tint: var(--hue-indigo); }
+@utility tint-violet { --tint: var(--hue-violet); }
+@utility tint-purple { --tint: var(--hue-purple); }
+@utility tint-fuchsia { --tint: var(--hue-fuchsia); }
+@utility tint-pink { --tint: var(--hue-pink); }
+@utility tint-rose { --tint: var(--hue-rose); }
+@utility tint-slate { --tint: var(--hue-slate); }
+
+@utility tint-brand { --tint: var(--brand); }
+@utility tint-success { --tint: var(--success); }
+@utility tint-warning { --tint: var(--warning); }
+@utility tint-danger { --tint: var(--danger); }
+@utility tint-info { --tint: var(--info); }
+
 /**
- * The app is single-theme, so native form controls, scrollbars and the
- * browser's own focus rings follow the dark scheme everywhere — not only
- * inside .admin-shell, which previously scoped this declaration and left
- * /charts, /maps and /forms with light native controls.
+ * `:root` **is** the dark theme, so an absent or unrecognised `data-theme`
+ * fails safe to the product's canonical look rather than to a light shell that
+ * the panels cannot render. Light is the explicit override.
  */
 :root {
     color-scheme: dark;
+
+    /* Surfaces */
+    --canvas: #020617;
+    --surface: #0f172a;
+    --surface-raised: #0f172a;
+    --surface-sunken: #0b1220;
+    --surface-hover: rgb(255 255 255 / 0.06);
+    --overlay: rgb(2 6 23 / 0.72);
+
+    /* Hairlines */
+    --line: rgb(255 255 255 / 0.1);
+    --line-strong: rgb(255 255 255 / 0.18);
+    --line-focus: rgb(96 165 250 / 0.65);
+
+    /* Text */
+    --fg: #f8fafc;
+    --fg-muted: #94a3b8;
+    --fg-faint: #64748b;
+    --on-brand: #ffffff;
+
+    /* Brand */
+    --brand: #2563eb;
+    --brand-hover: #3b82f6;
+    --brand-soft: rgb(37 99 235 / 0.15);
+    --brand-border: rgb(96 165 250 / 0.3);
+    --brand-fg: #bfdbfe;
+
+    /* Status */
+    --success: #34d399;
+    --success-soft: rgb(52 211 153 / 0.1);
+    --success-border: rgb(52 211 153 / 0.22);
+    --success-fg: #6ee7b7;
+
+    --warning: #fbbf24;
+    --warning-soft: rgb(251 191 36 / 0.1);
+    --warning-border: rgb(251 191 36 / 0.22);
+    --warning-fg: #fcd34d;
+
+    --danger: #fb7185;
+    --danger-soft: rgb(251 113 133 / 0.1);
+    --danger-border: rgb(251 113 133 / 0.22);
+    --danger-fg: #fda4af;
+
+    --info: #38bdf8;
+    --info-soft: rgb(56 189 248 / 0.1);
+    --info-border: rgb(56 189 248 / 0.22);
+    --info-fg: #7dd3fc;
+
+    /* Tier 3 — chart series. Brightened for a dark canvas. */
+    --chart-grid: #1e293b;
+    --chart-axis: #334155;
+    --chart-label: #94a3b8;
+    --chart-tooltip-bg: #1e293b;
+    --chart-tooltip-fg: #f8fafc;
+    --chart-1: #60a5fa;
+    --chart-2: #fb923c;
+    --chart-3: #34d399;
+    --chart-4: #fbbf24;
+    --chart-5: #a78bfa;
+    --chart-6: #f472b6;
+    --chart-7: #22d3ee;
+    --chart-8: #94a3b8;
+
+    /* Tier 3 — map chrome */
+    --map-canvas: #0b1220;
+    --map-popup-bg: #0f172a;
+    --map-popup-fg: #e2e8f0;
+    --map-popup-border: rgb(255 255 255 / 0.12);
+    --map-control-bg: #1e293b;
+    --map-control-fg: #e2e8f0;
+    --map-control-hover-bg: #334155;
+    --map-control-hover-fg: #f8fafc;
+    --map-attribution-bg: rgb(2 6 23 / 0.75);
+    --map-attribution-fg: #94a3b8;
+
+    /* Tier 3 — tooltip bubble (inverse surface) and scrollbars */
+    --tooltip-bg: #1e293b;
+    --tooltip-fg: #f1f5f9;
+    --scroll-track: #0b1220;
+    --scroll-thumb: #334155;
+    --scroll-thumb-hover: #475569;
+
+    /* Tier 3 — grid overlay used by PanelShell / Hero / login */
+    --grid-line: #1e293b;
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+
+    /**
+     * Light tints sit on white, where a little pigment goes a long way.
+     *
+     * `--tint-fg` is the one that needed measuring: `color-mix(hue 56%, --fg)`
+     * puts 44% of near-black into the label, which is what makes it legible on
+     * a pale wash. At 78% the worst hue (yellow, the lightest) only reached
+     * 2.9:1 — below AA. At 56% every hue clears 4.5:1 against both
+     * `bg-tint-soft` and `bg-tint-strong`; yellow is the binding constraint.
+     */
+    --tint-soft-strength: 9%;
+    --tint-strong-strength: 20%;
+    --tint-border-strength: 34%;
+    --tint-fg-strength: 56%;
+
+    /* Same sidebar idea, dialled down to a paper wash. */
+    --sidebar-gradient: linear-gradient(
+        to bottom,
+        var(--surface),
+        color-mix(in oklab, var(--hue-indigo) 7%, var(--surface))
+    );
+
+    /* Same hero idea, dialled down to a whisper: 34% navy on white is a slab. */
+    --hero-gradient: linear-gradient(
+        to left,
+        color-mix(in oklab, var(--hue-blue) 7%, var(--surface)),
+        var(--surface) 58%
+    );
+
+    /* Surfaces — never pure white on the page level; #fff is reserved for cards */
+    --canvas: #f6f7f9;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --surface-sunken: #f1f3f6;
+    --surface-hover: rgb(15 23 42 / 0.04);
+    --overlay: rgb(15 23 42 / 0.45);
+
+    /* Hairlines */
+    --line: #e3e7ee;
+    --line-strong: #cbd3df;
+    --line-focus: #2563eb;
+
+    /* Text */
+    --fg: #0f172a;
+    --fg-muted: #52627a;
+    --fg-faint: #7d8ca3;
+    --on-brand: #ffffff;
+
+    /* Brand */
+    --brand: #2563eb;
+    --brand-hover: #1d4ed8;
+    --brand-soft: #eff5ff;
+    --brand-border: #bfd6fe;
+    --brand-fg: #1d4ed8;
+
+    /* Status — `*-fg` is chosen against `*-soft`, not against the page */
+    --success: #0f9d58;
+    --success-soft: #ecfdf5;
+    --success-border: #a7f3d0;
+    --success-fg: #047857;
+
+    --warning: #d97706;
+    --warning-soft: #fffbeb;
+    --warning-border: #fde68a;
+    --warning-fg: #b45309;
+
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --danger-border: #fecaca;
+    --danger-fg: #b91c1c;
+
+    --info: #0284c7;
+    --info-soft: #f0f9ff;
+    --info-border: #bae6fd;
+    --info-fg: #0369a1;
+
+    /* Tier 3 — chart series. Darkened for a light canvas. */
+    --chart-grid: #e8ecf3;
+    --chart-axis: #cbd3df;
+    --chart-label: #52627a;
+    --chart-tooltip-bg: #ffffff;
+    --chart-tooltip-fg: #0f172a;
+    --chart-1: #2563eb;
+    --chart-2: #f97316;
+    --chart-3: #10b981;
+    --chart-4: #f59e0b;
+    --chart-5: #8b5cf6;
+    --chart-6: #ec4899;
+    --chart-7: #06b6d4;
+    --chart-8: #64748b;
+
+    /* Tier 3 — map chrome */
+    --map-canvas: #f8fafc;
+    --map-popup-bg: #ffffff;
+    --map-popup-fg: #0f172a;
+    --map-popup-border: #e3e7ee;
+    --map-control-bg: #ffffff;
+    --map-control-fg: #374151;
+    --map-control-hover-bg: #f3f4f6;
+    --map-control-hover-fg: #1f2937;
+    --map-attribution-bg: rgb(255 255 255 / 0.9);
+    --map-attribution-fg: #6b7280;
+
+    /* Tier 3 — tooltip bubble (inverse surface) and scrollbars */
+    --tooltip-bg: #0f172a;
+    --tooltip-fg: #f8fafc;
+    --scroll-track: #f1f5f9;
+    --scroll-thumb: #cbd5e1;
+    --scroll-thumb-hover: #94a3b8;
+
+    /* Tier 3 — grid overlay */
+    --grid-line: #e3e7ee;
 }
 
 * {
@@ -214,8 +576,8 @@
 .loader {
     width: 28px;
     height: 28px;
-    border: 4px solid #ccc;
-    border-top-color: #3b82f6; /* blue-500 */
+    border: 4px solid var(--line-strong);
+    border-top-color: var(--brand);
     border-radius: 50%;
     animation: spin 0.9s linear infinite;
 }
@@ -226,69 +588,27 @@
     }
 }
 
-/* Dark mode adjustments */
-@media (prefers-color-scheme: dark) {
-    .loader {
-        border-color: #555;
-        border-top-color: #60a5fa; /* lighter blue */
-    }
-}
+/* ============================================================================
+ * Leaflet — chrome is theme-driven.
+ *
+ * Previously this section carried the same selectors four times over with
+ * hardcoded `white` / `#e5e7eb`, so a dark map popup was impossible. The
+ * duplicates are collapsed to one declaration per selector; the winning values
+ * are unchanged.
+ *
+ * The map's *tiles* are not styled here — the basemap provider follows the theme
+ * via `context/BasemapContext.tsx`.
+ * ========================================================================= */
 
-/* Leaflet Map Styles */
 .leaflet-container {
     width: 100% !important;
     height: 100% !important;
-    z-index: 1;
-}
-
-.leaflet-popup-content-wrapper {
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.leaflet-popup-content {
-    margin: 12px 16px;
-    font-family: vazir-matn;
-    direction: rtl;
-    text-align: right;
-    min-width: 200px;
-}
-
-.leaflet-popup-tip {
-    background: white;
-}
-
-.leaflet-control-zoom {
-    border: none !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-.leaflet-control-zoom a {
-    background-color: white !important;
-    color: #374151 !important;
-    border: none !important;
-    font-weight: bold !important;
-}
-
-.leaflet-control-zoom a:hover {
-    background-color: #f3f4f6 !important;
-    color: #1f2937 !important;
-}
-
-.leaflet-control-attribution {
-    background-color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 10px !important;
-    padding: 2px 5px !important;
-}
-
-/* Enhanced Map Styles */
-.leaflet-container {
-    width: 100% !important;
-    height: 100% !important;
+    /* NOTE: `height: 100% !important` here is why a fixed height on a
+       <MapContainer> is inert. Put the height on a wrapper. */
     z-index: 1 !important;
     position: relative !important;
     outline: none !important;
-    background: #f8fafc !important;
+    background: var(--map-canvas) !important;
 }
 
 .leaflet-map-pane {
@@ -306,7 +626,7 @@
     position: relative !important;
     overflow: hidden !important;
     border-radius: 8px !important;
-    border: 1px solid #e5e7eb !important;
+    border: 1px solid var(--line) !important;
 }
 
 /* Prevent map from causing page overflow */
@@ -318,22 +638,83 @@
     z-index: 1 !important;
 }
 
-/* RTL Support for map controls */
+/* RTL placement for map controls */
 .leaflet-control-zoom {
     left: auto !important;
     right: 10px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15) !important;
+    overflow: hidden !important;
 }
 
 .leaflet-control-attribution {
     right: auto !important;
     left: 0 !important;
+    background-color: var(--map-attribution-bg) !important;
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    margin: 8px !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1) !important;
+    font-family: vazir-matn !important;
 }
 
-/* Custom map popup styles */
+.leaflet-control-attribution a {
+    color: var(--map-attribution-fg) !important;
+    text-decoration: none !important;
+}
+
+.leaflet-control-attribution a:hover {
+    color: var(--fg) !important;
+}
+
+/* Zoom buttons */
+.leaflet-control-zoom a {
+    background-color: var(--map-control-bg) !important;
+    color: var(--map-control-fg) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    font-weight: bold !important;
+    width: 34px !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background-color: var(--map-control-hover-bg) !important;
+    color: var(--map-control-hover-fg) !important;
+}
+
+.leaflet-control-zoom a:first-child {
+    border-radius: 4px 4px 0 0 !important;
+}
+
+.leaflet-control-zoom a:last-child {
+    border-radius: 0 0 4px 4px !important;
+    border-bottom: none !important;
+}
+
+/* Anchored zoom control (used over the report rail map) */
+.leaflet-container .leaflet-control-zoom {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 1000 !important;
+}
+
+/* Popups */
 .leaflet-popup-content-wrapper {
     border-radius: 8px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-    background: white !important;
+    box-shadow: 0 10px 25px rgb(0 0 0 / 0.15) !important;
+    background: var(--map-popup-bg) !important;
+    color: var(--map-popup-fg) !important;
 }
 
 .leaflet-popup-content {
@@ -346,26 +727,26 @@
 }
 
 .leaflet-popup-tip {
-    background: white !important;
+    background: var(--map-popup-bg) !important;
     border: none !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1) !important;
+}
+
+.leaflet-popup-close-button {
+    color: var(--map-popup-fg) !important;
 }
 
 /* Fix for tile loading */
-.leaflet-tile-container {
-    pointer-events: auto !important;
-}
-
+.leaflet-tile-container,
 .leaflet-tile {
     pointer-events: auto !important;
 }
 
-/* Prevent map from expanding beyond container */
+/* Layer ordering: tiles < overlay/heatmap < markers < tooltips < popups */
 .leaflet-pane {
     z-index: 400;
 }
 
-/* Ensure proper layer ordering: tiles (lowest) < overlay/heatmap < markers < tooltips < popups (highest) */
 .leaflet-tile-pane {
     z-index: 200 !important;
 }
@@ -390,59 +771,39 @@
     z-index: 700 !important;
 }
 
-/* Custom zoom control styles */
-.leaflet-control-zoom a {
-    background-color: white !important;
-    color: #374151 !important;
-    border: none !important;
-    font-weight: bold !important;
-    width: 30px !important;
-    height: 30px !important;
-    line-height: 30px !important;
-    text-align: center !important;
-    font-size: 16px !important;
-    border-radius: 4px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.2s ease !important;
+/* Interactive polygon styles */
+.zone-polygon,
+.leaflet-interactive,
+.leaflet-clickable {
+    cursor: pointer !important;
+    pointer-events: auto !important;
 }
 
-.leaflet-control-zoom a:hover {
-    background-color: #f3f4f6 !important;
-    color: #1f2937 !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+.leaflet-zoom-animated svg path,
+.leaflet-overlay-pane svg path {
+    cursor: pointer !important;
+    pointer-events: auto !important;
 }
 
-.leaflet-control-zoom a:first-child {
-    border-radius: 4px 4px 0 0 !important;
+.leaflet-overlay-pane svg {
+    pointer-events: auto !important;
 }
 
-.leaflet-control-zoom a:last-child {
-    border-radius: 0 0 4px 4px !important;
+.leaflet-overlay-pane svg path:hover {
+    stroke-width: 4px !important;
+    stroke-opacity: 1 !important;
 }
 
-/* Attribution styles */
-.leaflet-control-attribution {
-    background-color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 10px !important;
-    padding: 2px 5px !important;
-    border-radius: 4px !important;
-    margin: 0 !important;
+/* Custom popup — content provides its own padding */
+.custom-popup {
+    z-index: 10000 !important;
 }
 
-/* Prevent map from interfering with page scroll */
-.leaflet-container .leaflet-control-zoom {
-    position: absolute !important;
-    top: 10px !important;
-    right: 10px !important;
-    z-index: 1000 !important;
-}
-
-/* Custom Map Popup and Tooltip Styles */
 .custom-popup .leaflet-popup-content-wrapper {
-    background: white !important;
+    background: var(--map-popup-bg) !important;
+    border: 1px solid var(--map-popup-border) !important;
     border-radius: 8px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
-    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 10px 25px rgb(0 0 0 / 0.15) !important;
     padding: 0 !important;
     margin: 0 !important;
 }
@@ -459,132 +820,117 @@
 }
 
 .custom-popup .leaflet-popup-tip {
-    background: white !important;
-    border: 1px solid #e5e7eb !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    background: var(--map-popup-bg) !important;
+    border: 1px solid var(--map-popup-border) !important;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1) !important;
+}
+
+/* Custom tooltip */
+.custom-tooltip {
+    z-index: 10000 !important;
 }
 
 .custom-tooltip.leaflet-tooltip {
-    background: rgba(17, 24, 39, 0.9) !important;
+    background: var(--tooltip-bg) !important;
     border: none !important;
     border-radius: 6px !important;
-    color: white !important;
+    color: var(--tooltip-fg) !important;
     font-family: vazir-matn !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     padding: 6px 10px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15) !important;
     direction: rtl !important;
     text-align: right !important;
 }
 
 .custom-tooltip.leaflet-tooltip::before {
-    border-top-color: rgba(17, 24, 39, 0.9) !important;
+    border-top-color: var(--tooltip-bg) !important;
 }
 
-/* Ensure popups and tooltips appear above polygons */
-.custom-popup {
-    z-index: 10000 !important;
+/* ============================================================================
+ * ApexCharts tooltip — the reason it lives here and not in chart options.
+ *
+ * The library's own stylesheet says, for the light theme:
+ *
+ *     .apexcharts-tooltip.apexcharts-theme-light {
+ *         border: 1px solid #e3e3e3;
+ *         background: rgba(255, 255, 255, .96)
+ *     }
+ *
+ * Note what is missing: `color`. The text inherits `chart.foreColor`, which is
+ * light in dark mode — a white box with white text. Only `tooltip.theme` selects
+ * the dark variant, and most of the ~20 chart option objects spread
+ * `chartTheme.options` and then override `tooltip: { shared, y }`, dropping the
+ * theme on the floor. Adding `theme:` to every one of them fixes today's charts
+ * and silently breaks the next one.
+ *
+ * The bubble is chrome, so it belongs to the token layer. `html` prefixes the
+ * selectors because ApexCharts appends its own <style> to <head> at chart init,
+ * *after* this stylesheet: equal specificity would lose to it.
+ * ========================================================================= */
+
+html .apexcharts-tooltip,
+html .apexcharts-tooltip.apexcharts-theme-light,
+html .apexcharts-tooltip.apexcharts-theme-dark {
+    background: var(--chart-tooltip-bg) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 0.5rem !important;
+    color: var(--chart-tooltip-fg) !important;
+    box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.55) !important;
+    font-family: vazir-matn, sans-serif !important;
 }
 
-.custom-tooltip {
-    z-index: 10000 !important;
+html .apexcharts-tooltip-title,
+html .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title,
+html .apexcharts-tooltip.apexcharts-theme-dark .apexcharts-tooltip-title {
+    background: transparent !important;
+    border-bottom: 1px solid var(--line) !important;
+    color: var(--chart-tooltip-fg) !important;
+    font-weight: 600 !important;
 }
 
-/* Enhanced Map Controls */
-.leaflet-control-zoom {
-    border: none !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    overflow: hidden !important;
+html .apexcharts-tooltip-text,
+html .apexcharts-tooltip-text-y-label,
+html .apexcharts-tooltip-text-y-value,
+html .apexcharts-tooltip-text-z-label,
+html .apexcharts-tooltip-text-z-value,
+html .apexcharts-tooltip-text-goals-label,
+html .apexcharts-tooltip-text-goals-value {
+    color: var(--chart-tooltip-fg) !important;
 }
 
-.leaflet-control-zoom a {
-    background-color: white !important;
-    color: #374151 !important;
-    border: none !important;
-    font-weight: bold !important;
-    width: 34px !important;
-    height: 34px !important;
-    line-height: 34px !important;
-    text-align: center !important;
-    font-size: 18px !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    transition: all 0.2s ease !important;
-    border-bottom: 1px solid #e5e7eb !important;
+/* Axis tooltips and the crosshair share the same bubble language. */
+html .apexcharts-xaxistooltip,
+html .apexcharts-yaxistooltip {
+    background: var(--chart-tooltip-bg) !important;
+    border-color: var(--line) !important;
+    color: var(--chart-tooltip-fg) !important;
 }
 
-.leaflet-control-zoom a:hover {
-    background-color: #f3f4f6 !important;
-    color: #1f2937 !important;
+html .apexcharts-xaxistooltip-bottom::before,
+html .apexcharts-yaxistooltip-left::before {
+    border-bottom-color: var(--line) !important;
 }
 
-.leaflet-control-zoom a:last-child {
-    border-bottom: none !important;
+html .apexcharts-xaxistooltip-bottom::after,
+html .apexcharts-yaxistooltip-left::after {
+    border-bottom-color: var(--chart-tooltip-bg) !important;
 }
 
-.leaflet-control-attribution {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 10px !important;
-    padding: 4px 8px !important;
-    border-radius: 6px !important;
-    margin: 8px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    border: 1px solid #e5e7eb !important;
-    font-family: vazir-matn !important;
+html .apexcharts-xcrosshairs,
+html .apexcharts-ycrosshairs {
+    stroke: var(--chart-axis) !important;
 }
 
-.leaflet-control-attribution a {
-    color: #6b7280 !important;
-    text-decoration: none !important;
-}
+/* ============================================================================
+ * react-multi-date-picker — RTL + theme.
+ *
+ * The library renders into document.body (portal), so these must be global and
+ * cannot rely on any wrapper class. That is precisely why the theme lives on
+ * <html data-theme> rather than on a scoped container.
+ * ========================================================================= */
 
-.leaflet-control-attribution a:hover {
-    color: #374151 !important;
-}
-
-/* Interactive Polygon Styles */
-.zone-polygon {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-}
-
-.leaflet-interactive {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-}
-
-/* Ensure SVG paths are interactive */
-.leaflet-zoom-animated svg path {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-}
-
-.leaflet-clickable {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-}
-
-/* Fix for polygon interactions */
-.leaflet-overlay-pane svg {
-    pointer-events: auto !important;
-}
-
-.leaflet-overlay-pane svg path {
-    cursor: pointer !important;
-    pointer-events: auto !important;
-}
-
-/* Hover state for polygons */
-.leaflet-overlay-pane svg path:hover {
-    stroke-width: 4px !important;
-    stroke-opacity: 1 !important;
-}
-
-/* React Multi Date Picker — RTL + dark theme.
-   The library renders into document.body (portal), so these must be global
-   rather than scoped, and they cannot rely on any `.admin-shell` ancestor. */
 .rmdp-container,
 .z-index-calendar {
     z-index: 9999999 !important;
@@ -593,71 +939,106 @@
 .rmdp-wrapper {
     direction: rtl !important;
     font-family: vazir-matn !important;
-    background-color: #0f172a !important;
-    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    background-color: var(--surface) !important;
+    border: 1px solid var(--line) !important;
 }
 
 .rmdp-calendar {
     direction: rtl !important;
-    background-color: #0f172a !important;
+    background-color: var(--surface) !important;
+}
+
+/**
+ * The month and year panels are a *separate* container from `.rmdp-calendar`,
+ * and the library hardcodes `background-color: #fff` on it. The day grid was
+ * themed but these two panels stayed a white rectangle — the panel opens over
+ * the calendar, so it looked like the picker had reverted to light mode.
+ *
+ * Their cells are ordinary `.rmdp-day` elements, so the colour/hover/selected
+ * rules above already reach them; only the surface was missing.
+ */
+.rmdp-month-picker,
+.rmdp-year-picker {
+    background-color: var(--surface) !important;
+}
+
+/* The popup pointer is drawn as a rotated square plus a matching 1px edge. */
+.rmdp-ep-arrow:after {
+    background-color: var(--surface) !important;
+}
+
+.rmdp-ep-arrow[direction="top"] {
+    border-bottom-color: var(--line) !important;
+}
+
+.rmdp-ep-arrow[direction="left"] {
+    border-right-color: var(--line) !important;
+}
+
+.rmdp-ep-arrow[direction="right"] {
+    border-left-color: var(--line) !important;
+}
+
+.rmdp-ep-arrow[direction="bottom"] {
+    border-top-color: var(--line) !important;
 }
 
 .rmdp-week-day {
-    color: #64748b !important;
+    color: var(--fg-faint) !important;
     font-weight: 500 !important;
 }
 
 .rmdp-day {
-    color: #cbd5e1 !important;
+    color: var(--fg-muted) !important;
 }
 
 /* Selected date */
 .rmdp-day.rmdp-selected span:not(.highlight) {
-    background-color: #2563eb !important;
-    box-shadow: 0 0 3px rgba(37, 99, 235, 0.6) !important;
-    color: white !important;
+    background-color: var(--brand) !important;
+    box-shadow: 0 0 3px rgb(37 99 235 / 0.6) !important;
+    color: var(--on-brand) !important;
 }
 
 /* Today */
 .rmdp-day.rmdp-today span {
-    background-color: rgba(96, 165, 250, 0.15) !important;
-    color: #bfdbfe !important;
+    background-color: var(--brand-soft) !important;
+    color: var(--brand-fg) !important;
     font-weight: 600 !important;
 }
 
 /* Hover */
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
-    background-color: rgba(59, 130, 246, 0.14) !important;
-    color: #dbeafe !important;
+    background-color: var(--brand-soft) !important;
+    color: var(--brand-fg) !important;
 }
 
 /* Range selection */
 .rmdp-range {
-    background-color: rgba(59, 130, 246, 0.14) !important;
-    box-shadow: 0 0 3px rgba(96, 165, 250, 0.3) !important;
+    background-color: var(--brand-soft) !important;
+    box-shadow: 0 0 3px var(--brand-border) !important;
 }
 
 .rmdp-header-values {
-    color: #f1f5f9 !important;
+    color: var(--fg) !important;
     font-weight: 600 !important;
 }
 
 .rmdp-arrow {
-    border-color: #64748b !important;
+    border-color: var(--fg-faint) !important;
 }
 
 .rmdp-arrow-container:hover {
-    background-color: rgba(59, 130, 246, 0.14) !important;
-    box-shadow: 0 0 3px rgba(96, 165, 250, 0.3) !important;
+    background-color: var(--brand-soft) !important;
+    box-shadow: 0 0 3px var(--brand-border) !important;
 }
 
 .rmdp-arrow-container:hover .rmdp-arrow {
-    border-color: #60a5fa !important;
+    border-color: var(--brand) !important;
 }
 
 /* Disabled days */
 .rmdp-day.rmdp-disabled {
-    color: #475569 !important;
+    color: var(--fg-faint) !important;
 }
 
 .rmdp-input {
@@ -666,47 +1047,47 @@
 }
 
 .rmdp-shadow {
-    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.5) !important;
     border-radius: 0.75rem !important;
 }
 
 /* Year and month selector */
 .rmdp-year.rmdp-selected,
 .rmdp-month.rmdp-selected {
-    background-color: #2563eb !important;
-    color: white !important;
+    background-color: var(--brand) !important;
+    color: var(--on-brand) !important;
 }
 
 .rmdp-year:hover,
 .rmdp-month:hover {
-    background-color: rgba(59, 130, 246, 0.14) !important;
-    color: #dbeafe !important;
+    background-color: var(--brand-soft) !important;
+    color: var(--brand-fg) !important;
 }
 
-/* Custom Scrollbar Styles */
+/* Scrollbars */
 ::-webkit-scrollbar {
     width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: var(--scroll-track);
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: var(--scroll-thumb);
     border-radius: 3px;
     transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: var(--scroll-thumb-hover);
 }
 
 /* Firefox scrollbar */
 * {
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 #f1f5f9;
+    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 
 /* Narrow custom scrollbar for the admin sidebar (appears on the left in RTL) */
@@ -739,150 +1120,66 @@
     display: none !important;
 }
 
-/* Admin workspace dark theme. Scoped to admin routes to preserve public pages. */
-.admin-shell {
-    color: #e2e8f0;
-    color-scheme: dark;
+/* ============================================================================
+ * Base element layer — native form controls, tables, and their states.
+ *
+ * These rules used to live inside `.admin-shell`, scoped to /admin and written
+ * with `!important`, because the components under it were written with light
+ * literals. Now that every surface speaks tokens, the styling belongs to the
+ * elements themselves and applies everywhere.
+ *
+ * Inside `@layer base` deliberately: Tailwind utilities live in
+ * `@layer utilities` and must still be able to override any of this. Unlayered
+ * rules beat layered ones regardless of specificity, which is the trap the old
+ * block fell into and why it needed `!important` to do its job.
+ * ========================================================================= */
+
+@layer base {
+    input:not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    select {
+        background-color: var(--surface-sunken);
+        border-color: var(--line);
+        color: var(--fg);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--fg-faint);
+    }
+
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+        outline: none;
+        border-color: var(--brand-border);
+        box-shadow: 0 0 0 3px var(--brand-soft);
+    }
+
+    label {
+        color: var(--fg-muted);
+    }
+
+    table {
+        border-color: var(--line);
+        color: var(--fg-muted);
+    }
+
+    th {
+        border-color: var(--line);
+        background-color: var(--surface-raised);
+        color: var(--fg);
+    }
+
+    td {
+        border-color: var(--line);
+    }
+
+    tbody tr:hover td {
+        background-color: var(--surface-hover);
+    }
 }
 
-.admin-shell .bg-white,
-.admin-shell .bg-gray-50,
-.admin-shell .bg-gray-100,
-.admin-shell .bg-slate-50 {
-    background-color: rgba(15, 23, 42, 0.82) !important;
-}
-
-.admin-shell .bg-gray-200,
-.admin-shell .bg-slate-100 {
-    background-color: #1e293b !important;
-}
-
-.admin-shell .text-gray-900,
-.admin-shell .text-gray-800,
-.admin-shell .text-gray-700,
-.admin-shell .text-slate-900,
-.admin-shell .text-slate-800,
-.admin-shell .text-slate-700 {
-    color: #f1f5f9 !important;
-}
-
-.admin-shell .text-gray-600,
-.admin-shell .text-gray-500,
-.admin-shell .text-slate-600,
-.admin-shell .text-slate-500 {
-    color: #94a3b8 !important;
-}
-
-.admin-shell .text-gray-400,
-.admin-shell .text-slate-400 {
-    color: #64748b !important;
-}
-
-.admin-shell .border,
-.admin-shell .border-gray-100,
-.admin-shell .border-gray-200,
-.admin-shell .border-gray-300,
-.admin-shell .border-slate-100,
-.admin-shell .border-slate-200,
-.admin-shell .border-slate-300 {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.admin-shell input:not([type="checkbox"]):not([type="radio"]),
-.admin-shell textarea,
-.admin-shell select {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    background-color: rgba(2, 6, 23, 0.72) !important;
-    color: #f1f5f9 !important;
-}
-
-.admin-shell label {
-    color: #cbd5e1;
-}
-
-.admin-shell input::placeholder,
-.admin-shell textarea::placeholder {
-    color: #64748b !important;
-}
-
-.admin-shell input:focus,
-.admin-shell textarea:focus,
-.admin-shell select:focus {
-    border-color: rgba(96, 165, 250, 0.65) !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14) !important;
-}
-
-.admin-shell .react-select__control {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    background-color: rgba(2, 6, 23, 0.72) !important;
-    box-shadow: none !important;
-}
-
-.admin-shell .react-select__single-value,
-.admin-shell .react-select__input-container,
-.admin-shell .react-select__placeholder {
-    color: #cbd5e1 !important;
-}
-
-.admin-shell .react-select__menu {
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background-color: #0f172a !important;
-}
-
-.admin-shell .react-select__option {
-    background-color: transparent !important;
-    color: #cbd5e1 !important;
-}
-
-.admin-shell .react-select__option--is-focused {
-    background-color: rgba(59, 130, 246, 0.14) !important;
-    color: #dbeafe !important;
-}
-
-.admin-shell .react-select__option--is-selected {
-    background-color: #2563eb !important;
-    color: white !important;
-}
-
-/* Checkbox rows (CustomCheckbox) inside the dark admin workspace */
-.admin-shell .hover\:bg-gray-50:hover {
-    background-color: rgba(255, 255, 255, 0.06) !important;
-}
-
-.admin-shell .bg-indigo-50 {
-    background-color: rgba(99, 102, 241, 0.15) !important;
-}
-
-.admin-shell .text-indigo-700 {
-    color: #a5b4fc !important;
-}
-
-.admin-shell .shadow,
-.admin-shell .shadow-md,
-.admin-shell .shadow-lg {
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2) !important;
-}
-
-.admin-shell table {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    background-color: rgba(15, 23, 42, 0.75);
-    color: #cbd5e1;
-}
-
-.admin-shell th {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    background-color: rgba(30, 41, 59, 0.9) !important;
-    color: #f1f5f9 !important;
-}
-
-.admin-shell td {
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #cbd5e1 !important;
-}
-
-.admin-shell tr:hover td {
-    background-color: rgba(59, 130, 246, 0.06);
-}
 
 /* Custom tooltip with data-tooltip attribute */
 [data-tooltip] {
@@ -894,8 +1191,8 @@
     position: absolute;
     bottom: calc(100% + 6px);
     right: 0;
-    background: #1e293b;
-    color: #f1f5f9;
+    background: var(--tooltip-bg);
+    color: var(--tooltip-fg);
     padding: 5px 10px;
     border-radius: 7px;
     font-size: 12px;
@@ -915,13 +1212,13 @@
 }
 
 [data-tooltip]:hover::before {
-    content: '';
+    content: "";
     position: absolute;
     bottom: calc(100% + 1px);
     right: 14px;
     border-width: 5px;
     border-style: solid;
-    border-color: #1e293b transparent transparent transparent;
+    border-color: var(--tooltip-bg) transparent transparent transparent;
     z-index: 99999;
     pointer-events: none;
     opacity: 0;

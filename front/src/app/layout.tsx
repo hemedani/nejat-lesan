@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { MapComparisonProvider } from "@/context/MapComparisonContext";
 import { BasemapProvider } from "@/context/BasemapContext";
 import { GlobalChartFiltersProvider } from "@/context/GlobalChartFiltersContext";
@@ -9,6 +10,7 @@ import { Navbar } from "@/components/organisms/Navbar";
 import ApexChartsLocale from "@/components/atoms/ApexChartsLocale";
 import { AdminAwareFooter } from "@/components/organisms/AdminAwareFooter";
 import GlobalFiltersBarWrapper from "@/components/dashboards/GlobalFiltersBar";
+import { DEFAULT_THEME_PREFERENCE, THEME_INIT_SCRIPT } from "@/utils/theme";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,24 +23,33 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl">
+    // `data-theme` is written server-side so the first byte of HTML is already
+    // themed. `suppressHydrationWarning` is required because THEME_INIT_SCRIPT
+    // may rewrite the attribute before React hydrates — that is the point of it.
+    <html lang="fa" dir="rtl" data-theme={DEFAULT_THEME_PREFERENCE} suppressHydrationWarning>
+      <head>
+        {/* Blocking, before first paint: prevents a flash of the wrong theme. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>
-        <ApexChartsLocale />
-        <BasemapProvider>
-          <MapComparisonProvider>
-            <AuthProvider>
-              <GlobalChartFiltersProvider>
-                <div className="min-h-screen flex flex-col bg-slate-950">
-                  <Navbar />
-                  <div className="flex-1 mt-16">{children}</div>
-                  <AdminAwareFooter />
-                </div>
-                <GlobalFiltersBarWrapper />
-                <Toaster position="top-center" reverseOrder={false} />
-              </GlobalChartFiltersProvider>
-            </AuthProvider>
-          </MapComparisonProvider>
-        </BasemapProvider>
+        <ThemeProvider>
+          <ApexChartsLocale />
+          <BasemapProvider>
+            <MapComparisonProvider>
+              <AuthProvider>
+                <GlobalChartFiltersProvider>
+                  <div className="min-h-screen flex flex-col bg-canvas">
+                    <Navbar />
+                    <div className="flex-1 mt-16">{children}</div>
+                    <AdminAwareFooter />
+                  </div>
+                  <GlobalFiltersBarWrapper />
+                  <Toaster position="top-center" reverseOrder={false} />
+                </GlobalChartFiltersProvider>
+              </AuthProvider>
+            </MapComparisonProvider>
+          </BasemapProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

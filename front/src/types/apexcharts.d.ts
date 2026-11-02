@@ -52,6 +52,17 @@ declare module 'apexcharts' {
     width?: string | number
     fontFamily?: string
     stacked?: boolean
+    /**
+     * Theme hooks. Without these, a themed options object cannot be annotated as
+     * `ApexOptions` — which is part of why every chart hardcoded light colours.
+     * See `src/utils/chart-theme.ts`.
+     */
+    background?: string
+    foreColor?: string
+    animations?: {
+      enabled?: boolean
+      speed?: number
+    }
     toolbar?: {
       show?: boolean
       offsetX?: number
@@ -79,11 +90,24 @@ declare module 'apexcharts' {
   export interface ApexOptions {
     chart?: ApexChart
     colors?: string[]
+    /** Drives ApexCharts' own defaults (toolbar icons, selection, tooltip chrome). */
+    theme?: {
+      mode?: 'light' | 'dark'
+      palette?: string
+    }
     dataLabels?: {
       enabled?: boolean
       style?: {
         fontSize?: string
+        fontWeight?: string | number
         colors?: string[]
+      }
+      dropShadow?: {
+        enabled?: boolean
+        top?: number
+        left?: number
+        blur?: number
+        opacity?: number
       }
       offsetX?: number
       offsetY?: number
@@ -123,6 +147,8 @@ declare module 'apexcharts' {
       }
       markers?: {
         size?: number
+        strokeWidth?: number
+        shape?: string
       }
       itemMargin?: {
         horizontal?: number
@@ -187,6 +213,7 @@ declare module 'apexcharts' {
       theme?: 'dark' | 'light'
       style?: {
         fontSize?: string
+        fontFamily?: string
       }
       y?: {
         formatter?: (val: number) => string
@@ -200,12 +227,26 @@ declare module 'apexcharts' {
       labels?: {
         style?: {
           fontSize?: string
+          colors?: string | string[]
+          fontFamily?: string
         }
+      }
+      axisBorder?: {
+        color?: string
+      }
+      axisTicks?: {
+        color?: string
       }
     }
     yaxis?: {
       title?: {
         text?: string
+      }
+      labels?: {
+        style?: {
+          colors?: string | string[]
+          fontFamily?: string
+        }
       }
     }
     markers?: {
