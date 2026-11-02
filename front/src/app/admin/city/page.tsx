@@ -1,3 +1,4 @@
+import { AUTH_COOKIE } from "@/utils/auth-constants";
 import CityDashboard from "@/components/template/CityDashboard";
 import SearchBox from "@/components/molecules/SearchBox";
 import Pagination from "@/components/molecules/Pagination";
@@ -6,6 +7,7 @@ import { gets } from "@/app/actions/city/gets";
 import { count } from "@/app/actions/city/count";
 import { remove } from "@/app/actions/city/remove";
 import { cookies } from "next/headers";
+import BackfillCityZonesButton from "@/components/template/BackfillCityZonesButton";
 
 import { translateModelNameToPersian } from "@/utils/helper";
 import Link from "next/link";
@@ -37,7 +39,7 @@ export default async function AirStatusDashboard({
     get: { qty: 1 },
   });
 
-  const token = (await cookies()).get("token");
+  const token = (await cookies()).get(AUTH_COOKIE);
   const lesanUrl = process.env.LESAN_URL ? process.env.LESAN_URL : "http://localhost:1382";
 
   return (
@@ -66,6 +68,9 @@ export default async function AirStatusDashboard({
       </div>
 
       <SearchBox title="name" defaultValue={name} />
+      <div className="flex justify-end mt-6 mb-4">
+        <BackfillCityZonesButton token={token?.value} />
+      </div>
       <CityDashboard
         data={data.success ? data.body : []}
         model="city"
