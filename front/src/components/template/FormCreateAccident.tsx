@@ -53,6 +53,10 @@ import { gets as getMotionDirections } from "@/app/actions/motion_direction/gets
 import { gets as getSystems } from "@/app/actions/system/gets";
 import { gets as getSystemTypes } from "@/app/actions/system_type/gets";
 import { useSelectStyles } from "@/utils/select-styles";
+import {
+  CITY_ZONE_OPTION_LIMIT,
+  sortCityZoneOptions,
+} from "@/utils/cityZoneOptions";
 
 // Dynamic imports for map components
 const MapContainer = dynamic(
@@ -557,14 +561,16 @@ const FormCreateAccident = () => {
   const loadCityZones = async (inputValue: string) => {
     try {
       const response = await getCityZones({
-        set: { name: inputValue, page: 1, limit: 50 },
+        set: { name: inputValue, page: 1, limit: CITY_ZONE_OPTION_LIMIT },
         get: { _id: 1, name: 1 },
       });
       return response.success
-        ? response.body.map((item: { _id: string; name: string }) => ({
-          value: item._id,
-          label: item.name,
-        }))
+        ? sortCityZoneOptions(
+            response.body.map((item: { _id: string; name: string }) => ({
+              value: item._id,
+              label: item.name,
+            })),
+          )
         : [];
     } catch {
       return [];

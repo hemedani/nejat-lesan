@@ -42,6 +42,10 @@ import MyAsyncMultiSelect, { SelectOption } from "../atoms/MyAsyncMultiSelect";
 import { DeepPartial, ReqType } from "@/types/declarations/selectInp";
 import { DefaultSearchArrayValues } from "@/utils/prepareAccidentSearch";
 import { arrayKeys, numericKeys } from "@/utils/keys";
+import {
+  CITY_ZONE_OPTION_LIMIT,
+  sortCityZoneOptions,
+} from "@/utils/cityZoneOptions";
 
 export type AdvencedArticleSearchParams =
   ReqType["main"]["accident"]["gets"]["set"];
@@ -107,9 +111,10 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       action: (
         args: any,
       ) => Promise<{ success: boolean; body: any[] } | null | undefined>,
+      options: { limit?: number; sortCityZones?: boolean } = {},
     ) =>
     async (inputValue?: string): Promise<SelectOption[]> => {
-      const setParams: any = { limit: 20, page: 1 };
+      const setParams: any = { limit: options.limit ?? 20, page: 1 };
       if (inputValue) {
         setParams.name = inputValue;
       }
@@ -119,10 +124,15 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           get: { _id: 1, name: 1 },
         });
         if (response && response.success) {
-          return response.body.map((item: { _id: string; name: string }) => ({
-            value: item.name,
-            label: item.name,
-          }));
+          const mapped = response.body.map(
+            (item: { _id: string; name: string }) => ({
+              value: item.name,
+              label: item.name,
+            }),
+          );
+          return options.sortCityZones
+            ? sortCityZoneOptions(mapped)
+            : mapped;
         }
       } catch (error) {
         console.error("Error loading options:", error);
@@ -147,7 +157,10 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const loadCitiesOptions = createLoadOptions(getCitiesAction);
   const loadTownshipsOptions = createLoadOptions(getTownshipsAction);
   const loadProvincesOptions = createLoadOptions(getProvincesAction);
-  const loadCityZonesOptions = createLoadOptions(getCityZonesAction);
+  const loadCityZonesOptions = createLoadOptions(getCityZonesAction, {
+    limit: CITY_ZONE_OPTION_LIMIT,
+    sortCityZones: true,
+  });
   const loadTrafficZonesOptions = createLoadOptions(getTrafficZonesAction);
   const loadRoadsOptions = createLoadOptions(getRoadsAction);
   const loadRoadRepairTypesOptions = createLoadOptions(

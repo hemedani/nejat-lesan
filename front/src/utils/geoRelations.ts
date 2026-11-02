@@ -23,6 +23,10 @@ import { gets as getAirPollutionZonesAction } from "@/app/actions/air_pollution_
 import type { ReqType } from "@/types/declarations/selectInp";
 import type { SelectOption } from "@/components/atoms/MyAsyncMultiSelect";
 import type { ChartFilterState } from "@/components/dashboards/ChartsFilterSidebar";
+import {
+  CITY_ZONE_OPTION_LIMIT,
+  sortCityZoneOptions,
+} from "@/utils/cityZoneOptions";
 
 // ---------------------------------------------------------------------------
 // Province index (name → id + options), fetched once per session
@@ -199,7 +203,10 @@ export async function loadCityZones(
   cityNames: string[] | undefined,
   inputValue?: string,
 ): Promise<SelectOption[]> {
-  const set: ReqType["main"]["city_zone"]["gets"]["set"] = { page: 1, limit: 20 };
+  const set: ReqType["main"]["city_zone"]["gets"]["set"] = {
+    page: 1,
+    limit: CITY_ZONE_OPTION_LIMIT,
+  };
   if (inputValue) set.name = inputValue;
   const provinceIds = await resolveProvinceIds(provinceNames);
   if (provinceIds.length > 0) set.provinceIds = provinceIds;
@@ -207,7 +214,7 @@ export async function loadCityZones(
   try {
     const res = await getCityZonesAction({ set, get: { _id: 1, name: 1 } });
     return res.success && Array.isArray(res.body)
-      ? toOptions(res.body as { name: string }[])
+      ? sortCityZoneOptions(toOptions(res.body as { name: string }[]))
       : [];
   } catch {
     return [];
