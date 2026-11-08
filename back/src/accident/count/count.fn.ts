@@ -24,6 +24,7 @@ export const countFn: ActFn = async (body) => {
 			// Location & Context (filtering by name of embedded object)
 			province,
 			city,
+			township,
 			road,
 			trafficZone,
 			cityZone,
@@ -169,6 +170,9 @@ export const countFn: ActFn = async (body) => {
 	}
 	if (city && city.length > 0) {
 		filters["city.name"] = { $in: city };
+	}
+	if (township && township.length > 0) {
+		filters["township.name"] = { $in: township };
 	}
 	if (road && road.length > 0) {
 		filters["road.name"] = { $in: road };
