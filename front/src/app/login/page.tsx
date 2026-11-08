@@ -1,8 +1,30 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import LoginForm from "@/components/organisms/login/LoginForm";
+import { useAuth } from "@/context/AuthContext";
+import { usePanelViewer } from "@/hooks/usePanelViewer";
+import { getDefaultPanel } from "@/utils/panels";
 
 const Login = () => {
+  const { isAuthenticated, authReady } = useAuth();
+  const viewer = usePanelViewer();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authReady || !isAuthenticated) return;
+    router.replace(getDefaultPanel(viewer));
+  }, [authReady, isAuthenticated, viewer, router]);
+
+  if (!authReady || isAuthenticated) {
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-canvas">
+        <span className="h-7 w-7 animate-spin rounded-full border-2 border-brand/70 border-t-transparent" />
+      </div>
+    );
+  }
+
   return (
     <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden bg-canvas">
       {/* Background Decorative Elements — the ambient glow is carried by these
