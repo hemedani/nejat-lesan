@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getOrganizations } from "@/app/actions/organization/getOrganizations";
 import { getUnits } from "@/app/actions/unit/getUnits";
 import { unwrapApiResponse } from "@/utils/api-response";
 import { usePanelScope } from "@/components/system/PanelScopeProvider";
+import SelectBox from "@/components/atoms/Select";
 import type { OrganizationListItem, UnitListItem } from "@/services/org-projections";
 
 /**
@@ -14,6 +15,13 @@ import type { OrganizationListItem, UnitListItem } from "@/services/org-projecti
  * Ghost/Manager hold no org role, so they get a picker instead — choosing an
  * organization (and, for unit-level panels, a unit) is what makes `/orghead`
  * and `/unit-head` usable for them.
+ *
+ * Both pickers are the project-standard `SelectBox` rather than a native
+ * `<select>`: the header is the first control a Ghost meets, and the org list is
+ * a request that can be slow or fail. A native select has nowhere to put either
+ * state — it renders an empty, apparently-ready list — so the fetch states are
+ * carried on the control itself (`loading` → spinner + «در حال بارگذاری…»,
+ * failure → the message underneath).
  */
 export function ScopePicker({
   scopeKind,
@@ -32,11 +40,16 @@ export function ScopePicker({
 
   const [orgs, setOrgs] = useState<OrganizationListItem[]>([]);
   const [units, setUnits] = useState<UnitListItem[]>([]);
+  const [loadingOrgs, setLoadingOrgs] = useState(false);
   const [loadingUnits, setLoadingUnits] = useState(false);
+  const [orgsError, setOrgsError] = useState<string | undefined>(undefined);
+  const [unitsError, setUnitsError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!isManagerScope) return;
     let alive = true;
+    setLoadingOrgs(true);
+    setOrgsError(undefined);
     void (async () => {
       try {
         const data = unwrapApiResponse<OrganizationListItem[]>(
@@ -44,7 +57,12 @@ export function ScopePicker({
         );
         if (alive) setOrgs(Array.isArray(data) ? data : []);
       } catch {
-        if (alive) setOrgs([]);
+        if (alive) {
+          setOrgs([]);
+          setOrgsError("فهرست سازمان‌ها خوانده نشد.");
+        }
+      } finally {
+        if (alive) setLoadingOrgs(false);
       }
     })();
     return () => {
@@ -59,6 +77,7 @@ export function ScopePicker({
     }
     let alive = true;
     setLoadingUnits(true);
+    setUnitsError(undefined);
     void (async () => {
       try {
         const data = unwrapApiResponse<UnitListItem[]>(
@@ -66,7 +85,10 @@ export function ScopePicker({
         );
         if (alive) setUnits(Array.isArray(data) ? data : []);
       } catch {
-        if (alive) setUnits([]);
+        if (alive) {
+          setUnits([]);
+          setUnitsError("فهرست واحدها خوانده نشد.");
+        }
       } finally {
         if (alive) setLoadingUnits(false);
       }
@@ -75,6 +97,18 @@ export function ScopePicker({
       alive = false;
     };
   }, [isManagerScope, scopeKind, orgId]);
+
+  // Built once per fetch rather than inline: the panel header re-renders on every
+  // navigation and scope change, and react-select re-derives its menu whenever the
+  // `options` identity changes — a fresh array per render would rebuild it each time.
+  const orgOptions = useMemo(
+    () => orgs.map((org) => ({ value: org._id, label: org.name || org._id })),
+    [orgs],
+  );
+  const unitOptions = useMemo(
+    () => units.map((unit) => ({ value: unit._id, label: unit.name || unit._id })),
+    [units],
+  );
 
   if (!isManagerScope) {
     const label =
@@ -93,36 +127,32 @@ export function ScopePicker({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <select
-        aria-label="انتخاب سازمان"
+    <div className="flex flex-wrap items-start gap-2">
+      <SelectBox
+        ariaLabel="انتخاب سازمان"
         value={orgId || ""}
-        onChange={(event) => selectOrg(event.target.value)}
-        className="rounded-xl border border-line bg-surface px-3 py-2 text-xs text-fg outline-none transition focus:border-blue-400/40"
-      >
-        <option value="">انتخاب سازمان…</option>
-        {orgs.map((org) => (
-          <option key={org._id} value={org._id}>
-            {org.name}
-          </option>
-        ))}
-      </select>
+        onValueChange={selectOrg}
+        options={orgOptions}
+        placeholder="انتخاب سازمان…"
+        loading={loadingOrgs}
+        clearable={false}
+        errMsg={orgsError}
+        className="min-w-44"
+      />
 
       {scopeKind === "unit" && orgId && (
-        <select
-          aria-label="انتخاب واحد"
+        <SelectBox
+          ariaLabel="انتخاب واحد"
           value={unitId || ""}
+          onValueChange={selectUnit}
+          options={unitOptions}
+          placeholder="انتخاب واحد…"
+          loading={loadingUnits}
           disabled={loadingUnits}
-          onChange={(event) => selectUnit(event.target.value)}
-          className="rounded-xl border border-line bg-surface px-3 py-2 text-xs text-fg outline-none transition focus:border-blue-400/40 disabled:opacity-50"
-        >
-          <option value="">{loadingUnits ? "در حال بارگذاری…" : "انتخاب واحد…"}</option>
-          {units.map((unit) => (
-            <option key={unit._id} value={unit._id}>
-              {unit.name}
-            </option>
-          ))}
-        </select>
+          clearable={false}
+          errMsg={unitsError}
+          className="min-w-40"
+        />
       )}
     </div>
   );

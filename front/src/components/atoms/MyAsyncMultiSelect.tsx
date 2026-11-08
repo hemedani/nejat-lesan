@@ -24,6 +24,8 @@ interface InputProps<Option, Group extends GroupBase<Option>, T extends FieldVal
   defaultValue?: PropsValue<Option>;
   value?: PropsValue<Option>;
   className?: string;
+  /** Render the dropdown in a portal so it is not clipped by scrollable containers. */
+  menuPortalTarget?: HTMLElement | null;
 }
 
 // Portal-based tooltip for multi-value chips — uses innerProps to attach handlers
@@ -95,10 +97,21 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
   defaultValue,
   value,
   className,
-  placeholder
+  placeholder,
+  menuPortalTarget,
 }: InputProps<Option, Group, T>) => {
 
   const customStyles = useSelectStyles(errMsg, { minHeight: "48px", rtl: true });
+
+  const styles = menuPortalTarget
+    ? {
+        ...customStyles,
+        menuPortal: (base: Record<string, unknown>) => ({
+          ...base,
+          zIndex: 100001,
+        }),
+      }
+    : customStyles;
 
   return (
     <div className={`flex flex-col gap-2 ${className || ""}`}>
@@ -129,7 +142,8 @@ const MyAsyncMultiSelect = <Option, Group extends GroupBase<Option>, T extends F
           }}
           name={name}
           placeholder={placeholder || `${label} را انتخاب کنید`}
-          styles={customStyles}
+          styles={styles}
+          menuPortalTarget={menuPortalTarget ?? undefined}
           noOptionsMessage={() => "گزینه‌یافت نشد"}
           loadingMessage={() => "در حال بارگذاری..."}
           isRtl={true}

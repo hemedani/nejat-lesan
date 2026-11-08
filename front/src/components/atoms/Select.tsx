@@ -19,7 +19,17 @@ interface CommonSelectProps {
   errMsg?: string;
   disabled?: boolean;
   clearable?: boolean;
+  /**
+   * The option list is still being fetched. Renders react-select's own spinner
+   * and, with the menu open, its loading message — instead of a control that
+   * looks ready and answers «گزینه‌ای یافت نشد» while the list is on its way.
+   */
+  loading?: boolean;
+  /** Accessible name for controls that carry no visible `label`. */
+  ariaLabel?: string;
 }
+
+const LOADING_PLACEHOLDER = "در حال بارگذاری…";
 
 /** react-hook-form mode */
 interface RhfSelectProps<T extends FieldValues = FieldValues>
@@ -44,7 +54,16 @@ export type SelectBoxProps<T extends FieldValues = FieldValues> =
 const SelectBox = <T extends FieldValues = FieldValues>(
   props: SelectBoxProps<T>,
 ) => {
-  const { options, placeholder = "انتخاب کنید", className = "", errMsg, disabled = false, clearable } = props;
+  const {
+    options,
+    placeholder = "انتخاب کنید",
+    className = "",
+    errMsg,
+    disabled = false,
+    clearable,
+    loading = false,
+    ariaLabel,
+  } = props;
   const id = props.name || props.label;
   const styles = useSelectStyles(errMsg);
 
@@ -76,7 +95,9 @@ const SelectBox = <T extends FieldValues = FieldValues>(
           value={"value" in props ? selectedOption : undefined}
           defaultValue={"defaultValue" in props ? props.defaultValue : undefined}
           isDisabled={disabled}
+          isLoading={loading}
           isClearable={isClearable}
+          aria-label={ariaLabel}
           onChange={(newVal) => {
             if ("setValue" in props) {
               if (!newVal) return;
@@ -91,8 +112,9 @@ const SelectBox = <T extends FieldValues = FieldValues>(
               props.onValueChange(newVal ? String(newVal.value) : "");
             }
           }}
-          placeholder={placeholder}
+          placeholder={loading ? LOADING_PLACEHOLDER : placeholder}
           noOptionsMessage={() => "گزینه‌ای یافت نشد"}
+          loadingMessage={() => LOADING_PLACEHOLDER}
           isRtl
           styles={styles}
           className="text-sm"
