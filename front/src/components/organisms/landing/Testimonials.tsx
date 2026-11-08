@@ -1,96 +1,90 @@
 import React from "react";
+import { SectionHeading } from "./SectionHeading";
 
-const testimonials = [
+const TESTIMONIALS = [
   {
     id: 1,
     content:
-      "سرعت پردازش داده‌ها در سامانه مرصاد بی‌نظیر است. به لطف معماری قدرتمند فریم‌ورک لسان (Lesan)، گزارش‌گیری و تحلیل میلیون‌ها رکورد تصادف در کسری از ثانیه و بدون هیچ‌گونه افت عملکردی انجام می‌شود.",
+      "سرعت پردازش داده‌ها در مرصاد بی‌نظیر است. گزارش‌گیری و تحلیل میلیون‌ها رکورد تصادف در کسری از ثانیه انجام می‌شود، بدون افت عملکرد.",
     author: "سرهنگ محمدی",
     role: "رئیس پلیس راهور استان",
-    avatarColor: "bg-brand",
+    plate: "bg-brand",
     initials: "س.م",
   },
   {
     id: 2,
     content:
-      "پایداری و دقت سیستم در تحلیل‌های پیچیده مکانی به ما کمک کرد تا نقاط حادثه‌خیز را با خطای صفر شناسایی کنیم. مرصاد با رابط کاربری زیبا و عملکرد بی‌نقص خود، یک تحول بزرگ در مدیریت ترافیک ایجاد کرده است.",
+      "تحلیل‌های مکانی کمک کرد نقاط حادثه‌خیز را با دقت پیدا کنیم. رابط کاربری روشن و عملکرد پایدار، کار روزمره تیم را ساده‌تر کرده است.",
     author: "مهندس رضایی",
     role: "مدیر مرکز کنترل ترافیک",
-    avatarColor: "bg-cyan-500",
+    plate: "bg-info",
     initials: "م.ر",
   },
   {
     id: 3,
     content:
-      "یکپارچگی داده‌ها و داشبوردهای روان، تصمیم‌گیری را برای مدیران ارشد بسیار ساده کرده است. پایداری و سرعت پاسخگویی فریم‌ورک لسان در بک‌اند سامانه، حتی در ساعات اوج ترافیک داده، واقعاً جای تحسین دارد.",
+      "یکپارچگی داده و داشبوردهای روان، تصمیم‌گیری را برای مدیران ارشد ساده کرده است. پایداری سامانه حتی در ساعات اوج ترافیک داده محسوس است.",
     author: "دکتر احمدی",
     role: "معاون حمل و نقل و ترافیک",
-    avatarColor: "bg-indigo-500",
+    plate: "bg-indigo-500",
     initials: "د.ا",
   },
 ];
 
 export const Testimonials = () => {
   return (
-    <section className="py-24 min-h-screen flex flex-col justify-center bg-surface relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-brand/10 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px]"></div>
+    <section className="relative overflow-hidden bg-surface py-20 md:py-28">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute -end-[5%] -top-[10%] h-96 w-96 rounded-full bg-brand/10 blur-[120px]" />
+        <div className="absolute -bottom-[10%] -start-[5%] h-96 w-96 rounded-full bg-cyan-600/10 blur-[120px]" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-fg mb-6 leading-tight">
-            اعتماد سازمان‌ها به{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-              قدرت و پایداری مرصاد
-            </span>
-          </h2>
-          <p className="text-lg text-fg-muted leading-relaxed">
-            نظرات مدیران و متخصصانی که روزانه برای حفظ ایمنی راه‌ها و تحلیل داده‌های کلان ترافیکی به
-            سامانه مرصاد تکیه می‌کنند.
-          </p>
-        </div>
+      <div className="relative z-10 mx-auto max-w-[1240px] px-4">
+        <SectionHeading
+          eyebrow="اعتماد سازمان‌ها"
+          title={
+            <>
+              کسانی که هر روز با{" "}
+              <span className="bg-gradient-to-r from-brand-fg to-info bg-clip-text text-transparent">
+                این داده
+              </span>{" "}
+              تصمیم می‌گیرند
+            </>
+          }
+          description="نظر مدیران و کارشناسانی که برای ایمنی راه‌ها به مرصاد تکیه می‌کنند."
+        />
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
-            <div
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {TESTIMONIALS.map((testimonial) => (
+            <figure
               key={testimonial.id}
-              className="group relative p-8 rounded-3xl bg-surface-hover hover:bg-surface-hover backdrop-blur-md border border-line hover:border-line-strong transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-2xl flex flex-col h-full"
+              className="group relative flex h-full flex-col rounded-3xl border border-line bg-surface-sunken p-7 shadow-lg transition duration-300 hover:-translate-y-1 hover:border-line-strong"
             >
-              {/* Quote Icon */}
-              <div className="absolute top-6 right-6 text-blue-500/20 group-hover:text-blue-500/30 transition-colors duration-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-12 h-12"
-                >
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-              </div>
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-8 w-8 text-brand/25 transition-colors group-hover:text-brand/40"
+                aria-hidden="true"
+              >
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+              </svg>
 
-              {/* Content */}
-              <div className="relative z-10 flex-grow mb-8 pt-4">
-                <p className="text-fg-muted leading-loose text-justify">{testimonial.content}</p>
-              </div>
+              <blockquote className="mt-4 flex-grow text-[13px] leading-7 text-fg-muted">
+                {testimonial.content}
+              </blockquote>
 
-              {/* Author Info */}
-              <div className="relative z-10 flex items-center gap-4 pt-6 border-t border-line">
+              <figcaption className="mt-6 flex items-center gap-3 border-t border-line pt-5">
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-fg font-bold text-lg shadow-inner ${testimonial.avatarColor}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-on-brand ${testimonial.plate}`}
                 >
                   {testimonial.initials}
                 </div>
-                <div>
-                  <h4 className="text-fg font-semibold text-base">{testimonial.author}</h4>
-                  <p className="text-fg-muted text-sm mt-1">{testimonial.role}</p>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-fg">{testimonial.author}</div>
+                  <div className="mt-0.5 truncate text-[11px] text-fg-faint">{testimonial.role}</div>
                 </div>
-              </div>
-            </div>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>

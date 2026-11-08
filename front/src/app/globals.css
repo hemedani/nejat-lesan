@@ -463,6 +463,26 @@
     }
 }
 
+@keyframes drawerIn {
+    from {
+        opacity: 0;
+        transform: translateX(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInFast {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 @keyframes popIn {
     0% {
         opacity: 0;
@@ -513,6 +533,14 @@
 
     .animate-slide-down {
         animation: slideDown 0.8s ease-out forwards;
+    }
+
+    .animate-fade-in-fast {
+        animation: fadeInFast 0.2s ease-out forwards;
+    }
+
+    .animate-drawer-in {
+        animation: drawerIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
     .animate-slide-up {
