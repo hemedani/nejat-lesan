@@ -55,5 +55,19 @@ export const loginAction = async ({ email, password }: { email: string; password
       },
     },
   });
+  /*
+  *	@LOG @DEBUG @INFO
+  *	This log written by ::==> {{ `` }}
+  *
+  *	Please remove your log after debugging
+  */
+  console.log(" ============= ");
+  console.group("response ------ in login actions ");
+  console.log();
+  console.info({ response }, " ------ ");
+  console.log();
+  console.groupEnd();
+  console.log(" ============= ");
+
   return response as unknown as LoginResponse;
 };
