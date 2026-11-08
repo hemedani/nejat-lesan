@@ -9,8 +9,8 @@ import { update } from "@/app/actions/accident/update";
 import { translateModelNameToPersian } from "@/utils/helper";
 import AccidentDashboard from "@/components/template/AccidentDashboard";
 import AccidentStatCards from "@/components/organisms/AccidentStatCards";
+import AccidentFilterBar from "@/components/organisms/accident/AccidentFilterBar";
 import LoadingSpinner from "@/components/atoms/LoadingSpinner";
-import ToggleAdvancedSearch from "@/components/molecules/ToggleAdvancedSearch";
 import { prepareAccidentsSearch } from "@/utils/prepareAccidentSearch";
 
 export default async function AccidentDashboardPage({
@@ -19,43 +19,63 @@ export default async function AccidentDashboardPage({
   searchParams: Promise<ReqType["main"]["accident"]["gets"]["set"]>;
 }) {
   const actualSearchParams = await searchParams;
-  const { defaultSearchArrayValues, accidents, setSearch } =
-    await prepareAccidentsSearch(actualSearchParams);
+  const { accidents, setSearch } = await prepareAccidentsSearch(
+    actualSearchParams,
+  );
+
+  const countFilters = { ...setSearch };
+  delete countFilters.page;
+  delete countFilters.limit;
 
   const counted = await count({
-    set: {}, // Count all records for statistics
-    get: { total: 1 },
+    set: countFilters,
+    get: { filtered: 1, total: 1 },
   });
 
-  // Get statistics for dashboard
-  const statsSet = {
-    // date_from: new Date(new Date().setDate(new Date().getDate() - 30)), // Last 30 days
-  };
-
-  const recentStats = await count({
-    set: statsSet,
-    get: { total: 1 },
-  });
+  const totalCount = counted?.body.total || 0;
+  const filteredCount = counted?.body.filtered || 0;
+  const currentPage = +setSearch.page!;
+  const pageSize = +setSearch.limit!;
 
   return (
-    <div className="relative min-h-full bg-canvas p-6">
-      {/* Dashboard Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            <div className="bg-red-500 w-2 h-12 mr-4 rounded-full"></div>
+    <div className="space-y-5">
+      <header className="relative overflow-hidden rounded-2xl border border-line bg-surface p-5 sm:p-6">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-80"
+          style={{ backgroundImage: "var(--hero-gradient)" }}
+          aria-hidden="true"
+        />
+
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="tint-rose flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-tint-strong text-tint-fg">
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.8}
+                  d="M12 9v4m0 4h.01M4.93 19h14.14a2 2 0 001.74-2.99l-7.07-12.02a2 2 0 00-3.48 0L3.19 16.01A2 2 0 004.93 19z"
+                />
+              </svg>
+            </div>
             <div>
-              <h1 className="text-3xl md:text-4xl text-fg font-bold">
+              <h1 className="text-2xl font-bold text-fg sm:text-3xl">
                 {translateModelNameToPersian("accident")}
               </h1>
-              <p className="text-fg-muted mt-1">
-                سیستم مدیریت و تحلیل {translateModelNameToPersian("accident")}
+              <p className="mt-1 text-sm text-fg-muted">
+                مدیریت، جستجو و تحلیل تصادفات ثبت‌شده
               </p>
             </div>
           </div>
+
           <Link
             href="/admin/accident/create"
-            className="bg-brand hover:bg-brand-hover text-on-brand px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-md transition-all hover:bg-brand-hover hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-line-focus focus:ring-offset-2 focus:ring-offset-surface"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,51 +92,30 @@ export default async function AccidentDashboardPage({
             افزودن حادثه جدید
           </Link>
         </div>
-      </div>
+      </header>
 
-      {/* Stats Cards */}
+      <AccidentStatCards
+        totalCount={totalCount}
+        filteredCount={filteredCount}
+        currentPage={currentPage}
+        pageSize={pageSize}
+      />
+
       <Suspense
         fallback={
-          <div className="h-32 flex items-center justify-center">
-            <LoadingSpinner />
-          </div>
+          <div className="h-[92px] animate-pulse rounded-2xl border border-line bg-surface" />
         }
       >
-        <AccidentStatCards
-          totalCount={counted?.body.qty || 0}
-          recentCount={recentStats?.body.qty || 0}
+        <AccidentFilterBar
+          pageAddress="/admin/accident"
+          totalCount={totalCount}
+          filteredCount={filteredCount}
         />
       </Suspense>
 
-      {/* Search Filters */}
-      <div className="bg-surface p-5 rounded-lg shadow-sm mb-8 hover:shadow-md transition-all duration-300 ease-in-out border border-line">
-        <div className="flex items-center mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-brand-fg ml-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <h2 className="text-lg font-semibold text-fg">
-            جستجوی پیشرفته
-          </h2>
-        </div>
-        <ToggleAdvancedSearch
-          defaultSearchArrayValues={defaultSearchArrayValues}
-          pageAddress="accident"
-        />
-      </div>
-
-      {/* Main Dashboard */}
       <Suspense
         fallback={
-          <div className="h-64 flex items-center justify-center">
+          <div className="flex h-64 items-center justify-center">
             <LoadingSpinner />
           </div>
         }
@@ -128,9 +127,9 @@ export default async function AccidentDashboardPage({
           removeByCreatedAt={removeByCreatedAt}
           add={add}
           update={update}
-          totalCount={counted?.body.qty || 0}
-          currentPage={+setSearch.page!}
-          pageSize={+setSearch.limit!}
+          totalCount={filteredCount}
+          currentPage={currentPage}
+          pageSize={pageSize}
         />
       </Suspense>
     </div>

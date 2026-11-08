@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
 import {
@@ -20,6 +20,43 @@ import CreateUpdateAccidentModal from "./CreateUpdateAccidentModal";
 import { accidentSchema } from "@/types/declarations/selectInp";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import BatchDeleteByPeriodModal from "./BatchDeleteByPeriodModal";
+import { href as attachmentHref } from "@/components/report/attachment-viewer";
+import { formatNumber } from "@/utils/formatters";
+
+function EmptyState({ onClear }: { onClear: () => void }) {
+  return (
+    <div className="mt-6 flex flex-col items-center justify-center rounded-xl border border-dashed border-line bg-canvas/50 px-6 py-14 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-sunken text-fg-faint">
+        <svg
+          className="h-7 w-7"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.6}
+            d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"
+          />
+        </svg>
+      </div>
+      <p className="mt-4 text-sm font-semibold text-fg">
+        تصادفی مطابق با فیلترها پیدا نشد
+      </p>
+      <p className="mt-1 text-xs text-fg-faint">
+        عبارت جستجو یا فیلترهای فعال را تغییر دهید.
+      </p>
+      <button
+        type="button"
+        onClick={onClear}
+        className="mt-4 rounded-xl border border-line-strong bg-surface px-4 py-2 text-xs font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
+      >
+        پاک کردن فیلترها
+      </button>
+    </div>
+  );
+}
 
 interface AccidentDashboardProps {
   data: accidentSchema[];
@@ -49,6 +86,8 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
   pageSize,
 }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const hasData = data.length > 0;
   const [activeModal, setActiveModal] = useState<
     "edit" | "delete" | "view" | "batchDelete" | null
   >(null);
@@ -99,21 +138,21 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
   return (
     <div className="bg-surface rounded-xl shadow-md overflow-hidden">
       <div className="p-6 border-b border-line">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-semibold text-fg">
             لیست {translateModelNameToPersian(model)}
-            <span className="text-sm font-normal text-fg-muted mr-2">
-              ({totalCount} مورد)
+            <span className="mr-2 text-sm font-normal text-fg-muted">
+              ({formatNumber(totalCount)} مورد)
             </span>
           </h2>
-          <div className="flex space-x-4 space-x-reverse">
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              className="px-4 py-2 bg-red-500 text-on-brand rounded-lg hover:bg-red-600 transition-all duration-200 flex items-center gap-2 shadow-sm"
+              className="flex items-center gap-2 rounded-xl border border-line-strong bg-surface px-4 py-2 text-sm font-medium text-fg transition-all duration-200 hover:bg-surface-hover"
               onClick={() => openModal("edit")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -123,15 +162,15 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                   clipRule="evenodd"
                 />
               </svg>
-              ثبت {translateModelNameToPersian(model)} جدید
+              ثبت سریع
             </button>
             <button
-              className="px-4 py-2 bg-red-600 text-on-brand rounded-lg hover:bg-red-700 transition-all duration-200 flex items-center gap-2 shadow-sm"
+              className="flex items-center gap-2 rounded-xl border border-danger-border bg-danger-soft px-4 py-2 text-sm font-semibold text-danger-fg transition-all duration-200 hover:brightness-105"
               onClick={() => openModal("batchDelete")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-4 w-4"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -148,12 +187,12 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
         {/* View Mode Tabs */}
         <Tab.Group>
-          <Tab.List className="flex space-x-4 space-x-reverse mt-6 border-b">
+          <Tab.List className="flex space-x-4 space-x-reverse mt-6 border-b border-line">
             <Tab
               className={({ selected }) =>
                 `px-4 py-2 text-sm font-medium border-b-2 ${
                   selected
-                    ? "border-red-500 text-danger-fg"
+                    ? "border-brand text-brand-fg"
                     : "border-transparent text-fg-muted hover:text-fg hover:border-line-strong"
                 }`
               }
@@ -165,7 +204,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
               className={({ selected }) =>
                 `px-4 py-2 text-sm font-medium border-b-2 ${
                   selected
-                    ? "border-red-500 text-danger-fg"
+                    ? "border-brand text-brand-fg"
                     : "border-transparent text-fg-muted hover:text-fg hover:border-line-strong"
                 }`
               }
@@ -177,7 +216,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
               className={({ selected }) =>
                 `px-4 py-2 text-sm font-medium border-b-2 ${
                   selected
-                    ? "border-red-500 text-danger-fg"
+                    ? "border-brand text-brand-fg"
                     : "border-transparent text-fg-muted hover:text-fg hover:border-line-strong"
                 }`
               }
@@ -188,33 +227,45 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
           </Tab.List>
           <Tab.Panels className="mt-4">
             <Tab.Panel>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                {data.map((accident) => (
-                  <AccidentCard
-                    key={accident._id}
-                    accident={accident}
-                    onView={() => openModal("view", accident)}
-                    onEdit={() => openModal("edit", accident)}
-                    onDelete={() => openModal("delete", accident)}
-                  />
-                ))}
-              </div>
+              {hasData ? (
+                <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {data.map((accident) => (
+                    <AccidentCard
+                      key={accident._id}
+                      accident={accident}
+                      onView={() => openModal("view", accident)}
+                      onEdit={() => openModal("edit", accident)}
+                      onDelete={() => openModal("delete", accident)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState onClear={() => router.push(pathname)} />
+              )}
             </Tab.Panel>
             <Tab.Panel>
-              <AccidentTable
-                accidents={data}
-                onView={(accident) => openModal("view", accident)}
-                onEdit={(accident) => openModal("edit", accident)}
-                onDelete={(accident) => openModal("delete", accident)}
-              />
-            </Tab.Panel>
-            <Tab.Panel>
-              <div className="h-[500px] mt-6">
-                <AccidentMap
+              {hasData ? (
+                <AccidentTable
                   accidents={data}
-                  onSelect={(accident) => openModal("view", accident)}
+                  onView={(accident) => openModal("view", accident)}
+                  onEdit={(accident) => openModal("edit", accident)}
+                  onDelete={(accident) => openModal("delete", accident)}
                 />
-              </div>
+              ) : (
+                <EmptyState onClear={() => router.push(pathname)} />
+              )}
+            </Tab.Panel>
+            <Tab.Panel>
+              {hasData ? (
+                <div className="mt-6 h-[500px]">
+                  <AccidentMap
+                    accidents={data}
+                    onSelect={(accident) => openModal("view", accident)}
+                  />
+                </div>
+              ) : (
+                <EmptyState onClear={() => router.push(pathname)} />
+              )}
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
@@ -264,15 +315,15 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
       {activeModal === "view" && selectedItem && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[2000]"
+          className="fixed inset-0 z-[100000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
           onClick={closeModal}
         >
           <div
-            className="bg-surface rounded-lg shadow-xl w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto"
+            className="max-h-[90vh] w-11/12 max-w-4xl overflow-y-auto rounded-2xl border border-line bg-surface shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
-              <div className="flex justify-between items-center border-b pb-4 mb-4">
+              <div className="mb-4 flex items-center justify-between border-b border-line pb-4">
                 <h2 className="text-2xl font-bold text-fg">
                   جزئیات {translateModelNameToPersian(model)}
                 </h2>
@@ -299,7 +350,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-semibold mb-4 text-fg border-b pb-2">
+                  <h3 className="mb-4 border-b border-line pb-2 text-lg font-semibold text-fg">
                     اطلاعات اصلی
                   </h3>
 
@@ -351,7 +402,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-4 text-fg border-b pb-2">
+                  <h3 className="mb-4 border-b border-line pb-2 text-lg font-semibold text-fg">
                     موقعیت
                   </h3>
 
@@ -371,7 +422,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-semibold mt-6 mb-4 text-fg border-b pb-2">
+                  <h3 className="mb-4 mt-6 border-b border-line pb-2 text-lg font-semibold text-fg">
                     خودروها
                   </h3>
 
@@ -381,7 +432,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                       selectedItem.vehicle_dtos.map((vehicle, index) => (
                         <div
                           key={index}
-                          className="p-3 border rounded-lg bg-canvas"
+                          className="rounded-lg border border-line bg-canvas p-3"
                         >
                           <div className="flex justify-between">
                             <span className="text-fg-muted">سیستم:</span>
@@ -420,7 +471,7 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
               {selectedItem.attachments &&
                 selectedItem.attachments.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-4 text-fg border-b pb-2">
+                    <h3 className="mb-4 border-b border-line pb-2 text-lg font-semibold text-fg">
                       پیوست‌ها
                     </h3>
 
@@ -428,15 +479,16 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                       {selectedItem.attachments.map((attachment) => (
                         <div
                           key={attachment._id}
-                          className="border rounded-lg p-3 flex flex-col items-center"
+                          className="flex flex-col items-center rounded-lg border border-line p-3"
                         >
                           <div className="w-full h-24 bg-surface-sunken rounded flex items-center justify-center mb-2">
                             {attachment.type.startsWith("image/") ? (
                               <Image
-                                src={`/api/attachments/${attachment._id}`}
+                                src={attachmentHref(attachment)}
                                 alt={attachment.name}
                                 width={96}
                                 height={96}
+                                unoptimized
                                 className="max-h-full max-w-full object-contain"
                               />
                             ) : (
@@ -471,13 +523,13 @@ const AccidentDashboard: React.FC<AccidentDashboardProps> = ({
                     closeModal();
                     openModal("edit", selectedItem);
                   }}
-                  className="px-4 py-2 bg-yellow-500 text-fg rounded-lg hover:bg-yellow-600 transition-all duration-200"
+                  className="tint-warning rounded-lg bg-tint-strong px-4 py-2 text-sm font-medium text-tint-fg transition-all duration-200 hover:brightness-110"
                 >
                   ویرایش
                 </button>
                 <button
                   onClick={closeModal}
-                  className="px-4 py-2 bg-surface-sunken text-fg rounded-lg hover:bg-line transition-all duration-200"
+                  className="rounded-lg bg-surface-sunken px-4 py-2 text-sm font-medium text-fg transition-all duration-200 hover:bg-surface-hover"
                 >
                   بستن
                 </button>

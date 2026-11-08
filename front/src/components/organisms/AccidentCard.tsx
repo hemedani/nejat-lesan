@@ -24,7 +24,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
   const severityLevel = getSeverityLevel();
   const severityColors = {
     high: "bg-danger-soft text-danger-fg border-danger-border",
-    medium: "bg-warning-soft text-amber-800 border-warning-border",
+    medium: "bg-warning-soft text-warning-fg border-warning-border",
     low: "bg-success-soft text-success-fg border-success-border",
   };
 
@@ -108,7 +108,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
             <div className="flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-red-500 ml-1"
+                className="h-5 w-5 text-danger-fg ml-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -128,7 +128,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
             <div className="flex items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-amber-500 ml-1"
+                className="h-5 w-5 text-warning-fg ml-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -149,7 +149,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
               <div className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-blue-500 ml-1"
+                  className="h-5 w-5 text-brand-fg ml-1"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -197,7 +197,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
         <div className="mt-5 pt-4 border-t border-line flex justify-between">
           <button
             onClick={onView}
-            className="text-brand-fg hover:text-brand-fg text-sm font-medium transition-colors duration-200"
+            className="text-brand-fg text-sm font-medium underline-offset-4 transition-colors duration-200 hover:underline"
           >
             مشاهده جزئیات
           </button>
@@ -205,7 +205,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
           <div className="flex space-x-3 space-x-reverse">
             <button
               onClick={onEdit}
-              className="p-1.5 tint-warning bg-tint-strong text-tint-fg rounded-md hover:bg-tint-strong transition-colors duration-200"
+              className="tint-warning rounded-md bg-tint-strong p-1.5 text-tint-fg transition-all duration-200 hover:brightness-110"
               title="ویرایش"
             >
               <svg
@@ -226,7 +226,7 @@ const AccidentCard: React.FC<AccidentCardProps> = ({
 
             <button
               onClick={onDelete}
-              className="p-1.5 bg-danger-soft text-danger-fg rounded-md hover:bg-danger-soft transition-colors duration-200"
+              className="rounded-md bg-danger-soft p-1.5 text-danger-fg transition-all duration-200 hover:brightness-110"
               title="حذف"
             >
               <svg

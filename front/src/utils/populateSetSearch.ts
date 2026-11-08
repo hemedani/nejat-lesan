@@ -3,8 +3,18 @@ import { ReqType } from "@/types/declarations/selectInp";
 export type GetAccidentsSetParams =
   ReqType["main"]["accident"]["gets"]["set"];
 
-export const populateSetSearch = (searchParams: GetAccidentsSetParams) => {
+const parseStringArray = (
+  input: string | string[] | undefined,
+): string[] | undefined => {
+  if (input === undefined || input === null) return undefined;
 
+  const values = Array.isArray(input) ? input : String(input).split(",");
+  const parsed = values.map((value) => String(value).trim()).filter(Boolean);
+
+  return parsed.length > 0 ? parsed : undefined;
+};
+
+export const populateSetSearch = (searchParams: GetAccidentsSetParams) => {
   const {
     limit = "20",
     page = "1",
@@ -23,8 +33,33 @@ export const populateSetSearch = (searchParams: GetAccidentsSetParams) => {
     officer,
     completionDateFrom,
     completionDateTo,
+    attachmentName,
+    attachmentType,
+    vehicleInsuranceNo,
+    vehiclePrintNumber,
+    vehiclePlaqueSerialElement,
+    vehicleInsuranceDateFrom,
+    vehicleInsuranceDateTo,
+    vehicleBodyInsuranceNo,
+    vehicleBodyInsuranceDateFrom,
+    vehicleBodyInsuranceDateTo,
+    vehicleDamageSectionOther,
+    vehicleInsuranceWarrantyLimit,
+    vehicleInsuranceWarrantyLimitMin,
+    vehicleInsuranceWarrantyLimitMax,
+    driverFirstName,
+    driverLastName,
+    driverNationalCode,
+    driverLicenceNumber,
+    passengerFirstName,
+    passengerLastName,
+    passengerNationalCode,
+    pedestrianFirstName,
+    pedestrianLastName,
+    pedestrianNationalCode,
     province,
     city,
+    township,
     road,
     trafficZone,
     cityZone,
@@ -43,75 +78,34 @@ export const populateSetSearch = (searchParams: GetAccidentsSetParams) => {
     vehicleReasons,
     equipmentDamages,
     roadSurfaceConditions,
-    attachmentName,
-    attachmentType,
     vehicleColor,
     vehicleSystem,
     vehiclePlaqueType,
     vehicleSystemType,
     vehicleFaultStatus,
     vehicleInsuranceCo,
-    vehicleInsuranceNo,
     vehiclePlaqueUsage,
-    vehiclePrintNumber,
-    vehiclePlaqueSerialElement,
-    vehicleInsuranceDateFrom,
-    vehicleInsuranceDateTo,
     vehicleBodyInsuranceCo,
-    vehicleBodyInsuranceNo,
     vehicleMotionDirection,
-    vehicleBodyInsuranceDateFrom,
-    vehicleBodyInsuranceDateTo,
     vehicleMaxDamageSections,
-    vehicleDamageSectionOther,
-    vehicleInsuranceWarrantyLimit,
-    vehicleInsuranceWarrantyLimitMin,
-    vehicleInsuranceWarrantyLimitMax,
     driverSex,
-    driverFirstName,
-    driverLastName,
-    driverNationalCode,
-    driverLicenceNumber,
     driverLicenceType,
     driverInjuryType,
     driverTotalReason,
     passengerSex,
-    passengerFirstName,
-    passengerLastName,
-    passengerNationalCode,
     passengerInjuryType,
     passengerFaultStatus,
     passengerTotalReason,
     pedestrianSex,
-    pedestrianFirstName,
-    pedestrianLastName,
-    pedestrianNationalCode,
     pedestrianInjuryType,
     pedestrianFaultStatus,
     pedestrianTotalReason,
   } = searchParams;
 
-  // Helper to process potential string array inputs from searchParams
-  const parseStringArray = (input: string | string[] | undefined): string[] | undefined => {
-    if (input === undefined || input === null) return undefined;
-    let arr: string[];
-    if (typeof input === 'string') {
-      // Split comma-separated string, trim whitespace, and filter out empty strings
-      arr = input.split(',').map(s => s.trim()).filter(s => s.length > 0);
-    } else if (Array.isArray(input)) {
-      // Ensure all elements are strings, trim, and filter out empty strings
-      arr = input.map(s => String(s).trim()).filter(s => s.length > 0);
-    } else {
-      return undefined; // Should not happen if searchParams are string | string[]
-    }
-    return arr.length > 0 ? arr : undefined;
-  };
-
   const set: ReqType["main"]["accident"]["gets"]["set"] = {
-    limit: +limit || 20, // Convert limit string to number, default to 20
-    page: +page || 1,    // Convert page string to number, default to 1
+    limit: +limit || 20,
+    page: +page || 1,
 
-    // Conditionally add numeric fields (convert from string)
     ...(seri && { seri: +seri }),
     ...(serial && { serial: +serial }),
     ...(deadCount && { deadCount: +deadCount }),
@@ -121,83 +115,96 @@ export const populateSetSearch = (searchParams: GetAccidentsSetParams) => {
     ...(injuredCountMin && { injuredCountMin: +injuredCountMin }),
     ...(injuredCountMax && { injuredCountMax: +injuredCountMax }),
     ...(newsNumber && { newsNumber: +newsNumber }),
-    ...(vehicleInsuranceWarrantyLimit && { vehicleInsuranceWarrantyLimit: +vehicleInsuranceWarrantyLimit }),
-    ...(vehicleInsuranceWarrantyLimitMin && { vehicleInsuranceWarrantyLimitMin: +vehicleInsuranceWarrantyLimitMin }),
-    ...(vehicleInsuranceWarrantyLimitMax && { vehicleInsuranceWarrantyLimitMax: +vehicleInsuranceWarrantyLimitMax }),
+    ...(vehicleInsuranceWarrantyLimit && {
+      vehicleInsuranceWarrantyLimit: +vehicleInsuranceWarrantyLimit,
+    }),
+    ...(vehicleInsuranceWarrantyLimitMin && {
+      vehicleInsuranceWarrantyLimitMin: +vehicleInsuranceWarrantyLimitMin,
+    }),
+    ...(vehicleInsuranceWarrantyLimitMax && {
+      vehicleInsuranceWarrantyLimitMax: +vehicleInsuranceWarrantyLimitMax,
+    }),
 
-    // Conditionally add string fields (no conversion needed if already string)
     ...(dateOfAccidentFrom && { dateOfAccidentFrom }),
     ...(dateOfAccidentTo && { dateOfAccidentTo }),
     ...(hasWitness && { hasWitness }),
     ...(officer && { officer }),
     ...(completionDateFrom && { completionDateFrom }),
     ...(completionDateTo && { completionDateTo }),
-    ...(province && { province }),
-    ...(city && { city }),
-    ...(road && { road }),
-    ...(trafficZone && { trafficZone }),
-    ...(cityZone && { cityZone }),
-    ...(accidentType && { accidentType }),
-    ...(position && { position }),
-    ...(rulingType && { rulingType }),
-    ...(lightStatus && { lightStatus }),
-    ...(collisionType && { collisionType }),
-    ...(roadSituation && { roadSituation }),
-    ...(roadRepairType && { roadRepairType }),
-    ...(shoulderStatus && { shoulderStatus }),
     ...(attachmentName && { attachmentName }),
     ...(attachmentType && { attachmentType }),
-    ...(vehicleColor && { vehicleColor }),
-    ...(vehicleSystem && { vehicleSystem }),
-    ...(vehiclePlaqueType && { vehiclePlaqueType }),
-    ...(vehicleSystemType && { vehicleSystemType }),
-    ...(vehicleFaultStatus && { vehicleFaultStatus }),
-    ...(vehicleInsuranceCo && { vehicleInsuranceCo }),
     ...(vehicleInsuranceNo && { vehicleInsuranceNo }),
-    ...(vehiclePlaqueUsage && { vehiclePlaqueUsage }),
     ...(vehiclePrintNumber && { vehiclePrintNumber }),
     ...(vehiclePlaqueSerialElement && { vehiclePlaqueSerialElement }),
     ...(vehicleInsuranceDateFrom && { vehicleInsuranceDateFrom }),
     ...(vehicleInsuranceDateTo && { vehicleInsuranceDateTo }),
-    ...(vehicleBodyInsuranceCo && { vehicleBodyInsuranceCo }),
     ...(vehicleBodyInsuranceNo && { vehicleBodyInsuranceNo }),
-    ...(vehicleMotionDirection && { vehicleMotionDirection }),
     ...(vehicleBodyInsuranceDateFrom && { vehicleBodyInsuranceDateFrom }),
     ...(vehicleBodyInsuranceDateTo && { vehicleBodyInsuranceDateTo }),
     ...(vehicleDamageSectionOther && { vehicleDamageSectionOther }),
-    ...(driverSex && { driverSex }),
     ...(driverFirstName && { driverFirstName }),
     ...(driverLastName && { driverLastName }),
     ...(driverNationalCode && { driverNationalCode }),
     ...(driverLicenceNumber && { driverLicenceNumber }),
-    ...(driverLicenceType && { driverLicenceType }),
-    ...(driverInjuryType && { driverInjuryType }),
-    ...(driverTotalReason && { driverTotalReason }),
-    ...(passengerSex && { passengerSex }),
     ...(passengerFirstName && { passengerFirstName }),
     ...(passengerLastName && { passengerLastName }),
     ...(passengerNationalCode && { passengerNationalCode }),
-    ...(passengerInjuryType && { passengerInjuryType }),
-    ...(passengerFaultStatus && { passengerFaultStatus }),
-    ...(passengerTotalReason && { passengerTotalReason }),
-    ...(pedestrianSex && { pedestrianSex }),
     ...(pedestrianFirstName && { pedestrianFirstName }),
     ...(pedestrianLastName && { pedestrianLastName }),
     ...(pedestrianNationalCode && { pedestrianNationalCode }),
-    ...(pedestrianInjuryType && { pedestrianInjuryType }),
-    ...(pedestrianFaultStatus && { pedestrianFaultStatus }),
-    ...(pedestrianTotalReason && { pedestrianTotalReason }),
-
-    // Conditionally add string array fields (parse if necessary)
-    ...(parseStringArray(areaUsages) && { areaUsages: parseStringArray(areaUsages) as string[] }),
-    ...(parseStringArray(airStatuses) && { airStatuses: parseStringArray(airStatuses) as string[] }),
-    ...(parseStringArray(roadDefects) && { roadDefects: parseStringArray(roadDefects) as string[] }),
-    ...(parseStringArray(humanReasons) && { humanReasons: parseStringArray(humanReasons) as string[] }),
-    ...(parseStringArray(vehicleReasons) && { vehicleReasons: parseStringArray(vehicleReasons) as string[] }),
-    ...(parseStringArray(equipmentDamages) && { equipmentDamages: parseStringArray(equipmentDamages) as string[] }),
-    ...(parseStringArray(roadSurfaceConditions) && { roadSurfaceConditions: parseStringArray(roadSurfaceConditions) as string[] }),
-    ...(parseStringArray(vehicleMaxDamageSections) && { vehicleMaxDamageSections: parseStringArray(vehicleMaxDamageSections) as string[] }),
   };
 
+  const arrayFilters: Record<string, string[] | undefined> = {
+    province: parseStringArray(province),
+    city: parseStringArray(city),
+    township: parseStringArray(township),
+    road: parseStringArray(road),
+    trafficZone: parseStringArray(trafficZone),
+    cityZone: parseStringArray(cityZone),
+    accidentType: parseStringArray(accidentType),
+    position: parseStringArray(position),
+    rulingType: parseStringArray(rulingType),
+    lightStatus: parseStringArray(lightStatus),
+    collisionType: parseStringArray(collisionType),
+    roadSituation: parseStringArray(roadSituation),
+    roadRepairType: parseStringArray(roadRepairType),
+    shoulderStatus: parseStringArray(shoulderStatus),
+    areaUsages: parseStringArray(areaUsages),
+    airStatuses: parseStringArray(airStatuses),
+    roadDefects: parseStringArray(roadDefects),
+    humanReasons: parseStringArray(humanReasons),
+    vehicleReasons: parseStringArray(vehicleReasons),
+    equipmentDamages: parseStringArray(equipmentDamages),
+    roadSurfaceConditions: parseStringArray(roadSurfaceConditions),
+    vehicleColor: parseStringArray(vehicleColor),
+    vehicleSystem: parseStringArray(vehicleSystem),
+    vehiclePlaqueType: parseStringArray(vehiclePlaqueType),
+    vehicleSystemType: parseStringArray(vehicleSystemType),
+    vehicleFaultStatus: parseStringArray(vehicleFaultStatus),
+    vehicleInsuranceCo: parseStringArray(vehicleInsuranceCo),
+    vehiclePlaqueUsage: parseStringArray(vehiclePlaqueUsage),
+    vehicleBodyInsuranceCo: parseStringArray(vehicleBodyInsuranceCo),
+    vehicleMotionDirection: parseStringArray(vehicleMotionDirection),
+    vehicleMaxDamageSections: parseStringArray(vehicleMaxDamageSections),
+    driverSex: parseStringArray(driverSex),
+    driverLicenceType: parseStringArray(driverLicenceType),
+    driverInjuryType: parseStringArray(driverInjuryType),
+    driverTotalReason: parseStringArray(driverTotalReason),
+    passengerSex: parseStringArray(passengerSex),
+    passengerInjuryType: parseStringArray(passengerInjuryType),
+    passengerFaultStatus: parseStringArray(passengerFaultStatus),
+    passengerTotalReason: parseStringArray(passengerTotalReason),
+    pedestrianSex: parseStringArray(pedestrianSex),
+    pedestrianInjuryType: parseStringArray(pedestrianInjuryType),
+    pedestrianFaultStatus: parseStringArray(pedestrianFaultStatus),
+    pedestrianTotalReason: parseStringArray(pedestrianTotalReason),
+  };
+
+  for (const [key, value] of Object.entries(arrayFilters)) {
+    if (value) {
+      (set as Record<string, unknown>)[key] = value;
+    }
+  }
+
   return set;
-}
+};
