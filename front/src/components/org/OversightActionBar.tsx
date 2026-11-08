@@ -4,12 +4,18 @@ import { useCallback, useState } from "react";
 
 import { fetchOversightList } from "@/app/actions/incident_report/getOversightList";
 import { bulkReviewReports } from "@/app/actions/incident_report/reviewReports";
+import {
+  bulkRemoveReports,
+  type RemoveTarget,
+} from "@/app/actions/incident_report/removeReports";
 import { reportsToCsv } from "@/services/reports-csv";
 import {
   ACCIDENT_GROUP_TITLE,
   type OversightFilters,
   type ReviewOutcome,
 } from "@/services/report-sources";
+import type { ReportSource } from "@/types/report-detail";
+import { useAuth } from "@/context/AuthContext";
 import { getPatrolErrorMessage } from "@/utils/api-response";
 import { reviewActionLabels, reviewStatusMeta, syncStatusMeta } from "@/utils/patrol-status";
 import { Button } from "@/components/atoms/Button";
@@ -133,6 +139,13 @@ type BatchSummary = {
   refused: RefusedRow[];
 };
 
+/** What a delete batch did. Same three shapes as `BatchSummary`, one verb. */
+type RemoveSummary = {
+  removed: number;
+  answered: number;
+  refused: RefusedRow[];
+};
+
 /**
  * Read a batch's per-row answers.
  *
@@ -202,6 +215,55 @@ const headline = (summary: BatchSummary): string => {
 };
 
 /**
+ * The same three shapes, for the one action that has no second chance.
+ *
+ * «حذف شدند» not «حذف شد» for a plurality, and the rows that survived are named
+ * rather than counted away, because a delete batch that dropped nineteen of twenty
+ * reports is not a success with a footnote — the one that stayed is the thing the
+ * reviewer has to deal with next, and it stays ticked for exactly that reason.
+ */
+const removeHeadline = (summary: RemoveSummary): string => {
+  if (summary.answered === 0) {
+    return "نتیجه‌ای برای این دسته برنگشت؛ هیچ گزارشی حذف نشد.";
+  }
+
+  const single = summary.answered === 1;
+
+  if (summary.removed === 0) {
+    return single
+      ? "گزارش انتخاب‌شده حذف نشد. دلیل:"
+      : `هیچ‌یک از ${count(summary.answered)} گزارش انتخاب‌شده حذف نشد. دلیل هر مورد:`;
+  }
+  if (summary.refused.length === 0) {
+    return single
+      ? "گزارش انتخاب‌شده حذف شد."
+      : `همهٔ ${count(summary.removed)} گزارش انتخاب‌شده حذف شدند.`;
+  }
+  return (
+    `${count(summary.removed)} گزارش از ${count(summary.answered)} گزارش انتخاب‌شده ` +
+    `حذف شد. ${count(summary.refused.length)} گزارش حذف نشد:`
+  );
+};
+
+/**
+ * Who the console offers deletion to.
+ *
+ * Mirrors the backend rather than inventing a narrower rule: `incident_report.remove`
+ * is level-gated to `Manager | OrgHead | UnitHead` and `accident.remove` to
+ * `Manager`, while `grantAccess` passes `Ghost` through any level list — so a Ghost
+ * has been allowed to delete for as long as those acts have existed, and the missing
+ * piece was a control, not a permission. Listing the same four levels here keeps the
+ * button and the act from disagreeing: a panel viewer who reaches this console and
+ * is not one of these four sees no button rather than one that refuses.
+ */
+const CAN_REMOVE_LEVELS: ReadonlySet<string> = new Set([
+  "Ghost",
+  "Manager",
+  "OrgHead",
+  "UnitHead",
+]);
+
+/**
  * The console's action bar: what to do with the ticked rows, and what happened.
  *
  * Driven by the selection the view already holds, which the view drops whenever the
@@ -212,10 +274,11 @@ const headline = (summary: BatchSummary): string => {
  * trust: `presentedIds` is re-checked at the point of submission below, so the act's
  * input cannot disagree with the table even if the invariant is ever narrowed again —
  * within one organization nothing else would catch it, since the backend's per-row
- * scope check passes ids the reviewer was already entitled to see. Nothing here
- * branches on `row.source`: accidents and non-accident reports are one table, the act
- * resolves each id to the model it belongs to, and a bar that assumed one type would
- * refuse half its own selection.
+ * scope check passes ids the reviewer was already entitled to see. The review actions
+ * do not branch on `row.source`: accidents and non-accident reports are one table, the
+ * act resolves each id to the model it belongs to, and a bar that assumed one type
+ * would refuse half its own selection. Delete is the exception — it has one act per
+ * collection — and that is why it alone reads the row's source (see `runRemove`).
  *
  * All three actions confirm, in the same dialog and with the same row list. Approve
  * needs it most: it is the irreversible direction, it takes no reason, so without a
@@ -239,6 +302,7 @@ export function OversightActionBar({
   filter,
   total,
   labelFor,
+  sourceFor,
   onSelectionChange,
   onRefresh,
 }: {
@@ -256,27 +320,38 @@ export function OversightActionBar({
   total: number;
   /** How a report id reads on screen, including ids from pages no longer shown. */
   labelFor: (id: string) => string;
+  /**
+   * Which collection a row lives in. Only delete needs it — each collection has its
+   * own `remove` act — and it is `undefined` for an id that is not on the presented
+   * page, which is how a stale selection is kept out of a destructive batch.
+   */
+  sourceFor: (id: string) => ReportSource | undefined;
   /** Hand back the ids the reviewer should still have selected. */
   onSelectionChange: (ids: string[]) => void;
   /** Re-read the list and the statistics so the counts show the change. */
   onRefresh: () => Promise<void>;
 }) {
-  const [pending, setPending] = useState<BulkAction | "export" | null>(null);
+  const { userLevel } = useAuth();
+  const [pending, setPending] = useState<BulkAction | "export" | "remove" | null>(null);
   const [startReviewOpen, setStartReviewOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
   const [returnOpen, setReturnOpen] = useState(false);
+  const [removeOpen, setRemoveOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [summary, setSummary] = useState<BatchSummary | null>(null);
+  const [removeSummary, setRemoveSummary] = useState<RemoveSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const busy = pending !== null;
   const selectedCount = selected.length;
+  const canRemove = Boolean(userLevel && CAN_REMOVE_LEVELS.has(userLevel));
 
-  /** Close whichever confirmation is open — one dialog at a time, three actions. */
+  /** Close whichever confirmation is open — one dialog at a time, four actions. */
   const closeModals = useCallback(() => {
     setStartReviewOpen(false);
     setApproveOpen(false);
     setReturnOpen(false);
+    setRemoveOpen(false);
   }, []);
 
   const runReview = async (action: BulkAction, actionReason?: string) => {
@@ -299,6 +374,7 @@ export function OversightActionBar({
     setPending(action);
     setError(null);
     setSummary(null);
+    setRemoveSummary(null);
 
     try {
       const results = await bulkReviewReports(targets, action, actionReason);
@@ -316,6 +392,71 @@ export function OversightActionBar({
     } catch (cause) {
       // The whole request was refused — a role that may not review, or a return with
       // no reason — so nothing was applied and the selection stays as it was.
+      setError(getPatrolErrorMessage(cause));
+      closeModals();
+    } finally {
+      setPending(null);
+    }
+  };
+
+  /**
+   * Delete the ticked rows.
+   *
+   * The one action that has to know which collection a row belongs to: there is no
+   * batch act behind delete, only `accident.remove` and `incident_report.remove`, so
+   * each row carries its source. An id whose source is unknown is dropped rather than
+   * guessed at — the only way that happens is a selection that outlived the presented
+   * page, and deleting the wrong collection's document with that id is not a mistake
+   * worth risking to save a round trip.
+   *
+   * Refusals stay ticked, exactly as they do for review: a report outside the caller's
+   * road scope is the one the reviewer still has to deal with, so the bar keeps it
+   * selected and names the reason instead of quietly dropping it.
+   */
+  const runRemove = async () => {
+    const presented =
+      presentedIds.size > 0 ? selected.filter((id) => presentedIds.has(id)) : selected;
+
+    const targets: RemoveTarget[] = presented.flatMap((reportId) => {
+      const source = sourceFor(reportId);
+      return source ? [{ reportId, source }] : [];
+    });
+
+    if (targets.length === 0) {
+      setSummary(null);
+      setRemoveSummary(null);
+      setError("هیچ‌یک از گزارش‌های انتخاب‌شده در ردیف‌های این صفحه نیست؛ اقدامی انجام نشد.");
+      onSelectionChange([]);
+      closeModals();
+      return;
+    }
+
+    setPending("remove");
+    setError(null);
+    setSummary(null);
+    setRemoveSummary(null);
+
+    try {
+      const results = await bulkRemoveReports(targets);
+      const refused: RefusedRow[] = results
+        .filter((row) => !row.ok)
+        .map((row) => ({
+          id: row.reportId,
+          label: labelFor(row.reportId),
+          error: row.error ?? "دلیل نامشخص",
+        }));
+
+      setRemoveSummary({
+        removed: results.length - refused.length,
+        answered: results.length,
+        refused,
+      });
+      onSelectionChange(results.filter((row) => !row.ok).map((row) => row.reportId));
+      closeModals();
+      await onRefresh();
+    } catch (cause) {
+      // A transport-level failure: nothing is known about the rows, so the selection
+      // is left exactly as it was and the reviewer can retry the same batch.
       setError(getPatrolErrorMessage(cause));
       closeModals();
     } finally {
@@ -362,6 +503,7 @@ export function OversightActionBar({
           <p className="mt-1 text-xs text-fg-faint">
             شروع بررسی، تأیید و برگشت روی همهٔ گزارش‌های انتخاب‌شده اعمال می‌شود؛ تصادف‌ها و
             گزارش‌های رخداد با هم.
+            {canRemove && " حذف نیز همین‌طور، اما بازگشت‌ناپذیر است."}
           </p>
         </div>
 
@@ -401,6 +543,16 @@ export function OversightActionBar({
           >
             {exportLabel}
           </Button>
+          {canRemove && (
+            <Button
+              variant="danger"
+              size="sm"
+              disabled={selectedCount === 0 || busy}
+              onClick={() => setRemoveOpen(true)}
+            >
+              حذف
+            </Button>
+          )}
         </div>
       </section>
 
@@ -423,6 +575,33 @@ export function OversightActionBar({
                   <li className="text-xs opacity-80">
                     و {count(summary.refused.length - MAX_LISTED_REFUSALS)} مورد دیگر که همچنان
                     انتخاب شده‌اند.
+                  </li>
+                )}
+              </ul>
+            )}
+          </Notice>
+        </div>
+      )}
+
+      {removeSummary && (
+        <div className="mb-4">
+          <Notice tone={removeSummary.refused.length === 0 ? "emerald" : "amber"}>
+            <p>{removeHeadline(removeSummary)}</p>
+            {removeSummary.refused.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs leading-5">
+                {removeSummary.refused.slice(0, MAX_LISTED_REFUSALS).map((row) => (
+                  <li key={row.id}>
+                    <span dir="ltr" className="font-medium">
+                      {row.label}
+                    </span>
+                    {" — "}
+                    {row.error}
+                  </li>
+                ))}
+                {removeSummary.refused.length > MAX_LISTED_REFUSALS && (
+                  <li className="text-xs opacity-80">
+                    و {count(removeSummary.refused.length - MAX_LISTED_REFUSALS)} مورد دیگر که
+                    همچنان انتخاب شده‌اند.
                   </li>
                 )}
               </ul>
@@ -526,6 +705,33 @@ export function OversightActionBar({
           onValueChange={setReason}
           errMsg={!reason.trim() ? "ثبت دلیل الزامی است." : undefined}
         />
+      </DarkModal>
+
+      <DarkModal
+        isOpen={removeOpen}
+        title={`حذف ${count(selectedCount)} گزارش`}
+        onClose={() => setRemoveOpen(false)}
+        footer={
+          <>
+            <Button variant="neutral" onClick={() => setRemoveOpen(false)}>
+              انصراف
+            </Button>
+            <Button
+              variant="danger"
+              loading={pending === "remove"}
+              onClick={() => void runRemove()}
+            >
+              حذف قطعی {count(selectedCount)} گزارش
+            </Button>
+          </>
+        }
+      >
+        <p className="mb-3 text-xs leading-6 text-fg-muted">
+          گزارش‌های زیر برای همیشه حذف می‌شوند — همراه با پیوست‌ها و تاریخچه بازبینی‌شان — و
+          قابل بازگردانی نیستند. اگر قصدتان رد کردن گزارش است، به‌جای حذف از «برگشت برای
+          اصلاح» استفاده کنید تا مأمور بتواند اصلاحش کند.
+        </p>
+        <SelectedReportList selected={selected} labelFor={labelFor} />
       </DarkModal>
     </>
   );

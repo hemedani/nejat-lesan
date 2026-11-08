@@ -256,6 +256,18 @@ function OrgReportsConsole({
     [rows],
   );
 
+  /**
+   * Which collection a row lives in.
+   *
+   * Only the delete action needs this — review is one act over both models, delete is
+   * one act per model — and it answers `undefined` for an id that is not on the
+   * presented page, which is what keeps a stale selection out of a destructive batch.
+   */
+  const sourceFor = useCallback(
+    (id: string) => rows.find((candidate) => candidate._id === id)?.source,
+    [rows],
+  );
+
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const headingText = heading || "گزارش‌های رخداد";
   const subtitleText =
@@ -339,6 +351,7 @@ function OrgReportsConsole({
         filter={filter}
         total={total}
         labelFor={labelFor}
+        sourceFor={sourceFor}
         onSelectionChange={setSelected}
         onRefresh={refresh}
       />
