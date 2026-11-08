@@ -1460,6 +1460,58 @@ Deno.test("attachments — a file already on a report is not reaped as an orphan
 	assertExists(created, "the report itself must survive");
 });
 
+/** Does the upload tree still hold the bytes at `path` (relative to `./uploads`)? */
+const storedBytesExist = async (path: string): Promise<boolean> => {
+	try {
+		await Deno.stat(`./uploads/${path}`);
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+Deno.test("removal — deleting a report takes its file rows and their bytes", async () => {
+	const { officer, form } = await provisionFiler("حذف پیوست");
+	const photo = await uploadAsset(officer, "deleted-with-report.png");
+	assertExists(
+		photo.path,
+		"the upload should record where it wrote the bytes",
+	);
+	assertEquals(
+		await storedBytesExist(photo.path),
+		true,
+		"the upload should be on disk before the delete",
+	);
+
+	const created = await runAct("incident_report", "add", {
+		set: {
+			form_definition_id: form._id.toString(),
+			client_report_uuid: `uuid-${RUN}-remove-1`,
+			location: { type: "Point", coordinates: [51.4, 35.7] },
+			attachmentsIds: [photo._id.toString()],
+		},
+		get: { _id: 1 },
+	}, officer) as { _id: ObjectId };
+
+	// The console's shape: a report that still has attachments cannot be deleted
+	// without the cascade, so this is the only path that deletes one.
+	await runAct("incident_report", "remove", {
+		set: { _id: created._id.toString(), hardCascade: true },
+		get: { success: true },
+	}, managerId);
+
+	assertEquals(
+		await file.countDocument({ filter: { _id: photo._id } }),
+		0,
+		"the file row must not outlive the report it belonged to",
+	);
+	assertEquals(
+		await storedBytesExist(photo.path),
+		false,
+		"the bytes must not outlive the row that named them",
+	);
+});
+
 Deno.test("cleanup test database", async () => {
 	const client = await new MongoClient(
 		Deno.env.get("MONGO_URI") || "mongodb://127.0.0.1:27017/",

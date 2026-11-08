@@ -283,6 +283,15 @@ This analytics system provides the core functionality for the traffic management
 - File uploads are stored in the "uploads" directory
 - Files are linked to other models via relations
 - The system handles various types of attachments for accident records
+- A `file` row is a pointer, not the upload: any act that deletes one must unlink
+  its bytes through `utils/storedFiles.ts` (`removeStoredBytes`), which reads the
+  recorded `path` and refuses anything outside the upload tree. Lesan's cascade
+  deletes rows only — it knows nothing about the disk
+- Report deletion (`accident.remove`, `incident_report.remove`) finishes the job
+  through `src/shared/reportAttachments.ts`: the cascade only reaches files whose
+  `accident`/`incident_report` back-reference was written (`uploadAccidentImages`
+  writes it; attaching an existing upload by id does not), so files attached from
+  the report side are deleted there, together with their bytes
 
 ## 🌐 API Features
 

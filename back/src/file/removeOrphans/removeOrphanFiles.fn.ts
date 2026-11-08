@@ -1,5 +1,6 @@
 import { type ActFn, ObjectId } from "@deps";
 import { file } from "../../../mod.ts";
+import { removeStoredBytes } from "@lib";
 
 const DEFAULT_OLDER_THAN_DAYS = 7;
 
@@ -129,15 +130,10 @@ export const removeOrphanFilesFn: ActFn = async (body) => {
 		// Where the bytes went is recorded per document, not assumed: `file.uploadFile`
 		// writes to one of six trees and `file.uploadAccidentImages` always writes
 		// `accidents/`. Hardcoding that directory deleted nothing for the other five
-		// and leaked their bytes. Documents predating the `path` field are all
-		// accident uploads, hence the fallback.
-		const path = (doc.path as string | undefined) ??
-			`accidents/${doc.name as string}`;
-		try {
-			await Deno.remove(`./uploads/${path}`);
-		} catch (_error) {
-			// disk cleanup is best-effort; the doc removal below is authoritative
-		}
+		// and leaked their bytes. The same reading of `path` — and the same
+		// best-effort unlink — is shared with the acts that delete a report, so the
+		// two cannot disagree about which file a row stands for.
+		await removeStoredBytes([doc]);
 		await file.deleteOne({ filter: { _id: new ObjectId(doc._id) } });
 		removed++;
 	}
